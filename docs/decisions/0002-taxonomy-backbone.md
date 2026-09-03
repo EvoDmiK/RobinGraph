@@ -10,7 +10,7 @@
 
 ## 결정
 
-- 국제 조류 분류의 MVP 기준판으로 **AviList v2025** 스냅샷을 사용한다.
+- 국제 조류 분류의 MVP 기준판으로 **AviList v2025b** 스냅샷을 사용한다.
 - 국립생물자원관 국가생물종목록은 별도 `TaxonConceptSet`으로 유지하고, 정확한 공공누리 유형을 확인한 뒤 한국어 일반명과 국내 지정 정보를 연결한다.
 - 외부 분류 개념을 하나로 덮어쓰지 않는다. 원 출처 개념, 이름, 지위를 보존하고 승인된 crosswalk로 AviList 개념에 연결한다.
 - 다음 AviList 판이 나와도 기존 Taxon을 수정하지 않고 새 concept set과 버전 간 매핑을 만든다.
@@ -23,7 +23,7 @@
 
 ## ID 정책
 
-AviList의 sequence나 학명 문자열을 내부 ID로 사용하지 않는다. 소스 레코드는 `avilist:v2025:<release-scoped-key>` 형태의 릴리스 범위 키를 사용하고, Taxon은 별도 불변 내부 ID를 가진다. 차기 판으로의 연속성은 accepted name, rank, parent lineage와 사람이 검토한 split/merge crosswalk로 판단한다.
+AviList의 sequence나 학명 문자열을 내부 ID로 사용하지 않는다. 소스 레코드는 `avilist:v2025b:<release-scoped-key>` 형태의 릴리스 범위 키를 사용하고, Taxon은 별도 불변 내부 ID를 가진다. 차기 판으로의 연속성은 accepted name, rank, parent lineage와 사람이 검토한 split/merge crosswalk로 판단한다.
 
 ## 검토한 대안
 
@@ -34,7 +34,7 @@ AviList의 sequence나 학명 문자열을 내부 ID로 사용하지 않는다. 
 
 ## 확정 전 조건
 
-- AviList v2025 다운로드 파일, 인용문, CC BY 4.0 원문을 프로젝트 manifest에 보존한다.
+- AviList v2025b 다운로드 파일, 인용문, CC BY 4.0 원문을 프로젝트 manifest에 보존한다.
 - AviList 행을 재현 가능하게 식별할 release-scoped key 규칙을 실제 열 구성에 맞춰 검증한다.
 - NIBR 국가생물종목록의 정확한 공공누리 유형과 API/다운로드 조건을 확인한다.
 - MVP 대상 종 표본으로 AviList↔NIBR crosswalk를 만들고 split, merge, synonym 사례를 검토한다.

@@ -10,9 +10,9 @@
 |---:|---|---|---|
 | 1 | 데이터 후보·라이선스·품질 조사 결과를 시스템 요구사항으로 변환 | `data-source-decision-input.md` | 완료, Claude |
 | 2 | MVP 범위와 정책 결정 | taxonomy 및 license ADR | Proposed, 사용자 확정 필요 |
-| 3 | 출처별 staging 필드와 공통 데이터 계약 정의 | `data-contracts.md` | 공통 계약 완료, 원본 필드 매핑 대기 |
-| 4 | 10종·관찰 100건·문서 2개 fixture와 15개 gold 질문 설계 | `data/eval` 명세 | 수직 슬라이스 차단 |
-| 5 | 빈 환경부터 인용 답변까지의 수직 슬라이스 구현 | 첫 실행 가능한 MVP | 앞 단계 완료 후 |
+| 3 | 출처별 staging 필드와 공통 데이터 계약 정의 | `data-contracts.md`, `config/schemas/source-registry.schema.json`, `src/robingraph/ingest/validation.py` | 공통 계약·registry/staging fixture 검증 완료, 원본 필드 매핑 대기 |
+| 4 | 10종·관찰 100건·문서 2개 fixture와 15개 gold 질문 설계 | `docs/evaluation.md`, `data/eval/v1` | 완료, fixture 수직 슬라이스 검증됨 |
+| 5 | 빈 환경부터 인용 답변까지의 수직 슬라이스 구현 | 첫 실행 가능한 MVP | 합성 fixture의 Neo4j·FastAPI 경로 검증됨, 운영 source·모델 연결 대기 |
 
 ## 결정 등록부
 
@@ -20,7 +20,7 @@
 |---|---|---|---|---|
 | D-01 | 주 사용자·언어 | 한국어 일반 사용자, 학명과 영어 근거 지원 | 제품 목표 | 확인 필요 |
 | D-02 | MVP 지역 | 한 광역 지역 | 관찰 데이터 밀도와 사용자 관심 | 확인 필요 |
-| D-03 | 분류 기준판과 릴리스 | AviList v2025 + NIBR 별도 concept set | NIBR 정확한 이용 조건 | ADR-0002 Proposed |
+| D-03 | 분류 기준판과 릴리스 | AviList v2025b + NIBR 별도 concept set | NIBR 정확한 이용 조건 | ADR-0002 Proposed |
 | D-04 | 관찰 데이터 범위 | GBIF의 CC0/CC BY 레코드, 10만 건 이하 | MVP 지역과 GBIF 실제 건수 | 확인 필요 |
 | D-05 | 민감종 좌표 | 원좌표 비공개, 공개 좌표 별도 파생 | 국내 기준과 격자 해상도 | 확인 필요 |
 | D-06 | 라이선스 허용 행렬 | CC0·CC BY·공공누리 1유형만 | 서비스 상업성 | ADR-0003 Proposed |
@@ -54,9 +54,15 @@
 - [ ] 선택한 소스의 안정적 ID와 최소 필드가 확인됐다.
 - [ ] 라이선스 정책이 검색·임베딩·표시·재배포별로 정해졌다.
 - [ ] 민감종 좌표의 보관본과 공개본 처리 방식이 정해졌다.
-- [ ] 15개 gold 질문과 기대 evidence가 정의됐다.
+- [x] 15개 gold 질문과 기대 evidence가 정의됐다. 합성 fixture로 `15/15` 평가를 통과했다.
 - [ ] HermesAgent endpoint, 모델 ID, 구조화 출력과 token usage 응답이 확인됐다.
 - [ ] Jina API의 endpoint, 인증, 출력 차원, task 설정과 정규화 방식이 확인됐다.
+
+## 구현 환경 확인
+
+- [x] Python 3.12.14 가상환경에서 editable 설치, fixture 검증, 15개 gold 평가, 단위 테스트를 실행했다.
+- [x] Neo4j Community `2026.07.1`의 `neo4j` database에 인증·연결했고, 합성 fixture schema와 idempotent graph load를 검증했다. full-text/vector index는 Jina 출력 차원 계약 확인 후 생성한다.
+- [ ] HermesAgent와 Jina API의 연결 계약을 실제 endpoint로 확인했다.
 
 ## 협업 결과 통합 규칙
 
