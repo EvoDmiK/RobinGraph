@@ -15,7 +15,7 @@
 
 | 후보 | 범위 | 접근 방식 | 갱신 주기 | 식별자 | 라이선스 / 저작자 표시 | 재배포·임베딩 | 품질 위험 |
 |---|---|---|---|---|---|---|---|
-| **AviList — The Global Avian Checklist** ([avilist.org](https://www.avilist.org/), [checklist v2025](https://www.avilist.org/checklist/v2025/)) | 전세계 조류 11,131종. IOC World Bird List, Clements/eBird Taxonomy, Howard & Moore를 단일판으로 통합한 신규 국제 표준(2025-06 최초 발표) | 공식 사이트에서 XLSX 일괄 다운로드(AviList 탭, 결정 요약, 인용 포함). 공개 API는 확인 안 됨 | 연 1회 예상(공식 갱신 주기 명문화는 확인 못함, 검토 필요) | 학명 + 계통순서(sequence), 안정적 국제 판 하나로 통합되어 후속 crosswalk 부담이 낮음 | **CC BY 4.0**("AviList: The Global Avian Checklist © 2025 by AviList Core Team is licensed under CC BY 4.0") | 저작자 표시 하에 재배포·그래프 임베딩 가능 | 2025년 최초 발표로 장기 유지보수·개정 이력이 짧음. 기존 IOC/Clements 사용자 커뮤니티의 완전한 전환 여부 확인 필요 |
+| **AviList — The Global Avian Checklist** ([avilist.org](https://www.avilist.org/), [checklist v2025b](https://www.avilist.org/checklist/v2025b/)) | 전세계 조류 11,131종. IOC World Bird List, Clements/eBird Taxonomy, Howard & Moore를 단일판으로 통합한 신규 국제 표준(2025-06 최초 발표, 2026-06 부수 필드·정정 개정) | 공식 사이트에서 XLSX 일괄 다운로드(AviList 탭, 결정 요약, 인용 포함). 공개 API는 확인 안 됨 | 연 1회 예상(공식 갱신 주기 명문화는 확인 못함, 검토 필요) | 학명 + 계통순서(sequence), 안정적 국제 판 하나로 통합되어 후속 crosswalk 부담이 낮음 | **CC BY 4.0**("AviList: The Global Avian Checklist © 2026 by AviList Core Team is licensed under CC BY 4.0") | 저작자 표시 하에 재배포·그래프 임베딩 가능 | v2025b는 core taxonomy/nomenclature 변경 없이 부수 필드와 일부 정정을 반영. 기존 IOC/Clements 사용자 커뮤니티의 완전한 전환 여부 확인 필요 |
 | IOC World Bird List ([worldbirdnames.org](https://www.worldbirdnames.org/new/)) | 전세계 조류, v15.2(2026-04-13)가 마지막 독자 갱신으로 안내됨 | 웹사이트에서 XLSX/CSV 다운로드 | 과거 분기별. **v15.2 이후 편집팀이 AviList로 이관 예정이라고 공식 명시** | 학명 + IOC sequence | **CC BY 3.0 Unported**. 인용: "Gill F, D Donsker & P Rasmussen (Eds). 2026. IOC World Bird List (v15.2)." | 저작자 표시 하에 재배포·임베딩 가능 | **유지보수 종료 위험** — 신규 분류 반영이 AviList로 이전되므로 장기 기준판으로 신규 채택하기에 부적합 |
 | Clements Checklist / eBird Taxonomy (Cornell Lab, [birds.cornell.edu/clementschecklist](https://www.birds.cornell.edu/clementschecklist/)) | 전세계 조류(species, subspecies, group). 최신판 Excel/CSV 제공 | 웹사이트에서 Excel(5MB)/CSV(10MB) 무료 다운로드 | 연 1회(매년 8월경 공지, 최근 2023b 등) | 학명 + sequence number, eBird 코드(species code)와 연동 | **검토 필요** — 공식 다운로드 페이지에서 재배포·상업적 이용 조건을 명시한 라이선스 문구를 직접 확인하지 못했다. eBird 자체 이용약관(재배포 제한)과 연계될 가능성이 있어 별도 확인 필요 | 확인 전까지 재배포·임베딩 불가로 간주(잠정) | 최신판은 이제 AviList와 병행 유지되는 상태로 보이며, 향후 유지보수 방향이 불확실 |
 | GBIF Backbone Taxonomy ([gbif.org/dataset/d7dddbf4...](https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c)) | 전 생물군을 아우르는 GBIF 자체 종합 분류 체계(조류 포함) | [hosted-datasets.gbif.org](https://hosted-datasets.gbif.org/datasets/backbone/) 에서 Darwin Core Archive 다운로드, GBIF Species API | 비정기(릴리스 아카이브 존재) | `taxonKey`(usageKey) — 릴리스마다 변경 가능 | **CC BY 4.0** | 저작자 표시 하에 재배포·임베딩 가능 | GBIF는 향후 자체 Backbone을 폐기하고 **Catalogue of Life를 주 분류 기준으로 전환할 계획**이라고 공지함 — 신규 채택 시 장기 지속가능성 위험 |
@@ -77,7 +77,7 @@
 
 | 도메인 | MVP 1순위 소스 | 근거 |
 |---|---|---|
-| 분류 기준판 | **AviList v2025**(국제) + **국립생물자원관 국가생물종목록**(한국어 국명·국내 crosswalk) | AviList는 명시적 CC BY 4.0으로 재배포·임베딩 제약이 가장 적고, IOC/Clements 분절 문제를 해소한 최신 통합판이다. NIBR 목록은 한국어 국명과 국내 법적 지위(멸종위기종 등)를 얻는 유일한 공식 출처이므로 원 출처로 병행 보존한다(system-design.md 5.2절의 crosswalk 원칙 적용) |
+| 분류 기준판 | **AviList v2025b**(국제) + **국립생물자원관 국가생물종목록**(한국어 국명·국내 crosswalk) | AviList는 명시적 CC BY 4.0으로 재배포·임베딩 제약이 가장 적고, IOC/Clements 분절 문제를 해소한 최신 통합판이다. NIBR 목록은 한국어 국명과 국내 법적 지위(멸종위기종 등)를 얻는 유일한 공식 출처이므로 원 출처로 병행 보존한다(system-design.md 5.2절의 crosswalk 원칙 적용) |
 | 관찰 | **GBIF Occurrence(CC0/CC BY 레코드만 필터링)** + 필요 시 **iNaturalist API(CC0/CC BY 레코드만)** | 둘 다 레코드 단위 라이선스가 명확히 태깅되어 있어 "라이선스 정책을 검색 전에 적용"(설계 원칙 5)을 코드로 구현하기 쉽다. eBird EBD 원본은 재배포 금지 조항이 있어 MVP 1순위에서 제외하고, 필요해지면 목적 기재 후 별도 신청 경로로 다룬다 |
 | 지역 | 좌표 속성 우선 + **국가공간정보포털 행정구역 경계**(라이선스 확정 후) | 설계 4.4절이 이미 "좌표 속성 + 사전 계산한 Place 관계"를 MVP 기본값으로 정했으므로, 행정구역 폴리곤은 라이선스 확인 후 보조적으로만 도입 |
 | 서식지 | **국립생태원 EcoBank**(공간 실측) — 단, 공공누리 유형 확정 전까지 요약·링크만 사용. 통제 어휘는 국내 관행 라벨을 우선하고 IUCN 매핑은 라이선스 확정 후 보류 | IUCN Habitats Classification Scheme는 이용약관상 재배포 허용 범위가 불명확해(개인/가구 한정 조항) MVP에 바로 편입하기 어렵다 |
@@ -89,7 +89,7 @@
 
 ### 3.1 분류 기준판 (system-design.md 14절 항목 3)
 
-- **1차 기준판**: AviList v2025 (CC BY 4.0, avilist.org 배포 XLSX 스냅샷을 SourceDataset으로 등록)
+- **1차 기준판**: AviList v2025b (CC BY 4.0, avilist.org 배포 XLSX 스냅샷을 SourceDataset으로 등록)
 - **원 출처 보존**: 국립생물자원관 국가생물종목록을 별도 TaxonConceptSet으로 함께 적재하고, 국명(`VernacularName`, language=ko)과 국내 법적 지위(멸종위기종 등)는 이 목록에서만 채운다
 - **재확인 필요**: 구현 착수 시점에 AviList/NIBR 최신 버전과 라이선스 문구를 다시 확인한다(둘 다 개정 이력이 짧거나 빠르게 바뀔 수 있음)
 

@@ -68,6 +68,8 @@
 
 API 키와 비밀 URL은 registry 파일에 넣지 않고 환경 변수나 비밀 저장소의 참조명만 둔다.
 
+기계 검증용 JSON Schema는 `config/schemas/source-registry.schema.json`에 둔다. 애플리케이션은 같은 enum과 필수 필드를 `robingraph.ingest.validation.validate_source_registry_record`로 검증하며, source registry 오류는 fetch 전 차단한다.
+
 ## 4. 분류와 이름 staging
 
 ### 4.1 Taxon concept
@@ -238,7 +240,7 @@ manifest는 실행 ID, pipeline Git SHA, 설정 해시, 시작/종료 시각, �
 
 | 내부 계약 | 선택 소스 원본 필드 | 변환 | 결측/격리 규칙 | 라이선스 정책 |
 |---|---|---|---|---|
-| Taxon concept | AviList v2025 + NIBR 국가생물종목록 | AviList를 기준 concept set으로, NIBR은 별도 concept set과 한국어 이름으로 변환 | 릴리스 범위 키 생성, ambiguous crosswalk 격리 | AviList CC BY 4.0. NIBR은 정확한 공공누리 유형 확인 전 적재 보류 |
+| Taxon concept | AviList v2025b + NIBR 국가생물종목록 | AviList를 기준 concept set으로, NIBR은 별도 concept set과 한국어 이름으로 변환 | 릴리스 범위 키 생성, ambiguous crosswalk 격리 | AviList CC BY 4.0. NIBR은 정확한 공공누리 유형 확인 전 적재 보류 |
 | Observation | GBIF Occurrence | GBIF dataset key, gbifID/occurrenceID, taxon key, event/좌표 필드를 staging에 보존 | CC0/CC BY 데이터셋만 수집, taxon unresolved와 민감도 unknown은 공개 적재 보류 | 데이터셋 단위 라이선스와 DOI를 SourceDataset/다운로드 manifest에 연결 |
 | Place | 국가공간정보포털 행정구역 경계 | 행정 코드와 계층을 Place로, 좌표 공간 조인은 버전 기록 | 정확한 이용 조건 확인 전 fixture만 사용 | 공공누리 유형 확인 필요 |
 | Habitat | EcoBank | 국내 서식지 라벨을 별도 vocabulary로 유지 | 자유 텍스트 자동 병합 금지 | 항목별 공공누리 유형 확인 전 검색 적재 보류 |
