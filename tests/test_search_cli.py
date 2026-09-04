@@ -19,6 +19,9 @@ class SearchCLITest(unittest.TestCase):
         self.settings = patch('robingraph.cli.Neo4jSettings.from_environment', return_value=settings)
         self.settings.start()
         self.addCleanup(self.settings.stop)
+        self.environment = patch('robingraph.cli.load_local_environment')
+        self.environment.start()
+        self.addCleanup(self.environment.stop)
 
     def invoke(self, *args):
         out, err = StringIO(), StringIO()

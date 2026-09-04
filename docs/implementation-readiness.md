@@ -65,7 +65,7 @@
 - [x] Neo4j Community `2026.07.1` 임시 인스턴스에서 전체 44개 테스트(실제 DB 통합 테스트 10개 포함), 반복 적재·정책 철회·인용 위치 검증을 통과했다. Neo4j 모드 HTTP 응답도 확인했다. 현재는 소규모 fixture의 이름 해소와 매개변수 기반 그래프 조회이며, 전문·벡터 검색은 후속 단계다.
 - [x] Jina API의 연결 계약을 실제 endpoint로 확인했다. 문서 청크 4개와 검색어 1개의 임베딩을 검증했다.
 - [ ] HermesAgent의 연결 계약을 실제 endpoint로 확인했다.
-- [x] Jina 호환 HTTP 어댑터와 Neo4j 전문/벡터 검색 CLI를 추가했다. 모의 Jina와 실제 Neo4j를 연결해 전체 96개 테스트를 통과했다. 기본 DB 없는 실행은 76개 통과·20개 skip이며, 기존 15개 gold 질문도 유지된다. 세부 결과는 [현재 구현 상태 §12](current-implementation.md#12-하이브리드-검색-배치-완료)에 있다.
+- [x] Jina 호환 HTTP 어댑터와 Neo4j 전문/벡터 검색 CLI를 추가했다. 모의 Jina와 실제 Neo4j를 연결해 전체 96개 테스트를 통과했다. 기본 DB 없는 실행은 76개 통과·20개 skip이며, 기존 15개 gold 질문도 유지된다. 한국어 문헌 검색 fixture baseline은 fulltext/vector/hybrid별 recall@k·MRR·지연시간·정책 제외를 측정한다. 세부 결과는 [현재 구현 상태 §12](current-implementation.md#12-하이브리드-검색-배치-완료)에 있다.
 
 ## 협업 결과 통합 규칙
 

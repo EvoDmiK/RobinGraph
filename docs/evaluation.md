@@ -138,7 +138,20 @@ data/eval/v1/
 | `GQ-014` | fixture 검토 문서가 지지하는 새는 무엇인가? | `fixture-review-document`만 후보이므로 `abstain` |
 | `GQ-015` | fixture 데이터에 없는 펭귄 관찰 기록을 알려줘. | evidence 없음, `abstain` |
 
-## 8. 수직 슬라이스 합격 기준
+## 8. 문헌 검색 평가 계약
+
+`search-questions.jsonl`은 기존 답변 회귀 gold와 별도로 문헌 retrieval 품질을 측정한다. 각 행에는 Korean 질문, 기대 Chunk ID, 그리고 절대 노출되면 안 되는 Chunk ID를 둔다. 빈 기대 집합은 정책 제외 검증용 질문이다.
+
+`robingraph evaluate-search-neo4j --mode all --limit 3`는 전문, 벡터, RRF 결합 검색을 각각 실행해 다음을 반환한다.
+
+- `recall_at_k`: 기대 Chunk 전체 중 상위 k에서 반환된 비율
+- `mean_reciprocal_rank`: 기대 Chunk가 처음 나온 순위의 역수 평균
+- 평균 및 p95 지연시간
+- `policy_safe`: 금지 Chunk가 어떤 결과에도 나타나지 않았는지 여부
+
+2026-09-04 fixture baseline(4개 허용 Chunk, 4개 positive/1개 policy 질문)에서는 전문 검색 recall@3 `0.75`, 벡터 및 결합 검색 recall@3 `1.00`, 모든 모드 `policy_safe=true`였다. 단일 실행 평균 지연시간은 전문 약 `235ms`, 벡터 약 `1430ms`, 결합 약 `1290ms`였다. 이 값은 작은 합성 corpus와 원격 임베딩 왕복의 관측값일 뿐 운영 품질 또는 SLO가 아니다.
+
+## 9. 수직 슬라이스 합격 기준
 
 현재 합성 fixture 수직 슬라이스는 다음 명령 흐름으로 검증한다. 운영 구현에서는 같은 계약을 Neo4j, 임베딩, HermesAgent 어댑터로 확장한다.
 

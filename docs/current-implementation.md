@@ -217,3 +217,7 @@ GPT-5.6 Luna가 Jina 호환 HTTP 어댑터를, Claude가 Neo4j 전문/벡터 검
 | 원격 GitHub Actions | 미실행 |
 
 테스트용 벡터는 서버 연결과 정책·검색 흐름을 검사하기 위한 합성 값이다. 실제 한국어 의미 검색 품질·성능을 입증하지 않는다. 변경은 작업공간에 있으며 이번 배치에서 커밋/푸시는 하지 않았다.
+
+## 13. 한국어 검색 baseline
+
+`data/eval/v1/search-questions.jsonl`에 4개 relevance와 1개 정책 제외 질문을 추가했다. `evaluate-search-neo4j --mode all --limit 3`는 fulltext, vector, hybrid(RRF)를 개별 실행해 recall@k, MRR, 평균/p95 지연시간과 정책 제외 여부를 JSON으로 반환한다. 실제 fixture baseline은 fulltext recall@3 `0.75`, vector/hybrid `1.00`, 전 모드 `policy_safe=true`였다. 4개 허용 문헌 Chunk로는 운영 한국어 검색 품질을 판정할 수 없으므로, 승인된 실제 corpus 이후 질문 수와 난이도를 확대해야 한다.

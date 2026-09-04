@@ -34,7 +34,8 @@ class FixtureSliceTest(unittest.TestCase):
         manifest = json.loads((self.root / "fixture-manifest.json").read_text(encoding="utf-8"))
         self.assertEqual("v1", manifest["fixture_version"])
         self.assertEqual(15, manifest["expected_counts"]["gold_questions"])
-        self.assertEqual(6, len(manifest["files"]))
+        self.assertEqual(5, manifest["expected_counts"]["search_questions"])
+        self.assertEqual(7, len(manifest["files"]))
 
     def test_all_gold_questions_obey_evidence_and_policy_contracts(self) -> None:
         gold_rows = [

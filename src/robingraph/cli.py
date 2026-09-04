@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import sys
 
+from .environment import load_local_environment
 from .fixture import default_fixture_root, load_fixture
 from .graph.settings import Neo4jSettings
 from .retrieval.fixture_repository import FixtureRepository
@@ -199,6 +200,43 @@ def search_neo4j(arguments: argparse.Namespace) -> int:
     return 0
 
 
+def evaluate_search_neo4j(arguments: argparse.Namespace) -> int:
+    """Compare fixture fulltext, vector, and fused retrieval quality."""
+    from .embeddings import JinaEmbeddingClient
+    from .retrieval.evaluation import evaluate_search, load_search_questions
+    from .retrieval.hybrid import FULLTEXT_CHANNEL, VECTOR_CHANNEL
+    from .retrieval.neo4j_hybrid import HybridSearchRequest, search
+
+    settings = Neo4jSettings.from_environment()
+    questions = load_search_questions(default_fixture_root() / "search-questions.jsonl")
+    requested_modes = ("fulltext", "vector", "hybrid") if arguments.mode == "all" else (arguments.mode,)
+    client = JinaEmbeddingClient.from_env() if any(mode != "fulltext" for mode in requested_modes) else None
+    channels = {
+        "fulltext": (FULLTEXT_CHANNEL,),
+        "vector": (VECTOR_CHANNEL,),
+        "hybrid": (FULLTEXT_CHANNEL, VECTOR_CHANNEL),
+    }
+    reports: dict[str, object] = {}
+    for mode in requested_modes:
+        reports[mode] = evaluate_search(
+            questions,
+            lambda question, limit, mode=mode: search(
+                settings,
+                HybridSearchRequest(
+                    question,
+                    limit=limit,
+                    fulltext_top_k=max(25, limit),
+                    vector_top_k=max(25, limit),
+                    channels=channels[mode],
+                ),
+                query_embedder=client if mode != "fulltext" else None,
+            ),
+            limit=arguments.limit,
+        ).as_dict()
+    print(json.dumps({"fixture_only": True, "modes": reports}, ensure_ascii=False))
+    return 0
+
+
 def _search_limit(value: str) -> int:
     number = int(value)
     if not 1 <= number <= 100:
@@ -207,6 +245,12 @@ def _search_limit(value: str) -> int:
 
 
 def main() -> int:
+    try:
+        load_local_environment()
+    except (OSError, ValueError) as error:
+        print(f"Local environment configuration failed: {error}", file=sys.stderr)
+        return 1
+
     parser = argparse.ArgumentParser(prog="robingraph")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("validate-fixture").set_defaults(handler=validate_fixture)
@@ -233,8 +277,12 @@ def main() -> int:
     search_parser.add_argument("--limit", type=_search_limit, default=10)
     search_parser.add_argument("--hybrid", action="store_true", help="Use the configured Jina server for the query vector")
     search_parser.set_defaults(handler=search_neo4j)
+    evaluate_search_parser = commands.add_parser("evaluate-search-neo4j", help="Compare fixture fulltext, vector, and hybrid retrieval")
+    evaluate_search_parser.add_argument("--mode", choices=("all", "fulltext", "vector", "hybrid"), default="all")
+    evaluate_search_parser.add_argument("--limit", type=_search_limit, default=3)
+    evaluate_search_parser.set_defaults(handler=evaluate_search_neo4j)
     arguments = parser.parse_args()
-    if arguments.command in {"index-neo4j-fixture", "search-neo4j"}:
+    if arguments.command in {"index-neo4j-fixture", "search-neo4j", "evaluate-search-neo4j"}:
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
         try:

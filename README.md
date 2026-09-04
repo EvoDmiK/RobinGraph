@@ -31,7 +31,7 @@ uv run --locked --extra test python -m unittest discover -s tests -v
 
 커밋된 fixture를 먼저 검증한다. 재생성 비교는 테스트가 임시 폴더에서 수행하므로 원본 손상이나 줄바꿈 문제를 덮어쓰지 않는다. 기존 Windows 작업공간의 CRLF 복구와 의도적인 fixture 변경 방법은 [개발 가이드](docs/development.md)를 참고한다.
 
-Neo4j 연결 정보는 Git에 넣지 않고 환경 변수로만 제공한다. `NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`를 설정한 뒤 아래 명령으로 합성 fixture를 graph에 적재하고 안전 조건을 검증한다.
+Neo4j 연결 정보는 Git에 넣지 않고 로컬 `.env` 또는 환경 변수로만 제공한다. CLI는 실행 디렉터리의 `.env`를 읽으며, 명시적으로 설정한 환경 변수가 같은 키를 우선한다. `NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`를 설정한 뒤 아래 명령으로 합성 fixture를 graph에 적재하고 안전 조건을 검증한다.
 
 ```sh
 uv run --locked robingraph verify-neo4j
@@ -67,7 +67,7 @@ uv run --locked robingraph search-neo4j --question "fixture 호수" --limit 5
 
 이 기본 경로는 Jina를 호출하지 않는다. 키워드 검색은 한국어 형태소를 해석하지 않으므로 일부 표현을 놓칠 수 있다.
 
-`.env.example`의 `ROBINGRAPH_JINA_*` 변수를 환경에 설정하면 다음 명령으로 허용된 fixture 청크를 임베딩하고 벡터 검색을 함께 사용할 수 있다. 제공된 API 문서에 맞춰 BirdsNest 프로필과 512차원을 반영했다. `.env`를 자동 로드하지 않으며 API 키는 환경 또는 secret store에서 별도로 제공한다. 정정된 키로 실제 문서·검색어 임베딩과 정규화 검증에 성공했다. [연결 검증 기록](docs/embedding-adapter.md)을 참고한다.
+`.env.example`의 `ROBINGRAPH_JINA_*` 변수를 로컬 `.env` 또는 환경 변수로 설정하면 다음 명령으로 허용된 fixture 청크를 임베딩하고 벡터 검색을 함께 사용할 수 있다. 제공된 API 문서에 맞춰 BirdsNest 프로필과 512차원을 반영했다. `.env`는 CLI가 자동으로 읽고 Git에서는 제외된다. API 키는 `.env` 또는 secret store에서만 제공한다. [연결 검증 기록](docs/embedding-adapter.md)을 참고한다.
 
 ```sh
 uv run --locked robingraph index-neo4j-fixture --embeddings
@@ -75,3 +75,9 @@ uv run --locked robingraph search-neo4j --question "물가에 사는 새에 대�
 ```
 
 `--embeddings`는 HTTP 요청과 Neo4j 벡터 쓰기를 수행한다. 동일 프로필의 전체 허용 청크 집합으로 벡터를 갱신하므로 부분 배치 갱신용 명령이 아니다. `--hybrid`는 읽기 전용 검색과 질문 임베딩 요청을 수행하며, 벡터를 사용할 수 없으면 `warnings`에 이유를 표시한다. 현재 이 경로는 근거 검색까지 제공하며 LLM 답변 생성은 포함하지 않는다.
+
+한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.
+
+```sh
+uv run --locked robingraph evaluate-search-neo4j --mode all --limit 3
+```
