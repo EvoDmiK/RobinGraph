@@ -17,7 +17,7 @@
 Jina API 문서를 반영하고 정정된 서버 Bearer 키로 실제 문서·검색어 임베딩 인증과 512차원 정규화 검증을 완료했다. 현재 결과는 [임베딩 연결 기록](embedding-adapter.md)에 있다.
 
 1. 운영 모델 revision과 키 공급 방식을 확정. 실제 Jina → 로컬 Neo4j → 하이브리드 검색 연결 검증은 완료했다.
-2. 한국어 검색 평가 질문을 늘리고 전문/벡터/결합 검색의 recall@k와 지연시간 비교. 현재 15개 gold는 기존 그래프 답변 회귀 기준이며 의미 검색 품질 평가가 아니다.
+2. [진행 중] 한국어 검색 평가 질문을 늘리고 전문/벡터/결합 검색의 recall@k와 지연시간 비교. 현재 15개 gold는 기존 그래프 답변 회귀 기준이며 의미 검색 품질 평가가 아니다. fixture 5개 검색 gold와 `evaluate-search-neo4j`를 추가했으며, 실제 baseline 측정과 운영 corpus 확장은 후속이다.
 3. Hermes의 구조화 출력 계약을 확인하고 검색된 evidence만 사용하는 답변 생성·인용 검증 연결.
 4. Claude의 소스 조사 결과에서 승인된 source/release를 선택하고 source registry → 원본 저장 → 정제 → 학명 매핑 → Neo4j 적재 구현. 기존 질문 경로도 SourceDataset 단위 정책 검사로 통일.
 5. 실제 모델·서버 규모가 정해지면 Neo4j SEARCH 구문 전환, 성능/비용 측정, 운영 모니터링을 진행.

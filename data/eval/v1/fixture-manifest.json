@@ -11,6 +11,7 @@
     "allowed_documents": 2,
     "allowed_chunks": 4,
     "gold_questions": 15,
+    "search_questions": 5,
     "expected_quarantine": 0
   },
   "files": [
@@ -38,6 +39,11 @@
       "path": "gold-questions.jsonl",
       "sha256": "ab873ad5796a15eb7b52466bb9cc8c6680700b9a1e4b3e231f9b306f660f5538",
       "bytes": 5435
+    },
+    {
+      "path": "search-questions.jsonl",
+      "sha256": "b9ee87e7a769e1c9c3890f4d41eed8060448f6bf96c9b2fd4cab3da6d0efb967",
+      "bytes": 715
     },
     {
       "path": "source-registry.json",

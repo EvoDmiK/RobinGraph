@@ -135,6 +135,15 @@ class HybridSchemaConfigTest(unittest.TestCase):
         self.assertEqual("cosine", config.similarity_function)
 
 
+class HybridSearchRequestTest(unittest.TestCase):
+    def test_channel_selection_is_explicit_and_rejects_invalid_values(self) -> None:
+        self.assertEqual((FULLTEXT_CHANNEL,), HybridSearchRequest("query", channels=(FULLTEXT_CHANNEL,)).channels)
+        self.assertEqual((VECTOR_CHANNEL,), HybridSearchRequest("query", channels=(VECTOR_CHANNEL,)).channels)
+        for channels in ((), ("unknown",), (FULLTEXT_CHANNEL, FULLTEXT_CHANNEL)):
+            with self.subTest(channels=channels), self.assertRaisesRegex(ValueError, "channels"):
+                HybridSearchRequest("query", channels=channels)
+
+
 class RealEmbeddingContractInteropTest(unittest.TestCase):
     """Proves `robingraph.embeddings`'s real dataclasses satisfy this module's
     structural `EmbeddedChunkLike`/`EmbeddingProfileLike` Protocols without
