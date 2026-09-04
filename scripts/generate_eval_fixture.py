@@ -361,7 +361,17 @@ def write_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     )
 
 
-def validate(taxonomy: list[dict[str, Any]], observations: list[dict[str, Any]], documents: list[dict[str, Any]], chunks: list[dict[str, Any]], gold: list[dict[str, Any]]) -> None:
+def search_questions() -> list[dict[str, Any]]:
+    return [
+        {"question_id": "SQ-001", "question_ko": "fixture 호수의 흰뺨검둥오리 관찰 기록", "relevant_chunk_ids": ["fixture-chunk-waterbirds-1"]},
+        {"question_id": "SQ-002", "question_ko": "물가 서식지를 설명한 문서", "relevant_chunk_ids": ["fixture-chunk-waterbirds-2"]},
+        {"question_id": "SQ-003", "question_ko": "도시 녹지 서식지를 설명한 문서", "relevant_chunk_ids": ["fixture-chunk-woodland-2"]},
+        {"question_id": "SQ-004", "question_ko": "쇠딱다구리와 제비의 관찰 기록", "relevant_chunk_ids": ["fixture-chunk-woodland-1"]},
+        {"question_id": "SQ-005", "question_ko": "검토 대기 정책 텍스트", "relevant_chunk_ids": [], "forbidden_chunk_ids": ["fixture-chunk-review-1"]},
+    ]
+
+
+def validate(taxonomy: list[dict[str, Any]], observations: list[dict[str, Any]], documents: list[dict[str, Any]], chunks: list[dict[str, Any]], gold: list[dict[str, Any]], search_gold: list[dict[str, Any]]) -> None:
     allowed_observations = [record for record in observations if record["license_policy_status"] == "allowed"]
     allowed_documents = [record for record in documents if record["license_policy_status"] == "allowed"]
     allowed_chunks = [record for record in chunks if record["license_policy_status"] == "allowed"]
@@ -371,6 +381,7 @@ def validate(taxonomy: list[dict[str, Any]], observations: list[dict[str, Any]],
     assert len(allowed_documents) == 2
     assert len(allowed_chunks) == 4
     assert len(gold) == 15
+    assert len(search_gold) == 5
     assert {record["occurrence_id"] for record in allowed_observations} == {
         f"fixture-occ-{index:03d}" for index in range(1, 101)
     }
@@ -409,13 +420,15 @@ def generate(output: Path = OUTPUT) -> None:
             must_not_include,
         ) in gold_questions()
     ]
-    validate(taxonomy, observations, documents, chunks, gold)
+    search_gold = search_questions()
+    validate(taxonomy, observations, documents, chunks, gold, search_gold)
 
     write_jsonl(input_dir / "taxonomy.jsonl", taxonomy)
     write_jsonl(input_dir / "observations.jsonl", observations)
     write_jsonl(input_dir / "documents.jsonl", documents)
     write_jsonl(input_dir / "chunks.jsonl", chunks)
     write_jsonl(output / "gold-questions.jsonl", gold)
+    write_jsonl(output / "search-questions.jsonl", search_gold)
     write_json(output / "source-registry.json", source_registry())
 
     tracked_paths = [
@@ -424,6 +437,7 @@ def generate(output: Path = OUTPUT) -> None:
         input_dir / "documents.jsonl",
         input_dir / "chunks.jsonl",
         output / "gold-questions.jsonl",
+        output / "search-questions.jsonl",
         output / "source-registry.json",
     ]
     manifest = {
@@ -439,6 +453,7 @@ def generate(output: Path = OUTPUT) -> None:
             "allowed_documents": 2,
             "allowed_chunks": 4,
             "gold_questions": 15,
+            "search_questions": 5,
             "expected_quarantine": 0,
         },
         "files": [

@@ -496,6 +496,7 @@ class HybridSearchRequest:
     fulltext_top_k: int = 25
     vector_top_k: int = 25
     rrf_k: int = DEFAULT_RRF_K
+    channels: tuple[str, ...] = (FULLTEXT_CHANNEL, VECTOR_CHANNEL)
 
     def __post_init__(self) -> None:
         if not isinstance(self.query_text, str) or not self.query_text.strip():
@@ -506,6 +507,10 @@ class HybridSearchRequest:
                 raise ValueError(f"HybridSearchRequest.{field_name} must be between 1 and {_MAX_SEARCH_BOUND}: {value}")
         if isinstance(self.rrf_k, bool) or not isinstance(self.rrf_k, int) or self.rrf_k < 1:
             raise ValueError("HybridSearchRequest.rrf_k must be a positive integer")
+        if not self.channels or any(channel not in {FULLTEXT_CHANNEL, VECTOR_CHANNEL} for channel in self.channels):
+            raise ValueError("HybridSearchRequest.channels must contain fulltext and/or vector")
+        if len(set(self.channels)) != len(self.channels):
+            raise ValueError("HybridSearchRequest.channels must not contain duplicates")
 
 
 class Neo4jHybridSearch:
@@ -553,17 +558,23 @@ class Neo4jHybridSearch:
 
         warnings: list[str] = []
         with self._driver.session(database=self._settings.database) as session:
-            fulltext_rows = _run(
-                session,
-                _FULLTEXT_SEARCH_QUERY,
-                index_name=self._config.fulltext_index_name,
-                query_text=escape_lucene_query_text(request.query_text),
-                top_k=request.fulltext_top_k,
+            fulltext_rows = (
+                _run(
+                    session,
+                    _FULLTEXT_SEARCH_QUERY,
+                    index_name=self._config.fulltext_index_name,
+                    query_text=escape_lucene_query_text(request.query_text),
+                    top_k=request.fulltext_top_k,
+                )
+                if FULLTEXT_CHANNEL in request.channels
+                else []
             )
             fulltext_ranking = [row["chunk_id"] for row in fulltext_rows]
 
             vector_ranking: list[str] = []
-            if query_embedder is None:
+            if VECTOR_CHANNEL not in request.channels:
+                pass
+            elif query_embedder is None:
                 warnings.append(VECTOR_UNAVAILABLE_WARNING + ": no query embedder was provided")
             else:
                 index_dimensions = self._vector_index_dimensions(session)
@@ -609,9 +620,9 @@ class Neo4jHybridSearch:
         if query_embedder is not None and not vector_eligible and not warnings:
             warnings.append(VECTOR_UNAVAILABLE_WARNING + ": no eligible vectors match the requested profile")
 
-        channel_rankings: dict[str, Sequence[str]] = {
-            FULLTEXT_CHANNEL: tuple(chunk_id for chunk_id in fulltext_ranking if chunk_id in eligible)
-        }
+        channel_rankings: dict[str, Sequence[str]] = {}
+        if FULLTEXT_CHANNEL in request.channels:
+            channel_rankings[FULLTEXT_CHANNEL] = tuple(chunk_id for chunk_id in fulltext_ranking if chunk_id in eligible)
         if vector_eligible:
             channel_rankings[VECTOR_CHANNEL] = tuple(chunk_id for chunk_id in vector_ranking if chunk_id in vector_eligible)
 
