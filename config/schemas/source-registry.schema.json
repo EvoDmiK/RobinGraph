@@ -26,6 +26,7 @@
     "incremental_cursor": {"type": ["string", "null"]},
     "rate_limit_note": {"type": ["string", "null"]},
     "license_uri": {"type": "string", "format": "uri"},
+    "license_name": {"type": ["string", "null"]},
     "terms_uri": {"type": ["string", "null"], "format": "uri"},
     "adapter_owner": {"type": "string", "minLength": 1},
     "enabled": {"type": "boolean"},

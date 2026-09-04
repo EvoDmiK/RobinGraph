@@ -10,7 +10,8 @@ from robingraph.fixture import default_fixture_root, load_fixture
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.graph.fixture_projection import fixture_graph_payload
 from robingraph.ingest.validation import validate_source_registry_record, validate_staging_record
-from robingraph.slice import FixtureQuestionService, validate_answer
+from robingraph.retrieval.fixture_repository import FixtureRepository
+from robingraph.slice import QuestionService, validate_answer
 
 
 class FixtureSliceTest(unittest.TestCase):
@@ -18,7 +19,8 @@ class FixtureSliceTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.root = default_fixture_root()
         cls.corpus = load_fixture(cls.root)
-        cls.service = FixtureQuestionService(cls.corpus)
+        cls.repository = FixtureRepository(cls.corpus)
+        cls.service = QuestionService(cls.repository)
 
     def test_policy_filter_keeps_only_allowed_records(self) -> None:
         self.assertEqual(10, len(self.corpus.taxonomy))
@@ -44,7 +46,7 @@ class FixtureSliceTest(unittest.TestCase):
         for gold in gold_rows:
             with self.subTest(question_id=gold["question_id"]):
                 answer = self.service.answer(gold["question_ko"])
-                validate_answer(answer, self.corpus)
+                validate_answer(answer, self.repository)
                 self.assertEqual(gold["expected_disposition"], answer.disposition)
                 self.assertTrue(set(gold["expected_taxon_ids"]).issubset(answer.taxon_ids))
                 expected_evidence = set(gold["acceptable_evidence_ids"])
@@ -86,6 +88,34 @@ class FixtureSliceTest(unittest.TestCase):
         source["enabled"] = "yes"
         issue_codes = {issue.reason_code for issue in validate_source_registry_record(source)}
         self.assertEqual({"invalid_access_method", "invalid_enabled_flag"}, issue_codes)
+
+    def test_source_registry_schema_matches_the_python_validator_contract(self) -> None:
+        schema_path = self.root.parents[2] / "config" / "schemas" / "source-registry.schema.json"
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+
+        # Every source registry entry is checked by both the JSON Schema (for
+        # external tooling) and validate_source_registry_record (at runtime).
+        # They must agree on which fields are required and what "enabled" and
+        # "license_policy_status" mean, or one side could accept a record the
+        # other would reject.
+        required_fields = (
+            "source_id", "name", "provider", "landing_uri", "access_method", "auth_method",
+            "release_strategy", "license_uri", "adapter_owner", "enabled", "license_policy_status",
+        )
+        self.assertEqual(set(required_fields), set(schema["required"]))
+        self.assertEqual(set(required_fields), set(schema["properties"]) - {"license_name", "incremental_cursor", "rate_limit_note", "terms_uri"})
+
+        self.assertEqual({"api", "download", "manual"}, set(schema["properties"]["access_method"]["enum"]))
+        self.assertEqual(
+            {"allowed", "restricted", "review_required", "denied"},
+            set(schema["properties"]["license_policy_status"]["enum"]),
+        )
+
+        for source in self.corpus.source_registry.values():
+            with self.subTest(source_id=source["source_id"]):
+                self.assertEqual((), validate_source_registry_record(source))
+                for field in required_fields:
+                    self.assertIn(field, source)
 
     def test_neo4j_settings_require_credentials_and_a_bolt_scheme(self) -> None:
         with patch.dict(os.environ, {}, clear=True):

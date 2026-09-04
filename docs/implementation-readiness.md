@@ -28,7 +28,7 @@
 | D-08 | 미디어 저장 | 허용 목록의 메타데이터와 딥링크 | 자산별 라이선스·API 조건 | 정책 초안 완료 |
 | D-09 | 기본 DB | Neo4j Community | 규모·배포·라이선스 조건 | ADR-0001 Proposed |
 | D-10 | LLM 실행 | HermesAgent → gpt-5.6-sol | endpoint·구조화 출력·reasoning·usage 계약 | 모델 확인, API 계약 대기 |
-| D-11 | 임베딩 | Jina-embeddings-v3 API | endpoint·차원·task·정규화 설정 | 일부 확인 필요 |
+| D-11 | 임베딩 | Jina-embeddings-v3 API, 512차원 | 운영 모델 revision 고정·키 공급 방식 | 실제 문서/검색어 임베딩 인증·정규화 검증 완료 |
 | D-12 | 관찰 저장소 분리 | 10만 건까지 Neo4j, 이후 TimescaleDB 검증 | 예상 관찰량과 질의 성능 | 측정 후 결정 |
 
 ## 데이터 계약에 필요한 최소 정보
@@ -45,7 +45,7 @@
 - 품질 위험, 결측 의미, 중복 가능성, 격리 기준
 - 원본 SHA-256와 수집 manifest 생성 가능 여부
 
-## 수직 슬라이스 시작 조건
+## 실제 데이터 수직 슬라이스 시작 조건
 
 다음 조건이 모두 충족되어야 구현을 시작한다.
 
@@ -56,13 +56,16 @@
 - [ ] 민감종 좌표의 보관본과 공개본 처리 방식이 정해졌다.
 - [x] 15개 gold 질문과 기대 evidence가 정의됐다. 합성 fixture로 `15/15` 평가를 통과했다.
 - [ ] HermesAgent endpoint, 모델 ID, 구조화 출력과 token usage 응답이 확인됐다.
-- [ ] Jina API의 endpoint, 인증, 출력 차원, task 설정과 정규화 방식이 확인됐다.
+- [x] Jina API의 endpoint, 인증, 512차원 출력, 문서/검색어 task와 L2 정규화를 실제 요청으로 확인했다.
 
 ## 구현 환경 확인
 
-- [x] Python 3.12.14 가상환경에서 editable 설치, fixture 검증, 15개 gold 평가, 단위 테스트를 실행했다.
-- [x] Neo4j Community `2026.07.1`의 `neo4j` database에 인증·연결했고, 합성 fixture schema와 idempotent graph load를 검증했다. full-text/vector index는 Jina 출력 차원 계약 확인 후 생성한다.
-- [ ] HermesAgent와 Jina API의 연결 계약을 실제 endpoint로 확인했다.
+- [x] Python 3.12.13과 `uv.lock`으로 개발환경을 고정했다. Windows의 `core.autocrlf=true` 새 체크아웃에서 fixture 검증, 15개 gold 평가, 재생성·손상 검사 포함 단위 테스트를 실행했다.
+- [x] Windows·Ubuntu·macOS 검증과 별도 Neo4j 서비스 통합 테스트용 GitHub Actions workflow를 추가했다. 원격 실행 결과는 push 후 확인한다.
+- [x] Neo4j Community `2026.07.1` 임시 인스턴스에서 전체 44개 테스트(실제 DB 통합 테스트 10개 포함), 반복 적재·정책 철회·인용 위치 검증을 통과했다. Neo4j 모드 HTTP 응답도 확인했다. 현재는 소규모 fixture의 이름 해소와 매개변수 기반 그래프 조회이며, 전문·벡터 검색은 후속 단계다.
+- [x] Jina API의 연결 계약을 실제 endpoint로 확인했다. 문서 청크 4개와 검색어 1개의 임베딩을 검증했다.
+- [ ] HermesAgent의 연결 계약을 실제 endpoint로 확인했다.
+- [x] Jina 호환 HTTP 어댑터와 Neo4j 전문/벡터 검색 CLI를 추가했다. 모의 Jina와 실제 Neo4j를 연결해 전체 96개 테스트를 통과했다. 기본 DB 없는 실행은 76개 통과·20개 skip이며, 기존 15개 gold 질문도 유지된다. 세부 결과는 [현재 구현 상태 §12](current-implementation.md#12-하이브리드-검색-배치-완료)에 있다.
 
 ## 협업 결과 통합 규칙
 
