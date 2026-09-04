@@ -1,7 +1,9 @@
-"""Fixture-only FastAPI application.
+"""FastAPI application shared by fixture (offline) and Neo4j retrieval modes.
 
-The production provider will replace FixtureQuestionService after graph and LLM
-contracts are approved; response provenance remains part of the API contract.
+The active `GraphRepository` decides the retrieval backend; the Answer/
+Citation response contract and provenance validation are identical either
+way. `/health` discloses which mode is active so operators and tests do not
+have to guess.
 """
 
 from __future__ import annotations
@@ -9,8 +11,10 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from ..fixture import FixtureCorpus, load_fixture
-from ..slice import Answer, FixtureQuestionService, validate_answer
+from ..fixture import load_fixture
+from ..retrieval.repository import GraphRepository
+from ..retrieval.fixture_repository import FixtureRepository
+from ..slice import Answer, QuestionService, validate_answer
 
 
 class QuestionRequest(BaseModel):
@@ -51,20 +55,20 @@ def _response(answer: Answer) -> AnswerResponse:
     )
 
 
-def create_app(corpus: FixtureCorpus | None = None) -> FastAPI:
-    corpus = corpus or load_fixture()
-    service = FixtureQuestionService(corpus)
+def create_app(repository: GraphRepository | None = None) -> FastAPI:
+    repository = repository or FixtureRepository(load_fixture())
+    service = QuestionService(repository)
     app = FastAPI(title="RobinGraph", version="0.1.0")
 
     @app.get("/health")
     def health() -> dict[str, str]:
-        return {"status": "ok", "mode": "fixture", "taxonomy_release": corpus.manifest["taxonomy_release"]}
+        return {"status": "ok", "mode": repository.mode, "taxonomy_release": repository.taxonomy_release}
 
     @app.post("/v1/answers", response_model=AnswerResponse)
     def answer_question(request: QuestionRequest) -> AnswerResponse:
         answer = service.answer(request.question)
         try:
-            validate_answer(answer, corpus)
+            validate_answer(answer, repository)
         except ValueError as error:
             raise HTTPException(status_code=500, detail="Answer provenance validation failed") from error
         return _response(answer)

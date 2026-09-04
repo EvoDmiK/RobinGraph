@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -11,7 +12,6 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "eval" / "v1"
-INPUT = OUTPUT / "input"
 FIXTURE_VERSION = "v1"
 RETRIEVED_AT = "2026-09-03T00:00:00Z"
 RUN_ID = "fixture-run-v1"
@@ -350,13 +350,14 @@ def gold_questions() -> list[dict[str, Any]]:
 
 
 def write_json(path: Path, payload: Any) -> None:
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 def write_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
     path.write_text(
         "".join(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n" for record in records),
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -378,8 +379,10 @@ def validate(taxonomy: list[dict[str, Any]], observations: list[dict[str, Any]],
     assert all(record["latitude_private"] is not None for record in allowed_observations if record["sensitivity_class"] == "withheld")
 
 
-def main() -> None:
-    INPUT.mkdir(parents=True, exist_ok=True)
+def generate(output: Path = OUTPUT) -> None:
+    """Write byte-identical UTF-8/LF fixture files on every supported platform."""
+    input_dir = output / "input"
+    input_dir.mkdir(parents=True, exist_ok=True)
     taxonomy = taxonomy_records()
     observations = observation_records()
     documents = document_records()
@@ -408,20 +411,20 @@ def main() -> None:
     ]
     validate(taxonomy, observations, documents, chunks, gold)
 
-    write_jsonl(INPUT / "taxonomy.jsonl", taxonomy)
-    write_jsonl(INPUT / "observations.jsonl", observations)
-    write_jsonl(INPUT / "documents.jsonl", documents)
-    write_jsonl(INPUT / "chunks.jsonl", chunks)
-    write_jsonl(OUTPUT / "gold-questions.jsonl", gold)
-    write_json(OUTPUT / "source-registry.json", source_registry())
+    write_jsonl(input_dir / "taxonomy.jsonl", taxonomy)
+    write_jsonl(input_dir / "observations.jsonl", observations)
+    write_jsonl(input_dir / "documents.jsonl", documents)
+    write_jsonl(input_dir / "chunks.jsonl", chunks)
+    write_jsonl(output / "gold-questions.jsonl", gold)
+    write_json(output / "source-registry.json", source_registry())
 
     tracked_paths = [
-        INPUT / "taxonomy.jsonl",
-        INPUT / "observations.jsonl",
-        INPUT / "documents.jsonl",
-        INPUT / "chunks.jsonl",
-        OUTPUT / "gold-questions.jsonl",
-        OUTPUT / "source-registry.json",
+        input_dir / "taxonomy.jsonl",
+        input_dir / "observations.jsonl",
+        input_dir / "documents.jsonl",
+        input_dir / "chunks.jsonl",
+        output / "gold-questions.jsonl",
+        output / "source-registry.json",
     ]
     manifest = {
         "fixture_version": FIXTURE_VERSION,
@@ -440,15 +443,22 @@ def main() -> None:
         },
         "files": [
             {
-                "path": path.relative_to(OUTPUT).as_posix(),
+                "path": path.relative_to(output).as_posix(),
                 "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                 "bytes": path.stat().st_size,
             }
             for path in tracked_paths
         ],
     }
-    write_json(OUTPUT / "fixture-manifest.json", manifest)
-    print(f"Wrote deterministic fixture to {OUTPUT}")
+    write_json(output / "fixture-manifest.json", manifest)
+    print(f"Wrote deterministic fixture to {output}")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=OUTPUT, help="Destination fixture directory")
+    args = parser.parse_args()
+    generate(args.output)
 
 
 if __name__ == "__main__":

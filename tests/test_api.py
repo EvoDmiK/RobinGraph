@@ -6,12 +6,13 @@ from fastapi.testclient import TestClient
 
 from robingraph.api.app import create_app
 from robingraph.fixture import load_fixture
+from robingraph.retrieval.fixture_repository import FixtureRepository
 
 
 class ApiTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = TestClient(create_app(load_fixture()))
+        cls.client = TestClient(create_app(FixtureRepository(load_fixture())))
 
     def test_health_discloses_fixture_mode(self) -> None:
         response = self.client.get("/health")

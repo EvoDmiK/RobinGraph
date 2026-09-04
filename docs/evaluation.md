@@ -143,15 +143,15 @@ data/eval/v1/
 현재 합성 fixture 수직 슬라이스는 다음 명령 흐름으로 검증한다. 운영 구현에서는 같은 계약을 Neo4j, 임베딩, HermesAgent 어댑터로 확장한다.
 
 ```sh
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -e .
-.venv/bin/python scripts/generate_eval_fixture.py
-.venv/bin/robingraph validate-fixture
-.venv/bin/robingraph evaluate-fixture
-.venv/bin/python -m unittest discover -s tests -v
+uv sync --locked --extra test
+uv run --locked robingraph validate-fixture
+uv run --locked robingraph evaluate-fixture
+uv run --locked --extra test python -m unittest discover -s tests -v
 ```
 
-실행 순서는 fixture 유효성 검사 → canonical staging 필드 검증 → policy filter/quarantine → 이름 해소 → 인용 검증 → gold 평가다. 검증은 필수 provenance ID, 날짜 정밀도, 좌표 범위, 수량, 민감도, 문서·Chunk 필수 필드를 검사한다. `denied`나 `review_required`는 형식 오류가 아니라 정책 필터 대상이며 검색과 생성 컨텍스트에서만 제외한다. 현재는 외부 source와 서비스 endpoint를 사용하지 않는 in-memory repository이며, 운영 단계에서 graph load와 구조화 출력 provider를 연결한다.
+Python 버전과 의존성은 `.python-version`과 `uv.lock`으로 고정한다. 커밋된 fixture를 먼저 검증하고, 재생성 바이트 비교는 테스트가 임시 디렉터리에서 수행한다. Windows 줄바꿈과 환경 설정은 [개발 가이드](development.md)를 참고한다.
+
+실행 순서는 fixture 유효성 검사 → canonical staging 필드 검증 → policy filter/quarantine → 이름 해소 → 인용 검증 → gold 평가다. 검증은 필수 provenance ID, 날짜 정밀도, 좌표 범위, 수량, 민감도, 문서·Chunk 필수 필드를 검사한다. `denied`나 `review_required`는 형식 오류가 아니라 정책 필터 대상이며 검색과 생성 컨텍스트에서 제외한다. 기본 검증은 외부 서비스 없이 in-memory repository를 사용한다. 별도 Neo4j repository도 같은 합성 데이터와 답변 계약으로 검증하며, 외부 source 수집과 구조화 출력 provider는 후속 단계다.
 
 Neo4j 연결 정보가 제공된 환경에서는 `robingraph load-neo4j-fixture`로 동일한 policy-filtered fixture를 idempotent하게 적재하고, `robingraph verify-neo4j-fixture`로 Taxon 10개, Observation 100개, Document 2개, Chunk 4개와 private 좌표·차단 관찰 0건을 검증한다. FastAPI `POST /v1/answers`는 fixture 모드에서 같은 citation 계약을 HTTP 응답으로 노출한다.
 
