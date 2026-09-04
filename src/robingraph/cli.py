@@ -1,14 +1,18 @@
-"""Command line entry points for fixture verification and evaluation."""
+"""Command line entry points for fixture verification, evaluation, and serving."""
 
 from __future__ import annotations
 
 import argparse
+from dataclasses import asdict
+from datetime import datetime, timezone
 import json
 from pathlib import Path
+import sys
 
 from .fixture import default_fixture_root, load_fixture
 from .graph.settings import Neo4jSettings
-from .slice import FixtureQuestionService, validate_answer
+from .retrieval.fixture_repository import FixtureRepository
+from .slice import QuestionService, validate_answer
 
 
 def _gold_questions(root: Path) -> list[dict[str, object]]:
@@ -27,13 +31,13 @@ def validate_fixture(_: argparse.Namespace) -> int:
 
 def evaluate(_: argparse.Namespace) -> int:
     root = default_fixture_root()
-    corpus = load_fixture(root)
-    service = FixtureQuestionService(corpus)
+    repository = FixtureRepository(load_fixture(root))
+    service = QuestionService(repository)
     failures = []
     for gold in _gold_questions(root):
         answer = service.answer(str(gold["question_ko"]))
         try:
-            validate_answer(answer, corpus)
+            validate_answer(answer, repository)
             if answer.disposition != gold["expected_disposition"]:
                 raise ValueError(f"expected {gold['expected_disposition']}, got {answer.disposition}")
             if not set(gold["expected_taxon_ids"]).issubset(answer.taxon_ids):
@@ -67,12 +71,12 @@ def verify_neo4j(_: argparse.Namespace) -> int:
 
 
 def load_neo4j_fixture(_: argparse.Namespace) -> int:
-    from .graph.neo4j_client import bootstrap_schema, load_fixture
+    from .graph.neo4j_client import bootstrap_schema, load_fixture as load_neo4j_fixture_graph
 
     settings = Neo4jSettings.from_environment()
-    corpus = load_fixture_data()
+    corpus = load_fixture()
     bootstrap_schema(settings)
-    counts = load_fixture(settings, corpus)
+    counts = load_neo4j_fixture_graph(settings, corpus)
     print(
         "Neo4j fixture loaded: "
         f"{counts.taxa} taxa, {counts.observations} observations, "
@@ -104,8 +108,102 @@ def serve_fixture(arguments: argparse.Namespace) -> int:
     return 0
 
 
-def load_fixture_data():
-    return load_fixture()
+def serve_neo4j(arguments: argparse.Namespace) -> int:
+    import uvicorn
+
+    from .api.app import create_app
+    from .retrieval.neo4j_repository import Neo4jGraphRepository
+
+    repository = Neo4jGraphRepository(Neo4jSettings.from_environment())
+    try:
+        app = create_app(repository)
+        uvicorn.run(app, host=arguments.host, port=arguments.port)
+    finally:
+        repository.close()
+    return 0
+
+
+def ask_neo4j(arguments: argparse.Namespace) -> int:
+    """Answer one question against the live Neo4j graph without starting the API.
+
+    Useful for smoke-testing a `load-neo4j-fixture` load and for the opt-in
+    Neo4j integration tests (`tests/test_neo4j_integration.py`).
+    """
+
+    from .retrieval.neo4j_repository import Neo4jGraphRepository
+
+    with Neo4jGraphRepository(Neo4jSettings.from_environment()) as repository:
+        service = QuestionService(repository)
+        answer = service.answer(arguments.question)
+        validate_answer(answer, repository)
+        print(
+            json.dumps(
+                {
+                    "answer_text": answer.answer_text,
+                    "disposition": answer.disposition,
+                    "taxon_ids": list(answer.taxon_ids),
+                    "evidence_ids": list(answer.evidence_ids),
+                    "warnings": list(answer.warnings),
+                },
+                ensure_ascii=False,
+            )
+        )
+    return 0
+
+
+def index_neo4j_fixture(arguments: argparse.Namespace) -> int:
+    """Explicit search schema/vector write for the already loaded fixture."""
+    from .embeddings import JinaEmbeddingClient, embed_fixture_chunks
+    from .retrieval.neo4j_hybrid import bootstrap_hybrid_search_schema, index_chunks
+
+    settings = Neo4jSettings.from_environment()
+    client = JinaEmbeddingClient.from_env() if arguments.embeddings else None
+    bootstrap_hybrid_search_schema(settings, dimensions=client.profile.dimensions if client else None)
+    output: dict[str, object] = {"mode": "fulltext", "fixture_only": True}
+    if client:
+        embedded = embed_fixture_chunks(load_fixture(), client)
+        report = index_chunks(
+            settings, embedded, expected_profile=client.profile,
+            indexed_at=datetime.now(timezone.utc).isoformat(),
+        )
+        output.update(mode="hybrid", profile=asdict(client.profile), report=asdict(report))
+        print(json.dumps(output, ensure_ascii=False))
+        return 1 if report.skipped else 0
+    print(json.dumps(output, ensure_ascii=False))
+    return 0
+
+
+def search_neo4j(arguments: argparse.Namespace) -> int:
+    """Read-only document search; Jina is used only with explicit --hybrid."""
+    from .embeddings import EmbeddingError, JinaEmbeddingClient
+    from .retrieval.neo4j_hybrid import HybridSearchRequest, search
+
+    settings = Neo4jSettings.from_environment()
+    client = JinaEmbeddingClient.from_env() if arguments.hybrid else None
+    request = HybridSearchRequest(
+        query_text=arguments.question, limit=arguments.limit,
+        fulltext_top_k=max(25, arguments.limit), vector_top_k=max(25, arguments.limit),
+    )
+    warnings: list[str] = []
+    try:
+        outcome = search(settings, request, query_embedder=client)
+    except EmbeddingError:
+        # Provider failures must never be replaced with fabricated vectors.
+        outcome = search(settings, request)
+        warnings.append("Embedding request failed; results are keyword-only fulltext")
+    output = asdict(outcome)
+    output["warnings"] = [*outcome.warnings, *warnings]
+    output["mode"] = "hybrid" if any("vector" in result.channels for result in outcome.results) else "fulltext"
+    output["fixture_only"] = True
+    print(json.dumps(output, ensure_ascii=False))
+    return 0
+
+
+def _search_limit(value: str) -> int:
+    number = int(value)
+    if not 1 <= number <= 100:
+        raise argparse.ArgumentTypeError("limit must be between 1 and 100")
+    return number
 
 
 def main() -> int:
@@ -120,7 +218,33 @@ def main() -> int:
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
     serve.set_defaults(handler=serve_fixture)
+    serve_graph = commands.add_parser("serve-neo4j")
+    serve_graph.add_argument("--host", default="127.0.0.1")
+    serve_graph.add_argument("--port", type=int, default=8000)
+    serve_graph.set_defaults(handler=serve_neo4j)
+    ask = commands.add_parser("ask-neo4j")
+    ask.add_argument("--question", required=True)
+    ask.set_defaults(handler=ask_neo4j)
+    index = commands.add_parser("index-neo4j-fixture", help="Create fixture search indexes; optionally call Jina and store vectors")
+    index.add_argument("--embeddings", action="store_true", help="Embed allowed fixture chunks using configured Jina server")
+    index.set_defaults(handler=index_neo4j_fixture)
+    search_parser = commands.add_parser("search-neo4j", help="Search fixture document chunks with citations")
+    search_parser.add_argument("--question", required=True)
+    search_parser.add_argument("--limit", type=_search_limit, default=10)
+    search_parser.add_argument("--hybrid", action="store_true", help="Use the configured Jina server for the query vector")
+    search_parser.set_defaults(handler=search_neo4j)
     arguments = parser.parse_args()
+    if arguments.command in {"index-neo4j-fixture", "search-neo4j"}:
+        from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
+
+        try:
+            return arguments.handler(arguments)
+        except ValueError as error:
+            print(f"Search configuration or validation failed: {error}", file=sys.stderr)
+            return 1
+        except (Neo4jError, ServiceUnavailable, SessionExpired):
+            print("Neo4j search failed; check connectivity and run the fixture load/index commands.", file=sys.stderr)
+            return 1
     return arguments.handler(arguments)
 
 

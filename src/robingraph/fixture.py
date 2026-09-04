@@ -6,8 +6,9 @@ from dataclasses import dataclass
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
+from . import policy
 from .ingest.validation import validate_source_registry_record, validate_staging_record
 
 
@@ -124,11 +125,19 @@ def load_fixture(root: Path | None = None) -> FixtureCorpus:
         if source["license_policy_status"] != record["license_policy_status"]:
             raise ValueError(f"Policy mismatch for {record['record_key']}")
 
+    document_by_id = {record["document_id"]: record for record in documents}
     corpus = FixtureCorpus(
-        taxonomy=tuple(record for record in taxonomy if record["license_policy_status"] == ALLOWED_POLICY_STATUS),
-        observations=tuple(record for record in observations if record["license_policy_status"] == ALLOWED_POLICY_STATUS),
-        documents=tuple(record for record in documents if record["license_policy_status"] == ALLOWED_POLICY_STATUS),
-        chunks=tuple(record for record in chunks if record["license_policy_status"] == ALLOWED_POLICY_STATUS),
+        taxonomy=tuple(record for record in taxonomy if policy.record_allowed(record)),
+        observations=tuple(record for record in observations if policy.record_allowed(record)),
+        # Document metadata (title, source, license) is kept for every allowed
+        # document even when its fulltext/chunk permission is denied; only the
+        # derived chunk content below is withheld in that case.
+        documents=tuple(record for record in documents if policy.document_metadata_allowed(record)),
+        chunks=tuple(
+            record
+            for record in chunks
+            if policy.chunk_allowed(record, document_by_id.get(record["document_id"]))
+        ),
         source_registry=registry,
         manifest=manifest,
     )
