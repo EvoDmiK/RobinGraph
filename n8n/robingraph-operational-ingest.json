@@ -1,0 +1,1403 @@
+{
+  "id": "e39e9afe-8072-5d67-98c4-9bfc4b4199a2",
+  "name": "RobinGraph — reviewed operational ingest (inactive until approvals and CLI exist)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "6efdf283-9816-5e52-ba57-8944be544a80",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -900,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "e003ba1b-4124-5061-8a84-b146c36f3dfe",
+      "name": "Schedule Trigger — daily 02:00 KST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest lock acquire --run-id \"n8n-{{ $execution.id }}\" --lock-dir \"$ROBINGRAPH_INGEST_LOCK_DIR\" --stale-after-seconds \"$ROBINGRAPH_INGEST_LOCK_STALE_SECONDS\"",
+        "cwd": "/"
+      },
+      "id": "ac341515-127d-5a05-87b8-779867b34f43",
+      "name": "Acquire exclusive ingest lock — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8493f282-aeac-5966-a055-dafca2273724",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e36277f8-2394-5e29-9918-affee1f6d1b7",
+      "name": "Exit code 0? — Acquire exclusive ingest lock",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -360,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest preflight --run-id \"n8n-{{ $execution.id }}\" --scope taxonomy --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --approval-manifest \"$ROBINGRAPH_APPROVAL_MANIFEST\" --require-enabled --require-policy allowed --require-approved-release",
+        "cwd": "/"
+      },
+      "id": "19502222-f719-5602-8ac6-4cd49faa4a96",
+      "name": "Preflight taxonomy sources — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2c2123d5-4f8f-5d4c-9e12-c16f951e00af",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "14869faa-7b26-53fd-a497-f0468600df6b",
+      "name": "Exit code 0? — Preflight taxonomy sources",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest preflight --run-id \"n8n-{{ $execution.id }}\" --scope observations --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --approval-manifest \"$ROBINGRAPH_APPROVAL_MANIFEST\" --require-enabled --require-policy allowed --require-approved-release",
+        "cwd": "/"
+      },
+      "id": "6d6d8714-4261-5528-90bc-667a9d346996",
+      "name": "Preflight observation sources — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        360,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0e141376-4f72-5fc1-abfb-e646db1db655",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4fe77fee-95d6-5382-b6aa-702cbc05a6e0",
+      "name": "Exit code 0? — Preflight observation sources",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest preflight --run-id \"n8n-{{ $execution.id }}\" --scope documents-media --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --approval-manifest \"$ROBINGRAPH_APPROVAL_MANIFEST\" --require-enabled --require-policy allowed --require-approved-release",
+        "cwd": "/"
+      },
+      "id": "018b7259-af0d-56cb-9a63-64d7d2f7d9ea",
+      "name": "Preflight document and media sources — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e0e36148-75d5-5726-8c06-40b79b0f004f",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c718ea67-c179-5b83-8239-f0bcc74d322c",
+      "name": "Exit code 0? — Preflight document and media sources",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest fetch --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "3517320c-4b30-5e0c-a856-65c6b8e23b4d",
+      "name": "Fetch immutable approved releases — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03fe038f-78fd-5f29-8dc2-735725d335a2",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0978e891-c7c8-5d46-96e9-5cabe6959f85",
+      "name": "Exit code 0? — Fetch immutable approved releases",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest normalize --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "4378577e-c31a-5616-8a83-142e7e283b08",
+      "name": "Normalize to staging Parquet — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "946e6d82-1108-50cc-8ef8-c41310f1edb4",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9e20741e-f0a2-558b-b913-66e0286704ac",
+      "name": "Exit code 0? — Normalize to staging Parquet",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2040,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest validate --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "3f359506-ac89-5aa6-a60a-4b687f7c408b",
+      "name": "Validate and quarantine — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        2280,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "812360a7-ee9e-59aa-a110-e327a30c4867",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4cf2b009-b9cf-5dd7-95c6-0c97e7817d44",
+      "name": "Exit code 0? — Validate and quarantine",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest resolve --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "89e50708-1637-501e-937f-d937ca8117f0",
+      "name": "Resolve taxonomy — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        2760,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9c5d4978-ccb0-5b1a-ba87-07299d95d1ea",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ae7c72ba-b1fb-5324-8b2f-18f3d321e6ad",
+      "name": "Exit code 0? — Resolve taxonomy",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3000,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest dedupe --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "9da24b14-9967-52e7-8bad-0891eb74432a",
+      "name": "Dedupe without deletion — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        3240,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9f0cf3ef-01cc-55b2-8d00-dc051f097f20",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ee2d4ddb-4714-5fad-89f9-0e85a6158c98",
+      "name": "Exit code 0? — Dedupe without deletion",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest embed --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "59194f39-ba58-5276-b660-e904adc79a1f",
+      "name": "Embed allowed chunks only — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        3720,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ef398311-b651-5416-b885-b0172e5a292b",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "104df789-a4c0-577d-b9f6-55d7ea2f6118",
+      "name": "Exit code 0? — Embed allowed chunks only",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest load --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "c4ffdd19-c737-5039-b7ad-e55c8c17e598",
+      "name": "Idempotent candidate graph load — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        4200,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d7e69315-2173-56ad-9d18-472887f898d8",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3b0574b8-d660-5abf-9659-eca7a19e6e28",
+      "name": "Exit code 0? — Idempotent candidate graph load",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest verify --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "5415d226-33ef-57e3-b6de-e2946f26db96",
+      "name": "Verify candidate and quality gates — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        4680,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a66c4da8-df39-55e2-9380-e25868b3c05e",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "31df6a88-f589-57da-a6ab-93c89b34b9e2",
+      "name": "Exit code 0? — Verify candidate and quality gates",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4920,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest activate --run-id \"n8n-{{ $execution.id }}\"",
+        "cwd": "/"
+      },
+      "id": "d082e78b-86e3-576c-ac0e-a4ae2a7ce494",
+      "name": "Activate verified release atomically — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        5160,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f1f8b30-7f8d-50b0-b318-60a4ea121b31",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a8341b8c-7c2a-57d0-b344-9ce2cf6507bc",
+      "name": "Exit code 0? — Activate verified release atomically",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        5400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest summarize --run-id \"n8n-{{ $execution.id }}\" --status succeeded --redacted",
+        "cwd": "/"
+      },
+      "id": "6dd0e1c2-4d32-56d1-8b42-7f992c9d45e2",
+      "name": "Build success summary — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        5640,
+        -180
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. This best-effort summary must not suppress the independent notification path."
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
+        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
+        "subject": "=[RobinGraph] ingest succeeded: n8n-{{ $execution.id }}",
+        "emailType": "text",
+        "message": "={{ $json.stdout || 'Ingest succeeded. Inspect the redacted run manifest for counts.' }}",
+        "options": {}
+      },
+      "id": "715d5ca1-c81f-5a05-923d-e2fe518b00a1",
+      "name": "Notify success",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        5880,
+        -180
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest summarize --run-id \"n8n-{{ $execution.id }}\" --status failed --redacted",
+        "cwd": "/"
+      },
+      "id": "f9c7dd56-e7d1-5cce-b5a5-1a321ffe35d4",
+      "name": "Build redacted failure summary — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        5640,
+        240
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. This best-effort summary must not suppress the independent notification path."
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
+        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
+        "subject": "=[RobinGraph] ingest blocked or failed: n8n-{{ $execution.id }}",
+        "emailType": "text",
+        "message": "={{ $json.stdout || 'Ingest stopped before activation. Inspect the n8n execution and redacted run manifest.' }}",
+        "options": {}
+      },
+      "id": "a50e3c12-038f-5e29-aaf5-291118179f91",
+      "name": "Notify failure or blocked preflight",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        5880,
+        240
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
+        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
+        "subject": "=[RobinGraph] ingest did not start: n8n-{{ $execution.id }}",
+        "emailType": "text",
+        "message": "The exclusive lock was not acquired. No owned lock will be released by this execution.",
+        "options": {}
+      },
+      "id": "f32d4c20-83ac-53bc-8016-b2e2501b1f8b",
+      "name": "Notify lock not acquired",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        5640,
+        480
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "authentication": "privateKey",
+        "resource": "command",
+        "operation": "execute",
+        "command": "=cd \"$ROBINGRAPH_APP_DIR\" && uv run --locked robingraph ingest lock release --run-id \"n8n-{{ $execution.id }}\" --lock-dir \"$ROBINGRAPH_INGEST_LOCK_DIR\"",
+        "cwd": "/"
+      },
+      "id": "158be130-484a-5710-85dc-90e60fb0024f",
+      "name": "Release owned ingest lock — CLI required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [
+        6160,
+        20
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Requires the documented Python CLI contract. The SSH node returns a result object even when the remote command exits non-zero; the following IF node therefore checks code explicitly."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c852759f-b6b6-5359-84e2-e631a0670e88",
+              "leftValue": "={{ Number($json.code ?? -1) }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "39a66fd1-88a5-59d3-af88-5be2c7c0c671",
+      "name": "Exit code 0? — Release owned ingest lock",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
+        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
+        "subject": "=[RobinGraph] ingest lock cleanup failed: n8n-{{ $execution.id }}",
+        "emailType": "text",
+        "message": "The run-owned lock could not be released. Inspect the lock audit record before another run.",
+        "options": {}
+      },
+      "id": "b1793466-5e17-51ee-aeae-145eba6fd751",
+      "name": "Notify lock release failure",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        6640,
+        220
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "139bbd1f-a810-5898-b1c3-c691e6564f63",
+      "name": "Finished",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        6880,
+        20
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Acquire exclusive ingest lock — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger — daily 02:00 KST": {
+      "main": [
+        [
+          {
+            "node": "Acquire exclusive ingest lock — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Acquire exclusive ingest lock — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Acquire exclusive ingest lock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Acquire exclusive ingest lock": {
+      "main": [
+        [
+          {
+            "node": "Preflight taxonomy sources — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify lock not acquired",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preflight taxonomy sources — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Preflight taxonomy sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Preflight taxonomy sources": {
+      "main": [
+        [
+          {
+            "node": "Preflight observation sources — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preflight observation sources — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Preflight observation sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Preflight observation sources": {
+      "main": [
+        [
+          {
+            "node": "Preflight document and media sources — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preflight document and media sources — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Preflight document and media sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Preflight document and media sources": {
+      "main": [
+        [
+          {
+            "node": "Fetch immutable approved releases — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch immutable approved releases — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Fetch immutable approved releases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Fetch immutable approved releases": {
+      "main": [
+        [
+          {
+            "node": "Normalize to staging Parquet — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize to staging Parquet — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Normalize to staging Parquet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Normalize to staging Parquet": {
+      "main": [
+        [
+          {
+            "node": "Validate and quarantine — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and quarantine — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Validate and quarantine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Validate and quarantine": {
+      "main": [
+        [
+          {
+            "node": "Resolve taxonomy — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve taxonomy — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Resolve taxonomy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Resolve taxonomy": {
+      "main": [
+        [
+          {
+            "node": "Dedupe without deletion — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dedupe without deletion — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Dedupe without deletion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Dedupe without deletion": {
+      "main": [
+        [
+          {
+            "node": "Embed allowed chunks only — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embed allowed chunks only — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Embed allowed chunks only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Embed allowed chunks only": {
+      "main": [
+        [
+          {
+            "node": "Idempotent candidate graph load — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Idempotent candidate graph load — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Idempotent candidate graph load",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Idempotent candidate graph load": {
+      "main": [
+        [
+          {
+            "node": "Verify candidate and quality gates — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify candidate and quality gates — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Verify candidate and quality gates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Verify candidate and quality gates": {
+      "main": [
+        [
+          {
+            "node": "Activate verified release atomically — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activate verified release atomically — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Activate verified release atomically",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Activate verified release atomically": {
+      "main": [
+        [
+          {
+            "node": "Build success summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build redacted failure summary — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build success summary — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Notify success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify success": {
+      "main": [
+        [
+          {
+            "node": "Release owned ingest lock — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build redacted failure summary — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Notify failure or blocked preflight",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify failure or blocked preflight": {
+      "main": [
+        [
+          {
+            "node": "Release owned ingest lock — CLI required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify lock not acquired": {
+      "main": [
+        [
+          {
+            "node": "Finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Release owned ingest lock — CLI required": {
+      "main": [
+        [
+          {
+            "node": "Exit code 0? — Release owned ingest lock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exit code 0? — Release owned ingest lock": {
+      "main": [
+        [
+          {
+            "node": "Finished",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify lock release failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify lock release failure": {
+      "main": [
+        [
+          {
+            "node": "Finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner",
+    "concurrency": 1
+  },
+  "versionId": "25054095-61a5-5f61-8223-5e40ff2b96b4",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
