@@ -730,22 +730,24 @@
     },
     {
       "parameters": {
-        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
-        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
-        "subject": "=[RobinGraph] ingest succeeded: n8n-{{ $execution.id }}",
-        "emailType": "text",
-        "message": "={{ $json.stdout || 'Ingest succeeded. Inspect the redacted run manifest for counts.' }}",
-        "options": {}
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '✅ **RobinGraph ingest succeeded**\\nRun: n8n-' + $execution.id + '\\n' + String($json.stdout || 'Inspect the redacted run manifest for counts.').slice(0, 1700) }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
       },
       "id": "715d5ca1-c81f-5a05-923d-e2fe518b00a1",
       "name": "Notify success",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
       "position": [
         5880,
         -180
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Map a Discord Webhook credential after import. The webhook URL must not be stored in this JSON."
     },
     {
       "parameters": {
@@ -768,41 +770,45 @@
     },
     {
       "parameters": {
-        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
-        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
-        "subject": "=[RobinGraph] ingest blocked or failed: n8n-{{ $execution.id }}",
-        "emailType": "text",
-        "message": "={{ $json.stdout || 'Ingest stopped before activation. Inspect the n8n execution and redacted run manifest.' }}",
-        "options": {}
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '❌ **RobinGraph ingest blocked or failed**\\nRun: n8n-' + $execution.id + '\\n' + String($json.stdout || 'Ingest stopped before activation. Inspect the n8n execution and redacted run manifest.').slice(0, 1700) }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
       },
       "id": "a50e3c12-038f-5e29-aaf5-291118179f91",
       "name": "Notify failure or blocked preflight",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
       "position": [
         5880,
         240
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Map a Discord Webhook credential after import. The webhook URL must not be stored in this JSON."
     },
     {
       "parameters": {
-        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
-        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
-        "subject": "=[RobinGraph] ingest did not start: n8n-{{ $execution.id }}",
-        "emailType": "text",
-        "message": "The exclusive lock was not acquired. No owned lock will be released by this execution.",
-        "options": {}
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '⚠️ **RobinGraph ingest did not start**\\nRun: n8n-' + $execution.id + '\\nThe exclusive lock was not acquired. No owned lock will be released by this execution.' }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
       },
       "id": "f32d4c20-83ac-53bc-8016-b2e2501b1f8b",
       "name": "Notify lock not acquired",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
       "position": [
         5640,
         480
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Map a Discord Webhook credential after import. The webhook URL must not be stored in this JSON."
     },
     {
       "parameters": {
@@ -858,22 +864,24 @@
     },
     {
       "parameters": {
-        "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
-        "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
-        "subject": "=[RobinGraph] ingest lock cleanup failed: n8n-{{ $execution.id }}",
-        "emailType": "text",
-        "message": "The run-owned lock could not be released. Inspect the lock audit record before another run.",
-        "options": {}
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '🚨 **RobinGraph ingest lock cleanup failed**\\nRun: n8n-' + $execution.id + '\\nThe run-owned lock could not be released. Inspect the lock audit record before another run.' }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
       },
       "id": "b1793466-5e17-51ee-aeae-145eba6fd751",
       "name": "Notify lock release failure",
-      "type": "n8n-nodes-base.emailSend",
-      "typeVersion": 2.1,
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
       "position": [
         6640,
         220
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Map a Discord Webhook credential after import. The webhook URL must not be stored in this JSON."
     },
     {
       "parameters": {},

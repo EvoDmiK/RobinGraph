@@ -4,7 +4,7 @@
 
 통합 워크플로우는 `workflow.dove-nest.com`의 Personal 프로젝트에 가져왔다. 워크플로우 이름은 `RobinGraph — reviewed operational ingest (inactive until approvals and CLI exist)`이며, 예약 실행과 게시를 하지 않은 비활성 초안이다.
 
-2026-09-05 NAS n8n에서 Manual Trigger를 실행했다. 실행 엔진과 실패 분기는 정상 작동했으며 455ms에 종료됐다. 첫 SSH 노드인 `Acquire exclusive ingest lock — CLI required`에서 `Node does not have any credentials set` 오류가 발생해 원격 명령과 운영 데이터 변경은 없었다. n8n Credential 목록에서도 SSH와 SMTP Credential이 없음을 확인했다.
+2026-09-05 NAS n8n에서 Manual Trigger를 실행했다. 실행 엔진과 실패 분기는 정상 작동했으며 455ms에 종료됐다. 첫 SSH 노드인 `Acquire exclusive ingest lock — CLI required`에서 `Node does not have any credentials set` 오류가 발생해 원격 명령과 운영 데이터 변경은 없었다. n8n Credential 목록에서도 SSH Credential이 없음을 확인했다. 이후 운영자 요청에 따라 알림 노드는 SMTP에서 Discord Webhook으로 교체했다.
 
 현재 실패 노드는 `continueRegularOutput`으로 실패 분기를 이어 가므로 실행 이력이 `Success`로 표시될 수 있다. 이는 데이터 수집 성공을 의미하지 않는다. 각 SSH 노드의 `code`, 실패 알림, redacted run manifest를 함께 확인해야 하며, 운영 전에는 실패 실행을 명시적으로 실패 상태로 끝내는 보완이 필요하다.
 
@@ -73,16 +73,13 @@ ROBINGRAPH_JINA_BATCH_SIZE=32
 ROBINGRAPH_JINA_TIMEOUT_SECONDS=120
 ```
 
-### SMTP Credential과 n8n 환경
+### Discord Webhook Credential
 
-Email Send 노드에 `RobinGraph Operations SMTP` Credential을 연결한다. SMTP host, port, username, password, TLS 설정은 메일 제공자의 값을 사용한다. 발신·수신 주소는 NAS의 n8n 컨테이너 환경에 둔다.
+Discord 서버에서 알림을 받을 채널의 **채널 편집 → 연동 → 웹후크 → 새 웹후크 → 웹후크 URL 복사**를 선택한다. n8n에서 Discord Credential을 만들고 Connection Type을 Webhook으로 선택한 뒤 복사한 URL을 입력한다. Credential 이름은 `RobinGraph Operations Discord Webhook`을 사용한다.
 
-```sh
-ROBINGRAPH_ALERT_FROM=sender@example.com
-ROBINGRAPH_ALERT_TO=operator@example.com
-```
+모든 `Notify ...` Discord 노드에 같은 Credential을 연결한다. 성공, 수집 차단·실패, lock 미획득, lock 정리 실패가 같은 채널에 전송된다. 메시지는 2,000자 제한을 넘지 않도록 redacted summary를 최대 1,700자로 제한한다.
 
-Gmail OAuth Credential은 현재 Email Send 노드가 요구하는 SMTP Credential과 다른 종류다.
+Webhook URL은 Discord 채널에 메시지를 쓸 수 있는 secret이다. JSON, 문서, Git 또는 n8n 일반 환경변수에 넣지 않고 n8n Credential store에만 저장한다.
 
 ## 남은 구현과 승인
 
