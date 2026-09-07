@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 from pathlib import Path
 import unittest
 
@@ -74,18 +75,20 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertEqual("SHA256", raw_hash["parameters"]["type"])
         self.assertEqual("raw_sha256", raw_hash["parameters"]["dataPropertyName"])
 
-    def test_final_uses_parameterized_atomic_neo4j_load_and_fail_closed_paths(self) -> None:
+    def test_final_uses_community_neo4j_load_and_fail_closed_paths(self) -> None:
         workflow = load(FINAL)
         by_name = {item["name"]: item for item in workflow["nodes"]}
         connections = workflow["connections"]
-        load_node = by_name["Atomic upsert to Neo4j Query API"]
-        self.assertEqual("n8n-nodes-base.httpRequest", load_node["type"])
-        self.assertEqual("POST", load_node["parameters"]["method"])
-        self.assertEqual("genericCredentialType", load_node["parameters"]["authentication"])
-        self.assertEqual("httpBasicAuth", load_node["parameters"]["genericAuthType"])
-        body = load_node["parameters"]["jsonBody"]
+        load_node = by_name["Atomic upsert to Neo4j"]
+        self.assertEqual("n8n-nodes-neo4j.neo4j", load_node["type"])
+        self.assertEqual("graphDb", load_node["parameters"]["resource"])
+        self.assertEqual("executeQuery", load_node["parameters"]["operation"])
+        body = load_node["parameters"]["cypherQuery"]
+        self.assertIn("UNWIND $bird_taxa AS row", body)
+        self.assertIn("SET taxon:BirdTaxon", body)
+        self.assertIn("HAS_ACCEPTED_NAME", body)
+        self.assertIn("PARENT_OF", body)
         self.assertIn("UNWIND $observations AS row", body)
-        self.assertIn("parameters: $json", body)
         self.assertIn("MERGE (state:IngestState", body)
 
         verify_node = by_name["Verify Neo4j response counts"]
@@ -121,12 +124,40 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
             all(item["parameters"]["authentication"] == "webhook" for item in notifications)
         )
         self.assertFalse(any(item["type"] == "n8n-nodes-base.emailSend" for item in workflow["nodes"]))
-        self.assertFalse(any("credentials" in item for item in workflow["nodes"]))
+        neo4j_node = next(
+            item for item in workflow["nodes"]
+            if item["type"] == "n8n-nodes-neo4j.neo4j"
+        )
+        self.assertEqual(["neo4jApi"], list(neo4j_node["credentials"]))
         serialized = json.dumps(workflow).lower()
         self.assertNotIn("-----begin private key-----", serialized)
         self.assertNotIn("bearer ", serialized)
         self.assertNotIn("password", serialized)
         self.assertNotIn("robingraph ingest ", serialized)
+
+    def test_community_query_escaping_and_verification(self) -> None:
+        from scripts.generate_n8n_operational_ingest import ASSESS_NEO4J, CYPHER_LITERAL_JS
+
+        script = CYPHER_LITERAL_JS + r"""
+const assert = require('node:assert/strict');
+assert.equal(literal("O'Brien\\$run_id\n"), "'O\\'Brien\\\\$run_id\\u000a'");
+assert.equal(literal({rows: [null, true, 12]}), '{rows:[null,true,12]}');
+assert.throws(() => literal(Infinity));
+assert.throws(() => literal({'bad`key': 1}));
+const expected = {taxon_count: 2, taxon_link_count: 1, observation_count: 19,
+  media_count: 11, quarantine_count: 0, source_release: 'release'};
+const good = {loaded_taxa: 2, loaded_taxon_links: 1, loaded_observations: 19,
+  loaded_media: 11, loaded_quarantine: 0, 'state.active_release': 'release'};
+""" + "const verify = new Function('$', '$input', " + json.dumps(ASSESS_NEO4J) + ");" + r"""
+const check = value => verify(() => ({first: () => ({json: expected})}),
+  {first: () => ({json: value})})[0].json.load_ok;
+assert.equal(check(good), true);
+assert.equal(check({...good, loaded_observations: 18}), false);
+assert.equal(check({...good, 'state.active_release': 'old'}), false);
+assert.equal(check({error: 'connection failed'}), false);
+assert.equal(check({}), false);
+"""
+        subprocess.run(['node', '-e', script], check=True, capture_output=True, text=True)
 
     def test_nas_api_deployment_maps_existing_credentials(self) -> None:
         from scripts.deploy_n8n_operational_ingest import build_deployment
@@ -135,20 +166,14 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
             load(FINAL),
             {"id": "neo4j-id", "name": "Neo4j"},
             {"id": "discord-id", "name": "Nesty API 키"},
-            "http://neo4j:7474/db/neo4j/query/v2",
             "guild-id",
             "channel-id",
         )
         by_name = {item["name"]: item for item in payload["nodes"]}
-        load_node = by_name["Atomic upsert to Neo4j Query API"]
-        self.assertEqual("predefinedCredentialType", load_node["parameters"]["authentication"])
-        self.assertEqual("neo4jApi", load_node["parameters"]["nodeCredentialType"])
+        load_node = by_name["Atomic upsert to Neo4j"]
+        self.assertEqual("n8n-nodes-neo4j.neo4j", load_node["type"])
         self.assertEqual("neo4j-id", load_node["credentials"]["neo4jApi"]["id"])
         self.assertNotIn("concurrency", payload["settings"])
-        self.assertIn(
-            "http://neo4j:7474/db/neo4j/query/v2",
-            by_name["Build run configuration"]["parameters"]["jsCode"],
-        )
         for name in ("Notify success", "Notify failure"):
             self.assertEqual("channel-id", by_name[name]["parameters"]["channelId"]["value"])
             self.assertEqual("discord-id", by_name[name]["credentials"]["discordBotApi"]["id"])
@@ -169,8 +194,45 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
             "retrieved_at": "2026-09-07T00:00:00Z",
             "source_release": "gbif-live-integration-test",
             "source_count": 1,
+            "taxon_count": 2,
+            "taxon_link_count": 1,
             "quarantine_count": 0,
             "event_date_end": "2026-09-07",
+            "bird_taxa": [
+                {
+                    "id": f"gbif-taxon:family-{run_id}",
+                    "external_key": f"family-{run_id}",
+                    "provider": "GBIF Backbone",
+                    "rank": "family",
+                    "scientific_name": "Corvidae",
+                    "canonical_name": "Corvidae",
+                    "authorship": None,
+                    "taxonomic_status": "accepted",
+                    "vernacular_name_raw": None,
+                    "source_uri": f"https://example.invalid/species/family-{run_id}",
+                    "retrieved_at": "2026-09-07T00:00:00Z",
+                },
+                {
+                    "id": f"gbif-taxon:{run_id}",
+                    "external_key": run_id,
+                    "provider": "GBIF Backbone",
+                    "rank": "species",
+                    "scientific_name": "Pica serica",
+                    "canonical_name": "Pica serica",
+                    "authorship": "Gould, 1845",
+                    "taxonomic_status": "accepted",
+                    "vernacular_name_raw": "Oriental Magpie",
+                    "source_uri": f"https://example.invalid/species/{run_id}",
+                    "retrieved_at": "2026-09-07T00:00:00Z",
+                },
+            ],
+            "taxon_links": [
+                {
+                    "id": f"family-{run_id}->species-{run_id}",
+                    "parent_id": f"gbif-taxon:family-{run_id}",
+                    "child_id": f"gbif-taxon:{run_id}",
+                }
+            ],
             "observations": [
                 {
                     "id": observation_id,
@@ -216,6 +278,8 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         try:
             with driver.session(database=os.environ.get("NEO4J_DATABASE", "neo4j")) as session:
                 result = session.run(NEO4J_STATEMENT, **parameters).single(strict=True)
+                self.assertEqual(2, result["loaded_taxa"])
+                self.assertEqual(1, result["loaded_taxon_links"])
                 self.assertEqual(1, result["loaded_observations"])
                 self.assertEqual(0, result["loaded_media"])
                 self.assertEqual(0, result["loaded_quarantine"])
