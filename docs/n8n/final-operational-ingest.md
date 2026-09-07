@@ -1,134 +1,131 @@
-# RobinGraph n8n 운영 수집 워크플로우 평가와 통합본
+# n8n 운영 수집 후보 재평가와 네이티브 통합본
 
-상태: **NAS import 및 제한 실행 검증 완료 / 비활성**
+## 수정 이유
 
-통합 워크플로우: `n8n/robingraph-operational-ingest.json`
+초기 Claude 후보와 GPT-5.6 Terra 후보는 운영 통제와 데이터 안전을 자세히 설계했지만, 실제 작업을 존재하지 않는 `robingraph ingest ...` CLI에 맡겼다. 사용자가 요구한 것은 n8n 안에서 수행되는 데이터 수집이다. 따라서 SSH/CLI 방식은 최종 요구사항을 충족하지 못하며 배포 대상에서 제외한다.
 
-재생성 스크립트: `scripts/generate_n8n_operational_ingest.py`
+최종본은 n8n 기본 노드만으로 GBIF API 호출, pagination, SHA-256, 정규화, 검증, 중복 제거, Neo4j 적재 검증과 Discord 알림을 수행하도록 다시 만들었다.
 
-이 통합본은 NAS의 n8n이 Mac mini의 Python ingest CLI를 SSH로 순서대로 호출하는 운영 제어면이다. 데이터 변환, 정책 판정, 재시도, manifest 작성, Neo4j/Jina 접근은 Python에 둔다. 원본·staging·quarantine은 NAS 영속 볼륨에 저장하며 n8n 실행 컨테이너에는 저장하지 않는다.
+## 후보 점수
 
-현재 `src/robingraph/cli.py`에는 아래 `robingraph ingest` 명령이 없고 실제 source/release와 taxonomy·license ADR도 승인되지 않았다. 따라서 파일은 `active: false`이며 지금 실행하면 의도적으로 lock 또는 preflight에서 멈춰야 한다. 운영 수집이 가능하다는 뜻의 산출물이 아니라, 필요한 CLI와 승인 자료가 준비됐을 때 import해 사용할 실행 계약이다.
-
-## 평가 기준과 점수
-
-| 평가 항목 | 배점 | Claude | GPT-5.6 Terra |
+| 평가 항목 | 배점 | Claude 후보 | Terra 후보 |
 |---|---:|---:|---:|
-| 정책 안전성·fail-closed | 30 | 28 | 29 |
-| 실행 단계 완전성 | 25 | 14 | 14 |
-| 실패 복구·관측성 | 20 | 9 | 9 |
-| n8n 유지보수성 | 15 | 11 | 12 |
-| 배포·보안 적합성 | 10 | 8 | 8 |
-| **합계** | **100** | **70** | **72** |
+| n8n 안에서 실제 데이터 수집 | 30 | 0 | 0 |
+| 데이터 정책·provenance | 20 | 12 | 17 |
+| 실패 차단과 검증 | 20 | 15 | 16 |
+| 운영 안전과 관측성 | 15 | 12 | 12 |
+| import·설정 가능성 | 15 | 8 | 8 |
+| **합계** | **100** | **47** | **53** |
 
-두 후보 모두 단계 구성과 운영 문서는 충실하지만 그대로 운영할 수준의 점수는 아니다. 가장 큰 공통 결함은 n8n SSH 노드의 동작을 잘못 가정한 것이다. 공식 SSH 노드 구현은 원격 명령의 `code`, `stdout`, `stderr`를 결과 객체로 반환하며, 원격 종료 코드가 0이 아니어도 그 자체로 노드 오류를 던지지 않는다. 따라서 두 후보의 `continueErrorOutput` 두 번째 분기는 일반적인 CLI 실패에서 실행되지 않고 다음 성공 단계가 진행될 수 있다. [n8n SSH 노드 공식 구현](https://github.com/n8n-io/n8n/blob/master/packages/nodes-base/nodes/Ssh/Ssh.node.ts#L356-L372)
+두 후보 모두 n8n 시각적 흐름과 운영 계약을 갖췄지만, 실제 source endpoint와 adapter가 없고 미구현 CLI에 의존하는 결함 때문에 점수를 낮췄다.
 
-두 후보의 SSH `command` 값에는 `{{$execution.id}}`가 있지만 n8n expression 값임을 나타내는 선행 `=`가 없다. 이 상태에서는 실행 ID가 원격 명령에 동적으로 들어간다는 보장이 없다. 또한 lock 획득 실패도 공통 실패 경로로 합쳐져 자신이 얻지 못한 lock의 release를 시도한다.
+### Claude 후보에서 유지한 점
 
-### Claude 후보에서 채택한 점
+- `concurrency=1`로 같은 workflow의 중복 실행을 제한한다.
+- 성공과 실패가 편집기에서 바로 보이는 IF 분기를 둔다.
+- 성공 데이터를 장기 실행 이력에 과도하게 보존하지 않는다.
 
-- workflow `concurrency: 1`과 원격 소유권 lock을 함께 사용해 같은 workflow의 중복 실행을 먼저 줄인다.
-- 품질 gate의 true/false를 n8n IF 노드로 보이게 하여 activation 조건을 실행 화면에서 확인할 수 있다. 통합본은 이 아이디어를 확장해 모든 주요 SSH 단계에 종료 코드 IF를 둔다. IF 노드는 조건에 따라 두 경로로 분기하는 공식 core node다. [n8n IF 노드 문서](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.if/)
-- Manual Trigger와 KST 02:00 Schedule Trigger, source scope별 preflight, 성공·실패 요약을 모두 포함한다.
+### Terra 후보에서 유지한 점
 
-### Terra 후보에서 채택한 점
+- immutable raw hash, quarantine, idempotent upsert와 active release 개념을 유지한다.
+- HTTP 성공 코드만으로 적재 성공을 판단하지 않고 반환 count를 검증한다.
+- 검증된 동일 실행만 active release와 증분 cursor를 갱신한다.
+- secret은 workflow body가 아니라 Credential store에 둔다.
 
-- 승인 manifest, immutable raw hash, quarantine, idempotent load, verified candidate와 atomic activation의 CLI 계약이 구체적이다.
-- 알림을 수집 SSH와 분리해 SSH 대상 장애 때도 n8n이 운영자에게 알릴 수 있다. 통합본은 운영자 요청에 따라 Discord Webhook을 사용한다.
-- 성공 실행 본문을 n8n에 장기 보존하지 않고 redacted summary만 알림에 쓰는 운영 방향이 명확하다.
-- n8n에는 예약·호출·알림만 두고 Python에 정책과 변환 규칙을 유지한다.
+## 네이티브 통합본
 
-## 통합본 실행 경로
+통합본은 다음 15개 노드로 구성된다.
 
 ```mermaid
 flowchart LR
-  T[Manual 또는 KST 02:00] --> L[원격 소유권 lock]
-  L --> LC{code = 0?}
-  LC -- 아니오 --> NL[lock 미획득 알림]
-  LC -- 예 --> P[scope별 승인 preflight]
-  P --> F[fetch]
-  F --> N[normalize]
-  N --> V[validate + quarantine]
-  V --> R[resolve]
-  R --> D[dedupe]
-  D --> E[embed]
-  E --> G[후보 graph load]
-  G --> Q[verify + quality gates]
-  Q --> A[verified release atomic activate]
-  A --> S[redacted success summary]
-  S --> NS[성공 알림]
-  NS --> U[소유 lock release]
-  P -. 각 단계 code != 0 .-> X[redacted failure summary]
-  F -.-> X
-  N -.-> X
-  V -.-> X
-  R -.-> X
-  D -.-> X
-  E -.-> X
-  G -.-> X
-  Q -.-> X
-  A -.-> X
-  X --> NF[실패 알림]
-  NF --> U
-  U --> UC{code = 0?}
-  UC -- 아니오 --> NU[lock 정리 실패 알림]
+  M[Manual Trigger] --> C[Build config]
+  S[Daily Schedule] --> C
+  C --> G[GBIF HTTP Request]
+  G --> H[Crypto SHA-256]
+  H --> N[Code normalize / validate / dedupe]
+  N --> Q{Quality gates passed?}
+  Q -->|yes| U[Neo4j HTTP Query API]
+  Q -->|no| F[Discord failure]
+  U --> R[Verify response counts]
+  R --> V{Atomic load verified?}
+  V -->|yes| A[Advance cursor]
+  V -->|no| F
+  A --> D[Discord success]
+  D --> Z[Finished]
+  F --> E[Stop And Error]
 ```
 
-통합본은 다음 문제를 직접 보완한다.
+SSH 노드는 없다. 외부 통신 노드는 GBIF public API, Neo4j private HTTP endpoint와 Discord Webhook뿐이다.
 
-- 모든 mutating SSH 단계 뒤에 `Number($json.code ?? -1) == 0` IF를 둔다. SSH transport 오류도 `continueRegularOutput`으로 IF에 전달되며 `code`가 없으므로 실패 분기로 간다.
-- 모든 동적 SSH 명령은 `=`로 시작하고 `n8n-{{ $execution.id }}` run ID를 사용한다.
-- lock 획득 실패는 별도 알림으로 끝나며 release를 호출하지 않는다.
-- lock을 획득한 뒤 실패하면 redacted summary와 알림 후 owner 검증 release를 호출한다. release 실패도 종료 코드를 검사해 별도로 알린다.
-- `verify`가 0으로 끝난 뒤에만 `activate`를 호출하며, `activate`는 같은 run의 verified manifest와 gate 결과를 다시 확인해야 한다.
-- n8n Code 노드와 `raw_stdout` 보존을 제거했다. gate와 정책의 실제 판단은 버전 관리되는 Python에 남는다.
+## 데이터 범위와 변환
 
-## 필요한 Python CLI 계약
+GBIF Occurrence Search API에서 `country=KR`, `taxon_key=212`, `has_coordinate=true`, `occurrence_status=present`를 사용한다. 라이선스 query parameter는 `CC0_1_0`과 `CC_BY_4_0` 두 개로 제한한다. 최초 실행은 최근 30일이고, 다음 활성 실행부터 마지막 검증 성공일을 시작일로 재사용한다. 시작일이 포함되므로 하루가 겹칠 수 있지만 GBIF ID 기반 dedupe와 Neo4j `MERGE`가 재실행을 안전하게 처리한다.
 
-다음 명령은 아직 구현 대상이다. 모든 명령은 `--run-id`로 같은 manifest를 갱신하고, 성공이면 종료 코드 0, 차단 또는 실패이면 0 이외의 코드를 반환해야 한다. stdout은 한 줄 redacted JSON만 허용하며 secret, 원문, 정밀 좌표를 포함하면 안 된다.
+각 occurrence는 다음 그래프 구조로 적재된다.
 
-| 명령 | 책임과 성공 조건 |
-|---|---|
-| `ingest lock acquire/release` | 원자적 lock, owner run ID 확인, 감사 가능한 stale lock 처리 |
-| `ingest preflight` | scope별 `enabled`, `allowed`, approved immutable release, approval manifest, adapter/schema 버전 확인 |
-| `ingest fetch` | 승인 release만 수집하고 원본 URI, SHA-256, retrieval time을 immutable manifest에 기록 |
-| `ingest normalize` | canonical UTF-8 Parquet과 provenance 생성 |
-| `ingest validate` | 행 오류 quarantine, blocked 오류가 있으면 실패 |
-| `ingest resolve` | taxonomy release에 대해 accepted/ambiguous/unmatched/rejected와 rule version 기록 |
-| `ingest dedupe` | 원본 삭제 없이 duplicate group과 representative 기록 |
-| `ingest embed` | license와 embedding 허용이 확인된 청크만 Jina에 전송 |
-| `ingest load` | 결정적 외부 키로 candidate release에 idempotent upsert, active pointer 유지 |
-| `ingest verify` | raw hash, blocked=0, license/source 완전성, 참조 무결성, 해소율, embedding 실패율, 재실행 동등성 평가 |
-| `ingest activate` | 같은 run의 verified manifest를 재검증한 뒤 active release pointer를 atomic swap |
-| `ingest summarize` | source별 counts, duration, candidate/active release, blocked reason의 redacted JSON 출력 |
+```mermaid
+graph LR
+  RUN[IngestionRun] -->|INGESTED| O[Observation]
+  O -->|IDENTIFIED_AS| XT[ExternalTaxonConcept]
+  O -->|WITHIN| P[Place]
+  O -->|FROM_RECORD| SR[SourceRecord]
+  SR -->|IN_DATASET| SD[SourceDataset]
+  SD -->|LICENSED_UNDER| L[License]
+  O -->|HAS_MEDIA| MA[MediaAsset]
+  E[EvidenceUnit] -->|FROM_RECORD| SR
+```
 
-## n8n import와 배포 설정
+GBIF taxon key를 내부 canonical `Taxon.id`로 사용하지 않는다. AviList v2025b와의 승인된 crosswalk가 준비되기 전까지 `ExternalTaxonConcept`로 보존한다. 미디어는 허용 라이선스의 URL과 attribution metadata만 저장하고 파일은 다운로드하지 않는다.
 
-1. `n8n/robingraph-operational-ingest.json`을 import하고 **비활성 상태를 유지**한다.
-2. 모든 SSH 노드에 `Mac mini RobinGraph ingest SSH` private-key credential을 매핑한다. SSH 계정은 전용 `robingraph-ingest` 사용자로 제한하고 sudo와 일반 관리 권한을 주지 않는다.
-3. 모든 Discord 알림 노드에 `RobinGraph Operations Discord Webhook` credential을 매핑한다.
-4. Discord webhook URL은 n8n credential store에만 두고 workflow JSON이나 환경 변수에 넣지 않는다.
-5. Mac mini의 비대화식 SSH 환경에 다음 변수를 제공한다: `ROBINGRAPH_APP_DIR`, `ROBINGRAPH_SOURCE_REGISTRY`, `ROBINGRAPH_APPROVAL_MANIFEST`, `ROBINGRAPH_RAW_ROOT`, `ROBINGRAPH_STAGING_ROOT`, `ROBINGRAPH_QUARANTINE_ROOT`, `ROBINGRAPH_INGEST_LOCK_DIR`, `ROBINGRAPH_INGEST_LOCK_STALE_SECONDS`, taxonomy/embedding/quality gate 설정과 Neo4j/Jina/source secret reference.
-6. n8n SSH 노드는 원격 명령 실행 권한을 가지므로 private network, 최소 workflow 편집 권한, 전용 SSH 계정으로 제한하고 n8n security audit을 운영 점검에 포함한다. [n8n security audit](https://docs.n8n.io/hosting/securing/security-audit/)
+## 품질 gate
+
+다음 조건 중 하나라도 발생하면 Neo4j write를 호출하지 않는다.
+
+- GBIF page request의 비정상 응답 또는 `results` 누락
+- source window에 occurrence가 0건
+- 검증 통과 occurrence가 0건
+- quarantine 비율이 25% 초과
+- pagination 20페이지 상한에서 `endOfRecords`가 false
+
+레코드 단위 오류는 GBIF ID, source URI와 reason code만 quarantine에 남긴다. private coordinate나 전체 raw record를 quarantine에 복사하지 않는다.
+
+## 원본 무결성과 제한
+
+Crypto 노드가 각 GBIF response page의 JSON을 SHA-256으로 해시하고 각 SourceRecord에 page hash를 기록한다. 현재 통합본은 NAS 영속 볼륨 경로가 확정되지 않아 response body 자체를 파일로 장기 보존하지 않는다. 완전한 immutable raw archive가 필요하면 n8n 컨테이너에 RobinGraph 전용 read/write volume을 마운트한 뒤 `Convert to File → Crypto → Read/Write Files from Disk` 단계로 확장해야 한다.
+
+실행 DB에 대량 원본을 남기지 않도록 성공 실행 데이터 저장은 `none`이다. 수집 증거는 GBIF occurrence URI, page hash, retrieved time과 source updated time으로 남긴다.
+
+## Neo4j 적재 계약
+
+Neo4j 전용 n8n 기본 노드가 없으므로 HTTP Request 노드가 `POST /db/neo4j/query/v2`를 호출한다. Neo4j Basic Auth는 Credential store에서 주입한다.
+
+Cypher는 workflow에 고정되어 있고 외부 값은 전부 query parameter로 전달한다. 관찰, 외부 분류, 장소, source/license provenance, media, quarantine, IngestionRun과 IngestState를 하나의 implicit transaction에서 `MERGE`한다. 쿼리 오류가 나면 batch 전체가 rollback된다.
+
+Query API는 실행 결과를 별도로 확인해야 하므로 다음 값을 검증한다.
+
+- HTTP status `202`
+- server error 배열이 비어 있음
+- loaded observation/media/quarantine count가 입력 count와 같음
+- 반환 active release가 현재 source release와 같음
+
+이 네 조건을 모두 통과한 뒤에만 n8n static workflow data의 `last_successful_event_date`를 갱신한다.
+
+## 필요한 Credential
+
+| Credential 이름 | 종류 | 연결 노드 |
+|---|---|---|
+| `RobinGraph Neo4j HTTP` | HTTP Basic Auth | `Atomic upsert to Neo4j Query API` |
+| `RobinGraph Operations Discord Webhook` | Discord Webhook | 두 `Notify ...` 노드 |
+
+GBIF public API에는 Credential이 필요 없다. Neo4j URL은 `Build run configuration`의 한 곳에서 설정한다.
 
 ## 검증 결과
 
-`tests/test_n8n_workflows.py`가 다음을 자동 확인한다.
+- n8n stable 2.37.10에 있는 HTTP Request 4.5, Code 2, IF 2.3, Crypto 2, Discord 2 노드로 구성했다.
+- 생성된 JSON은 공식 `docker.n8n.io/n8nio/n8n:stable import:workflow` 시험을 통과했다.
+- 모든 Code node와 Neo4j JSON body expression은 JavaScript parser 검사를 통과했다.
+- GBIF 실 API의 30일 표본을 실행해 source 19건, 정규화 19건, 허용 media 11건, quarantine 0건을 확인했다.
+- n8n stable의 Manual Trigger로 GBIF HTTP, page SHA-256, 정규화와 quality gate가 실제 실행되는 것을 확인했다. Neo4j placeholder/Credential 단계에서는 예상대로 실패 분기와 `Stop And Error`가 실행됐다.
+- 저장소 테스트는 SSH 노드 0개, pagination 상한과 종료 조건, SHA-256, parameterized Neo4j write, cursor guard, Discord 실패 후 `Stop And Error`, secret literal 부재를 검사한다.
 
-- 후보 2개와 통합본 1개의 JSON 파싱, 비활성 상태, 고유 node ID/name, 존재하는 connection target
-- 통합본 주요 SSH 단계마다 직후 종료 코드 IF가 있는지
-- verify 성공 IF만 activation에 들어가는지
-- lock 미획득 경로가 release를 호출하지 않는지
-- lock release 실패 알림 경로가 있는지
-- workflow concurrency, Code 노드 부재, credential/secret literal 부재
-
-공식 `docker.n8n.io/n8nio/n8n:stable` 이미지의 n8n **2.37.10**에서 임시 SQLite DB를 사용해 후보 2개와 통합본을 각각 `import:workflow`로 가져오는 시험도 모두 통과했다. 첫 시험에서 최신 importer가 요구하는 workflow 최상위 `id` 누락을 발견해 세 파일에 고유 ID를 추가한 뒤 다시 검증했다. 저장소 전체 테스트는 112개 중 92개가 통과했고, live Neo4j opt-in 테스트 20개는 기존 설정대로 skip됐다.
-
-2026-09-05 `workflow.dove-nest.com`의 Personal 프로젝트에 통합본을 import했다. 37개 node와 연결이 편집기에 표시됐고 workflow 목록이 16개에서 17개로 증가해 서버 저장도 확인했다. Publish와 Schedule Trigger는 활성화하지 않았다.
-
-같은 NAS n8n에서 Manual Trigger를 실행했다. 실행 엔진과 실패 분기는 정상 작동했으며 455ms에 종료됐다. 첫 SSH node에서 `Node does not have any credentials set` 오류가 발생했고, SSH Credential이 등록되어 있지 않아 원격 명령과 운영 데이터 변경은 없었다. 이 실행 뒤 운영자 요청에 따라 SMTP 알림을 Discord Webhook 알림으로 교체했다. 실패를 `continueRegularOutput`으로 처리하므로 실행 이력은 `Success`로 보일 수 있지만 이는 수집 성공을 의미하지 않는다. 운영 전에는 실패 실행을 명시적인 실패 상태로 끝내는 보완도 필요하다.
-
-Python ingest CLI와 승인 source가 아직 없으므로 원격 단계의 end-to-end 실행은 수행할 수 없다. 설정값과 검증 순서는 [운영 수집 런북](README.md)에 정리했다. 운영 전 staging n8n에서 다음 두 시나리오가 필요하다.
-
-1. **차단 시험**: CLI 미구현 또는 미승인 manifest 상태에서 실행하고 fetch와 activation이 한 번도 호출되지 않는지 확인한다.
-2. **합성 성공 시험**: 승인된 synthetic source로 모든 단계, 성공 알림, lock release를 확인한 뒤 gate 실패를 주입해 activation이 호출되지 않고 실패 알림과 lock release가 실행되는지 확인한다.
+실제 NAS의 Neo4j URL과 Credential이 아직 연결되지 않았으므로 end-to-end DB write는 수행하지 않았다. Credential을 연결한 뒤에도 첫 Manual Trigger 결과를 확인하기 전에는 workflow를 Publish하지 않는다.
