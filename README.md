@@ -20,6 +20,11 @@
 - [문헌 하이브리드 검색](docs/hybrid-retrieval.md)
 - [n8n 운영 수집 워크플로우와 실행 런북](docs/n8n/README.md)
 - [NAS Docker·Nginx Proxy Manager 배포 런북](docs/nas-deployment.md)
+- [기여자와 AI 협업 기록](CONTRIBUTORS.md)
+
+## 기여자
+
+RobinGraph는 프로젝트 소유자 김둘기와 AI 개발 도구인 [OpenAI Codex](https://github.com/apps/chatgpt-codex-connector), [Anthropic Claude](https://github.com/apps/claude)의 협업으로 개발하고 있습니다. 역할과 Git 커밋 표기 기준은 [CONTRIBUTORS.md](CONTRIBUTORS.md)에 기록합니다.
 
 ## Fixture 검증
 
