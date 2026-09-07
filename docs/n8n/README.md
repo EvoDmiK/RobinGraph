@@ -105,6 +105,7 @@ Discord 서버에서 알림 채널의 **채널 편집 → 연동 → 웹후크 �
 - 2026-09-07 기준 GBIF 실 API의 2026-08-08~2026-09-07 한국 조류 CC0/CC BY 표본: 19 occurrence, 정규화 19, 허용 미디어 11, quarantine 0
 - `docker.n8n.io/n8nio/n8n:stable` import 시험 통과
 - 같은 n8n stable 컨테이너에서 Manual Trigger 실행: GBIF HTTP → SHA-256 → 정규화 → quality gate까지 실제 실행해 19/19건 통과. Neo4j placeholder/Credential이 없는 단계는 실패 분기와 `Stop And Error`로 종료됨
+- GitHub Actions의 Neo4j Community 2026.07.1에서 통합본의 동일 Cypher를 합성 관찰 1건으로 실행해 observation 1, media 0, quarantine 0과 active release 반환을 검증함
 - 저장소 정적 테스트는 source pagination, SHA-256, SSH 부재, parameterized Neo4j transaction, fail-closed 분기와 secret 부재를 검사한다.
 
 ## 산출물

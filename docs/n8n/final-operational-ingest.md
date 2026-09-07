@@ -126,6 +126,7 @@ GBIF public API에는 Credential이 필요 없다. Neo4j URL은 `Build run confi
 - 모든 Code node와 Neo4j JSON body expression은 JavaScript parser 검사를 통과했다.
 - GBIF 실 API의 30일 표본을 실행해 source 19건, 정규화 19건, 허용 media 11건, quarantine 0건을 확인했다.
 - n8n stable의 Manual Trigger로 GBIF HTTP, page SHA-256, 정규화와 quality gate가 실제 실행되는 것을 확인했다. Neo4j placeholder/Credential 단계에서는 예상대로 실패 분기와 `Stop And Error`가 실행됐다.
+- GitHub Actions의 Neo4j Community 2026.07.1에서 동일한 Cypher를 합성 관찰 1건으로 실행해 observation 1, media 0, quarantine 0과 active release 반환을 확인했다.
 - 저장소 테스트는 SSH 노드 0개, pagination 상한과 종료 조건, SHA-256, parameterized Neo4j write, cursor guard, Discord 실패 후 `Stop And Error`, secret literal 부재를 검사한다.
 
 실제 NAS의 Neo4j URL과 Credential이 아직 연결되지 않았으므로 end-to-end DB write는 수행하지 않았다. Credential을 연결한 뒤에도 첫 Manual Trigger 결과를 확인하기 전에는 workflow를 Publish하지 않는다.
