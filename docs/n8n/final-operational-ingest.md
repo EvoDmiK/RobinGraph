@@ -34,7 +34,7 @@
 ### Terra 후보에서 채택한 점
 
 - 승인 manifest, immutable raw hash, quarantine, idempotent load, verified candidate와 atomic activation의 CLI 계약이 구체적이다.
-- SMTP 알림을 수집 SSH와 분리해 SSH 대상 장애 때도 n8n이 운영자에게 알릴 수 있다.
+- 알림을 수집 SSH와 분리해 SSH 대상 장애 때도 n8n이 운영자에게 알릴 수 있다. 통합본은 운영자 요청에 따라 Discord Webhook을 사용한다.
 - 성공 실행 본문을 n8n에 장기 보존하지 않고 redacted summary만 알림에 쓰는 운영 방향이 명확하다.
 - n8n에는 예약·호출·알림만 두고 Python에 정책과 변환 규칙을 유지한다.
 
@@ -106,8 +106,8 @@ flowchart LR
 
 1. `n8n/robingraph-operational-ingest.json`을 import하고 **비활성 상태를 유지**한다.
 2. 모든 SSH 노드에 `Mac mini RobinGraph ingest SSH` private-key credential을 매핑한다. SSH 계정은 전용 `robingraph-ingest` 사용자로 제한하고 sudo와 일반 관리 권한을 주지 않는다.
-3. Email Send 노드에 `RobinGraph Operations SMTP` credential을 매핑한다.
-4. n8n에는 `ROBINGRAPH_ALERT_FROM`, `ROBINGRAPH_ALERT_TO`만 둔다. private key, SMTP 비밀값은 credential store에 둔다.
+3. 모든 Discord 알림 노드에 `RobinGraph Operations Discord Webhook` credential을 매핑한다.
+4. Discord webhook URL은 n8n credential store에만 두고 workflow JSON이나 환경 변수에 넣지 않는다.
 5. Mac mini의 비대화식 SSH 환경에 다음 변수를 제공한다: `ROBINGRAPH_APP_DIR`, `ROBINGRAPH_SOURCE_REGISTRY`, `ROBINGRAPH_APPROVAL_MANIFEST`, `ROBINGRAPH_RAW_ROOT`, `ROBINGRAPH_STAGING_ROOT`, `ROBINGRAPH_QUARANTINE_ROOT`, `ROBINGRAPH_INGEST_LOCK_DIR`, `ROBINGRAPH_INGEST_LOCK_STALE_SECONDS`, taxonomy/embedding/quality gate 설정과 Neo4j/Jina/source secret reference.
 6. n8n SSH 노드는 원격 명령 실행 권한을 가지므로 private network, 최소 workflow 편집 권한, 전용 SSH 계정으로 제한하고 n8n security audit을 운영 점검에 포함한다. [n8n security audit](https://docs.n8n.io/hosting/securing/security-audit/)
 
@@ -126,7 +126,7 @@ flowchart LR
 
 2026-09-05 `workflow.dove-nest.com`의 Personal 프로젝트에 통합본을 import했다. 37개 node와 연결이 편집기에 표시됐고 workflow 목록이 16개에서 17개로 증가해 서버 저장도 확인했다. Publish와 Schedule Trigger는 활성화하지 않았다.
 
-같은 NAS n8n에서 Manual Trigger를 실행했다. 실행 엔진과 실패 분기는 정상 작동했으며 455ms에 종료됐다. 첫 SSH node에서 `Node does not have any credentials set` 오류가 발생했고, SSH와 SMTP Credential이 등록되어 있지 않아 원격 명령과 운영 데이터 변경은 없었다. 실패를 `continueRegularOutput`으로 처리하므로 실행 이력은 `Success`로 보일 수 있지만 이는 수집 성공을 의미하지 않는다. 운영 전에는 실패 실행을 명시적인 실패 상태로 끝내는 보완도 필요하다.
+같은 NAS n8n에서 Manual Trigger를 실행했다. 실행 엔진과 실패 분기는 정상 작동했으며 455ms에 종료됐다. 첫 SSH node에서 `Node does not have any credentials set` 오류가 발생했고, SSH Credential이 등록되어 있지 않아 원격 명령과 운영 데이터 변경은 없었다. 이 실행 뒤 운영자 요청에 따라 SMTP 알림을 Discord Webhook 알림으로 교체했다. 실패를 `continueRegularOutput`으로 처리하므로 실행 이력은 `Success`로 보일 수 있지만 이는 수집 성공을 의미하지 않는다. 운영 전에는 실패 실행을 명시적인 실패 상태로 끝내는 보완도 필요하다.
 
 Python ingest CLI와 승인 source가 아직 없으므로 원격 단계의 end-to-end 실행은 수행할 수 없다. 설정값과 검증 순서는 [운영 수집 런북](README.md)에 정리했다. 운영 전 staging n8n에서 다음 두 시나리오가 필요하다.
 
