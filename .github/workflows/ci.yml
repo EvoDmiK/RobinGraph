@@ -8,6 +8,18 @@ permissions:
   contents: read
 
 jobs:
+  docker-image:
+    name: NAS Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate NAS Compose file
+        env:
+          ROBINGRAPH_ENV_FILE: .env.nas.example
+        run: docker compose --env-file .env.nas.example -f compose.nas.yml config --quiet
+      - name: Build API image
+        run: docker build --tag robingraph-api:ci .
+
   fixture:
     name: Fixture (${{ matrix.os }})
     strategy:
