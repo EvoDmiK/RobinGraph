@@ -2,10 +2,11 @@
 
 그래프 데이터베이스와 LLM을 이용해 근거가 확인되는 조류 정보를 제공하는 GraphRAG 프로젝트입니다.
 
-합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. HermesAgent 생성과 외부 데이터 수집은 후속 단계다.
+합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. HermesAgent 답변 생성은 후속 단계다.
 
 - [시스템 설계](docs/system-design.md)
 - [2026-09-04 작업 기록](docs/work-log/2026-09-04.md)
+- [2026-09-07 작업 기록](docs/work-log/2026-09-07.md)
 - [외부 데이터 소스 조사](docs/data-source-decision-input.md)
 - [데이터 계약](docs/data-contracts.md)
 - [구현 준비 체크리스트](docs/implementation-readiness.md)

@@ -83,7 +83,7 @@ Discord 서버에서 알림 채널의 **채널 편집 → 연동 → 웹후크 �
 - HTTP 202만 신뢰하지 않고 반환 count와 active release를 입력값과 대조한다.
 - 검증 성공 뒤에만 n8n의 증분 cursor를 갱신한다.
 - 품질 gate 또는 Neo4j 검증 실패는 Discord 알림 후 `Stop And Error`로 끝나 실행 이력도 실패가 된다.
-- workflow `concurrency`는 1이다.
+- source JSON의 workflow `concurrency`는 1이다. NAS Public API 배포에서는 이 UI 전용 필드가 제외되므로 운영 Publish 전에 UI에서 1로 설정됐는지 확인한다.
 
 ## 검증 순서
 
