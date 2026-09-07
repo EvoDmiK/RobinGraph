@@ -1,0 +1,80 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-image:
+    name: NAS Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate NAS Compose file
+        env:
+          ROBINGRAPH_ENV_FILE: .env.nas.example
+        run: docker compose --env-file .env.nas.example -f compose.nas.yml config --quiet
+      - name: Build API image
+        run: docker build --tag robingraph-api:ci .
+
+  fixture:
+    name: Fixture (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Exercise Windows checkout line endings
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf true
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.26"
+          enable-cache: true
+      - name: Install locked environment
+        run: uv sync --locked --extra test
+      - name: Validate committed fixture before any regeneration
+        run: uv run --locked robingraph validate-fixture
+      - name: Evaluate gold questions
+        run: uv run --locked robingraph evaluate-fixture
+      - name: Unit and reproducibility tests
+        run: uv run --locked --extra test python -m unittest discover -s tests -v
+
+  neo4j:
+    name: Neo4j integration
+    runs-on: ubuntu-latest
+    services:
+      neo4j:
+        image: neo4j:2026.07.1-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76
+        env:
+          NEO4J_AUTH: neo4j/fixture-test-only
+          NEO4J_server_memory_heap_initial__size: 256m
+          NEO4J_server_memory_heap_max__size: 512m
+          NEO4J_server_memory_pagecache_size: 128m
+        ports:
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p fixture-test-only 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 18
+    env:
+      ROBINGRAPH_NEO4J_INTEGRATION_TESTS: "1"
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: fixture-test-only
+      NEO4J_DATABASE: neo4j
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.26"
+          enable-cache: true
+      - run: uv sync --locked --extra test
+      - name: Unit and live Neo4j tests
+        run: uv run --locked --extra test python -m unittest discover -s tests -v

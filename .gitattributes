@@ -1,0 +1,9 @@
+* text=auto
+
+# Manifest hashes cover the exact UTF-8 bytes, including line endings.
+data/eval/** text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.sh text eol=lf
+.python-version text eol=lf
+uv.lock text eol=lf
