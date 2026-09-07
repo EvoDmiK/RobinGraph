@@ -96,21 +96,20 @@ def exit_check(name: str, position: tuple[int, int]) -> dict[str, object]:
     )
 
 
-def email(name: str, subject: str, message: str, position: tuple[int, int]) -> dict[str, object]:
+def discord(name: str, message: str, position: tuple[int, int]) -> dict[str, object]:
     return node(
         name,
-        "n8n-nodes-base.emailSend",
-        2.1,
+        "n8n-nodes-base.discord",
+        2,
         {
-            "fromEmail": "={{ $env.ROBINGRAPH_ALERT_FROM }}",
-            "toEmail": "={{ $env.ROBINGRAPH_ALERT_TO }}",
-            "subject": subject,
-            "emailType": "text",
-            "message": message,
-            "options": {},
+            "authentication": "webhook",
+            "operation": "sendLegacy",
+            "content": message,
+            "options": {"username": "RobinGraph Operations", "wait": True},
         },
         position,
         onError="continueRegularOutput",
+        notes="Map a Discord Webhook credential after import. The webhook URL must not be stored in this JSON.",
     )
 
 
@@ -194,10 +193,10 @@ def main() -> None:
                 (summary_x, -180),
                 check_exit=False,
             ),
-            email(
+            discord(
                 "Notify success",
-                "=[RobinGraph] ingest succeeded: n8n-{{ $execution.id }}",
-                "={{ $json.stdout || 'Ingest succeeded. Inspect the redacted run manifest for counts.' }}",
+                "={{ '✅ **RobinGraph ingest succeeded**\\nRun: n8n-' + $execution.id + '\\n' + "
+                "String($json.stdout || 'Inspect the redacted run manifest for counts.').slice(0, 1700) }}",
                 (summary_x + 240, -180),
             ),
             ssh(
@@ -206,19 +205,19 @@ def main() -> None:
                 (summary_x, 240),
                 check_exit=False,
             ),
-            email(
+            discord(
                 "Notify failure or blocked preflight",
-                "=[RobinGraph] ingest blocked or failed: n8n-{{ $execution.id }}",
                 (
-                    "={{ $json.stdout || 'Ingest stopped before activation. Inspect the n8n execution and "
-                    "redacted run manifest.' }}"
+                    "={{ '❌ **RobinGraph ingest blocked or failed**\\nRun: n8n-' + $execution.id + '\\n' + "
+                    "String($json.stdout || 'Ingest stopped before activation. Inspect the n8n execution and "
+                    "redacted run manifest.').slice(0, 1700) }}"
                 ),
                 (summary_x + 240, 240),
             ),
-            email(
+            discord(
                 "Notify lock not acquired",
-                "=[RobinGraph] ingest did not start: n8n-{{ $execution.id }}",
-                "The exclusive lock was not acquired. No owned lock will be released by this execution.",
+                "={{ '⚠️ **RobinGraph ingest did not start**\\nRun: n8n-' + $execution.id + "
+                "'\\nThe exclusive lock was not acquired. No owned lock will be released by this execution.' }}",
                 (summary_x, 480),
             ),
             ssh(
@@ -227,10 +226,10 @@ def main() -> None:
                 (summary_x + 520, 20),
             ),
             exit_check("Exit code 0? — Release owned ingest lock", (summary_x + 760, 20)),
-            email(
+            discord(
                 "Notify lock release failure",
-                "=[RobinGraph] ingest lock cleanup failed: n8n-{{ $execution.id }}",
-                "The run-owned lock could not be released. Inspect the lock audit record before another run.",
+                "={{ '🚨 **RobinGraph ingest lock cleanup failed**\\nRun: n8n-' + $execution.id + "
+                "'\\nThe run-owned lock could not be released. Inspect the lock audit record before another run.' }}",
                 (summary_x + 1000, 220),
             ),
             node("Finished", "n8n-nodes-base.noOp", 1, {}, (summary_x + 1240, 20)),

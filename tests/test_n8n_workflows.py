@@ -106,6 +106,17 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         workflow = load(FINAL)
         self.assertEqual(1, workflow["settings"]["concurrency"])
         self.assertFalse(any(item["type"] == "n8n-nodes-base.code" for item in workflow["nodes"]))
+        notifications = [
+            item for item in workflow["nodes"] if item["name"].startswith("Notify ")
+        ]
+        self.assertEqual(4, len(notifications))
+        self.assertTrue(
+            all(item["type"] == "n8n-nodes-base.discord" for item in notifications)
+        )
+        self.assertTrue(
+            all(item["parameters"]["authentication"] == "webhook" for item in notifications)
+        )
+        self.assertFalse(any(item["type"] == "n8n-nodes-base.emailSend" for item in workflow["nodes"]))
         self.assertNotIn("credentials", json.dumps(workflow))
         serialized = json.dumps(workflow).lower()
         self.assertNotIn("-----begin private key-----", serialized)
