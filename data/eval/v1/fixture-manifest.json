@@ -1,0 +1,54 @@
+{
+  "fixture_version": "v1",
+  "ingestion_run_id": "fixture-run-v1",
+  "taxonomy_release": "fixture-avlist-2025",
+  "policy_version": "fixture-policy-v1",
+  "retrieved_at": "2026-09-03T00:00:00Z",
+  "expected_counts": {
+    "taxonomy": 10,
+    "allowed_observations": 100,
+    "input_observations": 101,
+    "allowed_documents": 2,
+    "allowed_chunks": 4,
+    "gold_questions": 15,
+    "search_questions": 5,
+    "expected_quarantine": 0
+  },
+  "files": [
+    {
+      "path": "input/taxonomy.jsonl",
+      "sha256": "57c42e755db1c60d667d1d46756ea862585a1b04a7afebc5a6ff5420494ca8a0",
+      "bytes": 11220
+    },
+    {
+      "path": "input/observations.jsonl",
+      "sha256": "a2ba2fe2f03c580c8ecfff529decdb301ef9ddce1db1d03fd17aabcb0a55f054",
+      "bytes": 122747
+    },
+    {
+      "path": "input/documents.jsonl",
+      "sha256": "84c6c71866c7e975b4dfd49d6077546c56f3e904413a7eb08dae0ac7a5d57be2",
+      "bytes": 2266
+    },
+    {
+      "path": "input/chunks.jsonl",
+      "sha256": "e46f8c4dbdb6a8771f28f214d2442f7ffed64b5c1abddc538adc2d6a7e584c6f",
+      "bytes": 4996
+    },
+    {
+      "path": "gold-questions.jsonl",
+      "sha256": "ab873ad5796a15eb7b52466bb9cc8c6680700b9a1e4b3e231f9b306f660f5538",
+      "bytes": 5435
+    },
+    {
+      "path": "search-questions.jsonl",
+      "sha256": "b9ee87e7a769e1c9c3890f4d41eed8060448f6bf96c9b2fd4cab3da6d0efb967",
+      "bytes": 715
+    },
+    {
+      "path": "source-registry.json",
+      "sha256": "28c970dadd8cd01f442d8a2542c6cfa445f83e9580c1dd9f943749b8623a18e6",
+      "bytes": 2756
+    }
+  ]
+}
