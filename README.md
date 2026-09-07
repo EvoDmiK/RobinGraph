@@ -19,6 +19,7 @@
 - [Jina 임베딩 어댑터](docs/embedding-adapter.md)
 - [문헌 하이브리드 검색](docs/hybrid-retrieval.md)
 - [n8n 운영 수집 워크플로우와 실행 런북](docs/n8n/README.md)
+- [NAS Docker·Nginx Proxy Manager 배포 런북](docs/nas-deployment.md)
 
 ## Fixture 검증
 
