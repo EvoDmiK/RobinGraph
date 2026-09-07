@@ -388,7 +388,7 @@ const loadOk = statusCode === 202 && serverErrors.length === 0
   && Number(result.loaded_observations) === expected.observation_count
   && Number(result.loaded_media) === expected.media_count
   && Number(result.loaded_quarantine) === expected.quarantine_count
-  && result.active_release === expected.source_release;
+  && result['state.active_release'] === expected.source_release;
 return [{json: {
   ...expected,
   load_ok: loadOk,
@@ -432,7 +432,7 @@ def main() -> None:
         node(
             "Fetch GBIF Korea Aves pages",
             "n8n-nodes-base.httpRequest",
-            4.5,
+            4.4,
             {
                 "url": (
                     "https://api.gbif.org/v1/occurrence/search"
@@ -502,7 +502,7 @@ def main() -> None:
         node(
             "Atomic upsert to Neo4j Query API",
             "n8n-nodes-base.httpRequest",
-            4.5,
+            4.4,
             {
                 "method": "POST",
                 "url": "={{ $('Build run configuration').first().json.neo4j_query_url }}",

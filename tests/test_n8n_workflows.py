@@ -88,6 +88,9 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertIn("parameters: $json", body)
         self.assertIn("MERGE (state:IngestState", body)
 
+        verify_node = by_name["Verify Neo4j response counts"]
+        self.assertIn("result['state.active_release']", verify_node["parameters"]["jsCode"])
+
         self.assertEqual(
             "Notify failure",
             connections["Quality gates passed?"]["main"][1][0]["node"],
@@ -124,6 +127,31 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertNotIn("bearer ", serialized)
         self.assertNotIn("password", serialized)
         self.assertNotIn("robingraph ingest ", serialized)
+
+    def test_nas_api_deployment_maps_existing_credentials(self) -> None:
+        from scripts.deploy_n8n_operational_ingest import build_deployment
+
+        payload = build_deployment(
+            load(FINAL),
+            {"id": "neo4j-id", "name": "Neo4j"},
+            {"id": "discord-id", "name": "Nesty API 키"},
+            "http://neo4j:7474/db/neo4j/query/v2",
+            "guild-id",
+            "channel-id",
+        )
+        by_name = {item["name"]: item for item in payload["nodes"]}
+        load_node = by_name["Atomic upsert to Neo4j Query API"]
+        self.assertEqual("predefinedCredentialType", load_node["parameters"]["authentication"])
+        self.assertEqual("neo4jApi", load_node["parameters"]["nodeCredentialType"])
+        self.assertEqual("neo4j-id", load_node["credentials"]["neo4jApi"]["id"])
+        self.assertNotIn("concurrency", payload["settings"])
+        self.assertIn(
+            "http://neo4j:7474/db/neo4j/query/v2",
+            by_name["Build run configuration"]["parameters"]["jsCode"],
+        )
+        for name in ("Notify success", "Notify failure"):
+            self.assertEqual("channel-id", by_name[name]["parameters"]["channelId"]["value"])
+            self.assertEqual("discord-id", by_name[name]["credentials"]["discordBotApi"]["id"])
 
     @unittest.skipUnless(
         os.environ.get("ROBINGRAPH_NEO4J_INTEGRATION_TESTS") == "1",

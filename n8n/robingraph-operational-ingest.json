@@ -113,7 +113,7 @@
       "id": "a3512a53-bda5-5728-bbf2-163b5650e79c",
       "name": "Fetch GBIF Korea Aves pages",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
+      "typeVersion": 4.4,
       "position": [
         -400,
         0
@@ -224,7 +224,7 @@
       "id": "3b7bc28d-8dee-5048-a06f-bfec49cf5cc4",
       "name": "Atomic upsert to Neo4j Query API",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
+      "typeVersion": 4.4,
       "position": [
         700,
         -140
@@ -235,7 +235,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Normalize, validate and deduplicate GBIF').first().json;\nconst response = $input.first().json;\nconst statusCode = Number(response.statusCode ?? response.status ?? 0);\nconst body = response.body ?? response;\nconst fields = body?.data?.fields || [];\nconst values = body?.data?.values?.[0] || [];\nconst result = Object.fromEntries(fields.map((field, index) => [field, values[index]]));\nconst serverErrors = Array.isArray(body?.errors) ? body.errors : [];\nconst errorText = String(response.error?.message || body?.error?.message || body?.message || serverErrors[0]?.message || '');\nconst loadOk = statusCode === 202 && serverErrors.length === 0\n  && Number(result.loaded_observations) === expected.observation_count\n  && Number(result.loaded_media) === expected.media_count\n  && Number(result.loaded_quarantine) === expected.quarantine_count\n  && result.active_release === expected.source_release;\nreturn [{json: {\n  ...expected,\n  load_ok: loadOk,\n  loaded_observations: Number(result.loaded_observations || 0),\n  loaded_media: Number(result.loaded_media || 0),\n  loaded_quarantine: Number(result.loaded_quarantine || 0),\n  failure_reason: loadOk ? '' : (errorText || `Neo4j verification failed (HTTP ${statusCode || 'unknown'})`)\n}}];"
+        "jsCode": "const expected = $('Normalize, validate and deduplicate GBIF').first().json;\nconst response = $input.first().json;\nconst statusCode = Number(response.statusCode ?? response.status ?? 0);\nconst body = response.body ?? response;\nconst fields = body?.data?.fields || [];\nconst values = body?.data?.values?.[0] || [];\nconst result = Object.fromEntries(fields.map((field, index) => [field, values[index]]));\nconst serverErrors = Array.isArray(body?.errors) ? body.errors : [];\nconst errorText = String(response.error?.message || body?.error?.message || body?.message || serverErrors[0]?.message || '');\nconst loadOk = statusCode === 202 && serverErrors.length === 0\n  && Number(result.loaded_observations) === expected.observation_count\n  && Number(result.loaded_media) === expected.media_count\n  && Number(result.loaded_quarantine) === expected.quarantine_count\n  && result['state.active_release'] === expected.source_release;\nreturn [{json: {\n  ...expected,\n  load_ok: loadOk,\n  loaded_observations: Number(result.loaded_observations || 0),\n  loaded_media: Number(result.loaded_media || 0),\n  loaded_quarantine: Number(result.loaded_quarantine || 0),\n  failure_reason: loadOk ? '' : (errorText || `Neo4j verification failed (HTTP ${statusCode || 'unknown'})`)\n}}];"
       },
       "id": "6b44696c-8925-59b5-ad25-c3b9679b08a1",
       "name": "Verify Neo4j response counts",
