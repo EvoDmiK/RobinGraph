@@ -108,12 +108,34 @@ Discord 서버에서 알림 채널의 **채널 편집 → 연동 → 웹후크 �
 - GitHub Actions의 Neo4j Community 2026.07.1에서 통합본의 동일 Cypher를 합성 관찰 1건으로 실행해 observation 1, media 0, quarantine 0과 active release 반환을 검증함
 - 저장소 정적 테스트는 source pagination, SHA-256, SSH 부재, parameterized Neo4j transaction, fail-closed 분기와 secret 부재를 검사한다.
 
+## NAS Public API 배포 결과
+
+- 2026-09-07 기존 workflow `Mw9tbGM9vyzu6X1F`를 사용자 상태 디렉터리에 백업하고 15-node 네이티브 workflow로 교체했다. SSH node는 0개이며 배포 뒤 inactive 상태를 유지했다.
+- NAS Docker network의 `http://neo4j:7474/db/neo4j/query/v2`에서 기존 `Neo4j` credential로 `RETURN 1`을 실행해 HTTP 202 성공 응답을 확인했다.
+- 실제 trigger execution `17238`에서 GBIF source 19건, observation 19건, media 11건, quarantine 0건과 `load_ok=true`를 확인했다. cursor 갱신과 Discord `전서구` 성공 알림까지 모든 노드가 성공했다.
+- 테스트 직후 workflow를 inactive로 되돌리고 schedule을 `0 2 * * *`로 복원했다.
+
+프로젝트 루트의 Git 제외 `.env`에 `ROBINGRAPH_N8N_API_URL`, `ROBINGRAPH_N8N_API_KEY`, `ROBINGRAPH_N8N_WORKFLOW_ID`를 둔다. 다음 명령은 Credential과 inactive 상태를 확인하고 배포 계획만 출력한다.
+
+```bash
+python3 scripts/deploy_n8n_operational_ingest.py
+```
+
+`--apply`를 붙이면 inactive workflow를 백업한 뒤 교체한다. 백업은 `~/.local/state/robingraph/n8n-backups/`에 권한 `0600`으로 저장한다.
+
+```bash
+python3 scripts/deploy_n8n_operational_ingest.py --apply
+```
+
+NAS 배포는 기존 `Neo4j` credential, `Nesty API 키` Discord Bot credential과 NestControl의 `전서구` 채널을 연결한다. Public API가 UI 전용 `concurrency` 필드를 허용하지 않아 API payload에서는 이 필드를 제외한다.
+
 ## 산출물
 
 | 파일 | 용도 |
 |---|---|
 | `n8n/robingraph-operational-ingest.json` | n8n 네이티브 최종 import 파일 |
 | `scripts/generate_n8n_operational_ingest.py` | 최종 JSON 재생성 스크립트 |
+| `scripts/deploy_n8n_operational_ingest.py` | n8n Public API 점검·백업·배포 스크립트 |
 | `tests/test_n8n_workflows.py` | import shape와 안전 경로 정적 검사 |
 | `docs/n8n/final-operational-ingest.md` | 후보 재평가와 통합 설계 판단 |
 | `n8n/candidates/claude-operational-ingest.json` | Claude 후보 원본, SSH/CLI 중심이라 배포하지 않음 |

@@ -121,12 +121,14 @@ GBIF public API에는 Credential이 필요 없다. Neo4j URL은 `Build run confi
 
 ## 검증 결과
 
-- n8n stable 2.37.10에 있는 HTTP Request 4.5, Code 2, IF 2.3, Crypto 2, Discord 2 노드로 구성했다.
+- NAS n8n에서 실제 사용 중인 HTTP Request 4.4와 Code 2, IF 2.3, Crypto 2, Discord 2 노드로 구성했다. 최신 stable에서도 4.4 workflow import가 가능하다.
 - 생성된 JSON은 공식 `docker.n8n.io/n8nio/n8n:stable import:workflow` 시험을 통과했다.
 - 모든 Code node와 Neo4j JSON body expression은 JavaScript parser 검사를 통과했다.
 - GBIF 실 API의 30일 표본을 실행해 source 19건, 정규화 19건, 허용 media 11건, quarantine 0건을 확인했다.
 - n8n stable의 Manual Trigger로 GBIF HTTP, page SHA-256, 정규화와 quality gate가 실제 실행되는 것을 확인했다. Neo4j placeholder/Credential 단계에서는 예상대로 실패 분기와 `Stop And Error`가 실행됐다.
 - GitHub Actions의 Neo4j Community 2026.07.1에서 동일한 Cypher를 합성 관찰 1건으로 실행해 observation 1, media 0, quarantine 0과 active release 반환을 확인했다.
 - 저장소 테스트는 SSH 노드 0개, pagination 상한과 종료 조건, SHA-256, parameterized Neo4j write, cursor guard, Discord 실패 후 `Stop And Error`, secret literal 부재를 검사한다.
+- NAS Public API로 기존 workflow ID를 유지하면서 최종본을 배포했다. Docker service name `neo4j`와 기존 Neo4j credential로 Query API 연결을 검증했다.
+- 실제 NAS execution `17238`에서 source/observation 19건, media 11건, quarantine 0건을 적재하고 `state.active_release` 반환까지 대조해 `load_ok=true`를 확인했다. 같은 실행의 Discord Bot 성공 알림도 완료됐다.
 
-실제 NAS의 Neo4j URL과 Credential이 아직 연결되지 않았으므로 end-to-end DB write는 수행하지 않았다. Credential을 연결한 뒤에도 첫 Manual Trigger 결과를 확인하기 전에는 workflow를 Publish하지 않는다.
+테스트 뒤 workflow는 inactive 상태이고 schedule은 매일 02:00 KST로 복원했다. 운영 활성화 여부는 별도로 결정한다.
