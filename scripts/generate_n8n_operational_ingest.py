@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from textwrap import dedent
 from uuid import NAMESPACE_URL, uuid5
@@ -119,8 +120,7 @@ return [{
     aves_taxon_key: 212,
     page_size: 300,
     max_pages: 20,
-    maximum_rejected_ratio: 0.25,
-    neo4j_query_url: 'http://REPLACE_WITH_NEO4J_HOST:7474/db/neo4j/query/v2'
+    maximum_rejected_ratio: 0.25
   }
 }];
 """
@@ -168,6 +168,36 @@ const seen = new Set();
 const observations = [];
 const media = [];
 const quarantine = [];
+const taxonById = new Map();
+const taxonLinkById = new Map();
+
+const addTaxon = (key, rank, scientificName, details = {}) => {
+  if (key == null || !scientificName) return null;
+  const externalKey = String(key);
+  const id = `gbif-taxon:${externalKey}`;
+  const existing = taxonById.get(id) || {};
+  taxonById.set(id, {
+    ...existing,
+    id,
+    external_key: externalKey,
+    provider: 'GBIF Backbone',
+    rank: String(rank || 'UNKNOWN').toLowerCase(),
+    scientific_name: String(scientificName),
+    canonical_name: details.canonical_name == null ? (existing.canonical_name ?? null) : String(details.canonical_name),
+    authorship: details.authorship == null ? (existing.authorship ?? null) : String(details.authorship),
+    taxonomic_status: details.taxonomic_status == null ? (existing.taxonomic_status ?? null) : String(details.taxonomic_status).toLowerCase(),
+    vernacular_name_raw: details.vernacular_name_raw == null ? (existing.vernacular_name_raw ?? null) : String(details.vernacular_name_raw),
+    source_uri: `https://www.gbif.org/species/${externalKey}`,
+    retrieved_at: config.retrieved_at
+  });
+  return id;
+};
+
+const addTaxonLink = (parentId, childId) => {
+  if (!parentId || !childId || parentId === childId) return;
+  const id = `${parentId}->${childId}`;
+  taxonLinkById.set(id, {id, parent_id: parentId, child_id: childId});
+};
 
 for (const {raw, pageHash} of rawRecords) {
   const externalId = String(raw.gbifID ?? raw.key ?? 'missing');
@@ -205,12 +235,34 @@ for (const {raw, pageHash} of rawRecords) {
   const generalized = Boolean(raw.informationWithheld || raw.dataGeneralizations || issues.includes('COORDINATE_ROUNDED'));
   const placeLabel = raw.locality || raw.stateProvince || raw.countryCode || 'Republic of Korea';
   const observationId = `gbif-observation:${externalId}`;
+  const hierarchy = [
+    [raw.kingdomKey, 'kingdom', raw.kingdom],
+    [raw.phylumKey, 'phylum', raw.phylum],
+    [raw.classKey, 'class', raw.class],
+    [raw.orderKey, 'order', raw.order],
+    [raw.familyKey, 'family', raw.family],
+    [raw.genusKey, 'genus', raw.genus],
+    [raw.speciesKey, 'species', raw.species]
+  ];
+  const hierarchyIds = hierarchy
+    .map(([key, rank, name]) => addTaxon(key, rank, name, {canonical_name: name}))
+    .filter(Boolean);
+  for (let index = 1; index < hierarchyIds.length; index += 1) {
+    addTaxonLink(hierarchyIds[index - 1], hierarchyIds[index]);
+  }
+  const acceptedTaxonId = addTaxon(taxonKey, raw.taxonRank || raw.rank, raw.acceptedScientificName || raw.scientificName, {
+    canonical_name: raw.species || raw.genericName || null,
+    authorship: raw.scientificNameAuthorship,
+    taxonomic_status: raw.taxonomicStatus,
+    vernacular_name_raw: raw.vernacularName
+  });
+  addTaxonLink(hierarchyIds.at(-1), acceptedTaxonId);
   observations.push({
     id: observationId,
     external_id: externalId,
     occurrence_id: String(raw.occurrenceID || externalId),
     event_id: raw.eventID == null ? null : String(raw.eventID),
-    external_taxon_id: `gbif-taxon:${taxonKey}`,
+    external_taxon_id: acceptedTaxonId,
     external_taxon_key: String(taxonKey),
     scientific_name: String(raw.acceptedScientificName || raw.scientificName),
     scientific_name_raw: String(raw.scientificName),
@@ -258,6 +310,8 @@ for (const {raw, pageHash} of rawRecords) {
 }
 
 const rejectedRatio = rawRecords.length ? quarantine.length / rawRecords.length : 1;
+const birdTaxa = [...taxonById.values()];
+const taxonLinks = [...taxonLinkById.values()];
 const failureReasons = [];
 if (!pages.length) failureReasons.push('GBIF returned no valid page objects');
 if (pageErrors.length) failureReasons.push(`${pageErrors.length} GBIF page request(s) failed`);
@@ -274,11 +328,15 @@ return [{json: {
   page_count: pages.length,
   source_count: rawRecords.length,
   observation_count: observations.length,
+  taxon_count: birdTaxa.length,
+  taxon_link_count: taxonLinks.length,
   media_count: media.length,
   quarantine_count: quarantine.length,
   rejected_ratio: rejectedRatio,
   truncated,
   observations,
+  bird_taxa: birdTaxa,
+  taxon_links: taxonLinks,
   media,
   quarantine
 }}];
@@ -291,8 +349,53 @@ NEO4J_STATEMENT = " ".join(
         MERGE (run:IngestionRun {id: $run_id})
         SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at,
             run.source_release = $source_release, run.status = 'loading',
-            run.source_count = $source_count, run.quarantine_count = $quarantine_count
+            run.source_count = $source_count, run.taxon_count = $taxon_count,
+            run.quarantine_count = $quarantine_count
         WITH run
+        CALL {
+          WITH run
+          MERGE (concept_set:TaxonConceptSet {id: 'rg:concept-set:gbif-current'})
+          SET concept_set.title = 'GBIF taxonomic backbone', concept_set.version = 'mutable-current',
+              concept_set.source_uri = 'https://www.gbif.org/species/search',
+              concept_set.retrieved_at = $retrieved_at
+          MERGE (taxonomy_dataset:SourceDataset {id: 'gbif-dataset:taxonomic-backbone'})
+          SET taxonomy_dataset.name = 'GBIF taxonomic backbone', taxonomy_dataset.provider = 'GBIF',
+              taxonomy_dataset.version = 'mutable-current',
+              taxonomy_dataset.landing_uri = 'https://www.gbif.org/species/search',
+              taxonomy_dataset.policy_status = 'allowed'
+          MERGE (taxonomy_license:License {id: 'https://creativecommons.org/licenses/by/4.0/'})
+          SET taxonomy_license.license_uri = 'https://creativecommons.org/licenses/by/4.0/',
+              taxonomy_license.policy_status = 'allowed'
+          MERGE (taxonomy_dataset)-[:LICENSED_UNDER]->(taxonomy_license)
+          MERGE (concept_set)-[:FROM_DATASET]->(taxonomy_dataset)
+          WITH run, concept_set
+          UNWIND $bird_taxa AS row
+          MERGE (taxon:ExternalTaxonConcept {id: row.id})
+          SET taxon:BirdTaxon,
+              taxon.provider = row.provider, taxon.external_key = row.external_key,
+              taxon.scientific_name = row.scientific_name, taxon.canonical_name = row.canonical_name,
+              taxon.authorship = row.authorship, taxon.rank = row.rank,
+              taxon.taxonomic_status = row.taxonomic_status,
+              taxon.vernacular_name_raw = row.vernacular_name_raw,
+              taxon.source_uri = row.source_uri, taxon.retrieved_at = row.retrieved_at
+          MERGE (scientific_name:ScientificName {id: 'gbif-scientific-name:' + row.external_key})
+          SET scientific_name.full_name = row.scientific_name,
+              scientific_name.canonical = row.canonical_name,
+              scientific_name.authorship = row.authorship,
+              scientific_name.nomenclatural_code = 'ICZN'
+          MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name)
+          MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set)
+          MERGE (run)-[:INGESTED]->(taxon)
+          RETURN count(*) AS loaded_taxa
+        }
+        CALL {
+          WITH run
+          UNWIND $taxon_links AS row
+          MATCH (parent:ExternalTaxonConcept {id: row.parent_id})
+          MATCH (child:ExternalTaxonConcept {id: row.child_id})
+          MERGE (parent)-[:PARENT_OF {provider: 'GBIF'}]->(child)
+          RETURN count(*) AS loaded_taxon_links
+        }
         CALL {
           WITH run
           UNWIND $observations AS row
@@ -310,9 +413,8 @@ NEO4J_STATEMENT = " ".join(
               source.retrieved_at = row.retrieved_at, source.source_updated_at = row.source_updated_at,
               source.issues = row.issues
           MERGE (source)-[:IN_DATASET]->(dataset)
-          MERGE (taxon:ExternalTaxonConcept {id: row.external_taxon_id})
-          SET taxon.provider = 'GBIF Backbone', taxon.external_key = row.external_taxon_key,
-              taxon.scientific_name = row.scientific_name, taxon.rank = row.taxon_rank
+          WITH run, row, source
+          MATCH (taxon:ExternalTaxonConcept {id: row.external_taxon_id})
           MERGE (place:Place {id: row.place_id})
           SET place.name = row.place_name, place.country_code = 'KR', place.place_type = 'gbif_admin_area'
           MERGE (observation:Observation {id: row.id})
@@ -364,27 +466,51 @@ NEO4J_STATEMENT = " ".join(
           RETURN count(*) AS loaded_quarantine
         }
         SET run.status = 'succeeded', run.finished_at = datetime(),
+            run.taxon_count = loaded_taxa, run.taxon_link_count = loaded_taxon_links,
             run.observation_count = loaded_observations, run.media_count = loaded_media
         MERGE (state:IngestState {id: $pipeline_id})
         SET state.active_release = $source_release, state.last_successful_run_id = $run_id,
             state.last_successful_at = datetime(), state.event_date_end = $event_date_end
-        RETURN loaded_observations, loaded_media, loaded_quarantine, state.active_release
+        RETURN loaded_taxa, loaded_taxon_links, loaded_observations, loaded_media,
+               loaded_quarantine, state.active_release
         """
     ).split()
 )
 
 
+# The community node calls graph.query(cypherQuery) without a parameters argument.
+# Substitute only placeholders in the trusted template, never in external values.
+CYPHER_LITERAL_JS = r"""
+const literal = value => {
+  if (value === null) return 'null';
+  if (typeof value === 'string') return "'" + value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/[\u0000-\u001f\u007f]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + "'";
+  if (typeof value === 'boolean') return String(value);
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';
+  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');
+    return key + ':' + literal(val);
+  }).join(',') + '}';
+  throw new Error('Unsupported Cypher value');
+};
+"""
+
+
+def community_cypher_expression() -> str:
+    keys = sorted(set(re.findall(r"\$([A-Za-z_][A-Za-z0-9_]*)", NEO4J_STATEMENT)))
+    return "={{ (() => { " + CYPHER_LITERAL_JS + "const values = {" + ",".join(
+        json.dumps(key) + ": literal($json[" + json.dumps(key) + "])" for key in keys
+    ) + "}; return " + json.dumps(NEO4J_STATEMENT) + r".replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+
+
 ASSESS_NEO4J = r"""
 const expected = $('Normalize, validate and deduplicate GBIF').first().json;
 const response = $input.first().json;
-const statusCode = Number(response.statusCode ?? response.status ?? 0);
-const body = response.body ?? response;
-const fields = body?.data?.fields || [];
-const values = body?.data?.values?.[0] || [];
-const result = Object.fromEntries(fields.map((field, index) => [field, values[index]]));
-const serverErrors = Array.isArray(body?.errors) ? body.errors : [];
-const errorText = String(response.error?.message || body?.error?.message || body?.message || serverErrors[0]?.message || '');
-const loadOk = statusCode === 202 && serverErrors.length === 0
+const result = response;
+const errorText = String(response.error?.message || response.error || response.message || '');
+const loadOk = !errorText
+  && Number(result.loaded_taxa) === expected.taxon_count
+  && Number(result.loaded_taxon_links) === expected.taxon_link_count
   && Number(result.loaded_observations) === expected.observation_count
   && Number(result.loaded_media) === expected.media_count
   && Number(result.loaded_quarantine) === expected.quarantine_count
@@ -392,10 +518,12 @@ const loadOk = statusCode === 202 && serverErrors.length === 0
 return [{json: {
   ...expected,
   load_ok: loadOk,
+  loaded_taxa: Number(result.loaded_taxa || 0),
+  loaded_taxon_links: Number(result.loaded_taxon_links || 0),
   loaded_observations: Number(result.loaded_observations || 0),
   loaded_media: Number(result.loaded_media || 0),
   loaded_quarantine: Number(result.loaded_quarantine || 0),
-  failure_reason: loadOk ? '' : (errorText || `Neo4j verification failed (HTTP ${statusCode || 'unknown'})`)
+  failure_reason: loadOk ? '' : (errorText || 'Neo4j result counts or active release do not match')
 }}];
 """
 
@@ -425,7 +553,7 @@ def main() -> None:
             BUILD_CONFIGURATION,
             (-680, 0),
             notes=(
-                "Edit neo4j_query_url before the first run. The workflow defaults to a thirty-day window "
+                "Select the Neo4j credential before the first run. The workflow defaults to a thirty-day window "
                 "and advances its cursor only after a verified atomic load."
             ),
         ),
@@ -500,38 +628,19 @@ def main() -> None:
         code("Normalize, validate and deduplicate GBIF", NORMALIZE_GBIF, (110, 0)),
         boolean_if("Quality gates passed?", "={{ $json.ready_to_load }}", (410, 0)),
         node(
-            "Atomic upsert to Neo4j Query API",
-            "n8n-nodes-base.httpRequest",
-            4.4,
+            "Atomic upsert to Neo4j",
+            "n8n-nodes-neo4j.neo4j",
+            1,
             {
-                "method": "POST",
-                "url": "={{ $('Build run configuration').first().json.neo4j_query_url }}",
-                "authentication": "genericCredentialType",
-                "genericAuthType": "httpBasicAuth",
-                "sendHeaders": True,
-                "headerParameters": {"parameters": [{"name": "Content-Type", "value": "application/json"}]},
-                "sendBody": True,
-                "contentType": "json",
-                "specifyBody": "json",
-                "jsonBody": (
-                    "={{ JSON.stringify({ statement: "
-                    + json.dumps(NEO4J_STATEMENT)
-                    + ", parameters: $json, txMetadata: { app: 'RobinGraph n8n', run_id: $json.run_id }, "
-                    "maxExecutionTime: 120 }) }}"
-                ),
-                "options": {
-                    "response": {
-                        "response": {"fullResponse": True, "neverError": True, "responseFormat": "json"}
-                    },
-                    "timeout": 150000,
-                },
+                "resource": "graphDb",
+                "operation": "executeQuery",
+                "cypherQuery": community_cypher_expression(),
             },
             (700, -140),
+            credentials={"neo4jApi": {"id": "DvmTD1qB0Kb7TRml", "name": "Neo4j"}},
             onError="continueRegularOutput",
-            notes=(
-                "Map a generic HTTP Basic Auth credential for Neo4j. This single Query API request is an "
-                "implicit transaction: any Cypher failure rolls back the whole batch."
-            ),
+            alwaysOutputData=True,
+            notes="Execute one atomic Cypher statement using the Neo4j credential. Values are escaped as Cypher literals because this community node has no query parameter input.",
         ),
         code("Verify Neo4j response counts", ASSESS_NEO4J, (990, -140)),
         boolean_if("Atomic load verified?", "={{ $json.load_ok }}", (1270, -140)),
@@ -540,7 +649,8 @@ def main() -> None:
             "Notify success",
             "={{ '✅ **RobinGraph GBIF ingest succeeded**\\nRun: ' + $json.run_id + "
             "'\\nWindow: ' + $json.event_date_start + ' → ' + $json.event_date_end + "
-            "'\\nSource: ' + $json.source_count + ', loaded: ' + $json.loaded_observations + "
+            "'\\nSource: ' + $json.source_count + ', birds: ' + $json.loaded_taxa + "
+            "', observations: ' + $json.loaded_observations + "
             "', media: ' + $json.loaded_media + ', quarantine: ' + $json.loaded_quarantine }}",
             (1810, -260),
         ),
@@ -570,9 +680,9 @@ def main() -> None:
         "Hash each raw GBIF page": {"main": [[edge("Normalize, validate and deduplicate GBIF")]]},
         "Normalize, validate and deduplicate GBIF": {"main": [[edge("Quality gates passed?")]]},
         "Quality gates passed?": {
-            "main": [[edge("Atomic upsert to Neo4j Query API")], [edge("Notify failure")]]
+            "main": [[edge("Atomic upsert to Neo4j")], [edge("Notify failure")]]
         },
-        "Atomic upsert to Neo4j Query API": {"main": [[edge("Verify Neo4j response counts")]]},
+        "Atomic upsert to Neo4j": {"main": [[edge("Verify Neo4j response counts")]]},
         "Verify Neo4j response counts": {"main": [[edge("Atomic load verified?")]]},
         "Atomic load verified?": {"main": [[edge("Advance n8n cursor")], [edge("Notify failure")]]},
         "Advance n8n cursor": {"main": [[edge("Notify success")]]},

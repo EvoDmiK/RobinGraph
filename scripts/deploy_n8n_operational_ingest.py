@@ -12,7 +12,6 @@ from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "n8n" / "robingraph-operational-ingest.json"
-DEFAULT_NEO4J_URL = "http://neo4j:7474/db/neo4j/query/v2"
 DEFAULT_DISCORD_GUILD_ID = "1504129603310981120"
 DEFAULT_DISCORD_CHANNEL_ID = "1541317761517756436"
 
@@ -62,7 +61,6 @@ def build_deployment(
     workflow: dict[str, object],
     neo4j_credential: dict[str, str],
     discord_credential: dict[str, str],
-    neo4j_url: str,
     discord_guild_id: str,
     discord_channel_id: str,
 ) -> dict[str, object]:
@@ -71,16 +69,7 @@ def build_deployment(
 
     for item in deployed["nodes"]:
         name = item["name"]
-        if name == "Build run configuration":
-            item["parameters"]["jsCode"] = item["parameters"]["jsCode"].replace(
-                "http://REPLACE_WITH_NEO4J_HOST:7474/db/neo4j/query/v2",
-                neo4j_url,
-            )
-        elif name == "Atomic upsert to Neo4j Query API":
-            parameters = item["parameters"]
-            parameters["authentication"] = "predefinedCredentialType"
-            parameters.pop("genericAuthType", None)
-            parameters["nodeCredentialType"] = "neo4jApi"
+        if name == "Atomic upsert to Neo4j":
             item["credentials"] = {"neo4jApi": neo4j_credential}
         elif name in {"Notify success", "Notify failure"}:
             content = item["parameters"]["content"]
@@ -133,15 +122,11 @@ def main() -> None:
         os.environ.get("ROBINGRAPH_N8N_DISCORD_CREDENTIAL", "Nesty API 키"),
         "discordBotApi",
     )
-    neo4j_url = os.environ.get("ROBINGRAPH_NEO4J_QUERY_URL", "").strip()
-    if not neo4j_url or "REPLACE_WITH_NEO4J_HOST" in neo4j_url:
-        neo4j_url = DEFAULT_NEO4J_URL
     source = json.loads(SOURCE.read_text(encoding="utf-8"))
     payload = build_deployment(
         source,
         neo4j,
         discord,
-        neo4j_url,
         os.environ.get("ROBINGRAPH_DISCORD_GUILD_ID", DEFAULT_DISCORD_GUILD_ID),
         os.environ.get("ROBINGRAPH_DISCORD_CHANNEL_ID", DEFAULT_DISCORD_CHANNEL_ID),
     )
