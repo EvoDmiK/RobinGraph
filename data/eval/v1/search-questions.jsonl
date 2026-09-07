@@ -1,0 +1,5 @@
+{"question_id": "SQ-001", "question_ko": "fixture 호수의 흰뺨검둥오리 관찰 기록", "relevant_chunk_ids": ["fixture-chunk-waterbirds-1"]}
+{"question_id": "SQ-002", "question_ko": "물가 서식지를 설명한 문서", "relevant_chunk_ids": ["fixture-chunk-waterbirds-2"]}
+{"question_id": "SQ-003", "question_ko": "도시 녹지 서식지를 설명한 문서", "relevant_chunk_ids": ["fixture-chunk-woodland-2"]}
+{"question_id": "SQ-004", "question_ko": "쇠딱다구리와 제비의 관찰 기록", "relevant_chunk_ids": ["fixture-chunk-woodland-1"]}
+{"forbidden_chunk_ids": ["fixture-chunk-review-1"], "question_id": "SQ-005", "question_ko": "검토 대기 정책 텍스트", "relevant_chunk_ids": []}

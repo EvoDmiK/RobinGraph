@@ -1,0 +1,530 @@
+{
+  "id": "3df21ed3-63d6-54a9-a99c-9f961484d14e",
+  "name": "RobinGraph — Claude operational ingest (fail-closed candidate)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1b20001-0000-0000-0000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-1320, 180]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b20002-0000-0000-0000-000000000002",
+      "name": "Schedule Trigger — daily 02:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1320, 20]
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest lock acquire --run-id 'n8n-{{$execution.id}}' --lock-dir \"$ROBINGRAPH_INGEST_LOCK_DIR\" --stale-after-seconds \"$ROBINGRAPH_INGEST_LOCK_STALE_SECONDS\""
+      },
+      "id": "a1b20003-0000-0000-0000-000000000003",
+      "name": "Acquire exclusive ingest lock — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [-1080, 100],
+      "retryOnFail": false,
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest preflight --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --scope taxonomy --require-enabled --require-policy allowed --require-approved-release --run-id 'n8n-{{$execution.id}}'"
+      },
+      "id": "a1b20004-0000-0000-0000-000000000004",
+      "name": "Preflight taxonomy — enabled, allowed, approved release — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [-820, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest preflight --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --scope observations --require-enabled --require-policy allowed --require-approved-release --run-id 'n8n-{{$execution.id}}'"
+      },
+      "id": "a1b20005-0000-0000-0000-000000000005",
+      "name": "Preflight observations — enabled, allowed, approved release — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [-560, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest preflight --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --scope documents-media --require-enabled --require-policy allowed --require-approved-release --run-id 'n8n-{{$execution.id}}'"
+      },
+      "id": "a1b20006-0000-0000-0000-000000000006",
+      "name": "Preflight documents-media — enabled, allowed, approved release — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [-300, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest fetch --run-id 'n8n-{{$execution.id}}' --registry \"$ROBINGRAPH_SOURCE_REGISTRY\" --raw-root \"$ROBINGRAPH_RAW_ROOT\""
+      },
+      "id": "a1b20007-0000-0000-0000-000000000007",
+      "name": "Fetch approved sources — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [-40, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest normalize --run-id 'n8n-{{$execution.id}}' --staging-root \"$ROBINGRAPH_STAGING_ROOT\""
+      },
+      "id": "a1b20008-0000-0000-0000-000000000008",
+      "name": "Normalize staging Parquet — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [220, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest validate --run-id 'n8n-{{$execution.id}}' --quarantine-root \"$ROBINGRAPH_QUARANTINE_ROOT\""
+      },
+      "id": "a1b20009-0000-0000-0000-000000000009",
+      "name": "Validate + quarantine rows — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [480, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest resolve --run-id 'n8n-{{$execution.id}}' --taxonomy-release \"$ROBINGRAPH_TAXONOMY_RELEASE\""
+      },
+      "id": "a1b20010-0000-0000-0000-000000000010",
+      "name": "Resolve taxonomy — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [740, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest dedupe --run-id 'n8n-{{$execution.id}}'"
+      },
+      "id": "a1b20011-0000-0000-0000-000000000011",
+      "name": "Dedupe without deletion — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [1000, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest embed --run-id 'n8n-{{$execution.id}}' --embedding-profile \"$ROBINGRAPH_EMBEDDING_PROFILE\""
+      },
+      "id": "a1b20012-0000-0000-0000-000000000012",
+      "name": "Embed allowed chunks only — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [1260, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest load --run-id 'n8n-{{$execution.id}}' --target-release \"$ROBINGRAPH_CANDIDATE_RELEASE\""
+      },
+      "id": "a1b20013-0000-0000-0000-000000000013",
+      "name": "Idempotent graph load — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [1520, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest verify --run-id 'n8n-{{$execution.id}}' --candidate-release \"$ROBINGRAPH_CANDIDATE_RELEASE\" --quality-gates \"$ROBINGRAPH_QUALITY_GATES\" --exit-zero"
+      },
+      "id": "a1b20014-0000-0000-0000-000000000014",
+      "name": "Verify candidate — exits 0, stdout JSON gate result — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [1780, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = $input.first().json.stdout || '{}';\nlet g;\ntry { g = JSON.parse(out); } catch (e) { g = { gate_passed: false, parse_error: true }; }\nreturn [{ json: { gate_passed: g.gate_passed === true, gate_results: g.gate_results || {}, summary: g.summary || '', raw_stdout: out } }];"
+      },
+      "id": "a1b20015-0000-0000-0000-000000000015",
+      "name": "Parse quality gate JSON from verify stdout",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2040, 100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "gate-condition",
+              "leftValue": "={{$json.gate_passed}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b20016-0000-0000-0000-000000000016",
+      "name": "IF: quality gate passed? — activate only if true",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2300, 100]
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest activate --run-id 'n8n-{{$execution.id}}' --candidate-release \"$ROBINGRAPH_CANDIDATE_RELEASE\""
+      },
+      "id": "a1b20017-0000-0000-0000-000000000017",
+      "name": "Activate only verified release — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [2560, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest summarize --run-id 'n8n-{{$execution.id}}' --status succeeded"
+      },
+      "id": "a1b20018-0000-0000-0000-000000000018",
+      "name": "Execution summary succeeded — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [2820, 100],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.ROBINGRAPH_ALERT_WEBHOOK_URL}}",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify({run_id: 'n8n-' + $execution.id, status: 'succeeded', triggered_by: $execution.mode, summary: $json.stdout || 'No summary. Check Mac mini manifest.', timestamp: new Date().toISOString()})}}",
+        "options": {}
+      },
+      "id": "a1b20019-0000-0000-0000-000000000019",
+      "name": "Notify success via webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3080, 100],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest summarize --run-id 'n8n-{{$execution.id}}' --status failed"
+      },
+      "id": "a1b20021-0000-0000-0000-000000000021",
+      "name": "Execution summary failed — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [420, 420],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.ROBINGRAPH_ALERT_WEBHOOK_URL}}",
+        "authentication": "none",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{JSON.stringify({run_id: 'n8n-' + $execution.id, status: 'failed', triggered_by: $execution.mode, summary: $json.stdout || 'Ingest blocked or failed. No candidate release activated. Check Mac mini manifest and n8n execution log.', timestamp: new Date().toISOString()})}}",
+        "options": {}
+      },
+      "id": "a1b20022-0000-0000-0000-000000000022",
+      "name": "Notify failure or blocked preflight via webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 420],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "resource": "command",
+        "command": "robingraph ingest lock release --run-id 'n8n-{{$execution.id}}' --lock-dir \"$ROBINGRAPH_INGEST_LOCK_DIR\""
+      },
+      "id": "a1b20020-0000-0000-0000-000000000020",
+      "name": "Release exclusive ingest lock — CLI contract required",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [3340, 260],
+      "onError": "continueErrorOutput",
+      "credentials": {
+        "sshPassword": {
+          "id": "__SET_ON_IMPORT__",
+          "name": "Mac mini RobinGraph ingest SSH"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{"node": "Acquire exclusive ingest lock — CLI contract required", "type": "main", "index": 0}]]
+    },
+    "Schedule Trigger — daily 02:00": {
+      "main": [[{"node": "Acquire exclusive ingest lock — CLI contract required", "type": "main", "index": 0}]]
+    },
+    "Acquire exclusive ingest lock — CLI contract required": {
+      "main": [
+        [{"node": "Preflight taxonomy — enabled, allowed, approved release — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Preflight taxonomy — enabled, allowed, approved release — CLI contract required": {
+      "main": [
+        [{"node": "Preflight observations — enabled, allowed, approved release — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Preflight observations — enabled, allowed, approved release — CLI contract required": {
+      "main": [
+        [{"node": "Preflight documents-media — enabled, allowed, approved release — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Preflight documents-media — enabled, allowed, approved release — CLI contract required": {
+      "main": [
+        [{"node": "Fetch approved sources — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Fetch approved sources — CLI contract required": {
+      "main": [
+        [{"node": "Normalize staging Parquet — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Normalize staging Parquet — CLI contract required": {
+      "main": [
+        [{"node": "Validate + quarantine rows — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Validate + quarantine rows — CLI contract required": {
+      "main": [
+        [{"node": "Resolve taxonomy — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Resolve taxonomy — CLI contract required": {
+      "main": [
+        [{"node": "Dedupe without deletion — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Dedupe without deletion — CLI contract required": {
+      "main": [
+        [{"node": "Embed allowed chunks only — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Embed allowed chunks only — CLI contract required": {
+      "main": [
+        [{"node": "Idempotent graph load — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Idempotent graph load — CLI contract required": {
+      "main": [
+        [{"node": "Verify candidate — exits 0, stdout JSON gate result — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Verify candidate — exits 0, stdout JSON gate result — CLI contract required": {
+      "main": [
+        [{"node": "Parse quality gate JSON from verify stdout", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Parse quality gate JSON from verify stdout": {
+      "main": [
+        [{"node": "IF: quality gate passed? — activate only if true", "type": "main", "index": 0}]
+      ]
+    },
+    "IF: quality gate passed? — activate only if true": {
+      "main": [
+        [{"node": "Activate only verified release — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Activate only verified release — CLI contract required": {
+      "main": [
+        [{"node": "Execution summary succeeded — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Execution summary succeeded — CLI contract required": {
+      "main": [
+        [{"node": "Notify success via webhook", "type": "main", "index": 0}],
+        [{"node": "Execution summary failed — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Notify success via webhook": {
+      "main": [
+        [{"node": "Release exclusive ingest lock — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Release exclusive ingest lock — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Execution summary failed — CLI contract required": {
+      "main": [
+        [{"node": "Notify failure or blocked preflight via webhook", "type": "main", "index": 0}],
+        [{"node": "Release exclusive ingest lock — CLI contract required", "type": "main", "index": 0}]
+      ]
+    },
+    "Notify failure or blocked preflight via webhook": {
+      "main": [
+        [{"node": "Release exclusive ingest lock — CLI contract required", "type": "main", "index": 0}],
+        [{"node": "Release exclusive ingest lock — CLI contract required", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner",
+    "concurrency": 1
+  },
+  "versionId": "c8f1a234-5678-9abc-def0-123456789abc",
+  "meta": {"templateCredsSetupCompleted": false},
+  "tags": []
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RobinGraph source registry entry",
+  "type": "object",
+  "required": [
+    "source_id",
+    "name",
+    "provider",
+    "landing_uri",
+    "access_method",
+    "auth_method",
+    "release_strategy",
+    "license_uri",
+    "adapter_owner",
+    "enabled",
+    "license_policy_status"
+  ],
+  "properties": {
+    "source_id": {"type": "string", "minLength": 1},
+    "name": {"type": "string", "minLength": 1},
+    "provider": {"type": "string", "minLength": 1},
+    "landing_uri": {"type": "string", "format": "uri"},
+    "access_method": {"enum": ["api", "download", "manual"]},
+    "auth_method": {"enum": ["none", "api_key", "oauth", "manual"]},
+    "release_strategy": {"enum": ["versioned", "dated_snapshot", "mutable"]},
+    "incremental_cursor": {"type": ["string", "null"]},
+    "rate_limit_note": {"type": ["string", "null"]},
+    "license_uri": {"type": "string", "format": "uri"},
+    "license_name": {"type": ["string", "null"]},
+    "terms_uri": {"type": ["string", "null"], "format": "uri"},
+    "adapter_owner": {"type": "string", "minLength": 1},
+    "enabled": {"type": "boolean"},
+    "license_policy_status": {"enum": ["allowed", "restricted", "review_required", "denied"]}
+  },
+  "additionalProperties": false
+}

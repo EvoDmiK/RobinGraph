@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "robingraph"
+version = "0.1.0"
+description = "Evidence-grounded bird information GraphRAG"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+authors = [{ name = "RobinGraph" }]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "neo4j>=6,<7",
+  "uvicorn[standard]>=0.30,<1",
+]
+
+[project.optional-dependencies]
+test = [
+  "httpx2>=2.12,<3",
+]
+
+[project.scripts]
+robingraph = "robingraph.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.unittest]
+start-directory = "tests"

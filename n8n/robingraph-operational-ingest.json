@@ -1,0 +1,523 @@
+{
+  "id": "c6eeb933-a5ca-538e-862e-37f8e85ba765",
+  "name": "RobinGraph — native GBIF ingest to Neo4j (inactive until credentials verified)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4eed88d3-8436-5eef-91d8-c2afae520514",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "c326b3b6-94f5-5312-8d02-ed207e1b20af",
+      "name": "Schedule Trigger — daily 02:00 KST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst now = new Date();\nconst endDate = now.toISOString().slice(0, 10);\nconst fallbackStart = new Date(now);\nfallbackStart.setUTCDate(fallbackStart.getUTCDate() - 30);\nconst startDate = state.last_successful_event_date || fallbackStart.toISOString().slice(0, 10);\n\nreturn [{\n  json: {\n    run_id: `n8n-${$execution.id}`,\n    pipeline_id: 'gbif-occurrence-kr-aves',\n    retrieved_at: now.toISOString(),\n    event_date_start: startDate,\n    event_date_end: endDate,\n    source_release: `gbif-live-${endDate}`,\n    country: 'KR',\n    aves_taxon_key: 212,\n    page_size: 300,\n    max_pages: 20,\n    maximum_rejected_ratio: 0.25\n  }\n}];"
+      },
+      "id": "c1198591-b44b-5763-8fee-b436914c0e15",
+      "name": "Build run configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        0
+      ],
+      "notes": "Select the Neo4j credential before the first run. The workflow defaults to a thirty-day window and advances its cursor only after a verified atomic load."
+    },
+    {
+      "parameters": {
+        "url": "https://api.gbif.org/v1/occurrence/search?license=CC0_1_0&license=CC_BY_4_0",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "country",
+              "value": "={{ $('Build run configuration').first().json.country }}"
+            },
+            {
+              "name": "taxon_key",
+              "value": "={{ $('Build run configuration').first().json.aves_taxon_key }}"
+            },
+            {
+              "name": "has_coordinate",
+              "value": "true"
+            },
+            {
+              "name": "occurrence_status",
+              "value": "present"
+            },
+            {
+              "name": "event_date",
+              "value": "={{ $('Build run configuration').first().json.event_date_start + ',' + $('Build run configuration').first().json.event_date_end }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $('Build run configuration').first().json.page_size }}"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "updateAParameterInEachRequest",
+              "parameters": {
+                "parameters": [
+                  {
+                    "type": "qs",
+                    "name": "offset",
+                    "value": "={{ $pageCount * $('Build run configuration').first().json.page_size }}"
+                  }
+                ]
+              },
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ $response.body.endOfRecords === true }}",
+              "limitPagesFetched": true,
+              "maxRequests": 20,
+              "requestInterval": 200
+            }
+          },
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "a3512a53-bda5-5728-bbf2-163b5650e79c",
+      "name": "Fetch GBIF Korea Aves pages",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -400,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput",
+      "notes": "Calls the public GBIF API directly. Pagination is capped at 6,000 records per run."
+    },
+    {
+      "parameters": {
+        "action": "hash",
+        "binaryData": false,
+        "type": "SHA256",
+        "value": "={{ JSON.stringify($json.body ?? $json) }}",
+        "dataPropertyName": "raw_sha256",
+        "encoding": "hex"
+      },
+      "id": "c20d6887-c834-5c59-a42f-150cf1ed80b1",
+      "name": "Hash each raw GBIF page",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        -150,
+        0
+      ],
+      "notes": "Hashes every raw API page before normalization. Only the hash and source record URI are persisted."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const config = $('Build run configuration').first().json;\nconst inputItems = $input.all();\nconst pages = inputItems.map(item => {\n  const value = item.json;\n  const body = value.body ?? value;\n  return {...body, __status: Number(value.statusCode ?? 200), __raw_sha256: value.raw_sha256 ?? null};\n}).filter(page => Array.isArray(page.results));\nconst pageErrors = inputItems.filter(item => {\n  const value = item.json;\n  const body = value.body ?? value;\n  const status = Number(value.statusCode ?? 200);\n  return status < 200 || status >= 300 || !Array.isArray(body.results);\n});\nconst rawRecords = pages.flatMap(page => page.results.map(raw => ({raw, pageHash: page.__raw_sha256})));\nconst lastPage = pages.at(-1);\nconst truncated = Boolean(lastPage && lastPage.endOfRecords !== true && pages.length >= config.max_pages);\n\nconst allowedLicense = value => {\n  const normalized = String(value || '').toLowerCase().replace(/^https:/, 'http:').replace(/legalcode\\/?$/, '');\n  return [\n    'http://creativecommons.org/publicdomain/zero/1.0/',\n    'http://creativecommons.org/licenses/by/3.0/',\n    'http://creativecommons.org/licenses/by/4.0/'\n  ].includes(normalized);\n};\nconst datePrecision = value => {\n  const text = String(value || '');\n  if (/^\\d{4}-\\d{2}-\\d{2}T/.test(text)) return 'instant';\n  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(text)) return 'day';\n  if (/^\\d{4}-\\d{2}$/.test(text)) return 'month';\n  if (/^\\d{4}$/.test(text)) return 'year';\n  return 'unknown';\n};\nconst coordinateIssueCodes = new Set([\n  'ZERO_COORDINATE', 'COORDINATE_INVALID', 'COORDINATE_OUT_OF_RANGE',\n  'COUNTRY_COORDINATE_MISMATCH', 'COORDINATE_REPROJECTION_FAILED'\n]);\nconst seen = new Set();\nconst observations = [];\nconst media = [];\nconst quarantine = [];\nconst taxonById = new Map();\nconst taxonLinkById = new Map();\n\nconst addTaxon = (key, rank, scientificName, details = {}) => {\n  if (key == null || !scientificName) return null;\n  const externalKey = String(key);\n  const id = `gbif-taxon:${externalKey}`;\n  const existing = taxonById.get(id) || {};\n  taxonById.set(id, {\n    ...existing,\n    id,\n    external_key: externalKey,\n    provider: 'GBIF Backbone',\n    rank: String(rank || 'UNKNOWN').toLowerCase(),\n    scientific_name: String(scientificName),\n    canonical_name: details.canonical_name == null ? (existing.canonical_name ?? null) : String(details.canonical_name),\n    authorship: details.authorship == null ? (existing.authorship ?? null) : String(details.authorship),\n    taxonomic_status: details.taxonomic_status == null ? (existing.taxonomic_status ?? null) : String(details.taxonomic_status).toLowerCase(),\n    vernacular_name_raw: details.vernacular_name_raw == null ? (existing.vernacular_name_raw ?? null) : String(details.vernacular_name_raw),\n    source_uri: `https://www.gbif.org/species/${externalKey}`,\n    retrieved_at: config.retrieved_at\n  });\n  return id;\n};\n\nconst addTaxonLink = (parentId, childId) => {\n  if (!parentId || !childId || parentId === childId) return;\n  const id = `${parentId}->${childId}`;\n  taxonLinkById.set(id, {id, parent_id: parentId, child_id: childId});\n};\n\nfor (const {raw, pageHash} of rawRecords) {\n  const externalId = String(raw.gbifID ?? raw.key ?? 'missing');\n  if (seen.has(externalId)) continue;\n  seen.add(externalId);\n  const issues = Array.isArray(raw.issues) ? raw.issues : [];\n  const lat = Number(raw.decimalLatitude);\n  const lon = Number(raw.decimalLongitude);\n  const taxonKey = raw.acceptedTaxonKey ?? raw.taxonKey;\n  const reasons = [];\n  if (!allowedLicense(raw.license)) reasons.push('license_not_allowed');\n  if (!externalId || externalId === 'missing') reasons.push('missing_external_id');\n  if (!pageHash) reasons.push('missing_raw_page_sha256');\n  if (!taxonKey || !raw.scientificName) reasons.push('missing_taxon_identity');\n  if (!raw.eventDate) reasons.push('missing_event_date');\n  if (!Number.isFinite(lat) || lat < -90 || lat > 90 || !Number.isFinite(lon) || lon < -180 || lon > 180) {\n    reasons.push('invalid_or_missing_public_coordinate');\n  }\n  if (issues.some(issue => coordinateIssueCodes.has(issue))) reasons.push('unsafe_coordinate_issue');\n  if (String(raw.occurrenceStatus || '').toUpperCase() !== 'PRESENT') reasons.push('not_present');\n  if (String(raw.countryCode || '').toUpperCase() !== config.country) reasons.push('country_mismatch');\n  if (raw.individualCount != null && (!Number.isInteger(Number(raw.individualCount)) || Number(raw.individualCount) < 0)) {\n    reasons.push('invalid_individual_count');\n  }\n  if (reasons.length) {\n    quarantine.push({\n      external_id: externalId,\n      reason_codes: reasons,\n      stage: 'validate',\n      source_uri: externalId === 'missing' ? null : `https://api.gbif.org/v1/occurrence/${externalId}`\n    });\n    continue;\n  }\n\n  const generalized = Boolean(raw.informationWithheld || raw.dataGeneralizations || issues.includes('COORDINATE_ROUNDED'));\n  const placeLabel = raw.locality || raw.stateProvince || raw.countryCode || 'Republic of Korea';\n  const observationId = `gbif-observation:${externalId}`;\n  const hierarchy = [\n    [raw.kingdomKey, 'kingdom', raw.kingdom],\n    [raw.phylumKey, 'phylum', raw.phylum],\n    [raw.classKey, 'class', raw.class],\n    [raw.orderKey, 'order', raw.order],\n    [raw.familyKey, 'family', raw.family],\n    [raw.genusKey, 'genus', raw.genus],\n    [raw.speciesKey, 'species', raw.species]\n  ];\n  const hierarchyIds = hierarchy\n    .map(([key, rank, name]) => addTaxon(key, rank, name, {canonical_name: name}))\n    .filter(Boolean);\n  for (let index = 1; index < hierarchyIds.length; index += 1) {\n    addTaxonLink(hierarchyIds[index - 1], hierarchyIds[index]);\n  }\n  const acceptedTaxonId = addTaxon(taxonKey, raw.taxonRank || raw.rank, raw.acceptedScientificName || raw.scientificName, {\n    canonical_name: raw.species || raw.genericName || null,\n    authorship: raw.scientificNameAuthorship,\n    taxonomic_status: raw.taxonomicStatus,\n    vernacular_name_raw: raw.vernacularName\n  });\n  addTaxonLink(hierarchyIds.at(-1), acceptedTaxonId);\n  observations.push({\n    id: observationId,\n    external_id: externalId,\n    occurrence_id: String(raw.occurrenceID || externalId),\n    event_id: raw.eventID == null ? null : String(raw.eventID),\n    external_taxon_id: acceptedTaxonId,\n    external_taxon_key: String(taxonKey),\n    scientific_name: String(raw.acceptedScientificName || raw.scientificName),\n    scientific_name_raw: String(raw.scientificName),\n    taxon_rank: String(raw.taxonRank || raw.rank || 'UNKNOWN').toLowerCase(),\n    observed_at: String(raw.eventDate),\n    event_date_precision: datePrecision(raw.eventDate),\n    count: raw.individualCount == null ? null : Number(raw.individualCount),\n    basis: String(raw.basisOfRecord || 'UNKNOWN').toLowerCase(),\n    lat,\n    lon,\n    coordinate_uncertainty_m: raw.coordinateUncertaintyInMeters == null ? null : Number(raw.coordinateUncertaintyInMeters),\n    geodetic_datum: raw.geodeticDatum == null ? null : String(raw.geodeticDatum),\n    sensitivity: generalized ? 'generalized' : 'public',\n    place_id: `gbif-place:${raw.countryCode || 'KR'}:${raw.stateProvince || 'unknown'}`,\n    place_name: String(placeLabel),\n    dataset_id: `gbif-dataset:${raw.datasetKey || 'unknown'}`,\n    dataset_key: String(raw.datasetKey || 'unknown'),\n    publisher_key: raw.publishingOrgKey == null ? null : String(raw.publishingOrgKey),\n    license_uri: String(raw.license),\n    source_record_key: `gbif:${config.source_release}:${externalId}`,\n    source_release: config.source_release,\n    raw_uri: `https://api.gbif.org/v1/occurrence/${externalId}`,\n    raw_sha256: pageHash,\n    source_updated_at: raw.lastInterpreted == null ? null : String(raw.lastInterpreted),\n    retrieved_at: config.retrieved_at,\n    issues\n  });\n  for (const [index, asset] of (Array.isArray(raw.media) ? raw.media : []).entries()) {\n    if (!allowedLicense(asset.license)) continue;\n    const assetId = String(asset.identifier || asset.references || `${externalId}:${index}`);\n    media.push({\n      id: `gbif-media:${assetId}`,\n      observation_id: observationId,\n      media_type: String(asset.type || 'unknown').toLowerCase(),\n      format: asset.format == null ? null : String(asset.format),\n      landing_uri: String(asset.references || raw.references || `https://www.gbif.org/occurrence/${externalId}`),\n      asset_uri: asset.identifier == null ? null : String(asset.identifier),\n      creator: asset.creator == null ? null : String(asset.creator),\n      publisher: asset.publisher == null ? null : String(asset.publisher),\n      attribution: String(asset.rightsHolder || asset.creator || asset.publisher || 'See source'),\n      license_uri: String(asset.license),\n      retrieved_at: config.retrieved_at\n    });\n  }\n}\n\nconst rejectedRatio = rawRecords.length ? quarantine.length / rawRecords.length : 1;\nconst birdTaxa = [...taxonById.values()];\nconst taxonLinks = [...taxonLinkById.values()];\nconst failureReasons = [];\nif (!pages.length) failureReasons.push('GBIF returned no valid page objects');\nif (pageErrors.length) failureReasons.push(`${pageErrors.length} GBIF page request(s) failed`);\nif (!rawRecords.length) failureReasons.push('GBIF returned zero records for the configured window');\nif (!observations.length) failureReasons.push('No records passed validation');\nif (rejectedRatio > config.maximum_rejected_ratio) failureReasons.push(`Rejected ratio ${rejectedRatio.toFixed(3)} exceeds gate`);\nif (truncated) failureReasons.push(`Result exceeded ${config.max_pages * config.page_size} records; narrow the date window`);\n\nreturn [{json: {\n  ...config,\n  fetch_ok: pages.length > 0 && pageErrors.length === 0,\n  ready_to_load: failureReasons.length === 0,\n  failure_reason: failureReasons.join('; '),\n  page_count: pages.length,\n  source_count: rawRecords.length,\n  observation_count: observations.length,\n  taxon_count: birdTaxa.length,\n  taxon_link_count: taxonLinks.length,\n  media_count: media.length,\n  quarantine_count: quarantine.length,\n  rejected_ratio: rejectedRatio,\n  truncated,\n  observations,\n  bird_taxa: birdTaxa,\n  taxon_links: taxonLinks,\n  media,\n  quarantine\n}}];"
+      },
+      "id": "0700773b-8c3b-57c9-a717-4ddc303648f6",
+      "name": "Normalize, validate and deduplicate GBIF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        110,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a40ed167-2bb1-52e5-b84d-6e49ad2a3c23",
+              "leftValue": "={{ $json.ready_to_load }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c036319b-90fd-5719-a6e5-5a33adcb767f",
+      "name": "Quality gates passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        410,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "graphDb",
+        "operation": "executeQuery",
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"bird_taxa\": literal($json[\"bird_taxa\"]),\"event_date_end\": literal($json[\"event_date_end\"]),\"media\": literal($json[\"media\"]),\"observations\": literal($json[\"observations\"]),\"pipeline_id\": literal($json[\"pipeline_id\"]),\"quarantine\": literal($json[\"quarantine\"]),\"quarantine_count\": literal($json[\"quarantine_count\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"source_count\": literal($json[\"source_count\"]),\"source_release\": literal($json[\"source_release\"]),\"taxon_count\": literal($json[\"taxon_count\"]),\"taxon_links\": literal($json[\"taxon_links\"])}; return \"MERGE (run:IngestionRun {id: $run_id}) SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at, run.source_release = $source_release, run.status = 'loading', run.source_count = $source_count, run.taxon_count = $taxon_count, run.quarantine_count = $quarantine_count WITH run CALL { WITH run MERGE (concept_set:TaxonConceptSet {id: 'rg:concept-set:gbif-current'}) SET concept_set.title = 'GBIF taxonomic backbone', concept_set.version = 'mutable-current', concept_set.source_uri = 'https://www.gbif.org/species/search', concept_set.retrieved_at = $retrieved_at MERGE (taxonomy_dataset:SourceDataset {id: 'gbif-dataset:taxonomic-backbone'}) SET taxonomy_dataset.name = 'GBIF taxonomic backbone', taxonomy_dataset.provider = 'GBIF', taxonomy_dataset.version = 'mutable-current', taxonomy_dataset.landing_uri = 'https://www.gbif.org/species/search', taxonomy_dataset.policy_status = 'allowed' MERGE (taxonomy_license:License {id: 'https://creativecommons.org/licenses/by/4.0/'}) SET taxonomy_license.license_uri = 'https://creativecommons.org/licenses/by/4.0/', taxonomy_license.policy_status = 'allowed' MERGE (taxonomy_dataset)-[:LICENSED_UNDER]->(taxonomy_license) MERGE (concept_set)-[:FROM_DATASET]->(taxonomy_dataset) WITH run, concept_set UNWIND $bird_taxa AS row MERGE (taxon:ExternalTaxonConcept {id: row.id}) SET taxon:BirdTaxon, taxon.provider = row.provider, taxon.external_key = row.external_key, taxon.scientific_name = row.scientific_name, taxon.canonical_name = row.canonical_name, taxon.authorship = row.authorship, taxon.rank = row.rank, taxon.taxonomic_status = row.taxonomic_status, taxon.vernacular_name_raw = row.vernacular_name_raw, taxon.source_uri = row.source_uri, taxon.retrieved_at = row.retrieved_at MERGE (scientific_name:ScientificName {id: 'gbif-scientific-name:' + row.external_key}) SET scientific_name.full_name = row.scientific_name, scientific_name.canonical = row.canonical_name, scientific_name.authorship = row.authorship, scientific_name.nomenclatural_code = 'ICZN' MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name) MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set) MERGE (run)-[:INGESTED]->(taxon) RETURN count(*) AS loaded_taxa } CALL { WITH run UNWIND $taxon_links AS row MATCH (parent:ExternalTaxonConcept {id: row.parent_id}) MATCH (child:ExternalTaxonConcept {id: row.child_id}) MERGE (parent)-[:PARENT_OF {provider: 'GBIF'}]->(child) RETURN count(*) AS loaded_taxon_links } CALL { WITH run UNWIND $observations AS row MERGE (dataset:SourceDataset {id: row.dataset_id}) SET dataset.name = 'GBIF occurrence dataset', dataset.provider = 'GBIF', dataset.dataset_key = row.dataset_key, dataset.version = row.source_release, dataset.landing_uri = 'https://www.gbif.org/dataset/' + row.dataset_key, dataset.policy_status = 'allowed' MERGE (license:License {id: row.license_uri}) SET license.license_uri = row.license_uri, license.policy_status = 'allowed' MERGE (dataset)-[:LICENSED_UNDER]->(license) MERGE (source:SourceRecord {id: row.source_record_key}) SET source.external_id = row.external_id, source.record_type = 'observation', source.raw_uri = row.raw_uri, source.raw_hash = row.raw_sha256, source.retrieved_at = row.retrieved_at, source.source_updated_at = row.source_updated_at, source.issues = row.issues MERGE (source)-[:IN_DATASET]->(dataset) WITH run, row, source MATCH (taxon:ExternalTaxonConcept {id: row.external_taxon_id}) MERGE (place:Place {id: row.place_id}) SET place.name = row.place_name, place.country_code = 'KR', place.place_type = 'gbif_admin_area' MERGE (observation:Observation {id: row.id}) SET observation.occurrence_id = row.occurrence_id, observation.event_id = row.event_id, observation.scientific_name_raw = row.scientific_name_raw, observation.observed_at = row.observed_at, observation.event_date_precision = row.event_date_precision, observation.count = row.count, observation.basis = row.basis, observation.lat = row.lat, observation.lon = row.lon, observation.coordinate_uncertainty_m = row.coordinate_uncertainty_m, observation.geodetic_datum = row.geodetic_datum, observation.sensitivity = row.sensitivity, observation.source_record_key = row.source_record_key, observation.ingestion_run_id = $run_id MERGE (observation)-[:IDENTIFIED_AS]->(taxon) MERGE (observation)-[:WITHIN]->(place) MERGE (observation)-[:FROM_RECORD]->(source) MERGE (run)-[:INGESTED]->(observation) MERGE (evidence:EvidenceUnit {id: 'gbif-evidence:' + row.external_id}) SET evidence.evidence_type = 'observation', evidence.locator = row.raw_uri, evidence.accessed_at = row.retrieved_at MERGE (evidence)-[:FROM_RECORD]->(source) RETURN count(*) AS loaded_observations } CALL { WITH run UNWIND $media AS row MATCH (observation:Observation {id: row.observation_id}) MERGE (asset:MediaAsset {id: row.id}) SET asset.media_type = row.media_type, asset.format = row.format, asset.landing_uri = row.landing_uri, asset.asset_uri = row.asset_uri, asset.creator = row.creator, asset.publisher = row.publisher, asset.attribution = row.attribution, asset.license_uri = row.license_uri, asset.redistribution_allowed = true, asset.retrieved_at = row.retrieved_at MERGE (observation)-[:HAS_MEDIA]->(asset) MERGE (run)-[:INGESTED]->(asset) RETURN count(*) AS loaded_media } CALL { WITH run UNWIND $quarantine AS row MERGE (item:QuarantineRecord {id: $pipeline_id + ':' + row.external_id + ':' + row.stage}) ON CREATE SET item.first_seen_run_id = $run_id, item.first_seen_at = $retrieved_at SET item.external_id = row.external_id, item.stage = row.stage, item.reason_codes = row.reason_codes, item.source_uri = row.source_uri, item.last_seen_run_id = $run_id, item.last_seen_at = $retrieved_at, item.resolution_status = 'open' MERGE (run)-[:QUARANTINED]->(item) RETURN count(*) AS loaded_quarantine } SET run.status = 'succeeded', run.finished_at = datetime(), run.taxon_count = loaded_taxa, run.taxon_link_count = loaded_taxon_links, run.observation_count = loaded_observations, run.media_count = loaded_media MERGE (state:IngestState {id: $pipeline_id}) SET state.active_release = $source_release, state.last_successful_run_id = $run_id, state.last_successful_at = datetime(), state.event_date_end = $event_date_end RETURN loaded_taxa, loaded_taxon_links, loaded_observations, loaded_media, loaded_quarantine, state.active_release\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+      },
+      "id": "14529b7c-eb1e-5079-8eef-6c323e60a66b",
+      "name": "Atomic upsert to Neo4j",
+      "type": "n8n-nodes-neo4j.neo4j",
+      "typeVersion": 1,
+      "position": [
+        700,
+        -140
+      ],
+      "credentials": {
+        "neo4jApi": {
+          "id": "DvmTD1qB0Kb7TRml",
+          "name": "Neo4j"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "notes": "Execute one atomic Cypher statement using the Neo4j credential. Values are escaped as Cypher literals because this community node has no query parameter input."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Normalize, validate and deduplicate GBIF').first().json;\nconst response = $input.first().json;\nconst result = response;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst loadOk = !errorText\n  && Number(result.loaded_taxa) === expected.taxon_count\n  && Number(result.loaded_taxon_links) === expected.taxon_link_count\n  && Number(result.loaded_observations) === expected.observation_count\n  && Number(result.loaded_media) === expected.media_count\n  && Number(result.loaded_quarantine) === expected.quarantine_count\n  && result['state.active_release'] === expected.source_release;\nreturn [{json: {\n  ...expected,\n  load_ok: loadOk,\n  loaded_taxa: Number(result.loaded_taxa || 0),\n  loaded_taxon_links: Number(result.loaded_taxon_links || 0),\n  loaded_observations: Number(result.loaded_observations || 0),\n  loaded_media: Number(result.loaded_media || 0),\n  loaded_quarantine: Number(result.loaded_quarantine || 0),\n  failure_reason: loadOk ? '' : (errorText || 'Neo4j result counts or active release do not match')\n}}];"
+      },
+      "id": "6b44696c-8925-59b5-ad25-c3b9679b08a1",
+      "name": "Verify Neo4j response counts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        990,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7940f899-7ccb-5280-8f46-088c0d9642f1",
+              "leftValue": "={{ $json.load_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b18161ef-8093-50cd-a637-e0bf34a453b7",
+      "name": "Atomic load verified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1270,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const result = $input.first().json;\nif (!result.load_ok) throw new Error('Refusing to advance the cursor before a verified Neo4j load');\nconst state = $getWorkflowStaticData('global');\nstate.last_successful_event_date = result.event_date_end;\nstate.last_successful_run_id = result.run_id;\nreturn [{json: result}];"
+      },
+      "id": "ce3d6f94-f2b4-56b6-94d3-4d85c937777a",
+      "name": "Advance n8n cursor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '✅ **RobinGraph GBIF ingest succeeded**\\nRun: ' + $json.run_id + '\\nWindow: ' + $json.event_date_start + ' → ' + $json.event_date_end + '\\nSource: ' + $json.source_count + ', birds: ' + $json.loaded_taxa + ', observations: ' + $json.loaded_observations + ', media: ' + $json.loaded_media + ', quarantine: ' + $json.loaded_quarantine }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
+      },
+      "id": "48c7619f-3226-5763-99f8-3cb26d60831f",
+      "name": "Notify success",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1810,
+        -260
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Map the RobinGraph Operations Discord Webhook credential after import. The webhook URL must remain only in n8n's credential store."
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "operation": "sendLegacy",
+        "content": "={{ '❌ **RobinGraph GBIF ingest blocked or failed**\\nRun: ' + $json.run_id + '\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) + '\\nSource: ' + Number($json.source_count || 0) + ', valid: ' + Number($json.observation_count || 0) + ', quarantine: ' + Number($json.quarantine_count || 0) }}",
+        "options": {
+          "username": "RobinGraph Operations",
+          "wait": true
+        }
+      },
+      "id": "feee8a2e-37c4-515e-8ca0-cf19690f2f0b",
+      "name": "Notify failure",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        180
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Map the RobinGraph Operations Discord Webhook credential after import. The webhook URL must remain only in n8n's credential store."
+    },
+    {
+      "parameters": {
+        "errorMessage": "RobinGraph native ingest failed; inspect the preceding quality or Neo4j response node."
+      },
+      "id": "36eff287-b409-5ef7-942e-9f1cb8fb394c",
+      "name": "Fail execution",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1810,
+        180
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ae370e35-0443-507c-91d0-f36bde5135d0",
+      "name": "Finished",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        -60
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build run configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger — daily 02:00 KST": {
+      "main": [
+        [
+          {
+            "node": "Build run configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build run configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch GBIF Korea Aves pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch GBIF Korea Aves pages": {
+      "main": [
+        [
+          {
+            "node": "Hash each raw GBIF page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hash each raw GBIF page": {
+      "main": [
+        [
+          {
+            "node": "Normalize, validate and deduplicate GBIF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize, validate and deduplicate GBIF": {
+      "main": [
+        [
+          {
+            "node": "Quality gates passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality gates passed?": {
+      "main": [
+        [
+          {
+            "node": "Atomic upsert to Neo4j",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atomic upsert to Neo4j": {
+      "main": [
+        [
+          {
+            "node": "Verify Neo4j response counts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Neo4j response counts": {
+      "main": [
+        [
+          {
+            "node": "Atomic load verified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atomic load verified?": {
+      "main": [
+        [
+          {
+            "node": "Advance n8n cursor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Advance n8n cursor": {
+      "main": [
+        [
+          {
+            "node": "Notify success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify success": {
+      "main": [
+        [
+          {
+            "node": "Finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify failure": {
+      "main": [
+        [
+          {
+            "node": "Fail execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "none",
+    "callerPolicy": "workflowsFromSameOwner",
+    "concurrency": 1
+  },
+  "versionId": "4a6306ed-1ce6-594e-90a9-36a6f7444892",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
