@@ -112,12 +112,13 @@ def serve_fixture(arguments: argparse.Namespace) -> int:
 def serve_neo4j(arguments: argparse.Namespace) -> int:
     import uvicorn
 
-    from .api.app import create_app
+    from .api.app import create_app, create_neo4j_search_handler
     from .retrieval.neo4j_repository import Neo4jGraphRepository
 
-    repository = Neo4jGraphRepository(Neo4jSettings.from_environment())
+    settings = Neo4jSettings.from_environment()
+    repository = Neo4jGraphRepository(settings)
     try:
-        app = create_app(repository)
+        app = create_app(repository, search_handler=create_neo4j_search_handler(settings))
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:
         repository.close()

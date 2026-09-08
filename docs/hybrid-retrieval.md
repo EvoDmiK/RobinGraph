@@ -4,9 +4,26 @@
 
 ## 실행 경로
 
-`load-neo4j-fixture` → `index-neo4j-fixture` → `search-neo4j --question "..."` 순서로 실행한다. 기본 경로는 전문 검색만 사용한다. 환경에 Jina 연결 정보를 설정한 뒤 인덱싱에 `--embeddings`, 검색에 `--hybrid`를 붙이면 Jina 호환 HTTP 요청과 벡터 검색을 사용한다. 전체 명령은 [README](../README.md#문헌-청크-검색)에 있다.
+`load-neo4j-fixture` → `index-neo4j-fixture` → `search-neo4j --question "..."` 순서로 실행한다. 기본 경로는 전문 검색만 사용한다. 환경에 Jina 연결 정보를 설정한 뒤 인덱싱에 `--embeddings`, 검색에 `--hybrid`를 붙이면 Jina 호환 HTTP 요청과 벡터 검색을 사용한다. `serve-neo4j`를 실행하면 같은 읽기 경로가 Swagger의 `POST /v1/search`에도 노출된다. 전체 명령과 HTTP 예시는 [README](../README.md#문헌-청크-검색)에 있다.
 
-이 경로는 문헌 근거를 검색한다. 기존 질문 API의 종·장소·기간 그래프 질의는 별도로 유지되며, LLM 답변 생성은 후속 단계다.
+이 경로는 문헌 근거를 검색한다. 기존 `POST /v1/answers`의 종·장소·기간 그래프 질의는 별도로 유지되며, LLM 답변 생성은 후속 단계다.
+
+## HTTP API
+
+`POST /v1/search` 요청은 `question`, `mode`, `limit`을 받는다. `mode`는
+`fulltext` 또는 `hybrid`, `limit`은 1~100이며 기본값은 각각 `fulltext`, 10이다.
+응답에는 `chunk_id`, 본문, RRF 점수, 기여 채널, 실제 citation과 경고가 있다.
+`requested_mode`와 실제 `mode`를 함께 반환하므로 임베딩 장애로 전문 검색에
+폴백했는지 호출자가 확인할 수 있다. Neo4j 모드가 아니거나 검색 backend가
+사용 불가능하면 HTTP 503을 반환한다.
+
+```json
+{
+  "question": "호수와 하천에서 관찰된 물새",
+  "mode": "hybrid",
+  "limit": 5
+}
+```
 
 ## 공개 Python API
 
@@ -37,7 +54,7 @@ SourceDataset에 저장한 `policy_status`와 Document의 `embedding_allowed`를
 
 질문은 Cypher 파라미터로 바인딩하며 Lucene 특수문자와 대문자 연산자도 무력화한다. Python 요청의 결과/후보 수는 1~500, CLI 결과 수는 1~100으로 제한한다. 정책에서 탈락한 ID는 경고에 노출하지 않는다.
 
-벡터 인덱스나 호환 벡터가 없으면 전문 검색으로 제한하고 경고를 반환한다. CLI의 Jina 요청 실패도 전문 검색으로 돌아가며 경고를 남긴다. 연결 설정 자체가 빠진 `--hybrid` 요청은 구성 오류로 실패한다.
+벡터 인덱스나 호환 벡터가 없으면 전문 검색으로 제한하고 경고를 반환한다. CLI와 HTTP API의 Jina 요청 실패도 전문 검색으로 돌아가며 경고를 남긴다. 연결 설정 자체가 빠진 hybrid 요청은 CLI에서는 구성 오류, HTTP API에서는 503으로 실패한다.
 
 Neo4j에서는 같은 스키마를 다른 이름으로 다시 만들려는 `IF NOT EXISTS`가 원하는 이름의 인덱스를 만들지 않을 수 있다. Bootstrap은 생성 후 실제 인덱스를 검증해 이를 명시적으로 실패시킨다. 인덱스 이름·차원·분석기를 바꿀 때는 별도 마이그레이션이 필요하다.
 
