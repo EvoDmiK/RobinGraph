@@ -201,18 +201,34 @@ API 컨테이너에서 임베딩 서버의 DNS, TLS, HTTP 도달성을 확인한
 docker exec robingraph-api python -c "import urllib.request; print(urllib.request.urlopen('https://embed.dove-nest.com/healthz', timeout=10).read().decode())"
 ```
 
-현재 임베딩 경로는 FastAPI의 `/v1/answers`에 자동으로 연결되지 않는다. 아래
-명시적 CLI가 정책상 허용된 fixture 문헌 청크를 임베딩해 Neo4j에 저장하고,
-질문 임베딩을 사용한 전문·벡터 결합 검색을 실행한다.
+임베딩 인덱싱은 명시적인 쓰기 작업이므로 아래 CLI로만 실행한다. 검색은 같은
+CLI 또는 Swagger의 `POST /v1/search`에서 실행할 수 있다. `/v1/answers`의
+그래프 답변 경로에는 임베딩 검색이 자동으로 섞이지 않는다.
 
 ```sh
 docker exec robingraph-api robingraph index-neo4j-fixture --embeddings
 docker exec robingraph-api robingraph search-neo4j --question "물가에 사는 새에 대한 기록" --hybrid --limit 5
 ```
 
+Swagger에서는 다음 요청으로 같은 하이브리드 검색을 실행한다.
+
+```json
+{
+  "question": "물가에 사는 새에 대한 기록",
+  "mode": "hybrid",
+  "limit": 5
+}
+```
+
+`mode: fulltext`는 Jina를 호출하지 않는다. `mode: hybrid`에서 임베딩 서버가
+일시적으로 실패하면 전문 검색 결과와 경고를 반환한다. Neo4j/임베딩 설정이
+유효하지 않거나 Neo4j를 사용할 수 없으면 HTTP 503을 반환한다. 검색 endpoint는
+외부 모델 호출을 유발할 수 있으므로 공개 NPM에는 Access List 또는 Cloudflare
+Access를 반드시 적용한다.
+
 실제 GBIF corpus를 임베딩 검색 대상으로 제공하려면 해당 데이터를 검색용 문서
-청크로 투영하는 적재 과정과 `/v1/search` 같은 FastAPI 검색 endpoint를 별도로
-구현해야 한다.
+청크로 투영하는 적재 과정을 별도로 구현해야 한다. 현재 `/v1/search`는 fixture
+문헌 청크만 검색한다.
 
 ## 6. 갱신과 운영 명령
 

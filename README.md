@@ -65,7 +65,9 @@ uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 �
 
 ## 문헌 청크 검색
 
-위 질문 API와 별도로, 문헌 검색 결과의 본문·순위·출처·라이선스를 JSON으로 확인할 수 있다. 먼저 현재 버전의 loader로 fixture를 적재한 뒤 전문 검색 인덱스를 준비한다.
+위 질문 API와 별도로, 문헌 검색 결과의 본문·순위·출처·라이선스를 CLI와
+`POST /v1/search`에서 JSON으로 확인할 수 있다. 먼저 현재 버전의 loader로
+fixture를 적재한 뒤 전문 검색 인덱스를 준비한다.
 
 ```sh
 uv run --locked robingraph load-neo4j-fixture
@@ -83,6 +85,19 @@ uv run --locked robingraph search-neo4j --question "물가에 사는 새에 대�
 ```
 
 `--embeddings`는 HTTP 요청과 Neo4j 벡터 쓰기를 수행한다. 동일 프로필의 전체 허용 청크 집합으로 벡터를 갱신하므로 부분 배치 갱신용 명령이 아니다. `--hybrid`는 읽기 전용 검색과 질문 임베딩 요청을 수행하며, 벡터를 사용할 수 없으면 `warnings`에 이유를 표시한다. 현재 이 경로는 근거 검색까지 제공하며 LLM 답변 생성은 포함하지 않는다.
+
+`serve-neo4j`의 Swagger(`/docs`)에서는 `mode`를 `fulltext` 또는 `hybrid`로
+선택한다. 기본값은 `fulltext`이며 이때 Jina를 호출하지 않는다.
+
+```sh
+curl -X POST http://127.0.0.1:8000/v1/search \
+  -H 'Content-Type: application/json' \
+  -d '{"question":"호수와 하천에서 관찰된 물새","mode":"hybrid","limit":5}'
+```
+
+응답의 `requested_mode`는 요청값, `mode`는 실제 결과에 사용된 모드다. 임베딩
+호출이 일시적으로 실패하면 전문 검색으로 폴백하고 `warnings`에 이유를 남긴다.
+`serve-fixture`에서도 OpenAPI 계약은 보이지만 검색 호출은 HTTP 503을 반환한다.
 
 한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.
 
