@@ -7,6 +7,7 @@
 - [시스템 설계](docs/system-design.md)
 - [2026-09-04 작업 기록](docs/work-log/2026-09-04.md)
 - [2026-09-07 작업 기록](docs/work-log/2026-09-07.md)
+- [2026-09-08 작업 기록](docs/work-log/2026-09-08.md)
 - [외부 데이터 소스 조사](docs/data-source-decision-input.md)
 - [데이터 계약](docs/data-contracts.md)
 - [구현 준비 체크리스트](docs/implementation-readiness.md)
@@ -98,6 +99,26 @@ curl -X POST http://127.0.0.1:8000/v1/search \
 응답의 `requested_mode`는 요청값, `mode`는 실제 결과에 사용된 모드다. 임베딩
 호출이 일시적으로 실패하면 전문 검색으로 폴백하고 `warnings`에 이유를 남긴다.
 `serve-fixture`에서도 OpenAPI 계약은 보이지만 검색 호출은 HTTP 503을 반환한다.
+
+## 운영 GBIF 관찰 조회
+
+n8n 운영 workflow가 적재한 실제 GBIF `BirdTaxon`·`Observation`은
+`serve-neo4j`의 `GET /v1/observations`에서 조회한다. GBIF taxon key, 학명,
+장소명, 관찰일 범위와 pagination을 조합할 수 있다.
+
+```sh
+curl "http://127.0.0.1:8000/v1/observations?scientific_name=Anas%20zonorhyncha&observed_from=2026-09-01&limit=25"
+```
+
+응답은 `mode: operational`, `data_source: gbif`, `fixture_only: false`를 명시하고,
+각 관찰에 taxon·place·허용된 media·EvidenceUnit·원본 GBIF URL·dataset URL·
+허용 라이선스를 포함한다. `SourceRecord → SourceDataset → License`의 허용 provenance 체인이
+완전한 레코드만 반환한다. `sensitivity: generalized`인 관찰은 저장된 공개 좌표도
+API에서 숨기며 `coordinate_disclosure: withheld`와 경고를 반환한다.
+
+이 endpoint는 구조화된 관찰 검색이다. 문헌 전문·벡터 검색인 `/v1/search`와
+Hermes 기반 자연어 답변 생성은 별도 경로다. `serve-fixture`에서는 계약만
+노출하고 호출은 HTTP 503을 반환한다.
 
 한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.
 

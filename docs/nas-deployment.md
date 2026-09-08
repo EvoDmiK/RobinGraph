@@ -180,7 +180,19 @@ docker compose --env-file .env.nas -f compose.nas.yml up -d --force-recreate
 docker compose --env-file .env.nas -f compose.nas.yml logs --tail=100 api
 ```
 
-`/health`의 `mode`가 `neo4j`인지 확인한다. 현재 `serve-neo4j` 답변 경로는 `:RobinGraph:Fixture` 그래프를 조회한다. n8n이 적재한 GBIF `BirdTaxon`과 `Observation`은 아직 이 API의 검색 대상으로 연결되지 않았으므로, 실제 GBIF 검색 API가 완성되기 전에는 fixture 모드를 외부 연결과 API contract 검증 용도로만 사용한다.
+`/health`의 `mode`가 `neo4j`인지 확인한다. `serve-neo4j`의 `/v1/answers`와
+`/v1/search`는 계속 `:RobinGraph:Fixture` 그래프를 사용하지만,
+`GET /v1/observations`는 n8n이 적재한 실제 GBIF `BirdTaxon`과 `Observation`을
+조회한다. fixture 모드에서는 운영 관찰 endpoint가 HTTP 503을 반환한다.
+
+```sh
+curl "https://aviary.dove-nest.com/v1/observations?place=Seoul&observed_from=2026-09-01&limit=25"
+```
+
+운영 endpoint는 taxon key(`taxon_key`), 학명·원본 일반명(`scientific_name`),
+장소명(`place`), 시작·종료일(`observed_from`, `observed_to`), `limit`(최대 100),
+`offset`을 지원한다. provenance와 허용 라이선스 체인이 온전한 GBIF 레코드만
+반환하며, 일반화된 관찰의 좌표는 API 응답에서 숨긴다.
 
 임베딩 서버는 `robingraph-edge`의 Docker DNS를 사용하는 컨테이너가 아니라
 HTTPS endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과 secret을
@@ -226,9 +238,9 @@ Swagger에서는 다음 요청으로 같은 하이브리드 검색을 실행한�
 외부 모델 호출을 유발할 수 있으므로 공개 NPM에는 Access List 또는 Cloudflare
 Access를 반드시 적용한다.
 
-실제 GBIF corpus를 임베딩 검색 대상으로 제공하려면 해당 데이터를 검색용 문서
-청크로 투영하는 적재 과정을 별도로 구현해야 한다. 현재 `/v1/search`는 fixture
-문헌 청크만 검색한다.
+실제 GBIF 관찰은 `/v1/observations`에서 구조화 검색할 수 있다. GBIF 데이터를
+임베딩 검색 대상으로도 제공하려면 검색용 문서 청크로 투영하는 적재 과정을
+별도로 구현해야 한다. 현재 `/v1/search`는 fixture 문헌 청크만 검색한다.
 
 ## 6. 갱신과 운영 명령
 
