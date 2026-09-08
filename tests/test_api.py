@@ -5,12 +5,26 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from robingraph.api.app import SearchBackendUnavailableError, create_app, create_neo4j_search_handler
+from robingraph.api.app import (
+    OperationalBackendUnavailableError,
+    SearchBackendUnavailableError,
+    create_app,
+    create_neo4j_observation_handler,
+    create_neo4j_search_handler,
+)
 from robingraph.embeddings import EmbeddingConfigurationError, EmbeddingHTTPError
 from robingraph.fixture import load_fixture
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.retrieval.fixture_repository import FixtureRepository
 from robingraph.retrieval.hybrid import HybridResult, HybridSearchOutcome
+from robingraph.retrieval.operational import (
+    OperationalCitation,
+    OperationalMedia,
+    OperationalObservation,
+    OperationalObservationQuery,
+    OperationalPlace,
+    OperationalTaxon,
+)
 from robingraph.retrieval.repository import SourceCitation
 
 
@@ -102,6 +116,153 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(503, response.status_code)
         self.assertEqual("Neo4j search is unavailable", response.json()["detail"])
 
+    def test_operational_observations_are_declared_but_unavailable_in_fixture_mode(self) -> None:
+        operation = self.client.get("/openapi.json").json()["paths"]["/v1/observations"]["get"]
+        self.assertIn("503", operation["responses"])
+        response = self.client.get("/v1/observations")
+        self.assertEqual(503, response.status_code)
+
+    def test_operational_observations_pass_filters_and_disclose_provenance(self) -> None:
+        calls: list[OperationalObservationQuery] = []
+        observation = OperationalObservation(
+            observation_id="gbif-observation:123",
+            occurrence_id="123",
+            observed_at="2026-09-07T10:00:00Z",
+            count=2,
+            basis="human_observation",
+            sensitivity="public",
+            latitude=37.5,
+            longitude=127.0,
+            coordinate_uncertainty_m=25.0,
+            taxon=OperationalTaxon(
+                taxon_id="gbif-taxon:2498349",
+                external_key="2498349",
+                scientific_name="Anas zonorhyncha",
+                canonical_name="Anas zonorhyncha",
+                vernacular_name_raw="Eastern Spot-billed Duck",
+                rank="species",
+            ),
+            place=OperationalPlace("gbif-place:KR:Seoul", "Seoul", "KR"),
+            citation=OperationalCitation(
+                evidence_id="gbif-evidence:123",
+                dataset_id="gbif-dataset:dataset-1",
+                dataset_name="GBIF occurrence dataset",
+                source_url="https://api.gbif.org/v1/occurrence/123",
+                dataset_url="https://www.gbif.org/dataset/dataset-1",
+                license_uris=("https://creativecommons.org/licenses/by/4.0/",),
+                retrieved_at="2026-09-08T00:00:00Z",
+                source_updated_at="2026-09-07T12:00:00Z",
+            ),
+            media=(
+                OperationalMedia(
+                    media_id="gbif-media:123",
+                    media_type="stillimage",
+                    format="image/jpeg",
+                    landing_uri="https://example.invalid/media/123",
+                    asset_uri="https://example.invalid/media/123.jpg",
+                    creator="Observer",
+                    publisher="Publisher",
+                    attribution="Observer / CC BY 4.0",
+                    license_uri="https://creativecommons.org/licenses/by/4.0/",
+                ),
+            ),
+        )
+
+        def handler(query: OperationalObservationQuery) -> tuple[OperationalObservation, ...]:
+            calls.append(query)
+            return (observation,)
+
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), observation_handler=handler)
+        )
+        response = client.get(
+            "/v1/observations",
+            params={
+                "taxon_key": "2498349",
+                "scientific_name": "Anas",
+                "place": "Seoul",
+                "observed_from": "2026-09-01",
+                "observed_to": "2026-09-08",
+                "limit": 10,
+                "offset": 5,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(
+            OperationalObservationQuery(
+                taxon_key="2498349",
+                scientific_name="Anas",
+                place="Seoul",
+                observed_from="2026-09-01",
+                observed_to="2026-09-08",
+                limit=10,
+                offset=5,
+            ),
+            calls[0],
+        )
+        payload = response.json()
+        self.assertEqual("operational", payload["mode"])
+        self.assertEqual("gbif", payload["data_source"])
+        self.assertFalse(payload["fixture_only"])
+        self.assertEqual("public", payload["results"][0]["coordinate_disclosure"])
+        self.assertEqual(37.5, payload["results"][0]["latitude"])
+        self.assertEqual("gbif-evidence:123", payload["results"][0]["citation"]["evidence_id"])
+        self.assertEqual(
+            ["https://creativecommons.org/licenses/by/4.0/"],
+            payload["results"][0]["citation"]["license_uris"],
+        )
+        self.assertEqual("gbif-media:123", payload["results"][0]["media"][0]["media_id"])
+
+    def test_generalized_observation_coordinates_are_withheld(self) -> None:
+        observation = OperationalObservation(
+            observation_id="gbif-observation:generalized",
+            occurrence_id="generalized",
+            observed_at="2026-09-07",
+            count=None,
+            basis="human_observation",
+            sensitivity="generalized",
+            latitude=None,
+            longitude=None,
+            coordinate_uncertainty_m=None,
+            taxon=OperationalTaxon("gbif-taxon:1", "1", "Bird one", None, None, "species"),
+            place=OperationalPlace("gbif-place:KR:x", "Somewhere", "KR"),
+            citation=OperationalCitation(
+                "gbif-evidence:generalized",
+                "gbif-dataset:x",
+                "GBIF occurrence dataset",
+                "https://api.gbif.org/v1/occurrence/generalized",
+                "https://www.gbif.org/dataset/x",
+                ("https://creativecommons.org/publicdomain/zero/1.0/",),
+                "2026-09-08T00:00:00Z",
+                None,
+            ),
+            media=(),
+        )
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                observation_handler=lambda _query: (observation,),
+            )
+        )
+        payload = client.get("/v1/observations").json()
+        self.assertEqual("withheld", payload["results"][0]["coordinate_disclosure"])
+        self.assertIsNone(payload["results"][0]["latitude"])
+        self.assertIn("generalized", payload["warnings"][0])
+
+    def test_operational_observation_filters_are_validated(self) -> None:
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), observation_handler=lambda _query: ())
+        )
+        self.assertEqual(422, client.get("/v1/observations?limit=101").status_code)
+        self.assertEqual(422, client.get("/v1/observations?offset=-1").status_code)
+        self.assertEqual(422, client.get("/v1/observations?place=%20%20").status_code)
+        self.assertEqual(
+            422,
+            client.get(
+                "/v1/observations?observed_from=2026-09-08&observed_to=2026-09-01"
+            ).status_code,
+        )
+
 
 class Neo4jApiSearchHandlerTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -151,3 +312,17 @@ class Neo4jApiSearchHandlerTest(unittest.TestCase):
             side_effect=EmbeddingConfigurationError("missing endpoint"),
         ), self.assertRaisesRegex(SearchBackendUnavailableError, "missing endpoint"):
             handler("물새", 5, True)
+
+
+class Neo4jOperationalHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def search_observations(self, _query: OperationalObservationQuery):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_observation_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            OperationalBackendUnavailableError, "Operational GBIF observation search is unavailable"
+        ) as caught:
+            handler(OperationalObservationQuery())
+        self.assertNotIn("raw graph details", str(caught.exception))

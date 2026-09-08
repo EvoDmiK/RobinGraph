@@ -184,6 +184,9 @@ assert.equal(check({}), false);
     )
     def test_native_neo4j_statement_executes_atomically(self) -> None:
         from neo4j import GraphDatabase
+        from robingraph.graph.settings import Neo4jSettings
+        from robingraph.retrieval.operational import OperationalObservationQuery
+        from robingraph.retrieval.operational_neo4j import Neo4jOperationalObservationRepository
         from scripts.generate_n8n_operational_ingest import NEO4J_STATEMENT
 
         run_id = "n8n-native-workflow-integration-test"
@@ -284,6 +287,20 @@ assert.equal(check({}), false);
                 self.assertEqual(0, result["loaded_media"])
                 self.assertEqual(0, result["loaded_quarantine"])
                 self.assertEqual(parameters["source_release"], result["state.active_release"])
+                with Neo4jOperationalObservationRepository(
+                    Neo4jSettings(
+                        uri=os.environ["NEO4J_URI"],
+                        username=os.environ["NEO4J_USERNAME"],
+                        password=os.environ["NEO4J_PASSWORD"],
+                        database=os.environ.get("NEO4J_DATABASE", "neo4j"),
+                    )
+                ) as repository:
+                    observations = repository.search_observations(
+                        OperationalObservationQuery(taxon_key=run_id)
+                    )
+                self.assertEqual(1, len(observations))
+                self.assertEqual(observation_id, observations[0].observation_id)
+                self.assertEqual(f"gbif-evidence:{run_id}", observations[0].citation.evidence_id)
                 session.run(
                     "MATCH (node) WHERE node.id CONTAINS $marker DETACH DELETE node",
                     marker=run_id,

@@ -78,6 +78,19 @@ class SearchCLITest(unittest.TestCase):
         self.assertEqual(2, error.exception.code)
         search.assert_not_called()
 
+    def test_serve_neo4j_wires_and_closes_operational_observation_repository(self):
+        with patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository") as fixture_type, \
+             patch(
+                 "robingraph.retrieval.operational_neo4j.Neo4jOperationalObservationRepository"
+             ) as operational_type, \
+             patch("uvicorn.run") as run:
+            code, out, err = self.invoke("serve-neo4j")
+        self.assertEqual((0, "", ""), (code, out, err))
+        app = run.call_args.args[0]
+        self.assertIn("/v1/observations", app.openapi()["paths"])
+        fixture_type.return_value.close.assert_called_once_with()
+        operational_type.return_value.close.assert_called_once_with()
+
 
 if __name__ == '__main__':
     unittest.main()
