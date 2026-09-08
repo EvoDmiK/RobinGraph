@@ -11,6 +11,15 @@ from .repository import (
     VernacularName,
 )
 from .fixture_repository import FixtureRepository
+from .operational import (
+    OperationalCitation,
+    OperationalMedia,
+    OperationalObservation,
+    OperationalObservationQuery,
+    OperationalObservationRepository,
+    OperationalPlace,
+    OperationalTaxon,
+)
 
 __all__ = [
     "ChunkRecord",
@@ -18,6 +27,13 @@ __all__ = [
     "FixtureRepository",
     "GraphRepository",
     "ObservationRecord",
+    "OperationalCitation",
+    "OperationalMedia",
+    "OperationalObservation",
+    "OperationalObservationQuery",
+    "OperationalObservationRepository",
+    "OperationalPlace",
+    "OperationalTaxon",
     "PlaceRecord",
     "SourceCitation",
     "TaxonRecord",
