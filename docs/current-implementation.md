@@ -135,6 +135,14 @@ uv run --locked robingraph ask-neo4j --question "2025년 1월 fixture 호수에�
 {"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"}
 ```
 
+Neo4j 모드는 `POST /v1/search`도 제공한다. 요청의 `mode`는 `fulltext` 또는
+`hybrid`이며 결과에 청크 본문, 점수, 기여 채널, citation, 경고를 반환한다.
+fixture 모드에서는 같은 endpoint가 503을 반환한다.
+
+```json
+{"question": "호수와 하천에서 관찰된 물새", "mode": "hybrid", "limit": 5}
+```
+
 ## 8. Neo4j 통합 테스트(opt-in)와 CI 연동 요청
 
 `tests/test_neo4j_integration.py`는 **`ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1`이 없을 때만** skip된다.
@@ -200,7 +208,8 @@ GPT-5.6 Luna가 Jina 호환 HTTP 어댑터를, Claude가 Neo4j 전문/벡터 검
 
 - `index-neo4j-fixture`: 기본은 전문 검색 인덱스 준비. `--embeddings`를 명시하면 설정된 Jina 서버에 허용 청크를 보내고 벡터를 저장한다.
 - `search-neo4j --question ...`: 문헌 청크의 본문·점수·검색 채널·출처·라이선스를 반환한다. `--hybrid`는 질문 임베딩과 벡터 검색을 추가한다.
-- 기존 `serve-fixture`, `serve-neo4j`, `ask-neo4j`의 답변 경로는 기존 그래프 질의를 사용한다. 새 검색 CLI에는 아직 LLM 생성이 없다.
+- `serve-neo4j`의 `POST /v1/search`: Swagger에서 전문/하이브리드 검색 모드를 선택하고 CLI와 같은 검색 결과 계약을 반환한다.
+- 기존 `serve-fixture`, `serve-neo4j`, `ask-neo4j`의 답변 경로는 기존 그래프 질의를 사용한다. 검색 CLI와 HTTP API에는 아직 LLM 생성이 없다.
 - 새 검색은 SourceDataset 단위 정책을 확인한다. 기존 질문 repository의 License 단위 정책 검사는 실제 다중 소스 적재 전에 통일해야 한다.
 
 실행 문서: [하이브리드 검색](hybrid-retrieval.md), [임베딩 어댑터](embedding-adapter.md), [작업 기록과 다음 목록](next-implementation-batch.md).
