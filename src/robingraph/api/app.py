@@ -24,6 +24,7 @@ from ..retrieval.operational import (
 )
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
+from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
 
 
@@ -163,6 +164,28 @@ class OperationalObservationSearchResponse(BaseModel):
     warnings: list[str]
 
 
+class TaxonomyLineageBackendUnavailableError(RuntimeError):
+    """The AviList reference-taxonomy graph could not be read safely."""
+
+
+LineageHandler = Callable[[str], "TaxonomyLineage | None"]
+
+
+class LineageTaxonResponse(BaseModel):
+    taxon_id: str
+    rank: str
+    scientific_name: str
+    authority: str | None
+
+
+class TaxonomyLineageResponse(BaseModel):
+    query_scientific_name: str
+    taxonomy_source: Literal["AviList"] = "AviList"
+    taxonomy_release: str
+    concept_set_id: str
+    lineage: list[LineageTaxonResponse]
+
+
 def _response(answer: Answer) -> AnswerResponse:
     return AnswerResponse(
         answer_id=answer.answer_id,
@@ -226,6 +249,15 @@ def _operational_observation_response(
             source_updated_at=observation.citation.source_updated_at,
         ),
         media=[OperationalMediaResponse(**value.__dict__) for value in observation.media],
+    )
+
+
+def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
+    return TaxonomyLineageResponse(
+        query_scientific_name=lineage.query_scientific_name,
+        taxonomy_release=lineage.taxonomy_release,
+        concept_set_id=lineage.concept_set_id,
+        lineage=[LineageTaxonResponse(**item.__dict__) for item in lineage.items],
     )
 
 
@@ -293,11 +325,28 @@ def create_neo4j_observation_handler(
     return handle
 
 
+def create_neo4j_lineage_handler(repository: TaxonomyLineageRepository) -> LineageHandler:
+    """Map Neo4j and missing-projection failures to a safe API boundary."""
+
+    def handle(scientific_name: str) -> "TaxonomyLineage | None":
+        from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
+
+        try:
+            return repository.lineage_for_scientific_name(scientific_name)
+        except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
+            raise TaxonomyLineageBackendUnavailableError(
+                "AviList reference-taxonomy lineage is unavailable"
+            ) from error
+
+    return handle
+
+
 def create_app(
     repository: GraphRepository | None = None,
     *,
     search_handler: SearchHandler | None = None,
     observation_handler: ObservationSearchHandler | None = None,
+    lineage_handler: LineageHandler | None = None,
 ) -> FastAPI:
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
@@ -381,6 +430,32 @@ def create_app(
             results=[_operational_observation_response(value) for value in observations],
             warnings=warnings,
         )
+
+    @app.get(
+        "/v1/taxa/lineage",
+        response_model=TaxonomyLineageResponse,
+        responses={
+            404: {"description": "No active AviList lineage exists for scientific_name"},
+            503: {"description": "The AviList reference-taxonomy projection is unavailable"},
+        },
+    )
+    def get_taxonomy_lineage(
+        scientific_name: str = Query(min_length=1, max_length=200),
+    ) -> TaxonomyLineageResponse:
+        if lineage_handler is None:
+            raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
+        cleaned = scientific_name.strip()
+        if not cleaned:
+            raise HTTPException(status_code=422, detail="scientific_name must not be blank")
+        try:
+            lineage = lineage_handler(cleaned)
+        except TaxonomyLineageBackendUnavailableError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
+        if lineage is None:
+            raise HTTPException(
+                status_code=404, detail="No active AviList lineage found for scientific_name"
+            )
+        return _lineage_response(lineage)
 
     return app
 
