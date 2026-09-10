@@ -16,7 +16,12 @@ RUN uv sync --python /usr/local/bin/python --locked --no-dev --no-install-projec
 
 COPY --chown=robingraph:robingraph src ./src
 COPY --chown=robingraph:robingraph data/eval/v1 ./data/eval/v1
+COPY --chown=robingraph:robingraph config ./config
+COPY --chown=robingraph:robingraph n8n ./n8n
+COPY --chown=robingraph:robingraph scripts ./scripts
 RUN uv sync --python /usr/local/bin/python --locked --no-dev
+
+RUN install -d -o robingraph -g robingraph /app/.cache /home/robingraph/.local/state
 
 ENV PATH="/app/.venv/bin:$PATH"
 

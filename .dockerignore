@@ -14,6 +14,12 @@ n8n
 scripts
 tests
 config
+!n8n/
+!n8n/**
+!scripts/
+!scripts/**
+!config/
+!config/**
 build
 dist
 *.egg-info

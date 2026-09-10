@@ -348,7 +348,13 @@ class TemporaryGateway:
         return errors
 
 
-def create_gateway(client: N8nClient, database: str, username: str, password: str) -> TemporaryGateway:
+def create_gateway(
+    client: N8nClient,
+    database: str,
+    username: str,
+    password: str,
+    neo4j_http_url: str = "http://neo4j:7474",
+) -> TemporaryGateway:
     suffix = secrets.token_hex(12)
     secret = secrets.token_urlsafe(32)
     credential_ids: list[str] = []
@@ -383,7 +389,8 @@ def create_gateway(client: N8nClient, database: str, username: str, password: st
                 credentials={"httpHeaderAuth": {"id": header["id"], "name": header["name"]}}))
             nodes.append(code(unwrap, "const body=$input.first().json.body;if(!body||typeof body!=='object')throw new Error('JSON object body required');return [{json:body}];", (-350, index * 220)))
             nodes.append(node(query, "n8n-nodes-base.httpRequest", 4.4, {
-                "method": "POST", "url": f"http://neo4j:7474/db/{database}/query/v2",
+                "method": "POST",
+                "url": f"{neo4j_http_url.rstrip('/')}/db/{quote(database, safe='')}/query/v2",
                 "authentication": "genericCredentialType", "genericAuthType": "httpBasicAuth",
                 "sendHeaders": True,
                 "headerParameters": {"parameters": [{"name": "Content-Type", "value": "application/json"}]},
@@ -447,8 +454,13 @@ def load_remote(path: Path, config: dict[str, object]) -> dict[str, object]:
     if missing:
         raise RuntimeError("Missing required environment settings: " + ", ".join(missing))
     client = N8nClient(os.environ["ROBINGRAPH_N8N_API_URL"], os.environ["ROBINGRAPH_N8N_API_KEY"])
-    gateway = create_gateway(client, os.environ.get("NEO4J_DATABASE", "neo4j"),
-                             os.environ["NEO4J_USERNAME"], os.environ["NEO4J_PASSWORD"])
+    gateway = create_gateway(
+        client,
+        os.environ.get("NEO4J_DATABASE", "neo4j"),
+        os.environ["NEO4J_USERNAME"],
+        os.environ["NEO4J_PASSWORD"],
+        os.environ.get("ROBINGRAPH_NEO4J_HTTP_URL", "http://neo4j:7474"),
+    )
     run_id = "avonet:verified-batch:" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + ":" + secrets.token_hex(4)
     retrieved_at = datetime.now(timezone.utc).isoformat()
     batch_size = int(config["batch_size"])

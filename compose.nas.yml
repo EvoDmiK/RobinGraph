@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: robingraph-api:local
+    image: ${ROBINGRAPH_IMAGE:-robingraph-api:local}
     container_name: robingraph-api
     command:
       - robingraph
@@ -36,7 +36,53 @@ services:
     networks:
       - edge
 
+  nas-tools:
+    profiles:
+      - tools
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${ROBINGRAPH_IMAGE:-robingraph-api:local}
+    entrypoint:
+      - python
+    command:
+      - --version
+    environment:
+      NEO4J_USERNAME: ${NEO4J_USERNAME:-}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-}
+      NEO4J_DATABASE: ${NEO4J_DATABASE:-neo4j}
+      ROBINGRAPH_NEO4J_HTTP_URL: ${ROBINGRAPH_NEO4J_HTTP_URL:-http://neo4j:7474}
+      ROBINGRAPH_N8N_API_URL: ${ROBINGRAPH_N8N_API_URL:-}
+      ROBINGRAPH_N8N_API_KEY: ${ROBINGRAPH_N8N_API_KEY:-}
+      ROBINGRAPH_N8N_WORKFLOW_ID: ${ROBINGRAPH_N8N_WORKFLOW_ID:-}
+      ROBINGRAPH_N8N_REFERENCE_WORKFLOW_ID: ${ROBINGRAPH_N8N_REFERENCE_WORKFLOW_ID:-}
+      ROBINGRAPH_N8N_AVONET_WORKFLOW_ID: ${ROBINGRAPH_N8N_AVONET_WORKFLOW_ID:-}
+      ROBINGRAPH_N8N_NEO4J_CREDENTIAL: ${ROBINGRAPH_N8N_NEO4J_CREDENTIAL:-Neo4j}
+      ROBINGRAPH_N8N_DISCORD_CREDENTIAL: ${ROBINGRAPH_N8N_DISCORD_CREDENTIAL:-Nesty API 키}
+      ROBINGRAPH_DISCORD_GUILD_ID: ${ROBINGRAPH_DISCORD_GUILD_ID:-1504129603310981120}
+      ROBINGRAPH_DISCORD_CHANNEL_ID: ${ROBINGRAPH_DISCORD_CHANNEL_ID:-1541317761517756436}
+    volumes:
+      - ingest-cache:/app/.cache
+      - deployment-state:/home/robingraph/.local/state
+    init: true
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - edge
+
 networks:
   edge:
     external: true
     name: ${ROBINGRAPH_EDGE_NETWORK:-robingraph-edge}
+
+volumes:
+  ingest-cache:
+    name: ${ROBINGRAPH_INGEST_CACHE_VOLUME:-robingraph-ingest-cache}
+  deployment-state:
+    name: ${ROBINGRAPH_STATE_VOLUME:-robingraph-state}
