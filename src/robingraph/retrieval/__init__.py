@@ -20,12 +20,14 @@ from .operational import (
     OperationalPlace,
     OperationalTaxon,
 )
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, TaxonomyLineageRepository
 
 __all__ = [
     "ChunkRecord",
     "DocumentRecord",
     "FixtureRepository",
     "GraphRepository",
+    "LineageTaxon",
     "ObservationRecord",
     "OperationalCitation",
     "OperationalMedia",
@@ -37,5 +39,7 @@ __all__ = [
     "PlaceRecord",
     "SourceCitation",
     "TaxonRecord",
+    "TaxonomyLineage",
+    "TaxonomyLineageRepository",
     "VernacularName",
 ]
