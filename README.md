@@ -2,13 +2,17 @@
 
 그래프 데이터베이스와 LLM을 이용해 근거가 확인되는 조류 정보를 제공하는 GraphRAG 프로젝트입니다.
 
-합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. HermesAgent 답변 생성은 후속 단계다.
+합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. AviList 분류·EltonTraits 식성·체중과 AVONET 형태 측정치·서식 환경을 수집하는 두 n8n workflow를 제공한다. 메모리 제한을 피하는 검증 배치 로더로 실제 AVONET 11,009종과 128,331개 형질 claim까지 NAS Neo4j에 적재했다. HermesAgent 답변 생성은 후속 단계다.
 
 - [시스템 설계](docs/system-design.md)
 - [2026-09-04 작업 기록](docs/work-log/2026-09-04.md)
 - [2026-09-07 작업 기록](docs/work-log/2026-09-07.md)
 - [2026-09-08 작업 기록](docs/work-log/2026-09-08.md)
+- [2026-09-09 작업 기록](docs/work-log/2026-09-09.md)
+- [2026-09-10 작업 기록](docs/work-log/2026-09-10.md)
 - [외부 데이터 소스 조사](docs/data-source-decision-input.md)
+- [종 정보 수집 포인트와 평가](docs/collection-points.md)
+- [n8n 종별 분류·생태·형태 정보 수집](docs/n8n/species-information-ingest.md)
 - [데이터 계약](docs/data-contracts.md)
 - [구현 준비 체크리스트](docs/implementation-readiness.md)
 - [보유 인프라 적용안](docs/deployment-profile.md)
