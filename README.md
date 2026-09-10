@@ -2,15 +2,22 @@
 
 그래프 데이터베이스와 LLM을 이용해 근거가 확인되는 조류 정보를 제공하는 GraphRAG 프로젝트입니다.
 
-합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. HermesAgent 답변 생성은 후속 단계다.
+합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. AviList 분류·EltonTraits 식성·체중과 AVONET 형태 측정치·서식 환경을 수집하는 두 n8n workflow를 제공한다. 메모리 제한을 피하는 검증 배치 로더로 실제 AVONET 11,009종과 128,331개 형질 claim까지 NAS Neo4j에 적재했다. HermesAgent 답변 생성은 후속 단계다.
 
 - [시스템 설계](docs/system-design.md)
+- [그래프 DB 스키마](docs/graph-database-schema.md)
 - [2026-09-04 작업 기록](docs/work-log/2026-09-04.md)
 - [2026-09-07 작업 기록](docs/work-log/2026-09-07.md)
+- [2026-09-08 작업 기록](docs/work-log/2026-09-08.md)
+- [2026-09-09 작업 기록](docs/work-log/2026-09-09.md)
+- [2026-09-10 작업 기록](docs/work-log/2026-09-10.md)
 - [외부 데이터 소스 조사](docs/data-source-decision-input.md)
+- [종 정보 수집 포인트와 평가](docs/collection-points.md)
+- [n8n 종별 분류·생태·형태 정보 수집](docs/n8n/species-information-ingest.md)
 - [데이터 계약](docs/data-contracts.md)
 - [구현 준비 체크리스트](docs/implementation-readiness.md)
 - [보유 인프라 적용안](docs/deployment-profile.md)
+- [NAS 배포 런북](docs/nas-deployment.md)
 - [기술 의사결정 기록](docs/decisions/)
 - [평가 fixture와 gold 질문](docs/evaluation.md)
 - [현재 구현 상태](docs/current-implementation.md)
@@ -98,6 +105,26 @@ curl -X POST http://127.0.0.1:8000/v1/search \
 응답의 `requested_mode`는 요청값, `mode`는 실제 결과에 사용된 모드다. 임베딩
 호출이 일시적으로 실패하면 전문 검색으로 폴백하고 `warnings`에 이유를 남긴다.
 `serve-fixture`에서도 OpenAPI 계약은 보이지만 검색 호출은 HTTP 503을 반환한다.
+
+## 운영 GBIF 관찰 조회
+
+n8n 운영 workflow가 적재한 실제 GBIF `BirdTaxon`·`Observation`은
+`serve-neo4j`의 `GET /v1/observations`에서 조회한다. GBIF taxon key, 학명,
+장소명, 관찰일 범위와 pagination을 조합할 수 있다.
+
+```sh
+curl "http://127.0.0.1:8000/v1/observations?scientific_name=Anas%20zonorhyncha&observed_from=2026-09-01&limit=25"
+```
+
+응답은 `mode: operational`, `data_source: gbif`, `fixture_only: false`를 명시하고,
+각 관찰에 taxon·place·허용된 media·EvidenceUnit·원본 GBIF URL·dataset URL·
+허용 라이선스를 포함한다. `SourceRecord → SourceDataset → License`의 허용 provenance 체인이
+완전한 레코드만 반환한다. `sensitivity: generalized`인 관찰은 저장된 공개 좌표도
+API에서 숨기며 `coordinate_disclosure: withheld`와 경고를 반환한다.
+
+이 endpoint는 구조화된 관찰 검색이다. 문헌 전문·벡터 검색인 `/v1/search`와
+Hermes 기반 자연어 답변 생성은 별도 경로다. `serve-fixture`에서는 계약만
+노출하고 호출은 HTTP 503을 반환한다.
 
 한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.
 

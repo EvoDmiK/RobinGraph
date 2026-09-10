@@ -1,0 +1,169 @@
+{
+  "registry_version": "2026-09-09",
+  "selected_design": "terra-claim-first",
+  "collection_points": [
+    {
+      "collection_point_id": "taxonomy-avilist-v2025b",
+      "source_id": "avilist-v2025b",
+      "source_release": "v2025b",
+      "scope": "taxonomy",
+      "role": "primary_backbone",
+      "endpoint_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+      "payload_mode": "source_snapshot",
+      "evidence_kind": "direct",
+      "score": 92,
+      "enabled": true,
+      "license_policy_status": "allowed",
+      "target_entities": [
+        "TaxonConceptSet",
+        "Taxon",
+        "ScientificName",
+        "ExternalIdentifier"
+      ],
+      "expected_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+      "notes": "Pin the official Explorer v2025b JSON SHA-256 in each ingestion manifest. Its 33684 rows and the 15 fields used by RobinGraph were verified field-for-field against the Extended XLSX; never use a display name as the internal ID."
+    },
+    {
+      "collection_point_id": "taxonomy-checklistbank-release",
+      "source_id": "catalogue-of-life-checklistbank",
+      "source_release": "2026-08-20:dataset-316115:doi-10.48580/dgywk",
+      "scope": "taxonomy",
+      "role": "synonym_and_crosswalk",
+      "endpoint_uri": "https://api.checklistbank.org/dataset/316115/nameusage/search",
+      "payload_mode": "structured_claim",
+      "evidence_kind": "direct",
+      "score": 88,
+      "enabled": true,
+      "license_policy_status": "allowed",
+      "target_entities": [
+        "ExternalTaxonConcept",
+        "ScientificName",
+        "ExternalIdentifier",
+        "TaxonMappingClaim"
+      ],
+      "expected_sha256": null,
+      "notes": "Pinned to Catalogue of Life release 2026-08-20. Name matches remain candidates until accepted by a deterministic or reviewed crosswalk."
+    },
+    {
+      "collection_point_id": "taxonomy-gbif-name-match",
+      "source_id": "gbif-species-api",
+      "source_release": "mutable-as-of-2026-09-08",
+      "scope": "taxonomy",
+      "role": "name_match_candidate",
+      "endpoint_uri": "https://api.gbif.org/v1/species/match",
+      "payload_mode": "structured_claim",
+      "evidence_kind": "direct",
+      "score": 82,
+      "enabled": false,
+      "license_policy_status": "review_required",
+      "target_entities": [
+        "ExternalTaxonConcept",
+        "ExternalIdentifier",
+        "TaxonMappingCandidate"
+      ],
+      "expected_sha256": null,
+      "notes": "Keep disabled until provider-level licensing is preserved; a fuzzy match must never merge taxa automatically."
+    },
+    {
+      "collection_point_id": "traits-eltontraits-v1",
+      "source_id": "eltontraits-v1",
+      "source_release": "figshare-article-3559887-v1:file-5631081",
+      "scope": "traits",
+      "role": "diet_foraging_body_mass",
+      "endpoint_uri": "https://ndownloader.figshare.com/files/5631081",
+      "payload_mode": "structured_claim",
+      "evidence_kind": "literature",
+      "score": 90,
+      "enabled": true,
+      "license_policy_status": "allowed",
+      "target_entities": [
+        "TraitClaim",
+        "TaxonMappingCandidate",
+        "EvidenceUnit"
+      ],
+      "expected_sha256": "97216eb1797da077169ebb1ebea275db293b09fc62f8bb8911f9beb98c50d321",
+      "notes": "Figshare article 3559887 exposes BirdFuncDat.txt as file 5631081 under CC0. Store each value as a separate claim with units and citation."
+    },
+    {
+      "collection_point_id": "traits-avonet",
+      "source_id": "avonet",
+      "source_release": "figshare-article-16586228-v7:file-34480856",
+      "scope": "traits",
+      "role": "morphology_and_habitat",
+      "endpoint_uri": "https://ndownloader.figshare.com/files/34480856",
+      "payload_mode": "structured_claim",
+      "evidence_kind": "literature",
+      "score": 78,
+      "enabled": true,
+      "license_policy_status": "allowed",
+      "target_entities": [
+        "TraitClaim",
+        "TaxonMappingCandidate",
+        "EvidenceUnit"
+      ],
+      "expected_sha256": "eb645e83dddb40f1654a3e8d721998dbca76eff540231b7b809267c1e96f8d3e",
+      "notes": "Figshare article 16586228 version 7 dataset license CC BY 4.0 verified 2026-09-09. Pin file 34480856 and AVONET1_BirdLife species averages (11009 rows). Wing.Length is folded wing length, not wingspan; Habitat.Density is a categorical habitat descriptor, not measured tree density. Preserve inferred-trait and reference-species flags."
+    },
+    {
+      "collection_point_id": "korea-nibr-species",
+      "source_id": "nibr-species",
+      "source_release": "unapproved",
+      "scope": "habitat",
+      "role": "korean_name_status_and_description",
+      "endpoint_uri": "https://species.nibr.go.kr/api-list",
+      "payload_mode": "link_only",
+      "evidence_kind": "direct",
+      "score": 76,
+      "enabled": false,
+      "license_policy_status": "review_required",
+      "target_entities": [
+        "VernacularName",
+        "ConservationClaim",
+        "HabitatClaim",
+        "SourceRecord"
+      ],
+      "expected_sha256": null,
+      "notes": "Until the exact object license is approved, retain only approved metadata and a source link; do not summarize or embed Type 3 KOGL text."
+    },
+    {
+      "collection_point_id": "vegetation-ecobank-spatial-join",
+      "source_id": "nie-ecobank",
+      "source_release": "unapproved-layer",
+      "scope": "vegetation",
+      "role": "observation_to_vegetation_layer_join",
+      "endpoint_uri": "https://www.nie-ecobank.kr/data/api/introduceOpenAPI.do",
+      "payload_mode": "spatial_inference",
+      "evidence_kind": "spatial_inference",
+      "score": 81,
+      "enabled": false,
+      "license_policy_status": "review_required",
+      "target_entities": [
+        "VegetationLayer",
+        "VegetationAssociationClaim",
+        "EvidenceUnit"
+      ],
+      "expected_sha256": null,
+      "notes": "Store layer ID/version, CRS, buffer, observation date, method, and confidence. Never promote nearby vegetation to an intrinsic species preference."
+    },
+    {
+      "collection_point_id": "conservation-iucn-v4",
+      "source_id": "iucn-red-list-v4",
+      "source_release": "v4-unapproved",
+      "scope": "conservation",
+      "role": "assessment_status_and_trend",
+      "endpoint_uri": "https://api.iucnredlist.org/api/v4",
+      "payload_mode": "link_only",
+      "evidence_kind": "direct",
+      "score": 79,
+      "enabled": false,
+      "license_policy_status": "restricted",
+      "target_entities": [
+        "ConservationClaim",
+        "ThreatClaim",
+        "SourceRecord"
+      ],
+      "expected_sha256": null,
+      "notes": "Do not collect, cache, redistribute, summarize, or embed until the intended use is approved under the API terms."
+    }
+  ]
+}
