@@ -10,6 +10,7 @@ from robingraph.api.app import (
     SearchBackendUnavailableError,
     TaxonomyLineageBackendUnavailableError,
     create_app,
+    create_neo4j_korean_lineage_handler,
     create_neo4j_lineage_handler,
     create_neo4j_observation_handler,
     create_neo4j_search_handler,
@@ -266,7 +267,7 @@ class ApiTest(unittest.TestCase):
             ).status_code,
         )
 
-    def test_taxonomy_lineage_trims_the_query_and_returns_avilist_lineage(self) -> None:
+    def test_taxonomy_lineage_scientific_name_trims_the_query_and_returns_full_response_contract(self) -> None:
         calls: list[str] = []
         lineage = TaxonomyLineage(
             query_scientific_name="Anas zonorhyncha",
@@ -274,11 +275,14 @@ class ApiTest(unittest.TestCase):
             taxonomy_release="2025b",
             concept_set_id="avilist-2025b",
             items=(
-                LineageTaxon("order:anseriformes", "order", "Anseriformes", None),
-                LineageTaxon("family:anatidae", "family", "Anatidae", "Leach, 1820"),
-                LineageTaxon("genus:anas", "genus", "Anas", "Linnaeus, 1758"),
-                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),
+                LineageTaxon("order:anseriformes", "order", "Anseriformes", None, None),
+                LineageTaxon("family:anatidae", "family", "Anatidae", "Leach, 1820", None),
+                LineageTaxon("genus:anas", "genus", "Anas", "Linnaeus, 1758", None),
+                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),
             ),
+            query_name="Anas zonorhyncha",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="scientific_name",
         )
 
         def handler(scientific_name: str) -> TaxonomyLineage:
@@ -292,7 +296,10 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(["Anas zonorhyncha"], calls)
         self.assertEqual(
             {
+                "query_name": "Anas zonorhyncha",
                 "query_scientific_name": "Anas zonorhyncha",
+                "resolved_query_scientific_name": "Anas zonorhyncha",
+                "matched_by": "scientific_name",
                 "taxonomy_source": "AviList",
                 "taxonomy_release": "2025b",
                 "concept_set_id": "avilist-2025b",
@@ -302,40 +309,130 @@ class ApiTest(unittest.TestCase):
                         "rank": "order",
                         "scientific_name": "Anseriformes",
                         "authority": None,
+                        "korean_name": None,
                     },
                     {
                         "taxon_id": "family:anatidae",
                         "rank": "family",
                         "scientific_name": "Anatidae",
                         "authority": "Leach, 1820",
+                        "korean_name": None,
                     },
                     {
                         "taxon_id": "genus:anas",
                         "rank": "genus",
                         "scientific_name": "Anas",
                         "authority": "Linnaeus, 1758",
+                        "korean_name": None,
                     },
                     {
                         "taxon_id": "species:anas-zonorhyncha",
                         "rank": "species",
                         "scientific_name": "Anas zonorhyncha",
                         "authority": None,
+                        "korean_name": "흰뺨검둥오리",
                     },
                 ],
             },
             response.json(),
         )
 
+    def test_taxonomy_lineage_response_defaults_new_fields_when_repository_omits_them(self) -> None:
+        # A legacy `TaxonomyLineage` constructed without the new keyword
+        # fields (as old callers do) must still render a complete response:
+        # `query_name` and `resolved_query_scientific_name` fall back to
+        # `query_scientific_name`, and `matched_by` defaults to
+        # "scientific_name".
+        legacy_lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),),
+        )
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: legacy_lineage)
+        )
+        payload = client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").json()
+        self.assertEqual("Anas zonorhyncha", payload["query_name"])
+        self.assertEqual("Anas zonorhyncha", payload["resolved_query_scientific_name"])
+        self.assertEqual("scientific_name", payload["matched_by"])
+        self.assertIsNone(payload["lineage"][0]["korean_name"])
+
+    def test_taxonomy_lineage_name_param_uses_the_korean_handler_and_reports_matched_by_korean_name(
+        self,
+    ) -> None:
+        calls: list[str] = []
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(
+                LineageTaxon("order:anseriformes", "order", "Anseriformes", None, None),
+                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),
+            ),
+            query_name="흰뺨검둥오리",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="korean_name",
+        )
+
+        def scientific_handler(_scientific_name: str) -> TaxonomyLineage:
+            raise AssertionError("scientific_name handler must not be invoked for name= queries")
+
+        def korean_handler(name: str) -> TaxonomyLineage:
+            calls.append(name)
+            return lineage
+
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=scientific_handler,
+                korean_lineage_handler=korean_handler,
+            )
+        )
+        response = client.get("/v1/taxa/lineage", params={"name": "  흰뺨검둥오리  "})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(["흰뺨검둥오리"], calls)
+        payload = response.json()
+        self.assertEqual("흰뺨검둥오리", payload["query_name"])
+        self.assertEqual("Anas zonorhyncha", payload["query_scientific_name"])
+        self.assertEqual("Anas zonorhyncha", payload["resolved_query_scientific_name"])
+        self.assertEqual("korean_name", payload["matched_by"])
+        self.assertEqual("흰뺨검둥오리", payload["lineage"][-1]["korean_name"])
+
+    def test_taxonomy_lineage_requires_exactly_one_of_scientific_name_or_name(self) -> None:
+        client = TestClient(create_app(FixtureRepository(load_fixture())))
+        self.assertEqual(422, client.get("/v1/taxa/lineage").status_code)
+        self.assertEqual(
+            422,
+            client.get(
+                "/v1/taxa/lineage",
+                params={"scientific_name": "Anas zonorhyncha", "name": "흰뺨검둥오리"},
+            ).status_code,
+        )
+
     def test_taxonomy_lineage_rejects_blank_and_overlong_queries(self) -> None:
-        client = TestClient(create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None))
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=lambda _name: None,
+                korean_lineage_handler=lambda _name: None,
+            )
+        )
         self.assertEqual(422, client.get("/v1/taxa/lineage?scientific_name=%20").status_code)
         self.assertEqual(422, client.get("/v1/taxa/lineage", params={"scientific_name": "x" * 201}).status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage?name=%20").status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage", params={"name": "x" * 201}).status_code)
 
-    def test_taxonomy_lineage_not_found_and_unavailable_are_distinguished(self) -> None:
+    def test_taxonomy_lineage_scientific_name_not_found_and_unavailable_are_distinguished(self) -> None:
         missing_client = TestClient(
             create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None)
         )
-        self.assertEqual(404, missing_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code)
+        response = missing_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha")
+        self.assertEqual(404, response.status_code)
+        self.assertIn("scientific_name", response.json()["detail"])
 
         unavailable_client = TestClient(
             create_app(
@@ -349,17 +446,48 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(503, response.status_code)
         self.assertEqual("AviList reference taxonomy is unavailable", response.json()["detail"])
 
+    def test_taxonomy_lineage_name_not_found_and_unavailable_are_distinguished(self) -> None:
+        missing_client = TestClient(
+            create_app(FixtureRepository(load_fixture()), korean_lineage_handler=lambda _name: None)
+        )
+        response = missing_client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"})
+        self.assertEqual(404, response.status_code)
+        self.assertIn("Korean vernacular name", response.json()["detail"])
+
+        unavailable_client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                korean_lineage_handler=lambda _name: (_ for _ in ()).throw(
+                    TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")
+                ),
+            )
+        )
+        response = unavailable_client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"})
+        self.assertEqual(503, response.status_code)
+        self.assertEqual("AviList reference taxonomy is unavailable", response.json()["detail"])
+
     def test_taxonomy_lineage_is_declared_but_unavailable_without_a_neo4j_handler(self) -> None:
         operation = self.client.get("/openapi.json").json()["paths"]["/v1/taxa/lineage"]["get"]
-        parameter = next(value for value in operation["parameters"] if value["name"] == "scientific_name")
-        self.assertEqual("query", parameter["in"])
-        self.assertEqual(1, parameter["schema"]["minLength"])
-        self.assertEqual(200, parameter["schema"]["maxLength"])
+        parameters = {value["name"]: value for value in operation["parameters"]}
+        self.assertEqual({"scientific_name", "name"}, parameters.keys())
+        for query_param_name in ("scientific_name", "name"):
+            parameter = parameters[query_param_name]
+            self.assertEqual("query", parameter["in"])
+            string_schema = next(
+                candidate for candidate in parameter["schema"]["anyOf"] if candidate.get("type") == "string"
+            )
+            self.assertEqual(1, string_schema["minLength"])
+            self.assertEqual(200, string_schema["maxLength"])
         self.assertIn("404", operation["responses"])
+        self.assertIn("422", operation["responses"])
         self.assertIn("503", operation["responses"])
         self.assertEqual(
             503,
             self.client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code,
+        )
+        self.assertEqual(
+            503,
+            self.client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"}).status_code,
         )
 
 
@@ -439,3 +567,76 @@ class Neo4jLineageHandlerTest(unittest.TestCase):
         ) as caught:
             handler("Anas zonorhyncha")
         self.assertNotIn("raw graph details", str(caught.exception))
+
+    def test_neo4j_driver_error_is_mapped_to_safe_error(self) -> None:
+        from neo4j.exceptions import ServiceUnavailable
+
+        class BrokenRepository:
+            def lineage_for_scientific_name(self, _scientific_name: str):
+                raise ServiceUnavailable("connection refused")
+
+        handler = create_neo4j_lineage_handler(BrokenRepository())
+        with self.assertRaises(TaxonomyLineageBackendUnavailableError):
+            handler("Anas zonorhyncha")
+
+    def test_repository_success_passes_lineage_through_unchanged(self) -> None:
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),),
+        )
+
+        class Repository:
+            def lineage_for_scientific_name(self, scientific_name: str):
+                return lineage if scientific_name == "Anas zonorhyncha" else None
+
+        handler = create_neo4j_lineage_handler(Repository())
+        self.assertIs(lineage, handler("Anas zonorhyncha"))
+        self.assertIsNone(handler("Not a real bird"))
+
+
+class Neo4jKoreanLineageHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def lineage_for_korean_name(self, _korean_name: str):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_korean_lineage_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            TaxonomyLineageBackendUnavailableError, "AviList reference-taxonomy lineage is unavailable"
+        ) as caught:
+            handler("흰뺨검둥오리")
+        self.assertNotIn("raw graph details", str(caught.exception))
+
+    def test_neo4j_driver_error_is_mapped_to_safe_error(self) -> None:
+        from neo4j.exceptions import ServiceUnavailable
+
+        class BrokenRepository:
+            def lineage_for_korean_name(self, _korean_name: str):
+                raise ServiceUnavailable("connection refused")
+
+        handler = create_neo4j_korean_lineage_handler(BrokenRepository())
+        with self.assertRaises(TaxonomyLineageBackendUnavailableError):
+            handler("흰뺨검둥오리")
+
+    def test_repository_success_passes_lineage_through_unchanged(self) -> None:
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),),
+            query_name="흰뺨검둥오리",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="korean_name",
+        )
+
+        class Repository:
+            def lineage_for_korean_name(self, korean_name: str):
+                return lineage if korean_name == "흰뺨검둥오리" else None
+
+        handler = create_neo4j_korean_lineage_handler(Repository())
+        self.assertIs(lineage, handler("흰뺨검둥오리"))
+        self.assertIsNone(handler("존재하지않는이름"))
