@@ -1,5 +1,13 @@
 # RobinGraph 현재 구현 상태
 
+최신 추가(2026-09-10): n8n에서 AviList 분류·EltonTraits 식성/체중과 AVONET
+형태 측정치/서식 환경을 수집하는 두 workflow를 제공한다. 실제 원본 전체를
+검증하고, 선택 시트 스트리밍·100종 배치 로더로 NAS Neo4j에 AVONET 11,009종,
+형질 claim 128,331개, 미매핑 후보 1,130개를 실제 적재했다.
+[종별 정보 수집 가이드](n8n/species-information-ingest.md)와
+[9월 10일 적재 기록](work-log/2026-09-10.md)을 참고한다. 아래 내용은 이전 단계의
+구현 기록이다.
+
 - 상태: In progress
 - 기준일: 2026-09-04
 - 범위: 합성 fixture + 라이선스 정책·provenance + Neo4j 그래프/전문/벡터 검색 + Jina 호환 HTTP 어댑터

@@ -20,6 +20,26 @@ def _gold_questions(root: Path) -> list[dict[str, object]]:
     return [json.loads(line) for line in (root / "gold-questions.jsonl").read_text(encoding="utf-8").splitlines() if line]
 
 
+def list_collection_points(arguments: argparse.Namespace) -> int:
+    """Print validated collection boundaries without fetching external data."""
+
+    from .ingest.collection_points import load_collection_points, serialize_points
+
+    registry = load_collection_points()
+    points = registry.select(scope=arguments.scope, include_blocked=arguments.include_blocked)
+    print(
+        json.dumps(
+            {
+                "registry_version": registry.registry_version,
+                "selected_design": registry.selected_design,
+                "collection_points": serialize_points(points),
+            },
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
 def validate_fixture(_: argparse.Namespace) -> int:
     corpus = load_fixture()
     print(
@@ -261,6 +281,20 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(prog="robingraph")
     commands = parser.add_subparsers(dest="command", required=True)
+    collection_points = commands.add_parser(
+        "collection-points",
+        help="List policy-validated taxonomy, trait, habitat, and vegetation collection points",
+    )
+    collection_points.add_argument(
+        "--scope",
+        choices=("taxonomy", "traits", "habitat", "vegetation", "conservation"),
+    )
+    collection_points.add_argument(
+        "--include-blocked",
+        action="store_true",
+        help="Include disabled review-required and restricted collection points",
+    )
+    collection_points.set_defaults(handler=list_collection_points)
     commands.add_parser("validate-fixture").set_defaults(handler=validate_fixture)
     commands.add_parser("evaluate-fixture").set_defaults(handler=evaluate)
     commands.add_parser("verify-neo4j").set_defaults(handler=verify_neo4j)

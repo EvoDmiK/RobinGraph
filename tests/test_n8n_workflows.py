@@ -11,10 +11,12 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 FINAL = ROOT / "n8n" / "robingraph-operational-ingest.json"
+REFERENCE = ROOT / "n8n" / "robingraph-reference-ingest.json"
 WORKFLOWS = [
     ROOT / "n8n" / "candidates" / "claude-operational-ingest.json",
     ROOT / "n8n" / "candidates" / "terra-operational-ingest.json",
     FINAL,
+    REFERENCE,
 ]
 
 
@@ -175,6 +177,155 @@ assert.equal(check({}), false);
         self.assertEqual("neo4j-id", load_node["credentials"]["neo4jApi"]["id"])
         self.assertNotIn("concurrency", payload["settings"])
         for name in ("Notify success", "Notify failure"):
+            self.assertEqual("channel-id", by_name[name]["parameters"]["channelId"]["value"])
+            self.assertEqual("discord-id", by_name[name]["credentials"]["discordBotApi"]["id"])
+
+    def test_reference_workflow_collects_only_approved_pinned_sources(self) -> None:
+        workflow = load(REFERENCE)
+        by_name = {item["name"]: item for item in workflow["nodes"]}
+        self.assertFalse(any(item["type"] == "n8n-nodes-base.ssh" for item in workflow["nodes"]))
+
+        build = by_name["Build reference configuration"]["parameters"]["jsCode"]
+        points = json.loads((ROOT / "config" / "collection-points.json").read_text(encoding="utf-8"))
+        enabled = {
+            item["collection_point_id"]: item
+            for item in points["collection_points"]
+            if item["enabled"] and item["license_policy_status"] == "allowed"
+            and item["collection_point_id"] != "traits-avonet"
+        }
+        self.assertEqual(
+            {
+                "taxonomy-avilist-v2025b",
+                "taxonomy-checklistbank-release",
+                "traits-eltontraits-v1",
+            },
+            set(enabled),
+        )
+        for item in enabled.values():
+            self.assertIn(item["endpoint_uri"], build)
+            if item["expected_sha256"]:
+                self.assertIn(item["expected_sha256"], build)
+
+        serialized = json.dumps(workflow)
+        for blocked in (
+            "api.gbif.org/v1/species/match",
+            "species.nibr.go.kr/api-list",
+            "nie-ecobank.kr/data/api",
+            "api.iucnredlist.org/api/v4",
+            "discovery.ucl.ac.uk/id/eprint/10144437",
+        ):
+            self.assertNotIn(blocked, serialized)
+
+        avi_fetch = by_name["Fetch AviList snapshot"]
+        elton_fetch = by_name["Fetch EltonTraits snapshot"]
+        self.assertEqual("text", avi_fetch["parameters"]["options"]["response"]["response"]["responseFormat"])
+        self.assertEqual("file", elton_fetch["parameters"]["options"]["response"]["response"]["responseFormat"])
+        self.assertFalse(by_name["Hash AviList snapshot"]["parameters"]["binaryData"])
+        self.assertEqual("={{ $json.data }}", by_name["Hash AviList snapshot"]["parameters"]["value"])
+        self.assertTrue(by_name["Hash EltonTraits snapshot"]["parameters"]["binaryData"])
+        for name in ("Hash AviList snapshot", "Hash EltonTraits snapshot"):
+            self.assertEqual("SHA256", by_name[name]["parameters"]["type"])
+        elton_extract = by_name["Extract EltonTraits TSV"]
+        self.assertEqual("csv", elton_extract["parameters"]["operation"])
+        self.assertEqual("\t", elton_extract["parameters"]["options"]["delimiter"])
+        self.assertEqual("latin1", elton_extract["parameters"]["options"]["encoding"])
+
+    def test_reference_workflow_is_claim_first_batched_and_fail_closed(self) -> None:
+        workflow = load(REFERENCE)
+        by_name = {item["name"]: item for item in workflow["nodes"]}
+        connections = workflow["connections"]
+        self.assertEqual(1, workflow["settings"]["concurrency"])
+        self.assertIn("AviList SHA-256 mismatch", by_name["Assemble claims and quality gates"]["parameters"]["jsCode"])
+        self.assertIn("Exact trait mapping ratio", by_name["Assemble claims and quality gates"]["parameters"]["jsCode"])
+        self.assertIn("taxonomy_batch_size", by_name["Prepare taxonomy batches"]["parameters"]["jsCode"])
+        self.assertIn("trait_claim_batch_size", by_name["Prepare trait batches"]["parameters"]["jsCode"])
+
+        taxonomy_query = by_name["Upsert AviList taxonomy batch"]["parameters"]["cypherQuery"]
+        self.assertIn("MERGE (taxon:Taxon", taxonomy_query)
+        self.assertIn("HAS_ACCEPTED_NAME", taxonomy_query)
+        self.assertIn("PARENT_OF", taxonomy_query)
+        self.assertIn("ExternalIdentifier", taxonomy_query)
+        trait_query = by_name["Upsert EltonTraits batch"]["parameters"]["cypherQuery"]
+        self.assertIn("TraitClaim", trait_query)
+        self.assertIn("TaxonMappingClaim", trait_query)
+        self.assertIn("TaxonMappingCandidate", trait_query)
+        self.assertIn("SUPPORTED_BY", trait_query)
+        finalize_query = by_name["Finalize active reference releases"]["parameters"]["cypherQuery"]
+        self.assertIn("ExternalTaxonConcept:BirdTaxon", finalize_query)
+        self.assertIn("MERGE (taxonomy_state:IngestState", finalize_query)
+        self.assertIn("run.status = 'succeeded'", finalize_query)
+
+        for gate in (
+            "Reference quality gates passed?",
+            "Ingestion run started?",
+            "Taxonomy load verified?",
+            "Trait load verified?",
+            "Reference release finalized?",
+        ):
+            self.assertEqual("Notify reference failure", connections[gate]["main"][1][0]["node"])
+        self.assertEqual(
+            "Fail reference execution",
+            connections["Notify reference failure"]["main"][0][0]["node"],
+        )
+
+    def test_snapshot_binaries_are_not_fanned_out_or_merged_into_rows(self) -> None:
+        cases = [
+            (REFERENCE, 'EltonTraits', 'Extract EltonTraits TSV', 'Normalize EltonTraits'),
+            (ROOT / 'n8n/robingraph-avonet-ingest.json', 'AVONET', 'Extract AVONET species sheet', 'Normalize AVONET species'),
+        ]
+        for path, source, extract, normalize in cases:
+            with self.subTest(source=source):
+                workflow=load(path)
+                nodes={n['name']:n for n in workflow['nodes']}
+                chain=[f'Fetch {source} snapshot', f'Hash {source} snapshot', f'Restore {source} snapshot binary', extract, normalize]
+                for previous,following in zip(chain,chain[1:]):
+                    self.assertEqual(workflow['connections'][previous]['main'],[[{'node':following,'type':'main','index':0}]])
+                self.assertNotIn(f'Join {source} hash and rows',nodes)
+                restore=nodes[chain[2]]['parameters']['jsCode']
+                self.assertIn('.first()',restore)
+                self.assertIn('binary: item.binary' if source!='AVONET' else 'binary:item.binary',restore)
+
+    def test_reference_code_nodes_and_cypher_expressions_parse_as_javascript(self) -> None:
+        workflow = load(REFERENCE)
+        checked = 0
+        for item in workflow["nodes"]:
+            if item["type"] == "n8n-nodes-base.code":
+                script = item["parameters"]["jsCode"]
+            elif item["type"] == "n8n-nodes-neo4j.neo4j":
+                expression = item["parameters"]["cypherQuery"]
+                self.assertTrue(expression.startswith("={{"))
+                script = expression.removeprefix("={{").removesuffix("}}").strip()
+            else:
+                continue
+            subprocess.run(
+                ["node", "--check"],
+                input=script,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            checked += 1
+        self.assertGreaterEqual(checked, 15)
+
+    def test_reference_nas_deployment_maps_all_credentials(self) -> None:
+        from scripts.deploy_n8n_reference_ingest import build_deployment
+
+        payload = build_deployment(
+            load(REFERENCE),
+            {"id": "neo4j-id", "name": "Neo4j"},
+            {"id": "discord-id", "name": "Nesty API 키"},
+            "guild-id",
+            "channel-id",
+        )
+        self.assertNotIn("concurrency", payload["settings"])
+        neo4j_nodes = [item for item in payload["nodes"] if item["type"] == "n8n-nodes-neo4j.neo4j"]
+        from scripts.generate_n8n_reference_ingest import REFERENCE_LABELS
+        self.assertEqual(5 + len(REFERENCE_LABELS), len(neo4j_nodes))
+        self.assertTrue(
+            all(item["credentials"]["neo4jApi"]["id"] == "neo4j-id" for item in neo4j_nodes)
+        )
+        by_name = {item["name"]: item for item in payload["nodes"]}
+        for name in ("Notify reference success", "Notify reference failure"):
             self.assertEqual("channel-id", by_name[name]["parameters"]["channelId"]["value"])
             self.assertEqual("discord-id", by_name[name]["credentials"]["discordBotApi"]["id"])
 
