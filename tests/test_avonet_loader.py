@@ -77,6 +77,7 @@ class AvonetLoaderTest(unittest.TestCase):
         self.assertNotIn("NEO4J_PASSWORD=", source)
         self.assertIn("httpHeaderAuth", source)
         self.assertIn("finally:", source)
+        self.assertIn("ROBINGRAPH_NEO4J_HTTP_URL", source)
 
 
 if __name__ == "__main__":

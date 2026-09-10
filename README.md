@@ -16,6 +16,7 @@
 - [데이터 계약](docs/data-contracts.md)
 - [구현 준비 체크리스트](docs/implementation-readiness.md)
 - [보유 인프라 적용안](docs/deployment-profile.md)
+- [NAS 배포 런북](docs/nas-deployment.md)
 - [기술 의사결정 기록](docs/decisions/)
 - [평가 fixture와 gold 질문](docs/evaluation.md)
 - [현재 구현 상태](docs/current-implementation.md)
