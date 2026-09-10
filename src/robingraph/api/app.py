@@ -176,10 +176,14 @@ class LineageTaxonResponse(BaseModel):
     rank: str
     scientific_name: str
     authority: str | None
+    korean_name: str | None
 
 
 class TaxonomyLineageResponse(BaseModel):
+    query_name: str
     query_scientific_name: str
+    resolved_query_scientific_name: str
+    matched_by: Literal["scientific_name", "korean_name"]
     taxonomy_source: Literal["AviList"] = "AviList"
     taxonomy_release: str
     concept_set_id: str
@@ -254,7 +258,14 @@ def _operational_observation_response(
 
 def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
     return TaxonomyLineageResponse(
+        query_name=lineage.query_name if lineage.query_name is not None else lineage.query_scientific_name,
         query_scientific_name=lineage.query_scientific_name,
+        resolved_query_scientific_name=(
+            lineage.resolved_query_scientific_name
+            if lineage.resolved_query_scientific_name is not None
+            else lineage.query_scientific_name
+        ),
+        matched_by=lineage.matched_by,
         taxonomy_release=lineage.taxonomy_release,
         concept_set_id=lineage.concept_set_id,
         lineage=[LineageTaxonResponse(**item.__dict__) for item in lineage.items],
@@ -341,12 +352,33 @@ def create_neo4j_lineage_handler(repository: TaxonomyLineageRepository) -> Linea
     return handle
 
 
+def create_neo4j_korean_lineage_handler(repository: TaxonomyLineageRepository) -> LineageHandler:
+    """Map Neo4j and missing-projection failures to a safe API boundary.
+
+    Mirrors `create_neo4j_lineage_handler` but resolves by the target's
+    directly attached Korean `VernacularName` instead of by scientific name.
+    """
+
+    def handle(korean_name: str) -> "TaxonomyLineage | None":
+        from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
+
+        try:
+            return repository.lineage_for_korean_name(korean_name)
+        except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
+            raise TaxonomyLineageBackendUnavailableError(
+                "AviList reference-taxonomy lineage is unavailable"
+            ) from error
+
+    return handle
+
+
 def create_app(
     repository: GraphRepository | None = None,
     *,
     search_handler: SearchHandler | None = None,
     observation_handler: ObservationSearchHandler | None = None,
     lineage_handler: LineageHandler | None = None,
+    korean_lineage_handler: LineageHandler | None = None,
 ) -> FastAPI:
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
@@ -435,26 +467,52 @@ def create_app(
         "/v1/taxa/lineage",
         response_model=TaxonomyLineageResponse,
         responses={
-            404: {"description": "No active AviList lineage exists for scientific_name"},
+            404: {"description": "No active AviList lineage exists for scientific_name or name"},
+            422: {"description": "Exactly one nonblank scientific_name or name query parameter is required"},
             503: {"description": "The AviList reference-taxonomy projection is unavailable"},
         },
     )
     def get_taxonomy_lineage(
-        scientific_name: str = Query(min_length=1, max_length=200),
+        scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
+        name: str | None = Query(default=None, min_length=1, max_length=200),
     ) -> TaxonomyLineageResponse:
-        if lineage_handler is None:
-            raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
-        cleaned = scientific_name.strip()
-        if not cleaned:
-            raise HTTPException(status_code=422, detail="scientific_name must not be blank")
-        try:
-            lineage = lineage_handler(cleaned)
-        except TaxonomyLineageBackendUnavailableError as error:
-            raise HTTPException(status_code=503, detail=str(error)) from error
-        if lineage is None:
+        provided = [
+            (query_param, value)
+            for query_param, value in (("scientific_name", scientific_name), ("name", name))
+            if value is not None
+        ]
+        if len(provided) != 1:
             raise HTTPException(
-                status_code=404, detail="No active AviList lineage found for scientific_name"
+                status_code=422,
+                detail="Exactly one of scientific_name or name is required",
             )
+        query_param, raw_value = provided[0]
+        cleaned = raw_value.strip()
+        if not cleaned:
+            raise HTTPException(status_code=422, detail=f"{query_param} must not be blank")
+
+        if query_param == "scientific_name":
+            if lineage_handler is None:
+                raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
+            try:
+                lineage = lineage_handler(cleaned)
+            except TaxonomyLineageBackendUnavailableError as error:
+                raise HTTPException(status_code=503, detail=str(error)) from error
+            if lineage is None:
+                raise HTTPException(
+                    status_code=404, detail="No active AviList lineage found for scientific_name"
+                )
+        else:
+            if korean_lineage_handler is None:
+                raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
+            try:
+                lineage = korean_lineage_handler(cleaned)
+            except TaxonomyLineageBackendUnavailableError as error:
+                raise HTTPException(status_code=503, detail=str(error)) from error
+            if lineage is None:
+                raise HTTPException(
+                    status_code=404, detail="No licensed Korean vernacular name found for name"
+                )
         return _lineage_response(lineage)
 
     return app
