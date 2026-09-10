@@ -8,7 +8,9 @@ from fastapi.testclient import TestClient
 from robingraph.api.app import (
     OperationalBackendUnavailableError,
     SearchBackendUnavailableError,
+    TaxonomyLineageBackendUnavailableError,
     create_app,
+    create_neo4j_lineage_handler,
     create_neo4j_observation_handler,
     create_neo4j_search_handler,
 )
@@ -26,6 +28,7 @@ from robingraph.retrieval.operational import (
     OperationalTaxon,
 )
 from robingraph.retrieval.repository import SourceCitation
+from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
 
 class ApiTest(unittest.TestCase):
@@ -263,6 +266,102 @@ class ApiTest(unittest.TestCase):
             ).status_code,
         )
 
+    def test_taxonomy_lineage_trims_the_query_and_returns_avilist_lineage(self) -> None:
+        calls: list[str] = []
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(
+                LineageTaxon("order:anseriformes", "order", "Anseriformes", None),
+                LineageTaxon("family:anatidae", "family", "Anatidae", "Leach, 1820"),
+                LineageTaxon("genus:anas", "genus", "Anas", "Linnaeus, 1758"),
+                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),
+            ),
+        )
+
+        def handler(scientific_name: str) -> TaxonomyLineage:
+            calls.append(scientific_name)
+            return lineage
+
+        client = TestClient(create_app(FixtureRepository(load_fixture()), lineage_handler=handler))
+        response = client.get("/v1/taxa/lineage", params={"scientific_name": "  Anas zonorhyncha  "})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(["Anas zonorhyncha"], calls)
+        self.assertEqual(
+            {
+                "query_scientific_name": "Anas zonorhyncha",
+                "taxonomy_source": "AviList",
+                "taxonomy_release": "2025b",
+                "concept_set_id": "avilist-2025b",
+                "lineage": [
+                    {
+                        "taxon_id": "order:anseriformes",
+                        "rank": "order",
+                        "scientific_name": "Anseriformes",
+                        "authority": None,
+                    },
+                    {
+                        "taxon_id": "family:anatidae",
+                        "rank": "family",
+                        "scientific_name": "Anatidae",
+                        "authority": "Leach, 1820",
+                    },
+                    {
+                        "taxon_id": "genus:anas",
+                        "rank": "genus",
+                        "scientific_name": "Anas",
+                        "authority": "Linnaeus, 1758",
+                    },
+                    {
+                        "taxon_id": "species:anas-zonorhyncha",
+                        "rank": "species",
+                        "scientific_name": "Anas zonorhyncha",
+                        "authority": None,
+                    },
+                ],
+            },
+            response.json(),
+        )
+
+    def test_taxonomy_lineage_rejects_blank_and_overlong_queries(self) -> None:
+        client = TestClient(create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None))
+        self.assertEqual(422, client.get("/v1/taxa/lineage?scientific_name=%20").status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage", params={"scientific_name": "x" * 201}).status_code)
+
+    def test_taxonomy_lineage_not_found_and_unavailable_are_distinguished(self) -> None:
+        missing_client = TestClient(
+            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None)
+        )
+        self.assertEqual(404, missing_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code)
+
+        unavailable_client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=lambda _name: (_ for _ in ()).throw(
+                    TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")
+                ),
+            )
+        )
+        response = unavailable_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha")
+        self.assertEqual(503, response.status_code)
+        self.assertEqual("AviList reference taxonomy is unavailable", response.json()["detail"])
+
+    def test_taxonomy_lineage_is_declared_but_unavailable_without_a_neo4j_handler(self) -> None:
+        operation = self.client.get("/openapi.json").json()["paths"]["/v1/taxa/lineage"]["get"]
+        parameter = next(value for value in operation["parameters"] if value["name"] == "scientific_name")
+        self.assertEqual("query", parameter["in"])
+        self.assertEqual(1, parameter["schema"]["minLength"])
+        self.assertEqual(200, parameter["schema"]["maxLength"])
+        self.assertIn("404", operation["responses"])
+        self.assertIn("503", operation["responses"])
+        self.assertEqual(
+            503,
+            self.client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code,
+        )
+
 
 class Neo4jApiSearchHandlerTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -325,4 +424,18 @@ class Neo4jOperationalHandlerTest(unittest.TestCase):
             OperationalBackendUnavailableError, "Operational GBIF observation search is unavailable"
         ) as caught:
             handler(OperationalObservationQuery())
+        self.assertNotIn("raw graph details", str(caught.exception))
+
+
+class Neo4jLineageHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def lineage_for_scientific_name(self, _scientific_name: str):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_lineage_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            TaxonomyLineageBackendUnavailableError, "AviList reference-taxonomy lineage is unavailable"
+        ) as caught:
+            handler("Anas zonorhyncha")
         self.assertNotIn("raw graph details", str(caught.exception))
