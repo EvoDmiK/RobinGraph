@@ -1,0 +1,341 @@
+{
+  "id": "robingraph-avonet-ingest",
+  "name": "RobinGraph — AVONET morphology and ecology reference ingest",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "25c3fcac-c3e8-5adc-b376-2c88fff030ec",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const config = {\"url\": \"https://ndownloader.figshare.com/files/34480856\", \"sha256\": \"eb645e83dddb40f1654a3e8d721998dbca76eff540231b7b809267c1e96f8d3e\", \"release\": \"figshare-article-16586228-v7:file-34480856\", \"sheet\": \"AVONET1_BirdLife\", \"expected_rows\": 11009, \"taxonomy_release\": \"v2025b\", \"batch_size\": 100, \"expected_source_claims\": 143004, \"expected_matched_profiles\": 9879, \"expected_loaded_claims\": 128331, \"expected_mapping_candidates\": 1130, \"taxonomy_sha256\": \"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411\", \"dataset_id\": \"avonet:figshare-article-16586228-v7:file-34480856\", \"fields\": [[\"Beak.Length_Culmen\", \"beak_length_culmen\", \"mm\", \"Beak Culmen\"], [\"Beak.Length_Nares\", \"beak_length_nares\", \"mm\", \"Beak Nares\"], [\"Beak.Width\", \"beak_width\", \"mm\", \"Beak Width\"], [\"Beak.Depth\", \"beak_depth\", \"mm\", \"Beak Depth\"], [\"Tarsus.Length\", \"tarsus_length\", \"mm\", \"Tarsus Length\"], [\"Wing.Length\", \"wing_length\", \"mm\", \"Wing Length\"], [\"Tail.Length\", \"tail_length\", \"mm\", \"Tail Length\"], [\"Mass\", \"body_mass\", \"g\", \"Body Mass\"], [\"Habitat\", \"habitat\", null, null], [\"Habitat.Density\", \"habitat_density_category\", null, null], [\"Trophic.Level\", \"trophic_level\", null, null], [\"Trophic.Niche\", \"trophic_niche\", null, null], [\"Primary.Lifestyle\", \"primary_lifestyle\", null, null]]};\nreturn [{json:{...config, run_id:\"avonet:\"+$execution.id, retrieved_at:new Date().toISOString()}}];"
+      },
+      "id": "ab12b856-aeb9-5290-9ed0-ef904525b71f",
+      "name": "Build AVONET configuration",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "timeout": 180000,
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "01d6235c-29ab-5510-b310-22f965d3025a",
+      "name": "Fetch AVONET snapshot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "action": "hash",
+        "binaryData": true,
+        "binaryPropertyName": "data",
+        "type": "SHA256",
+        "dataPropertyName": "raw_sha256",
+        "encoding": "hex"
+      },
+      "id": "231c4ab7-26b4-5721-8e1d-a83ca0653943",
+      "name": "Hash AVONET snapshot",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        600,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "data",
+        "options": {
+          "sheetName": "AVONET1_BirdLife",
+          "headerRow": true,
+          "includeEmptyCells": true,
+          "rawData": false,
+          "readAsString": false
+        }
+      },
+      "id": "2a8b4056-ca05-5659-b978-d53ae8140852",
+      "name": "Extract AVONET species sheet",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const item=$('Fetch AVONET snapshot').first(); if (!item.binary?.data) throw new Error('AVONET snapshot binary missing'); return [{json:$input.first().json,binary:item.binary}];"
+      },
+      "id": "9973f9d3-450d-5d2f-af2a-ee651e92aee1",
+      "name": "Restore AVONET snapshot binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const config = $('Build AVONET configuration').first().json;\nconst hash = $('Hash AVONET snapshot').first().json.raw_sha256;\nif (hash !== config.sha256) throw new Error('AVONET snapshot SHA-256 mismatch');\nconst rows = $input.all().map(x => x.json);\nif (rows.length !== config.expected_rows) throw new Error('AVONET row count mismatch');\nconst text = x => x == null || String(x).trim() === '' || String(x).trim() === 'NA' ? null : String(x).trim();\nconst seen = new Set();\nconst profiles = rows.map((raw, index) => {\n  const scientific_name = text(raw.Species1), sequence = text(raw.Sequence);\n  if (!scientific_name || seen.has(scientific_name)) throw new Error('Missing or duplicate species identity');\n  seen.add(scientific_name);\n  if (!['YES', 'NO'].includes(raw.Inference)) throw new Error('Invalid inference flag');\n  const inferred = (text(raw['Traits.inferred']) || '').toLowerCase().split(';').map(x => x.trim());\n  const id = 'avonet:' + config.release + ':' + encodeURIComponent(scientific_name);\n  const profile = {id, scientific_name, sequence, row_number: index + 2,\n    source_uri: config.url + '#sheet=' + config.sheet + '&row=' + (index + 2),\n    inference_raw: raw.Inference, inferred_fields_raw: text(raw['Traits.inferred']),\n    reference_species: text(raw['Reference.species']), avibase_id: text(raw['Avibase.ID1']),\n    sample_size: Number(raw['Total.individuals']), mass_source: text(raw['Mass.Source']),\n    mass_references: text(raw['Mass.Refs.Other']), claims: []};\n  if (!Number.isInteger(profile.sample_size) || profile.sample_size < 0) throw new Error('Invalid sample size');\n  for (const [field, trait, unit, inferredName] of config.fields) {\n    if (!Object.prototype.hasOwnProperty.call(raw, field)) throw new Error('Missing required column: ' + field);\n    const value = text(raw[field]);\n    if (value == null) continue;\n    let value_num = null, value_text = null;\n    if (unit) {\n      value_num = Number(value);\n      if (!Number.isFinite(value_num) || value_num <= 0) throw new Error('Invalid measurement: ' + field);\n    } else if (field === 'Habitat.Density') {\n      value_text = {'1': 'dense', '2': 'semi_open', '3': 'open'}[value];\n      if (!value_text) throw new Error('Invalid habitat density code');\n    } else value_text = value;\n    profile.claims.push({id: id + ':' + trait, trait_name: trait, source_field: field,\n      value_num, value_text, unit, raw_value: value,\n      inferred: !!inferredName && inferred.includes(inferredName.toLowerCase()),\n      evidence_kind: 'literature_dataset', summary_statistic: unit ? 'species_mean' : 'species_category'});\n  }\n  return profile;\n});\nif (!profiles.every(p => p.claims.length)) throw new Error('Empty trait profile');\nconst claim_count = profiles.reduce((n,p) => n+p.claims.length,0);\nif (claim_count !== config.expected_source_claims) throw new Error('AVONET source claim count mismatch');\nreturn [{json: {...config, profiles, claim_count}}];"
+      },
+      "id": "94aaee03-35af-549a-b9cb-ff462e0ac95c",
+      "name": "Normalize AVONET species",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const data = $input.first().json;\nconst batch_count = Math.ceil(data.profiles.length / data.batch_size);\nreturn Array.from({length: batch_count}, (_, i) => ({json: {\n  ...data, profiles: data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)})),\n  batch_index: i, batch_count\n}}));"
+      },
+      "id": "d307472b-0964-59c5-bd55-6248c078c8b7",
+      "name": "Build AVONET batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "graphDb",
+        "operation": "executeQuery",
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"dataset_id\": literal($json[\"dataset_id\"]),\"profiles\": literal($json[\"profiles\"]),\"release\": literal($json[\"release\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"sha256\": literal($json[\"sha256\"]),\"sheet\": literal($json[\"sheet\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"]),\"url\": literal($json[\"url\"])}; return \"MATCH (state:IngestState {id:'reference-taxonomy'}) WHERE state.active_release = $taxonomy_release MATCH (concept:TaxonConceptSet {id:state.active_concept_set_id}) WHERE concept.version=$taxonomy_release AND concept.snapshot_sha256=$taxonomy_sha256 AND EXISTS { MATCH (concept)-[:FROM_DATASET]->(td:SourceDataset)-[:LICENSED_UNDER]->(tl:License) WHERE td.version=$taxonomy_release AND td.policy_status='allowed' AND td.snapshot_sha256=$taxonomy_sha256 AND tl.policy_status='allowed' AND tl.license_uri='https://creativecommons.org/licenses/by/4.0/' } MERGE (dataset:SourceDataset {id:$dataset_id}) SET dataset.source_id='avonet', dataset.name='AVONET Supplementary dataset 1', dataset.source_release=$release, dataset.source_uri=$url, dataset.version=$release, dataset.snapshot_uri=$url, dataset.snapshot_sha256=$sha256, dataset.landing_uri='https://doi.org/10.6084/m9.figshare.16586228.v7', dataset.provider='AVONET', dataset.policy_status='allowed', dataset.raw_sha256=$sha256, dataset.license_policy_status='allowed', dataset.enabled=true MERGE (license:License {id:'https://creativecommons.org/licenses/by/4.0/'}) SET license.uri='https://creativecommons.org/licenses/by/4.0/', license.license_uri='https://creativecommons.org/licenses/by/4.0/', license.name='CC BY 4.0', license.policy_status='allowed' MERGE (dataset)-[:LICENSED_UNDER]->(license) MERGE (run:IngestionRun {id:$run_id}) SET run.status='loading', run.source_id='avonet', run.source_release=$release, run.taxonomy_release=$taxonomy_release, run.retrieved_at=$retrieved_at WITH concept, dataset, run UNWIND $profiles AS row OPTIONAL MATCH (taxon:Taxon)-[:IN_CONCEPT_SET]->(concept) WHERE taxon.source_release=$taxonomy_release AND taxon.rank='species' AND taxon.scientific_name=row.scientific_name WITH dataset, run, row, collect(DISTINCT taxon) AS taxa MERGE (record:SourceRecord {id:row.id}) SET record.record_type='trait_profile', record.external_id=row.sequence, record.scientific_name_raw=row.scientific_name, record.raw_uri=row.source_uri, record.raw_hash=$sha256, record.retrieved_at=$retrieved_at, record.source_sheet=$sheet, record.source_row=row.row_number, record.inference_raw=row.inference_raw, record.inferred_fields_raw=row.inferred_fields_raw, record.reference_species=row.reference_species, record.sample_size=row.sample_size, record.mass_source=row.mass_source, record.mass_references=row.mass_references, record.avibase_id=row.avibase_id MERGE (record)-[:IN_DATASET]->(dataset) MERGE (run)-[:INGESTED]->(record) CALL { WITH run, row, taxa, record WITH run, row, record, taxa[0] AS taxon WHERE size(taxa)=1 MERGE (mapping:TaxonMappingClaim {id:row.id+':mapping:'+$taxonomy_release}) SET mapping.method='exact_scientific_name_unique_in_avilist_species', mapping.resolution_status='accepted_automatic', mapping.taxonomy_release=$taxonomy_release MERGE (record)-[:HAS_MAPPING_CLAIM]->(mapping) MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) WITH run,row,record,taxon UNWIND row.claims AS value MERGE (evidence:EvidenceUnit {id:value.id+':evidence'}) SET evidence.evidence_type='literature_dataset_row', evidence.locator=row.source_uri+'&field='+value.source_field, evidence.citation='Tobias et al. (2022), AVONET; Figshare 16586228 v7', evidence.accessed_at=$retrieved_at MERGE (evidence)-[:FROM_RECORD]->(record) MERGE (claim:TraitClaim {id:value.id+':taxonomy:'+$taxonomy_release}) SET claim.trait_name=value.trait_name, claim.value_num=value.value_num, claim.value_text=value.value_text, claim.unit=value.unit, claim.raw_value=value.raw_value, claim.source_field=value.source_field, claim.source_release=$release, claim.source_id='avonet', claim.taxonomy_release=$taxonomy_release, claim.inferred=value.inferred, claim.evidence_kind=value.evidence_kind, claim.summary_statistic=value.summary_statistic, claim.retrieved_at=$retrieved_at MERGE (claim)-[:ASSERTS_ABOUT]->(taxon) MERGE (claim)-[:SUPPORTED_BY]->(evidence) MERGE (run)-[:INGESTED]->(claim) RETURN count(*) AS loaded_claims } CALL { WITH run,row,taxa,record WITH run,row,record,taxa WHERE size(taxa)<>1 MERGE (candidate:TaxonMappingCandidate {id:row.id+':candidate:'+$taxonomy_release}) SET candidate.source_scientific_name=row.scientific_name, candidate.source_taxonomy='HBW-BirdLife v5', candidate.taxonomy_release=$taxonomy_release, candidate.resolution_status='open', candidate.reason_code=CASE WHEN size(taxa)=0 THEN 'no_exact_match' ELSE 'ambiguous_exact_match' END, candidate.profile_json=row.profile_json MERGE (record)-[:HAS_MAPPING_CANDIDATE]->(candidate) MERGE (run)-[:QUARANTINED]->(candidate) RETURN count(*) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, count(*) AS loaded_profiles, sum(loaded_claims) AS loaded_claims, sum(loaded_candidates) AS loaded_candidates, sum(CASE WHEN size(taxa)=1 THEN 1 ELSE 0 END) AS matched_profiles, sum(CASE WHEN size(taxa)=1 THEN size(row.claims) ELSE 0 END) AS expected_claims\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+      },
+      "id": "d503a2e6-1b28-55e5-b384-67e10ba18bb2",
+      "name": "Upsert AVONET batches",
+      "type": "n8n-nodes-neo4j.neo4j",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        0
+      ],
+      "credentials": {
+        "neo4jApi": {
+          "id": "DvmTD1qB0Kb7TRml",
+          "name": "Neo4j"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Normalize AVONET species').first().json;\nconst rows = $input.all().map(x=>x.json);\nconst count = Math.ceil(expected.expected_rows/expected.batch_size);\nif (rows.length !== count) throw new Error('Missing batch results');\nconst indices = new Set();\nlet profiles=0, claims=0, candidates=0, matched=0;\nfor (const row of rows) {\n  if (row.error || !Number.isInteger(row.batch_index) || row.batch_index<0 || row.batch_index>=count || indices.has(row.batch_index) || row.batch_count!==count) throw new Error('Invalid batch acknowledgement');\n  indices.add(row.batch_index);\n  const wanted=Math.min(expected.batch_size,expected.expected_rows-row.batch_index*expected.batch_size);\n  if (row.loaded_profiles!==wanted || row.loaded_claims!==row.expected_claims || row.matched_profiles+row.loaded_candidates!==wanted) throw new Error('Batch count mismatch');\n  for (const key of ['loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims']) if (!Number.isInteger(row[key]) || row[key]<0) throw new Error('Invalid count');\n  profiles+=row.loaded_profiles; claims+=row.loaded_claims; candidates+=row.loaded_candidates; matched+=row.matched_profiles;\n}\nif (profiles!==expected.expected_rows || matched!==expected.expected_matched_profiles ||\n    claims!==expected.expected_loaded_claims || candidates!==expected.expected_mapping_candidates)\n  throw new Error('AVONET mapping quality gate failed');\nconst {profiles: unused, ...config}=expected;\nreturn [{json:{...config, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];"
+      },
+      "id": "3817e9ab-63fd-50aa-bd27-95f25d7ad58f",
+      "name": "Verify AVONET batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "graphDb",
+        "operation": "executeQuery",
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"loaded_candidates\": literal($json[\"loaded_candidates\"]),\"loaded_claims\": literal($json[\"loaded_claims\"]),\"loaded_profiles\": literal($json[\"loaded_profiles\"]),\"release\": literal($json[\"release\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"])}; return \"MATCH (taxonomy:IngestState {id:'reference-taxonomy'}) WHERE taxonomy.active_release=$taxonomy_release AND EXISTS { MATCH (cs:TaxonConceptSet {id:taxonomy.active_concept_set_id})-[:FROM_DATASET]->(td:SourceDataset)-[:LICENSED_UNDER]->(tl:License) WHERE cs.version=$taxonomy_release AND cs.snapshot_sha256=$taxonomy_sha256 AND td.version=$taxonomy_release AND td.policy_status='allowed' AND td.snapshot_sha256=$taxonomy_sha256 AND tl.policy_status='allowed' AND tl.license_uri='https://creativecommons.org/licenses/by/4.0/' } MATCH (run:IngestionRun {id:$run_id}) WHERE run.status='loading' CALL { WITH run MATCH (run)-[:INGESTED]->(r:SourceRecord) RETURN count(DISTINCT r) AS profiles } CALL { WITH run MATCH (run)-[:INGESTED]->(c:TraitClaim) RETURN count(DISTINCT c) AS claims } CALL { WITH run MATCH (run)-[:QUARANTINED]->(c:TaxonMappingCandidate) RETURN count(DISTINCT c) AS candidates } WITH run, profiles, claims, candidates WHERE profiles=$loaded_profiles AND claims=$loaded_claims AND candidates=$loaded_candidates MERGE (state:IngestState {id:'reference-avonet'}) SET state.active_release=$release, state.taxonomy_release=$taxonomy_release, state.last_successful_run_id=$run_id, state.last_successful_at=datetime() SET run.status='succeeded',run.profile_count=profiles,run.trait_claim_count=claims, run.mapping_candidate_count=candidates,run.completed_at=datetime() RETURN run.id AS finalized_run_id, state.active_release AS active_release, run.status AS status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+      },
+      "id": "267a4348-b79a-5b19-baf3-baa71eb0dbc2",
+      "name": "Finalize AVONET release",
+      "type": "n8n-nodes-neo4j.neo4j",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        0
+      ],
+      "credentials": {
+        "neo4jApi": {
+          "id": "DvmTD1qB0Kb7TRml",
+          "name": "Neo4j"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const row=$input.first().json; const cfg=$('Build AVONET configuration').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='succeeded') throw new Error('AVONET finalization failed'); return $input.all();"
+      },
+      "id": "c9233c38-7746-5197-b2e7-309adf693952",
+      "name": "Verify AVONET release",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Build AVONET configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AVONET configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch AVONET snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch AVONET snapshot": {
+      "main": [
+        [
+          {
+            "node": "Hash AVONET snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hash AVONET snapshot": {
+      "main": [
+        [
+          {
+            "node": "Restore AVONET snapshot binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore AVONET snapshot binary": {
+      "main": [
+        [
+          {
+            "node": "Extract AVONET species sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract AVONET species sheet": {
+      "main": [
+        [
+          {
+            "node": "Normalize AVONET species",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize AVONET species": {
+      "main": [
+        [
+          {
+            "node": "Build AVONET batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AVONET batches": {
+      "main": [
+        [
+          {
+            "node": "Upsert AVONET batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert AVONET batches": {
+      "main": [
+        [
+          {
+            "node": "Verify AVONET batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify AVONET batches": {
+      "main": [
+        [
+          {
+            "node": "Finalize AVONET release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize AVONET release": {
+      "main": [
+        [
+          {
+            "node": "Verify AVONET release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "concurrency": 1
+  },
+  "pinData": {},
+  "tags": []
+}
