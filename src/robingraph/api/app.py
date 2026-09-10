@@ -8,14 +8,20 @@ have to guess.
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Callable, Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ..fixture import load_fixture
 from ..graph.settings import Neo4jSettings
 from ..retrieval.hybrid import FULLTEXT_CHANNEL, VECTOR_CHANNEL, HybridSearchOutcome
+from ..retrieval.operational import (
+    OperationalObservation,
+    OperationalObservationQuery,
+    OperationalObservationRepository,
+)
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..slice import Answer, QuestionService, validate_answer
@@ -82,6 +88,81 @@ class SearchBackendUnavailableError(RuntimeError):
     """Search could not run because a configured external dependency failed."""
 
 
+class OperationalBackendUnavailableError(RuntimeError):
+    """The operational GBIF observation graph could not be read safely."""
+
+
+ObservationSearchHandler = Callable[
+    [OperationalObservationQuery], tuple[OperationalObservation, ...]
+]
+
+
+class OperationalTaxonResponse(BaseModel):
+    taxon_id: str
+    external_key: str
+    scientific_name: str
+    canonical_name: str | None
+    vernacular_name_raw: str | None
+    rank: str
+
+
+class OperationalPlaceResponse(BaseModel):
+    place_id: str
+    name: str
+    country_code: str
+
+
+class OperationalCitationResponse(BaseModel):
+    evidence_id: str
+    dataset_id: str
+    dataset_name: str
+    source_url: str
+    dataset_url: str
+    license_uris: list[str]
+    retrieved_at: str
+    source_updated_at: str | None
+
+
+class OperationalMediaResponse(BaseModel):
+    media_id: str
+    media_type: str
+    format: str | None
+    landing_uri: str
+    asset_uri: str | None
+    creator: str | None
+    publisher: str | None
+    attribution: str
+    license_uri: str
+
+
+class OperationalObservationResponse(BaseModel):
+    observation_id: str
+    occurrence_id: str
+    observed_at: str
+    count: int | None
+    basis: str
+    sensitivity: str
+    coordinate_disclosure: Literal["public", "withheld"]
+    latitude: float | None
+    longitude: float | None
+    coordinate_uncertainty_m: float | None
+    taxon: OperationalTaxonResponse
+    place: OperationalPlaceResponse
+    citation: OperationalCitationResponse
+    media: list[OperationalMediaResponse]
+
+
+class OperationalObservationSearchResponse(BaseModel):
+    mode: Literal["operational"] = "operational"
+    data_source: Literal["gbif"] = "gbif"
+    fixture_only: Literal[False] = False
+    limit: int
+    offset: int
+    returned: int
+    results: list[OperationalObservationResponse]
+    warnings: list[str]
+
+
 def _response(answer: Answer) -> AnswerResponse:
     return AnswerResponse(
         answer_id=answer.answer_id,
@@ -115,6 +196,36 @@ def _search_response(outcome: HybridSearchOutcome, *, requested_mode: SearchMode
             for result in outcome.results
         ],
         warnings=list(outcome.warnings),
+    )
+
+
+def _operational_observation_response(
+    observation: OperationalObservation,
+) -> OperationalObservationResponse:
+    return OperationalObservationResponse(
+        observation_id=observation.observation_id,
+        occurrence_id=observation.occurrence_id,
+        observed_at=observation.observed_at,
+        count=observation.count,
+        basis=observation.basis,
+        sensitivity=observation.sensitivity,
+        coordinate_disclosure=observation.coordinate_disclosure,
+        latitude=observation.latitude,
+        longitude=observation.longitude,
+        coordinate_uncertainty_m=observation.coordinate_uncertainty_m,
+        taxon=OperationalTaxonResponse(**observation.taxon.__dict__),
+        place=OperationalPlaceResponse(**observation.place.__dict__),
+        citation=OperationalCitationResponse(
+            evidence_id=observation.citation.evidence_id,
+            dataset_id=observation.citation.dataset_id,
+            dataset_name=observation.citation.dataset_name,
+            source_url=observation.citation.source_url,
+            dataset_url=observation.citation.dataset_url,
+            license_uris=list(observation.citation.license_uris),
+            retrieved_at=observation.citation.retrieved_at,
+            source_updated_at=observation.citation.source_updated_at,
+        ),
+        media=[OperationalMediaResponse(**value.__dict__) for value in observation.media],
     )
 
 
@@ -164,10 +275,29 @@ def create_neo4j_search_handler(settings: Neo4jSettings) -> SearchHandler:
     return handle
 
 
+def create_neo4j_observation_handler(
+    repository: OperationalObservationRepository,
+) -> ObservationSearchHandler:
+    """Map Neo4j and malformed-projection failures to a safe API boundary."""
+
+    def handle(query: OperationalObservationQuery) -> tuple[OperationalObservation, ...]:
+        from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
+
+        try:
+            return repository.search_observations(query)
+        except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
+            raise OperationalBackendUnavailableError(
+                "Operational GBIF observation search is unavailable"
+            ) from error
+
+    return handle
+
+
 def create_app(
     repository: GraphRepository | None = None,
     *,
     search_handler: SearchHandler | None = None,
+    observation_handler: ObservationSearchHandler | None = None,
 ) -> FastAPI:
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
@@ -199,6 +329,58 @@ def create_app(
         except SearchBackendUnavailableError as error:
             raise HTTPException(status_code=503, detail=str(error)) from error
         return _search_response(outcome, requested_mode=request.mode)
+
+    @app.get(
+        "/v1/observations",
+        response_model=OperationalObservationSearchResponse,
+        responses={503: {"description": "The operational GBIF observation graph is unavailable"}},
+    )
+    def search_operational_observations(
+        taxon_key: str | None = Query(default=None, min_length=1, max_length=50),
+        scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
+        place: str | None = Query(default=None, min_length=1, max_length=200),
+        observed_from: date | None = None,
+        observed_to: date | None = None,
+        limit: int = Query(default=25, ge=1, le=100),
+        offset: int = Query(default=0, ge=0),
+    ) -> OperationalObservationSearchResponse:
+        if observation_handler is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Operational GBIF observation search is available only in Neo4j mode",
+            )
+        for name, value in (
+            ("taxon_key", taxon_key),
+            ("scientific_name", scientific_name),
+            ("place", place),
+        ):
+            if value is not None and not value.strip():
+                raise HTTPException(status_code=422, detail=f"{name} must not be blank")
+        if observed_from and observed_to and observed_from > observed_to:
+            raise HTTPException(status_code=422, detail="observed_from must not be later than observed_to")
+        query = OperationalObservationQuery(
+            taxon_key=taxon_key,
+            scientific_name=scientific_name,
+            place=place,
+            observed_from=observed_from.isoformat() if observed_from else None,
+            observed_to=observed_to.isoformat() if observed_to else None,
+            limit=limit,
+            offset=offset,
+        )
+        try:
+            observations = observation_handler(query)
+        except OperationalBackendUnavailableError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
+        warnings = []
+        if any(observation.coordinate_disclosure == "withheld" for observation in observations):
+            warnings.append("Coordinates for generalized observations are withheld")
+        return OperationalObservationSearchResponse(
+            limit=limit,
+            offset=offset,
+            returned=len(observations),
+            results=[_operational_observation_response(value) for value in observations],
+            warnings=warnings,
+        )
 
     return app
 

@@ -9,32 +9,39 @@ flowchart LR
   U[Browser] -->|HTTPS| NPM[Nginx Proxy Manager]
   NPM -->|http://robingraph-api:8000| API[RobinGraph FastAPI]
   API -->|bolt://neo4j:7687| NEO[Neo4j]
+  TOOL[일회성 nas-tools] --> N8N[n8n]
+  N8N -->|Query API| NEO
 ```
 
-기존 Django 컨테이너의 포트, 이미지, 볼륨과 네트워크 설정은 변경하지 않는다.
+기존 Django, Neo4j, n8n, NPM 컨테이너의 이미지와 볼륨은 변경하지 않는다.
 
 ## 포함된 배포 파일
 
 | 파일 | 역할 |
 |---|---|
-| `Dockerfile` | Python 3.12.13과 잠긴 uv 환경으로 비루트 API 이미지 생성 |
-| `compose.nas.yml` | API 컨테이너, healthcheck, 재시작·로그·보안 설정 |
-| `.env.nas.example` | NAS 전용 비밀값과 실행 모드 템플릿 |
+| `Dockerfile` | Python 3.12.13과 잠긴 uv 환경으로 비루트 API·도구 이미지 생성 |
+| `compose.nas.yml` | API 컨테이너와 일회성 `nas-tools` 프로필, healthcheck·로그·보안 설정 |
+| `.env.nas.example` | API 전용 환경 변수 템플릿 |
+| `.env.nas.ingest.example` | n8n 배포·적재 도구 전용 secret 템플릿 |
+| `scripts/deploy_nas.sh` | preflight, 배포, 검증, workflow 배포와 AVONET 적재 명령 |
 | `.dockerignore` | 비밀값, 개발 캐시와 불필요한 build context 제외 |
 
 ## 1. NAS checkout 준비
 
-NAS의 RobinGraph 저장소 루트에서 `dev` 브랜치를 받은 뒤 환경 파일을 만든다.
+NAS의 RobinGraph 저장소 루트에서 배포할 브랜치를 받은 뒤 환경 파일을 만든다.
 
 ```sh
 git fetch origin
-git switch dev
-git pull --ff-only origin dev
+git switch EvoDmiK/dev-2
+git pull --ff-only origin EvoDmiK/dev-2
 cp .env.nas.example .env.nas
-chmod 600 .env.nas
+cp .env.nas.ingest.example .env.nas.ingest
+chmod 600 .env.nas .env.nas.ingest
 ```
 
-`.env.nas`는 Git에 추가하지 않는다. 첫 프록시 검증은 `ROBINGRAPH_API_MODE=serve-fixture`로 진행한다.
+`.env.nas`와 `.env.nas.ingest`는 Git에 추가하지 않는다. API 파일에는 Neo4j/Jina
+값만 두고, n8n API key와 일회성 적재 자격정보는 ingest 파일에만 둔다. 첫 프록시
+검증은 `ROBINGRAPH_API_MODE=serve-fixture`로 진행한다.
 
 ## 2. 공용 Docker 네트워크 준비
 
@@ -83,10 +90,11 @@ docker network connect --alias neo4j robingraph-edge tailscale-neo4j
 
 이 구성에서 n8n이 `http://neo4j:7474`를 사용할 수 있는 것은 n8n과
 `tailscale-neo4j`가 모두 `homelab_default`에 있고 그 네트워크에서 `neo4j`
-서비스 이름 또는 별칭을 해석하기 때문이다. `robingraph-api`는
-`robingraph-edge`에만 있으므로
-위와 같이 같은 별칭과 경로를 별도로 만들어야 `bolt://neo4j:7687`을 사용할 수
-있다. 연결 후 API 컨테이너에서 DNS와 TCP를 함께 확인한다.
+서비스 이름 또는 별칭을 해석하기 때문이다. `robingraph-api`와 `nas-tools`는
+`robingraph-edge`에 있으므로 위와 같이 같은 별칭과 경로를 별도로 만들어야
+`bolt://neo4j:7687`과 `http://neo4j:7474`를 사용할 수 있다.
+
+연결 후 API 컨테이너에서 DNS와 TCP를 함께 확인한다.
 
 ```sh
 docker exec robingraph-api python -c "import socket; print(socket.gethostbyname('neo4j')); socket.create_connection(('neo4j', 7687), 3); print('Neo4j TCP OK')"
@@ -119,25 +127,38 @@ networks:
     name: robingraph-edge
 ```
 
-NPM도 같은 이유로 수동 연결 대신 Compose에 `robingraph-edge` 외부 네트워크를
-선언해야 컨테이너 재생성 뒤에도 연결이 유지된다.
+NPM과 n8n도 같은 이유로 수동 연결 대신 각 운영 Compose에 `robingraph-edge` 외부
+네트워크를 선언해야 컨테이너 재생성 뒤에도 연결이 유지된다. n8n의 실제 DNS 이름이
+`n8n`이 아니면 `.env.nas.ingest`의 `ROBINGRAPH_N8N_API_URL`을 맞춘다.
 
 ## 3. 이미지 빌드와 첫 실행
 
+자동 preflight와 배포 스크립트를 사용한다.
+
+```sh
+sh scripts/deploy_nas.sh preflight
+sh scripts/deploy_nas.sh deploy
+sh scripts/deploy_nas.sh verify
+sh scripts/deploy_nas.sh status
+```
+
+`deploy`는 외부 network와 환경값을 검사하고, 고정 lockfile로 이미지를 빌드한 뒤
+API를 교체한다. 최대 120초 동안 Docker healthcheck를 기다리며 실패하면 최근 로그를
+출력하고 non-zero로 종료한다. 같은 작업을 수동으로 실행하려면 다음 명령을 쓴다.
+
 ```sh
 docker compose --env-file .env.nas -f compose.nas.yml config
-docker compose --env-file .env.nas -f compose.nas.yml build --pull
-docker compose --env-file .env.nas -f compose.nas.yml up -d
+docker compose --env-file .env.nas -f compose.nas.yml build --pull api
+docker compose --env-file .env.nas -f compose.nas.yml up -d api
 docker compose --env-file .env.nas -f compose.nas.yml ps
 ```
 
-`robingraph-api`가 `healthy`가 되면 컨테이너 내부 상태를 확인한다.
+`robingraph-api`가 `healthy`가 되면 컨테이너 내부 상태를 확인한다. 첫 fixture 실행의
+응답은 `mode: fixture`여야 한다.
 
 ```sh
 docker exec robingraph-api python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8000/health').read().decode())"
 ```
-
-첫 실행의 응답은 `mode: fixture`여야 한다.
 
 ## 4. Nginx Proxy Manager 설정
 
@@ -153,7 +174,9 @@ docker exec robingraph-api python -c "import urllib.request; print(urllib.reques
 | Websockets Support | 활성화 가능 |
 | Cache Assets | 비활성화 |
 
-SSL 탭에서는 기존 Dove Nest 서비스와 같은 인증서 방식을 사용하고 `Force SSL`, `HTTP/2 Support`를 활성화한다. 테스트 Swagger가 공개 검색이나 무단 호출에 노출되지 않도록 NPM Access List 또는 Cloudflare Access를 연결한다.
+SSL 탭에서는 기존 Dove Nest 서비스와 같은 인증서 방식을 사용하고 `Force SSL`,
+`HTTP/2 Support`를 활성화한다. 테스트 Swagger가 공개 검색이나 무단 호출에
+노출되지 않도록 NPM Access List 또는 Cloudflare Access를 연결한다.
 
 배포 확인 주소:
 
@@ -176,15 +199,26 @@ NEO4J_DATABASE=neo4j
 설정을 반영한다.
 
 ```sh
-docker compose --env-file .env.nas -f compose.nas.yml up -d --force-recreate
-docker compose --env-file .env.nas -f compose.nas.yml logs --tail=100 api
+sh scripts/deploy_nas.sh deploy
+sh scripts/deploy_nas.sh verify
 ```
 
-`/health`의 `mode`가 `neo4j`인지 확인한다. 현재 `serve-neo4j` 답변 경로는 `:RobinGraph:Fixture` 그래프를 조회한다. n8n이 적재한 GBIF `BirdTaxon`과 `Observation`은 아직 이 API의 검색 대상으로 연결되지 않았으므로, 실제 GBIF 검색 API가 완성되기 전에는 fixture 모드를 외부 연결과 API contract 검증 용도로만 사용한다.
+`/health`의 `mode`가 `neo4j`인지 확인한다. `serve-neo4j`의 `/v1/answers`와
+`/v1/search`는 계속 `:RobinGraph:Fixture` 그래프를 사용하지만,
+`GET /v1/observations`는 n8n이 적재한 실제 GBIF `BirdTaxon`과 `Observation`을
+조회한다. fixture 모드에서는 운영 관찰 endpoint가 HTTP 503을 반환한다.
 
-임베딩 서버는 `robingraph-edge`의 Docker DNS를 사용하는 컨테이너가 아니라
-HTTPS endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과 secret을
-설정한다. API 키의 실제 값은 Git이나 명령 출력에 남기지 않는다.
+```sh
+curl "https://aviary.dove-nest.com/v1/observations?place=Seoul&observed_from=2026-09-01&limit=25"
+```
+
+운영 endpoint는 taxon key(`taxon_key`), 학명·원본 일반명(`scientific_name`),
+장소명(`place`), 시작·종료일(`observed_from`, `observed_to`), `limit`(최대 100),
+`offset`을 지원한다. provenance와 허용 라이선스 체인이 온전한 GBIF 레코드만
+반환하며, 일반화된 관찰의 좌표는 API 응답에서 숨긴다.
+
+임베딩 서버는 HTTPS endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과
+secret을 설정한다. API 키의 실제 값은 Git이나 명령 출력에 남기지 않는다.
 
 ```dotenv
 ROBINGRAPH_JINA_ENDPOINT=https://embed.dove-nest.com/v1/embeddings
@@ -226,22 +260,57 @@ Swagger에서는 다음 요청으로 같은 하이브리드 검색을 실행한�
 외부 모델 호출을 유발할 수 있으므로 공개 NPM에는 Access List 또는 Cloudflare
 Access를 반드시 적용한다.
 
-실제 GBIF corpus를 임베딩 검색 대상으로 제공하려면 해당 데이터를 검색용 문서
-청크로 투영하는 적재 과정을 별도로 구현해야 한다. 현재 `/v1/search`는 fixture
-문헌 청크만 검색한다.
+실제 GBIF 관찰은 `/v1/observations`에서 구조화 검색할 수 있다. GBIF 데이터를
+임베딩 검색 대상으로도 제공하려면 검색용 문서 청크로 투영하는 적재 과정을
+별도로 구현해야 한다. 현재 `/v1/search`는 fixture 문헌 청크만 검색한다.
 
-## 6. 갱신과 운영 명령
+## 6. n8n workflow 배포와 AVONET 적재
+
+`.env.nas.ingest`에 n8n API와 credential 이름을 설정한다. `nas-tools`는
+`tools` profile을 명시할 때만 실행되고 n8n secret은 상시 API 컨테이너에 전달되지
+않는다. 아래 명령은 세 workflow를 inactive 상태로 생성하거나 갱신한다.
 
 ```sh
-git pull --ff-only origin dev
-docker compose --env-file .env.nas -f compose.nas.yml up -d --build
-docker compose --env-file .env.nas -f compose.nas.yml logs -f --tail=100 api
+sh scripts/deploy_nas.sh deploy-workflows
 ```
 
-컨테이너를 중지하되 이미지는 유지하려면 다음 명령을 사용한다.
+처음 생성된 workflow ID는 출력에서 확인해 `.env.nas.ingest`의 해당
+`ROBINGRAPH_N8N_*_WORKFLOW_ID`에 기록한다. 기존 workflow가 active면 배포기는
+덮어쓰지 않는다. 갱신 전 백업은 `robingraph-state` Docker volume에 보존된다.
+
+AVONET은 먼저 다운로드·선택 worksheet 검증만 수행한다.
+
+```sh
+sh scripts/deploy_nas.sh validate-avonet
+```
+
+11,009종과 원본 형질값 143,004개가 확인된 뒤에만 실제 적재를 명시한다.
+
+```sh
+sh scripts/deploy_nas.sh ingest-avonet
+```
+
+원본은 `robingraph-ingest-cache` volume에 보존된다. 적재는 100종 단위의 임시 인증
+n8n gateway를 사용한다. 9,879종 매핑, claim 128,331개, 후보 1,130개가 모두
+일치해야 active release를 갱신하며 임시 workflow와 credential은 성공·실패 모두
+삭제한다. Neo4j 또는 n8n의 Docker DNS가 기본값과 다르면
+`ROBINGRAPH_NEO4J_HTTP_URL`과 `ROBINGRAPH_N8N_API_URL`을 수정한다.
+
+## 7. 갱신과 운영 명령
+
+```sh
+git pull --ff-only origin EvoDmiK/dev-2
+sh scripts/deploy_nas.sh deploy
+sh scripts/deploy_nas.sh logs
+```
+
+컨테이너를 중지하되 이미지와 도구 volume은 유지하려면 다음 명령을 사용한다.
 
 ```sh
 docker compose --env-file .env.nas -f compose.nas.yml down
 ```
 
-문제가 생기면 이전 Git 커밋을 별도 checkout한 뒤 같은 Compose 명령으로 다시 빌드한다. Neo4j 데이터나 기존 Django 컨테이너는 이 Compose 프로젝트가 소유하지 않으므로 `down`의 영향을 받지 않는다.
+문제가 생기면 `.env.nas`의 `ROBINGRAPH_IMAGE`를 이전 불변 태그로 바꾸거나 이전
+Git 커밋을 별도 checkout한 뒤 다시 배포한다. Neo4j 데이터와 기존 Django/n8n
+컨테이너는 이 Compose 프로젝트가 소유하지 않으므로 `down`의 영향을 받지 않는다.
+실패한 AVONET batch는 검증된 active release 포인터를 교체하지 않는다.
