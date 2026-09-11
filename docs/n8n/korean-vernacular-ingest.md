@@ -55,7 +55,9 @@
 - **가변 데이터**: Wikidata는 커뮤니티가 계속 편집하는 데이터베이스라
   AviList/EltonTraits처럼 고정 SHA-256을 미리 박아둘 수 없다. 대신 매 실행마다
   받은 SPARQL 응답 본문을 SHA-256으로 해시해 `SourceRecord.raw_hash`에
-  보존한다(`source_release`는 `mutable-as-of-<날짜>` 형태).
+  보존한다. `wikidata_dataset_id`와 `source_release`도 이 해시에서 계산하므로
+  같은 바이트의 응답은 같은 불변 snapshot을 다시 사용하고, 다른 응답은 이전
+  snapshot을 덮어쓰지 않는 새 ID를 사용한다.
 
 ## 처리 흐름
 
@@ -87,9 +89,10 @@ flowchart LR
 - 같은 학명에 서로 다른 한국어 이름이 두 개 이상 연결된 경우(Wikidata
   항목 간 불일치)에는 **어느 쪽도 임의로 선택하지 않고** 둘 다
   `reason_code: 'conflicting_korean_labels'` 후보로 남긴다.
-- `VernacularName`은 `id: <taxon_id>:vernacular:ko:wikidata`로 `MERGE`한다.
-  결정론적 ID이므로 같은 입력으로 다시 실행해도 새 노드가 생기지 않고
-  속성만 갱신된다(idempotent).
+- `VernacularName`은 `id: <taxon_id>:vernacular:ko:wikidata:<wikidata_dataset_id>`로
+  `MERGE`한다. `SourceRecord`도 QID와 같은 dataset ID로 스코프한다. 따라서
+  같은 응답은 같은 불변 노드를 다시 사용하고, 다른 snapshot은 이전 provenance
+  속성을 갱신하지 않는다.
 - `korea-nibr-species`처럼 `enabled: false`이거나
   `license_policy_status`가 `allowed`가 아닌 collection point로는 이 workflow를
   생성할 수 없다 —
@@ -115,6 +118,11 @@ flowchart LR
   `source_qids`(매칭에 쓰인 Wikidata Q-ID들)를 함께 저장해 감사 추적이
   가능하게 한다. `/v1/taxa/lineage`는 `status`를 `lineage[].korean_name_status`로
   그대로 노출해 "공식 국명이 아님"을 API 응답 자체에서 알 수 있게 한다.
+- `Finalize`는 활성 상태 노드를 먼저 `MERGE`해 유일 ID 잠금을 잡은 뒤,
+  시작 시 읽어 둔 `last_successful_run_id`와 현재 값을 비교한다. 따라서 첫
+  실행 두 개가 모두 기존 상태 없음(`''`)을 봤더라도 하나만 활성화하고, 대기한
+  다른 실행은 갱신된 run ID를 보고 실패한다. 활성 AviList concept set도 Start,
+  각 batch, Finalize에서 다시 확인한다.
 
 ## 생성과 로컬 검증
 
@@ -180,8 +188,9 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
 6. Neo4j에서 아래 질의로 실제 적재를 확인한다.
 
    ```cypher
+   MATCH (state:IngestState {id: 'korean-vernacular-names'})
    MATCH (v:VernacularName {language: 'ko'})<-[:HAS_VERNACULAR_NAME]-(t:Taxon:BirdTaxon)
-   WHERE v.source_release STARTS WITH 'mutable-as-of'
+   WHERE v.dataset_id = state.active_dataset_id
    RETURN t.scientific_name, v.name, v.status
    ORDER BY t.scientific_name
    LIMIT 25;

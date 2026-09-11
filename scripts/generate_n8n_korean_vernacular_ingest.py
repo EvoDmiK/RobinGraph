@@ -564,12 +564,13 @@ BATCH_STATEMENT = compact_cypher(
 # 2. `currentRunId = $expected_prior_run_id` -- optimistic concurrency. Each
 #    run captures the *prior* korean-vernacular-names run id at "Read active
 #    taxonomy and Korean dataset state" (near the start of its execution).
-#    If another run finalizes first, `korean-vernacular-names.
-#    last_successful_run_id` changes before this run reaches Finalize, this
-#    WHERE no longer matches, and the query returns zero rows -- this run's
-#    own writes (already content-addressed and therefore harmless even if
-#    never activated) are simply never pointed at by IngestState. A stale,
-#    slower writer can never clobber a newer activation.
+#    Finalize first MERGEs the unique state node, which obtains the key lock
+#    before reading and comparing `last_successful_run_id`. That ordering is
+#    essential for the first activation too: two runs can both have captured
+#    the absent state's coalesced `''`, but only the first may create/update
+#    it; the waiting transaction then reads the first run id and fails its
+#    WHERE guard. A stale, slower writer therefore cannot clobber a newer
+#    activation. Its already content-addressed writes remain unactivated.
 #
 # Retiring a name that dropped out of the new snapshot needs no explicit
 # delete: once `active_dataset_id` flips away from the taxon's old
@@ -579,13 +580,13 @@ FINALIZE_STATEMENT = compact_cypher(
     """
     MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
     MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id
-    OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'})
-    WITH run, coalesce(koreanState.last_successful_run_id, '') AS currentRunId
+    MERGE (state:IngestState {id: 'korean-vernacular-names'})
+    ON CREATE SET state.last_successful_run_id = ''
+    WITH run, state, coalesce(state.last_successful_run_id, '') AS currentRunId
     WHERE currentRunId = $expected_prior_run_id
     SET run.status = 'succeeded', run.finished_at = datetime(),
         run.loaded_vernacular_names = $loaded_vernacular_names,
         run.loaded_candidates = $loaded_candidates
-    MERGE (state:IngestState {id: 'korean-vernacular-names'})
     SET state.active_release = $source_release, state.active_dataset_id = $wikidata_dataset_id,
         state.taxonomy_release = $taxonomy_release,
         state.last_successful_run_id = $run_id, state.last_successful_at = datetime(),
