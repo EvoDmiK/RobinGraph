@@ -22,6 +22,16 @@ WORKFLOWS = {
 }
 DEFAULT_DISCORD_GUILD_ID = "1504129603310981120"
 DEFAULT_DISCORD_CHANNEL_ID = "1541317761517756436"
+# Whether a workflow's Discord notification nodes must have a resolvable
+# credential before this script will treat it as ready to deploy. Missing
+# from this dict means "required" (the pre-existing, still-in-force
+# contract for "reference"; see test_reference_deployment.py). The Korean
+# vernacular pipeline's notifications are explicitly optional (see
+# docs/n8n/korean-vernacular-ingest.md) -- a missing Discord credential must
+# never block generation, the read-only `--remote` precheck, or `--apply`;
+# the Discord node itself is `onError: continueRegularOutput`, so an
+# unconfigured notification only fails that one node at run time.
+DISCORD_REQUIRED = {"korean-vernacular": False}
 
 
 def load_env(path: Path) -> None:
@@ -71,6 +81,8 @@ def build_deployment(
     discord_credential: dict[str, str] | None,
     discord_guild_id: str,
     discord_channel_id: str,
+    *,
+    discord_required: bool = True,
 ) -> dict[str, object]:
     deployed = json.loads(json.dumps(workflow))
     deployed["name"] = str(deployed["name"]).removesuffix(" (inactive until verified)")
@@ -79,6 +91,14 @@ def build_deployment(
             item["credentials"] = {"neo4jApi": neo4j_credential}
         elif item["type"] == "n8n-nodes-base.discord":
             if discord_credential is None:
+                if not discord_required:
+                    # Leave the node in its pre-deploy template shape (webhook
+                    # auth, no credential): it imports fine and simply needs
+                    # someone to finish wiring the credential in the n8n UI
+                    # before it can actually send -- exactly the
+                    # `meta.templateCredsSetupCompleted: False` contract the
+                    # rest of this workflow's nodes already rely on.
+                    continue
                 raise ValueError("Discord credential is required for a workflow with notification nodes")
             content = item["parameters"]["content"]
             item["parameters"] = {
@@ -148,19 +168,29 @@ def main() -> None:
         os.environ.get("ROBINGRAPH_N8N_NEO4J_CREDENTIAL", "Neo4j"),
         "neo4jApi",
     )
+    discord_required = DISCORD_REQUIRED.get(args.workflow, True)
     discord = None
     if any(item["type"] == "n8n-nodes-base.discord" for item in source["nodes"]):
-        discord = credential_by_name(
-            credential_rows,
-            os.environ.get("ROBINGRAPH_N8N_DISCORD_CREDENTIAL", "Nesty API 키"),
-            "discordBotApi",
-        )
+        try:
+            discord = credential_by_name(
+                credential_rows,
+                os.environ.get("ROBINGRAPH_N8N_DISCORD_CREDENTIAL", "Nesty API 키"),
+                "discordBotApi",
+            )
+        except RuntimeError:
+            if discord_required:
+                raise
+            # Optional for this workflow: proceed without a Discord
+            # credential rather than failing the whole read-only precheck
+            # or deploy over an unconfigured notification channel.
+            discord = None
     payload = build_deployment(
         source,
         neo4j,
         discord,
         os.environ.get("ROBINGRAPH_DISCORD_GUILD_ID", DEFAULT_DISCORD_GUILD_ID),
         os.environ.get("ROBINGRAPH_DISCORD_CHANNEL_ID", DEFAULT_DISCORD_CHANNEL_ID),
+        discord_required=discord_required,
     )
 
     if not args.apply:

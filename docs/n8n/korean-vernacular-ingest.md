@@ -1,6 +1,6 @@
 # n8n 한국어 일반명(Korean vernacular name) 수집 런북
 
-> **WIP / 2026-09-11 사용자 요청으로 중단.** 아래는 초기 구현 런북이며 수정 중인 생성기와 일부 설명이 다르다. 배포 전에 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md)을 먼저 확인한다. 테스트 전체 통과나 운영 실행 완료를 의미하지 않는다.
+> **오프라인 구현·테스트 완료 / 라이브 검증 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 이 체크포인트를 마무리했다: 생성기 `NameError` 수정, 알림의 Discord-선택-사항화, 오프라인 테스트 계약 수정까지 반영해 전체 오프라인 스위트가 통과한다. 실제 n8n import/실행과 운영 Neo4j 적재는 여전히 검증되지 않았다 — 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md) 참고.
 
 ## 배경
 
@@ -153,8 +153,15 @@ uv run --locked python scripts/deploy_n8n_reference_ingest.py --workflow korean-
 uv run --locked python scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply
 ```
 
-필수 전제는 [분류·형질 기준정보 수집 런북](reference-ingest.md)과 동일하게
-`n8n-nodes-neo4j` community node, `Neo4j` credential, Discord Bot credential이다.
+필수 전제는 [분류·형질 기준정보 수집 런북](reference-ingest.md)과 같은
+`n8n-nodes-neo4j` community node와 `Neo4j` credential이다. **Discord Bot
+credential은 이 workflow에서 선택 사항이다** — `reference` workflow와 달리
+`scripts/deploy_n8n_reference_ingest.py`가 `korean-vernacular`를
+`DISCORD_REQUIRED`에서 제외해두었으므로, `--remote`/`--apply` 모두 Discord
+credential 이름을 찾지 못해도 예외 없이 계속 진행한다. Discord를 설정하지
+않으면 `Notify Korean vernacular success`/`failure` 노드가 credential 없는
+템플릿 상태로 남고, 실제 실행 시 그 노드만 `onError: continueRegularOutput`으로
+조용히 실패할 뿐 나머지 workflow(적재·활성화)는 영향을 받지 않는다.
 `Fetch Wikidata Korean bird labels`와 `Resolve active concept set and match
 candidates` 노드가 실행되려면 `reference-taxonomy` `IngestState`가 이미
 활성 상태여야 하므로, 반드시 기준정보 workflow를 먼저 성공적으로 실행한
@@ -192,22 +199,37 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
    `loaded_vernacular_names`, `loaded_candidates`를 확인하고,
    `IngestState {id: 'reference-taxonomy'}`가 이 실행으로 바뀌지 않았음을
    확인한다.
-9. Discord 성공 알림을 확인한 뒤에만 월간 schedule 활성화를 검토한다.
+9. Discord credential을 설정했다면 성공 알림을 확인한다(선택 사항 — 설정하지
+   않았다면 이 단계는 건너뛰고 나머지 count/API 확인 결과만으로 판단한다).
+   그 뒤에만 월간 schedule 활성화를 검토한다.
 
 ## 현재 검증 상태 (정직하게 보고)
 
 - **로컬로 검증한 것**: workflow import shape, 노드 간 연결, 모든 Code/Cypher
-  노드의 JavaScript 문법(`node --check`, 18개 노드), 정규화·매칭 분류
-  로직(`classifyWikidataRows`, `classifyMatches`, `assembleGates`)을 실제
-  `node` 프로세스에서 중복/충돌/미매칭/모호 매칭/활성 concept set 없음/HTTP
-  요청 실패·비정상 응답 케이스로 직접 실행해 검증, license gate 함수를
-  프로젝트의 실제 `config/collection-points.json`(Wikidata 승인, NIBR
-  미승인, ADR-0005 확정 후에도 동일)에 대해 실행해 검증, 그리고 읽기
-  경로(`taxonomy_lineage_neo4j.py`)가 이 workflow의 쓰기 포맷과 정확히
-  맞물려 `청둥오리 → Anas platyrhynchos`(+ `korean_name_status:
-  "community-sourced"`)를 반환하는지, 그리고 승인되지 않은 라이선스 체인의
-  이름은 애초에 조회되지 않는지 Mock Neo4j 드라이버로 오프라인 계약 테스트.
-  전체 오프라인 스위트는 214개 통과, 조건부 live integration 21개 skip.
+  노드의 JavaScript 문법(`node --check`, code 7개 + Neo4j 12개 = 19개 노드;
+  나머지 2개 Discord 알림 노드는 JS가 아닌 n8n 표현식이라 별도 검사 대상이
+  아니다), 정규화·매칭 분류 로직(`classifyWikidataRows`, `classifyMatches`,
+  `assembleGates`)을 실제 `node` 프로세스에서 중복/충돌/동명이인(homonym)/
+  미매칭/모호 매칭/malformed binding/활성 concept set 없음/HTTP 요청 실패·
+  비정상 응답 케이스로 직접 실행해 검증, content-addressed
+  `wikidata_dataset_id`가 같은 hash에서는 멱등, 다른 hash에서는 달라지는지
+  검증, `FINALIZE_STATEMENT`의 낙관적 동시성 가드가 뒤늦은 실행의 활성화를
+  거부하는지 검증, license gate 함수를 프로젝트의 실제
+  `config/collection-points.json`(Wikidata 승인, NIBR 미승인, ADR-0005 확정
+  후에도 동일)에 대해 실행해 검증, 그리고 읽기 경로
+  (`taxonomy_lineage_neo4j.py`)가 이 workflow의 쓰기 포맷과 정확히 맞물려
+  `청둥오리 → Anas platyrhynchos`(+ `korean_name_status:
+  "community-sourced"`)를 반환하는지, 승인되지 않은 라이선스 체인의 이름은
+  애초에 조회되지 않는지, 활성 `wikidata_dataset_id`가 바뀌면 이전 스냅샷의
+  이름이 더 이상 조회되지 않는지(퇴역 경계)를 Mock Neo4j 드라이버로 오프라인
+  계약 테스트. Discord 알림은 credential 없이도 배포/실행이 막히지 않는지
+  검증(`test_korean_vernacular_deployment_succeeds_without_a_discord_credential`).
+  전체 오프라인 스위트(`tests/` 전체, 이 workflow 전용 테스트만이 아님)는
+  **220개 통과, 0개 실패/오류, 22개 조건부 live skip**(모두
+  `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1` 같은 명시적 opt-in이 있어야 실행).
+  `scripts/generate_n8n_korean_vernacular_ingest.py`를 재실행해도
+  `n8n/robingraph-korean-vernacular-ingest.json`이 바이트 단위로 동일(SHA-256
+  동일)함을 확인했다.
 - **아직 검증하지 않은 것**: 이 workflow를 실제 n8n에 import하고 Manual
   Trigger로 실행한 적이 없다. Wikidata SPARQL endpoint를 향한 실제 HTTP
   호출, 실제 Neo4j에 대한 batch MERGE, 그리고 `/v1/taxa/lineage?name=청둥오리`의

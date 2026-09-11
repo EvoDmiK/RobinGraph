@@ -461,7 +461,7 @@
       "parameters": {
         "authentication": "webhook",
         "operation": "sendLegacy",
-        "content": "={{ '✅ **RobinGraph Korean vernacular-name ingest succeeded**\\nRun: ' + $json.run_id + '\\nVernacularName nodes: ' + $json.loaded_vernacular_names + ', review candidates: ' + $json.loaded_candidates + '\\nActive reference-taxonomy release: ' + $json.taxonomy_release }}",
+        "content": "={{ '✅ **RobinGraph Korean vernacular-name ingest succeeded**\\nRun: ' + $json.run_id + '\\nVernacularName nodes: ' + $json.loaded_vernacular_names + ', review candidates: ' + $json.loaded_candidates + '\\nActive reference-taxonomy release: ' + $json.taxonomy_release + '\\nActive Wikidata dataset: ' + $json.wikidata_dataset_id }}",
         "options": {
           "username": "RobinGraph Operations",
           "wait": true
