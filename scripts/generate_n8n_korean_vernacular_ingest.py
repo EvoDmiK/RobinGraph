@@ -767,29 +767,28 @@ def main() -> None:
         neo4j_node("Finalize Korean vernacular active release", FINALIZE_STATEMENT, (3160, -180)),
         code("Verify Korean vernacular release finalized", VERIFY_FINALIZE, (3400, -180)),
         boolean_if("Korean vernacular release finalized?", "={{ $json.finalize_ok }}", (3640, -180)),
-        status_node(
+        # Discord nodes, like `generate_n8n_reference_ingest.py`'s "Notify
+        # reference *" pair: `discord()` sets `onError: continueRegularOutput`,
+        # so a workflow whose Discord credential is not (yet) wired -- this
+        # pipeline's notifications are optional, see
+        # `docs/n8n/korean-vernacular-ingest.md` -- fails that single node
+        # and keeps going, instead of aborting the whole run. `deploy_n8n_reference_ingest.build_deployment`
+        # only requires a Discord credential to be *available* when this
+        # workflow is deployed with `discord_required=True`; the
+        # korean-vernacular deploy path passes `discord_required=False`.
+        discord(
             "Notify Korean vernacular success",
-            r"""
-            const message = '✅ RobinGraph Korean vernacular-name ingest succeeded\n' +
-              'Run: ' + $json.run_id +
-              '\nVernacularName nodes: ' + $json.loaded_vernacular_names +
-              ', review candidates: ' + $json.loaded_candidates +
-              '\nActive reference-taxonomy release: ' + $json.taxonomy_release +
-              '\nActive Wikidata dataset: ' + $json.wikidata_dataset_id;
-            console.log(message);
-            return [{json: {...$json, notification_message: message}}];
-            """,
+            "={{ '✅ **RobinGraph Korean vernacular-name ingest succeeded**\\nRun: ' + $json.run_id + "
+            "'\\nVernacularName nodes: ' + $json.loaded_vernacular_names + ', review candidates: ' + "
+            "$json.loaded_candidates + '\\nActive reference-taxonomy release: ' + $json.taxonomy_release + "
+            "'\\nActive Wikidata dataset: ' + $json.wikidata_dataset_id }}",
             (3880, -280),
         ),
-        status_node(
+        discord(
             "Notify Korean vernacular failure",
-            r"""
-            const message = '❌ RobinGraph Korean vernacular-name ingest blocked or failed\n' +
-              'Run: ' + String($json.run_id || 'not-started') +
-              '\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500);
-            console.log(message);
-            return [{json: {...$json, notification_message: message}}];
-            """,
+            "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + "
+            "String($json.run_id || 'not-started') + '\\nReason: ' + "
+            "String($json.failure_reason || 'Unknown failure').slice(0, 1500) }}",
             (1720, 220),
         ),
         node(

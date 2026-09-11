@@ -1,10 +1,57 @@
 # n8n 한국어 이름 수집 파이프라인 작업 중단 기록
 
-- 기록일: 2026-09-11
-- 상태: **WIP / 사용자 요청으로 중단. 배포 준비 완료가 아님.**
+- 기록일: 2026-09-11 (아래 "2026-09-11 재개 기록" 절 기준 최신)
+- 상태: **오프라인 구현·테스트 완료(220/220 통과, 22 조건부 live skip). 실제 n8n/Neo4j 라이브 검증은 아직 없음 — 배포 준비 완료로 간주하지 않는다.**
 - 저장 브랜치: `EvoDmiK/dev-2` (작업 시작 커밋: `b6625da`)
 - 역할: Claude 구현, GPT-5.6 Sol 독립 평가, Codex 통합 확인.
 - 이번 저장은 구현·테스트·문서의 중간 체크포인트이며 운영 배포, 데이터 적재, `product` 병합을 의미하지 않는다.
+
+## 2026-09-11 재개 기록 (별도 worktree, `EvoDmiK/finish-korean-vernacular`)
+
+`dev` 최신 커밋(`d818c46`) 위에 이 체크포인트(`4888759`)를 fast-forward로 이어붙인
+별도 worktree/브랜치에서 아래 항목만 마무리했다. 원래 `dev-2`/`dev` worktree는
+건드리지 않았다.
+
+- **고쳤다**: `scripts/generate_n8n_korean_vernacular_ingest.py`의
+  `status_node` `NameError`(정의되지 않은 이름 호출). 두 알림 노드를 이미 import돼
+  있던 `discord()` 헬퍼(`generate_n8n_reference_ingest.py`, `reference ingest`의
+  알림 노드와 동일 패턴)로 바꾸고, 메시지를 n8n 표현식(`={{ ... }}`)으로 다시 썼다.
+- **고쳤다**: 알림이 Discord credential 없이도 안전하게 동작하도록
+  `scripts/deploy_n8n_reference_ingest.py`에 워크플로우별 `DISCORD_REQUIRED` 표를
+  추가했다. `korean-vernacular`는 `False`(선택)로, 기존 `reference`는 표에
+  없으므로 그대로 필수로 남는다(`test_reference_requires_notification_credentials_before_deployment`
+  불변). `--remote`/`--apply` 모두 Discord credential 조회가 실패해도
+  선택 워크플로우면 예외를 던지지 않고 `discord_credential=None`으로 계속 진행한다.
+  Discord 알림 노드 자체는 계속 `onError: continueRegularOutput`이라 실행 중에도
+  그 노드 하나만 실패하고 전체 workflow가 멈추지 않는다.
+- **고쳤다**: `tests/test_n8n_workflows.py`의
+  `test_korean_vernacular_normalize_computes_idempotent_content_addressed_dataset_id`.
+  "서로 다른 본문" 케이스가 이전 케이스와 동일한 `hash` 상수를 그대로 재사용해
+  "동일 hash인데 본문만 다르다"는, 실제로는 일어날 수 없는 입력(hash는 항상 실제
+  본문 바이트의 SHA-256이므로 본문이 다르면 hash도 다르다)을 계약 위반인 것처럼
+  단언하고 있었다. `hash2`(이미 스크립트에 정의돼 있던 두 번째 해시 상수)로
+  바꿔 "다른 본문 == 다른 해시 == 다른 `wikidata_dataset_id`"라는 실제 계약에
+  맞췄다.
+- `n8n/robingraph-korean-vernacular-ingest.json`을 재생성했다. 생성기를 연속
+  두 번 실행해도 SHA-256이 동일(멱등)함을 확인했고, `git diff --check`도
+  깨끗하다.
+- 동시성/동명 충돌/malformed binding 집계/QID provenance/이전 snapshot 퇴역
+  경계는 재검토 결과 이미 코드와 오프라인 테스트가 올바르게 처리하고 있었다
+  (`src/robingraph/retrieval/taxonomy_lineage_neo4j.py`의
+  `active_dataset_id` 기반 스코핑과 `policy_status: 'allowed'` 체인,
+  `RESOLVE_MATCHES_STATEMENT`/`FINALIZE_STATEMENT`의 낙관적 동시성 재확인).
+  코드 변경은 하지 않았다 — 아래 오프라인 테스트 결과가 근거다.
+- Discord가 선택 사항이 됐다는 새 계약을 검증하는 테스트
+  (`test_korean_vernacular_deployment_succeeds_without_a_discord_credential`)를
+  추가했다.
+- 오프라인 전체 스위트: `uv run --locked --extra test python -m unittest
+  discover -s tests` → **220개 실행, 220개 통과, 0개 오류, 22개 skip**(모두
+  `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1` 같은 명시적 opt-in이 없어 조건부로
+  건너뛴 live 통합 테스트; 이 재개 세션에서 opt-in하지 않았으므로 실행하지
+  않았다 — 아래 "아직 검증하지 않은 것" 참고).
+- **아직 검증하지 않은 것(변경 없음)**: 실제 n8n import/Manual Trigger 실행,
+  운영 Neo4j batch 적재, 실제 API `청둥오리` 200 응답. 이번 재개 세션에서도
+  운영 n8n import/실행, 운영 Neo4j 쓰기는 수행하지 않았다(작업 범위 제약).
 
 ## 목적과 현재 구현
 
@@ -31,16 +78,23 @@
 
 Sol 1차 평가는 완료했으며 다음 문제를 보고했다. Claude의 수정이 일부 들어갔지만 최종 재평가는 완료되지 않았다. 재평가 터미널은 ORCA 명령 PATH 문제로 멈췄고 사용자 요청으로 작업을 중단했다.
 
-1. 서로 다른 종의 동일 한국어 이름을 임의로 한 종으로 선택하지 않는지 확인.
-2. 스냅샷·출처 레코드 불변성, 재실행 멱등성, 새 스냅샷에서 삭제된 이름의 조회 제외 확인.
-3. 잘못된 binding의 누락 없는 집계와 실패 정책 확인.
-4. 매칭 후 활성 taxonomy가 바뀌거나 동시 실행이 경합할 때 활성화 차단 확인.
-5. 모든 QID의 출처 연결과 후보 레코드 추적성 확인.
-6. 위 오류 테스트 수정 후 전체 테스트와 Sol 최종 평가 재실행.
-7. 수정 중인 생성기와 체크인 JSON을 재생성·비교해 동기화 확인. 중단 시점에는 생성기의 수정 시각이 JSON보다 늦었다.
-8. 한국어 워크플로우에서 Discord를 선택 사항으로 만들고, NAS 한국어 워크플로우 단독 배포 경로를 마무리. 기존 다른 워크플로우는 보존.
-9. 기존 런북의 `mutable-as-of`, 노드 수, 테스트 수, Discord 필수 조건 등은 초기본 설명이므로 최종 코드와 대조해 갱신. 이 작업 기록이 현재 상태의 기준이다.
-10. 준비가 끝난 뒤 실제 환경에서 import → 수동 실행 → Neo4j count/활성 상태 → API 조회를 검증하고 그때 실행 증거를 기록.
+1. ✅ 서로 다른 종의 동일 한국어 이름을 임의로 한 종으로 선택하지 않는지 확인 — `classifyWikidataRows`의 두 번째 패스(homonym 격리)와
+   `test_korean_vernacular_classify_wikidata_rows_quarantines_cross_taxon_homonyms`로 오프라인 검증됨(2026-09-11 재개 세션에서 재검토, 코드 변경 없음).
+2. ✅ 스냅샷·출처 레코드 불변성, 재실행 멱등성, 새 스냅샷에서 삭제된 이름의 조회 제외 확인 — `NORMALIZE_WIKIDATA`의 content-addressed id와
+   `taxonomy_lineage_neo4j.py`의 `active_dataset_id` 스코프 조회로 오프라인 검증됨.
+3. ✅ 잘못된 binding의 누락 없는 집계와 실패 정책 확인 — `malformed_row_count` 집계와 `ASSEMBLE_GATES_JS`의 fail-closed 사유로 오프라인 검증됨.
+4. ✅ 매칭 후 활성 taxonomy가 바뀌거나 동시 실행이 경합할 때 활성화 차단 확인 — `START_STATEMENT`/`BATCH_STATEMENT`/`FINALIZE_STATEMENT`의
+   `active_concept_set_id` 재확인과 `expected_prior_run_id` 낙관적 동시성 가드, `test_korean_vernacular_verify_finalize_detects_lost_optimistic_concurrency_race`로 검증됨.
+5. ✅ 모든 QID의 출처 연결과 후보 레코드 추적성 확인 — `BATCH_STATEMENT`가 write row와 candidate 양쪽에서 `row.qids`마다 별도 `SourceRecord`를 생성함.
+6. ✅ 오류 테스트(`test_korean_vernacular_normalize_computes_idempotent_content_addressed_dataset_id`)를 고치고 전체 오프라인 테스트 재실행 — 220/220 통과.
+   Sol 최종 재평가는 이 세션에서 실행하지 않았다(별도 외부 도구 호출이 필요하며 이번 작업 범위 밖).
+7. ✅ 생성기와 체크인 JSON을 재생성·비교해 동기화 확인 — 재생성 결과가 체크인 JSON과 바이트 단위로 일치하고, 연속 재실행도 멱등(SHA-256 동일).
+8. ✅ 한국어 워크플로우에서 Discord를 선택 사항으로 만들고, NAS 한국어 워크플로우 단독 배포 경로를 마무리 — `deploy_n8n_reference_ingest.py`의
+   `DISCORD_REQUIRED` 표로 `korean-vernacular`만 선택 사항으로 만들었고, `reference`는 여전히 필수(기존 테스트 불변). `--workflow korean-vernacular`
+   단독 배포 경로(`ready-local`)는 그대로 동작함을 확인.
+9. ✅ 이 작업 기록과 [런북](korean-vernacular-ingest.md)의 "현재 검증 상태"를 최종 코드와 대조해 갱신함(아래 참고).
+10. ⬜ 준비가 끝난 뒤 실제 환경에서 import → 수동 실행 → Neo4j count/활성 상태 → API 조회를 검증하고 그때 실행 증거를 기록 — **여전히 미검증**.
+    이번 재개 세션은 운영 n8n import/실행과 운영 Neo4j 쓰기를 명시적으로 범위 밖으로 뒀다(라이브 opt-in 없음).
 
 ## 소스 결정 및 재개 주의사항
 
