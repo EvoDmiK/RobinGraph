@@ -474,6 +474,30 @@ assert.equal(check({}), false);
             self.assertEqual("channel-id", by_name[name]["parameters"]["channelId"]["value"])
             self.assertEqual("discord-id", by_name[name]["credentials"]["discordBotApi"]["id"])
 
+    def test_korean_vernacular_deployment_succeeds_without_a_discord_credential(self) -> None:
+        """Discord is optional for this pipeline (docs/n8n/korean-vernacular-ingest.md):
+        deploying with no Discord credential configured must not raise --
+        unlike the reference workflow, whose notifications are mandatory
+        (see test_reference_deployment.test_reference_requires_notification_credentials_before_deployment)."""
+
+        from scripts.deploy_n8n_reference_ingest import DISCORD_REQUIRED, build_deployment
+
+        self.assertFalse(DISCORD_REQUIRED.get("korean-vernacular", True))
+        payload = build_deployment(
+            load(KOREAN_VERNACULAR),
+            {"id": "neo4j-id", "name": "Neo4j"},
+            None,
+            "guild-id",
+            "channel-id",
+            discord_required=False,
+        )
+        by_name = {item["name"]: item for item in payload["nodes"]}
+        for name in ("Notify Korean vernacular success", "Notify Korean vernacular failure"):
+            node = by_name[name]
+            self.assertEqual("n8n-nodes-base.discord", node["type"])
+            self.assertNotIn("credentials", node)
+            self.assertEqual("continueRegularOutput", node["onError"])
+
     def test_korean_vernacular_deploy_script_is_registered(self) -> None:
         from scripts.deploy_n8n_reference_ingest import WORKFLOWS as DEPLOY_WORKFLOWS
 
@@ -724,7 +748,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "assert.equal(runA.wikidata_dataset_id, runB.wikidata_dataset_id);\n"
             "assert.equal(runA.source_release, runB.source_release);\n"
             "assert.ok(runA.wikidata_dataset_id.startsWith('wikidata-dataset:taxon-labels:sha256-'));\n"
-            "const runDifferentContent = run({statusCode: 200, data: differentBody}, hash);\n"
+            "const runDifferentContent = run({statusCode: 200, data: differentBody}, hash2);\n"
             "assert.notEqual(runDifferentContent.wikidata_dataset_id, runA.wikidata_dataset_id);\n"
             "const failed = run({statusCode: 500, data: 'Internal Server Error'}, null);\n"
             "assert.equal(failed.wikidata_dataset_id, null);\n"
