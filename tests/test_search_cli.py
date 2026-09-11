@@ -6,6 +6,8 @@ import json
 import unittest
 from unittest.mock import patch
 
+from fastapi.testclient import TestClient
+
 from robingraph.cli import main
 from robingraph.embeddings import EmbeddingHTTPError
 from robingraph.graph.settings import Neo4jSettings
@@ -90,6 +92,45 @@ class SearchCLITest(unittest.TestCase):
         self.assertIn("/v1/observations", app.openapi()["paths"])
         fixture_type.return_value.close.assert_called_once_with()
         operational_type.return_value.close.assert_called_once_with()
+
+    def test_serve_neo4j_wires_both_lineage_handlers_and_closes_the_lineage_repository(self):
+        with patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository") as fixture_type, \
+             patch(
+                 "robingraph.retrieval.operational_neo4j.Neo4jOperationalObservationRepository"
+             ) as operational_type, \
+             patch(
+                 "robingraph.retrieval.taxonomy_lineage_neo4j.Neo4jTaxonomyLineageRepository"
+             ) as lineage_type, \
+             patch("uvicorn.run") as run:
+            lineage_type.return_value.lineage_for_scientific_name.return_value = None
+            lineage_type.return_value.lineage_for_korean_name.return_value = None
+            code, out, err = self.invoke("serve-neo4j")
+        self.assertEqual((0, "", ""), (code, out, err))
+
+        app = run.call_args.args[0]
+        self.assertIn("/v1/taxa/lineage", app.openapi()["paths"])
+        parameters = {
+            value["name"] for value in app.openapi()["paths"]["/v1/taxa/lineage"]["get"]["parameters"]
+        }
+        self.assertEqual({"scientific_name", "name"}, parameters)
+
+        # Both query paths must actually be wired to a live handler (not left
+        # `None`, which would surface as a 503 "available only in Neo4j
+        # mode" instead of ever reaching the repository).
+        client = TestClient(app)
+        self.assertEqual(
+            404, client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code
+        )
+        self.assertEqual(
+            404,
+            client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"}).status_code,
+        )
+        lineage_type.return_value.lineage_for_scientific_name.assert_called_once_with("Anas zonorhyncha")
+        lineage_type.return_value.lineage_for_korean_name.assert_called_once_with("흰뺨검둥오리")
+
+        fixture_type.return_value.close.assert_called_once_with()
+        operational_type.return_value.close.assert_called_once_with()
+        lineage_type.return_value.close.assert_called_once_with()
 
 
 if __name__ == '__main__':

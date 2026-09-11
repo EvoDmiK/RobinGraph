@@ -13,6 +13,14 @@ graph or the GBIF operational graph. Every query below:
   `Taxon` label, so the label pair `Taxon:BirdTaxon` structurally excludes
   it -- the two taxonomies are never merged (see
   `docs/graph-database-schema.md`).
+
+Two independent read paths are exposed: `lineage_for_scientific_name`
+(matches `Taxon.scientific_name`) and `lineage_for_korean_name` (matches a
+directly attached `VernacularName {language: 'ko'}`). Both walk the same
+ancestor chain and both project each ancestor's own Korean vernacular name
+(nullable) into `LineageTaxon.korean_name`. Neither path ever reads or
+writes `ExternalTaxonConcept`, and neither ever invents a Korean name that
+is not already present as a licensed `VernacularName` node.
 """
 
 from __future__ import annotations
@@ -41,7 +49,12 @@ RETURN conceptSet.id AS concept_set_id,
 # `Taxon:BirdTaxon` label pair, so the walk can never cross into
 # `ExternalTaxonConcept` nodes. `length(ancestorPath) DESC` orders root first
 # (order, then family, then genus, ..., down to `target` itself at depth 0),
-# preserving order->family->genus->species order in the collected list.
+# preserving order->family->genus->species order in the collected list. Each
+# ancestor's own Korean vernacular name (if any) is projected alongside it --
+# this is an additive OPTIONAL MATCH on the existing bound `$concept_set_id`,
+# so it introduces no new query parameter. If malformed source data attaches
+# multiple Korean names to one taxon, `min` deterministically retains one name
+# instead of duplicating that lineage node.
 _LINEAGE_QUERY = """
 MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
 MATCH (target:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(conceptSet)
@@ -53,14 +66,73 @@ OPTIONAL MATCH ancestorPath =
   (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
 WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
 WITH ancestor, length(ancestorPath) AS depth
-ORDER BY depth DESC
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko'})
+WITH ancestor, depth, min(koreanName.name) AS korean_name
+ORDER BY depth DESC, ancestor.id
 RETURN collect({
   taxon_id: ancestor.id,
   rank: ancestor.rank,
   scientific_name: ancestor.scientific_name,
-  authority: ancestor.authority
+  authority: ancestor.authority,
+  korean_name: korean_name
 }) AS lineage_items
 """
+
+# The Korean-name path resolves `target` via its own directly attached
+# `VernacularName {language: 'ko'}` (within the active concept set, since
+# `target` is required to be `IN_CONCEPT_SET` first) instead of by
+# `scientific_name`, then walks the identical deterministic ancestor chain.
+# `target.scientific_name` is carried through as `targetScientificName` so
+# the caller can report the resolved canonical scientific name alongside the
+# Korean query that produced it.
+_LINEAGE_BY_KOREAN_NAME_QUERY = """
+MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
+MATCH (target:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(conceptSet)
+MATCH (target)-[:HAS_VERNACULAR_NAME]->(vernacular:VernacularName {language: 'ko'})
+WHERE toLower(vernacular.name) = toLower($korean_name)
+WITH DISTINCT target
+ORDER BY target.id
+LIMIT 1
+WITH target, target.scientific_name AS targetScientificName
+OPTIONAL MATCH ancestorPath =
+  (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
+WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
+WITH targetScientificName, ancestor, length(ancestorPath) AS depth
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko'})
+WITH targetScientificName, ancestor, depth, min(koreanName.name) AS korean_name
+ORDER BY depth DESC, ancestor.id
+RETURN targetScientificName,
+       collect({
+         taxon_id: ancestor.id,
+         rank: ancestor.rank,
+         scientific_name: ancestor.scientific_name,
+         authority: ancestor.authority,
+         korean_name: korean_name
+       }) AS lineage_items
+"""
+
+
+def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
+    if not isinstance(raw_items, list):
+        raise ValueError("Invalid AviList lineage projection")
+    items: list[LineageTaxon] = []
+    for item in raw_items:
+        if not isinstance(item, dict):
+            raise ValueError("Invalid AviList lineage projection item")
+        required = ("taxon_id", "rank", "scientific_name")
+        if any(item.get(field) is None or not str(item[field]).strip() for field in required):
+            raise ValueError("Invalid AviList lineage projection item")
+        korean_name = item.get("korean_name")
+        items.append(
+            LineageTaxon(
+                taxon_id=str(item["taxon_id"]),
+                rank=str(item["rank"]),
+                scientific_name=str(item["scientific_name"]),
+                authority=None if item.get("authority") is None else str(item["authority"]),
+                korean_name=None if korean_name is None or not str(korean_name).strip() else str(korean_name),
+            )
+        )
+    return tuple(items)
 
 
 class Neo4jTaxonomyLineageRepository:
@@ -87,11 +159,7 @@ class Neo4jTaxonomyLineageRepository:
         rows = self._run(query, **parameters)
         return rows[0] if rows else {}
 
-    def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
-        cleaned = scientific_name.strip()
-        if not cleaned:
-            raise ValueError("scientific_name must not be blank")
-
+    def _active_concept_set(self) -> tuple[str, str]:
         active = self._single(_ACTIVE_CONCEPT_SET_QUERY)
         concept_set_id = active.get("concept_set_id")
         if not concept_set_id:
@@ -102,6 +170,14 @@ class Neo4jTaxonomyLineageRepository:
         taxonomy_release = active.get("taxonomy_release")
         if not taxonomy_release:
             raise ValueError("Active AviList reference-taxonomy release is not available")
+        return str(concept_set_id), str(taxonomy_release)
+
+    def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
+        cleaned = scientific_name.strip()
+        if not cleaned:
+            raise ValueError("scientific_name must not be blank")
+
+        concept_set_id, taxonomy_release = self._active_concept_set()
 
         rows = self._run(_LINEAGE_QUERY, concept_set_id=concept_set_id, scientific_name=cleaned)
         if not rows:
@@ -111,28 +187,48 @@ class Neo4jTaxonomyLineageRepository:
             projection.get("lineage_items"), list
         ):
             raise ValueError("Invalid AviList lineage projection")
-        raw_items = projection["lineage_items"]
-        items: list[LineageTaxon] = []
-        for item in raw_items:
-            if not isinstance(item, dict):
-                raise ValueError("Invalid AviList lineage projection item")
-            required = ("taxon_id", "rank", "scientific_name")
-            if any(item.get(field) is None or not str(item[field]).strip() for field in required):
-                raise ValueError("Invalid AviList lineage projection item")
-            items.append(
-                LineageTaxon(
-                    taxon_id=str(item["taxon_id"]),
-                    rank=str(item["rank"]),
-                    scientific_name=str(item["scientific_name"]),
-                    authority=None if item.get("authority") is None else str(item["authority"]),
-                )
-            )
+        items = _parse_lineage_items(projection["lineage_items"])
         if not items:
             return None
         return TaxonomyLineage(
             query_scientific_name=cleaned,
             taxonomy_source="AviList",
-            taxonomy_release=str(taxonomy_release),
-            concept_set_id=str(concept_set_id),
-            items=tuple(items),
+            taxonomy_release=taxonomy_release,
+            concept_set_id=concept_set_id,
+            items=items,
+            query_name=cleaned,
+            resolved_query_scientific_name=items[-1].scientific_name,
+            matched_by="scientific_name",
+        )
+
+    def lineage_for_korean_name(self, korean_name: str) -> TaxonomyLineage | None:
+        cleaned = korean_name.strip()
+        if not cleaned:
+            raise ValueError("korean_name must not be blank")
+
+        concept_set_id, taxonomy_release = self._active_concept_set()
+
+        rows = self._run(_LINEAGE_BY_KOREAN_NAME_QUERY, concept_set_id=concept_set_id, korean_name=cleaned)
+        if not rows:
+            return None
+        projection = rows[0]
+        if not isinstance(projection, dict) or not isinstance(
+            projection.get("lineage_items"), list
+        ):
+            raise ValueError("Invalid AviList lineage projection")
+        target_scientific_name = projection.get("targetScientificName")
+        if not target_scientific_name or not str(target_scientific_name).strip():
+            raise ValueError("Invalid AviList lineage projection")
+        items = _parse_lineage_items(projection["lineage_items"])
+        if not items:
+            return None
+        return TaxonomyLineage(
+            query_scientific_name=str(target_scientific_name),
+            taxonomy_source="AviList",
+            taxonomy_release=taxonomy_release,
+            concept_set_id=concept_set_id,
+            items=items,
+            query_name=cleaned,
+            resolved_query_scientific_name=str(target_scientific_name),
+            matched_by="korean_name",
         )
