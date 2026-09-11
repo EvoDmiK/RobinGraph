@@ -418,7 +418,19 @@ assert.equal(check({}), false);
         # Optimistic concurrency: a concurrent run that already advanced
         # korean-vernacular-names past what this run captured must block
         # this run's activation rather than being clobbered by it.
+        # The state is MERGEd (and its unique-key lock acquired) *before*
+        # reading the current run id. Without this order, two first-ever
+        # executions can both see an absent state as '', pass the comparison,
+        # and have the later transaction overwrite the first activation.
         self.assertIn("WHERE currentRunId = $expected_prior_run_id", finalize_query)
+        self.assertIn(
+            "MERGE (state:IngestState {id: 'korean-vernacular-names'}) ON CREATE SET state.last_successful_run_id = '' WITH run, state, coalesce(state.last_successful_run_id, '') AS currentRunId",
+            finalize_query,
+        )
+        self.assertLess(
+            finalize_query.index("MERGE (state:IngestState {id: 'korean-vernacular-names'})"),
+            finalize_query.index("WHERE currentRunId = $expected_prior_run_id"),
+        )
         self.assertIn(
             "MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id",
             finalize_query,
