@@ -134,6 +134,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
 
     from .api.app import (
         create_app,
+        create_neo4j_korean_lineage_handler,
         create_neo4j_lineage_handler,
         create_neo4j_observation_handler,
         create_neo4j_search_handler,
@@ -152,6 +153,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             search_handler=create_neo4j_search_handler(settings),
             observation_handler=create_neo4j_observation_handler(operational_repository),
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),
+            korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:
