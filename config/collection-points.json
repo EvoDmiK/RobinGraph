@@ -105,6 +105,26 @@
       "notes": "Figshare article 16586228 version 7 dataset license CC BY 4.0 verified 2026-09-09. Pin file 34480856 and AVONET1_BirdLife species averages (11009 rows). Wing.Length is folded wing length, not wingspan; Habitat.Density is a categorical habitat descriptor, not measured tree density. Preserve inferred-trait and reference-species flags."
     },
     {
+      "collection_point_id": "korean-vernacular-wikidata-species-labels",
+      "source_id": "wikidata-taxon-labels",
+      "source_release": "mutable-as-of-2026-09-11",
+      "scope": "taxonomy",
+      "role": "korean_vernacular_name",
+      "endpoint_uri": "https://query.wikidata.org/sparql",
+      "payload_mode": "structured_claim",
+      "evidence_kind": "direct",
+      "score": 74,
+      "enabled": true,
+      "license_policy_status": "allowed",
+      "target_entities": [
+        "VernacularName",
+        "VernacularNameCandidate",
+        "SourceRecord"
+      ],
+      "expected_sha256": null,
+      "notes": "CC0 confirmed 2026-09-11 by fetching https://www.wikidata.org/wiki/Wikidata:Licensing directly ('All structured data in the main, property and lexeme namespaces is made available under the Creative Commons CC0 License') and by a live SPARQL query against https://query.wikidata.org/sparql selecting P105=Q7432 (species) items with P171* Q5113 (Aves), a P225 taxon name, and an rdfs:label filtered to lang=ko; the query returned Q25348 -> taxonName 'Anas platyrhynchos' -> itemLabel(ko) '청둥오리' among its rows. Wikidata is community-edited (mutable), so each run hashes its own SPARQL response for provenance instead of pinning a fixed SHA-256. Matches only against Taxon:BirdTaxon already in the active reference-taxonomy TaxonConceptSet by exact scientific_name; never creates a TaxonConceptSet, never touches ExternalTaxonConcept, and never guesses a Korean name when a scientific name has more than one distinct Wikidata Korean label (routed to VernacularNameCandidate instead). Distinct from and does not change the still-review_required korea-nibr-species point below."
+    },
+    {
       "collection_point_id": "korea-nibr-species",
       "source_id": "nibr-species",
       "source_release": "unapproved",

@@ -42,3 +42,23 @@ AviList의 sequence나 학명 문자열을 내부 ID로 사용하지 않는다. 
 ## 결과
 
 NIBR 조건 확인 전에는 해당 데이터를 운영 그래프에 넣지 않는다. fixture에서는 출처와 사용 허가가 명확한 소수 한국어 이름만 사용한다.
+
+## 추가 결정 (2026-09-11): Wikidata를 한국어 일반명의 임시 승인 소스로 채택
+
+확인한 NIBR 데이터셋(15048041)은 공공누리 제3유형으로 기본 허용 목록 밖이므로
+운영 적재 비활성 상태를 유지한다(ADR-0005 참조). 별도로 Wikidata
+구조화 데이터(query.wikidata.org)가 **CC0**로 명시되어 있음을
+<https://www.wikidata.org/wiki/Wikidata:Licensing>에서 직접 확인했고, 실제
+SPARQL 질의로 조류 종 학명과 한국어 label이 함께 반환됨을 확인했다(예:
+Q25348 → `Anas platyrhynchos` → `청둥오리`). 이 라이선스는 ADR-0003의 허용
+목록(CC0/CC BY/공공누리 1유형)에 그대로 해당하므로, NIBR과 별개로
+`korean-vernacular-wikidata-species-labels` collection point를 승인해
+한국어 `VernacularName` 적재를 시작한다.
+
+- 이 결정은 NIBR의 상태를 바꾸지 않는다. NIBR이 나중에 승인되면 국내 법적
+  지위(멸종위기종 등)와 국명을 원 출처로 병행 적재하는 기존 계획은 그대로
+  유효하다.
+- Wikidata 적재는 활성 `reference-taxonomy` concept set의 기존 `Taxon`에
+  학명 완전 일치로만 붙이며, 충돌하거나 모호한 매칭은 `VernacularNameCandidate`로
+  격리하고 임의로 하나를 선택하지 않는다.
+- 상세 실행 계약: [n8n 한국어 일반명 수집 런북](../n8n/korean-vernacular-ingest.md).

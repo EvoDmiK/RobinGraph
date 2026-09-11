@@ -32,9 +32,10 @@ Claude안은 AviList, Catalogue of Life, NIBR의 역할 구분이 강하다. Ter
 | EcoBank 식생 공간결합 | 81 | review_required | layer 버전과 방법을 가진 spatial inference |
 | IUCN Red List API v4 | 79 | restricted | 승인 전 link-only |
 | AVONET | 78 | enabled | Figshare v7 파일 34480856의 CC BY 4.0 확인, 형태·서식 환경 claim |
+| Wikidata 한국어 일반명 | 74 | enabled | CC0 확인(2026-09-11), 학명 완전 일치로만 매칭, 충돌·미매칭은 candidate로 격리 |
 | NIBR | 76 | review_required | 승인 전 metadata·link-only |
 
-현재 자동 수집 가능한 포인트는 AviList, ChecklistBank, EltonTraits, AVONET 네 개다. AVONET은 Figshare article 16586228 v7의 파일 34480856과 SHA-256을 고정하고 별도 n8n workflow에서 형태·서식 환경 claim을 수집한다. [실행 가이드](n8n/species-information-ingest.md)를 참고한다. AviList는 v2025b Extended XLSX의 직접 URL과 SHA-256을, ChecklistBank는 Catalogue of Life 2026-08-20 릴리스(dataset 316115, DOI 10.48580/dgywk)를, EltonTraits는 Figshare의 조류 파일(`BirdFuncDat.txt`, file ID 5631081, CC0)과 SHA-256을 고정했다. 나머지는 설정에는 남겨 운영자가 확인할 수 있지만 `enabled=false`이며 런타임 loader가 비허용 포인트의 활성화를 거부한다.
+현재 자동 수집 가능한 포인트는 AviList, ChecklistBank, EltonTraits, AVONET, Wikidata 한국어 일반명 다섯 개다. Wikidata 포인트(`korean-vernacular-wikidata-species-labels`)는 국립생물자원관(NIBR)과는 별개다 — NIBR은 정확한 공공누리 유형이 확인되기 전까지 여전히 `review_required`/`enabled: false`로 남는다([ADR-0002](decisions/0002-taxonomy-backbone.md) 참고). Wikidata는 커뮤니티가 계속 편집하는 데이터라 고정 SHA-256 대신 매 실행마다 응답을 해시해 보존하고, 활성 `reference-taxonomy` concept set의 기존 `Taxon`에만 학명 완전 일치로 붙인다. 자세한 실행 계약은 [n8n 한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md)에 기록한다. AVONET은 Figshare article 16586228 v7의 파일 34480856과 SHA-256을 고정하고 별도 n8n workflow에서 형태·서식 환경 claim을 수집한다. [실행 가이드](n8n/species-information-ingest.md)를 참고한다. AviList는 v2025b Extended XLSX의 직접 URL과 SHA-256을, ChecklistBank는 Catalogue of Life 2026-08-20 릴리스(dataset 316115, DOI 10.48580/dgywk)를, EltonTraits는 Figshare의 조류 파일(`BirdFuncDat.txt`, file ID 5631081, CC0)과 SHA-256을 고정했다. 나머지는 설정에는 남겨 운영자가 확인할 수 있지만 `enabled=false`이며 런타임 loader가 비허용 포인트의 활성화를 거부한다.
 
 AviList·ChecklistBank·EltonTraits는 `n8n/robingraph-reference-ingest.json`에 연결했다. AviList와 EltonTraits는 snapshot을 직접 내려받아 SHA-256과 행 수를 확인한 뒤 Neo4j에 배치 적재한다. ChecklistBank는 고정 릴리스 메타데이터를 먼저 확인하고 EltonTraits 미대응 학명의 검토 URL을 제공하지만, fuzzy match를 자동 승인하지 않는다. 상세한 실행 계약은 [n8n 분류·형질 기준정보 수집 런북](n8n/reference-ingest.md)에 기록한다.
 

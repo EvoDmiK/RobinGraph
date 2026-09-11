@@ -310,6 +310,7 @@ class ApiTest(unittest.TestCase):
                         "scientific_name": "Anseriformes",
                         "authority": None,
                         "korean_name": None,
+                        "korean_name_status": None,
                     },
                     {
                         "taxon_id": "family:anatidae",
@@ -317,6 +318,7 @@ class ApiTest(unittest.TestCase):
                         "scientific_name": "Anatidae",
                         "authority": "Leach, 1820",
                         "korean_name": None,
+                        "korean_name_status": None,
                     },
                     {
                         "taxon_id": "genus:anas",
@@ -324,6 +326,7 @@ class ApiTest(unittest.TestCase):
                         "scientific_name": "Anas",
                         "authority": "Linnaeus, 1758",
                         "korean_name": None,
+                        "korean_name_status": None,
                     },
                     {
                         "taxon_id": "species:anas-zonorhyncha",
@@ -331,6 +334,7 @@ class ApiTest(unittest.TestCase):
                         "scientific_name": "Anas zonorhyncha",
                         "authority": None,
                         "korean_name": "흰뺨검둥오리",
+                        "korean_name_status": None,
                     },
                 ],
             },
@@ -370,7 +374,14 @@ class ApiTest(unittest.TestCase):
             concept_set_id="avilist-2025b",
             items=(
                 LineageTaxon("order:anseriformes", "order", "Anseriformes", None, None),
-                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),
+                LineageTaxon(
+                    "species:anas-zonorhyncha",
+                    "species",
+                    "Anas zonorhyncha",
+                    None,
+                    "흰뺨검둥오리",
+                    "community-sourced",
+                ),
             ),
             query_name="흰뺨검둥오리",
             resolved_query_scientific_name="Anas zonorhyncha",
@@ -401,6 +412,8 @@ class ApiTest(unittest.TestCase):
         self.assertEqual("Anas zonorhyncha", payload["resolved_query_scientific_name"])
         self.assertEqual("korean_name", payload["matched_by"])
         self.assertEqual("흰뺨검둥오리", payload["lineage"][-1]["korean_name"])
+        self.assertEqual("community-sourced", payload["lineage"][-1]["korean_name_status"])
+        self.assertIsNone(payload["lineage"][0]["korean_name_status"])
 
     def test_taxonomy_lineage_requires_exactly_one_of_scientific_name_or_name(self) -> None:
         client = TestClient(create_app(FixtureRepository(load_fixture())))
