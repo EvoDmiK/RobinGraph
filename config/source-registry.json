@@ -85,6 +85,23 @@
     "license_policy_status": "allowed"
   },
   {
+    "source_id": "wikidata-taxon-labels",
+    "name": "Wikidata taxon labels",
+    "provider": "Wikimedia Foundation / Wikidata community",
+    "landing_uri": "https://www.wikidata.org/wiki/Wikidata:WikiProject_Taxonomy",
+    "access_method": "api",
+    "auth_method": "none",
+    "release_strategy": "mutable",
+    "incremental_cursor": null,
+    "rate_limit_note": "Community-edited SPARQL endpoint (query.wikidata.org); send a descriptive User-Agent, avoid tight polling loops, and hash each response for provenance since the underlying data can change between runs.",
+    "license_uri": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "license_name": "CC0 1.0 (Wikidata structured data)",
+    "terms_uri": "https://www.wikidata.org/wiki/Wikidata:Licensing",
+    "adapter_owner": "RobinGraph Korea",
+    "enabled": true,
+    "license_policy_status": "allowed"
+  },
+  {
     "source_id": "nibr-species",
     "name": "NIBR Korean Peninsula Biodiversity",
     "provider": "National Institute of Biological Resources",

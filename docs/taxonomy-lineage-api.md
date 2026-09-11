@@ -31,6 +31,11 @@ GET /v1/taxa/lineage?name=흰뺨검둥오리
   적재가 없는 종은 `name=` 조회가 항상 404를 반환한다 — 이는 결함이 아니라
   현재 AviList 적재 상태를 그대로 반영한 것이다. 한국어 이름을 임의로
   번역·생성해 채우지 않는다.
+- [n8n 한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md)이 이 간극을
+  메우는 별도 적재 경로(Wikidata CC0 구조화 데이터, 학명으로 활성 AviList
+  `Taxon`에만 매칭)를 정의한다. 다만 이 문서 작성 시점에는 그 workflow가
+  오프라인으로만 검증되었고 실제 n8n/Neo4j에서 실행된 적이 없다 — 실행 전까지는
+  `청둥오리` 같은 이름도 여전히 404를 반환한다.
 
 성공 응답 예시는 다음과 같다. `taxonomy_release`와 `concept_set_id`는 현재 활성화된
 AviList 적재 상태에서 읽으므로 배포 환경에 따라 값이 달라질 수 있다. 아래는
@@ -52,28 +57,32 @@ AviList 적재 상태에서 읽으므로 배포 환경에 따라 값이 달라�
       "rank": "order",
       "scientific_name": "Anseriformes",
       "authority": null,
-      "korean_name": null
+      "korean_name": null,
+      "korean_name_status": null
     },
     {
       "taxon_id": "...",
       "rank": "family",
       "scientific_name": "Anatidae",
       "authority": null,
-      "korean_name": null
+      "korean_name": null,
+      "korean_name_status": null
     },
     {
       "taxon_id": "...",
       "rank": "genus",
       "scientific_name": "Anas",
       "authority": null,
-      "korean_name": null
+      "korean_name": null,
+      "korean_name_status": null
     },
     {
       "taxon_id": "...",
       "rank": "species",
       "scientific_name": "Anas zonorhyncha",
       "authority": null,
-      "korean_name": "흰뺨검둥오리"
+      "korean_name": "흰뺨검둥오리",
+      "korean_name_status": "community-sourced"
     }
   ]
 }
@@ -88,6 +97,7 @@ AviList 적재 상태에서 읽으므로 배포 환경에 따라 값이 달라�
 | `resolved_query_scientific_name` | 새 필드. 조회로 실제 일치한 대상 `Taxon`의 정식 학명이며 두 조회 경로 모두에서 항상 채워진다. |
 | `matched_by` | `"scientific_name"` 또는 `"korean_name"` — 어느 경로로 대상을 찾았는지. |
 | `lineage[].korean_name` | 각 계통 항목(조상 포함)에 직접 연결된 한국어 `VernacularName`이 있으면 그 이름, 없으면 `null`이다. |
+| `lineage[].korean_name_status` | 해당 `korean_name`을 적재한 `VernacularName.status`. `korean_name`이 `null`이면 항상 `null`이다. 현재 값은 `"community-sourced"`([n8n 한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md), Wikidata 구조화 데이터)뿐이며 **국립생물자원관(NIBR) 등 공식 국명이 아니다** — 커뮤니티가 계속 편집하는 Wikidata 항목의 한국어 label이다. NIBR 공식 국명이 승인·적재되면 다른 `status` 값(예: `"source-preferred"`)으로 구분한다([ADR-0002](decisions/0002-taxonomy-backbone.md) 참고). |
 
 `taxonomy_source`, `taxonomy_release`, `concept_set_id`, `lineage[].taxon_id` /
 `rank` / `scientific_name` / `authority`는 기존과 동일하다.
@@ -124,14 +134,22 @@ curl "https://<NAS-API-HOST>/v1/taxa/lineage?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB
 - `(Taxon:BirdTaxon)`만 조회하므로 GBIF `(ExternalTaxonConcept:BirdTaxon)`가 계통에
   섞이지 않는다. 한국어 `VernacularName` 조회도 `Taxon:BirdTaxon`에 직접 연결된
   것만 읽으며 GBIF `ExternalTaxonConcept`는 절대 조회·병합하지 않는다.
+- 한국어 `VernacularName`은 대상 조회와 계통 항목의 `korean_name` 투영 모두에서
+  `VernacularName -[:FROM_RECORD]-> SourceRecord -[:IN_DATASET]->
+  SourceDataset {policy_status: 'allowed'}` 연결이 끊기지 않아야만 조회된다.
+  이는 화면 표시 필터가 아니라 조회 자체의 경계다 — 승인된 적재 경로를 거치지
+  않았거나, 나중에 정책이 바뀌어 `review_required`/`restricted`로 내려간
+  데이터셋에 연결된 이름은 계통에서 감춰지는 게 아니라 애초에 대상을 찾지
+  못한다(적재된 적 없는 이름과 구분되지 않는다).
 - `PARENT_OF.concept_set_id`가 활성 concept set과 일치하는 관계만 순회한다.
 - 두 조회 경로 모두 대상 `Taxon`을 `ORDER BY target.id LIMIT 1`로 결정론적으로
   하나만 선택한 뒤 조상 순회를 시작하므로, 동일한 학명이나 동일한 한국어
   이름을 가진 `Taxon`이 둘 이상 있어도 모호하게 fan-out 되지 않는다. 한국어
   이름 노드가 같은 대상에 중복 연결된 경우에도 대상 후보를 먼저 중복 제거한다.
 - 한 계통 항목에 한국어 일반명이 여러 개 연결된 비정상·중복 데이터는 이름순으로
-  하나만 결정적으로 선택한다. 항목을 중복 반환하거나 입력값으로 새 이름을 만들지
-  않는다.
+  하나만 결정적으로 선택하며, 선택한 이름의 `status`도 같은 `VernacularName`
+  노드에서 함께 가져온다(서로 다른 노드의 이름과 상태를 따로 집계해 섞지
+  않는다). 항목을 중복 반환하거나 입력값으로 새 이름을 만들지 않는다.
 - 누락되거나 잘못된 projection은 내부 예외를 노출하지 않고 HTTP 503 경계로 변환한다.
 - fixture 그래프(`Taxon:RobinGraph:Fixture`)의 이름은 AviList 기준 분류에 절대
   복사하지 않으며, 라이선스가 확인되지 않은 한국어 번역을 임의로 만들어 채우지

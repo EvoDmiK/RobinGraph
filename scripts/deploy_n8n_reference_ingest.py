@@ -15,6 +15,10 @@ SOURCE = ROOT / "n8n" / "robingraph-reference-ingest.json"
 WORKFLOWS = {
     "reference": (SOURCE, "ROBINGRAPH_N8N_REFERENCE_WORKFLOW_ID"),
     "avonet": (ROOT / "n8n" / "robingraph-avonet-ingest.json", "ROBINGRAPH_N8N_AVONET_WORKFLOW_ID"),
+    "korean-vernacular": (
+        ROOT / "n8n" / "robingraph-korean-vernacular-ingest.json",
+        "ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID",
+    ),
 }
 DEFAULT_DISCORD_GUILD_ID = "1504129603310981120"
 DEFAULT_DISCORD_CHANNEL_ID = "1541317761517756436"

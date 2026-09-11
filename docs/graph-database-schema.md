@@ -95,9 +95,27 @@ GBIF Backbone의 분류 개념이다. GBIF 관찰 레코드가 사용한 분류�
 |---|---|---|
 | `ScientificName` | `id`, `full_name`, `canonical`, `authorship`, `nomenclatural_code` | `(Taxon 또는 ExternalTaxonConcept)-[:HAS_ACCEPTED_NAME]->(ScientificName)` |
 | `VernacularName` | `id`, `name`, `language`, `status`, `source_release` | `(Taxon)-[:HAS_VERNACULAR_NAME]->(VernacularName)` |
+
+`status`는 이름의 권위 수준을 구분한다: AviList 자체 영명은 `source-preferred`,
+[n8n 한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md)이 적재한
+Wikidata 한국어 이름은 `community-sourced`다. `community-sourced`는 **국립생물자원관(NIBR) 같은 공식 국명이 아니라는** 뜻이다 — Wikidata는 누구나 계속 편집하는
+데이터베이스이며, `/v1/taxa/lineage`도 이를 `lineage[].korean_name_status`로 그대로 노출한다([분류 계통 API](taxonomy-lineage-api.md)). NIBR 국명이 승인·적재되면 별도 `status` 값으로 구분한다.
+
+| `VernacularNameCandidate` | 학명 미매칭·모호 매칭·상충하는 한국어 이름의 검토 대기열 | `taxon_name`, `proposed_name`, `reason_code`, `qids`, `resolution_status`, `last_seen_run_id`, `last_seen_at` |
 | `ExternalIdentifier` | `id`, `scheme`, `value` | `(Taxon)-[:HAS_EXTERNAL_IDENTIFIER]->(ExternalIdentifier)` |
 
-현재 AviList 적재의 일반명은 영명(`language: 'en'`)이다. 따라서 `흰뺨검둥오리` 같은 한국어 이름으로 직접 찾는 정규 `VernacularName` 데이터는 아직 보장되지 않는다. 현재 가장 안정적인 검색 키는 학명 `Anas zonorhyncha`다.
+현재 AviList 적재 자체가 보장하는 일반명은 영명(`language: 'en'`)뿐이다. 한국어
+`VernacularName`은 별도의 [n8n 한국어 일반명 수집
+런북](n8n/korean-vernacular-ingest.md)(Wikidata CC0, 학명 완전 일치로만 매칭)이
+채우며, 이 글을 쓰는 시점에는 그 workflow가 오프라인으로만 검증되고 아직
+실제 n8n/Neo4j에서 실행된 적이 없다. 학명 미매칭·모호 매칭·상충하는 한국어
+이름은 `VernacularName`으로 쓰지 않고 `VernacularNameCandidate`로 격리한다.
+현재 가장 안정적인 검색 키는 여전히 학명(예: `Anas zonorhyncha`)이다.
+
+```text
+(SourceRecord)-[:HAS_VERNACULAR_CANDIDATE]->(VernacularNameCandidate)
+(IngestionRun)-[:QUARANTINED]->(VernacularNameCandidate)
+```
 
 ## 3. 형질과 분류 매핑
 
@@ -288,6 +306,12 @@ fixture에서는 호환 목적의 관계 이름 `OBSERVED_TAXON`을 사용한다
 다음 라벨의 `id`에 uniqueness constraint를 만든다.
 
 `Taxon`, `TaxonConceptSet`, `ScientificName`, `VernacularName`, `ExternalIdentifier`, `SourceRecord`, `SourceDataset`, `License`, `EvidenceUnit`, `TraitClaim`, `TaxonMappingClaim`, `TaxonMappingCandidate`, `IngestionRun`, `IngestState`
+
+### 한국어 일반명 workflow bootstrap
+
+다음 라벨의 `id`에 uniqueness constraint를 만든다([n8n 한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md)).
+
+`VernacularName`, `VernacularNameCandidate`, `SourceRecord`, `SourceDataset`, `License`, `IngestionRun`, `IngestState`
 
 추가 property index:
 

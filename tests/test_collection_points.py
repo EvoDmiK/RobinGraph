@@ -23,6 +23,7 @@ class CollectionPointTest(unittest.TestCase):
                 "taxonomy-checklistbank-release",
                 "traits-eltontraits-v1",
                 "traits-avonet",
+                "korean-vernacular-wikidata-species-labels",
             },
             {point.collection_point_id for point in registry.select()},
         )

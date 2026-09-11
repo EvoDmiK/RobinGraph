@@ -134,6 +134,7 @@ case "$ACTION" in
     compose_tools run --rm nas-tools scripts/deploy_n8n_operational_ingest.py --apply
     compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --apply
     compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --workflow avonet --apply
+    compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply
     echo "n8n workflow definitions deployed inactive; record any newly printed workflow IDs"
     ;;
   validate-avonet)
@@ -151,3 +152,8 @@ case "$ACTION" in
     die "usage: $0 {preflight|deploy|verify|status|logs|deploy-workflows|validate-avonet|ingest-avonet}"
     ;;
 esac
+
+# Korean vernacular ingest runs natively inside n8n once deploy-workflows above
+# has created/updated it: trigger it manually from the n8n UI/API, not from
+# this script. See docs/n8n/korean-vernacular-ingest.md for the exact
+# first-run checklist.

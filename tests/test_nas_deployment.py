@@ -58,6 +58,32 @@ class NasDeploymentTest(unittest.TestCase):
         self.assertNotIn("source \"$", script)
         self.assertNotIn("set -x", script)
 
+    def test_deploy_workflows_action_includes_korean_vernacular(self) -> None:
+        script = (ROOT / "scripts" / "deploy_nas.sh").read_text(encoding="utf-8")
+        deploy_workflows_block = script.split("deploy-workflows)", 1)[1].split(";;", 1)[0]
+        self.assertIn(
+            "scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply",
+            deploy_workflows_block,
+        )
+
+    def test_ingest_example_and_compose_pass_through_korean_vernacular_workflow_id(self) -> None:
+        example = (ROOT / ".env.nas.ingest.example").read_text(encoding="utf-8")
+        values = dict(
+            line.split("=", 1)
+            for line in example.splitlines()
+            if line and not line.startswith("#") and "=" in line
+        )
+        self.assertIn("ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID", values)
+        self.assertEqual("", values["ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID"])
+
+        compose = (ROOT / "compose.nas.yml").read_text(encoding="utf-8")
+        _, tools = compose.split("  nas-tools:", 1)
+        self.assertIn(
+            "ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID: "
+            "${ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID:-}",
+            tools,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

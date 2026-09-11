@@ -32,6 +32,14 @@ class LineageTaxon:
     scientific_name: str
     authority: str | None
     korean_name: str | None = None
+    # `VernacularName.status` for whichever Korean name won the deterministic
+    # tie-break in the Neo4j reader (e.g. "community-sourced" for the
+    # Wikidata ingest, "source-preferred" for a future official source).
+    # `None` whenever `korean_name` is `None`. This tells a caller a name is
+    # not (yet) an official Korean standard name -- see
+    # docs/decisions/0002-taxonomy-backbone.md and
+    # docs/n8n/korean-vernacular-ingest.md.
+    korean_name_status: str | None = None
 
 
 @dataclass(frozen=True)

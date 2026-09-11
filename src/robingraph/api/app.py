@@ -177,6 +177,7 @@ class LineageTaxonResponse(BaseModel):
     scientific_name: str
     authority: str | None
     korean_name: str | None
+    korean_name_status: str | None = None
 
 
 class TaxonomyLineageResponse(BaseModel):

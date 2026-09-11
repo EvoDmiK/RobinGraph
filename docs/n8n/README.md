@@ -10,8 +10,9 @@ RobinGraph의 n8n 수집은 세 workflow로 나뉜다.
 | `robingraph-operational-ingest.json` | GBIF 한국 조류 관찰 | 9월 8일 전용 Neo4j 노드 수동 실행 검증 완료, 마지막 기록상 비활성 |
 | `robingraph-reference-ingest.json` | AviList 기준 분류와 EltonTraits 형질 | 9월 9일 검증 batch 적재 완료, import artifact는 비활성 |
 | `robingraph-avonet-ingest.json` | AVONET 형태 측정치·서식 환경 | 9월 10일 메모리 안전 batch 적재 완료, import artifact는 비활성 |
+| `robingraph-korean-vernacular-ingest.json` | Wikidata(CC0) 기반 한국어 일반명 | 9월 11일 오프라인 검증 완료, 실제 n8n/Neo4j 실행은 아직 없음, import artifact는 비활성 |
 
-분류·형질 workflow의 데이터 계약, 배치 적재, 품질 gate와 배포 방법은 [분류·형질 기준정보 수집 런북](reference-ingest.md)을 따른다. 아래 내용은 GBIF 관찰 workflow 전용이다.
+분류·형질 workflow의 데이터 계약, 배치 적재, 품질 gate와 배포 방법은 [분류·형질 기준정보 수집 런북](reference-ingest.md)을 따른다. 한국어 일반명 수집은 [n8n 한국어 일반명 수집 런북](korean-vernacular-ingest.md)을 따른다. 아래 내용은 GBIF 관찰 workflow 전용이다.
 
 ## GBIF workflow 현재 상태
 
@@ -166,7 +167,9 @@ LIMIT 100;
 | `scripts/deploy_n8n_operational_ingest.py` | n8n Public API 점검·백업·배포 스크립트 |
 | `n8n/robingraph-reference-ingest.json` | AviList·EltonTraits 기준정보 import 파일 |
 | `scripts/generate_n8n_reference_ingest.py` | collection point에서 기준정보 workflow 재생성 |
-| `scripts/deploy_n8n_reference_ingest.py` | 기준정보 workflow 원격 점검·생성·백업·배포 |
+| `scripts/deploy_n8n_reference_ingest.py` | 기준정보·AVONET·한국어 일반명 workflow 원격 점검·생성·백업·배포 |
+| `n8n/robingraph-korean-vernacular-ingest.json` | Wikidata(CC0) 한국어 일반명 import 파일 |
+| `scripts/generate_n8n_korean_vernacular_ingest.py` | collection point에서 한국어 일반명 workflow 재생성 |
 | `scripts/load_n8n_avonet.py` | AVONET 선택 시트 스트리밍 검증과 임시 인증 batch 적재 |
 | `docs/n8n/reference-ingest.md` | 기준정보 첫 실행과 운영 런북 |
 | `tests/test_n8n_workflows.py` | import shape와 안전 경로 정적 검사 |
