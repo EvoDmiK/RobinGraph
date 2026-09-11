@@ -36,11 +36,12 @@
   두 번 실행해도 SHA-256이 동일(멱등)함을 확인했고, `git diff --check`도
   깨끗하다.
 - 동시성/동명 충돌/malformed binding 집계/QID provenance/이전 snapshot 퇴역
-  경계는 재검토 결과 이미 코드와 오프라인 테스트가 올바르게 처리하고 있었다
-  (`src/robingraph/retrieval/taxonomy_lineage_neo4j.py`의
-  `active_dataset_id` 기반 스코핑과 `policy_status: 'allowed'` 체인,
-  `RESOLVE_MATCHES_STATEMENT`/`FINALIZE_STATEMENT`의 낙관적 동시성 재확인).
-  코드 변경은 하지 않았다 — 아래 오프라인 테스트 결과가 근거다.
+  경계를 재검토했다. 후속 독립 리뷰에서 **첫 활성화 경합**의 실제 빈틈을
+  발견했다: 이전 `FINALIZE_STATEMENT`는 상태 노드가 없는 두 실행이 모두
+  `''`를 읽고 비교를 통과할 수 있었다. 이제 상태를 먼저 `MERGE`해 유일 ID
+  잠금을 얻은 뒤 `last_successful_run_id`를 비교하므로, 기다린 실행은 첫
+  실행의 ID를 보고 fail-closed 된다. 동명/잘못된 binding/QID/활성 snapshot
+  경계는 기존 구현과 테스트가 계속 보장한다.
 - Discord가 선택 사항이 됐다는 새 계약을 검증하는 테스트
   (`test_korean_vernacular_deployment_succeeds_without_a_discord_credential`)를
   추가했다.
@@ -84,7 +85,8 @@ Sol 1차 평가는 완료했으며 다음 문제를 보고했다. Claude의 수�
    `taxonomy_lineage_neo4j.py`의 `active_dataset_id` 스코프 조회로 오프라인 검증됨.
 3. ✅ 잘못된 binding의 누락 없는 집계와 실패 정책 확인 — `malformed_row_count` 집계와 `ASSEMBLE_GATES_JS`의 fail-closed 사유로 오프라인 검증됨.
 4. ✅ 매칭 후 활성 taxonomy가 바뀌거나 동시 실행이 경합할 때 활성화 차단 확인 — `START_STATEMENT`/`BATCH_STATEMENT`/`FINALIZE_STATEMENT`의
-   `active_concept_set_id` 재확인과 `expected_prior_run_id` 낙관적 동시성 가드, `test_korean_vernacular_verify_finalize_detects_lost_optimistic_concurrency_race`로 검증됨.
+   `active_concept_set_id` 재확인, 그리고 상태를 먼저 잠근 뒤 `expected_prior_run_id`를 비교하는 낙관적 동시성 가드로 검증됨. 첫 활성화 경합의
+   회귀 순서도 `test_korean_vernacular_workflow_never_touches_reference_taxonomy_state_or_gbif_taxa`가 검사한다.
 5. ✅ 모든 QID의 출처 연결과 후보 레코드 추적성 확인 — `BATCH_STATEMENT`가 write row와 candidate 양쪽에서 `row.qids`마다 별도 `SourceRecord`를 생성함.
 6. ✅ 오류 테스트(`test_korean_vernacular_normalize_computes_idempotent_content_addressed_dataset_id`)를 고치고 전체 오프라인 테스트 재실행 — 220/220 통과.
    Sol 최종 재평가는 이 세션에서 실행하지 않았다(별도 외부 도구 호출이 필요하며 이번 작업 범위 밖).
