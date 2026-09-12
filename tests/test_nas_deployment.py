@@ -61,10 +61,66 @@ class NasDeploymentTest(unittest.TestCase):
     def test_deploy_workflows_action_includes_korean_vernacular(self) -> None:
         script = (ROOT / "scripts" / "deploy_nas.sh").read_text(encoding="utf-8")
         deploy_workflows_block = script.split("deploy-workflows)", 1)[1].split(";;", 1)[0]
+        self.assertIn("build_tools_image", deploy_workflows_block)
         self.assertIn(
             "scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply",
             deploy_workflows_block,
         )
+
+    def test_korean_vernacular_has_dedicated_nas_preflight_deploy_and_verify_actions(self) -> None:
+        script = (ROOT / "scripts" / "deploy_nas.sh").read_text(encoding="utf-8")
+
+        preflight = script.split("preflight-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn("preflight_tools", preflight)
+        self.assertIn("build_tools_image", preflight)
+        self.assertIn("check_korean_vernacular_workflow", preflight)
+
+        deploy = script.split("deploy-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn("check_korean_vernacular_workflow", deploy)
+        self.assertIn(
+            "scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply",
+            deploy,
+        )
+        self.assertLess(
+            deploy.index("check_korean_vernacular_workflow"),
+            deploy.index("--workflow korean-vernacular --apply"),
+        )
+
+        verify = script.split("verify-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn(
+            'require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"',
+            verify,
+        )
+        self.assertIn("check_korean_vernacular_workflow", verify)
+
+    def test_workflow_deployments_rebuild_the_tools_image_from_the_current_checkout(self) -> None:
+        script = (ROOT / "scripts" / "deploy_nas.sh").read_text(encoding="utf-8")
+        helper = script.split("build_tools_image()", 1)[1].split("}", 1)[0]
+        self.assertIn("compose_tools build --pull nas-tools", helper)
+
+    def test_korean_vernacular_has_status_activate_and_deactivate_actions_with_explicit_write_intent(
+        self,
+    ) -> None:
+        script = (ROOT / "scripts" / "deploy_nas.sh").read_text(encoding="utf-8")
+
+        status = script.split("status-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn("preflight_tools", status)
+        self.assertIn('require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"', status)
+        self.assertIn("scripts/manage_n8n_korean_vernacular.py status", status)
+        # Read-only: status must never pass --apply.
+        self.assertNotIn("--apply", status)
+
+        activate = script.split("activate-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn('require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"', activate)
+        self.assertIn("scripts/manage_n8n_korean_vernacular.py activate --apply", activate)
+
+        deactivate = script.split("deactivate-korean-vernacular)", 1)[1].split(";;", 1)[0]
+        self.assertIn('require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"', deactivate)
+        self.assertIn("scripts/manage_n8n_korean_vernacular.py deactivate --apply", deactivate)
+
+        usage_line = next(line for line in script.splitlines() if line.strip().startswith('die "usage:'))
+        for action in ("status-korean-vernacular", "activate-korean-vernacular", "deactivate-korean-vernacular"):
+            self.assertIn(action, usage_line)
 
     def test_ingest_example_and_compose_pass_through_korean_vernacular_workflow_id(self) -> None:
         example = (ROOT / ".env.nas.ingest.example").read_text(encoding="utf-8")

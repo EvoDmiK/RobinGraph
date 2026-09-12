@@ -382,6 +382,32 @@ assert.equal(check({}), false);
         self.assertNotIn("ExternalTaxonConcept", resolve_query)
 
         batch_query = by_name["Upsert Korean vernacular names batch"]["parameters"]["cypherQuery"]
+        prepare_batches = by_name["Prepare Korean vernacular batches"]["parameters"]["jsCode"]
+        # The NAS community Neo4j node evaluates one query for its first
+        # input item. Loop Over Items feeds the separate logical batches to
+        # it one at a time, then emits all result rows to the verifier.
+        self.assertIn("return batches.map", prepare_batches)
+        self.assertNotIn("batches: batches.map", prepare_batches)
+        self.assertIn("UNWIND $rows AS row", batch_query)
+        self.assertIn("UNWIND $candidates AS row", batch_query)
+        loop = by_name["Loop Over Korean vernacular batches"]
+        self.assertEqual("n8n-nodes-base.splitInBatches", loop["type"])
+        self.assertEqual(3, loop["typeVersion"])
+        self.assertEqual(
+            "Loop Over Korean vernacular batches",
+            connections["Prepare Korean vernacular batches"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            [
+                [{"node": "Upsert Korean vernacular names batch", "type": "main", "index": 0}],
+                [{"node": "Verify Korean vernacular batches", "type": "main", "index": 0}],
+            ],
+            connections["Loop Over Korean vernacular batches"]["main"],
+        )
+        self.assertEqual(
+            "Loop Over Korean vernacular batches",
+            connections["Upsert Korean vernacular names batch"]["main"][0][0]["node"],
+        )
         # The dataset id is content-addressed and folded into every written
         # node's id: identical Wikidata content across runs MERGEs the same
         # immutable nodes, different content never overwrites another
@@ -437,17 +463,66 @@ assert.equal(check({}), false);
         )
         self.assertIn("reference-taxonomy", finalize_query)
 
+        # Every failure branch runs the run-failure bookkeeping funnel before
+        # the Discord notification: Start sets an IngestionRun to 'loading',
+        # but a downstream failure previously left it stuck there forever
+        # with no durable record that the run failed. Mark-failed guards on
+        # `run.status = 'loading'`, so it is a safe no-op for the two gates
+        # that fail before any run exists (quality gates, or a Start whose
+        # own concept-set guard already refused it).
         for gate in (
             "Korean vernacular quality gates passed?",
             "Korean vernacular ingestion run started?",
             "Korean vernacular load verified?",
             "Korean vernacular release finalized?",
         ):
-            self.assertEqual("Notify Korean vernacular failure", connections[gate]["main"][1][0]["node"])
+            self.assertEqual(
+                "Capture Korean vernacular failure context", connections[gate]["main"][1][0]["node"]
+            )
+        self.assertEqual(
+            "Mark Korean vernacular run failed",
+            connections["Capture Korean vernacular failure context"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            "Record Korean vernacular run failure",
+            connections["Mark Korean vernacular run failed"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            "Notify Korean vernacular failure",
+            connections["Record Korean vernacular run failure"]["main"][0][0]["node"],
+        )
         self.assertEqual(
             "Fail Korean vernacular execution",
             connections["Notify Korean vernacular failure"]["main"][0][0]["node"],
         )
+
+        mark_failed_query = by_name["Mark Korean vernacular run failed"]["parameters"]["cypherQuery"]
+        self.assertIn("MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'", mark_failed_query)
+        self.assertIn("run.status = 'failed'", mark_failed_query)
+        self.assertIn("run.failure_reason = $failure_reason", mark_failed_query)
+        # Never advances or alters the active dataset on a failure path --
+        # only FINALIZE_STATEMENT ever touches IngestState.
+        self.assertNotIn("IngestState", mark_failed_query)
+        self.assertNotIn("active_dataset_id", mark_failed_query)
+
+        # The DB-bookkeeping outcome (did 'Mark Korean vernacular run
+        # failed' actually reach Neo4j?) is reported separately from the
+        # original ingest failure_reason -- an operator must be able to
+        # tell "the ingest failed for reason X" apart from "and on top of
+        # that, we could not even record the failure in the graph".
+        failure_message = by_name["Notify Korean vernacular failure"]["parameters"]["content"]
+        self.assertIn("run_marked_failed", failure_message)
+        self.assertIn("Run bookkeeping", failure_message)
+
+        fetch = by_name["Fetch Wikidata Korean bird labels"]
+        self.assertEqual("continueRegularOutput", fetch["onError"])
+        self.assertTrue(fetch["parameters"]["options"]["response"]["response"]["neverError"])
+        # A transport-level failure (no onError-caught non-2xx, a genuine
+        # connection error) hands this node an item with no `data` field at
+        # all. Hashing `undefined` would throw one node past where the
+        # resilience above was added; `?? ''` keeps the Crypto node from
+        # ever seeing `undefined`.
+        self.assertEqual("={{ $json.data ?? '' }}", by_name["Hash Wikidata response"]["parameters"]["value"])
 
     def test_korean_vernacular_code_nodes_and_cypher_expressions_parse_as_javascript(self) -> None:
         workflow = load(KOREAN_VERNACULAR)
@@ -479,7 +554,7 @@ assert.equal(check({}), false);
         neo4j_nodes = [item for item in payload["nodes"] if item["type"] == "n8n-nodes-neo4j.neo4j"]
         from scripts.generate_n8n_korean_vernacular_ingest import KOREAN_VERNACULAR_LABELS
 
-        self.assertEqual(5 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
+        self.assertEqual(6 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
         self.assertTrue(all(item["credentials"]["neo4jApi"]["id"] == "neo4j-id" for item in neo4j_nodes))
         by_name = {item["name"]: item for item in payload["nodes"]}
         for name in ("Notify Korean vernacular success", "Notify Korean vernacular failure"):
@@ -784,10 +859,6 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
 
         from scripts.generate_n8n_korean_vernacular_ingest import VERIFY_FINALIZE
 
-        script = VERIFY_FINALIZE.replace(
-            "$('Assemble Korean vernacular quality gates').first().json",
-            "expected",
-        ) + ""
         harness = (
             "const assert = require('node:assert/strict');\n"
             "const expected = {run_id: 'run-2', source_release: 'wikidata-snapshot:2026-09-11:sha256-abc', "
@@ -796,7 +867,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "function verifyFinalize(response) {\n"
             "  const impl = new Function('$', '$input', " + json.dumps(VERIFY_FINALIZE) + ");\n"
             "  return impl(\n"
-            "    (name) => { if (name === 'Assemble Korean vernacular quality gates') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
+            "    (name) => { if (name === 'Verify Korean vernacular batches') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
             "    {first: () => ({json: response})}\n"
             "  )[0].json;\n"
             "}\n"
@@ -818,6 +889,260 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "assert.equal(wrongDataset.finalize_ok, false);\n"
         )
         subprocess.run(["node", "-e", harness], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_verify_batches_then_finalize_chain_preserves_real_load_counts(self) -> None:
+        """Regression test for a real bug: VERIFY_FINALIZE used to read
+        `expected` from 'Assemble Korean vernacular quality gates', which
+        never carries loaded_vernacular_names/loaded_candidates at all --
+        those are only computed by VERIFY_BATCHES. Every real Finalize
+        success therefore reported both fields as `undefined`, and nothing
+        downstream (the success Discord message, or
+        manage_n8n_korean_vernacular.py's execution-evidence check, which
+        treats a missing count as 0 and rejects the run as not meaningful)
+        could ever see the real totals. This drives the actual
+        VERIFY_BATCHES -> (IF passthrough) -> VERIFY_FINALIZE chain with
+        batch rows summing to the real smoke-test totals (846 names, 102
+        candidates) and asserts they survive to the final output as actual
+        nonzero integers, not undefined."""
+
+        from scripts.generate_n8n_korean_vernacular_ingest import VERIFY_BATCHES, VERIFY_FINALIZE
+
+        harness = (
+            "const assert = require('node:assert/strict');\n"
+            "const assembled = {run_id: 'run-18066', source_release: 'wikidata-snapshot:2026-09-11:sha256-abc', "
+            "wikidata_dataset_id: 'wikidata-dataset:taxon-labels:sha256-abc', "
+            "write_row_count: 846, candidate_count: 102};\n"
+            "const verifyBatches = new Function('$', '$input', " + json.dumps(VERIFY_BATCHES) + ");\n"
+            "const batchOutput = verifyBatches(\n"
+            "  (name) => { if (name === 'Assemble Korean vernacular quality gates') return {first: () => ({json: assembled})}; throw new Error('unexpected: ' + name); },\n"
+            "  {all: () => [\n"
+            "    {json: {batch_index: 0, batch_count: 2, loaded_vernacular_names: 846, loaded_candidates: 0}},\n"
+            "    {json: {batch_index: 1, batch_count: 2, loaded_vernacular_names: 0, loaded_candidates: 102}},\n"
+            "  ]}\n"
+            ")[0].json;\n"
+            "assert.equal(batchOutput.load_ok, true);\n"
+            "assert.equal(batchOutput.loaded_vernacular_names, 846);\n"
+            "assert.equal(batchOutput.loaded_candidates, 102);\n"
+            # 'Korean vernacular load verified?' (the IF between batches and
+            # Finalize) passes the item through unchanged; Finalize's own
+            # Neo4j response is a fresh, unrelated set of return columns.
+            "const finalizeResponse = {finalized_run_id: 'run-18066', run_status: 'succeeded', "
+            "active_release: assembled.source_release, active_dataset_id: assembled.wikidata_dataset_id};\n"
+            "const verifyFinalize = new Function('$', '$input', " + json.dumps(VERIFY_FINALIZE) + ");\n"
+            "const finalOutput = verifyFinalize(\n"
+            "  (name) => { if (name === 'Verify Korean vernacular batches') return {first: () => ({json: batchOutput})}; throw new Error('unexpected: ' + name); },\n"
+            "  {first: () => ({json: finalizeResponse})}\n"
+            ")[0].json;\n"
+            "assert.equal(finalOutput.finalize_ok, true);\n"
+            "assert.equal(finalOutput.loaded_vernacular_names, 846);\n"
+            "assert.equal(finalOutput.loaded_candidates, 102);\n"
+            "assert.equal(Number.isInteger(finalOutput.loaded_vernacular_names), true);\n"
+            "assert.equal(Number.isInteger(finalOutput.loaded_candidates), true);\n"
+        )
+        subprocess.run(["node", "-e", harness], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_record_failure_preserves_original_reason_and_is_a_safe_no_op(self) -> None:
+        """RECORD_FAILURE_JS spreads `...expected` first, so
+        MARK_FAILED_STATEMENT's own return columns can never clobber the
+        original failure_reason 'Capture Korean vernacular failure context'
+        captured -- 'Notify Korean vernacular failure' must report the real
+        cause, not a rephrasing of it. It must also be a safe no-op (no
+        thrown exception, run_marked_failed: false) for the two branches
+        that fail before any IngestionRun exists, where Mark-failed's
+        Cypher guard matches zero rows and the community Neo4j node hands
+        back `{}`."""
+
+        from scripts.generate_n8n_korean_vernacular_ingest import RECORD_FAILURE_JS
+
+        script = (
+            "const assert = require('node:assert/strict');\n"
+            "const captured = {run_id: 'run-9', failure_reason: 'Wikidata SPARQL endpoint returned HTTP 500'};\n"
+            "function recordFailure(response) {\n"
+            "  const impl = new Function('$', '$input', " + json.dumps(RECORD_FAILURE_JS) + ");\n"
+            "  return impl(\n"
+            "    (name) => { if (name === 'Capture Korean vernacular failure context') return {first: () => ({json: captured})}; throw new Error('unexpected'); },\n"
+            "    {first: () => ({json: response})}\n"
+            "  )[0].json;\n"
+            "}\n"
+            # A run genuinely marked failed: the original reason survives untouched.
+            "const marked = recordFailure({marked_failed_run_id: 'run-9', run_status: 'failed'});\n"
+            "assert.equal(marked.run_marked_failed, true);\n"
+            "assert.equal(marked.failure_reason, captured.failure_reason);\n"
+            "assert.equal(marked.run_id, captured.run_id);\n"
+            # No run existed yet (quality-gates-before-Start, or Start's own
+            # guard already refused it) -- the community node returns `{}`.
+            "const noRun = recordFailure({});\n"
+            "assert.equal(noRun.run_marked_failed, false);\n"
+            "assert.equal(noRun.failure_reason, captured.failure_reason);\n"
+            # A Neo4j-level error on the mark-failed write itself must not be
+            # mistaken for a successful marking, and must not raise.
+            "const dbError = recordFailure({error: {message: 'connection reset'}});\n"
+            "assert.equal(dbError.run_marked_failed, false);\n"
+            "assert.equal(dbError.failure_reason, captured.failure_reason);\n"
+        )
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_failure_bookkeeping_preserves_the_reason_from_whichever_branch_actually_failed(
+        self,
+    ) -> None:
+        """Regression test for a real bug caught in review: reading
+        `$('Assemble Korean vernacular quality gates')` directly from
+        RECORD_FAILURE_JS would have silently lost the reason for every
+        batch-load or Finalize failure, because that node's own
+        failure_reason is only ever non-empty for a *pre-Start* rejection
+        -- quality gates had already passed (failure_reason: '') by the
+        time Start, the batch loop, or Finalize could fail. This drives the
+        full CAPTURE_FAILURE_CONTEXT_JS -> RECORD_FAILURE_JS chain with each
+        branch's real shape and asserts the *specific* reason from that
+        branch survives to what 'Notify Korean vernacular failure' reads,
+        never the generic 'Unknown failure' fallback."""
+
+        from scripts.generate_n8n_korean_vernacular_ingest import (
+            CAPTURE_FAILURE_CONTEXT_JS,
+            RECORD_FAILURE_JS,
+        )
+
+        script = (
+            "const assert = require('node:assert/strict');\n"
+            "function chain(branchOutput, markFailedResponse) {\n"
+            "  const capture = new Function('$', '$input', " + json.dumps(CAPTURE_FAILURE_CONTEXT_JS) + ");\n"
+            "  const captured = capture(() => { throw new Error('unused'); }, {first: () => ({json: branchOutput})})[0].json;\n"
+            "  const record = new Function('$', '$input', " + json.dumps(RECORD_FAILURE_JS) + ");\n"
+            "  return record(\n"
+            "    (name) => { if (name === 'Capture Korean vernacular failure context') return {first: () => ({json: captured})}; throw new Error('unexpected: ' + name); },\n"
+            "    {first: () => ({json: markFailedResponse})}\n"
+            "  )[0].json;\n"
+            "}\n"
+            # Quality-gates-before-Start: 'Assemble Korean vernacular quality
+            # gates' itself carries the reason; no run exists to mark.
+            "const gatesFailed = chain(\n"
+            "  {run_id: 'run-a', ready_to_load: false, failure_reason: 'No Korean vernacular candidates parsed from the Wikidata response'},\n"
+            "  {}\n"
+            ");\n"
+            "assert.equal(gatesFailed.failure_reason, 'No Korean vernacular candidates parsed from the Wikidata response');\n"
+            "assert.equal(gatesFailed.run_marked_failed, false);\n"
+            # Batch load failure: the reason comes from VERIFY_BATCHES's
+            # output, which is what flows into Mark-failed/Capture -- NOT
+            # from the (still-empty, since gates passed) Assemble output.
+            "const batchFailed = chain(\n"
+            "  {run_id: 'run-b', load_ok: false, failure_reason: 'Korean vernacular batch counts did not match'},\n"
+            "  {marked_failed_run_id: 'run-b', run_status: 'failed'}\n"
+            ");\n"
+            "assert.equal(batchFailed.failure_reason, 'Korean vernacular batch counts did not match');\n"
+            "assert.equal(batchFailed.run_marked_failed, true);\n"
+            # Finalize failure: same shape, a different, more specific reason.
+            "const finalizeFailed = chain(\n"
+            "  {run_id: 'run-c', finalize_ok: false, failure_reason: 'korean-vernacular-names activation was refused: lost the optimistic-concurrency race'},\n"
+            "  {marked_failed_run_id: 'run-c', run_status: 'failed'}\n"
+            ");\n"
+            "assert.equal(finalizeFailed.failure_reason, 'korean-vernacular-names activation was refused: lost the optimistic-concurrency race');\n"
+            "assert.equal(finalizeFailed.run_marked_failed, true);\n"
+        )
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_normalize_surfaces_the_real_transport_error_with_no_data_or_status(
+        self,
+    ) -> None:
+        """Executable (not just structural) coverage for the connection-level
+        transport failure path: 'Fetch Wikidata Korean bird labels' sets
+        neverError + onError: continueRegularOutput, so on a genuine
+        connection failure (DNS, refused, timeout exhaustion) the item that
+        reaches 'Hash Wikidata response' has an `error` field and no
+        `data`/`statusCode` at all -- exactly what `$json.data ?? ''`
+        keeps the Crypto node from throwing on. This simulates that exact
+        post-Hash shape (the hash itself is opaque to this test; only the
+        passthrough fields matter) and asserts NORMALIZE_WIKIDATA reports
+        the *real* upstream error text, not the generic "not a well-formed
+        results document" fallback that would wrongly suggest Wikidata
+        answered with garbage rather than not answering at all."""
+
+        from scripts.generate_n8n_korean_vernacular_ingest import NORMALIZE_WIKIDATA
+
+        script = (
+            "const assert = require('node:assert/strict');\n"
+            "const config = {retrieved_at: '2026-09-11T00:00:00.000Z'};\n"
+            # No `data`, no `statusCode`: exactly what 'Fetch Wikidata Korean
+            # bird labels' hands onward on a connection-level failure, with
+            # only `raw_sha256` added by 'Hash Wikidata response' hashing ''.
+            "const noDataTransportFailure = {error: {message: 'connect ECONNREFUSED 127.0.0.1:443'}, raw_sha256: "
+            "'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'};\n"
+            "const impl = new Function('$', '$input', " + json.dumps(NORMALIZE_WIKIDATA) + ");\n"
+            "const result = impl(\n"
+            "  (name) => {\n"
+            "    if (name === 'Build Korean vernacular configuration') return {first: () => ({json: config})};\n"
+            "    if (name === 'Hash Wikidata response') return {first: () => ({json: noDataTransportFailure})};\n"
+            "    throw new Error('unexpected node: ' + name);\n"
+            "  },\n"
+            "  {first: () => ({json: noDataTransportFailure})}\n"
+            ")[0].json;\n"
+            "assert.equal(result.fetch_ok, false);\n"
+            "assert.equal(result.wikidata_dataset_id, null);\n"
+            "assert.equal(result.source_release, null);\n"
+            "assert.match(result.fetch_failure_reason, /connect ECONNREFUSED 127\\.0\\.0\\.1:443/);\n"
+            "assert.doesNotMatch(result.fetch_failure_reason, /not a well-formed results document/);\n"
+        )
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_verify_batches_fails_closed_on_a_duplicated_batch_index(self) -> None:
+        """Retry/idempotence at the count-verification layer: if a batch
+        somehow reached the Neo4j node twice for the same batch_index (a
+        mid-loop retry or redelivery, as distinct from the already-covered
+        idempotent MERGE semantics of a whole-run retry), VERIFY_BATCHES
+        must fail closed rather than silently double-counting. `rows.length`
+        (every count row seen) exceeding the expected `batch_count` is what
+        catches it even though the *set* of batch indexes still looks
+        complete."""
+
+        from scripts.generate_n8n_korean_vernacular_ingest import VERIFY_BATCHES
+
+        script = (
+            "const assert = require('node:assert/strict');\n"
+            "const expected = {write_row_count: 4, candidate_count: 0};\n"
+            "function verifyBatches(rows) {\n"
+            "  const impl = new Function('$', '$input', " + json.dumps(VERIFY_BATCHES) + ");\n"
+            "  return impl(\n"
+            "    (name) => { if (name === 'Assemble Korean vernacular quality gates') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
+            "    {all: () => rows.map(json => ({json}))}\n"
+            "  )[0].json;\n"
+            "}\n"
+            # Clean, single-delivery run: two batches, indexes 0 and 1, counts match exactly.
+            "const clean = verifyBatches([\n"
+            "  {batch_index: 0, batch_count: 2, loaded_vernacular_names: 3, loaded_candidates: 0},\n"
+            "  {batch_index: 1, batch_count: 2, loaded_vernacular_names: 1, loaded_candidates: 0},\n"
+            "]);\n"
+            "assert.equal(clean.load_ok, true);\n"
+            "assert.equal(clean.loaded_vernacular_names, 4);\n"
+            # Batch 0 redelivered: three count rows for a two-batch run. The
+            # set of indexes {0, 1} still equals batch_count, but rows.length
+            # (3) no longer does -- this must fail closed, not double-count.
+            "const duplicated = verifyBatches([\n"
+            "  {batch_index: 0, batch_count: 2, loaded_vernacular_names: 3, loaded_candidates: 0},\n"
+            "  {batch_index: 0, batch_count: 2, loaded_vernacular_names: 3, loaded_candidates: 0},\n"
+            "  {batch_index: 1, batch_count: 2, loaded_vernacular_names: 1, loaded_candidates: 0},\n"
+            "]);\n"
+            "assert.equal(duplicated.load_ok, false);\n"
+            "assert.match(duplicated.failure_reason, /Korean vernacular batch counts did not match/);\n"
+            # A batch index missing entirely (e.g. the loop stopped early
+            # after a partial failure) must also fail closed.
+            "const missing = verifyBatches([\n"
+            "  {batch_index: 0, batch_count: 2, loaded_vernacular_names: 3, loaded_candidates: 0},\n"
+            "]);\n"
+            "assert.equal(missing.load_ok, false);\n"
+            # Every batch must declare the same genuine numeric batch count;
+            # previously only the first row's count was trusted.
+            "const inconsistentBatchCount = verifyBatches([\n"
+            "  {batch_index: 0, batch_count: 2, loaded_vernacular_names: 3, loaded_candidates: 0},\n"
+            "  {batch_index: 1, batch_count: 99, loaded_vernacular_names: 1, loaded_candidates: 0},\n"
+            "]);\n"
+            "assert.equal(inconsistentBatchCount.load_ok, false);\n"
+            # String counts are not real Neo4j numeric result values. They
+            # must fail closed instead of being coerced through Number(...).
+            "const stringCount = verifyBatches([\n"
+            "  {batch_index: 0, batch_count: 1, loaded_vernacular_names: '4', loaded_candidates: 0},\n"
+            "]);\n"
+            "assert.equal(stringCount.load_ok, false);\n"
+        )
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
 
     @unittest.skipUnless(
         os.environ.get("ROBINGRAPH_NEO4J_INTEGRATION_TESTS") == "1",

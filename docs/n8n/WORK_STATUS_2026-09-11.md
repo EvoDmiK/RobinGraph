@@ -1,10 +1,48 @@
 # n8n 한국어 이름 수집 파이프라인 작업 중단 기록
 
 - 기록일: 2026-09-11 (아래 "2026-09-11 재개 기록" 절 기준 최신)
-- 상태: **오프라인 구현·테스트 완료(220/220 통과, 22 조건부 live skip). 실제 n8n/Neo4j 라이브 검증은 아직 없음 — 배포 준비 완료로 간주하지 않는다.**
+- 상태(2026-09-11 시점): **오프라인 구현·테스트 완료(220/220 통과로 기록했으나, 2026-09-12 재확인 결과 정확한 수치는 222회 실행/22 조건부 skip/200 통과였다 — 아래 "2026-09-12 후속 기록" 참고). 이 시점에는 실제 n8n/Neo4j 라이브 검증이 아직 없었다 — 배포 준비 완료로 간주하지 않았다.**
+- **이 상태는 2026-09-12에 갱신됐다.** 라이브 n8n 실행과 운영 API 200 확인이
+  실제로 끝났다 — 최신 상태는 아래 "2026-09-12 후속 기록"과
+  [런북의 "현재 검증 상태"](korean-vernacular-ingest.md#현재-검증-상태-정직하게-보고)를
+  본다. 이 문서의 나머지 절은 2026-09-11 시점 기록을 그대로 보존한다(역사적
+  정확성을 위해 수정하지 않음).
 - 저장 브랜치: `EvoDmiK/dev-2` (작업 시작 커밋: `b6625da`)
 - 역할: Claude 구현, GPT-5.6 Sol 독립 평가, Codex 통합 확인.
 - 이번 저장은 구현·테스트·문서의 중간 체크포인트이며 운영 배포, 데이터 적재, `product` 병합을 의미하지 않는다.
+
+## 2026-09-12 후속 기록
+
+- canonical workflow `Hmjfi1zAIOKR5YE5`를 n8n Public API로 inactive 상태로
+  생성·갱신했다(32개 노드; Neo4j 노드 12개 + Discord 노드 2개 credential
+  연결 확인). Public API에 수동 실행 endpoint가 없어 webhook trigger를 붙인
+  임시 활성 복사본으로 실제 실행하고 매번 제거하는 방식을 썼다.
+- 임시 복사본의 execution `18066`에서 실제 재검증: Wikidata binding
+  948건(잘못된 행 0건) → `VernacularName` write 846개, candidate 102개로
+  정확히 분류, 적재 합계 일치로 `load_ok=true`/`finalize_ok=true` 종료.
+  canonical은 계속 inactive로 유지했다.
+- 운영 API `GET /v1/taxa/lineage?name=청둥오리`가 실제로 `200`과
+  `Anas platyrhynchos` 역조회 결과를 반환함을 확인했다 — 위 상태 줄의
+  "라이브 검증 아직 없음"은 이 시점부터 더 이상 사실이 아니다.
+- 같은 확인 중 별도 문제를 발견했다: 공개 도메인
+  `https://aviary.dove-nest.com`의 `/openapi.json`과 실제 `/v1/taxa/lineage`
+  응답 모두 `korean_name_status` 필드가 없다 — NAS가 이 필드를 추가하기
+  이전 이미지를 그대로 서비스 중이라는 뜻이며, 이 workflow 자체의 결함이
+  아니라 이미지 재배포가 필요한 상태다. 이를 자동으로 잡아내는 읽기 전용
+  검증기 `scripts/verify_api_deployment.py`를 추가했다
+  ([NAS 배포 런북 §8](../nas-deployment.md) 참고).
+- 오프라인 스위트를 2026-09-12에 다시 실행해 실제 수치를 재확인했다:
+  **222회 실행, 22개 조건부 skip, 200개 통과, 0개 실패**(이 문서 상단의
+  "220/220 통과"는 부정확했다 — 실행 총량에서 skip을 뺀 값이 통과 수다).
+  이 세션 동안 이 workflow의 생성기·테스트·JSON이 계속 진행 중인 별도
+  작업으로 수정되고 있어 전체 스위트 총 개수는 이후에도 계속 바뀔 수
+  있다(관찰: 222 → 239, 일부 중간 시점에서 `test_n8n_workflows.py`의
+  Korean vernacular 테스트 1건이 간헐적으로 실패/오류). 최신 수치는 항상
+  `uv run --locked --extra test python -m unittest discover -s tests`로
+  직접 확인한다.
+- 실제 배포·재배포는 이 세션에서 수행하지 않았다(범위 제약, 읽기 전용
+  조사만 수행). 재배포·재검증 명령은 [NAS 배포 런북 §7, §8](../nas-deployment.md)에
+  정리했다.
 
 ## 2026-09-11 재개 기록 (별도 worktree, `EvoDmiK/finish-korean-vernacular`)
 
