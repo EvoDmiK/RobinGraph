@@ -25,6 +25,7 @@ flowchart LR
 | `.env.nas.ingest.example` | n8n 배포·적재 도구 전용 secret 템플릿 |
 | `scripts/deploy_nas.sh` | preflight, 배포, 검증, workflow 배포와 AVONET 적재 명령 |
 | `.dockerignore` | 비밀값, 개발 캐시와 불필요한 build context 제외 |
+| `scripts/verify_api_deployment.py` | 배포 후 공개 도메인의 OpenAPI·응답 계약을 이 checkout과 대조하는 읽기 전용 검증기(§8) |
 
 ## 1. NAS checkout 준비
 
@@ -32,8 +33,8 @@ NAS의 RobinGraph 저장소 루트에서 배포할 브랜치를 받은 뒤 환�
 
 ```sh
 git fetch origin
-git switch EvoDmiK/dev-2
-git pull --ff-only origin EvoDmiK/dev-2
+git switch dev
+git pull --ff-only origin dev
 cp .env.nas.example .env.nas
 cp .env.nas.ingest.example .env.nas.ingest
 chmod 600 .env.nas .env.nas.ingest
@@ -268,7 +269,7 @@ Access를 반드시 적용한다.
 
 `.env.nas.ingest`에 n8n API와 credential 이름을 설정한다. `nas-tools`는
 `tools` profile을 명시할 때만 실행되고 n8n secret은 상시 API 컨테이너에 전달되지
-않는다. 아래 명령은 세 workflow를 inactive 상태로 생성하거나 갱신한다.
+않는다. 아래 명령은 네 workflow를 inactive 상태로 생성하거나 갱신한다.
 
 ```sh
 sh scripts/deploy_nas.sh deploy-workflows
@@ -277,6 +278,34 @@ sh scripts/deploy_nas.sh deploy-workflows
 처음 생성된 workflow ID는 출력에서 확인해 `.env.nas.ingest`의 해당
 `ROBINGRAPH_N8N_*_WORKFLOW_ID`에 기록한다. 기존 workflow가 active면 배포기는
 덮어쓰지 않는다. 갱신 전 백업은 `robingraph-state` Docker volume에 보존된다.
+배포 명령은 현재 checkout의 `scripts/`와 `n8n/`을 사용하는 `nas-tools` 이미지를
+먼저 다시 빌드하므로, 이전 이미지에 남은 오래된 workflow 정의가 올라가지 않는다.
+
+한국어 일반명 workflow만 별도로 올릴 때는 전체 묶음 대신 다음 전용 경로를 쓴다.
+사전 점검은 n8n API, Neo4j credential과 기존 workflow의 inactive 상태를 읽기
+전용으로 확인한다. Discord credential은 이 workflow에 한해 선택 사항이다.
+
+```sh
+sh scripts/deploy_nas.sh preflight-korean-vernacular
+sh scripts/deploy_nas.sh deploy-korean-vernacular
+```
+
+첫 배포에서 출력된 ID를 `.env.nas.ingest`에 기록한다.
+
+```dotenv
+ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID=<created-workflow-id>
+```
+
+그 다음 원격 workflow가 실제로 존재하며 계속 inactive인지 다시 확인한다.
+
+```sh
+sh scripts/deploy_nas.sh verify-korean-vernacular
+```
+
+이 세 명령은 workflow 정의만 생성·갱신하며 실행하거나 활성화하지 않는다. 실제
+Wikidata 조회와 Neo4j 쓰기는 n8n UI의 Manual Trigger에서 첫 실행 체크리스트를
+따라 별도로 수행한다. 자세한 품질 gate와 Cypher 검증은
+[한국어 일반명 수집 런북](n8n/korean-vernacular-ingest.md)을 따른다.
 
 AVONET은 먼저 다운로드·선택 worksheet 검증만 수행한다.
 
@@ -299,7 +328,7 @@ n8n gateway를 사용한다. 9,879종 매핑, claim 128,331개, 후보 1,130개�
 ## 7. 갱신과 운영 명령
 
 ```sh
-git pull --ff-only origin EvoDmiK/dev-2
+git pull --ff-only origin dev
 sh scripts/deploy_nas.sh deploy
 sh scripts/deploy_nas.sh logs
 ```
@@ -314,3 +343,110 @@ docker compose --env-file .env.nas -f compose.nas.yml down
 Git 커밋을 별도 checkout한 뒤 다시 배포한다. Neo4j 데이터와 기존 Django/n8n
 컨테이너는 이 Compose 프로젝트가 소유하지 않으므로 `down`의 영향을 받지 않는다.
 실패한 AVONET batch는 검증된 active release 포인터를 교체하지 않는다.
+
+## 8. 배포 후 공개 계약 검증
+
+`verify` action은 컨테이너 안에서 loopback으로 `/health`만 확인한다 — 프로세스가
+떠 있다는 확인일 뿐, Nginx Proxy Manager 뒤 공개 도메인이 **이 checkout이
+선언한 API 계약**을 실제로 서비스하는지는 확인하지 않는다. 이미지 재빌드를
+건너뛰거나 오래된 캐시 레이어가 재사용되면, HTTP는 계속 200을 반환하면서도
+필드가 빠진 구버전 응답을 그대로 내보낼 수 있다. `scripts/verify_api_deployment.py`는
+이 간극을 메우는 읽기 전용 스크립트로, 자격 증명이 필요 없는 공개
+`GET` endpoint만 호출하고 `.env*` 파일을 전혀 읽지 않는다.
+
+```sh
+uv run --locked python scripts/verify_api_deployment.py
+```
+
+기본 대상은 `https://aviary.dove-nest.com`이다. 다른 환경을 검증하려면
+`--base-url`(또는 `ROBINGRAPH_PUBLIC_API_URL` 환경변수)을 바꾼다. 확인 대상
+이름은 `--lineage-name`으로 바꿀 수 있고(기본값 `청둥오리`), 그 이름이
+실제로 해석돼야 하는 학명과 상태는 각각 `--expected-scientific-name`(기본
+`Anas platyrhynchos`), `--expected-korean-name-status`(기본
+`community-sourced`)로 바꿀 수 있다 — 다른 canary 이름으로 검증하고
+싶을 때만 셋을 함께 바꾼다.
+
+```sh
+uv run --locked python scripts/verify_api_deployment.py --base-url https://staging.example.com --json
+```
+
+검증기가 실제로 확인하는 것(모두 실패해도 원격을 바꾸지 않는 읽기 전용 GET):
+
+1. **도달성**: `GET /health`, `GET /openapi.json`,
+   `GET /v1/taxa/lineage?name=<이름>` 세 endpoint가 모두 `200`과 유효한
+   JSON을 반환하는지.
+2. **형태(malformed 200 거부)**: `200`이면서 JSON 배열·`null`·문자열처럼
+   객체가 아닌 본문은 "통과"로 치지 않는다 — 셋 다 유효한 JSON이지만
+   계약을 전혀 지키지 않은 응답이므로 명시적으로 실패 처리한다.
+3. **스키마 필드·타입 parity**: 배포된 `/openapi.json`의
+   `LineageTaxonResponse` 스키마가 **이 checkout이 `create_app().openapi()`로
+   실제 선언하는 스키마**와 같은 필드 이름을 갖는지*뿐 아니라* 같은 타입을
+   선언하는지도 비교한다(예: `korean_name_status`가 이름은 있어도 타입이
+   `string`이 아니면 drift로 잡는다) — 필드 이름만 보고 "계약이 같다"고
+   과장하지 않는다.
+4. **실응답 필드 parity**: 실제 `/v1/taxa/lineage` 응답의 `lineage[]`
+   각 항목도 같은 필드 집합을 갖는지 — 선언된 스키마와 실제 직렬화된
+   응답이 다를 수 있으므로(구버전 Pydantic 모델은 필드 자체가 없다) 둘 다
+   확인하고, `lineage` 배열이 비어 있으면(형태는 맞지만 아무것도 못 찾은
+   경우) 이것도 실패로 잡는다.
+5. **값 수준 canary 검증(형태가 맞아도 데이터가 틀리면 실패)**: 이름만
+   맞는 필드가 있는 것으로는 부족하다 — `health.status == "ok"`,
+   `health.mode == "neo4j"`, `lineage.matched_by == "korean_name"`,
+   해석된 종의 `scientific_name`이 `--expected-scientific-name`(기본
+   `Anas platyrhynchos`)과 같은지, 그 종의 `korean_name_status`가
+   `--expected-korean-name-status`(기본 `community-sourced`)와 정확히
+   같은지(비어있거나 `null`이면 실패)까지 확인한다. 배포가 계약 모양은
+   맞지만 오래된 Neo4j 스냅샷이나 잘못된 매칭을 서비스하는 경우를 잡기
+   위한 것이다.
+6. `health.taxonomy_release`(fixture corpus 프로세스 릴리스)와
+   `lineage.taxonomy_release`(활성 AviList `reference-taxonomy` 릴리스)를
+   **서로 비교하지 않고** 각각 라벨을 붙여 나란히 보고한다. 이 둘은 서로
+   다른 데이터 영역이라 값이 달라도 정상이다 — 하나가 다른 하나의 "최신
+   여부"를 판정하는 근거가 아니다.
+
+종료 코드: `0`은 세 endpoint 모두 정상이고 형태·스키마·canary 어디에도
+drift가 없을 때, `1`은 endpoint는 응답하지만 스키마·응답 필드·타입 또는
+canary 값이 이 checkout과 어긋날 때(재배포 또는 데이터 재확인 필요), `2`는
+endpoint 중 하나라도 도달 불가·타임아웃·비-200·JSON 파싱 실패일 때다.
+오류 메시지는 항상 정제된 형태만 출력한다 — 원본 응답 본문이나 예외 내부
+문자열은 그대로 노출하지 않는다.
+
+드리프트가 나오면(예: `korean_name_status` 필드 누락) 원인은 대개 오래된
+이미지이지 코드 버그가 아니다. 최신 `dev`를 반영해 재빌드·재배포한 뒤 다시
+실행한다.
+
+```sh
+git pull --ff-only origin dev
+sh scripts/deploy_nas.sh deploy
+sh scripts/deploy_nas.sh verify
+uv run --locked python scripts/verify_api_deployment.py
+```
+
+주의: Python 표준 라이브러리 `urllib`의 기본 `User-Agent`(`Python-urllib/x.y`)는
+이 도메인의 NPM/WAF 설정에서 `403`으로 차단된다(같은 GET이 `curl`이나 브라우저
+UA로는 통과함, 2026-09-12 확인). 그래서 이 스크립트는 직접 만든 client 코드로
+`curl`을 대체할 때는 `User-Agent`를 명시적으로 지정해야 한다 — 스크립트 자체는
+이미 `User-Agent: RobinGraph-Deployment-Verifier/1.0`을 보낸다.
+
+### 알려진 접근 blocker (2026-09-12)
+
+이 문서의 §1·§7 rebuild/redeploy 명령은 NAS에 실제로 로그인해야 실행할 수
+있다. 2026-09-12 기준 다음이 확인됐다 — 아래 어느 것도 이 세션에서 원격
+상태를 바꾸지 않았다.
+
+- 기존 SSH 별칭(`~/.ssh/config`의 `Host NAS`, LAN IP `192.168.219.99` 포트
+  `99`)으로 읽기 전용 접속을 시도했으나 **`Connection refused`**를 받았다 —
+  이 경로로는 현재 NAS에 로그인할 수 없다.
+  운영자는 로그인 전에 포트/방화벽 상태를 먼저 확인해야 한다.
+  방화벽/포트 상태는 이 세션에서 원격으로 진단하지 않았다(범위 밖).
+- Tailscale에 `dove-storage`, `dove-portainer`, `dove-graph`,
+  `dove-hermes-dashboard`, `dove-mini` 등 dove-nest 관련 노드가 연결돼 있다
+  (`tailscale status`로 설정만 확인, 실제 접속은 시도하지 않음). 재배포는
+  이 경로나 NAS 콘솔 직접 접근으로 사람이 수행해야 한다.
+- `.env.nas`/`.env.nas.ingest`는 이 checkout에 없다(값은 열어보지 않고
+  파일 부재만 확인). 위 명령을 실행하려면 §1의 템플릿에서 새로 만들어야
+  한다.
+- 결론: **이 런북의 재빌드·재배포 명령은 이 워커/코디네이터 환경에서
+  직접 실행할 수 없다** — 확인된 Tailscale 경로나 NAS 콘솔에 접근 권한이
+  있는 운영자가 직접 실행해야 한다. 자세한 조사 기록은
+  [2026-09-12 작업 기록](work-log/2026-09-12.md) 참고.
