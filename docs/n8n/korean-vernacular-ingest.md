@@ -1,6 +1,6 @@
 # n8n 한국어 일반명(Korean vernacular name) 수집 런북
 
-> **오프라인 구현·테스트 완료 / 라이브 검증 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 이 체크포인트를 마무리했다: 생성기 `NameError` 수정, 알림의 Discord-선택-사항화, 오프라인 테스트 계약 수정까지 반영해 전체 오프라인 스위트가 통과한다. 실제 n8n import/실행과 운영 Neo4j 적재는 여전히 검증되지 않았다 — 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md) 참고.
+> **오프라인 구현·테스트 완료 / 라이브 검증 완료(2026-09-12), NAS 이미지 재배포 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 오프라인 체크포인트를 마무리했고, 2026-09-12에 canonical workflow `Hmjfi1zAIOKR5YE5` 생성과 임시 webhook 복사본을 통한 실제 실행(execution `18066`, Wikidata 948건 → write 846/candidate 102, `load_ok=true`/`finalize_ok=true`), 그리고 운영 API `GET /v1/taxa/lineage?name=청둥오리`의 실제 `200` 응답까지 라이브로 확인했다. 다만 같은 확인 과정에서 공개 `aviary.dove-nest.com`이 이 필드(`korean_name_status`)를 추가하기 이전의 NAS 이미지를 여전히 서비스 중임을 발견했다 — 아래 "현재 검증 상태"와 [NAS 배포 런북 §8](../nas-deployment.md)의 재배포·재검증 절차를 따른다. 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md)과 [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
 
 ## 배경
 
@@ -123,6 +123,11 @@ flowchart LR
   실행 두 개가 모두 기존 상태 없음(`''`)을 봤더라도 하나만 활성화하고, 대기한
   다른 실행은 갱신된 run ID를 보고 실패한다. 활성 AviList concept set도 Start,
   각 batch, Finalize에서 다시 확인한다.
+- NAS의 `n8n-nodes-neo4j` 노드는 여러 입력 item 중 첫 item에 대해서만 query를
+  실행하는 동작이 확인됐다. 따라서 `Prepare Korean vernacular batches`가 만든
+  300건 단위 item을 `Loop Over Korean vernacular batches`가 하나씩 Neo4j 노드에
+  공급한다. 각 query의 count 행은 loop 완료 출력에 모이며 `Verify Korean
+  vernacular batches`가 전체 write/candidate 합계를 검사한다.
 
 ## 생성과 로컬 검증
 
@@ -134,9 +139,43 @@ uv run --locked --extra test python -m unittest tests.test_taxonomy_lineage_neo4
 ```
 
 두 번째 명령은 기본적으로 원격에 연결하지 않고 import artifact만 확인한다
-(`ready-local: nodes=30, active=False`).
+(`ready-local: nodes=32, active=False`).
 
 ## NAS 연결과 배포
+
+NAS에서는 프로젝트 루트의 `.env` 대신 Git에서 제외된 `.env.nas.ingest`를
+사용한다. 템플릿을 복사하고 권한을 제한한다.
+
+```sh
+cp .env.nas.ingest.example .env.nas.ingest
+chmod 600 .env.nas.ingest
+```
+
+`ROBINGRAPH_N8N_API_URL`, `ROBINGRAPH_N8N_API_KEY`,
+`ROBINGRAPH_N8N_NEO4J_CREDENTIAL`을 채운 뒤 아래 전용 명령으로 현재 checkout의
+도구 이미지를 다시 빌드하고 원격 상태를 읽기 전용으로 점검한다.
+
+```sh
+sh scripts/deploy_nas.sh preflight-korean-vernacular
+```
+
+점검이 통과하면 inactive workflow를 생성하거나 갱신한다.
+
+```sh
+sh scripts/deploy_nas.sh deploy-korean-vernacular
+```
+
+처음 생성된 ID를 `.env.nas.ingest`의
+`ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID`에 기록하고 확인한다.
+
+```sh
+sh scripts/deploy_nas.sh verify-korean-vernacular
+```
+
+이 경로는 workflow를 실행하거나 활성화하지 않는다. 실제 데이터 쓰기는 아래 첫
+실행 검증에서 운영자가 Manual Trigger를 눌렀을 때만 시작된다.
+
+### 로컬 개발 환경에서 직접 연결할 때
 
 Git에서 제외되는 프로젝트 루트 `.env`에 다음 값을 둔다(기존
 `ROBINGRAPH_N8N_API_URL`, `ROBINGRAPH_N8N_API_KEY`,
@@ -202,8 +241,13 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
    curl "https://<NAS-API-HOST>/v1/taxa/lineage?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC"
    ```
 
-   (`청둥오리`의 URL 인코딩. 이 workflow가 아직 NAS/Neo4j에서 실제로 실행되지
-   않았다면 이 호출은 여전히 404를 반환한다 — 아래 "현재 검증 상태" 참고.)
+   (`청둥오리`의 URL 인코딩. 이 workflow를 아직 실행한 적 없는 Neo4j라면 이
+   호출은 여전히 404를 반환한다. 2026-09-12에 임시 webhook 복사본으로 한 번
+   실행한 뒤에는 실제로 `200`을 반환함을 확인했다 — 아래 "현재 검증 상태"
+   참고. 이 `<NAS-API-HOST>`가 가리키는 API 이미지 자체가 최신 `dev`보다
+   오래됐다면 응답에 `korean_name_status` 필드가 빠질 수 있다 — 그 경우
+   `scripts/verify_api_deployment.py`로 확인하고 [NAS 배포 런북 §8](../nas-deployment.md)의
+   재배포 절차를 따른다.)
 8. `IngestState {id: 'korean-vernacular-names'}`의 `active_release`,
    `loaded_vernacular_names`, `loaded_candidates`를 확인하고,
    `IngestState {id: 'reference-taxonomy'}`가 이 실행으로 바뀌지 않았음을
@@ -234,21 +278,46 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
   계약 테스트. Discord 알림은 credential 없이도 배포/실행이 막히지 않는지
   검증(`test_korean_vernacular_deployment_succeeds_without_a_discord_credential`).
   전체 오프라인 스위트(`tests/` 전체, 이 workflow 전용 테스트만이 아님)는
-  **220개 통과, 0개 실패/오류, 22개 조건부 live skip**(모두
-  `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1` 같은 명시적 opt-in이 있어야 실행).
-  `scripts/generate_n8n_korean_vernacular_ingest.py`를 재실행해도
+  **2026-09-12 재확인 기준 222개 실행, 22개 조건부 live skip, 200개 통과,
+  0개 실패**였다(이전 버전 문서의 "220개 통과"는 부정확한 수치였다 — 실행
+  총량 222에서 조건부 skip 22를 뺀 200이 실제 통과 수다. skip은 모두
+  `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1` 같은 명시적 opt-in이 있어야
+  실행됨). `scripts/generate_n8n_korean_vernacular_ingest.py`를 재실행해도
   `n8n/robingraph-korean-vernacular-ingest.json`이 바이트 단위로 동일(SHA-256
-  동일)함을 확인했다.
-- **아직 검증하지 않은 것**: 이 workflow를 실제 n8n에 import하고 Manual
-  Trigger로 실행한 적이 없다. Wikidata SPARQL endpoint를 향한 실제 HTTP
-  호출, 실제 Neo4j에 대한 batch MERGE, 그리고 `/v1/taxa/lineage?name=청둥오리`의
-  실제 200 응답은 모두 **아직 라이브로 확인되지 않았다.** 위 오프라인
-  테스트는 이 workflow가 배포되면 "그렇게 동작하도록 설계됐다"는 근거이지
-  "실제로 그렇게 동작했다"는 증거가 아니다.
-- 다음 사람이 할 일: 기준정보 workflow가 활성 `reference-taxonomy`를 가진
-  NAS/Neo4j에서 이 workflow를 import하고, 위 "첫 실행 검증" 절차를 그대로
-  실행해 실제 count와 `/v1/taxa/lineage?name=청둥오리` 200 응답을 확인한 뒤
-  이 절을 실행 증거로 갱신한다.
+  동일)함을 확인했다. 이 workflow의 생성기·테스트·JSON은 계속 활발히
+  작업 중이라 이 숫자는 시점 스냅샷이며, 최신 값은 항상
+  `uv run --locked --extra test python -m unittest discover -s tests`를
+  직접 실행해 확인한다.
+- **2026-09-12 라이브 검증 결과(실제로 확인됨)**: canonical workflow
+  `Hmjfi1zAIOKR5YE5`를 n8n Public API로 inactive 상태로 생성·갱신(32개
+  노드, Neo4j 노드 12개 + Discord 노드 2개 credential 연결 확인). Public
+  API에는 수동 실행 endpoint가 없어 webhook trigger를 붙인 임시 활성 복사본으로
+  실제 실행했다(execution `18066`). Wikidata 948 binding(잘못된 행 0건)을
+  846개 `VernacularName` write와 102개 candidate로 정확히 분류했고
+  `load_ok=true`, `finalize_ok=true`로 종료됐다. 임시 workflow는 실행 직후
+  비활성화·삭제했고 canonical은 inactive로 유지했다. 이어서 운영 API
+  `GET /v1/taxa/lineage?name=청둥오리`가 실제로 `200`과
+  `Anas platyrhynchos` 역조회 결과를 반환함을 확인했다. 자세한 실행 기록은
+  [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
+- **같은 라이브 검증에서 새로 발견한 문제(이 workflow 자체의 결함이
+  아니라 NAS 이미지 버전 skew)**: 공개 `https://aviary.dove-nest.com`의
+  `/openapi.json`과 실제 `/v1/taxa/lineage` 응답 모두 이 문서 위쪽에서
+  설명한 `korean_name_status` 필드가 **아예 없다** — NAS가 이 필드를 추가한
+  커밋 이전 이미지를 그대로 서비스 중이기 때문이다. `GET /health`의
+  `taxonomy_release`(`fixture-avlist-2025`)와 `GET /v1/taxa/lineage`의
+  `taxonomy_release`(`v2025b`)가 다른 것은 서로 다른 데이터 영역(fixture
+  corpus vs. 활성 AviList concept set)이라 정상이며 결함이 아니다. 이
+  drift를 매 배포마다 자동으로 잡아내는 읽기 전용 검증기
+  `scripts/verify_api_deployment.py`를 추가했다 — 사용법은
+  [NAS 배포 런북 §8](../nas-deployment.md)에 있다.
+- 다음 사람이 할 일: (1) NAS의 `robingraph-api` 이미지를 현재 `dev`로
+  재빌드·재배포해 `korean_name_status` drift를 없앤 뒤
+  `scripts/verify_api_deployment.py`로 재확인한다. (2) canonical workflow
+  `Hmjfi1zAIOKR5YE5`는 여전히 inactive다 — 실제 월간 schedule 활성화 여부는
+  운영자가 별도로 결정한다. (3) `test_korean_vernacular_workflow_never_touches_reference_taxonomy_state_or_gbif_taxa`
+  등 진행 중인 생성기 변경(실패 알림 흐름에 `Mark Korean vernacular run
+  failed` 노드 추가)이 안정화되면 오프라인 스위트를 다시 실행해 최종 수치를
+  갱신한다.
 
 ## 구현 위치
 

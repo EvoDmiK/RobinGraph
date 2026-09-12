@@ -1,5 +1,24 @@
 # RobinGraph 현재 구현 상태
 
+최신 추가(2026-09-12): NAS 공개 API의 배포 버전이 실제로 이 checkout의 API
+계약과 일치하는지 확인하는 읽기 전용 검증기 `scripts/verify_api_deployment.py`를
+추가했다. 라이브 확인 과정에서 `https://aviary.dove-nest.com`이
+`LineageTaxonResponse.korean_name_status` 필드가 없는 오래된 이미지를 서비스
+중임을 발견했다. 또한 §1의 `GET /health`가 반환하는 `taxonomy_release`는
+아래(§1, §12)에서 설명하는 fixture corpus의 릴리스일 뿐이며, AviList
+분류·한국어 이름 계통을 다루는 `GET /v1/taxa/lineage`의 `taxonomy_release`
+(활성 AviList `reference-taxonomy` concept set 릴리스, 예: `v2025b`)와는
+서로 다른, 비교 대상이 아닌 별개의 값이다 — 이 문서가 다루는 fixture/Neo4j
+그래프 슬라이스와 [분류 계통 API](taxonomy-lineage-api.md)가 다루는 AviList
+reference-taxonomy는 애초에 다른 데이터 영역이기 때문이다(자세한 배경은
+[graph-database-schema.md](graph-database-schema.md), 검증기 사용법은
+[NAS 배포 런북 §8](nas-deployment.md) 참고). 아래 §1~12의 테스트 수치는 이
+문서가 다루는 fixture/Neo4j 그래프 슬라이스에 한정된 2026-09-04 시점
+기록이며, 그 이후 추가된 taxonomy-lineage·Korean vernacular·NAS 배포
+테스트는 포함하지 않는다 — 현재 저장소 전체 오프라인 스위트의 최신 수치는
+[한국어 일반명 수집 런북의 "현재 검증 상태"](n8n/korean-vernacular-ingest.md#현재-검증-상태-정직하게-보고)에
+기록한다.
+
 최신 추가(2026-09-10): n8n에서 AviList 분류·EltonTraits 식성/체중과 AVONET
 형태 측정치/서식 환경을 수집하는 두 workflow를 제공한다. 실제 원본 전체를
 검증하고, 선택 시트 스트리밍·100종 배치 로더로 NAS Neo4j에 AVONET 11,009종,

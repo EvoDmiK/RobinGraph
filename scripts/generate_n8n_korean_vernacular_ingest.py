@@ -49,6 +49,24 @@ Snapshot model (fixes applied after GPT-5.6 Sol's initial review, see
   against a taxonomy generation that is no longer current.
 - Any structurally malformed SPARQL binding (missing item/taxonName/label)
   fails the run closed rather than being silently dropped.
+- Every failure branch (quality gates, Start, batch load, or Finalize) now
+  runs through ``MARK_FAILED_STATEMENT`` before the Discord notification.
+  Once ``Start`` has flipped an ``IngestionRun`` to ``status: 'loading'``, a
+  downstream failure sets it to ``'failed'`` with the same
+  ``failure_reason`` the notification reports -- previously the run was
+  left stuck at ``'loading'`` forever, with no durable record that it
+  failed. The guard (``WHERE run.status = 'loading'``) makes this a safe
+  no-op for the two branches that fail before any run exists (quality
+  gates, or a Start whose own ``active_concept_set_id`` guard already
+  rejected it) and never touches ``IngestState`` -- the active dataset is
+  never advanced or altered on a failure path.
+- ``Fetch Wikidata Korean bird labels`` now sets ``neverError`` and
+  ``onError: continueRegularOutput`` (mirroring ``Fetch pinned ChecklistBank
+  release`` in ``generate_n8n_reference_ingest.py``), so a non-2xx response
+  *or* a connection-level failure (DNS, timeout exhaustion, refused
+  connection) flows into ``Normalize Korean vernacular candidates`` as data
+  instead of stopping the whole execution before any Discord notification
+  or run bookkeeping can run.
 """
 
 from __future__ import annotations
@@ -272,6 +290,12 @@ const fetched = $('Hash Wikidata response').first().json;
 // snapshot' in generate_n8n_reference_ingest.py for the established
 // convention this mirrors). A non-200 must never be treated as "zero
 // candidates found" -- those are different failures with different causes.
+// 'Fetch Wikidata Korean bird labels' sets neverError + onError:
+// continueRegularOutput, so a connection-level failure (DNS, refused,
+// timeout exhaustion) never throws -- it instead lands here with an
+// `error` field and no statusCode/data, exactly like the Neo4j nodes'
+// onError shape checked in VERIFY_START/VERIFY_BATCHES/VERIFY_FINALIZE.
+const upstreamErrorText = String(fetched.error?.message || fetched.error || fetched.message || '');
 const statusCode = Number(fetched.statusCode ?? 0);
 const raw = fetched.data;
 let parsed = null;
@@ -312,8 +336,8 @@ return [{json: {
   fetch_status_code: statusCode,
   fetch_ok: fetchOk,
   fetch_failure_reason: statusCode !== 200
-    ? `Wikidata SPARQL endpoint returned HTTP ${statusCode}`
-    : (!wellFormed ? (parseError || 'Wikidata SPARQL response was not a well-formed results document') : ''),
+    ? (upstreamErrorText || `Wikidata SPARQL endpoint returned HTTP ${statusCode}`)
+    : (!wellFormed ? (parseError || upstreamErrorText || 'Wikidata SPARQL response was not a well-formed results document') : ''),
   source_binding_count: bindings.length,
   malformed_row_count: malformedRowCount,
   distinct_taxon_name_count: clean.length + new Set(conflicted.map(row => row.taxon_name)).size,
@@ -491,15 +515,15 @@ START_STATEMENT = compact_cypher(
 # content never overwrites a prior snapshot's hash in place. All of a row's
 # `qids` get their own SourceRecord (not just qids[0]), so provenance is
 # never dropped for a name asserted by more than one Wikidata item. The
-# `HAS_VERNACULAR_NAME` edge is created immediately as each batch commits,
-# but stays invisible to reads until Finalize activates this dataset id in
+# `HAS_VERNACULAR_NAME` edge is created as each logical batch commits, but
+# stays invisible to reads until Finalize activates this dataset id in
 # `IngestState {id: 'korean-vernacular-names'}.active_dataset_id` -- writes
 # are staged-by-construction, not by any separate staging label. Re-checking
 # `state.active_concept_set_id = $concept_set_id` on every batch (not just
 # at Start) means even a taxonomy switch mid-run stops matching further
-# taxa; the pre-existing count verification in `VERIFY_BATCHES` (comparing
-# totals against `write_row_count`/`candidate_count`) already catches the
-# resulting shortfall and fails the run closed.
+# taxa. The NAS community Neo4j node evaluates its query once for the first
+# input item, so a Loop Over Items node explicitly feeds it one logical
+# batch at a time and collects all count rows for `VERIFY_BATCHES`.
 BATCH_STATEMENT = compact_cypher(
     """
     MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
@@ -597,6 +621,26 @@ FINALIZE_STATEMENT = compact_cypher(
     """
 )
 
+# Runs on every failure branch (quality gates, Start, batch load, Finalize),
+# right before the Discord notification. The `WHERE run.status = 'loading'`
+# guard makes this a safe no-op when no run was ever started (quality gates
+# rejected the run before Start, or Start's own concept-set guard already
+# refused it) -- MATCH simply returns zero rows, and `onError:
+# continueRegularOutput` + `alwaysOutputData` (see `neo4j_node`) mean that
+# never throws. It also means this can never re-mark a run that already
+# reached 'succeeded' (Finalize already advanced it past 'loading') or that
+# a slower, duplicate failure signal already marked 'failed'. This never
+# touches `IngestState` -- the active `korean-vernacular-names` dataset is
+# only ever advanced by FINALIZE_STATEMENT, never rolled back or altered
+# here, so a failed run cannot change what reads currently see as active.
+MARK_FAILED_STATEMENT = compact_cypher(
+    """
+    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
+    SET run.status = 'failed', run.finished_at = datetime(), run.failure_reason = $failure_reason
+    RETURN run.id AS marked_failed_run_id, run.status AS run_status
+    """
+)
+
 
 def prepare_batches_js(source_var: str) -> str:
     return dedent(
@@ -637,11 +681,30 @@ VERIFY_BATCHES = r"""
 const expected = $('Assemble Korean vernacular quality gates').first().json;
 const rows = $input.all().map(item => item.json);
 const errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);
-const indexes = new Set(rows.map(row => Number(row.batch_index)).filter(Number.isInteger));
-const batchCount = rows.length ? Number(rows[0].batch_count) : 0;
-const loadedVernacularNames = rows.reduce((sum, row) => sum + Number(row.loaded_vernacular_names || 0), 0);
-const loadedCandidates = rows.reduce((sum, row) => sum + Number(row.loaded_candidates || 0), 0);
-const loadOk = !errors.length && batchCount > 0 && indexes.size === batchCount && rows.length === batchCount
+// Treat the Neo4j output as untrusted at this boundary. In particular, do
+// not coerce strings/booleans with Number(...): a malformed output must not
+// turn into a seemingly valid count and authorize Finalize.
+const isNonNegativeSafeInteger = value =>
+  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
+const batchCount = rows.length && isNonNegativeSafeInteger(rows[0].batch_count)
+  ? rows[0].batch_count
+  : 0;
+const validBatchRows = batchCount > 0 && rows.every(row =>
+  row && typeof row === 'object'
+  && row.batch_count === batchCount
+  && isNonNegativeSafeInteger(row.batch_index)
+  && row.batch_index < batchCount
+  && isNonNegativeSafeInteger(row.loaded_vernacular_names)
+  && isNonNegativeSafeInteger(row.loaded_candidates)
+);
+const indexes = new Set(validBatchRows ? rows.map(row => row.batch_index) : []);
+const loadedVernacularNames = validBatchRows
+  ? rows.reduce((sum, row) => sum + row.loaded_vernacular_names, 0)
+  : 0;
+const loadedCandidates = validBatchRows
+  ? rows.reduce((sum, row) => sum + row.loaded_candidates, 0)
+  : 0;
+const loadOk = !errors.length && validBatchRows && indexes.size === batchCount && rows.length === batchCount
   && loadedVernacularNames === expected.write_row_count
   && loadedCandidates === expected.candidate_count;
 return [{json: {...expected,
@@ -652,8 +715,21 @@ return [{json: {...expected,
 }}];
 """
 
+# `expected` is read from 'Verify Korean vernacular batches', not 'Assemble
+# Korean vernacular quality gates': the latter never carries
+# loaded_vernacular_names/loaded_candidates at all -- those are only
+# computed by VERIFY_BATCHES, further down the chain -- so reading it here
+# would leave both fields `undefined` in every real Finalize success, with
+# nothing downstream (the success Discord message, or
+# manage_n8n_korean_vernacular.py's execution-evidence check) able to tell
+# a meaningful run apart from an empty one. 'Verify Korean vernacular
+# batches' already carries everything: it itself spreads `...expected` from
+# Assemble (so run_id/source_release/wikidata_dataset_id are still present)
+# plus its own correct loaded_vernacular_names/loaded_candidates, and 'Korean
+# vernacular load verified?' (the IF between it and Finalize) passes items
+# through unchanged.
 VERIFY_FINALIZE = r"""
-const expected = $('Assemble Korean vernacular quality gates').first().json;
+const expected = $('Verify Korean vernacular batches').first().json;
 const response = $input.first().json;
 const errorText = String(response.error?.message || response.error || response.message || '');
 const finalizeOk = !errorText
@@ -670,6 +746,43 @@ return [{json: {...expected,
     'active concept set changed since this run resolved matches, or a concurrent run ' +
     'already activated a newer snapshot first (lost the optimistic-concurrency race)')
 }}];
+"""
+
+# A plain passthrough, but under a name every failure branch can be read
+# back from by identity. All four failure branches (quality gates, Start,
+# batch load, Finalize) converge here before 'Mark Korean vernacular run
+# failed' wipes $json down to that Neo4j write's own return columns (same
+# reason every VERIFY_* step above re-merges with a named upstream lookup).
+# Reading a *fixed* node name (rather than $input) is what lets
+# RECORD_FAILURE_JS recover the right context afterwards regardless of
+# which of the four branches actually failed -- each carries its own
+# failure_reason (from 'Assemble Korean vernacular quality gates' itself
+# for a pre-Start failure, or from the relevant VERIFY_* step for a
+# batch/Finalize failure), and this node is the one stable place to name.
+CAPTURE_FAILURE_CONTEXT_JS = r"""
+return [{json: $input.first().json}];
+"""
+
+# `...expected` is spread *first* so MARK_FAILED_STATEMENT's own return
+# columns never clobber `expected.failure_reason`. `expected` is read from
+# 'Capture Korean vernacular failure context', not 'Assemble Korean
+# vernacular quality gates': the latter's own failure_reason is only ever
+# non-empty for a pre-Start (quality-gates) failure -- for a batch or
+# Finalize failure it is still '' (quality gates passed, that is why Start
+# ran at all), so reading it directly here would silently report "Unknown
+# failure" downstream instead of the real, later-computed reason.
+# `run_marked_failed` is purely observational (true only when a 'loading'
+# run existed and was just flipped to 'failed'); nothing downstream
+# branches on it, so a quality-gates-before-Start failure (where no run
+# exists to mark) still reaches the same notification/stop path.
+RECORD_FAILURE_JS = r"""
+const expected = $('Capture Korean vernacular failure context').first().json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || '');
+const runMarkedFailed = !errorText
+  && response.marked_failed_run_id === expected.run_id
+  && response.run_status === 'failed';
+return [{json: {...expected, run_marked_failed: runMarkedFailed}}];
 """
 
 
@@ -724,7 +837,9 @@ def main() -> None:
                     ]
                 },
                 "options": {
-                    "response": {"response": {"fullResponse": True, "responseFormat": "text"}},
+                    "response": {
+                        "response": {"fullResponse": True, "neverError": True, "responseFormat": "text"}
+                    },
                     "timeout": 120000,
                 },
             },
@@ -732,6 +847,7 @@ def main() -> None:
             retryOnFail=True,
             maxTries=3,
             waitBetweenTries=5000,
+            onError="continueRegularOutput",
         ),
         node(
             "Hash Wikidata response",
@@ -741,7 +857,17 @@ def main() -> None:
                 "action": "hash",
                 "binaryData": False,
                 "type": "SHA256",
-                "value": "={{ $json.data }}",
+                # `?? ''`, not `$json.data` directly: 'Fetch Wikidata Korean
+                # bird labels' has neverError + onError: continueRegularOutput
+                # (see module docstring), so a connection-level failure hands
+                # this node an item with an `error` field and no `data` at
+                # all. Hashing `undefined` would throw here -- one node past
+                # where the resilience was added -- and abort the execution
+                # before Normalize/Notify ever see it. The Crypto node passes
+                # every existing json field through untouched alongside the
+                # computed hash, so `error` (and the missing `statusCode`)
+                # still reach 'Normalize Korean vernacular candidates' intact.
+                "value": "={{ $json.data ?? '' }}",
                 "dataPropertyName": "raw_sha256",
                 "encoding": "hex",
             },
@@ -762,12 +888,19 @@ def main() -> None:
             prepare_batches_js("Assemble Korean vernacular quality gates"),
             (2200, -180),
         ),
-        neo4j_node("Upsert Korean vernacular names batch", BATCH_STATEMENT, (2440, -180)),
-        code("Verify Korean vernacular batches", VERIFY_BATCHES, (2680, -180)),
-        boolean_if("Korean vernacular load verified?", "={{ $json.load_ok }}", (2920, -180)),
-        neo4j_node("Finalize Korean vernacular active release", FINALIZE_STATEMENT, (3160, -180)),
-        code("Verify Korean vernacular release finalized", VERIFY_FINALIZE, (3400, -180)),
-        boolean_if("Korean vernacular release finalized?", "={{ $json.finalize_ok }}", (3640, -180)),
+        node(
+            "Loop Over Korean vernacular batches",
+            "n8n-nodes-base.splitInBatches",
+            3,
+            {"options": {}},
+            (2440, -180),
+        ),
+        neo4j_node("Upsert Korean vernacular names batch", BATCH_STATEMENT, (2680, -180)),
+        code("Verify Korean vernacular batches", VERIFY_BATCHES, (2920, -180)),
+        boolean_if("Korean vernacular load verified?", "={{ $json.load_ok }}", (3160, -180)),
+        neo4j_node("Finalize Korean vernacular active release", FINALIZE_STATEMENT, (3400, -180)),
+        code("Verify Korean vernacular release finalized", VERIFY_FINALIZE, (3640, -180)),
+        boolean_if("Korean vernacular release finalized?", "={{ $json.finalize_ok }}", (3880, -180)),
         # Discord nodes, like `generate_n8n_reference_ingest.py`'s "Notify
         # reference *" pair: `discord()` sets `onError: continueRegularOutput`,
         # so a workflow whose Discord credential is not (yet) wired -- this
@@ -783,14 +916,27 @@ def main() -> None:
             "'\\nVernacularName nodes: ' + $json.loaded_vernacular_names + ', review candidates: ' + "
             "$json.loaded_candidates + '\\nActive reference-taxonomy release: ' + $json.taxonomy_release + "
             "'\\nActive Wikidata dataset: ' + $json.wikidata_dataset_id }}",
-            (3880, -280),
+            (4120, -280),
         ),
+        code("Capture Korean vernacular failure context", CAPTURE_FAILURE_CONTEXT_JS, (1720, 220)),
+        neo4j_node("Mark Korean vernacular run failed", MARK_FAILED_STATEMENT, (1960, 220)),
+        code("Record Korean vernacular run failure", RECORD_FAILURE_JS, (2200, 220)),
         discord(
             "Notify Korean vernacular failure",
             "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + "
             "String($json.run_id || 'not-started') + '\\nReason: ' + "
-            "String($json.failure_reason || 'Unknown failure').slice(0, 1500) }}",
-            (1720, 220),
+            "String($json.failure_reason || 'Unknown failure').slice(0, 1500) + "
+            # A separate signal from the failure reason itself: this Discord
+            # node's own onError: continueRegularOutput means it still fires
+            # even if 'Mark Korean vernacular run failed' could not reach
+            # Neo4j at all (DB down, not just the original ingest failure).
+            # An operator seeing 'not recorded' here knows the IngestionRun
+            # may still show 'loading' in the graph and needs a manual look,
+            # instead of assuming the failure was already durably bookkept.
+            "'\\nRun bookkeeping: ' + ($json.run_marked_failed "
+            "? 'marked failed in Neo4j' "
+            ": 'not recorded in Neo4j (no run was loading, or the bookkeeping write itself failed)') }}",
+            (2440, 220),
         ),
         node(
             "Fail Korean vernacular execution",
@@ -802,9 +948,9 @@ def main() -> None:
                     "quality or Neo4j verification node."
                 )
             },
-            (1960, 220),
+            (2680, 220),
         ),
-        node("Korean vernacular ingest finished", "n8n-nodes-base.noOp", 1, {}, (4120, -180)),
+        node("Korean vernacular ingest finished", "n8n-nodes-base.noOp", 1, {}, (4360, -180)),
     ]
 
     connections = {
@@ -830,7 +976,7 @@ def main() -> None:
         "Korean vernacular quality gates passed?": {
             "main": [
                 [edge("Start Korean vernacular ingestion run")],
-                [edge("Notify Korean vernacular failure")],
+                [edge("Capture Korean vernacular failure context")],
             ]
         },
         "Start Korean vernacular ingestion run": {"main": [[edge("Verify Korean vernacular run started")]]},
@@ -840,16 +986,30 @@ def main() -> None:
         "Korean vernacular ingestion run started?": {
             "main": [
                 [edge("Prepare Korean vernacular batches")],
-                [edge("Notify Korean vernacular failure")],
+                [edge("Capture Korean vernacular failure context")],
             ]
         },
-        "Prepare Korean vernacular batches": {"main": [[edge("Upsert Korean vernacular names batch")]]},
-        "Upsert Korean vernacular names batch": {"main": [[edge("Verify Korean vernacular batches")]]},
+        "Prepare Korean vernacular batches": {
+            "main": [[edge("Loop Over Korean vernacular batches")]]
+        },
+        "Loop Over Korean vernacular batches": {
+            "main": [
+                # splitInBatches output 0 is the current loop item; output
+                # 1 fires only after every item has returned to this node.
+                # Sending these the other way round verifies before any
+                # write and can leave every batch unprocessed.
+                [edge("Upsert Korean vernacular names batch")],
+                [edge("Verify Korean vernacular batches")],
+            ]
+        },
+        "Upsert Korean vernacular names batch": {
+            "main": [[edge("Loop Over Korean vernacular batches")]]
+        },
         "Verify Korean vernacular batches": {"main": [[edge("Korean vernacular load verified?")]]},
         "Korean vernacular load verified?": {
             "main": [
                 [edge("Finalize Korean vernacular active release")],
-                [edge("Notify Korean vernacular failure")],
+                [edge("Capture Korean vernacular failure context")],
             ]
         },
         "Finalize Korean vernacular active release": {
@@ -861,10 +1021,15 @@ def main() -> None:
         "Korean vernacular release finalized?": {
             "main": [
                 [edge("Notify Korean vernacular success")],
-                [edge("Notify Korean vernacular failure")],
+                [edge("Capture Korean vernacular failure context")],
             ]
         },
         "Notify Korean vernacular success": {"main": [[edge("Korean vernacular ingest finished")]]},
+        "Capture Korean vernacular failure context": {
+            "main": [[edge("Mark Korean vernacular run failed")]]
+        },
+        "Mark Korean vernacular run failed": {"main": [[edge("Record Korean vernacular run failure")]]},
+        "Record Korean vernacular run failure": {"main": [[edge("Notify Korean vernacular failure")]]},
         "Notify Korean vernacular failure": {"main": [[edge("Fail Korean vernacular execution")]]},
     }
 

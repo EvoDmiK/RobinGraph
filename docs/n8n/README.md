@@ -3,7 +3,7 @@
 ## workflow 구성
 
 종별 분류·형태·생태 정보 수집은 [실행 가이드](species-information-ingest.md)를 따른다.
-RobinGraph의 n8n 수집은 세 workflow로 나뉜다.
+RobinGraph의 n8n 수집은 네 workflow로 나뉜다.
 
 | workflow | 범위 | 상태 |
 |---|---|---|

@@ -53,6 +53,18 @@ compose_tools() {
   docker compose --env-file "$TOOLS_ENV" -f "$COMPOSE_FILE" --profile tools "$@"
 }
 
+build_tools_image() {
+  # The workflow artifacts and deployers are copied into the image. Rebuild
+  # before every deployment action so a NAS checkout cannot accidentally
+  # publish definitions left in an older local image.
+  compose_tools build --pull nas-tools
+}
+
+check_korean_vernacular_workflow() {
+  compose_tools run --rm nas-tools \
+    scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --remote
+}
+
 preflight_api() {
   require_command docker
   docker compose version >/dev/null
@@ -131,11 +143,50 @@ case "$ACTION" in
     ;;
   deploy-workflows)
     preflight_tools
+    build_tools_image
     compose_tools run --rm nas-tools scripts/deploy_n8n_operational_ingest.py --apply
     compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --apply
     compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --workflow avonet --apply
     compose_tools run --rm nas-tools scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply
     echo "n8n workflow definitions deployed inactive; record any newly printed workflow IDs"
+    ;;
+  preflight-korean-vernacular)
+    preflight_tools
+    build_tools_image
+    check_korean_vernacular_workflow
+    echo "Korean vernacular workflow is ready for an inactive NAS deployment"
+    ;;
+  deploy-korean-vernacular)
+    preflight_tools
+    build_tools_image
+    check_korean_vernacular_workflow
+    compose_tools run --rm nas-tools \
+      scripts/deploy_n8n_reference_ingest.py --workflow korean-vernacular --apply
+    echo "Korean vernacular workflow deployed inactive; record a newly printed workflow ID before verification"
+    ;;
+  verify-korean-vernacular)
+    preflight_tools
+    require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"
+    build_tools_image
+    check_korean_vernacular_workflow
+    ;;
+  status-korean-vernacular)
+    preflight_tools
+    require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"
+    build_tools_image
+    compose_tools run --rm nas-tools scripts/manage_n8n_korean_vernacular.py status
+    ;;
+  activate-korean-vernacular)
+    preflight_tools
+    require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"
+    build_tools_image
+    compose_tools run --rm nas-tools scripts/manage_n8n_korean_vernacular.py activate --apply
+    ;;
+  deactivate-korean-vernacular)
+    preflight_tools
+    require_env_value ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID "$TOOLS_ENV"
+    build_tools_image
+    compose_tools run --rm nas-tools scripts/manage_n8n_korean_vernacular.py deactivate --apply
     ;;
   validate-avonet)
     preflight_tools
@@ -149,11 +200,18 @@ case "$ACTION" in
     compose_tools run --rm nas-tools scripts/load_n8n_avonet.py --apply
     ;;
   *)
-    die "usage: $0 {preflight|deploy|verify|status|logs|deploy-workflows|validate-avonet|ingest-avonet}"
+    die "usage: $0 {preflight|deploy|verify|status|logs|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet}"
     ;;
 esac
 
-# Korean vernacular ingest runs natively inside n8n once deploy-workflows above
-# has created/updated it: trigger it manually from the n8n UI/API, not from
-# this script. See docs/n8n/korean-vernacular-ingest.md for the exact
-# first-run checklist.
+# Korean vernacular ingest runs natively inside n8n once deploy-workflows or
+# deploy-korean-vernacular has created/updated it. Trigger it manually from
+# the n8n UI, not from this script. See docs/n8n/korean-vernacular-ingest.md
+# for the exact first-run checklist.
+#
+# status/activate/deactivate-korean-vernacular only flip the Public API
+# `active` flag through scripts/manage_n8n_korean_vernacular.py -- they
+# never run the workflow themselves. activate-korean-vernacular refuses
+# (see that script's module docstring) unless the deployed canonical
+# workflow still matches this checkout's reviewed artifact and its own
+# execution history already shows a real, meaningful successful run.

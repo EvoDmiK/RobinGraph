@@ -81,6 +81,7 @@
           "response": {
             "response": {
               "fullResponse": true,
+              "neverError": true,
               "responseFormat": "text"
             }
           },
@@ -97,14 +98,15 @@
       ],
       "retryOnFail": true,
       "maxTries": 3,
-      "waitBetweenTries": 5000
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
         "action": "hash",
         "binaryData": false,
         "type": "SHA256",
-        "value": "={{ $json.data }}",
+        "value": "={{ $json.data ?? '' }}",
         "dataPropertyName": "raw_sha256",
         "encoding": "hex"
       },
@@ -144,7 +146,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "function classifyWikidataRows(bindings) {\n  const qidOf = uri => String(uri || '').split('/').pop();\n  const text = value => value == null ? '' : String(value).trim();\n  const seenTriples = new Set();\n  const byTaxonName = new Map();\n  // The SPARQL query projects item/taxonName/itemLabel as mandatory\n  // (none are OPTIONAL in SPARQL_QUERY), so a binding missing any of them\n  // is never an expected, legitimate shape -- it signals a schema change\n  // or a malformed/truncated response, and must never be dropped silently.\n  let malformedRowCount = 0;\n  for (const binding of bindings || []) {\n    const qid = qidOf(binding.item && binding.item.value);\n    const taxonName = text(binding.taxonName && binding.taxonName.value);\n    const koreanName = text(binding.itemLabel && binding.itemLabel.value);\n    if (!qid || !taxonName || !koreanName) {\n      malformedRowCount += 1;\n      continue;\n    }\n    const tripleKey = qid + '::' + taxonName + '::' + koreanName;\n    if (seenTriples.has(tripleKey)) continue;\n    seenTriples.add(tripleKey);\n    const group = byTaxonName.get(taxonName) || [];\n    group.push({qid, taxonName, koreanName});\n    byTaxonName.set(taxonName, group);\n  }\n  const perTaxonClean = [];\n  const conflicted = [];\n  for (const [taxonName, rows] of byTaxonName) {\n    const distinctNames = [...new Set(rows.map(row => row.koreanName))];\n    if (distinctNames.length > 1) {\n      for (const row of rows) {\n        conflicted.push({\n          taxon_name: taxonName,\n          korean_name: row.koreanName,\n          qids: [row.qid],\n          reason_code: 'conflicting_korean_labels',\n        });\n      }\n      continue;\n    }\n    perTaxonClean.push({\n      taxon_name: taxonName,\n      korean_name: distinctNames[0],\n      qids: [...new Set(rows.map(row => row.qid))].sort(),\n    });\n  }\n  // Second pass, across taxon names: the same Korean label legitimately\n  // produced for two DIFFERENT scientific names (a homonym, or the same\n  // casual common name misapplied to two species in Wikidata) is a real\n  // ambiguity for the exact-match Korean-name lookup, even though each\n  // taxon name looked \"clean\" on its own in the first pass. Neither taxon\n  // is allowed to win arbitrarily -- both are quarantined.\n  const byKoreanName = new Map();\n  for (const row of perTaxonClean) {\n    const group = byKoreanName.get(row.korean_name) || [];\n    group.push(row);\n    byKoreanName.set(row.korean_name, group);\n  }\n  const clean = [];\n  for (const rows of byKoreanName.values()) {\n    if (rows.length > 1) {\n      for (const row of rows) {\n        conflicted.push({\n          taxon_name: row.taxon_name,\n          korean_name: row.korean_name,\n          qids: row.qids,\n          reason_code: 'ambiguous_korean_name_across_taxa',\n        });\n      }\n      continue;\n    }\n    clean.push(rows[0]);\n  }\n  clean.sort((a, b) => a.taxon_name.localeCompare(b.taxon_name));\n  conflicted.sort((a, b) => a.taxon_name.localeCompare(b.taxon_name) || a.korean_name.localeCompare(b.korean_name));\n  return {clean, conflicted, malformedRowCount};\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst hash = $('Hash Wikidata response').first().json.raw_sha256 ?? null;\n// Read by name, not $input.first(): 'Read active taxonomy and Korean\n// dataset state' now sits between the Hash node and this one so its output\n// is guaranteed available (by name) to 'Assemble Korean vernacular quality\n// gates' later -- which pushes this node's actual fetch payload off the\n// positional $input chain and onto a named lookup instead.\nconst fetched = $('Hash Wikidata response').first().json;\n// fullResponse + responseFormat 'text' surfaces the HTTP status alongside the\n// body text on the same item (see 'Fetch AviList snapshot' / 'Hash AviList\n// snapshot' in generate_n8n_reference_ingest.py for the established\n// convention this mirrors). A non-200 must never be treated as \"zero\n// candidates found\" -- those are different failures with different causes.\nconst statusCode = Number(fetched.statusCode ?? 0);\nconst raw = fetched.data;\nlet parsed = null;\nlet parseError = null;\nif (statusCode === 200) {\n  try {\n    parsed = JSON.parse(raw);\n  } catch (error) {\n    parseError = String(error && error.message || error);\n  }\n}\n// A well-formed SPARQL JSON Results response always carries head.vars and a\n// results.bindings array, even when there are zero matches. Anything else\n// (an HTML error page, a partial/cut-off body, a differently-shaped payload)\n// is treated as \"not a usable response\" rather than silently coerced to an\n// empty-but-valid result set.\nconst wellFormed = !!(\n  parsed && parsed.head && Array.isArray(parsed.head.vars) &&\n  parsed.results && Array.isArray(parsed.results.bindings)\n);\nconst bindings = wellFormed ? parsed.results.bindings : [];\nconst {clean, conflicted, malformedRowCount} = classifyWikidataRows(bindings);\nconst fetchOk = statusCode === 200 && wellFormed;\n// Content-addressed immutable identity: two runs observing byte-identical\n// Wikidata content compute the exact same dataset id and source_release,\n// so they idempotently MERGE the same nodes instead of one run's hash\n// overwriting another's. Different content -- even fetched the same day --\n// gets a different id and never touches a prior snapshot's nodes. Only\n// computed on a genuinely successful, hashed fetch; a failed/malformed\n// fetch has nothing meaningful to anchor an identity to.\nconst dateStamp = String(config.retrieved_at || '').slice(0, 10) || 'unknown-date';\nconst wikidataDatasetId = (fetchOk && hash) ? `wikidata-dataset:taxon-labels:sha256-${hash}` : null;\nconst sourceRelease = (fetchOk && hash) ? `wikidata-snapshot:${dateStamp}:sha256-${hash.slice(0, 12)}` : null;\nreturn [{json: {\n  source_sha256: hash,\n  wikidata_dataset_id: wikidataDatasetId,\n  source_release: sourceRelease,\n  fetch_status_code: statusCode,\n  fetch_ok: fetchOk,\n  fetch_failure_reason: statusCode !== 200\n    ? `Wikidata SPARQL endpoint returned HTTP ${statusCode}`\n    : (!wellFormed ? (parseError || 'Wikidata SPARQL response was not a well-formed results document') : ''),\n  source_binding_count: bindings.length,\n  malformed_row_count: malformedRowCount,\n  distinct_taxon_name_count: clean.length + new Set(conflicted.map(row => row.taxon_name)).size,\n  clean_candidates: clean,\n  conflicted_candidates: conflicted,\n}}];"
+        "jsCode": "function classifyWikidataRows(bindings) {\n  const qidOf = uri => String(uri || '').split('/').pop();\n  const text = value => value == null ? '' : String(value).trim();\n  const seenTriples = new Set();\n  const byTaxonName = new Map();\n  // The SPARQL query projects item/taxonName/itemLabel as mandatory\n  // (none are OPTIONAL in SPARQL_QUERY), so a binding missing any of them\n  // is never an expected, legitimate shape -- it signals a schema change\n  // or a malformed/truncated response, and must never be dropped silently.\n  let malformedRowCount = 0;\n  for (const binding of bindings || []) {\n    const qid = qidOf(binding.item && binding.item.value);\n    const taxonName = text(binding.taxonName && binding.taxonName.value);\n    const koreanName = text(binding.itemLabel && binding.itemLabel.value);\n    if (!qid || !taxonName || !koreanName) {\n      malformedRowCount += 1;\n      continue;\n    }\n    const tripleKey = qid + '::' + taxonName + '::' + koreanName;\n    if (seenTriples.has(tripleKey)) continue;\n    seenTriples.add(tripleKey);\n    const group = byTaxonName.get(taxonName) || [];\n    group.push({qid, taxonName, koreanName});\n    byTaxonName.set(taxonName, group);\n  }\n  const perTaxonClean = [];\n  const conflicted = [];\n  for (const [taxonName, rows] of byTaxonName) {\n    const distinctNames = [...new Set(rows.map(row => row.koreanName))];\n    if (distinctNames.length > 1) {\n      for (const row of rows) {\n        conflicted.push({\n          taxon_name: taxonName,\n          korean_name: row.koreanName,\n          qids: [row.qid],\n          reason_code: 'conflicting_korean_labels',\n        });\n      }\n      continue;\n    }\n    perTaxonClean.push({\n      taxon_name: taxonName,\n      korean_name: distinctNames[0],\n      qids: [...new Set(rows.map(row => row.qid))].sort(),\n    });\n  }\n  // Second pass, across taxon names: the same Korean label legitimately\n  // produced for two DIFFERENT scientific names (a homonym, or the same\n  // casual common name misapplied to two species in Wikidata) is a real\n  // ambiguity for the exact-match Korean-name lookup, even though each\n  // taxon name looked \"clean\" on its own in the first pass. Neither taxon\n  // is allowed to win arbitrarily -- both are quarantined.\n  const byKoreanName = new Map();\n  for (const row of perTaxonClean) {\n    const group = byKoreanName.get(row.korean_name) || [];\n    group.push(row);\n    byKoreanName.set(row.korean_name, group);\n  }\n  const clean = [];\n  for (const rows of byKoreanName.values()) {\n    if (rows.length > 1) {\n      for (const row of rows) {\n        conflicted.push({\n          taxon_name: row.taxon_name,\n          korean_name: row.korean_name,\n          qids: row.qids,\n          reason_code: 'ambiguous_korean_name_across_taxa',\n        });\n      }\n      continue;\n    }\n    clean.push(rows[0]);\n  }\n  clean.sort((a, b) => a.taxon_name.localeCompare(b.taxon_name));\n  conflicted.sort((a, b) => a.taxon_name.localeCompare(b.taxon_name) || a.korean_name.localeCompare(b.korean_name));\n  return {clean, conflicted, malformedRowCount};\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst hash = $('Hash Wikidata response').first().json.raw_sha256 ?? null;\n// Read by name, not $input.first(): 'Read active taxonomy and Korean\n// dataset state' now sits between the Hash node and this one so its output\n// is guaranteed available (by name) to 'Assemble Korean vernacular quality\n// gates' later -- which pushes this node's actual fetch payload off the\n// positional $input chain and onto a named lookup instead.\nconst fetched = $('Hash Wikidata response').first().json;\n// fullResponse + responseFormat 'text' surfaces the HTTP status alongside the\n// body text on the same item (see 'Fetch AviList snapshot' / 'Hash AviList\n// snapshot' in generate_n8n_reference_ingest.py for the established\n// convention this mirrors). A non-200 must never be treated as \"zero\n// candidates found\" -- those are different failures with different causes.\n// 'Fetch Wikidata Korean bird labels' sets neverError + onError:\n// continueRegularOutput, so a connection-level failure (DNS, refused,\n// timeout exhaustion) never throws -- it instead lands here with an\n// `error` field and no statusCode/data, exactly like the Neo4j nodes'\n// onError shape checked in VERIFY_START/VERIFY_BATCHES/VERIFY_FINALIZE.\nconst upstreamErrorText = String(fetched.error?.message || fetched.error || fetched.message || '');\nconst statusCode = Number(fetched.statusCode ?? 0);\nconst raw = fetched.data;\nlet parsed = null;\nlet parseError = null;\nif (statusCode === 200) {\n  try {\n    parsed = JSON.parse(raw);\n  } catch (error) {\n    parseError = String(error && error.message || error);\n  }\n}\n// A well-formed SPARQL JSON Results response always carries head.vars and a\n// results.bindings array, even when there are zero matches. Anything else\n// (an HTML error page, a partial/cut-off body, a differently-shaped payload)\n// is treated as \"not a usable response\" rather than silently coerced to an\n// empty-but-valid result set.\nconst wellFormed = !!(\n  parsed && parsed.head && Array.isArray(parsed.head.vars) &&\n  parsed.results && Array.isArray(parsed.results.bindings)\n);\nconst bindings = wellFormed ? parsed.results.bindings : [];\nconst {clean, conflicted, malformedRowCount} = classifyWikidataRows(bindings);\nconst fetchOk = statusCode === 200 && wellFormed;\n// Content-addressed immutable identity: two runs observing byte-identical\n// Wikidata content compute the exact same dataset id and source_release,\n// so they idempotently MERGE the same nodes instead of one run's hash\n// overwriting another's. Different content -- even fetched the same day --\n// gets a different id and never touches a prior snapshot's nodes. Only\n// computed on a genuinely successful, hashed fetch; a failed/malformed\n// fetch has nothing meaningful to anchor an identity to.\nconst dateStamp = String(config.retrieved_at || '').slice(0, 10) || 'unknown-date';\nconst wikidataDatasetId = (fetchOk && hash) ? `wikidata-dataset:taxon-labels:sha256-${hash}` : null;\nconst sourceRelease = (fetchOk && hash) ? `wikidata-snapshot:${dateStamp}:sha256-${hash.slice(0, 12)}` : null;\nreturn [{json: {\n  source_sha256: hash,\n  wikidata_dataset_id: wikidataDatasetId,\n  source_release: sourceRelease,\n  fetch_status_code: statusCode,\n  fetch_ok: fetchOk,\n  fetch_failure_reason: statusCode !== 200\n    ? (upstreamErrorText || `Wikidata SPARQL endpoint returned HTTP ${statusCode}`)\n    : (!wellFormed ? (parseError || upstreamErrorText || 'Wikidata SPARQL response was not a well-formed results document') : ''),\n  source_binding_count: bindings.length,\n  malformed_row_count: malformedRowCount,\n  distinct_taxon_name_count: clean.length + new Set(conflicted.map(row => row.taxon_name)).size,\n  clean_candidates: clean,\n  conflicted_candidates: conflicted,\n}}];"
       },
       "id": "e40749ff-e8c2-5c97-9caf-b4f078022fc4",
       "name": "Normalize Korean vernacular candidates",
@@ -315,6 +317,19 @@
     },
     {
       "parameters": {
+        "options": {}
+      },
+      "id": "d6d45843-98e7-567e-aeba-93baf1734ffa",
+      "name": "Loop Over Korean vernacular batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2440,
+        -180
+      ]
+    },
+    {
+      "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
         "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"rows\": literal($json[\"rows\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"source_sha256\": literal($json[\"source_sha256\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id MATCH (dataset:SourceDataset {id: $wikidata_dataset_id}) MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) CALL { WITH run, dataset, concept_set UNWIND $rows AS row MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}) SET vernacular.name = row.korean_name, vernacular.language = 'ko', vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id, vernacular.source_scientific_name_claim = row.taxon_name, vernacular.source_qids = row.qids, vernacular.source_release = $source_release, vernacular.retrieved_at = $retrieved_at MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) MERGE (run)-[:INGESTED]->(vernacular) WITH vernacular, dataset, row UNWIND row.qids AS qid MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id}) SET record.record_type = 'taxon_label', record.external_id = qid, record.raw_uri = 'https://www.wikidata.org/entity/' + qid, record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (vernacular)-[:FROM_RECORD]->(record) RETURN count(DISTINCT vernacular) AS loaded_vernacular_names } CALL { WITH run, dataset UNWIND $candidates AS row MERGE (candidate:VernacularNameCandidate { id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id }) SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name, candidate.reason_code = row.reason_code, candidate.qids = row.qids, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at MERGE (run)-[:QUARANTINED]->(candidate) WITH candidate, dataset, row UNWIND row.qids AS qid MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id}) SET record.record_type = 'taxon_label', record.external_id = qid, record.raw_uri = 'https://www.wikidata.org/entity/' + qid, record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (record)-[:HAS_VERNACULAR_CANDIDATE]->(candidate) RETURN count(DISTINCT candidate) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_vernacular_names, loaded_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
@@ -324,7 +339,7 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        2440,
+        2680,
         -180
       ],
       "credentials": {
@@ -340,14 +355,14 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble Korean vernacular quality gates').first().json;\nconst rows = $input.all().map(item => item.json);\nconst errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);\nconst indexes = new Set(rows.map(row => Number(row.batch_index)).filter(Number.isInteger));\nconst batchCount = rows.length ? Number(rows[0].batch_count) : 0;\nconst loadedVernacularNames = rows.reduce((sum, row) => sum + Number(row.loaded_vernacular_names || 0), 0);\nconst loadedCandidates = rows.reduce((sum, row) => sum + Number(row.loaded_candidates || 0), 0);\nconst loadOk = !errors.length && batchCount > 0 && indexes.size === batchCount && rows.length === batchCount\n  && loadedVernacularNames === expected.write_row_count\n  && loadedCandidates === expected.candidate_count;\nreturn [{json: {...expected,\n  load_ok: loadOk,\n  loaded_vernacular_names: loadedVernacularNames,\n  loaded_candidates: loadedCandidates,\n  failure_reason: loadOk ? '' : (errors.join('; ') || 'Korean vernacular batch counts did not match')\n}}];"
+        "jsCode": "const expected = $('Assemble Korean vernacular quality gates').first().json;\nconst rows = $input.all().map(item => item.json);\nconst errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);\n// Treat the Neo4j output as untrusted at this boundary. In particular, do\n// not coerce strings/booleans with Number(...): a malformed output must not\n// turn into a seemingly valid count and authorize Finalize.\nconst isNonNegativeSafeInteger = value =>\n  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;\nconst batchCount = rows.length && isNonNegativeSafeInteger(rows[0].batch_count)\n  ? rows[0].batch_count\n  : 0;\nconst validBatchRows = batchCount > 0 && rows.every(row =>\n  row && typeof row === 'object'\n  && row.batch_count === batchCount\n  && isNonNegativeSafeInteger(row.batch_index)\n  && row.batch_index < batchCount\n  && isNonNegativeSafeInteger(row.loaded_vernacular_names)\n  && isNonNegativeSafeInteger(row.loaded_candidates)\n);\nconst indexes = new Set(validBatchRows ? rows.map(row => row.batch_index) : []);\nconst loadedVernacularNames = validBatchRows\n  ? rows.reduce((sum, row) => sum + row.loaded_vernacular_names, 0)\n  : 0;\nconst loadedCandidates = validBatchRows\n  ? rows.reduce((sum, row) => sum + row.loaded_candidates, 0)\n  : 0;\nconst loadOk = !errors.length && validBatchRows && indexes.size === batchCount && rows.length === batchCount\n  && loadedVernacularNames === expected.write_row_count\n  && loadedCandidates === expected.candidate_count;\nreturn [{json: {...expected,\n  load_ok: loadOk,\n  loaded_vernacular_names: loadedVernacularNames,\n  loaded_candidates: loadedCandidates,\n  failure_reason: loadOk ? '' : (errors.join('; ') || 'Korean vernacular batch counts did not match')\n}}];"
       },
       "id": "937e9f99-3cbd-5376-87ca-bc6a1bb66b38",
       "name": "Verify Korean vernacular batches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2680,
+        2920,
         -180
       ]
     },
@@ -381,7 +396,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2920,
+        3160,
         -180
       ]
     },
@@ -396,7 +411,7 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        3160,
+        3400,
         -180
       ],
       "credentials": {
@@ -412,14 +427,14 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble Korean vernacular quality gates').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst finalizeOk = !errorText\n  && response.finalized_run_id === expected.run_id\n  && response.run_status === 'succeeded'\n  && response.active_release === expected.source_release\n  && response.active_dataset_id === expected.wikidata_dataset_id;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  loaded_vernacular_names: expected.loaded_vernacular_names,\n  loaded_candidates: expected.loaded_candidates,\n  failure_reason: finalizeOk ? '' : (errorText ||\n    'korean-vernacular-names activation was refused: either the reference-taxonomy ' +\n    'active concept set changed since this run resolved matches, or a concurrent run ' +\n    'already activated a newer snapshot first (lost the optimistic-concurrency race)')\n}}];"
+        "jsCode": "const expected = $('Verify Korean vernacular batches').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst finalizeOk = !errorText\n  && response.finalized_run_id === expected.run_id\n  && response.run_status === 'succeeded'\n  && response.active_release === expected.source_release\n  && response.active_dataset_id === expected.wikidata_dataset_id;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  loaded_vernacular_names: expected.loaded_vernacular_names,\n  loaded_candidates: expected.loaded_candidates,\n  failure_reason: finalizeOk ? '' : (errorText ||\n    'korean-vernacular-names activation was refused: either the reference-taxonomy ' +\n    'active concept set changed since this run resolved matches, or a concurrent run ' +\n    'already activated a newer snapshot first (lost the optimistic-concurrency race)')\n}}];"
       },
       "id": "d3bbc19f-1cd4-5ab1-beca-5acd2f1ff2af",
       "name": "Verify Korean vernacular release finalized",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3400,
+        3640,
         -180
       ]
     },
@@ -453,7 +468,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3640,
+        3880,
         -180
       ]
     },
@@ -472,7 +487,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        3880,
+        4120,
         -280
       ],
       "onError": "continueRegularOutput",
@@ -480,9 +495,61 @@
     },
     {
       "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: $input.first().json}];"
+      },
+      "id": "14976182-0281-56dd-8f37-cf014d89781c",
+      "name": "Capture Korean vernacular failure context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "graphDb",
+        "operation": "executeQuery",
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"failure_reason\": literal($json[\"failure_reason\"]),\"run_id\": literal($json[\"run_id\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' SET run.status = 'failed', run.finished_at = datetime(), run.failure_reason = $failure_reason RETURN run.id AS marked_failed_run_id, run.status AS run_status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+      },
+      "id": "7fc005e8-afb0-54e0-87ab-4a91afd1c216",
+      "name": "Mark Korean vernacular run failed",
+      "type": "n8n-nodes-neo4j.neo4j",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        220
+      ],
+      "credentials": {
+        "neo4jApi": {
+          "id": "DvmTD1qB0Kb7TRml",
+          "name": "Neo4j"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Capture Korean vernacular failure context').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst runMarkedFailed = !errorText\n  && response.marked_failed_run_id === expected.run_id\n  && response.run_status === 'failed';\nreturn [{json: {...expected, run_marked_failed: runMarkedFailed}}];"
+      },
+      "id": "259a0ddd-bce3-5262-98f1-c50759d81fbf",
+      "name": "Record Korean vernacular run failure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        220
+      ]
+    },
+    {
+      "parameters": {
         "authentication": "webhook",
         "operation": "sendLegacy",
-        "content": "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + String($json.run_id || 'not-started') + '\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) }}",
+        "content": "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + String($json.run_id || 'not-started') + '\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) + '\\nRun bookkeeping: ' + ($json.run_marked_failed ? 'marked failed in Neo4j' : 'not recorded in Neo4j (no run was loading, or the bookkeeping write itself failed)') }}",
         "options": {
           "username": "RobinGraph Operations",
           "wait": true
@@ -493,7 +560,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        1720,
+        2440,
         220
       ],
       "onError": "continueRegularOutput",
@@ -508,7 +575,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1960,
+        2680,
         220
       ]
     },
@@ -519,7 +586,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        4120,
+        4360,
         -180
       ]
     },
@@ -804,7 +871,7 @@
         ],
         [
           {
-            "node": "Notify Korean vernacular failure",
+            "node": "Capture Korean vernacular failure context",
             "type": "main",
             "index": 0
           }
@@ -844,7 +911,7 @@
         ],
         [
           {
-            "node": "Notify Korean vernacular failure",
+            "node": "Capture Korean vernacular failure context",
             "type": "main",
             "index": 0
           }
@@ -855,7 +922,25 @@
       "main": [
         [
           {
+            "node": "Loop Over Korean vernacular batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Korean vernacular batches": {
+      "main": [
+        [
+          {
             "node": "Upsert Korean vernacular names batch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verify Korean vernacular batches",
             "type": "main",
             "index": 0
           }
@@ -866,7 +951,7 @@
       "main": [
         [
           {
-            "node": "Verify Korean vernacular batches",
+            "node": "Loop Over Korean vernacular batches",
             "type": "main",
             "index": 0
           }
@@ -895,7 +980,7 @@
         ],
         [
           {
-            "node": "Notify Korean vernacular failure",
+            "node": "Capture Korean vernacular failure context",
             "type": "main",
             "index": 0
           }
@@ -935,7 +1020,7 @@
         ],
         [
           {
-            "node": "Notify Korean vernacular failure",
+            "node": "Capture Korean vernacular failure context",
             "type": "main",
             "index": 0
           }
@@ -947,6 +1032,39 @@
         [
           {
             "node": "Korean vernacular ingest finished",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capture Korean vernacular failure context": {
+      "main": [
+        [
+          {
+            "node": "Mark Korean vernacular run failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Korean vernacular run failed": {
+      "main": [
+        [
+          {
+            "node": "Record Korean vernacular run failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Korean vernacular run failure": {
+      "main": [
+        [
+          {
+            "node": "Notify Korean vernacular failure",
             "type": "main",
             "index": 0
           }
