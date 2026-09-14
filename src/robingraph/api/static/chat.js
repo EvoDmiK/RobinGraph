@@ -58,12 +58,22 @@
     clarify: { label: "추가 확인 필요", className: "disposition-clarify" },
   };
 
+  /**
+   * Only answer/abstain/clarify are known-safe dispositions. Anything else
+   * (a future backend value, or a hostile/garbled payload) must never be
+   * echoed back as if it were trusted content, and must never be treated as
+   * a rendered answer -- callers branch on `recognized` to fail closed.
+   */
   function formatDisposition(disposition) {
-    var known = DISPOSITION_LABELS[disposition];
-    if (known) {
-      return known;
+    // Require an exact string match rather than `DISPOSITION_LABELS[disposition]`:
+    // bracket lookup coerces its key to a string first, so a non-string
+    // payload like `["answer"]` (e.g. a malformed/hostile JSON body) would
+    // otherwise coerce to "answer" and be treated as recognized.
+    if (typeof disposition === "string" && Object.prototype.hasOwnProperty.call(DISPOSITION_LABELS, disposition)) {
+      var known = DISPOSITION_LABELS[disposition];
+      return { label: known.label, className: known.className, recognized: true };
     }
-    return { label: String(disposition), className: "disposition-unknown" };
+    return { label: "지원되지 않는 응답", className: "disposition-unknown", recognized: false };
   }
 
   function formatBackendMode(mode) {
@@ -84,7 +94,12 @@
    * Never surfaces a raw exception message or stack trace; an HTTP
    * `detail` string from our own FastAPI 4xx responses is short, plain
    * text (see AnswerResponse validation), but is still length-capped and
-   * stripped of control characters as defense in depth.
+   * stripped of control characters as defense in depth. Each 4xx status we
+   * recognize (400/401/403/422/404/429/503) gets its own honest message
+   * (bad request / auth required / forbidden / validation / not found /
+   * rate-limited / temporarily unavailable) rather than being collapsed
+   * into a generic "server error" -- only a genuinely unrecognized status
+   * falls through to the generic message below.
    */
   function stripControlCharacters(value) {
     var result = "";
@@ -102,15 +117,30 @@
     if (context.kind === "network") {
       return "서버에 연결할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도하세요.";
     }
+    if (context.kind === "unsupported-response") {
+      return "지원되지 않는 응답 형식을 받았습니다. 다시 시도해주세요.";
+    }
     if (context.kind === "http") {
       var status = context.status;
       var rawDetail = typeof context.detail === "string" ? context.detail : "";
       var safeDetail = stripControlCharacters(rawDetail).trim().slice(0, 300);
+      if (status === 400) {
+        return safeDetail ? "요청이 올바르지 않습니다: " + safeDetail : "요청이 올바르지 않습니다.";
+      }
+      if (status === 401) {
+        return "인증이 필요합니다. 로그인 상태를 확인한 뒤 다시 시도하세요.";
+      }
+      if (status === 403) {
+        return "이 작업에 대한 접근 권한이 없습니다.";
+      }
       if (status === 422) {
         return safeDetail ? "입력을 확인해주세요: " + safeDetail : "입력을 확인해주세요.";
       }
       if (status === 404) {
         return "요청한 정보를 찾을 수 없습니다.";
+      }
+      if (status === 429) {
+        return "요청이 너무 많습니다. 잠시 후 다시 시도하세요.";
       }
       if (status === 503) {
         return "백엔드를 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하세요.";
@@ -304,6 +334,17 @@
             appendErrorMessage(
               sanitizeErrorMessage({ kind: "http", status: result.response.status, detail: detail })
             );
+            return;
+          }
+          // Fail closed: only answer/abstain/clarify are known-safe
+          // dispositions. A 2xx with any other (or missing) disposition is
+          // never rendered as a successful answer, and the unrecognized
+          // value itself is never echoed back as trusted content -- the
+          // user only ever sees a fixed, generic "unsupported response"
+          // message.
+          var dispositionInfo = formatDisposition(result.payload && result.payload.disposition);
+          if (!dispositionInfo.recognized) {
+            appendErrorMessage(sanitizeErrorMessage({ kind: "unsupported-response" }));
             return;
           }
           appendAnswerMessage(result.payload);
