@@ -96,10 +96,22 @@ test("formatDisposition gives honest Korean labels for answer/abstain and a safe
   assert.equal(abstain.className, "disposition-abstain");
   assert.match(abstain.label, /근거/);
 
+  const clarify = chat.formatDisposition("clarify");
+  assert.equal(clarify.className, "disposition-clarify");
+  assert.match(clarify.label, /확인/);
+
   const hostileDisposition = "<script>alert(1)</script>";
   const fallback = chat.formatDisposition(hostileDisposition);
   assert.equal(fallback.className, "disposition-unknown");
   assert.equal(fallback.label, hostileDisposition);
+});
+
+test("formatBackendMode explains fixture, Neo4j, unavailable, and unsupported modes", () => {
+  assert.match(chat.formatBackendMode("fixture"), /합성 데이터/);
+  assert.match(chat.formatBackendMode("fixture"), /검색 미지원/);
+  assert.match(chat.formatBackendMode("neo4j"), /그래프 DB/);
+  assert.match(chat.formatBackendMode("future-mode"), /지원되지 않는 모드/);
+  assert.match(chat.formatBackendMode(null), /확인 불가/);
 });
 
 test("sanitizeErrorMessage never leaks raw exception detail and stays specific per failure kind", () => {
@@ -165,4 +177,6 @@ test("index.html only references same-origin local assets, never a remote script
     assert.equal(/^https?:\/\//i.test(reference), false, "asset reference must be same-origin/relative: " + reference);
     assert.equal(reference.startsWith("//"), false, "asset reference must not be protocol-relative: " + reference);
   }
+  assert.deepEqual(scriptSrcs, ["/static/chat.js"]);
+  assert.deepEqual(linkHrefs, ["/static/styles.css"]);
 });
