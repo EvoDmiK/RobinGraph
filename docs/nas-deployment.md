@@ -23,7 +23,7 @@ flowchart LR
 | `compose.nas.yml` | API 컨테이너와 일회성 `nas-tools` 프로필, healthcheck·로그·보안 설정 |
 | `.env.nas.example` | API 전용 환경 변수 템플릿 |
 | `.env.nas.ingest.example` | n8n 배포·적재 도구 전용 secret 템플릿 |
-| `scripts/deploy_nas.sh` | preflight, build, 배포, 검증, 상태, 로그, 중지, workflow 배포와 AVONET 적재 명령 |
+| `scripts/deploy_nas.sh` | preflight, build, deploy, update, verify, status, logs, stop, rollback, dry-run, workflow 배포와 AVONET 적재 명령. action 인자를 생략하면 아무 명령도 실행하지 않고 즉시 실패한다(§3) |
 | `.dockerignore` | 비밀값, 개발 캐시와 불필요한 build context 제외 |
 | `scripts/verify_api_deployment.py` | 배포 후 공개 도메인의 OpenAPI·응답 계약을 이 checkout과 대조하는 읽기 전용 검증기(§8) |
 | `scripts/package_nas_release.sh` | git 커밋에서 결정적이고 비밀 없는 이전용 묶음(tar.gz)과 체크섬 manifest를 생성하는 오프라인 스크립트(§9) |
@@ -145,13 +145,25 @@ sh scripts/deploy_nas.sh verify
 sh scripts/deploy_nas.sh status
 ```
 
-모든 action은 `preflight`와 같은 fail-closed 점검(외부 network 존재, 환경 파일
-존재, `serve-neo4j`일 때 필수 값 존재)을 먼저 통과해야 실제 명령을 실행한다.
-점검에 실패하면 non-zero로 종료하고 아무 컨테이너도 건드리지 않는다. `build`는
-이미지만 고정 lockfile로 다시 빌드하고 실행 중인 컨테이너는 바꾸지 않는다.
-`deploy`는 같은 build를 수행한 뒤 API 컨테이너를 교체한다. 최대 120초 동안 Docker
-healthcheck를 기다리며 실패하면 최근 로그를 출력하고 non-zero로 종료한다. 같은
-작업을 수동으로 실행하려면 다음 명령을 쓴다.
+`scripts/deploy_nas.sh`는 action 인자 없이 실행하면(예: `sh scripts/deploy_nas.sh`
+단독 실행) 어떤 명령도, Docker 호출 한 번도 실행하지 않고 usage 메시지와 함께
+즉시 non-zero로 종료한다 — 인자가 없다고 `deploy` 등 특정 action으로 기본
+동작하지 않는다. 모든 action은 `preflight`와 같은 fail-closed 점검(외부 network
+존재, 환경 파일 존재, `serve-neo4j`일 때 필수 값 존재)을 먼저 통과해야 실제
+명령을 실행한다. 점검에 실패하면 non-zero로 종료하고 아무 컨테이너도 건드리지
+않는다. `build`는 이미지만 고정 lockfile로 다시 빌드하고 실행 중인 컨테이너는
+바꾸지 않는다. `deploy`와 `update`는 동일하게 같은 build를 수행한 뒤 API
+컨테이너를 교체한다 — 이름만 다르다: `update`는 `git pull` 뒤의 의도적인
+재배포임을 명시적으로 드러내기 위한 별도 action이다. 최대 120초 동안 Docker
+healthcheck를 기다리며 실패하면 최근 로그를 출력하고 non-zero로 종료한다.
+`dry-run`은 동일한 fail-closed 점검과 `docker compose ... config`만 실행해
+무엇이 바뀔지 미리 보여줄 뿐, `build`·`up`·`down` 중 어느 것도 호출하지 않는다.
+
+```sh
+sh scripts/deploy_nas.sh dry-run
+```
+
+같은 작업을 수동으로 실행하려면 다음 명령을 쓴다.
 
 ```sh
 docker compose --env-file .env.nas -f compose.nas.yml config
@@ -340,9 +352,14 @@ n8n gateway를 사용한다. 9,879종 매핑, claim 128,331개, 후보 1,130개�
 
 ```sh
 git pull --ff-only origin dev
-sh scripts/deploy_nas.sh deploy
+sh scripts/deploy_nas.sh update
 sh scripts/deploy_nas.sh logs
 ```
+
+`update`는 `deploy`와 동일하게 이미지를 다시 빌드하고 API 컨테이너를 교체한다
+— `git pull` 직후의 의도적인 재배포에는 `update`를, 최초 배포나 설정만 바뀐
+일반적인 재적용에는 `deploy`를 쓴다. 둘 다 명시적으로 실행해야 하며(§3의
+무인자 실패 참고), 어느 쪽도 다른 action의 부수 효과로 자동 실행되지 않는다.
 
 API 컨테이너를 중지하되 컨테이너·이미지·volume은 그대로 두어 되돌릴 수 있게
 하려면 `stop` action을 사용한다. 이 action은 `docker compose ... stop api`만
@@ -361,10 +378,23 @@ sh scripts/deploy_nas.sh stop
 docker compose --env-file .env.nas -f compose.nas.yml down
 ```
 
-문제가 생기면 `.env.nas`의 `ROBINGRAPH_IMAGE`를 이전 불변 태그로 바꾸거나 이전
-Git 커밋을 별도 checkout한 뒤 다시 배포한다. Neo4j 데이터와 기존 Django/n8n
-컨테이너는 이 Compose 프로젝트가 소유하지 않으므로 `down`의 영향을 받지 않는다.
-실패한 AVONET batch는 검증된 active release 포인터를 교체하지 않는다.
+문제가 생기면 `rollback` action으로 되돌린다. 이 action은 로컬에 이미 존재하는
+이전 불변 이미지 태그를 명시적으로 요구하며, 그 태그가 `docker image inspect`로
+로컬에서 확인되지 않으면 아무것도 바꾸지 않고 즉시 실패한다. `rollback`은
+`build`를 절대 호출하지 않고(항상 이미 존재하는 이미지만 사용), `down`이나
+volume 삭제도 호출하지 않는다 — `up -d`로 지정한 이미지를 가리키도록 API
+컨테이너만 교체한 뒤 `deploy`/`update`와 같은 healthcheck 대기로 정상 기동을
+확인한다.
+
+```sh
+sh scripts/deploy_nas.sh rollback robingraph-api:<이전-불변-태그>
+```
+
+되돌릴 태그가 로컬에 없다면 먼저 그 커밋을 별도 checkout해 `sh scripts/deploy_nas.sh
+build`로 다시 만들고 원하는 불변 태그를 붙인 뒤 위 명령을 실행한다. Neo4j 데이터와
+기존 Django/n8n 컨테이너는 이 Compose 프로젝트가 소유하지 않으므로 `rollback`이나
+`down`의 영향을 받지 않는다. 실패한 AVONET batch는 검증된 active release 포인터를
+교체하지 않는다.
 
 ## 8. 배포 후 공개 계약 검증
 
@@ -492,24 +522,48 @@ worktree 안의 경로를 주면 스크립트가 즉시 실패한다(작업 중�
 내용은 항상 지정한 커밋의 git object database에서만 가져온다 — 현재 작업
 디렉터리에 남아 있는 미커밋 변경, 특히 값이 채워진 `.env.nas`나
 `.env.nas.ingest`가 실수로 worktree에 있더라도 그 파일들은 애초에 git에
-추적되지 않으므로 묶음에 절대 포함되지 않는다. 그래도 방어적으로, 스크립트는
-묶여 나갈 파일 목록을 확인해 `*.example`이 아닌 `.env`류, `credential`·
-`secret`이 포함된 이름, `*.pem`/`*.key`가 하나라도 있으면 묶음을 만들지
-않고 즉시 실패한다.
+추적되지 않으므로 묶음에 절대 포함되지 않는다.
+
+아카이브는 전체 저장소의 whole-tree `git archive`가 아니라, 오프라인으로
+풀고 Docker 이미지를 빌드·실행하고 이 문서가 설명하는 NAS 도구를 운영하는 데
+필요한 **런타임/배포 전용 allowlist**로 범위를 고정한다 — `Dockerfile`,
+`compose.nas.yml`, `pyproject.toml`/`uv.lock`/`README.md`/`.python-version`,
+`src/`, `data/eval/v1/`, `config/`, 4개의 운영 n8n workflow 정의
+(`n8n/robingraph-*.json`), `.env.nas*.example`, `.dockerignore`, 그리고
+§7까지 다룬 NAS 운영 도구 스크립트(`scripts/deploy_nas.sh`,
+`scripts/package_nas_release.sh`, `scripts/verify_api_deployment.py`,
+`scripts/deploy_n8n_operational_ingest.py`,
+`scripts/deploy_n8n_reference_ingest.py`,
+`scripts/manage_n8n_korean_vernacular.py`, `scripts/load_n8n_avonet.py`)와
+운영 런북(`docs/nas-deployment.md`, `docs/n8n/korean-vernacular-ingest.md`)만
+포함한다. `tests/`, `.codex/` agent 파일, `.github/` CI 메타데이터,
+`docs/work-log/`, n8n 초안 candidate, 개발 전용 generator 스크립트, 그 밖의
+설계·의사결정 문서는 커밋에 있더라도 절대 포함되지 않는다. 그래도 방어적으로,
+스크립트는 묶여 나갈 최종 파일 목록을 다시 확인해 `*.example`이 아닌 `.env`류,
+`credential`·`secret`이 포함된 이름, `*.pem`/`*.key`가 하나라도 있으면 묶음을
+만들지 않고 즉시 실패한다. 이 allowlist에 있어야 할 파일이 해당 커밋에 없으면
+(예: 파일 이름 변경) 아카이브를 만들지 않고 즉시 실패한다.
 
 실행하면 다음을 만든다.
 
-- `robingraph-nas-release-<commit>.tar.gz`: `git archive`로 만든 결정적
-  tar를 `gzip -n`(원본 파일명·시각 미기록)으로 압축한 이전용 아카이브.
-- `robingraph-nas-release-<commit>.manifest.txt`: 소스 커밋, 아카이브
-  SHA-256, 파일 개수, 그리고 아카이브에 포함된 모든 파일의 경로별
-  SHA-256(git blob 내용 기준)을 나열한 평문 manifest.
+- `robingraph-nas-release-<commit>.tar.gz`: allowlist에 속한 커밋 시점 git
+  blob만으로 만든 결정적 tar를 `gzip -n`과 동일하게(원본 파일명·시각
+  미기록) 압축한 이전용 아카이브. 아카이브 루트 바로 아래에는
+  **`MANIFEST.txt`가 함께 들어 있다** — 소스 커밋과 포함된 모든 파일의
+  경로별 SHA-256을 담고 있어, 아카이브가 원본 checkout이나 이 manifest
+  없이 단독으로 전달돼도(USB 등) 그 자리에서 압축을 풀고 완전히
+  오프라인으로 각 파일의 SHA-256을 재계산해 내용이 손상되지 않았는지
+  검증할 수 있다.
+- `robingraph-nas-release-<commit>.manifest.txt`: 위 내장 `MANIFEST.txt`와
+  같은 소스 커밋·파일별 SHA-256 목록에 더해, 아카이브 자체의 파일명과
+  SHA-256을 추가로 담은 외부 manifest. 전송 전에 아카이브를 통째로 검증할
+  때 사용한다(아래).
 
 같은 커밋으로 깨끗한(서로 다른) 출력 디렉터리 두 곳에 두 번 실행하면 두
 아카이브와 두 manifest가 바이트 단위로 완전히 같다 — 파일명도, 내용도,
-SHA-256도 같다. 이 성질은 `git archive`가 커밋과 git 버전이 같으면 항상
-같은 tar 바이트를 만들고, `gzip -n`이 원본 파일명·시각을 헤더에 남기지
-않기 때문에 성립한다.
+SHA-256도 같다. 이 성질은 tar 구성(파일 목록, 각 항목의 mtime·소유권·mode)이
+전적으로 해당 커밋의 git blob 내용과 커밋 시각에서 결정되고, 실행 시점의
+실제 시각이나 호출 순서에 의존하는 값이 전혀 섞이지 않기 때문에 성립한다.
 
 NAS에서 받은 뒤에는 아카이브의 SHA-256을 다시 계산해 manifest의
 `archive_sha256` 값과 직접 비교해 전송 중 손상이 없었는지 확인한다.
@@ -520,7 +574,22 @@ sha256sum robingraph-nas-release-<commit>.tar.gz
 tar xzf robingraph-nas-release-<commit>.tar.gz
 ```
 
-풀어낸 디렉터리는 일반 checkout과 같은 구조이므로, 그 안에서 §1의 `.env.nas`·
-`.env.nas.ingest` 준비 단계부터 이어서 진행하면 된다. 이 스크립트는 배포
-자체를 수행하지 않는다 — 항상 §2 이후 단계를 운영자가 직접, 또는
+외부 `*.manifest.txt`를 잃어버렸거나(USB로 아카이브만 전달된 경우 등) 처음부터
+아카이브만 받았다면, 압축을 푼 뒤 내장된 `MANIFEST.txt`만으로도 완전히
+오프라인으로 같은 검증을 할 수 있다.
+
+```sh
+tar xzf robingraph-nas-release-<commit>.tar.gz
+cd robingraph-nas-release-<commit>
+sha256sum --check <(sed '1,/^---$/d' MANIFEST.txt)
+```
+
+(`MANIFEST.txt`의 `---` 아래는 이미 `<sha256>  <경로>` 형식이므로 `sha256sum
+--check`가 그대로 읽는다. macOS 등 `shasum`만 있는 환경에서는
+`shasum -a 256 --check <(sed '1,/^---$/d' MANIFEST.txt)`를 쓴다.)
+
+풀어낸 디렉터리는 §1~§7에서 쓰는 런타임/배포 파일만 있는 축소된 checkout이므로,
+그 안에서 §1의 `.env.nas`·`.env.nas.ingest` 준비 단계부터 이어서 진행하면
+된다(테스트, `.codex`, 설계 문서 등 개발 전용 자료는 애초에 들어 있지 않다).
+이 스크립트는 배포 자체를 수행하지 않는다 — 항상 §2 이후 단계를 운영자가 직접, 또는
 `scripts/deploy_nas.sh`로 명시적으로 실행해야 한다.
