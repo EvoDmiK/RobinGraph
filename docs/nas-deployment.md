@@ -23,9 +23,10 @@ flowchart LR
 | `compose.nas.yml` | API 컨테이너와 일회성 `nas-tools` 프로필, healthcheck·로그·보안 설정 |
 | `.env.nas.example` | API 전용 환경 변수 템플릿 |
 | `.env.nas.ingest.example` | n8n 배포·적재 도구 전용 secret 템플릿 |
-| `scripts/deploy_nas.sh` | preflight, 배포, 검증, workflow 배포와 AVONET 적재 명령 |
+| `scripts/deploy_nas.sh` | preflight, build, 배포, 검증, 상태, 로그, 중지, workflow 배포와 AVONET 적재 명령 |
 | `.dockerignore` | 비밀값, 개발 캐시와 불필요한 build context 제외 |
 | `scripts/verify_api_deployment.py` | 배포 후 공개 도메인의 OpenAPI·응답 계약을 이 checkout과 대조하는 읽기 전용 검증기(§8) |
+| `scripts/package_nas_release.sh` | git 커밋에서 결정적이고 비밀 없는 이전용 묶음(tar.gz)과 체크섬 manifest를 생성하는 오프라인 스크립트(§9) |
 
 ## 1. NAS checkout 준비
 
@@ -138,14 +139,19 @@ NPM과 n8n도 같은 이유로 수동 연결 대신 각 운영 Compose에 `robin
 
 ```sh
 sh scripts/deploy_nas.sh preflight
+sh scripts/deploy_nas.sh build
 sh scripts/deploy_nas.sh deploy
 sh scripts/deploy_nas.sh verify
 sh scripts/deploy_nas.sh status
 ```
 
-`deploy`는 외부 network와 환경값을 검사하고, 고정 lockfile로 이미지를 빌드한 뒤
-API를 교체한다. 최대 120초 동안 Docker healthcheck를 기다리며 실패하면 최근 로그를
-출력하고 non-zero로 종료한다. 같은 작업을 수동으로 실행하려면 다음 명령을 쓴다.
+모든 action은 `preflight`와 같은 fail-closed 점검(외부 network 존재, 환경 파일
+존재, `serve-neo4j`일 때 필수 값 존재)을 먼저 통과해야 실제 명령을 실행한다.
+점검에 실패하면 non-zero로 종료하고 아무 컨테이너도 건드리지 않는다. `build`는
+이미지만 고정 lockfile로 다시 빌드하고 실행 중인 컨테이너는 바꾸지 않는다.
+`deploy`는 같은 build를 수행한 뒤 API 컨테이너를 교체한다. 최대 120초 동안 Docker
+healthcheck를 기다리며 실패하면 최근 로그를 출력하고 non-zero로 종료한다. 같은
+작업을 수동으로 실행하려면 다음 명령을 쓴다.
 
 ```sh
 docker compose --env-file .env.nas -f compose.nas.yml config
@@ -338,7 +344,18 @@ sh scripts/deploy_nas.sh deploy
 sh scripts/deploy_nas.sh logs
 ```
 
-컨테이너를 중지하되 이미지와 도구 volume은 유지하려면 다음 명령을 사용한다.
+API 컨테이너를 중지하되 컨테이너·이미지·volume은 그대로 두어 되돌릴 수 있게
+하려면 `stop` action을 사용한다. 이 action은 `docker compose ... stop api`만
+실행하며 `down`이나 volume 삭제는 절대 호출하지 않는다.
+
+```sh
+sh scripts/deploy_nas.sh stop
+```
+
+다시 시작하려면 `deploy`를 다시 실행하거나(이미지가 최신이면 재빌드 없이도
+`docker compose --env-file .env.nas -f compose.nas.yml start api`로 충분하다).
+컨테이너 자체를 제거하되 이미지와 도구 volume은 유지하려면 다음 명령을 수동으로
+사용한다.
 
 ```sh
 docker compose --env-file .env.nas -f compose.nas.yml down
@@ -455,3 +472,55 @@ UA로는 통과함, 2026-09-12 확인). 그래서 이 스크립트는 직접 만
   직접 실행할 수 없다** — 확인된 Tailscale 경로나 NAS 콘솔에 접근 권한이
   있는 운영자가 직접 실행해야 한다. 자세한 조사 기록은
   [2026-09-12 작업 기록](work-log/2026-09-12.md) 참고.
+
+## 9. `git pull` 없이 NAS로 옮길 배포 묶음 만들기
+
+NAS가 이 Git 원격에 직접 접근할 수 없을 때(방화벽, 오프라인 구간, USB로만
+옮기는 경우 등) `scripts/package_nas_release.sh`로 특정 커밋의 결정적이고
+비밀 없는 이전용 묶음을 미리 만들 수 있다. 이 스크립트는 Docker나 네트워크를
+전혀 사용하지 않고, 아무것도 배포하거나 push하지 않는다 — 파일만 쓴다.
+
+```sh
+sh scripts/package_nas_release.sh --ref <commit-ish> --output-dir <NAS_밖의_경로>
+```
+
+`--ref`를 생략하면 `HEAD`, `--output-dir`를 생략하면 `mktemp -d`로 만든
+임시 디렉터리를 쓴다. **출력 디렉터리는 반드시 이 worktree 밖이어야 한다** —
+worktree 안의 경로를 주면 스크립트가 즉시 실패한다(작업 중인 checkout에
+결과물이 섞여 실수로 커밋되는 것을 막기 위함).
+
+내용은 항상 지정한 커밋의 git object database에서만 가져온다 — 현재 작업
+디렉터리에 남아 있는 미커밋 변경, 특히 값이 채워진 `.env.nas`나
+`.env.nas.ingest`가 실수로 worktree에 있더라도 그 파일들은 애초에 git에
+추적되지 않으므로 묶음에 절대 포함되지 않는다. 그래도 방어적으로, 스크립트는
+묶여 나갈 파일 목록을 확인해 `*.example`이 아닌 `.env`류, `credential`·
+`secret`이 포함된 이름, `*.pem`/`*.key`가 하나라도 있으면 묶음을 만들지
+않고 즉시 실패한다.
+
+실행하면 다음을 만든다.
+
+- `robingraph-nas-release-<commit>.tar.gz`: `git archive`로 만든 결정적
+  tar를 `gzip -n`(원본 파일명·시각 미기록)으로 압축한 이전용 아카이브.
+- `robingraph-nas-release-<commit>.manifest.txt`: 소스 커밋, 아카이브
+  SHA-256, 파일 개수, 그리고 아카이브에 포함된 모든 파일의 경로별
+  SHA-256(git blob 내용 기준)을 나열한 평문 manifest.
+
+같은 커밋으로 깨끗한(서로 다른) 출력 디렉터리 두 곳에 두 번 실행하면 두
+아카이브와 두 manifest가 바이트 단위로 완전히 같다 — 파일명도, 내용도,
+SHA-256도 같다. 이 성질은 `git archive`가 커밋과 git 버전이 같으면 항상
+같은 tar 바이트를 만들고, `gzip -n`이 원본 파일명·시각을 헤더에 남기지
+않기 때문에 성립한다.
+
+NAS에서 받은 뒤에는 아카이브의 SHA-256을 다시 계산해 manifest의
+`archive_sha256` 값과 직접 비교해 전송 중 손상이 없었는지 확인한다.
+
+```sh
+sha256sum robingraph-nas-release-<commit>.tar.gz
+# manifest의 archive_sha256 줄과 값이 같은지 확인
+tar xzf robingraph-nas-release-<commit>.tar.gz
+```
+
+풀어낸 디렉터리는 일반 checkout과 같은 구조이므로, 그 안에서 §1의 `.env.nas`·
+`.env.nas.ingest` 준비 단계부터 이어서 진행하면 된다. 이 스크립트는 배포
+자체를 수행하지 않는다 — 항상 §2 이후 단계를 운영자가 직접, 또는
+`scripts/deploy_nas.sh`로 명시적으로 실행해야 한다.
