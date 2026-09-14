@@ -6,13 +6,18 @@ ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 COMPOSE_FILE="$ROOT_DIR/compose.nas.yml"
 API_ENV=${ROBINGRAPH_NAS_API_ENV:-"$ROOT_DIR/.env.nas"}
 TOOLS_ENV=${ROBINGRAPH_NAS_TOOLS_ENV:-"$ROOT_DIR/.env.nas.ingest"}
-ACTION=${1:-deploy}
-[ "$#" -gt 0 ] && shift
 
 die() {
   echo "error: $*" >&2
   exit 1
 }
+
+# No default action: an invocation with zero arguments must fail closed
+# before touching Docker at all, rather than silently defaulting to a
+# mutating action such as `deploy`.
+[ "$#" -gt 0 ] || die "usage: $0 {preflight|build|deploy|update|verify|status|logs|stop|rollback|dry-run|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet|package}"
+ACTION=$1
+shift
 
 require_command() {
   command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
@@ -95,6 +100,12 @@ preflight_tools() {
   compose_tools config --quiet
 }
 
+build_and_deploy_api() {
+  compose_api build --pull api
+  compose_api up -d --remove-orphans api
+  wait_for_api
+}
+
 wait_for_api() {
   container_id=$(compose_api ps -q api)
   [ -n "$container_id" ] || die "API container was not created"
@@ -129,9 +140,41 @@ case "$ACTION" in
     ;;
   deploy)
     preflight_api
-    compose_api build --pull api
-    compose_api up -d --remove-orphans api
+    build_and_deploy_api
+    ;;
+  update)
+    # Deliberate, explicit re-deploy entry point: identical to `deploy`
+    # (rebuild the image, then replace the running container), named
+    # separately so `git pull && sh scripts/deploy_nas.sh update` reads as
+    # an intentional roll-forward rather than an implicit side effect of
+    # some other action.
+    preflight_api
+    build_and_deploy_api
+    ;;
+  rollback)
+    # Rolls the running api container back to a previously built, still
+    # locally present image tag. Never rebuilds (no `compose_api build`)
+    # and never calls `down` or touches volumes -- it only swaps the image
+    # reference used by `up` and then waits for the container to become
+    # healthy again, the same recovery health-check `deploy`/`update` use.
+    [ "$#" -ge 1 ] || die "usage: $0 rollback <previously-built-image-ref>"
+    rollback_image=$1
+    preflight_api
+    docker image inspect "$rollback_image" >/dev/null 2>&1 ||
+      die "rollback image not found locally; it must already exist as a previously built/tagged image: $rollback_image"
+    ROBINGRAPH_IMAGE="$rollback_image" compose_api up -d --remove-orphans api
     wait_for_api
+    ;;
+  dry-run)
+    # Read-only plan action: runs the same fail-closed preflight checks as
+    # every mutating action and prints the resolved compose configuration,
+    # but never calls `build`, `up`, `down`, or any other mutating command.
+    preflight_api
+    echo "dry-run: no changes were made. A 'deploy' or 'update' here would run, in order:"
+    echo "  1) docker compose --env-file $API_ENV -f $COMPOSE_FILE build --pull api"
+    echo "  2) docker compose --env-file $API_ENV -f $COMPOSE_FILE up -d --remove-orphans api"
+    echo "  3) wait for the api container healthcheck to report healthy"
+    compose_api config
     ;;
   stop)
     preflight_api
@@ -218,7 +261,7 @@ case "$ACTION" in
     exec "$SCRIPT_DIR/package_nas_release.sh" "$@"
     ;;
   *)
-    die "usage: $0 {preflight|build|deploy|verify|status|logs|stop|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet|package}"
+    die "usage: $0 {preflight|build|deploy|update|verify|status|logs|stop|rollback|dry-run|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet|package}"
     ;;
 esac
 
