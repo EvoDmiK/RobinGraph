@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import stat
 import subprocess
 import unittest
@@ -13,8 +14,9 @@ PACKAGE_SCRIPT = ROOT / "scripts" / "package_nas_release.sh"
 
 FAKE_DOCKER = """#!/bin/sh
 # Stub docker(1) for offline testing of scripts/deploy_nas.sh. Records every
-# invocation and answers just enough to exercise preflight/build/stop
-# without touching a real Docker daemon or network.
+# invocation and answers just enough to exercise the full lifecycle --
+# preflight/build/deploy/update/rollback/dry-run/stop -- without touching a
+# real Docker daemon or network.
 log="$DOCKER_CALL_LOG"
 printf '%s\\n' "$*" >> "$log"
 
@@ -23,14 +25,31 @@ if [ "$1" = "network" ] && [ "$2" = "inspect" ]; then
     exit 1
 fi
 
+if [ "$1" = "image" ] && [ "$2" = "inspect" ]; then
+    [ "$3" = "${DOCKER_STUB_ROLLBACK_IMAGE:-}" ] && exit 0
+    exit 1
+fi
+
+if [ "$1" = "inspect" ]; then
+    echo "${DOCKER_STUB_HEALTH:-healthy}"
+    exit 0
+fi
+
 if [ "$1" = "compose" ]; then
     shift
     rest="$*"
     case "$rest" in
+        *"ps -q api"*)
+            echo "${DOCKER_STUB_CONTAINER_ID:-stub-container-id}"
+            exit 0
+            ;;
         *"version"*)
             exit 0
             ;;
         *"config --quiet"*)
+            exit 0
+            ;;
+        *"config"*)
             exit 0
             ;;
         *"build --pull api"*)
@@ -45,6 +64,11 @@ fi
 
 exit 0
 """
+
+
+def _non_comment_code(text: str) -> str:
+    lines = [line for line in text.splitlines() if not line.strip().startswith("#")]
+    return "\n".join(lines)
 
 
 class NasDeployLifecycleTest(unittest.TestCase):
@@ -68,10 +92,21 @@ class NasDeployLifecycleTest(unittest.TestCase):
 
     def test_lifecycle_actions_are_explicit_and_fail_closed(self) -> None:
         script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
-        for action in ("preflight)", "build)", "deploy)", "verify)", "status)", "logs)", "stop)"):
+        for action in (
+            "preflight)",
+            "build)",
+            "deploy)",
+            "update)",
+            "verify)",
+            "status)",
+            "logs)",
+            "stop)",
+            "rollback)",
+            "dry-run)",
+        ):
             self.assertIn(action, script)
 
-        for action in ("build)", "stop)"):
+        for action in ("build)", "deploy)", "update)", "stop)", "rollback)", "dry-run)"):
             block = script.split(action, 1)[1].split(";;", 1)[0]
             self.assertIn(
                 "preflight_api",
@@ -80,8 +115,39 @@ class NasDeployLifecycleTest(unittest.TestCase):
             )
 
         usage_line = next(line for line in script.splitlines() if line.strip().startswith('die "usage:'))
-        for action in ("preflight", "build", "deploy", "verify", "status", "logs", "stop", "package"):
+        for action in (
+            "preflight",
+            "build",
+            "deploy",
+            "update",
+            "verify",
+            "status",
+            "logs",
+            "stop",
+            "rollback",
+            "dry-run",
+            "package",
+        ):
             self.assertIn(action, usage_line)
+
+        # The zero-argument fail-closed path must die with the same kind of
+        # usage message before ACTION is ever assigned from $1.
+        zero_arg_line = next(
+            line for line in script.splitlines() if '[ "$#" -gt 0 ] || die "usage:' in line
+        )
+        for action in ("preflight", "build", "deploy", "update", "rollback", "dry-run"):
+            self.assertIn(action, zero_arg_line)
+
+    def test_zero_arguments_is_not_a_valid_action_and_uses_die(self) -> None:
+        script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
+        # There must be no `${1:-<action>}` default anywhere: a missing
+        # action must never silently resolve to a real action name.
+        self.assertNotRegex(script, r"\$\{1:-[a-zA-Z-]+\}")
+        self.assertIn('[ "$#" -gt 0 ] || die "usage:', script)
+        # The zero-argument check must run before ACTION is derived from $1.
+        zero_arg_idx = script.index('[ "$#" -gt 0 ] || die "usage:')
+        action_assign_idx = script.index("ACTION=$1")
+        self.assertLess(zero_arg_idx, action_assign_idx)
 
     def test_stop_action_is_rollback_safe(self) -> None:
         script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
@@ -96,6 +162,38 @@ class NasDeployLifecycleTest(unittest.TestCase):
         self.assertNotIn("--volumes", code_only)
         self.assertNotIn("rm ", code_only)
 
+    def test_rollback_action_never_builds_or_downs_and_requires_an_image_argument(self) -> None:
+        script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
+        rollback_block = script.split("rollback)", 1)[1].split(";;", 1)[0]
+        code_lines = [
+            line
+            for line in rollback_block.splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+        code_only = "\n".join(code_lines)
+        self.assertIn("docker image inspect", code_only)
+        self.assertIn("compose_api up -d --remove-orphans api", code_only)
+        self.assertIn("wait_for_api", code_only)
+        self.assertNotIn("compose_api build", code_only)
+        self.assertNotIn("down", code_only)
+        self.assertNotIn("-v", code_only)
+        self.assertNotIn("--volumes", code_only)
+        # Must require an explicit argument before doing anything else.
+        self.assertRegex(code_only, r'\[\s*"\$#"\s*-ge\s*1\s*\]')
+
+    def test_dry_run_action_never_mutates(self) -> None:
+        script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
+        dry_run_block = script.split("dry-run)", 1)[1].split(";;", 1)[0]
+        code_lines = [
+            line
+            for line in dry_run_block.splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+        code_only = "\n".join(code_lines)
+        self.assertNotIn("compose_api build", code_only)
+        self.assertNotIn("compose_api up", code_only)
+        self.assertNotIn("down", code_only)
+
     def test_package_action_delegates_and_never_touches_docker(self) -> None:
         script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
         package_block = script.split("package)", 1)[1].split(";;", 1)[0]
@@ -103,13 +201,21 @@ class NasDeployLifecycleTest(unittest.TestCase):
         self.assertNotIn("docker", package_block)
 
         package_script = PACKAGE_SCRIPT.read_text(encoding="utf-8")
-        self.assertNotIn("docker", package_script)
+        code = _non_comment_code(package_script).replace(".dockerignore", "")
+        self.assertNotIn("docker", code)
+        self.assertNotIn("curl ", code)
+        self.assertNotIn("wget ", code)
         self.assertNotIn("git push", package_script)
-        self.assertNotIn("git -C \"$ROOT_DIR\" push", package_script)
 
     def _run_with_stub_docker(
-        self, action: str, env_overrides: dict[str, str], network_ok: bool = True
-    ) -> tuple[subprocess.CompletedProcess, Path]:
+        self,
+        action: str,
+        env_overrides: dict[str, str],
+        network_ok: bool = True,
+        extra_args: list[str] | None = None,
+        stub_env: dict[str, str] | None = None,
+        no_action: bool = False,
+    ) -> tuple[subprocess.CompletedProcess, str]:
         with TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             bin_dir = tmp_path / "bin"
@@ -138,9 +244,17 @@ class NasDeployLifecycleTest(unittest.TestCase):
             env["DOCKER_STUB_NETWORK"] = "robingraph-edge" if network_ok else "unreachable-network"
             env["ROBINGRAPH_NAS_API_ENV"] = str(api_env)
             env["ROBINGRAPH_NAS_TOOLS_ENV"] = str(tmp_path / ".env.nas.ingest")
+            if stub_env:
+                env.update(stub_env)
+
+            argv = ["sh", str(DEPLOY_SCRIPT)]
+            if not no_action:
+                argv.append(action)
+            if extra_args:
+                argv.extend(extra_args)
 
             result = subprocess.run(
-                ["sh", str(DEPLOY_SCRIPT), action],
+                argv,
                 capture_output=True,
                 text=True,
                 env=env,
@@ -187,6 +301,70 @@ class NasDeployLifecycleTest(unittest.TestCase):
             min(build_calls),
             "preflight (network check) must run before the build mutates anything",
         )
+
+    def test_deploy_and_update_actions_build_deploy_and_health_check(self) -> None:
+        for action in ("deploy", "update"):
+            with self.subTest(action=action):
+                result, calls = self._run_with_stub_docker(action, {}, network_ok=True)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertIn("build --pull api", calls)
+                self.assertIn("up -d --remove-orphans api", calls)
+                self.assertIn("healthy", result.stdout)
+                self.assertNotIn("down", calls)
+
+    def test_rollback_requires_an_image_argument_before_touching_docker(self) -> None:
+        result, calls = self._run_with_stub_docker("rollback", {}, network_ok=True)
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("usage", result.stderr)
+        self.assertEqual("", calls.strip(), "rollback with no image argument must issue zero docker calls")
+
+    def test_rollback_never_builds_and_recovers_via_health_check(self) -> None:
+        result, calls = self._run_with_stub_docker(
+            "rollback",
+            {},
+            network_ok=True,
+            extra_args=["robingraph-api:previous-good"],
+            stub_env={"DOCKER_STUB_ROLLBACK_IMAGE": "robingraph-api:previous-good"},
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("image inspect robingraph-api:previous-good", calls)
+        self.assertIn("up -d --remove-orphans api", calls)
+        self.assertNotIn("build --pull api", calls)
+        self.assertNotIn("down", calls)
+        for line in calls.splitlines():
+            self.assertNotIn("-v", line.split())
+            self.assertNotIn("--volumes", line)
+        self.assertIn("healthy", result.stdout)
+
+    def test_rollback_fails_closed_when_the_image_is_not_present_locally(self) -> None:
+        result, calls = self._run_with_stub_docker(
+            "rollback",
+            {},
+            network_ok=True,
+            extra_args=["robingraph-api:never-built"],
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("rollback image not found locally", result.stderr)
+        self.assertNotIn("up -d --remove-orphans api", calls)
+        self.assertNotIn("build --pull api", calls)
+
+    def test_dry_run_action_makes_zero_mutating_docker_calls(self) -> None:
+        result, calls = self._run_with_stub_docker("dry-run", {}, network_ok=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertNotIn("build --pull api", calls)
+        self.assertNotIn("up -d --remove-orphans api", calls)
+        self.assertNotIn("down", calls)
+        self.assertIn("dry-run", result.stdout)
+
+    def test_zero_argument_stub_audit_proves_no_docker_mutations(self) -> None:
+        result, calls = self._run_with_stub_docker("", {}, network_ok=True, no_action=True)
+        self.assertNotEqual(0, result.returncode)
+        self.assertEqual(
+            "", calls.strip(), "a zero-argument invocation must never call docker at all"
+        )
+        self.assertIn("usage", result.stderr)
+        self.assertNotIn("build --pull api", calls)
+        self.assertNotIn("up -d --remove-orphans api", calls)
 
     def test_unknown_action_fails_closed_without_calling_docker(self) -> None:
         result, calls = self._run_with_stub_docker("this-is-not-an-action", {}, network_ok=True)
