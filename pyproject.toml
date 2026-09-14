@@ -27,5 +27,8 @@ robingraph = "robingraph.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+robingraph = ["api/static/*.html", "api/static/*.js", "api/static/*.css"]
+
 [tool.unittest]
 start-directory = "tests"

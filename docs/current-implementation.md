@@ -162,6 +162,14 @@ uv run --locked robingraph ask-neo4j --question "2025년 1월 fixture 호수에�
 {"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"}
 ```
 
+패키지 정적 채팅 셸은 `/`와 `/chat`, 그 자산은 `/static/`에서 같은 origin으로
+제공된다. UI는 `/v1/answers`만 답변 계약으로 사용한다: `answer_text`를 본문으로,
+`disposition`을 answer/abstain/clarify 상태로, `citations`을 출처·라이선스 표시로,
+`warnings`를 비치명적 안내로, `taxonomy_release`와 `data_cutoff`을 근거 메타데이터로
+매핑한다. `/v1/search`의 청크는 답변 대체재가 아니므로 검색 결과로 chat answer를
+합성하지 않는다. 정적 산출물이 누락되면 API·건강 확인은 계속 제공하고 UI 및 정적
+경로만 세부 설정을 드러내지 않는 503으로 실패한다.
+
 Neo4j 모드는 `POST /v1/search`도 제공한다. 요청의 `mode`는 `fulltext` 또는
 `hybrid`이며 결과에 청크 본문, 점수, 기여 채널, citation, 경고를 반환한다.
 fixture 모드에서는 같은 endpoint가 503을 반환한다.
