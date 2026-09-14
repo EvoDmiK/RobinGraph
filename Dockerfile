@@ -6,6 +6,8 @@ ARG VCS_REF=unknown
 
 LABEL org.opencontainers.image.title="RobinGraph API" \
       org.opencontainers.image.description="Evidence-grounded bird information GraphRAG API" \
+      org.opencontainers.image.source="https://github.com/EvoDmiK/RobinGraph" \
+      org.opencontainers.image.url="https://github.com/EvoDmiK/RobinGraph" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${VCS_REF}" \
       org.opencontainers.image.licenses="Proprietary"
