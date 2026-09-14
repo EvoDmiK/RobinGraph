@@ -43,6 +43,24 @@ test("chat.js contains no HTML-injection sink in executable code (comments may d
   }
 });
 
+test("chat.js wires the fail-closed disposition guard into the /v1/answers success path", () => {
+  const codeOnly = stripJsComments(jsSource);
+  // The success branch must gate on formatDisposition(...).recognized before
+  // ever calling appendAnswerMessage, and must route the unrecognized case
+  // through the dedicated "unsupported-response" error kind rather than
+  // rendering the payload.
+  assert.match(codeOnly, /dispositionInfo\.recognized/);
+  assert.match(codeOnly, /kind:\s*"unsupported-response"/);
+
+  const submitMatch = codeOnly.match(/function submitQuestion[\s\S]*?\n  \}\n/);
+  assert.ok(submitMatch, "expected to locate submitQuestion in chat.js");
+  const submitBody = submitMatch[0];
+  const guardIndex = submitBody.indexOf("dispositionInfo.recognized");
+  const renderIndex = submitBody.indexOf("appendAnswerMessage(result.payload)");
+  assert.ok(guardIndex !== -1 && renderIndex !== -1, "expected both the guard and the render call in submitQuestion");
+  assert.ok(guardIndex < renderIndex, "the recognized-disposition guard must run before rendering the answer");
+});
+
 test("chat.js only ever fetches same-origin /health and /v1/answers", () => {
   const calls = Array.from(jsSource.matchAll(/\.fetch\(\s*"([^"]+)"/g)).map((match) => match[1]);
   assert.deepEqual(calls.sort(), ["/health", "/v1/answers"]);
@@ -87,23 +105,54 @@ test("sanitizeUrl accepts well-formed absolute http(s) URLs unchanged", () => {
   );
 });
 
-test("formatDisposition gives honest Korean labels for answer/abstain and a safe fallback for anything else", () => {
+test("formatDisposition gives honest Korean labels for answer/abstain/clarify and marks them recognized", () => {
   const answer = chat.formatDisposition("answer");
   assert.equal(answer.label, "답변");
   assert.equal(answer.className, "disposition-answer");
+  assert.equal(answer.recognized, true);
 
   const abstain = chat.formatDisposition("abstain");
   assert.equal(abstain.className, "disposition-abstain");
   assert.match(abstain.label, /근거/);
+  assert.equal(abstain.recognized, true);
 
   const clarify = chat.formatDisposition("clarify");
   assert.equal(clarify.className, "disposition-clarify");
   assert.match(clarify.label, /확인/);
+  assert.equal(clarify.recognized, true);
+});
 
-  const hostileDisposition = "<script>alert(1)</script>";
-  const fallback = chat.formatDisposition(hostileDisposition);
-  assert.equal(fallback.className, "disposition-unknown");
-  assert.equal(fallback.label, hostileDisposition);
+test("formatDisposition fails closed on any unrecognized disposition: never echoes the raw value, never marks it recognized", () => {
+  const hostilePayloads = [
+    "<script>alert(1)</script>",
+    "success",
+    "ANSWER",
+    "answered",
+    "",
+    "   ",
+    null,
+    undefined,
+    42,
+    {},
+    ["answer"],
+  ];
+  for (const payload of hostilePayloads) {
+    const result = chat.formatDisposition(payload);
+    assert.equal(result.recognized, false, "expected unrecognized disposition: " + JSON.stringify(payload));
+    assert.equal(result.className, "disposition-unknown");
+    assert.notEqual(
+      result.label,
+      payload,
+      "the raw unrecognized disposition value must never be echoed back as the display label"
+    );
+    if (typeof payload === "string" && payload) {
+      assert.equal(
+        result.label.includes(payload),
+        false,
+        "the raw unrecognized disposition value must not appear inside the fallback label"
+      );
+    }
+  }
 });
 
 test("formatBackendMode explains fixture, Neo4j, unavailable, and unsupported modes", () => {
@@ -129,6 +178,53 @@ test("sanitizeErrorMessage never leaks raw exception detail and stays specific p
   const cleaned = chat.sanitizeErrorMessage({ kind: "http", status: 422, detail: withControlChars });
   assert.equal(cleaned.includes(String.fromCharCode(0)), false);
   assert.equal(cleaned.includes(String.fromCharCode(31)), false);
+});
+
+test("sanitizeErrorMessage gives honest, distinct client/access/rate-limit messages for 400/401/403/429 instead of a generic server error", () => {
+  const badRequest = chat.sanitizeErrorMessage({ kind: "http", status: 400 });
+  const unauthorized = chat.sanitizeErrorMessage({ kind: "http", status: 401 });
+  const forbidden = chat.sanitizeErrorMessage({ kind: "http", status: 403 });
+  const rateLimited = chat.sanitizeErrorMessage({ kind: "http", status: 429 });
+
+  for (const message of [badRequest, unauthorized, forbidden, rateLimited]) {
+    assert.equal(message.includes("서버 오류"), false, 'must not fall back to the generic "server error" message: ' + message);
+  }
+
+  assert.match(unauthorized, /인증/);
+  assert.match(forbidden, /권한/);
+  assert.match(rateLimited, /많습니다|재시도|다시 시도/);
+
+  // All four must be textually distinct from each other (and from 422/404/503/generic).
+  const allMessages = [
+    badRequest,
+    unauthorized,
+    forbidden,
+    rateLimited,
+    chat.sanitizeErrorMessage({ kind: "http", status: 422 }),
+    chat.sanitizeErrorMessage({ kind: "http", status: 404 }),
+    chat.sanitizeErrorMessage({ kind: "http", status: 503 }),
+    chat.sanitizeErrorMessage({ kind: "http", status: 500 }),
+  ];
+  assert.equal(new Set(allMessages).size, allMessages.length, "each status must map to a distinct honest message");
+
+  // A raw backend detail on a 400 is still capped/stripped, like 422.
+  const overlong400 = chat.sanitizeErrorMessage({ kind: "http", status: 400, detail: new Array(5000).fill("a").join("") });
+  assert.ok(overlong400.length < 400, "an overlong 400 detail string must be capped before display");
+  const controlChars400 = chat.sanitizeErrorMessage({
+    kind: "http",
+    status: 400,
+    detail: "x" + String.fromCharCode(0) + "y",
+  });
+  assert.equal(controlChars400.includes(String.fromCharCode(0)), false);
+});
+
+test('sanitizeErrorMessage exposes a distinct, safe "unsupported-response" message for fail-closed unknown dispositions', () => {
+  const message = chat.sanitizeErrorMessage({ kind: "unsupported-response" });
+  assert.equal(typeof message, "string");
+  assert.ok(message.length > 0);
+  assert.equal(message.includes("서버 오류"), false);
+  assert.notEqual(message, chat.sanitizeErrorMessage({ kind: "network" }));
+  assert.notEqual(message, chat.sanitizeErrorMessage({}));
 });
 
 test("index.html declares every required interactive control and accessibility label", () => {
