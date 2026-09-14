@@ -21,7 +21,13 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 
 - **질문 입력**: `textarea#question-input`. `Enter`로 전송, `Shift+Enter`로
   줄바꿈(`chat.js`의 `keydown` 핸들러). `maxlength=2000`으로
-  `QuestionRequest.question`의 서버 측 상한(2,000자)과 맞췄다.
+  `QuestionRequest.question`의 서버 측 상한(2,000자)과 맞췄다. 한국어 등
+  IME(입력기)로 글자를 조합하는 도중에는 `event.isComposing`이 `true`인
+  동안 `Enter`를 눌러도 전송하지 않는다 — 일부 IME가 조합을 확정하는
+  키 입력도 `Enter`로 보고하기 때문에, 이 가드가 없으면 조합 확정만
+  하려던 `Enter`가 질문을 조기에 전송해버릴 수 있다. 조합이 끝난
+  직후(`isComposing`이 다시 `false`)의 `Enter`는 평소대로 전송하고,
+  `Shift+Enter`는 조합 상태와 무관하게 항상 줄바꿈만 한다.
 - **전송/지우기**: `button#send-button`(`type="submit"`, 폼 제출과 동일)과
   `button#clear-button`(`type="button"`, 클릭 시 대화 기록만 초기화).
 - **진행 표시**: 요청 중에는 `#spinner`가 보이고, `#status-region`
@@ -59,12 +65,28 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 - **warnings**: `warnings[]`를 목록으로 그대로 노출한다(예: hybrid
   검색이 fulltext로 대체됐다는 경고 등, 다른 엔드포인트와 동일한 패턴).
 - **오류 처리**: 네트워크 실패, 그리고 HTTP 상태 코드
-  400/401/403/404/422/429/503 각각에 대해 짧고 정직한 한국어 메시지를
-  보여준다(`sanitizeErrorMessage`). 400과 422는 서버가 보낸 `detail`
-  문자열(제어 문자 제거·300자 절단 후)을 함께 보여주고, 나머지는 고정
-  문구만 보여준다. 위 목록에 없는 그 밖의 상태 코드는 "서버 오류가
-  발생했습니다 (상태 코드 N)"으로 뭉뚱그린다. 원본 예외 메시지나 스택
-  트레이스는 절대 화면에 그대로 노출하지 않는다.
+  400/401/403/404/422/429/503 각각에 대해 짧고 정직한 **고정** 한국어
+  메시지를 보여준다(`sanitizeErrorMessage`). 서버가 함께 보낸 `detail`
+  문자열은 400/422를 포함해 **어떤 상태 코드에서도 읽지도, 화면에
+  보여주지도 않는다** — 이 UI 입장에서 `detail`은 신뢰할 수 없는
+  입력이며(비밀 값, 내부 URL·경로, 제어 문자, 임의 길이의 텍스트가 섞여
+  들어올 수 있음), 화면에 노출해도 되는 정직한 문구인지 매 상태 코드마다
+  검증하는 대신 아예 참조하지 않는 편이 안전하다. 위 목록에 없는 그 밖의
+  상태 코드는 "서버 오류가 발생했습니다 (상태 코드 N)"으로 뭉뚱그린다.
+  원본 예외 메시지나 스택 트레이스는 절대 화면에 그대로 노출하지 않는다.
+
+## 접근성: 명도 대비(WCAG 2.1 AA)
+
+`#send-button`(전송 버튼)의 글자색과 배경색, 그리고 `.disposition-answer`/
+`.disposition-abstain`/`.disposition-clarify` 배지의 글자색과 배경색은
+라이트·다크 모드 모두 WCAG 2.1 AA 기준(일반 텍스트 4.5:1 이상)을 만족
+한다. `styles.css`는 이를 위해 `--send-button-text`,
+`--badge-answer-text`, `--badge-abstain-text` 커스텀 프로퍼티를 두어
+버튼·배지 배경이 테마별로 바뀔 때 글자색도 함께 바뀌도록 했다(예: 다크
+모드에서 `--color-accent`가 밝은 초록으로 바뀌므로 전송 버튼 글자는
+흰색 대신 어두운 글자색을 쓴다). `tests/frontend/chat_ui.test.js`가
+`styles.css`의 실제 선언을 파싱해 각 조합의 대비를 계산하고 4.5 이상인지
+검증한다 — 색상 값을 바꿀 때는 반드시 이 테스트를 다시 통과시켜야 한다.
 
 ## 보안 결정
 
@@ -120,7 +142,19 @@ node --test tests/frontend/chat_ui.test.js
 - `sanitizeUrl`이 `javascript:`/`data:`/프로토콜 상대 URL 등 위험한
   스킴을 모두 거부하고, 정상적인 `http(s)` URL만 통과시킨다.
 - `formatDisposition`, `sanitizeErrorMessage`가 정직하고 안전한 한국어
-  문구를 만들며, 원본 오류를 그대로 노출하지 않는다.
+  문구를 만들며, 원본 오류를 그대로 노출하지 않는다. 비밀 값·내부
+  URL·경로·제어 문자·매우 긴 텍스트가 섞인 적대적인 `detail` 페이로드를
+  400/422에 주더라도 고정 문구만 나오고 원본 값은 전혀 새어 나오지
+  않는다.
+- 전송 버튼과 답변/보류/추가 확인 배지의 글자·배경 대비를
+  `styles.css`의 실제 선언에서 계산해 라이트·다크 모드 모두 WCAG 2.1
+  AA(4.5:1) 이상인지 검증한다.
+- `chat.js`의 `keydown` 핸들러를 실제 이벤트 경로 그대로(가짜
+  DOM에 `keydown`을 디스패치 → `preventDefault`/`form.requestSubmit()`
+  → `submit` 핸들러 실행) 구동해, `Enter`(조합 중 아님)는 전송하고
+  `event.isComposing`이 `true`인 동안의 `Enter`는 무시하며,
+  `Shift+Enter`는 조합 상태와 무관하게 항상 줄바꿈만 하는지 확인한다.
+  Playwright 등 브라우저 없이 순수 Node 객체로 구현한 최소 DOM이다.
 - `index.html`에 필요한 인터랙션 요소·접근성 라벨
   (`question-input`, `send-button`, `clear-button`, `history`,
   `backend-mode-value`, `status-region`, `role="log"`,
