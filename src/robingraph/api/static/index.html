@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RobinGraph 질의응답 테스트 UI</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+  <header class="app-header">
+    <h1 id="app-title">RobinGraph 질의응답 테스트 UI</h1>
+    <p id="app-disclaimer" class="disclaimer">
+      이 화면은 수동 검증용 테스트 UI입니다. 답변은 Hermes를 비롯한 어떤
+      생성형 언어모델(LLM)도 사용하지 않고, RobinGraph 그래프에서 조회한
+      근거를 결정론적 규칙으로 정리해 보여줍니다. 근거가 부족하면 추측하지
+      않고 답변을 보류(abstain)합니다.
+    </p>
+    <div id="backend-status" class="backend-status" aria-live="polite">
+      <span id="backend-mode-label">백엔드 모드</span>:
+      <span id="backend-mode-value">확인 중…</span>
+    </div>
+  </header>
+
+  <main class="chat-main">
+    <section
+      id="history"
+      class="history"
+      role="log"
+      aria-live="polite"
+      aria-label="대화 기록"
+    ></section>
+
+    <form id="chat-form" class="chat-form" autocomplete="off">
+      <label for="question-input" class="visually-hidden">질문 입력</label>
+      <textarea
+        id="question-input"
+        name="question"
+        class="question-input"
+        rows="3"
+        maxlength="2000"
+        required
+        aria-label="질문 입력 (Enter: 전송, Shift+Enter: 줄바꿈)"
+        placeholder="예: 2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"
+      ></textarea>
+      <p id="input-hint" class="input-hint">Enter로 전송, Shift+Enter로 줄바꿈</p>
+
+      <div class="actions">
+        <button type="submit" id="send-button" class="send-button">보내기</button>
+        <button type="button" id="clear-button" class="clear-button">대화 지우기</button>
+      </div>
+
+      <div id="spinner" class="spinner" hidden aria-hidden="true"></div>
+      <p id="status-region" class="status-region" role="status" aria-live="polite"></p>
+    </form>
+  </main>
+
+  <footer class="app-footer">
+    <p>
+      이 화면은 같은 오리진(same-origin)의 <code>/health</code>,
+      <code>/v1/answers</code> 만 호출합니다. 대화 기록은 이 페이지가 열려
+      있는 동안에만 메모리에 유지되며, 새로고침하거나 "대화 지우기"를
+      누르면 사라집니다(별도 저장·로그인 없음).
+    </p>
+  </footer>
+</div>
+
+<script src="chat.js"></script>
+</body>
+</html>
