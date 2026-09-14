@@ -181,9 +181,14 @@ SSL 탭에서는 기존 Dove Nest 서비스와 같은 인증서 방식을 사용
 
 배포 확인 주소:
 
+- `https://aviary.dove-nest.com/` 또는 `/chat` (한국어 테스트 UI)
 - `https://aviary.dove-nest.com/health`
 - `https://aviary.dove-nest.com/docs`
 - `https://aviary.dove-nest.com/openapi.json`
+
+채팅 UI는 API와 같은 origin에서 제공되며 브라우저에 자격 증명을 넣지 않는다.
+다만 이 첫 버전에는 계정·인증이 없으므로 외부 공개 여부는 별도 제품 결정이다.
+공개하지 않을 환경에서는 위의 Access List/Cloudflare Access 경계를 유지한다.
 
 ## 5. 실제 Neo4j 모드와 임베딩 연결
 

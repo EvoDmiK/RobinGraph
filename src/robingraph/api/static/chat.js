@@ -55,6 +55,7 @@
   var DISPOSITION_LABELS = {
     answer: { label: "답변", className: "disposition-answer" },
     abstain: { label: "보류 (근거 부족)", className: "disposition-abstain" },
+    clarify: { label: "추가 확인 필요", className: "disposition-clarify" },
   };
 
   function formatDisposition(disposition) {
@@ -63,6 +64,19 @@
       return known;
     }
     return { label: String(disposition), className: "disposition-unknown" };
+  }
+
+  function formatBackendMode(mode) {
+    if (mode === "fixture") {
+      return "fixture (합성 데이터 · 문헌 검색 미지원)";
+    }
+    if (mode === "neo4j") {
+      return "neo4j (그래프 DB · 근거 기반 답변)";
+    }
+    if (typeof mode === "string" && mode.trim()) {
+      return "지원되지 않는 모드: " + mode.trim();
+    }
+    return "확인 불가";
   }
 
   /**
@@ -99,7 +113,7 @@
         return "요청한 정보를 찾을 수 없습니다.";
       }
       if (status === 503) {
-        return "백엔드 검색이 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하세요.";
+        return "백엔드를 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도하세요.";
       }
       return "서버 오류가 발생했습니다 (상태 코드 " + Number(status) + ").";
     }
@@ -172,6 +186,20 @@
       text.textContent = answer.answer_text;
       item.appendChild(text);
 
+      var answerMetadata = [];
+      if (answer.taxonomy_release) {
+        answerMetadata.push("분류 릴리스: " + answer.taxonomy_release);
+      }
+      if (answer.data_cutoff) {
+        answerMetadata.push("데이터 기준일: " + answer.data_cutoff);
+      }
+      if (answerMetadata.length > 0) {
+        var metadata = doc.createElement("p");
+        metadata.className = "answer-metadata";
+        metadata.textContent = answerMetadata.join(" · ");
+        item.appendChild(metadata);
+      }
+
       var warnings = Array.isArray(answer.warnings) ? answer.warnings : [];
       if (warnings.length > 0) {
         var warnList = doc.createElement("ul");
@@ -207,7 +235,10 @@
 
           var meta = doc.createElement("span");
           meta.className = "citation-meta";
-          meta.textContent = " — " + citation.locator + " (" + citation.license_name + ")";
+          meta.textContent =
+            " — 근거 " + citation.evidence_id +
+            " · " + citation.locator +
+            " (" + citation.license_name + ")";
           li.appendChild(meta);
 
           citeList.appendChild(li);
@@ -239,10 +270,10 @@
           return response.json();
         })
         .then(function (payload) {
-          backendModeValue.textContent = payload && payload.mode ? payload.mode : "알 수 없음";
+          backendModeValue.textContent = formatBackendMode(payload && payload.mode);
         })
         .catch(function () {
-          backendModeValue.textContent = "확인 불가";
+          backendModeValue.textContent = "확인 불가 (질문 API는 계속 시도할 수 있음)";
         });
     }
 
@@ -328,6 +359,7 @@
   return {
     sanitizeUrl: sanitizeUrl,
     formatDisposition: formatDisposition,
+    formatBackendMode: formatBackendMode,
     sanitizeErrorMessage: sanitizeErrorMessage,
     init: init,
   };
