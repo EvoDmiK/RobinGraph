@@ -9,9 +9,12 @@ have to guess.
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 from typing import Callable, Literal
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from ..fixture import load_fixture
@@ -191,6 +194,11 @@ class TaxonomyLineageResponse(BaseModel):
     lineage: list[LineageTaxonResponse]
 
 
+_DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
+_CHAT_UI_UNAVAILABLE = "Chat UI is temporarily unavailable."
+_SEARCH_UNAVAILABLE = "Document search is temporarily unavailable."
+
+
 def _response(answer: Answer) -> AnswerResponse:
     return AnswerResponse(
         answer_id=answer.answer_id,
@@ -297,7 +305,10 @@ def create_neo4j_search_handler(settings: Neo4jSettings) -> SearchHandler:
             try:
                 client = JinaEmbeddingClient.from_env()
             except EmbeddingConfigurationError as error:
-                raise SearchBackendUnavailableError(str(error)) from error
+                # Configuration errors can contain deployment-specific details.
+                # Keep them out of the HTTP contract while retaining the cause
+                # for server-side diagnostics.
+                raise SearchBackendUnavailableError(_SEARCH_UNAVAILABLE) from error
             try:
                 return search(settings, request, query_embedder=client)
             except EmbeddingError:
@@ -314,7 +325,7 @@ def create_neo4j_search_handler(settings: Neo4jSettings) -> SearchHandler:
                     warnings=(*outcome.warnings, "Embedding request failed; results are keyword-only fulltext"),
                 )
         except (Neo4jError, ServiceUnavailable, SessionExpired) as error:
-            raise SearchBackendUnavailableError("Neo4j search is unavailable") from error
+            raise SearchBackendUnavailableError(_SEARCH_UNAVAILABLE) from error
 
     return handle
 
@@ -380,10 +391,44 @@ def create_app(
     observation_handler: ObservationSearchHandler | None = None,
     lineage_handler: LineageHandler | None = None,
     korean_lineage_handler: LineageHandler | None = None,
+    static_dir: Path | None = None,
 ) -> FastAPI:
+    """Create the API and, when packaged assets are present, the chat shell.
+
+    ``static_dir`` is an internal test/integration seam. Production callers use
+    the package-local ``robingraph.api/static`` directory included in the wheel.
+    An absent asset directory deliberately does not stop the API from starting:
+    UI requests receive a generic 503 rather than an absolute server path.
+    """
+
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
     app = FastAPI(title="RobinGraph", version="0.1.0")
+    asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
+    index_path = asset_root / "index.html"
+
+    if asset_root.is_dir():
+        app.mount("/static", StaticFiles(directory=str(asset_root)), name="static")
+    else:
+
+        @app.get("/static/{asset_path:path}", include_in_schema=False)
+        def unavailable_static_asset(asset_path: str) -> PlainTextResponse:
+            # Do not reflect asset_path: it could contain deployment details or
+            # be used to probe the server's filesystem layout.
+            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
+
+    def chat_ui() -> FileResponse | PlainTextResponse:
+        if not index_path.is_file():
+            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
+        return FileResponse(index_path, media_type="text/html; charset=utf-8")
+
+    @app.get("/", include_in_schema=False, response_model=None)
+    def root() -> FileResponse | PlainTextResponse:
+        return chat_ui()
+
+    @app.get("/chat", include_in_schema=False, response_model=None)
+    def chat() -> FileResponse | PlainTextResponse:
+        return chat_ui()
 
     @app.get("/health")
     def health() -> dict[str, str]:
@@ -409,7 +454,9 @@ def create_app(
         try:
             outcome = search_handler(request.question, request.limit, request.mode == "hybrid")
         except SearchBackendUnavailableError as error:
-            raise HTTPException(status_code=503, detail=str(error)) from error
+            # Search handlers may wrap provider/configuration exceptions. Do
+            # not turn their messages into a client-visible information leak.
+            raise HTTPException(status_code=503, detail=_SEARCH_UNAVAILABLE) from error
         return _search_response(outcome, requested_mode=request.mode)
 
     @app.get(
