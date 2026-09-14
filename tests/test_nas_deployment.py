@@ -168,6 +168,14 @@ class NasDeploymentTest(unittest.TestCase):
         for asset in ("index.html", "chat.js", "styles.css"):
             self.assertIn(f"src/robingraph/api/static/{asset}", self.dockerfile)
 
+    def test_image_provenance_labels_explicitly_identify_robingraph(self) -> None:
+        repository_url = "https://github.com/EvoDmiK/RobinGraph"
+        for label in (
+            "org.opencontainers.image.source",
+            "org.opencontainers.image.url",
+        ):
+            self.assertIn(f'{label}="{repository_url}"', self.dockerfile)
+
     def test_api_is_fixture_first_and_hardened_without_a_host_port(self) -> None:
         self.assertIn("${ROBINGRAPH_API_MODE:-serve-fixture}", self.api)
         self.assertIn("image: ${ROBINGRAPH_IMAGE:-robingraph-api:local}", self.api)
