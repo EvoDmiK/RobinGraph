@@ -197,6 +197,15 @@ class TaxonomyLineageResponse(BaseModel):
 _DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
 _CHAT_UI_UNAVAILABLE = "Chat UI is temporarily unavailable."
 _SEARCH_UNAVAILABLE = "Document search is temporarily unavailable."
+_REQUIRED_CHAT_ASSETS = ("index.html", "chat.js", "styles.css")
+
+
+def _chat_assets_are_available(asset_root: Path) -> bool:
+    """Return whether the complete packaged chat bundle can be served safely."""
+
+    return asset_root.is_dir() and all(
+        (asset_root / asset_name).is_file() for asset_name in _REQUIRED_CHAT_ASSETS
+    )
 
 
 def _response(answer: Answer) -> AnswerResponse:
@@ -393,12 +402,13 @@ def create_app(
     korean_lineage_handler: LineageHandler | None = None,
     static_dir: Path | None = None,
 ) -> FastAPI:
-    """Create the API and, when packaged assets are present, the chat shell.
+    """Create the API and, when the packaged asset bundle is complete, the chat shell.
 
     ``static_dir`` is an internal test/integration seam. Production callers use
     the package-local ``robingraph.api/static`` directory included in the wheel.
-    An absent asset directory deliberately does not stop the API from starting:
-    UI requests receive a generic 503 rather than an absolute server path.
+    A missing asset directory or required chat asset deliberately does not stop
+    the API from starting: all UI requests receive a generic 503 rather than
+    an absolute server path or a partial chat shell.
     """
 
     repository = repository or FixtureRepository(load_fixture())
@@ -406,8 +416,9 @@ def create_app(
     app = FastAPI(title="RobinGraph", version="0.1.0")
     asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
     index_path = asset_root / "index.html"
+    chat_assets_available = _chat_assets_are_available(asset_root)
 
-    if asset_root.is_dir():
+    if chat_assets_available:
         app.mount("/static", StaticFiles(directory=str(asset_root)), name="static")
     else:
 
@@ -418,7 +429,7 @@ def create_app(
             return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
 
     def chat_ui() -> FileResponse | PlainTextResponse:
-        if not index_path.is_file():
+        if not chat_assets_available:
             return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
         return FileResponse(index_path, media_type="text/html; charset=utf-8")
 
