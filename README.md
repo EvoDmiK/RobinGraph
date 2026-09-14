@@ -127,6 +127,11 @@ curl -X POST http://127.0.0.1:8000/v1/search \
 응답의 `requested_mode`는 요청값, `mode`는 실제 결과에 사용된 모드다. 임베딩
 호출이 일시적으로 실패하면 전문 검색으로 폴백하고 `warnings`에 이유를 남긴다.
 `serve-fixture`에서도 OpenAPI 계약은 보이지만 검색 호출은 HTTP 503을 반환한다.
+설정된 검색 백엔드 자체를 사용할 수 없어 HTTP 503이 되는 경우에도
+`{"detail":"Document search is temporarily unavailable."}`라는 고정 상세만
+반환한다. 이 보안 처리로 상태 코드와 성공 응답 `DocumentSearchResponse` 스키마,
+요청의 `mode`·`limit` 범위는 바뀌지 않으며, 공급자 오류·설정·토큰 같은 내부
+상세는 응답에 포함하지 않는다.
 
 ## 운영 GBIF 관찰 조회
 

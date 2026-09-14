@@ -9,12 +9,13 @@ have to guess.
 from __future__ import annotations
 
 from datetime import date
+import os
 from pathlib import Path
+import stat
 from typing import Callable, Literal
 
 from fastapi import FastAPI, HTTPException, Query
-from fastapi.responses import FileResponse, PlainTextResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import PlainTextResponse, Response
 from pydantic import BaseModel, Field
 
 from ..fixture import load_fixture
@@ -198,14 +199,42 @@ _DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
 _CHAT_UI_UNAVAILABLE = "Chat UI is temporarily unavailable."
 _SEARCH_UNAVAILABLE = "Document search is temporarily unavailable."
 _REQUIRED_CHAT_ASSETS = ("index.html", "chat.js", "styles.css")
+_CHAT_ASSET_MEDIA_TYPES = {
+    "index.html": "text/html; charset=utf-8",
+    "chat.js": "application/javascript",
+    "styles.css": "text/css; charset=utf-8",
+}
 
 
-def _chat_assets_are_available(asset_root: Path) -> bool:
-    """Return whether the complete packaged chat bundle can be served safely."""
+def _read_chat_asset_bundle(asset_root: Path) -> dict[str, bytes] | None:
+    """Read a complete, non-empty chat bundle or return ``None`` without leaking errors.
 
-    return asset_root.is_dir() and all(
-        (asset_root / asset_name).is_file() for asset_name in _REQUIRED_CHAT_ASSETS
-    )
+    Each response reads every required asset before serving anything.  Reading the
+    bytes from the validated file descriptor keeps the validation/use window small:
+    a replacement or removal after opening cannot turn a checked bundle into a
+    partial response.
+    """
+
+    assets: dict[str, bytes] = {}
+    try:
+        for asset_name in _REQUIRED_CHAT_ASSETS:
+            descriptor = os.open(asset_root / asset_name, os.O_RDONLY)
+            try:
+                with os.fdopen(descriptor, "rb") as asset_file:
+                    descriptor = -1
+                    metadata = os.fstat(asset_file.fileno())
+                    if not stat.S_ISREG(metadata.st_mode) or metadata.st_size <= 0:
+                        return None
+                    content = asset_file.read()
+            finally:
+                if descriptor >= 0:
+                    os.close(descriptor)
+            if not content or len(content) != metadata.st_size:
+                return None
+            assets[asset_name] = content
+    except OSError:
+        return None
+    return assets
 
 
 def _response(answer: Answer) -> AnswerResponse:
@@ -406,39 +435,42 @@ def create_app(
 
     ``static_dir`` is an internal test/integration seam. Production callers use
     the package-local ``robingraph.api/static`` directory included in the wheel.
-    A missing asset directory or required chat asset deliberately does not stop
-    the API from starting: all UI requests receive a generic 503 rather than
-    an absolute server path or a partial chat shell.
+    A missing, empty, or unreadable required chat asset deliberately does not
+    stop the API from starting: all UI requests receive a generic 503 rather
+    than an absolute server path or a partial chat shell.
     """
 
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
     app = FastAPI(title="RobinGraph", version="0.1.0")
     asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
-    index_path = asset_root / "index.html"
-    chat_assets_available = _chat_assets_are_available(asset_root)
 
-    if chat_assets_available:
-        app.mount("/static", StaticFiles(directory=str(asset_root)), name="static")
-    else:
+    def unavailable_chat_ui() -> PlainTextResponse:
+        return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
 
-        @app.get("/static/{asset_path:path}", include_in_schema=False)
-        def unavailable_static_asset(asset_path: str) -> PlainTextResponse:
+    def chat_ui() -> Response | PlainTextResponse:
+        assets = _read_chat_asset_bundle(asset_root)
+        if assets is None:
+            return unavailable_chat_ui()
+        return Response(content=assets["index.html"], media_type=_CHAT_ASSET_MEDIA_TYPES["index.html"])
+
+    @app.get("/static/{asset_path:path}", include_in_schema=False, response_model=None)
+    def static_asset(asset_path: str) -> Response | PlainTextResponse:
+        assets = _read_chat_asset_bundle(asset_root)
+        if assets is None:
             # Do not reflect asset_path: it could contain deployment details or
             # be used to probe the server's filesystem layout.
-            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
-
-    def chat_ui() -> FileResponse | PlainTextResponse:
-        if not chat_assets_available:
-            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
-        return FileResponse(index_path, media_type="text/html; charset=utf-8")
+            return unavailable_chat_ui()
+        if asset_path not in assets:
+            raise HTTPException(status_code=404, detail="Not Found")
+        return Response(content=assets[asset_path], media_type=_CHAT_ASSET_MEDIA_TYPES[asset_path])
 
     @app.get("/", include_in_schema=False, response_model=None)
-    def root() -> FileResponse | PlainTextResponse:
+    def root() -> Response | PlainTextResponse:
         return chat_ui()
 
     @app.get("/chat", include_in_schema=False, response_model=None)
-    def chat() -> FileResponse | PlainTextResponse:
+    def chat() -> Response | PlainTextResponse:
         return chat_ui()
 
     @app.get("/health")
