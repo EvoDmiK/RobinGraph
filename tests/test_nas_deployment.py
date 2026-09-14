@@ -1,3 +1,5 @@
+"""Container deployment invariants kept independent of a Docker daemon."""
+
 from pathlib import Path
 import unittest
 
@@ -139,6 +141,61 @@ class NasDeploymentTest(unittest.TestCase):
             "${ROBINGRAPH_N8N_KOREAN_VERNACULAR_WORKFLOW_ID:-}",
             tools,
         )
+
+    def setUp(self) -> None:
+        self.dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
+        self.compose = (ROOT / "compose.nas.yml").read_text(encoding="utf-8")
+        self.api = self.compose.split("  nas-tools:", 1)[0]
+
+    def test_runtime_base_is_digest_pinned_and_arm64_capable(self) -> None:
+        self.assertIn(
+            "FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:",
+            self.dockerfile,
+        )
+        self.assertIn("linux/arm64", self.dockerfile)
+        self.assertNotIn("--platform=linux/amd64", self.dockerfile)
+        self.assertIn("UV_PYTHON_DOWNLOADS=never", self.dockerfile)
+        self.assertIn("uv sync --python /usr/local/bin/python --locked --no-dev", self.dockerfile)
+
+    def test_image_has_versioned_oci_metadata_and_required_ui_assets(self) -> None:
+        for label in (
+            "org.opencontainers.image.title",
+            "org.opencontainers.image.version",
+            "org.opencontainers.image.revision",
+        ):
+            self.assertIn(label, self.dockerfile)
+        self.assertIn("COPY --chown=robingraph:robingraph src ./src", self.dockerfile)
+        for asset in ("index.html", "chat.js", "styles.css"):
+            self.assertIn(f"src/robingraph/api/static/{asset}", self.dockerfile)
+
+    def test_api_is_fixture_first_and_hardened_without_a_host_port(self) -> None:
+        self.assertIn("${ROBINGRAPH_API_MODE:-serve-fixture}", self.api)
+        self.assertIn("image: ${ROBINGRAPH_IMAGE:-robingraph-api:local}", self.api)
+        self.assertIn("VERSION: ${ROBINGRAPH_IMAGE_VERSION:-0.1.0}", self.api)
+        self.assertIn("VCS_REF: ${ROBINGRAPH_VCS_REF:-unknown}", self.api)
+        self.assertIn("expose:\n      - \"8000\"", self.api)
+        self.assertNotIn("ports:", self.api)
+        self.assertIn("read_only: true", self.api)
+        self.assertIn("/tmp:size=64m,mode=1777", self.api)
+        self.assertIn("cap_drop:\n      - ALL", self.api)
+        self.assertIn("no-new-privileges:true", self.api)
+        self.assertIn("restart: unless-stopped", self.api)
+        self.assertIn("stop_grace_period: 20s", self.api)
+        self.assertIn("max-size: 10m", self.api)
+        self.assertIn("max-file: \"3\"", self.api)
+
+    def test_compose_has_loopback_healthcheck_and_external_edge_network(self) -> None:
+        self.assertIn("healthcheck:", self.api)
+        self.assertIn("http://127.0.0.1:8000/health", self.api)
+        self.assertIn("assert response.status == 200", self.api)
+        self.assertIn("start_period: 10s", self.api)
+        self.assertIn("external: true", self.compose)
+        self.assertIn("name: ${ROBINGRAPH_EDGE_NETWORK:-robingraph-edge}", self.compose)
+
+    def test_non_root_dockerfile_exposes_only_the_api_port(self) -> None:
+        self.assertIn("USER 10001:10001", self.dockerfile)
+        self.assertEqual(["EXPOSE 8000"], [line for line in self.dockerfile.splitlines() if line.startswith("EXPOSE ")])
+        self.assertIn("http://127.0.0.1:8000/health", self.dockerfile)
 
 
 if __name__ == "__main__":
