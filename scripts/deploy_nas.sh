@@ -7,6 +7,7 @@ COMPOSE_FILE="$ROOT_DIR/compose.nas.yml"
 API_ENV=${ROBINGRAPH_NAS_API_ENV:-"$ROOT_DIR/.env.nas"}
 TOOLS_ENV=${ROBINGRAPH_NAS_TOOLS_ENV:-"$ROOT_DIR/.env.nas.ingest"}
 ACTION=${1:-deploy}
+[ "$#" -gt 0 ] && shift
 
 die() {
   echo "error: $*" >&2
@@ -122,11 +123,22 @@ case "$ACTION" in
     preflight_api
     echo "NAS API deployment configuration is valid"
     ;;
+  build)
+    preflight_api
+    compose_api build --pull api
+    ;;
   deploy)
     preflight_api
     compose_api build --pull api
     compose_api up -d --remove-orphans api
     wait_for_api
+    ;;
+  stop)
+    preflight_api
+    # Stops the api container without removing it, its image, or any named
+    # volume: `deploy` (or `docker compose ... start api`) resumes from the
+    # same state. This action never calls `down` or touches volumes.
+    compose_api stop api
     ;;
   verify)
     preflight_api
@@ -199,8 +211,14 @@ case "$ACTION" in
     require_env_value NEO4J_PASSWORD "$TOOLS_ENV"
     compose_tools run --rm nas-tools scripts/load_n8n_avonet.py --apply
     ;;
+  package)
+    # Builds a deterministic, secret-free transfer archive from a committed
+    # git ref -- never from working-directory state. No Docker network or
+    # daemon is touched; this never deploys or pushes anything.
+    exec "$SCRIPT_DIR/package_nas_release.sh" "$@"
+    ;;
   *)
-    die "usage: $0 {preflight|deploy|verify|status|logs|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet}"
+    die "usage: $0 {preflight|build|deploy|verify|status|logs|stop|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet|package}"
     ;;
 esac
 
