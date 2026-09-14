@@ -70,6 +70,28 @@ uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 �
 
 두 모드 모두 현재는 작은 합성 데이터에 대해 이름·장소·날짜를 해소하고 근거로 답변을 구성한다. Neo4j 모드는 매개변수가 바인딩된 Cypher로 조회하며 벡터 검색이나 LLM 생성은 아직 사용하지 않는다. DB 통합 테스트 실행법은 [개발 가이드](docs/development.md#neo4j-통합-테스트)를 참고한다.
 
+## 브라우저 채팅 UI와 API 경계
+
+패키지에 포함된 한국어 채팅 UI는 `serve-fixture`와 `serve-neo4j` 모두에서
+`/` 및 `/chat`으로 제공되고, JS·CSS 같은 정적 파일은 같은 origin의 `/static/`에
+제공된다. 따라서 브라우저는 별도 API URL, 프록시, 토큰 또는 임베딩/Neo4j 자격 증명을
+가질 필요 없이 상대 경로 `POST /v1/answers`를 호출한다. 배포 산출물에
+`src/robingraph/api/static/index.html`과 관련 자산이 누락된 경우에도 API는 시작되며,
+UI 경로만 세부 경로를 노출하지 않는 일반적인 HTTP 503을 반환한다.
+
+프런트엔드는 `/v1/answers` 응답을 다음처럼 그대로 표시한다.
+
+- `answer_text`는 서버가 근거 확인을 마친 본문이며, 클라이언트가 검색 결과나 모델 출력으로 보완·재작성하지 않는다.
+- `disposition`이 `answer`이면 답변으로, `abstain`이면 답변 불가 안내로, `clarify`이면 추가 선택 질문으로 표시한다. 알 수 없는 값은 성공 답변으로 취급하지 않는다.
+- `citations`은 `evidence_id`와 함께 `source_url`, `locator`, `license_name`을 출처 UI에 표시한다. `warnings`는 답변을 숨기지 않는 주의 정보로 표시한다.
+- `taxonomy_release`와 `data_cutoff`은 답변이 근거한 분류판과 데이터 기준 시점 메타데이터로 표시한다.
+
+`POST /v1/search`는 문헌 청크 검색 계약이며 채팅 답변 생성 API가 아니다. 결과의
+본문·점수·citation만으로 `answer_text` 또는 `disposition`을 만들어 내거나, `/v1/answers`
+실패 시 그 결과를 채팅 답변처럼 표시해서는 안 된다. `GET /health`의 `mode`는 현재
+`fixture` 또는 `neo4j` 백엔드를 운영 상태로 표시하는 용도이며, UI가 답변 내용을
+추론하는 입력이 아니다.
+
 ## 문헌 청크 검색
 
 위 질문 API와 별도로, 문헌 검색 결과의 본문·순위·출처·라이선스를 CLI와

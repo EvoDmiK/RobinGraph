@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -32,15 +34,64 @@ from robingraph.retrieval.repository import SourceCitation
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
 
+class MockedNeo4jRepository(FixtureRepository):
+    """Fixture records with the active-mode shape of the Neo4j repository."""
+
+    mode = "neo4j"
+
+
 class ApiTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = TestClient(create_app(FixtureRepository(load_fixture())))
+        cls.static_directory = TemporaryDirectory()
+        cls.static_root = Path(cls.static_directory.name)
+        (cls.static_root / "index.html").write_text(
+            "<!doctype html><html lang=\"ko\"><body>RobinGraph 채팅</body></html>", encoding="utf-8"
+        )
+        (cls.static_root / "chat.js").write_text("console.log('chat');", encoding="utf-8")
+        (cls.static_root / "styles.css").write_text("body { color: #123; }", encoding="utf-8")
+        cls.client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=cls.static_root))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.static_directory.cleanup()
 
     def test_health_discloses_fixture_mode(self) -> None:
         response = self.client.get("/health")
         self.assertEqual(200, response.status_code)
         self.assertEqual("fixture", response.json()["mode"])
+
+    def test_chat_shell_and_same_origin_assets_are_served(self) -> None:
+        for path in ("/", "/chat"):
+            response = self.client.get(path)
+            self.assertEqual(200, response.status_code)
+            self.assertIn("RobinGraph 채팅", response.text)
+            self.assertIn("text/html", response.headers["content-type"])
+
+        script = self.client.get("/static/chat.js")
+        stylesheet = self.client.get("/static/styles.css")
+        self.assertEqual(200, script.status_code)
+        self.assertEqual(200, stylesheet.status_code)
+        self.assertIn("console.log", script.text)
+        self.assertIn("color", stylesheet.text)
+
+    def test_mocked_neo4j_app_keeps_chat_and_health_routes_available(self) -> None:
+        client = TestClient(
+            create_app(MockedNeo4jRepository(load_fixture()), static_dir=self.static_root)
+        )
+        self.assertEqual("neo4j", client.get("/health").json()["mode"])
+        self.assertEqual(200, client.get("/").status_code)
+        self.assertEqual(200, client.get("/chat").status_code)
+        self.assertEqual(200, client.get("/static/chat.js").status_code)
+
+    def test_missing_chat_assets_return_sanitized_service_unavailable(self) -> None:
+        missing_static_root = self.static_root / "missing"
+        client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=missing_static_root))
+        for path in ("/", "/chat", "/static/chat.js"):
+            response = client.get(path)
+            self.assertEqual(503, response.status_code)
+            self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+            self.assertNotIn(str(missing_static_root), response.text)
 
     def test_answer_contains_only_allowed_evidence(self) -> None:
         response = self.client.post("/v1/answers", json={"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"})
@@ -113,12 +164,13 @@ class ApiTest(unittest.TestCase):
 
     def test_search_backend_failure_is_503(self) -> None:
         def unavailable(_question: str, _limit: int, _hybrid: bool) -> HybridSearchOutcome:
-            raise SearchBackendUnavailableError("Neo4j search is unavailable")
+            raise SearchBackendUnavailableError("upstream token=not-for-client")
 
         client = TestClient(create_app(FixtureRepository(load_fixture()), search_handler=unavailable))
         response = client.post("/v1/search", json={"question": "물새"})
         self.assertEqual(503, response.status_code)
-        self.assertEqual("Neo4j search is unavailable", response.json()["detail"])
+        self.assertEqual("Document search is temporarily unavailable.", response.json()["detail"])
+        self.assertNotIn("token", response.json()["detail"])
 
     def test_operational_observations_are_declared_but_unavailable_in_fixture_mode(self) -> None:
         operation = self.client.get("/openapi.json").json()["paths"]["/v1/observations"]["get"]
@@ -550,7 +602,7 @@ class Neo4jApiSearchHandlerTest(unittest.TestCase):
         with patch(
             "robingraph.embeddings.JinaEmbeddingClient.from_env",
             side_effect=EmbeddingConfigurationError("missing endpoint"),
-        ), self.assertRaisesRegex(SearchBackendUnavailableError, "missing endpoint"):
+        ), self.assertRaisesRegex(SearchBackendUnavailableError, "temporarily unavailable"):
             handler("물새", 5, True)
 
 
