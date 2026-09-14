@@ -1190,7 +1190,8 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             with driver.session(database=database) as session:
                 session.run(
                     "MATCH (state:IngestState {id: 'reference-taxonomy'}) "
-                    "WHERE state.active_concept_set_id = $concept_set_id RETURN 1"
+                    "WHERE state.active_concept_set_id = $concept_set_id RETURN 1",
+                    concept_set_id=concept_set_id,
                 ).consume()
                 start = session.run(
                     START_STATEMENT,

@@ -93,6 +93,26 @@ class ApiTest(unittest.TestCase):
             self.assertEqual("Chat UI is temporarily unavailable.", response.text)
             self.assertNotIn(str(missing_static_root), response.text)
 
+    def test_partial_chat_asset_bundle_returns_sanitized_service_unavailable(self) -> None:
+        required_assets = {
+            "index.html": "<!doctype html><html lang=\"ko\"><body>RobinGraph 채팅</body></html>",
+            "chat.js": "console.log('chat');",
+            "styles.css": "body { color: #123; }",
+        }
+        for missing_asset in required_assets:
+            with self.subTest(missing_asset=missing_asset), TemporaryDirectory() as directory:
+                static_root = Path(directory)
+                for asset_name, content in required_assets.items():
+                    if asset_name != missing_asset:
+                        (static_root / asset_name).write_text(content, encoding="utf-8")
+
+                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                for path in ("/", "/chat", "/static/chat.js", "/static/styles.css"):
+                    response = client.get(path)
+                    self.assertEqual(503, response.status_code)
+                    self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                    self.assertNotIn(str(static_root), response.text)
+
     def test_answer_contains_only_allowed_evidence(self) -> None:
         response = self.client.post("/v1/answers", json={"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"})
         self.assertEqual(200, response.status_code)
