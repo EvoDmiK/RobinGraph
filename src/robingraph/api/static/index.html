@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RobinGraph 질의응답 테스트 UI</title>
-<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
 <div class="page">
@@ -62,9 +62,13 @@
       있는 동안에만 메모리에 유지되며, 새로고침하거나 "대화 지우기"를
       누르면 사라집니다(별도 저장·로그인 없음).
     </p>
+    <p>
+      <code>/v1/search</code>의 검색 결과는 대화 답변으로 합성하지 않습니다.
+      fixture 모드에서는 문헌 검색이 지원되지 않습니다.
+    </p>
   </footer>
 </div>
 
-<script src="chat.js"></script>
+<script src="/static/chat.js"></script>
 </body>
 </html>

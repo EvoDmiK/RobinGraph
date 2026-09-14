@@ -70,51 +70,24 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 - **입력·비밀정보 없음**: 이 화면은 인증도, API 키 입력도, 어떤 비밀도
   다루지 않는다. 질문 텍스트만 그대로 서버로 보낸다.
 
-## 실행 전제 조건 (통합 담당자에게)
+## 서버 통합
 
-이 커밋은 정적 자산·테스트·문서만 추가했고, **`app.py`는 건드리지
-않았다** — 소유권 경계상 `app.py`/`pyproject.toml` 수정은 이 작업
-범위 밖이라 통합 담당자가 반영해야 한다. 통합 시 필요한 변경:
-
-1. **정적 파일 서빙**: `create_app()`에 FastAPI `StaticFiles` 마운트를
-   추가해야 이 화면이 실제로 열린다. 예:
-   ```python
-   from fastapi.staticfiles import StaticFiles
-   from pathlib import Path
-
-   app.mount(
-       "/ui",
-       StaticFiles(directory=Path(__file__).parent / "static", html=True),
-       name="chat-ui",
-   )
-   ```
-   어느 경로(`/ui`, `/` 등)에 마운트하든 `index.html`은 `styles.css`,
-   `chat.js`를 상대 경로로 참조하므로 그대로 동작한다. `/health`,
-   `/v1/answers`와 경로가 겹치지 않게만 주의하면 된다.
-2. **패키지 포함**: `pyproject.toml`의
-   `[tool.setuptools.packages.find]`는 Python 패키지만 찾으므로, wheel을
-   빌드해 배포하는 경우 `static/`의 비-`.py` 파일(HTML/CSS/JS)이
-   패키지 데이터로 포함되도록 `[tool.setuptools.package-data]`(예:
-   `robingraph.api = ["static/*"]`) 또는 `MANIFEST.in` 추가가 필요하다.
-   로컬 checkout에서 `uvicorn`으로 직접 띄우는 현재 개발 흐름에는 영향이
-   없지만, 패키징된 배포본에는 반드시 필요하다.
-
-이 두 가지 모두 이 작업의 소유권 범위(`app.py`, 패키징 설정) 밖이라
-직접 수정하지 않고 여기에 명시적으로 남긴다.
+`create_app()`은 `/`와 `/chat`에서 채팅 셸을, `/static/`에서 JS·CSS를
+제공한다. 같은 앱 팩터리를 쓰는 `serve-fixture`와 `serve-neo4j`에 모두
+적용되며, `pyproject.toml`의 package-data 설정이 wheel에도 세 정적 자산을
+포함한다. 패키지에서 자산이 누락되더라도 API와 `/health`는 시작하고 UI
+경로만 내부 파일 경로를 노출하지 않는 일반적인 HTTP 503으로 실패한다.
 
 ## 로컬에서 눈으로 확인하기
 
-위 마운트가 추가된 뒤:
-
 ```sh
-uv run uvicorn robingraph.api.app:create_app --factory --reload
+uv run --locked robingraph serve-fixture
 ```
 
-브라우저로 마운트한 경로(예: `http://127.0.0.1:8000/ui/`)를 열면 같은
+`http://127.0.0.1:8000/` 또는 `http://127.0.0.1:8000/chat`을 열면 같은
 오리진에서 `/health`, `/v1/answers`를 호출하는 화면을 확인할 수 있다.
-마운트 전에는 `index.html`을 `file://`로 열어도 `fetch`가 다른
-오리진(또는 스킴)을 호출하는 셈이 되어 브라우저가 요청을 막으므로
-동작하지 않는다 — 이는 의도한 same-origin 제약이다.
+Neo4j 테스트 인스턴스가 준비된 경우에는 `serve-neo4j`로 같은 URL을 쓴다.
+`index.html`을 `file://`로 직접 열면 동작하지 않는 것이 정상이다.
 
 ## 테스트
 
@@ -140,6 +113,5 @@ node --test tests/frontend/chat_ui.test.js
 - `index.html`이 Hermes/LLM을 이 화면의 답변 생성 주체로 주장하지
   않는다(부정문으로만 언급한다).
 
-기존 Python API 계약 테스트(`tests/test_api.py`)는 이 작업에서 수정하지
-않았으며, 32개 모두 그대로 통과한다 — 이 UI는 API를 소비만 할 뿐 계약을
-바꾸지 않는다.
+Python API 계약 테스트(`tests/test_api.py`)는 fixture와 모의 Neo4j 모드의
+페이지·정적 자산 경로, 자산 누락 시 안전한 503, 기존 답변 계약을 함께 검사한다.

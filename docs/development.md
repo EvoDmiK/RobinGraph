@@ -43,6 +43,20 @@ fixture 내용의 의도적인 변경은 생성기 수정 → 재생성 → mani
 
 CI 설정은 [uv의 GitHub Actions 안내](https://docs.astral.sh/uv/guides/integration/github/)를 따른다. 로컬 테스트 통과와 원격 GitHub Actions 실행 결과는 구분해 기록한다.
 
+## 로컬 채팅 UI 확인
+
+`uv run --locked robingraph serve-fixture`를 실행하고
+`http://127.0.0.1:8000/` 또는 `/chat`을 연다. 이 화면은 같은 origin의
+`/health`와 `/v1/answers`만 호출하며, Hermes/LLM 생성이나 `/v1/search`
+결과의 답변 합성을 하지 않는다. 대화는 현재 페이지 메모리에만 남는다.
+
+브라우저 자동화 없이 클라이언트 정적 계약을 검사하려면 다음을 실행한다.
+
+```sh
+node --test tests/frontend/chat_ui.test.js
+uv run --locked --extra test python -m unittest tests.test_api -v
+```
+
 ## Neo4j 통합 테스트
 
 일반 테스트는 DB 없이 실행한다. CI의 별도 `neo4j` job은 Neo4j Community `2026.07.1` 컨테이너를 매번 새로 만들고, 인증을 켠 상태에서 `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1`로 실제 DB 테스트를 활성화한다. 이 job의 비밀번호는 일회용 테스트용 값이며 운영 자격 증명을 사용하지 않는다.
