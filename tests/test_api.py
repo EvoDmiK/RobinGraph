@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -113,6 +114,49 @@ class ApiTest(unittest.TestCase):
                     self.assertEqual("Chat UI is temporarily unavailable.", response.text)
                     self.assertNotIn(str(static_root), response.text)
 
+    def test_empty_required_chat_assets_fail_closed_while_api_routes_remain_available(self) -> None:
+        required_assets = {
+            "index.html": "<!doctype html><html><body>RobinGraph</body></html>",
+            "chat.js": "console.log('chat');",
+            "styles.css": "body { color: #123; }",
+        }
+        for empty_asset in required_assets:
+            with self.subTest(empty_asset=empty_asset), TemporaryDirectory() as directory:
+                static_root = Path(directory)
+                for asset_name, content in required_assets.items():
+                    (static_root / asset_name).write_text(
+                        "" if asset_name == empty_asset else content,
+                        encoding="utf-8",
+                    )
+
+                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                for path in ("/", "/chat", "/static/index.html", "/static/chat.js", "/static/styles.css"):
+                    response = client.get(path)
+                    self.assertEqual(503, response.status_code)
+                    self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                    self.assertNotIn(str(static_root), response.text)
+                self.assertEqual(200, client.get("/health").status_code)
+                self.assertEqual(
+                    200,
+                    client.post("/v1/answers", json={"question": "fixture 호수에 물새가 있나?"}).status_code,
+                )
+
+    def test_unreadable_required_chat_asset_fails_closed_without_path_leakage(self) -> None:
+        original_open = os.open
+
+        def reject_stylesheet(path: str | Path, flags: int, mode: int = 0o777) -> int:
+            if Path(path).name == "styles.css":
+                raise PermissionError("styles.css must not be disclosed")
+            return original_open(path, flags, mode)
+
+        with patch("robingraph.api.app.os.open", side_effect=reject_stylesheet):
+            for path in ("/", "/chat", "/static/chat.js"):
+                response = self.client.get(path)
+                self.assertEqual(503, response.status_code)
+                self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                self.assertNotIn(str(self.static_root), response.text)
+        self.assertEqual(200, self.client.get("/health").status_code)
+
     def test_answer_contains_only_allowed_evidence(self) -> None:
         response = self.client.post("/v1/answers", json={"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"})
         self.assertEqual(200, response.status_code)
@@ -135,6 +179,10 @@ class ApiTest(unittest.TestCase):
     def test_search_is_declared_but_unavailable_in_fixture_mode(self) -> None:
         operation = self.client.get("/openapi.json").json()["paths"]["/v1/search"]["post"]
         self.assertIn("503", operation["responses"])
+        self.assertEqual(
+            "#/components/schemas/DocumentSearchResponse",
+            operation["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        )
         response = self.client.post("/v1/search", json={"question": "물새", "mode": "hybrid", "limit": 5})
         self.assertEqual(503, response.status_code)
 

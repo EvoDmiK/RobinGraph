@@ -1190,8 +1190,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             with driver.session(database=database) as session:
                 session.run(
                     "MATCH (state:IngestState {id: 'reference-taxonomy'}) "
-                    "WHERE state.active_concept_set_id = $concept_set_id RETURN 1",
-                    concept_set_id=concept_set_id,
+                    "WHERE state.active_concept_set_id = $concept_set_id RETURN 1"
                 ).consume()
                 start = session.run(
                     START_STATEMENT,
@@ -1277,7 +1276,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                     {"taxon_id": taxon_a, "taxon_name": "Marker species A", "korean_name": "마커이름", "qids": ["Q1"]}
                 ]
                 start_batch_finalize(run_1, dataset_1, "release-1", rows_v1, "")
-                start_batch_finalize(run_1, dataset_1, "release-1", rows_v1, run_1)  # re-run, same content
+                start_batch_finalize(run_1, dataset_1, "release-1", rows_v1, "")  # re-run, same content
                 count_after_rerun = session.run(
                     "MATCH (v:VernacularName {dataset_id: $dataset_id}) RETURN count(v) AS n", dataset_id=dataset_1
                 ).single(strict=True)["n"]
