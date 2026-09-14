@@ -91,27 +91,19 @@
 
   /**
    * Turn a failure into a short, honest, non-leaking Korean message.
-   * Never surfaces a raw exception message or stack trace; an HTTP
-   * `detail` string from our own FastAPI 4xx responses is short, plain
-   * text (see AnswerResponse validation), but is still length-capped and
-   * stripped of control characters as defense in depth. Each 4xx status we
-   * recognize (400/401/403/422/404/429/503) gets its own honest message
+   * Never surfaces a raw exception message or stack trace, and never
+   * echoes any server-provided `detail` string either: a `detail` is
+   * attacker-influenced input as far as this UI is concerned (it can
+   * contain secrets, internal URLs/paths, control characters, or
+   * unbounded length even if our own backend never intends that), so it
+   * is accepted on the context object for forward-compatibility but is
+   * never read or displayed. Each 4xx status we recognize
+   * (400/401/403/422/404/429/503) gets its own fixed, honest message
    * (bad request / auth required / forbidden / validation / not found /
    * rate-limited / temporarily unavailable) rather than being collapsed
    * into a generic "server error" -- only a genuinely unrecognized status
    * falls through to the generic message below.
    */
-  function stripControlCharacters(value) {
-    var result = "";
-    for (var i = 0; i < value.length; i += 1) {
-      var code = value.charCodeAt(i);
-      if (code > 31 && code !== 127) {
-        result += value.charAt(i);
-      }
-    }
-    return result;
-  }
-
   function sanitizeErrorMessage(context) {
     context = context || {};
     if (context.kind === "network") {
@@ -122,10 +114,8 @@
     }
     if (context.kind === "http") {
       var status = context.status;
-      var rawDetail = typeof context.detail === "string" ? context.detail : "";
-      var safeDetail = stripControlCharacters(rawDetail).trim().slice(0, 300);
       if (status === 400) {
-        return safeDetail ? "요청이 올바르지 않습니다: " + safeDetail : "요청이 올바르지 않습니다.";
+        return "요청이 올바르지 않습니다. 입력 내용을 확인한 뒤 다시 시도하세요.";
       }
       if (status === 401) {
         return "인증이 필요합니다. 로그인 상태를 확인한 뒤 다시 시도하세요.";
@@ -134,7 +124,7 @@
         return "이 작업에 대한 접근 권한이 없습니다.";
       }
       if (status === 422) {
-        return safeDetail ? "입력을 확인해주세요: " + safeDetail : "입력을 확인해주세요.";
+        return "입력을 확인해주세요. 질문은 1자 이상 2,000자 이하로 입력해야 합니다.";
       }
       if (status === 404) {
         return "요청한 정보를 찾을 수 없습니다.";
@@ -329,11 +319,9 @@
         })
         .then(function (result) {
           if (!result.response.ok) {
-            var detail =
-              result.payload && typeof result.payload.detail === "string" ? result.payload.detail : "";
-            appendErrorMessage(
-              sanitizeErrorMessage({ kind: "http", status: result.response.status, detail: detail })
-            );
+            // The server's `detail` string is never read here: see
+            // sanitizeErrorMessage's fixed, honest per-status messages.
+            appendErrorMessage(sanitizeErrorMessage({ kind: "http", status: result.response.status }));
             return;
           }
           // Fail closed: only answer/abstain/clarify are known-safe
@@ -370,7 +358,14 @@
     });
 
     input.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" && !event.shiftKey) {
+      // event.isComposing is true while an IME (Korean/Japanese/Chinese
+      // input method) is still composing the current character block.
+      // Some IMEs report the confirming keystroke as "Enter" too, so
+      // without this guard, confirming a composition would also submit
+      // the form. Once composition ends, isComposing is false again and
+      // Enter submits normally; Shift+Enter always inserts a newline
+      // regardless of composition state.
+      if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
         event.preventDefault();
         if (typeof form.requestSubmit === "function") {
           form.requestSubmit();
