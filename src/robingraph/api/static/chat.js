@@ -1,6 +1,6 @@
 /**
  * RobinGraph manual test UI. Talks only to same-origin `/health` and
- * `/v1/answers`. No innerHTML/insertAdjacentHTML/document.write is used
+ * `/v1/chat`. No innerHTML/insertAdjacentHTML/document.write is used
  * anywhere in this file -- all dynamic content is inserted via
  * `textContent`/`createElement`, which never interprets its input as
  * markup. The one place hostile *server* content could still reach an
@@ -140,6 +140,68 @@
     return "요청 처리 중 알 수 없는 오류가 발생했습니다.";
   }
 
+  function boundedLimit(value) {
+    var number = Number(value);
+    return Number.isInteger(number) && number >= 1 && number <= 10 ? number : 10;
+  }
+
+  /** Build the exact typed body accepted by POST /v1/chat. */
+  function buildChatPayload(question, intent, values) {
+    var payload = { question: question, intent: intent };
+    values = values || {};
+    if (intent === "taxonomy") {
+      var scientificName = typeof values.scientific_name === "string" ? values.scientific_name.trim() : "";
+      var name = typeof values.name === "string" ? values.name.trim() : "";
+      // The API accepts at most one taxonomy name field. Prefer the explicit
+      // scientific name if a user happened to fill both controls.
+      payload.filters = scientificName
+        ? { kind: "taxonomy", scientific_name: scientificName }
+        : name ? { kind: "taxonomy", name: name } : { kind: "taxonomy" };
+    } else if (intent === "observations") {
+      var observationFilters = { kind: "observations", limit: boundedLimit(values.limit) };
+      ["taxon_key", "scientific_name", "place", "observed_from", "observed_to"].forEach(function (key) {
+        if (typeof values[key] === "string" && values[key].trim()) {
+          observationFilters[key] = values[key].trim();
+        }
+      });
+      payload.filters = observationFilters;
+    } else if (intent === "evidence") {
+      payload.filters = {
+        kind: "evidence",
+        limit: boundedLimit(values.limit),
+      };
+    }
+    return payload;
+  }
+
+  /** Convert typed route results into bounded plain-text lines for safe DOM rendering. */
+  function resultSummaryLines(result) {
+    if (!result || typeof result !== "object") {
+      return [];
+    }
+    if (result.kind === "taxonomy" && result.lineage && Array.isArray(result.lineage.lineage)) {
+      return result.lineage.lineage.slice(0, 20).map(function (item) {
+        var label = [item.rank, item.scientific_name].filter(Boolean).join(" · ");
+        return item.korean_name ? label + " (" + item.korean_name + ")" : label;
+      });
+    }
+    if (result.kind === "observations" && Array.isArray(result.results)) {
+      return result.results.slice(0, 10).map(function (item) {
+        var taxon = item.taxon && item.taxon.scientific_name ? item.taxon.scientific_name : "분류 미상";
+        var place = item.place && item.place.name ? item.place.name : "장소 미상";
+        var disclosure = item.coordinate_disclosure === "withheld" ? "좌표 비공개" : "공개 좌표";
+        return [item.observed_at, taxon, place, disclosure].filter(Boolean).join(" · ");
+      });
+    }
+    if (result.kind === "evidence" && result.search && Array.isArray(result.search.results)) {
+      return result.search.results.slice(0, 10).map(function (item) {
+        var channels = Array.isArray(item.channels) ? item.channels.join(", ") : "";
+        return channels ? item.text + " [" + channels + "]" : item.text;
+      });
+    }
+    return [];
+  }
+
   function init(doc, win) {
     var form = doc.getElementById("chat-form");
     var input = doc.getElementById("question-input");
@@ -149,10 +211,12 @@
     var statusRegion = doc.getElementById("status-region");
     var spinner = doc.getElementById("spinner");
     var backendModeValue = doc.getElementById("backend-mode-value");
+    var intent = doc.getElementById("chat-intent");
+    var taxonomyControls = doc.getElementById("taxonomy-controls");
+    var observationControls = doc.getElementById("observations-controls");
+    var evidenceControls = doc.getElementById("evidence-controls");
 
-    // Page-session only: lives in a plain JS array for as long as this tab
-    // stays open. Never written to localStorage/sessionStorage/cookies, and
-    // wiped by "대화 지우기" or a reload -- there is no persistence layer.
+    // Page-session only: this plain JS array is wiped on reload or clear.
     var messages = [];
 
     function setStatus(text) {
@@ -163,8 +227,41 @@
       sendButton.disabled = isBusy;
       clearButton.disabled = isBusy;
       input.disabled = isBusy;
+      intent.disabled = isBusy;
       spinner.hidden = !isBusy;
       form.setAttribute("aria-busy", isBusy ? "true" : "false");
+    }
+
+    function syncModeControls() {
+      taxonomyControls.hidden = intent.value !== "taxonomy";
+      observationControls.hidden = intent.value !== "observations";
+      evidenceControls.hidden = intent.value !== "evidence";
+    }
+
+    function selectedFilterValues() {
+      var selected = intent.value;
+      if (selected === "taxonomy") {
+        return {
+          scientific_name: doc.getElementById("taxonomy-scientific-name").value,
+          name: doc.getElementById("taxonomy-name").value,
+        };
+      }
+      if (selected === "observations") {
+        return {
+          taxon_key: doc.getElementById("observation-taxon-key").value,
+          scientific_name: doc.getElementById("observation-scientific-name").value,
+          place: doc.getElementById("observation-place").value,
+          observed_from: doc.getElementById("observation-from").value,
+          observed_to: doc.getElementById("observation-to").value,
+          limit: doc.getElementById("observation-limit").value,
+        };
+      }
+      if (selected === "evidence") {
+        return {
+          limit: doc.getElementById("evidence-limit").value,
+        };
+      }
+      return {};
     }
 
     function scrollToLatest() {
@@ -207,17 +304,29 @@
       item.appendChild(text);
 
       var answerMetadata = [];
-      if (answer.taxonomy_release) {
-        answerMetadata.push("분류 릴리스: " + answer.taxonomy_release);
-      }
-      if (answer.data_cutoff) {
-        answerMetadata.push("데이터 기준일: " + answer.data_cutoff);
+      var result = answer && answer.result;
+      if (result && result.kind === "taxonomy" && result.lineage) {
+        answerMetadata.push("분류 출처: " + result.lineage.taxonomy_source);
+        answerMetadata.push("분류 릴리스: " + result.lineage.taxonomy_release);
+        answerMetadata.push("개념집합: " + result.lineage.concept_set_id);
       }
       if (answerMetadata.length > 0) {
         var metadata = doc.createElement("p");
         metadata.className = "answer-metadata";
         metadata.textContent = answerMetadata.join(" · ");
         item.appendChild(metadata);
+      }
+
+      var resultLines = resultSummaryLines(result);
+      if (resultLines.length > 0) {
+        var resultList = doc.createElement("ul");
+        resultList.className = "route-results";
+        resultLines.forEach(function (line) {
+          var resultItem = doc.createElement("li");
+          resultItem.textContent = line;
+          resultList.appendChild(resultItem);
+        });
+        item.appendChild(resultList);
       }
 
       var warnings = Array.isArray(answer.warnings) ? answer.warnings : [];
@@ -233,6 +342,17 @@
       }
 
       var citations = Array.isArray(answer.citations) ? answer.citations : [];
+      if (result && result.kind === "evidence" && result.search && Array.isArray(result.search.results)) {
+        citations = result.search.results.map(function (item) {
+          return {
+            source_id: item.citation && item.citation.source_id,
+            source_url: item.citation && item.citation.source_url,
+            locator: item.citation && item.citation.locator,
+            license_name: item.citation && item.citation.license_name,
+            evidence_id: item.chunk_id,
+          };
+        });
+      }
       if (citations.length > 0) {
         var citeList = doc.createElement("ul");
         citeList.className = "citations";
@@ -302,10 +422,10 @@
       setStatus("답변을 불러오는 중입니다…");
 
       win
-        .fetch("/v1/answers", {
+        .fetch("/v1/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: question }),
+          body: JSON.stringify(buildChatPayload(question, intent.value, selectedFilterValues())),
         })
         .then(function (response) {
           return response
@@ -375,6 +495,9 @@
       }
     });
 
+    intent.addEventListener("change", syncModeControls);
+    syncModeControls();
+
     clearButton.addEventListener("click", function () {
       messages.length = 0;
       while (history.firstChild) {
@@ -397,6 +520,9 @@
     formatDisposition: formatDisposition,
     formatBackendMode: formatBackendMode,
     sanitizeErrorMessage: sanitizeErrorMessage,
+    boundedLimit: boundedLimit,
+    buildChatPayload: buildChatPayload,
+    resultSummaryLines: resultSummaryLines,
     init: init,
   };
 });

@@ -32,6 +32,42 @@
     ></section>
 
     <form id="chat-form" class="chat-form" autocomplete="off">
+      <label for="chat-intent">조회 유형</label>
+      <select id="chat-intent" name="intent" aria-label="조회 유형">
+        <option value="auto">자동 분류</option>
+        <option value="taxonomy">분류 계통</option>
+        <option value="observations">관찰 기록</option>
+        <option value="evidence">근거 문서</option>
+      </select>
+
+      <fieldset id="taxonomy-controls" class="chat-controls" hidden>
+        <legend>분류 계통 필터</legend>
+        <label for="taxonomy-scientific-name">학명</label>
+        <input id="taxonomy-scientific-name" maxlength="200" />
+        <label for="taxonomy-name">국명</label>
+        <input id="taxonomy-name" maxlength="200" />
+      </fieldset>
+      <fieldset id="observations-controls" class="chat-controls" hidden>
+        <legend>관찰 기록 필터</legend>
+        <label for="observation-taxon-key">분류 키</label>
+        <input id="observation-taxon-key" maxlength="50" />
+        <label for="observation-scientific-name">학명</label>
+        <input id="observation-scientific-name" maxlength="200" />
+        <label for="observation-place">장소</label>
+        <input id="observation-place" maxlength="200" />
+        <label for="observation-from">관찰 시작일</label>
+        <input id="observation-from" type="date" />
+        <label for="observation-to">관찰 종료일</label>
+        <input id="observation-to" type="date" />
+        <label for="observation-limit">최대 결과 (1–10)</label>
+        <input id="observation-limit" type="number" min="1" max="10" value="10" />
+      </fieldset>
+      <fieldset id="evidence-controls" class="chat-controls" hidden>
+        <legend>근거 문서 필터</legend>
+        <label for="evidence-limit">최대 결과 (1–10)</label>
+        <input id="evidence-limit" type="number" min="1" max="10" value="10" />
+      </fieldset>
+
       <label for="question-input" class="visually-hidden">질문 입력</label>
       <textarea
         id="question-input"
@@ -58,7 +94,7 @@
   <footer class="app-footer">
     <p>
       이 화면은 같은 오리진(same-origin)의 <code>/health</code>,
-      <code>/v1/answers</code> 만 호출합니다. 대화 기록은 이 페이지가 열려
+      <code>/v1/chat</code> 만 호출합니다. 대화 기록은 이 페이지가 열려
       있는 동안에만 메모리에 유지되며, 새로고침하거나 "대화 지우기"를
       누르면 사라집니다(별도 저장·로그인 없음).
     </p>

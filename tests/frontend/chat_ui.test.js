@@ -43,7 +43,7 @@ test("chat.js contains no HTML-injection sink in executable code (comments may d
   }
 });
 
-test("chat.js wires the fail-closed disposition guard into the /v1/answers success path", () => {
+test("chat.js wires the fail-closed disposition guard into the /v1/chat success path", () => {
   const codeOnly = stripJsComments(jsSource);
   // The success branch must gate on formatDisposition(...).recognized before
   // ever calling appendAnswerMessage, and must route the unrecognized case
@@ -61,11 +61,45 @@ test("chat.js wires the fail-closed disposition guard into the /v1/answers succe
   assert.ok(guardIndex < renderIndex, "the recognized-disposition guard must run before rendering the answer");
 });
 
-test("chat.js only ever fetches same-origin /health and /v1/answers", () => {
+test("chat.js only ever fetches same-origin /health and /v1/chat", () => {
   const calls = Array.from(jsSource.matchAll(/\.fetch\(\s*"([^"]+)"/g)).map((match) => match[1]);
-  assert.deepEqual(calls.sort(), ["/health", "/v1/answers"]);
+  assert.deepEqual(calls.sort(), ["/health", "/v1/chat"]);
   assert.equal(jsSource.includes("https://"), false, "no absolute/remote URL literal is allowed in chat.js");
   assert.equal(jsSource.includes("http://"), false, "no absolute/remote URL literal is allowed in chat.js");
+});
+
+test("chat.js has no browser persistence or analytics API", () => {
+  for (const forbidden of ["local" + "Storage", "session" + "Storage", "document." + "cookie", "analytics"]) {
+    assert.equal(jsSource.includes(forbidden), false, "must not contain " + forbidden);
+  }
+});
+
+test("buildChatPayload sends only route-appropriate typed filters and bounds limits", () => {
+  assert.deepEqual(chat.buildChatPayload("계통?", "auto", {}), { question: "계통?", intent: "auto" });
+  assert.deepEqual(chat.buildChatPayload("계통?", "taxonomy", { scientific_name: " Anas platyrhynchos ", name: "청둥오리" }), {
+    question: "계통?", intent: "taxonomy", filters: { kind: "taxonomy", scientific_name: "Anas platyrhynchos" },
+  });
+  assert.deepEqual(chat.buildChatPayload("관찰?", "observations", { place: " Seoul ", limit: "11", common_name: "ignored" }), {
+    question: "관찰?", intent: "observations", filters: { kind: "observations", place: "Seoul", limit: 10 },
+  });
+  assert.deepEqual(chat.buildChatPayload("근거?", "evidence", { mode: "ignored", limit: "2" }), {
+    question: "근거?", intent: "evidence", filters: { kind: "evidence", limit: 2 },
+  });
+});
+
+test("resultSummaryLines exposes typed lineage, public observations, and grounded evidence text with channels", () => {
+  assert.deepEqual(chat.resultSummaryLines({
+    kind: "taxonomy",
+    lineage: { lineage: [{ rank: "species", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" }] },
+  }), ["species · Anas platyrhynchos (청둥오리)"]);
+  assert.deepEqual(chat.resultSummaryLines({
+    kind: "observations",
+    results: [{ observed_at: "2025-01-02", taxon: { scientific_name: "Anas platyrhynchos" }, place: { name: "Seoul" }, coordinate_disclosure: "withheld" }],
+  }), ["2025-01-02 · Anas platyrhynchos · Seoul · 좌표 비공개"]);
+  assert.deepEqual(chat.resultSummaryLines({
+    kind: "evidence",
+    search: { results: [{ text: "grounded excerpt", channels: ["fulltext", "vector"] }] },
+  }), ["grounded excerpt [fulltext, vector]"]);
 });
 
 test("sanitizeUrl (the render helper backing citation links) rejects every hostile URL scheme", () => {
@@ -230,6 +264,7 @@ test('sanitizeErrorMessage exposes a distinct, safe "unsupported-response" messa
 test("index.html declares every required interactive control and accessibility label", () => {
   const requiredMarkers = [
     'id="chat-form"',
+    'id="chat-intent"',
     'id="question-input"',
     'id="send-button"',
     'id="clear-button"',
@@ -249,6 +284,8 @@ test("index.html declares every required interactive control and accessibility l
   assert.ok(htmlSource.includes('role="log"'), "conversation history must be an accessible log region");
   assert.ok(htmlSource.includes('role="status"'), "the progress/status region must be an accessible status region");
   assert.ok(htmlSource.includes('aria-live="polite"'), "dynamic regions must announce updates politely");
+  assert.match(htmlSource, /id="observation-limit"[^>]*min="1"[^>]*max="10"/);
+  assert.equal(htmlSource.includes("common-name"), false, "unsupported common-name observation filter must not be exposed");
 });
 
 test("index.html honestly discloses this is a deterministic, evidence-grounded UI, not an LLM/Hermes chatbot", () => {
@@ -494,11 +531,27 @@ function createFakeDom() {
     "status-region",
     "spinner",
     "backend-mode-value",
+    "chat-intent",
+    "taxonomy-controls",
+    "observations-controls",
+    "evidence-controls",
+    "taxonomy-scientific-name",
+    "taxonomy-name",
+    "observation-taxon-key",
+    "observation-scientific-name",
+    "observation-place",
+    "observation-from",
+    "observation-to",
+    "observation-limit",
+    "evidence-limit",
   ];
   const elementsById = {};
   for (const id of REQUIRED_IDS) {
     elementsById[id] = createFakeElement(id === "chat-form" ? "form" : "div");
   }
+  elementsById["chat-intent"].value = "auto";
+  elementsById["observation-limit"].value = "10";
+  elementsById["evidence-limit"].value = "10";
   // The real element is a <form>; give it a requestSubmit() that behaves
   // like the browser's -- synchronously dispatching a cancelable "submit"
   // event to whatever chat.js registered via form.addEventListener("submit", ...).
@@ -532,6 +585,24 @@ function pressKey(dom, keyEventOverrides) {
     Object.assign({ key: "Enter", shiftKey: false, isComposing: false }, keyEventOverrides)
   );
 }
+
+test("mode changes expose only the selected route controls", () => {
+  const dom = createFakeDom();
+  chat.init(dom.doc, dom.win);
+  const intent = dom.elementsById["chat-intent"];
+
+  assert.equal(dom.elementsById["taxonomy-controls"].hidden, true);
+  assert.equal(dom.elementsById["observations-controls"].hidden, true);
+  assert.equal(dom.elementsById["evidence-controls"].hidden, true);
+
+  for (const selected of ["taxonomy", "observations", "evidence", "auto"]) {
+    intent.value = selected;
+    intent.dispatch("change", {});
+    assert.equal(dom.elementsById["taxonomy-controls"].hidden, selected !== "taxonomy");
+    assert.equal(dom.elementsById["observations-controls"].hidden, selected !== "observations");
+    assert.equal(dom.elementsById["evidence-controls"].hidden, selected !== "evidence");
+  }
+});
 
 test("real keydown event path: Enter (not composing, not shifted) prevents default and submits via form.requestSubmit(), then the submit handler renders the user message", () => {
   const dom = createFakeDom();

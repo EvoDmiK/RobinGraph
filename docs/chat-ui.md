@@ -1,17 +1,39 @@
 # RobinGraph 채팅 테스트 UI
 
 `src/robingraph/api/static/`에 있는 정적 자산(`index.html`, `styles.css`,
-`chat.js`)은 사람이 수동으로 `GET /health`와 `POST /v1/answers`를 눈으로
+`chat.js`)은 사람이 수동으로 `GET /health`와 `POST /v1/chat`를 눈으로
 확인해 볼 수 있는 대화형(conversation-style) 테스트 화면이다. 별도의
 프론트엔드 앱 스택(번들러, 프레임워크, 빌드 단계)이 아니며, FastAPI가
 그대로 서빙할 수 있는 순수 HTML/CSS/바닐라 JS 3개 파일뿐이다.
 
+## 통합 채팅 경로
+
+`POST /v1/chat`은 기존 API를 대체하지 않는 추가 경로다. `question`은 공백이
+아닌 최대 2,000자이며 `intent`는 `auto`, `taxonomy`, `observations`,
+`evidence` 중 하나다. 명시 모드는 임베딩 없이 기존의 계통·관찰·문헌 조회
+핸들러를 바로 사용한다. `auto`만 Jina 임베딩의 `retrieval.passage` 능력
+프로토타입과 `retrieval.query` 질문 벡터를 비교한다. 임베딩 설정/제공자/형식,
+신뢰도 또는 승자 차이가 불확실하면 조회하지 않고 안전한 한국어 추가 확인
+응답을 반환한다. 유사도는 검색 경로 선택 신호일 뿐 사실을 생성하지 않는다.
+
+응답의 `result`는 `kind`가 `taxonomy`, `observations`, `evidence`, `clarify`
+중 하나인 판별 유니온이다. taxonomy에는 AviList 출처·릴리스·개념집합과 순서가
+보장된 계통을, observations에는 기존 공개/비공개 좌표 및 출처 매퍼 결과를,
+evidence에는 원문 발췌·인용·채널·hybrid fallback 경고를 담는다. 관찰 필터는
+분류 키, 학명, 장소, 날짜, 1–10개의 제한만 제공하며 좌표나 미지원 일반명
+필터는 노출하지 않는다. 관찰일이나 개념집합 릴리스를 검색/수집 기준시점으로
+표시하지 않는다. 명시적 evidence 요청은 임베딩을 완전히 우회해 fulltext로
+조회하고, `auto`가 evidence를 선택한 경우에만 hybrid 검색과 그 fallback
+경고가 적용될 수 있다. 필터 없는 관찰 전체 조회는 실행하지 않는다.
+
 ## 정직하게 밝혀둘 것: LLM이 아니다
 
 이 화면은 Hermes를 포함한 어떤 생성형 언어모델(LLM)도 사용하지 않는다.
-`answer_text`는 `QuestionService`(`src/robingraph/slice.py`)가 그래프
-근거를 결정론적 규칙으로 조합해 만든 문자열이며, 근거가 부족하면
-추측 대신 `disposition: "abstain"`으로 답변을 보류한다
+기존 `/v1/answers`의 `answer_text`는 `QuestionService`
+(`src/robingraph/slice.py`)가 그래프 근거를 결정론적 규칙으로 조합한다.
+`/v1/chat`은 기존의 계통·관찰·문헌 핸들러 결과와 고정 한국어 설명만
+반환하며, 근거가 부족하면 추측 대신 `disposition: "abstain"` 또는
+`"clarify"`로 답변을 보류한다
 ([current-implementation.md](current-implementation.md)의 "Hermes 연동은
 후속" 메모 참고). UI는 이 사실을 배너 문구로 명시적으로 드러내고,
 Hermes/LLM이 이 화면의 답변을 만든다고 암시하는 문구는 두지 않는다.
@@ -19,6 +41,9 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 
 ## 화면 구성과 상호작용
 
+- **조회 유형과 필터**: 자동/분류/관찰/근거 모드를 선택할 수 있고 선택한
+  명시 모드의 입력만 보인다. 관찰과 근거 결과 제한은 1–10으로 제한된다.
+  자동 모드는 질문 외 필터를 보내지 않는다.
 - **질문 입력**: `textarea#question-input`. `Enter`로 전송, `Shift+Enter`로
   줄바꿈(`chat.js`의 `keydown` 핸들러). `maxlength=2000`으로
   `QuestionRequest.question`의 서버 측 상한(2,000자)과 맞췄다. 한국어 등
@@ -100,7 +125,7 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
   실행될 수 있다. `sanitizeUrl`은 절대 `http(s)` URL만 통과시키고, 그 외
   스킴이나 프로토콜 상대 URL(`//evil/x`)은 `null`을 반환해 호출부가
   일반 텍스트로만 렌더링하게 만든다.
-- **동일 오리진만 호출**: `chat.js`는 `/health`, `/v1/answers` 두
+- **동일 오리진만 호출**: `chat.js`는 `/health`, `/v1/chat` 두
   상대 경로만 `fetch`하며, 코드 안에 절대 URL 리터럴이 전혀 없다
   (테스트가 소스에 `http://`/`https://` 문자열이 없는지 검사한다).
   이 화면은 CORS 없이, 이 API를 서빙하는 오리진에서 열릴 때만 동작하도록
@@ -126,7 +151,7 @@ uv run --locked robingraph serve-fixture
 ```
 
 `http://127.0.0.1:8000/` 또는 `http://127.0.0.1:8000/chat`을 열면 같은
-오리진에서 `/health`, `/v1/answers`를 호출하는 화면을 확인할 수 있다.
+오리진에서 `/health`, `/v1/chat`를 호출하는 화면을 확인할 수 있다.
 Neo4j 테스트 인스턴스가 준비된 경우에는 `serve-neo4j`로 같은 URL을 쓴다.
 `index.html`을 `file://`로 직접 열면 동작하지 않는 것이 정상이다.
 
@@ -141,7 +166,7 @@ node --test tests/frontend/chat_ui.test.js
 ```
 
 - `chat.js`의 실행 코드(주석 제외)에 `innerHTML` 등 주입 경로가 없다.
-- `chat.js`가 `/health`, `/v1/answers` 외의 URL을 호출하지 않는다.
+- `chat.js`가 `/health`, `/v1/chat` 외의 URL을 호출하지 않는다.
 - `sanitizeUrl`이 `javascript:`/`data:`/프로토콜 상대 URL 등 위험한
   스킴을 모두 거부하고, 정상적인 `http(s)` URL만 통과시킨다.
 - `formatDisposition`, `sanitizeErrorMessage`가 정직하고 안전한 한국어
