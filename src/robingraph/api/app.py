@@ -12,12 +12,13 @@ from datetime import date
 import os
 from pathlib import Path
 import stat
-from typing import Callable, Literal
+from typing import Annotated, Callable, Literal, cast
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from ..embeddings import EmbeddingClient
 from ..fixture import load_fixture
 from ..graph.settings import Neo4jSettings
 from ..retrieval.hybrid import FULLTEXT_CHANNEL, VECTOR_CHANNEL, HybridSearchOutcome
@@ -30,6 +31,7 @@ from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
+from .semantic_router import ChatIntent, SemanticRouter
 
 
 class QuestionRequest(BaseModel):
@@ -195,6 +197,115 @@ class TaxonomyLineageResponse(BaseModel):
     lineage: list[LineageTaxonResponse]
 
 
+# Integrated chat is intentionally additive.  It exposes only filters the
+# established bounded handlers understand; it never accepts arbitrary Cypher,
+# coordinates, or a common-name observation filter the operational handler
+# cannot promise to honor.
+class _ChatModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class TaxonomyChatFilters(_ChatModel):
+    kind: Literal["taxonomy"] = "taxonomy"
+    scientific_name: str | None = Field(default=None, max_length=200)
+    name: str | None = Field(default=None, max_length=200)
+
+    @model_validator(mode="after")
+    def exactly_one_name(self) -> "TaxonomyChatFilters":
+        values = [value for value in (self.scientific_name, self.name) if value is not None]
+        if len(values) > 1:
+            raise ValueError("only one taxonomy name filter is allowed")
+        if values and not values[0].strip():
+            raise ValueError("taxonomy name must not be blank")
+        return self
+
+
+class ObservationChatFilters(_ChatModel):
+    kind: Literal["observations"] = "observations"
+    taxon_key: str | None = Field(default=None, max_length=50)
+    scientific_name: str | None = Field(default=None, max_length=200)
+    place: str | None = Field(default=None, max_length=200)
+    observed_from: date | None = None
+    observed_to: date | None = None
+    limit: int = Field(default=10, ge=1, le=10)
+
+    @model_validator(mode="after")
+    def valid_dates_and_text(self) -> "ObservationChatFilters":
+        if self.observed_from and self.observed_to and self.observed_from > self.observed_to:
+            raise ValueError("observed_from must not be later than observed_to")
+        for value in (self.taxon_key, self.scientific_name, self.place):
+            if value is not None and not value.strip():
+                raise ValueError("observation text filters must not be blank")
+        return self
+
+
+class EvidenceChatFilters(_ChatModel):
+    kind: Literal["evidence"] = "evidence"
+    limit: int = Field(default=10, ge=1, le=10)
+
+
+ChatFilters = Annotated[
+    TaxonomyChatFilters | ObservationChatFilters | EvidenceChatFilters,
+    Field(discriminator="kind"),
+]
+
+
+class ChatRequest(_ChatModel):
+    question: str = Field(min_length=1, max_length=2_000)
+    intent: Literal["auto", "taxonomy", "observations", "evidence"] = "auto"
+    filters: ChatFilters | None = None
+
+    @field_validator("question")
+    @classmethod
+    def nonblank_question(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("question must not be blank")
+        return cleaned
+
+    @model_validator(mode="after")
+    def route_filter_matches_explicit_intent(self) -> "ChatRequest":
+        if self.filters is not None and self.intent != "auto" and self.filters.kind != self.intent:
+            raise ValueError("filters must match the selected intent")
+        return self
+
+
+class ChatTaxonomyResult(_ChatModel):
+    kind: Literal["taxonomy"] = "taxonomy"
+    lineage: TaxonomyLineageResponse | None
+
+
+class ChatObservationsResult(_ChatModel):
+    kind: Literal["observations"] = "observations"
+    results: list[OperationalObservationResponse]
+    limit: int
+
+
+class ChatEvidenceResult(_ChatModel):
+    kind: Literal["evidence"] = "evidence"
+    search: DocumentSearchResponse
+
+
+class ChatClarifyResult(_ChatModel):
+    kind: Literal["clarify"] = "clarify"
+    prompt: str
+
+
+ChatResult = Annotated[
+    ChatTaxonomyResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult,
+    Field(discriminator="kind"),
+]
+
+
+class ChatResponse(_ChatModel):
+    selected_intent: ChatIntent | None
+    route_method: Literal["semantic", "explicit"]
+    disposition: Literal["answer", "abstain", "clarify"]
+    answer_text: str
+    warnings: list[str]
+    result: ChatResult
+
+
 _DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
 _CHAT_UI_UNAVAILABLE = "Chat UI is temporarily unavailable."
 _SEARCH_UNAVAILABLE = "Document search is temporarily unavailable."
@@ -319,14 +430,16 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
     )
 
 
-def create_neo4j_search_handler(settings: Neo4jSettings) -> SearchHandler:
+def create_neo4j_search_handler(
+    settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None
+) -> SearchHandler:
     """Build the read-only Neo4j/Jina search boundary used by FastAPI."""
 
     def handle(question: str, limit: int, hybrid: bool) -> HybridSearchOutcome:
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
         from ..embeddings import EmbeddingConfigurationError, EmbeddingError, JinaEmbeddingClient
-        from ..retrieval.neo4j_hybrid import HybridSearchRequest, search
+        from ..retrieval.neo4j_hybrid import HybridSearchRequest, QueryEmbedderLike, search
 
         top_k = max(25, limit)
         channels = (FULLTEXT_CHANNEL, VECTOR_CHANNEL) if hybrid else (FULLTEXT_CHANNEL,)
@@ -341,14 +454,18 @@ def create_neo4j_search_handler(settings: Neo4jSettings) -> SearchHandler:
             if not hybrid:
                 return search(settings, request)
             try:
-                client = JinaEmbeddingClient.from_env()
+                client = embedding_client if embedding_client is not None else JinaEmbeddingClient.from_env()
             except EmbeddingConfigurationError as error:
                 # Configuration errors can contain deployment-specific details.
                 # Keep them out of the HTTP contract while retaining the cause
                 # for server-side diagnostics.
                 raise SearchBackendUnavailableError(_SEARCH_UNAVAILABLE) from error
             try:
-                return search(settings, request, query_embedder=client)
+                return search(
+                    settings,
+                    request,
+                    query_embedder=cast(QueryEmbedderLike, client),
+                )
             except EmbeddingError:
                 fallback_request = HybridSearchRequest(
                     query_text=question,
@@ -429,6 +546,7 @@ def create_app(
     observation_handler: ObservationSearchHandler | None = None,
     lineage_handler: LineageHandler | None = None,
     korean_lineage_handler: LineageHandler | None = None,
+    semantic_router: SemanticRouter | None = None,
     static_dir: Path | None = None,
 ) -> FastAPI:
     """Create the API and, when the packaged asset bundle is complete, the chat shell.
@@ -485,6 +603,180 @@ def create_app(
         except ValueError as error:
             raise HTTPException(status_code=500, detail="Answer provenance validation failed") from error
         return _response(answer)
+
+    @app.post("/v1/chat", response_model=ChatResponse)
+    def integrated_chat(request: ChatRequest) -> ChatResponse:
+        """Route a bounded chat request without inventing facts or filters.
+
+        Explicit routes never read the router, so a missing embedding setting
+        or provider outage cannot affect established operational workflows.
+        """
+
+        if request.intent == "auto":
+            selected = semantic_router.classify(request.question) if semantic_router is not None else None
+            method: Literal["semantic", "explicit"] = "semantic"
+            if selected is None:
+                return ChatResponse(
+                    selected_intent=None,
+                    route_method=method,
+                    disposition="clarify",
+                    answer_text="질문의 종류를 판단하지 못했습니다. 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+                    warnings=["자동 분류가 확실하지 않아 조회하지 않았습니다."],
+                    result=ChatClarifyResult(prompt="분류, 관찰, 근거 중 하나를 선택해 주세요."),
+                )
+        else:
+            selected = request.intent
+            method = "explicit"
+
+        if request.filters is not None and request.filters.kind != selected:
+            return ChatResponse(
+                selected_intent=selected,
+                route_method=method,
+                disposition="clarify",
+                answer_text="선택된 조회 유형과 필터가 일치하지 않습니다. 필터를 다시 선택해 주세요.",
+                warnings=["다른 조회 유형의 필터는 적용하지 않았습니다."],
+                result=ChatClarifyResult(prompt="선택된 조회 유형에 맞는 필터를 사용해 주세요."),
+            )
+
+        if selected == "taxonomy":
+            filters = request.filters if isinstance(request.filters, TaxonomyChatFilters) else None
+            query = (
+                (filters.scientific_name or filters.name or request.question)
+                if filters
+                else request.question
+            )
+            handler = korean_lineage_handler if filters and filters.name is not None else lineage_handler
+            if handler is None:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="분류 계통 정보를 현재 조회할 수 없습니다.",
+                    warnings=["분류 계통 조회 기능을 사용할 수 없습니다."],
+                    result=ChatTaxonomyResult(lineage=None),
+                )
+            try:
+                lineage = handler(query)
+            except Exception:
+                # A chat response must not disclose provider/configuration
+                # details.  The public lineage endpoint keeps its legacy 503.
+                return ChatResponse(
+                    selected_intent=selected,
+                    route_method=method,
+                    disposition="abstain",
+                    answer_text="분류 계통 정보를 현재 조회할 수 없습니다.",
+                    warnings=["분류 계통 조회 기능을 사용할 수 없습니다."],
+                    result=ChatTaxonomyResult(lineage=None),
+                )
+            if lineage is None:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="입력한 이름의 분류 계통을 확인하지 못했습니다.",
+                    warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
+                    result=ChatTaxonomyResult(lineage=None),
+                )
+            return ChatResponse(
+                selected_intent=selected, route_method=method, disposition="answer",
+                answer_text="분류 계통을 확인했습니다.", warnings=[],
+                result=ChatTaxonomyResult(lineage=_lineage_response(lineage)),
+            )
+
+        if selected == "observations":
+            filters = request.filters if isinstance(request.filters, ObservationChatFilters) else ObservationChatFilters()
+            has_bounded_filter = any(
+                value is not None
+                for value in (
+                    filters.taxon_key,
+                    filters.scientific_name,
+                    filters.place,
+                    filters.observed_from,
+                    filters.observed_to,
+                )
+            )
+            if not has_bounded_filter:
+                return ChatResponse(
+                    selected_intent=selected,
+                    route_method=method,
+                    disposition="clarify",
+                    answer_text="관찰 기록을 조회하려면 분류 키, 학명, 장소 또는 날짜 필터를 입력해 주세요.",
+                    warnings=["필터 없는 전체 관찰 기록 조회는 실행하지 않았습니다."],
+                    result=ChatObservationsResult(results=[], limit=filters.limit),
+                )
+            if observation_handler is None:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="관찰 기록을 현재 조회할 수 없습니다.",
+                    warnings=["관찰 기록 조회 기능을 사용할 수 없습니다."],
+                    result=ChatObservationsResult(results=[], limit=filters.limit),
+                )
+            query = OperationalObservationQuery(
+                taxon_key=filters.taxon_key, scientific_name=filters.scientific_name, place=filters.place,
+                observed_from=filters.observed_from.isoformat() if filters.observed_from else None,
+                observed_to=filters.observed_to.isoformat() if filters.observed_to else None,
+                limit=filters.limit, offset=0,
+            )
+            try:
+                observations = observation_handler(query)
+            except Exception:
+                return ChatResponse(
+                    selected_intent=selected,
+                    route_method=method,
+                    disposition="abstain",
+                    answer_text="관찰 기록을 현재 조회할 수 없습니다.",
+                    warnings=["관찰 기록 조회 기능을 사용할 수 없습니다."],
+                    result=ChatObservationsResult(results=[], limit=filters.limit),
+                )
+            warnings = []
+            if any(value.coordinate_disclosure == "withheld" for value in observations):
+                warnings.append("일반화된 관찰 기록의 좌표는 공개하지 않습니다.")
+            return ChatResponse(
+                selected_intent=selected, route_method=method,
+                disposition="answer" if observations else "abstain",
+                answer_text="관찰 기록을 확인했습니다." if observations else "일치하는 관찰 기록을 확인하지 못했습니다.",
+                warnings=warnings,
+                result=ChatObservationsResult(
+                    results=[_operational_observation_response(value) for value in observations], limit=filters.limit
+                ),
+            )
+
+        # The only remaining selected intent is evidence.  Preserve the
+        # established hybrid handler and its truthful vector/fulltext fallback
+        # warnings; similarity is presented as retrieval support, never fact.
+        filters = request.filters if isinstance(request.filters, EvidenceChatFilters) else EvidenceChatFilters()
+        requested_mode: SearchMode = "hybrid" if method == "semantic" else "fulltext"
+        if search_handler is None:
+            return ChatResponse(
+                selected_intent="evidence", route_method=method, disposition="abstain",
+                answer_text="근거 문서를 현재 조회할 수 없습니다.",
+                warnings=["근거 문서 조회 기능을 사용할 수 없습니다."],
+                result=ChatEvidenceResult(search=DocumentSearchResponse(
+                    requested_mode=requested_mode,
+                    mode="fulltext",
+                    fixture_only=True,
+                    results=[],
+                    warnings=[],
+                )),
+            )
+        try:
+            outcome = search_handler(request.question, filters.limit, requested_mode == "hybrid")
+        except Exception:
+            return ChatResponse(
+                selected_intent="evidence", route_method=method, disposition="abstain",
+                answer_text="근거 문서를 현재 조회할 수 없습니다.",
+                warnings=["근거 문서 조회 기능을 사용할 수 없습니다."],
+                result=ChatEvidenceResult(search=DocumentSearchResponse(
+                    requested_mode=requested_mode,
+                    mode="fulltext",
+                    fixture_only=True,
+                    results=[],
+                    warnings=[],
+                )),
+            )
+        evidence = _search_response(outcome, requested_mode=requested_mode)
+        return ChatResponse(
+            selected_intent="evidence", route_method=method,
+            disposition="answer" if evidence.results else "abstain",
+            answer_text="근거 문서를 확인했습니다." if evidence.results else "일치하는 근거 문서를 확인하지 못했습니다.",
+            warnings=list(evidence.warnings), result=ChatEvidenceResult(search=evidence),
+        )
 
     @app.post(
         "/v1/search",
