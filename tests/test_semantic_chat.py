@@ -53,7 +53,7 @@ def sample_observation() -> OperationalObservation:
         OperationalPlace("place:1", "Seoul", "KR"),
         OperationalCitation("evidence:1", "dataset:1", "GBIF", "https://example.invalid/source",
                             "https://example.invalid/dataset", ("https://creativecommons.org/licenses/by/4.0/",),
-                            "2025-01-03", None), (),
+                            "2025-01-03", "2025-01-04"), (),
     )
 
 
@@ -236,6 +236,95 @@ class SemanticChatApiTest(unittest.TestCase):
             auto_evidence_payload["warnings"],
         )
         self.assertEqual([("인용 근거", 10, True)], auto_evidence_calls)
+
+    def test_auto_observations_preserves_typed_bounded_filters_and_complete_provenance(self) -> None:
+        observation_queries = []
+
+        def observations(query):
+            observation_queries.append(query)
+            return (sample_observation(),)
+
+        auto_observations = self.make_client(
+            semantic_router=SemanticRouter(
+                FakeEmbeddings(((1.0, 0.0), (0.0, 1.0), (-1.0, 0.0)), (0.0, 1.0))
+            ),
+            observation_handler=observations,
+        ).post(
+            "/v1/chat",
+            json={
+                "question": "서울 청둥오리 관찰 기록",
+                "intent": "auto",
+                "filters": {
+                    "kind": "observations",
+                    "taxon_key": "1",
+                    "scientific_name": "Anas platyrhynchos",
+                    "place": "Seoul",
+                    "observed_from": "2025-01-01",
+                    "observed_to": "2025-01-31",
+                    "limit": 2,
+                },
+            },
+        )
+        payload = auto_observations.json()
+
+        self.assertEqual(200, auto_observations.status_code)
+        self.assertEqual("observations", payload["selected_intent"])
+        self.assertEqual("semantic", payload["route_method"])
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual(2, payload["result"]["limit"])
+        self.assertEqual(1, len(payload["result"]["results"]))
+        self.assertEqual(1, len(observation_queries))
+        query = observation_queries[0]
+        self.assertEqual("1", query.taxon_key)
+        self.assertEqual("Anas platyrhynchos", query.scientific_name)
+        self.assertEqual("Seoul", query.place)
+        self.assertEqual("2025-01-01", query.observed_from)
+        self.assertEqual("2025-01-31", query.observed_to)
+        self.assertEqual(2, query.limit)
+        self.assertEqual(0, query.offset)
+
+        observation = payload["result"]["results"][0]
+        self.assertEqual("withheld", observation["coordinate_disclosure"])
+        self.assertIsNone(observation["latitude"])
+        self.assertIsNone(observation["longitude"])
+        self.assertIsNone(observation["coordinate_uncertainty_m"])
+        self.assertEqual(
+            {
+                "observation_id": "gbif:1", "occurrence_id": "1", "observed_at": "2025-01-02",
+                "count": 1, "basis": "human_observation", "sensitivity": "generalized",
+                "coordinate_disclosure": "withheld", "latitude": None, "longitude": None,
+                "coordinate_uncertainty_m": None,
+                "taxon": {
+                    "taxon_id": "taxon:1", "external_key": "1", "scientific_name": "Anas platyrhynchos",
+                    "canonical_name": None, "vernacular_name_raw": None, "rank": "species",
+                },
+                "place": {"place_id": "place:1", "name": "Seoul", "country_code": "KR"},
+                "citation": {
+                    "evidence_id": "evidence:1", "dataset_id": "dataset:1", "dataset_name": "GBIF",
+                    "source_url": "https://example.invalid/source", "dataset_url": "https://example.invalid/dataset",
+                    "license_uris": ["https://creativecommons.org/licenses/by/4.0/"],
+                    "retrieved_at": "2025-01-03", "source_updated_at": "2025-01-04",
+                },
+                "media": [],
+            },
+            observation,
+        )
+        self.assertNotIn("data_cutoff", payload)
+
+        evidence_payload = self.make_client(
+            search_handler=lambda _question, _limit, _hybrid: sample_evidence(with_fallback_warning=False),
+        ).post("/v1/chat", json={"question": "근거", "intent": "evidence", "filters": {"kind": "evidence", "limit": 1}}).json()
+        self.assertEqual(
+            {
+                "chunk_id": "chunk:1", "text": "grounded excerpt", "score": 0.2,
+                "channels": ["fulltext"],
+                "citation": {
+                    "source_id": "source:1", "source_url": "https://example.invalid",
+                    "locator": "p. 1", "license_name": "CC-BY",
+                },
+            },
+            evidence_payload["result"]["search"]["results"][0],
+        )
 
     def test_validation_and_router_failure_are_safe(self) -> None:
         client = self.make_client()
