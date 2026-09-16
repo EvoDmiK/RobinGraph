@@ -218,6 +218,10 @@
 
     // Page-session only: this plain JS array is wiped on reload or clear.
     var messages = [];
+    // Keep an explicit composition flag in addition to checking individual
+    // key events.  A settled request may restore focus only once composition
+    // has finished, so an IME confirmation is never interrupted.
+    var isComposing = false;
 
     function setStatus(text) {
       statusRegion.textContent = text;
@@ -230,6 +234,15 @@
       intent.disabled = isBusy;
       spinner.hidden = !isBusy;
       form.setAttribute("aria-busy", isBusy ? "true" : "false");
+    }
+
+    function restoreQuestionFocus() {
+      // Focus is deliberately restored only after setBusy(false): calling it
+      // while the request owns the form could disrupt an IME or steal focus
+      // during the busy state.
+      if (!input.disabled && !isComposing && typeof input.focus === "function") {
+        input.focus();
+      }
     }
 
     function syncModeControls() {
@@ -402,7 +415,7 @@
 
     function loadHealth() {
       win
-        .fetch("/health", { method: "GET" })
+        .fetch("/health", { method: "GET", credentials: "omit" })
         .then(function (response) {
           if (!response.ok) {
             throw new Error("health check failed");
@@ -424,6 +437,7 @@
       win
         .fetch("/v1/chat", {
           method: "POST",
+          credentials: "omit",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(buildChatPayload(question, intent.value, selectedFilterValues())),
         })
@@ -463,6 +477,7 @@
         .then(function () {
           setBusy(false);
           setStatus("");
+          restoreQuestionFocus();
         });
     }
 
@@ -485,7 +500,7 @@
       // the form. Once composition ends, isComposing is false again and
       // Enter submits normally; Shift+Enter always inserts a newline
       // regardless of composition state.
-      if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+      if (event.key === "Enter" && !event.shiftKey && !event.isComposing && !isComposing) {
         event.preventDefault();
         if (typeof form.requestSubmit === "function") {
           form.requestSubmit();
@@ -493,6 +508,13 @@
           form.dispatchEvent(new Event("submit", { cancelable: true }));
         }
       }
+    });
+
+    input.addEventListener("compositionstart", function () {
+      isComposing = true;
+    });
+    input.addEventListener("compositionend", function () {
+      isComposing = false;
     });
 
     intent.addEventListener("change", syncModeControls);
