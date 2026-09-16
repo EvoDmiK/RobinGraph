@@ -191,6 +191,12 @@ body {
   font-size: 0.9rem;
 }
 
+.route-results {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+
 .citations {
   margin: 0.5rem 0 0;
   padding-left: 1.1rem;
@@ -214,6 +220,39 @@ body {
   border-radius: 0.75rem;
   background: var(--color-surface);
   padding: 0.75rem;
+}
+
+.chat-controls {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) minmax(0, 2fr);
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+}
+
+.chat-controls legend {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.chat-form input:not(.question-input),
+.chat-form select {
+  min-height: 2.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.35rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.35rem 0.5rem;
+}
+
+.chat-form input:focus-visible,
+.chat-form select:focus-visible,
+.chat-form textarea:focus-visible,
+.chat-form button:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .question-input {

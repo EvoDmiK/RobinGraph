@@ -139,6 +139,8 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         create_neo4j_observation_handler,
         create_neo4j_search_handler,
     )
+    from .api.semantic_router import SemanticRouter
+    from .embeddings import EmbeddingConfigurationError, JinaEmbeddingClient
     from .retrieval.neo4j_repository import Neo4jGraphRepository
     from .retrieval.operational_neo4j import Neo4jOperationalObservationRepository
     from .retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository
@@ -147,13 +149,25 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     repository = Neo4jGraphRepository(settings)
     operational_repository = Neo4jOperationalObservationRepository(settings)
     lineage_repository = Neo4jTaxonomyLineageRepository(settings)
+    # Constructing the stdlib client is configuration-only: it makes no HTTP
+    # request.  A missing/invalid non-secret embedding configuration merely
+    # disables auto routing; explicit chat routes and all legacy endpoints
+    # remain available.
+    embedding_client = None
+    semantic_router = None
+    try:
+        embedding_client = JinaEmbeddingClient.from_env()
+        semantic_router = SemanticRouter(embedding_client)
+    except EmbeddingConfigurationError:
+        pass
     try:
         app = create_app(
             repository,
-            search_handler=create_neo4j_search_handler(settings),
+            search_handler=create_neo4j_search_handler(settings, embedding_client=embedding_client),
             observation_handler=create_neo4j_observation_handler(operational_repository),
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),
             korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
+            semantic_router=semantic_router,
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:
