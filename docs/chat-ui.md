@@ -52,7 +52,9 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
   키 입력도 `Enter`로 보고하기 때문에, 이 가드가 없으면 조합 확정만
   하려던 `Enter`가 질문을 조기에 전송해버릴 수 있다. 조합이 끝난
   직후(`isComposing`이 다시 `false`)의 `Enter`는 평소대로 전송하고,
-  `Shift+Enter`는 조합 상태와 무관하게 항상 줄바꿈만 한다.
+  `Shift+Enter`는 조합 상태와 무관하게 항상 줄바꿈만 한다. 요청이 끝나
+  입력과 버튼이 다시 활성화된 뒤에만 질문 입력으로 포커스를 되돌리며,
+  IME 조합 중이거나 요청 진행 중에는 포커스를 강제로 옮기지 않는다.
 - **전송/지우기**: `button#send-button`(`type="submit"`, 폼 제출과 동일)과
   `button#clear-button`(`type="button"`, 클릭 시 대화 기록만 초기화).
 - **진행 표시**: 요청 중에는 `#spinner`가 보이고, `#status-region`
@@ -61,8 +63,10 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 - **대화 기록(page-session)**: `#history`(`role="log" aria-live="polite"`)
   는 이 탭이 열려 있는 동안만 유지되는 순수 JS 배열(`messages`)을
   반영한다. `localStorage`/`sessionStorage`/쿠키/서버 저장 어디에도 쓰지
-  않으므로 새로고침하거나 "대화 지우기"를 누르면 사라진다 — 이 UI에는
-  영속성도 로그인도 없다.
+  않으며, 두 `fetch` 호출은 모두 `credentials: "omit"`으로 실행되어
+  기존 동일 오리진 쿠키도 보내거나 새 쿠키를 처리하지 않는다. 따라서
+  새로고침하거나 "대화 지우기"를 누르면 사라진다 — 이 UI에는 영속성도
+  로그인도 없다.
 - **백엔드 모드 명시**: 로드 시 `GET /health`를 호출해 `mode`를
   `formatBackendMode`로 사람이 읽을 수 있는 한국어 문구로 바꿔
   `#backend-mode-value`에 표시한다 — `"fixture"`는
@@ -128,8 +132,9 @@ Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해�
 - **동일 오리진만 호출**: `chat.js`는 `/health`, `/v1/chat` 두
   상대 경로만 `fetch`하며, 코드 안에 절대 URL 리터럴이 전혀 없다
   (테스트가 소스에 `http://`/`https://` 문자열이 없는지 검사한다).
-  이 화면은 CORS 없이, 이 API를 서빙하는 오리진에서 열릴 때만 동작하도록
-  설계했다.
+  두 호출 모두 `credentials: "omit"`을 명시하므로 동일 오리진의 기존
+  쿠키를 전송하거나 응답의 `Set-Cookie`를 처리하지 않는다. 이 화면은
+  CORS 없이, 이 API를 서빙하는 오리진에서 열릴 때만 동작하도록 설계했다.
 - **입력·비밀정보 없음**: 이 화면은 인증도, API 키 입력도, 어떤 비밀도
   다루지 않는다. 질문 텍스트만 그대로 서버로 보낸다.
 
@@ -167,6 +172,8 @@ node --test tests/frontend/chat_ui.test.js
 
 - `chat.js`의 실행 코드(주석 제외)에 `innerHTML` 등 주입 경로가 없다.
 - `chat.js`가 `/health`, `/v1/chat` 외의 URL을 호출하지 않는다.
+- 최소 DOM의 실제 `fetch` 호출을 캡처해 두 요청의 URL이 정확히 상대
+  경로이고 각각 `credentials: "omit"`인지 확인한다.
 - `sanitizeUrl`이 `javascript:`/`data:`/프로토콜 상대 URL 등 위험한
   스킴을 모두 거부하고, 정상적인 `http(s)` URL만 통과시킨다.
 - `formatDisposition`, `sanitizeErrorMessage`가 정직하고 안전한 한국어
@@ -182,7 +189,12 @@ node --test tests/frontend/chat_ui.test.js
   → `submit` 핸들러 실행) 구동해, `Enter`(조합 중 아님)는 전송하고
   `event.isComposing`이 `true`인 동안의 `Enter`는 무시하며,
   `Shift+Enter`는 조합 상태와 무관하게 항상 줄바꿈만 하는지 확인한다.
-  Playwright 등 브라우저 없이 순수 Node 객체로 구현한 최소 DOM이다.
+  같은 경로에서 요청이 끝난 뒤에만 포커스를 복원하고, 진행 중 또는 IME
+  조합 중에는 포커스를 빼앗지 않는지도 확인한다. Playwright 등 브라우저
+  없이 순수 Node 객체로 구현한 최소 DOM이다.
+- 실제 `submit` 이벤트 경로에서 악의적 또는 형식이 잘못된 2xx payload가
+  오면 고정 오류만 렌더링되고 공격자 제공 disposition/answer/warning 텍스트가
+  결과에 남지 않는지 확인한다.
 - `index.html`에 필요한 인터랙션 요소·접근성 라벨
   (`question-input`, `send-button`, `clear-button`, `history`,
   `backend-mode-value`, `status-region`, `role="log"`,

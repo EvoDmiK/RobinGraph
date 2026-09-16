@@ -468,6 +468,10 @@ function createFakeElement(tagName) {
     rel: "",
     scrollTop: 0,
     scrollHeight: 0,
+    focusCalls: 0,
+    focus() {
+      this.focusCalls += 1;
+    },
     addEventListener(type, handler) {
       (listeners[type] = listeners[type] || []).push(handler);
     },
@@ -521,7 +525,7 @@ function createFakeElement(tagName) {
   return el;
 }
 
-function createFakeDom() {
+function createFakeDom(fetchImplementation) {
   const REQUIRED_IDS = [
     "chat-form",
     "question-input",
@@ -567,15 +571,18 @@ function createFakeDom() {
       return createFakeElement(tag);
     },
   };
-  // loadHealth() fires during init(); a pending, never-resolving promise
-  // keeps it out of the way of the synchronous keydown assertions below
-  // without needing any real network/browser fetch implementation.
+  const fetchCalls = [];
+  // loadHealth() fires during init(); the default pending, never-resolving
+  // promise keeps it out of the way of synchronous tests without any real
+  // network/browser fetch implementation. Async tests inject deterministic
+  // responses through fetchImplementation.
   const win = {
-    fetch() {
-      return new Promise(() => {});
+    fetch(url, options) {
+      fetchCalls.push({ url, options });
+      return fetchImplementation ? fetchImplementation(url, options) : new Promise(() => {});
     },
   };
-  return { doc, win, elementsById };
+  return { doc, win, elementsById, fetchCalls };
 }
 
 function pressKey(dom, keyEventOverrides) {
@@ -664,6 +671,104 @@ test("real keydown event path: Shift+Enter never submits, regardless of composit
     assert.equal(dom.elementsById["history"].children.length, 0);
     assert.equal(dom.elementsById["question-input"].value, "여러 줄");
   }
+});
+
+function jsonResponse(payload, status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json() {
+      return Promise.resolve(payload);
+    },
+  };
+}
+
+function deferred() {
+  let resolve;
+  const promise = new Promise((resolvePromise) => {
+    resolve = resolvePromise;
+  });
+  return { promise, resolve };
+}
+
+async function settleEventPath() {
+  // Drain the fetch -> response.json -> result -> finally promise chain.
+  await new Promise((resolve) => setImmediate(resolve));
+}
+
+function collectedText(node) {
+  return [node.textContent || ""].concat(node.children.flatMap(collectedText)).join(" ");
+}
+
+test("real fetch calls use exact relative URLs and credentials omit", () => {
+  const dom = createFakeDom((url) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    return new Promise(() => {});
+  });
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "credential boundary";
+  pressKey(dom, {});
+
+  assert.deepEqual(
+    dom.fetchCalls.map((call) => call.url),
+    ["/health", "/v1/chat"]
+  );
+  for (const call of dom.fetchCalls) {
+    assert.equal(call.options.credentials, "omit", call.url + " must omit ambient cookies");
+  }
+  assert.equal(dom.fetchCalls[0].options.method, "GET");
+  assert.equal(dom.fetchCalls[1].options.method, "POST");
+});
+
+test("hostile malformed 2xx payload fails closed through the actual event path without rendering attacker content", async () => {
+  const attackerText = "<img src=x onerror=alert('attacker')> secret-provider-detail";
+  const dom = createFakeDom((url) => Promise.resolve(
+    url === "/health"
+      ? jsonResponse({ mode: "fixture" })
+      : jsonResponse({ disposition: attackerText, answer_text: attackerText, warnings: [attackerText] })
+  ));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "safe user question";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const rendered = collectedText(dom.elementsById["history"]);
+  assert.match(rendered, /지원되지 않는 응답 형식/);
+  assert.equal(rendered.includes(attackerText), false);
+  assert.equal(rendered.includes("secret-provider-detail"), false);
+  assert.equal(dom.elementsById["history"].children.length, 2, "user message plus fixed error only");
+});
+
+test("question focus is restored only after the request settles, and never while IME composition is active", async () => {
+  const request = deferred();
+  const dom = createFakeDom((url) => (
+    url === "/health" ? Promise.resolve(jsonResponse({ mode: "fixture" })) : request.promise
+  ));
+  chat.init(dom.doc, dom.win);
+  const input = dom.elementsById["question-input"];
+  input.value = "focus after settle";
+  pressKey(dom, {});
+  assert.equal(input.disabled, true, "the request must own the busy state before focus is restored");
+  assert.equal(input.focusCalls, 0, "must not steal focus while busy");
+
+  input.dispatch("compositionstart", {});
+  request.resolve(jsonResponse({ disposition: "answer", answer_text: "safe", warnings: [] }));
+  await settleEventPath();
+  assert.equal(input.disabled, false);
+  assert.equal(input.focusCalls, 0, "must not focus an active IME composition");
+
+  input.dispatch("compositionend", {});
+  assert.equal(input.focusCalls, 0, "composition end alone must not cause an extra focus jump");
+
+  const settled = createFakeDom((url) => Promise.resolve(
+    url === "/health" ? jsonResponse({ mode: "fixture" }) : jsonResponse({ disposition: "answer", answer_text: "safe", warnings: [] })
+  ));
+  chat.init(settled.doc, settled.win);
+  settled.elementsById["question-input"].value = "restore focus";
+  pressKey(settled, {});
+  assert.equal(settled.elementsById["question-input"].focusCalls, 0);
+  await settleEventPath();
+  assert.equal(settled.elementsById["question-input"].focusCalls, 1, "focus returns only after request completion");
 });
 
 // ---------------------------------------------------------------------------
