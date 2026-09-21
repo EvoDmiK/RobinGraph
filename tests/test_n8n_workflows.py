@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FINAL = ROOT / "n8n" / "robingraph-operational-ingest.json"
 REFERENCE = ROOT / "n8n" / "robingraph-reference-ingest.json"
 KOREAN_VERNACULAR = ROOT / "n8n" / "robingraph-korean-vernacular-ingest.json"
+AVONET = ROOT / "n8n" / "robingraph-avonet-ingest.json"
 WORKFLOWS = [
     ROOT / "n8n" / "candidates" / "claude-operational-ingest.json",
     ROOT / "n8n" / "candidates" / "terra-operational-ingest.json",
@@ -242,6 +243,27 @@ assert.equal(check({}), false);
         self.assertIn("taxonomy_batch_size", by_name["Prepare taxonomy batches"]["parameters"]["jsCode"])
         self.assertIn("trait_claim_batch_size", by_name["Prepare trait batches"]["parameters"]["jsCode"])
 
+        for loop_name, prepare_name, upsert_name, verify_name in (
+            (
+                "Loop Over taxonomy batches",
+                "Prepare taxonomy batches",
+                "Upsert AviList taxonomy batch",
+                "Verify taxonomy batches",
+            ),
+            (
+                "Loop Over trait batches",
+                "Prepare trait batches",
+                "Upsert EltonTraits batch",
+                "Verify trait batches",
+            ),
+        ):
+            loop = by_name[loop_name]
+            self.assertEqual("n8n-nodes-base.splitInBatches", loop["type"])
+            self.assertEqual(loop_name, connections[prepare_name]["main"][0][0]["node"])
+            self.assertEqual(verify_name, connections[loop_name]["main"][0][0]["node"])
+            self.assertEqual(upsert_name, connections[loop_name]["main"][1][0]["node"])
+            self.assertEqual(loop_name, connections[upsert_name]["main"][0][0]["node"])
+
         taxonomy_query = by_name["Upsert AviList taxonomy batch"]["parameters"]["cypherQuery"]
         self.assertIn("MERGE (taxon:Taxon", taxonomy_query)
         self.assertIn("HAS_ACCEPTED_NAME", taxonomy_query)
@@ -286,6 +308,37 @@ assert.equal(check({}), false);
                 restore=nodes[chain[2]]['parameters']['jsCode']
                 self.assertIn('.first()',restore)
                 self.assertIn('binary: item.binary' if source!='AVONET' else 'binary:item.binary',restore)
+
+    def test_avonet_batches_are_explicitly_looped_through_neo4j(self) -> None:
+        workflow = load(AVONET)
+        by_name = {item["name"]: item for item in workflow["nodes"]}
+        connections = workflow["connections"]
+        loop = by_name["Loop Over AVONET batches"]
+        self.assertEqual("n8n-nodes-base.splitInBatches", loop["type"])
+        self.assertEqual(3, loop["typeVersion"])
+        self.assertEqual(
+            "Loop Over AVONET batches",
+            connections["Build AVONET batches"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            [
+                [{"node": "Verify AVONET batches", "type": "main", "index": 0}],
+                [{"node": "Upsert AVONET batches", "type": "main", "index": 0}],
+            ],
+            connections["Loop Over AVONET batches"]["main"],
+        )
+        self.assertEqual(
+            "Loop Over AVONET batches",
+            connections["Upsert AVONET batches"]["main"][0][0]["node"],
+        )
+        query = by_name["Upsert AVONET batches"]["parameters"]["cypherQuery"]
+        self.assertIn("OPTIONAL MATCH (taxon:Taxon { source_release:$taxonomy_release, rank:'species', scientific_name:row.scientific_name })", query)
+        self.assertIn(
+            "MERGE (run)-[:INGESTED]->(record) WITH run, row, taxa, record CALL",
+            query,
+        )
+        verifier = by_name["Verify AVONET batches"]["parameters"]["jsCode"]
+        self.assertIn("row[key] = Number(row[key])", verifier)
 
     def test_reference_code_nodes_and_cypher_expressions_parse_as_javascript(self) -> None:
         workflow = load(REFERENCE)
@@ -399,8 +452,8 @@ assert.equal(check({}), false);
         )
         self.assertEqual(
             [
-                [{"node": "Upsert Korean vernacular names batch", "type": "main", "index": 0}],
                 [{"node": "Verify Korean vernacular batches", "type": "main", "index": 0}],
+                [{"node": "Upsert Korean vernacular names batch", "type": "main", "index": 0}],
             ],
             connections["Loop Over Korean vernacular batches"]["main"],
         )

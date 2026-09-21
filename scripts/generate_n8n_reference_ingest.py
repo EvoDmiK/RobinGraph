@@ -1047,11 +1047,25 @@ def main() -> None:
         code("Verify ingestion run started", VERIFY_START, (1250, -180)),
         boolean_if("Ingestion run started?", "={{ $json.start_ok }}", (1490, -180)),
         code("Prepare taxonomy batches", PREPARE_TAXONOMY_BATCHES, (1730, -300)),
-        neo4j_node("Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (1970, -300)),
+        node(
+            "Loop Over taxonomy batches",
+            "n8n-nodes-base.splitInBatches",
+            3,
+            {"options": {}},
+            (1970, -300),
+        ),
+        neo4j_node("Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (2210, -300)),
         code("Verify taxonomy batches", VERIFY_TAXONOMY_BATCHES, (2210, -300)),
         boolean_if("Taxonomy load verified?", "={{ $json.taxonomy_load_ok }}", (2450, -300)),
         code("Prepare trait batches", PREPARE_TRAIT_BATCHES, (2690, -380)),
-        neo4j_node("Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (2930, -380)),
+        node(
+            "Loop Over trait batches",
+            "n8n-nodes-base.splitInBatches",
+            3,
+            {"options": {}},
+            (2930, -380),
+        ),
+        neo4j_node("Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (3170, -380)),
         code("Verify trait batches", VERIFY_TRAIT_BATCHES, (3170, -380)),
         boolean_if("Trait load verified?", "={{ $json.trait_load_ok }}", (3410, -380)),
         neo4j_node("Finalize active reference releases", FINALIZE_STATEMENT, (3650, -460)),
@@ -1117,14 +1131,26 @@ def main() -> None:
         "Ingestion run started?": {
             "main": [[edge("Prepare taxonomy batches")], [edge("Notify reference failure")]]
         },
-        "Prepare taxonomy batches": {"main": [[edge("Upsert AviList taxonomy batch")]]},
-        "Upsert AviList taxonomy batch": {"main": [[edge("Verify taxonomy batches")]]},
+        "Prepare taxonomy batches": {"main": [[edge("Loop Over taxonomy batches")]]},
+        "Loop Over taxonomy batches": {
+            "main": [
+                [edge("Verify taxonomy batches")],
+                [edge("Upsert AviList taxonomy batch")],
+            ]
+        },
+        "Upsert AviList taxonomy batch": {"main": [[edge("Loop Over taxonomy batches")]]},
         "Verify taxonomy batches": {"main": [[edge("Taxonomy load verified?")]]},
         "Taxonomy load verified?": {
             "main": [[edge("Prepare trait batches")], [edge("Notify reference failure")]]
         },
-        "Prepare trait batches": {"main": [[edge("Upsert EltonTraits batch")]]},
-        "Upsert EltonTraits batch": {"main": [[edge("Verify trait batches")]]},
+        "Prepare trait batches": {"main": [[edge("Loop Over trait batches")]]},
+        "Loop Over trait batches": {
+            "main": [
+                [edge("Verify trait batches")],
+                [edge("Upsert EltonTraits batch")],
+            ]
+        },
+        "Upsert EltonTraits batch": {"main": [[edge("Loop Over trait batches")]]},
         "Verify trait batches": {"main": [[edge("Trait load verified?")]]},
         "Trait load verified?": {
             "main": [[edge("Finalize active reference releases")], [edge("Notify reference failure")]]

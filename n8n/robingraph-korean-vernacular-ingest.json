@@ -933,14 +933,14 @@
       "main": [
         [
           {
-            "node": "Upsert Korean vernacular names batch",
+            "node": "Verify Korean vernacular batches",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Verify Korean vernacular batches",
+            "node": "Upsert Korean vernacular names batch",
             "type": "main",
             "index": 0
           }

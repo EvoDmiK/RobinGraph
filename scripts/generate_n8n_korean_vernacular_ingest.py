@@ -994,12 +994,12 @@ def main() -> None:
         },
         "Loop Over Korean vernacular batches": {
             "main": [
-                # splitInBatches output 0 is the current loop item; output
-                # 1 fires only after every item has returned to this node.
+                # n8n 2.15 splitInBatches output 0 fires after every item has
+                # returned to this node; output 1 carries the current loop item.
                 # Sending these the other way round verifies before any
                 # write and can leave every batch unprocessed.
-                [edge("Upsert Korean vernacular names batch")],
                 [edge("Verify Korean vernacular batches")],
+                [edge("Upsert Korean vernacular names batch")],
             ]
         },
         "Upsert Korean vernacular names batch": {
