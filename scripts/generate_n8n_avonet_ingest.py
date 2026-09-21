@@ -125,8 +125,11 @@ SET run.status='loading', run.source_id='avonet', run.source_release=$release,
     run.taxonomy_release=$taxonomy_release, run.retrieved_at=$retrieved_at
 WITH concept, dataset, run
 UNWIND $profiles AS row
-OPTIONAL MATCH (taxon:Taxon)-[:IN_CONCEPT_SET]->(concept)
-WHERE taxon.source_release=$taxonomy_release AND taxon.rank='species' AND taxon.scientific_name=row.scientific_name
+OPTIONAL MATCH (taxon:Taxon {
+  source_release:$taxonomy_release,
+  rank:'species',
+  scientific_name:row.scientific_name
+})-[:IN_CONCEPT_SET]->(concept)
 WITH dataset, run, row, collect(DISTINCT taxon) AS taxa
 MERGE (record:SourceRecord {id:row.id})
 SET record.record_type='trait_profile', record.external_id=row.sequence,
@@ -139,6 +142,7 @@ SET record.record_type='trait_profile', record.external_id=row.sequence,
     record.avibase_id=row.avibase_id
 MERGE (record)-[:IN_DATASET]->(dataset)
 MERGE (run)-[:INGESTED]->(record)
+WITH run, row, taxa, record
 CALL {
   WITH run, row, taxa, record
   WITH run, row, record, taxa[0] AS taxon WHERE size(taxa)=1
@@ -186,7 +190,12 @@ RETURN $batch_index AS batch_index, $batch_count AS batch_count,
 
 VERIFY_JS = r"""
 const expected = $('Normalize AVONET species').first().json;
-const rows = $input.all().map(x=>x.json);
+const numericKeys = ['batch_index','batch_count','loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims'];
+const rows = $input.all().map(x => {
+  const row = {...x.json};
+  for (const key of numericKeys) row[key] = Number(row[key]);
+  return row;
+});
 const count = Math.ceil(expected.expected_rows/expected.batch_size);
 if (rows.length !== count) throw new Error('Missing batch results');
 const indices = new Set();
@@ -196,7 +205,7 @@ for (const row of rows) {
   indices.add(row.batch_index);
   const wanted=Math.min(expected.batch_size,expected.expected_rows-row.batch_index*expected.batch_size);
   if (row.loaded_profiles!==wanted || row.loaded_claims!==row.expected_claims || row.matched_profiles+row.loaded_candidates!==wanted) throw new Error('Batch count mismatch');
-  for (const key of ['loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims']) if (!Number.isInteger(row[key]) || row[key]<0) throw new Error('Invalid count');
+  for (const key of numericKeys.slice(2)) if (!Number.isInteger(row[key]) || row[key]<0) throw new Error('Invalid count');
   profiles+=row.loaded_profiles; claims+=row.loaded_claims; candidates+=row.loaded_candidates; matched+=row.matched_profiles;
 }
 if (profiles!==expected.expected_rows || matched!==expected.expected_matched_profiles ||
@@ -267,10 +276,11 @@ def build_workflow(config: dict | None = None) -> dict:
         code('Restore AVONET snapshot binary', "const item=$('Fetch AVONET snapshot').first(); if (!item.binary?.data) throw new Error('AVONET snapshot binary missing'); return [{json:$input.first().json,binary:item.binary}];",(700,0)),
         code('Normalize AVONET species',NORMALIZE_JS,(1000,0)),
         code('Build AVONET batches',BATCH_JS.replace('data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size)', 'data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)}))'),(1200,0)),
-        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(1400,0)),
-        code('Verify AVONET batches',VERIFY_JS,(1600,0)),
-        neo4j_node('Finalize AVONET release',FINALIZE_CYPHER,(1800,0)),
-        code('Verify AVONET release',"const row=$input.first().json; const cfg=$('Build AVONET configuration').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='succeeded') throw new Error('AVONET finalization failed'); return $input.all();",(2000,0)),
+        node('Loop Over AVONET batches','n8n-nodes-base.splitInBatches',3,{'options':{}},(1400,0)),
+        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(1600,100)),
+        code('Verify AVONET batches',VERIFY_JS,(1800,-100)),
+        neo4j_node('Finalize AVONET release',FINALIZE_CYPHER,(2000,-100)),
+        code('Verify AVONET release',"const row=$input.first().json; const cfg=$('Build AVONET configuration').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='succeeded') throw new Error('AVONET finalization failed'); return $input.all();",(2200,-100)),
     ]
     connections = {}
     def connect(a,b,index=0): connections.setdefault(a,{'main':[[]]})['main'][0].append(edge(b,index))
@@ -280,8 +290,18 @@ def build_workflow(config: dict | None = None) -> dict:
     # Crypto v2 may remove the hashed binary; restore one item, never row fanout.
     connect('Hash AVONET snapshot','Restore AVONET snapshot binary')
     connect('Restore AVONET snapshot binary','Extract AVONET species sheet')
-    chain=['Extract AVONET species sheet','Normalize AVONET species','Build AVONET batches','Upsert AVONET batches','Verify AVONET batches','Finalize AVONET release','Verify AVONET release']
+    chain=['Extract AVONET species sheet','Normalize AVONET species','Build AVONET batches','Loop Over AVONET batches']
     for a,b in zip(chain,chain[1:]): connect(a,b)
+    # n8n 2.15 splitInBatches emits completion on output 0 and the current
+    # item on output 1. The community Neo4j node evaluates only one input
+    # item, so explicitly feed every batch through it before verification.
+    connections['Loop Over AVONET batches']={'main':[
+        [edge('Verify AVONET batches')],
+        [edge('Upsert AVONET batches')],
+    ]}
+    connect('Upsert AVONET batches','Loop Over AVONET batches')
+    connect('Verify AVONET batches','Finalize AVONET release')
+    connect('Finalize AVONET release','Verify AVONET release')
     return {'id':'robingraph-avonet-ingest','name':'RobinGraph — AVONET morphology and ecology reference ingest','active':False,'nodes':nodes,'connections':connections,'settings':{'executionOrder':'v1','timezone':'Asia/Seoul','concurrency':1},'pinData':{},'tags':[]}
 
 
