@@ -187,9 +187,12 @@ def build_configuration_js(points: dict[str, dict[str, object]]) -> str:
         "trait_license_uri": elton["source"]["license_uri"],
         "trait_landing_uri": elton["source"]["landing_uri"],
         "minimum_exact_match_ratio": 0.70,
-        "taxonomy_batch_size": 500,
-        "trait_claim_batch_size": 500,
-        "mapping_candidate_batch_size": 500,
+        # The community Neo4j node interpolates parameters into one Cypher
+        # string. Keep batches below n8n's 300-second JS task ceiling; the
+        # ingest API permits 500, but that is not a safe graph-render size.
+        "taxonomy_batch_size": 100,
+        "trait_claim_batch_size": 100,
+        "mapping_candidate_batch_size": 100,
     }
     return (
         "const now = new Date();\n"
