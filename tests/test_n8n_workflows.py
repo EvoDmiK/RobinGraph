@@ -425,8 +425,7 @@ assert.equal(check({}), false);
 
         state_query = by_name["Read active taxonomy and Korean dataset state"]["parameters"]["cypherQuery"]
         self.assertIn("OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'})", state_query)
-        self.assertIn("OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'})", state_query)
-        self.assertIn("coalesce(koreanState.last_successful_run_id, '')", state_query)
+        self.assertNotIn("korean-vernacular-names", state_query)
 
         resolve_query = by_name["Resolve active concept set and match candidates"]["parameters"]["cypherQuery"]
         self.assertIn("MATCH (state:IngestState {id: 'reference-taxonomy'})", resolve_query)
@@ -446,6 +445,7 @@ assert.equal(check({}), false);
         loop = by_name["Loop Over Korean vernacular batches"]
         self.assertEqual("n8n-nodes-base.splitInBatches", loop["type"])
         self.assertEqual(3, loop["typeVersion"])
+        self.assertEqual(1, loop["parameters"]["batchSize"])
         self.assertEqual(
             "Loop Over Korean vernacular batches",
             connections["Prepare Korean vernacular batches"]["main"][0][0]["node"],
@@ -453,7 +453,7 @@ assert.equal(check({}), false);
         self.assertEqual(
             [
                 [{"node": "Verify Korean vernacular batches", "type": "main", "index": 0}],
-                [{"node": "Upsert Korean vernacular names batch", "type": "main", "index": 0}],
+                [{"node": "Prepare PostgreSQL source batch", "type": "main", "index": 0}],
             ],
             connections["Loop Over Korean vernacular batches"]["main"],
         )
@@ -469,10 +469,10 @@ assert.equal(check({}), false);
             "MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}",
             batch_query,
         )
-        self.assertIn(
-            "MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id})", batch_query
-        )
-        self.assertIn("UNWIND row.qids AS qid", batch_query)
+        self.assertNotIn("SourceRecord", batch_query)
+        self.assertNotIn("SourceDataset", batch_query)
+        self.assertNotIn("IngestionRun", batch_query)
+        self.assertIn("vernacular.source_record_ids", batch_query)
         self.assertIn("vernacular.language = 'ko'", batch_query)
         self.assertIn("VernacularNameCandidate", batch_query)
         self.assertNotIn("ExternalTaxonConcept", batch_query)
@@ -485,36 +485,37 @@ assert.equal(check({}), false);
             batch_query,
         )
 
-        start_query = by_name["Start Korean vernacular ingestion run"]["parameters"]["cypherQuery"]
-        self.assertIn(
-            "MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id",
-            start_query,
-        )
-
-        finalize_query = by_name["Finalize Korean vernacular active release"]["parameters"]["cypherQuery"]
-        self.assertIn("MERGE (state:IngestState {id: 'korean-vernacular-names'})", finalize_query)
-        self.assertIn("state.active_dataset_id = $wikidata_dataset_id", finalize_query)
-        # Optimistic concurrency: a concurrent run that already advanced
-        # korean-vernacular-names past what this run captured must block
-        # this run's activation rather than being clobbered by it.
-        # The state is MERGEd (and its unique-key lock acquired) *before*
-        # reading the current run id. Without this order, two first-ever
-        # executions can both see an absent state as '', pass the comparison,
-        # and have the later transaction overwrite the first activation.
-        self.assertIn("WHERE currentRunId = $expected_prior_run_id", finalize_query)
-        self.assertIn(
-            "MERGE (state:IngestState {id: 'korean-vernacular-names'}) ON CREATE SET state.last_successful_run_id = '' WITH run, state, coalesce(state.last_successful_run_id, '') AS currentRunId",
-            finalize_query,
-        )
-        self.assertLess(
-            finalize_query.index("MERGE (state:IngestState {id: 'korean-vernacular-names'})"),
-            finalize_query.index("WHERE currentRunId = $expected_prior_run_id"),
-        )
+        finalize_query = by_name["Verify Korean vernacular graph snapshot"]["parameters"]["cypherQuery"]
         self.assertIn(
             "MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id",
             finalize_query,
         )
-        self.assertIn("reference-taxonomy", finalize_query)
+        self.assertNotIn("SET ", finalize_query)
+
+        control_nodes = [
+            by_name["Start PostgreSQL ingestion run"],
+            by_name["Append PostgreSQL source batch"],
+            by_name["Finalize PostgreSQL ingestion run"],
+            by_name["Mark PostgreSQL ingestion run failed"],
+        ]
+        for control in control_nodes:
+            self.assertEqual("n8n-nodes-base.httpRequest", control["type"])
+            self.assertIn("ROBINGRAPH_INGEST_API_URL", control["parameters"]["url"])
+            headers = control["parameters"]["headerParameters"]["parameters"]
+            self.assertEqual("Authorization", headers[0]["name"])
+            self.assertIn("ROBINGRAPH_INGEST_INTERNAL_TOKEN", headers[0]["value"])
+            # HTTP Request 4.4 uses a stream for raw request bodies. Its
+            # native JSON body mode is required for the JSON response body
+            # to reach the following verification Code node as `$json`.
+            self.assertEqual("json", control["parameters"]["contentType"])
+            self.assertEqual("json", control["parameters"]["specifyBody"])
+            self.assertEqual("={{ $json.ingest_request }}", control["parameters"]["jsonBody"])
+            self.assertNotIn("rawContentType", control["parameters"])
+            self.assertNotIn("body", control["parameters"])
+            response = control["parameters"]["options"]["response"]["response"]
+            self.assertEqual("json", response["responseFormat"])
+            self.assertTrue(response["neverError"])
+            self.assertNotIn("Bearer test", json.dumps(control))
 
         # Every failure branch runs the run-failure bookkeeping funnel before
         # the Discord notification: Start sets an IngestionRun to 'loading',
@@ -525,41 +526,34 @@ assert.equal(check({}), false);
         # own concept-set guard already refused it).
         for gate in (
             "Korean vernacular quality gates passed?",
-            "Korean vernacular ingestion run started?",
+            "PostgreSQL ingestion run started?",
+            "PostgreSQL source batch appended?",
             "Korean vernacular load verified?",
+            "Korean vernacular graph verified?",
             "Korean vernacular release finalized?",
         ):
             self.assertEqual(
                 "Capture Korean vernacular failure context", connections[gate]["main"][1][0]["node"]
             )
         self.assertEqual(
-            "Mark Korean vernacular run failed",
+            "Prepare PostgreSQL run failure",
             connections["Capture Korean vernacular failure context"]["main"][0][0]["node"],
         )
         self.assertEqual(
-            "Record Korean vernacular run failure",
-            connections["Mark Korean vernacular run failed"]["main"][0][0]["node"],
+            "Mark PostgreSQL ingestion run failed",
+            connections["Prepare PostgreSQL run failure"]["main"][0][0]["node"],
         )
         self.assertEqual(
-            "Notify Korean vernacular failure",
-            connections["Record Korean vernacular run failure"]["main"][0][0]["node"],
+            "Record Korean vernacular run failure",
+            connections["Mark PostgreSQL ingestion run failed"]["main"][0][0]["node"],
         )
         self.assertEqual(
             "Fail Korean vernacular execution",
             connections["Notify Korean vernacular failure"]["main"][0][0]["node"],
         )
 
-        mark_failed_query = by_name["Mark Korean vernacular run failed"]["parameters"]["cypherQuery"]
-        self.assertIn("MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'", mark_failed_query)
-        self.assertIn("run.status = 'failed'", mark_failed_query)
-        self.assertIn("run.failure_reason = $failure_reason", mark_failed_query)
-        # Never advances or alters the active dataset on a failure path --
-        # only FINALIZE_STATEMENT ever touches IngestState.
-        self.assertNotIn("IngestState", mark_failed_query)
-        self.assertNotIn("active_dataset_id", mark_failed_query)
-
         # The DB-bookkeeping outcome (did 'Mark Korean vernacular run
-        # failed' actually reach Neo4j?) is reported separately from the
+        # failed' actually reach PostgreSQL?) is reported separately from the
         # original ingest failure_reason -- an operator must be able to
         # tell "the ingest failed for reason X" apart from "and on top of
         # that, we could not even record the failure in the graph".
@@ -607,7 +601,7 @@ assert.equal(check({}), false);
         neo4j_nodes = [item for item in payload["nodes"] if item["type"] == "n8n-nodes-neo4j.neo4j"]
         from scripts.generate_n8n_korean_vernacular_ingest import KOREAN_VERNACULAR_LABELS
 
-        self.assertEqual(6 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
+        self.assertEqual(4 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
         self.assertTrue(all(item["credentials"]["neo4jApi"]["id"] == "neo4j-id" for item in neo4j_nodes))
         by_name = {item["name"]: item for item in payload["nodes"]}
         for name in ("Notify Korean vernacular success", "Notify Korean vernacular failure"):
@@ -803,7 +797,32 @@ assert.equal(matched.write_row_count, 1);
 assert.equal(matched.candidate_count, 0);
 assert.equal(matched.concept_set_id, 'rg:concept-set:avilist-v2025b');
 assert.equal(matched.wikidata_dataset_id, 'wikidata-dataset:taxon-labels:sha256-abc');
-assert.equal(matched.expected_prior_run_id, 'prior-run-7');
+
+// n8n's alwaysOutputData emits one synthetic {} item when the resolve query
+// legitimately had zero clean candidates. It must not become a phantom
+// no_matching candidate with undefined identity.
+const allConflicted = assembleGates(
+  config,
+  {source_sha256: 'abc', fetch_ok: true, malformed_row_count: 0, distinct_taxon_name_count: 1,
+   clean_candidates: [], conflicted_candidates: [{taxon_name: 'Anas test', korean_name: '시험오리', qids: ['Q7'], reason_code: 'conflicting_korean_labels'}]},
+  noPriorState,
+  [{}]
+);
+assert.equal(allConflicted.ready_to_load, true);
+assert.equal(allConflicted.candidate_count, 1);
+assert.equal(allConflicted.candidates[0].taxon_name, 'Anas test');
+
+// The same synthetic/malformed shape is an error when clean candidates
+// really were sent for resolution: no source row may disappear silently.
+const malformedResolution = assembleGates(
+  config,
+  {source_sha256: 'abc', fetch_ok: true, malformed_row_count: 0, distinct_taxon_name_count: 1,
+   clean_candidates: [{taxon_name: 'Anas test', korean_name: '시험오리', qids: ['Q7']}], conflicted_candidates: []},
+  noPriorState,
+  [{}]
+);
+assert.equal(malformedResolution.ready_to_load, false);
+assert.match(malformedResolution.failure_reason, /resolution returned incomplete or malformed rows/);
 
 // A failed or malformed Wikidata fetch (non-200, or a body that is not a
 // well-formed SPARQL results document) must fail closed with a specific
@@ -901,14 +920,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
         subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
 
     def test_korean_vernacular_verify_finalize_detects_lost_optimistic_concurrency_race(self) -> None:
-        """Adversarial case: a concurrent stale writer. Simulates the exact
-        Neo4j response shape when the FINALIZE_STATEMENT's
-        `WHERE currentRunId = $expected_prior_run_id` guard was not
-        satisfied (either a competing run already activated a newer
-        snapshot, or the reference-taxonomy concept set changed mid-run):
-        the query returns no matching row, so the community Neo4j node's
-        response is missing the expected fields entirely. VERIFY_FINALIZE
-        must treat that as a failure, never as a false "succeeded"."""
+        """A stale PostgreSQL state version must never look finalized."""
 
         from scripts.generate_n8n_korean_vernacular_ingest import VERIFY_FINALIZE
 
@@ -916,30 +928,21 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "const assert = require('node:assert/strict');\n"
             "const expected = {run_id: 'run-2', source_release: 'wikidata-snapshot:2026-09-11:sha256-abc', "
             "wikidata_dataset_id: 'wikidata-dataset:taxon-labels:sha256-abc', "
-            "loaded_vernacular_names: 5, loaded_candidates: 1};\n"
+            "expected_state_version: 7, loaded_vernacular_names: 5, loaded_candidates: 1};\n"
             "function verifyFinalize(response) {\n"
             "  const impl = new Function('$', '$input', " + json.dumps(VERIFY_FINALIZE) + ");\n"
             "  return impl(\n"
-            "    (name) => { if (name === 'Verify Korean vernacular batches') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
+            "    (name) => { if (name === 'Prepare PostgreSQL finalization') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
             "    {first: () => ({json: response})}\n"
             "  )[0].json;\n"
             "}\n"
-            # Lost the race: Neo4j's WHERE guard excluded every row, so the
-            # response the community node hands back carries none of the
-            # expected activation fields.
-            "const lostRace = verifyFinalize({});\n"
+            "const lostRace = verifyFinalize({detail: 'Invalid ingestion state'});\n"
             "assert.equal(lostRace.finalize_ok, false);\n"
-            "assert.match(lostRace.failure_reason, /lost the optimistic-concurrency race|active concept set changed/);\n"
-            # Won cleanly: every field matches this run's own expectations.
-            "const won = verifyFinalize({finalized_run_id: 'run-2', run_status: 'succeeded', "
-            "active_release: expected.source_release, active_dataset_id: expected.wikidata_dataset_id});\n"
+            "assert.match(lostRace.failure_reason, /Invalid ingestion state/);\n"
+            "const won = verifyFinalize({status: 'finalized', state_version: 8});\n"
             "assert.equal(won.finalize_ok, true);\n"
-            # A stale/wrong dataset id sneaking through (should be
-            # impossible given the query, but verified defensively) must
-            # still be rejected by the JS-side check, not just trusted.
-            "const wrongDataset = verifyFinalize({finalized_run_id: 'run-2', run_status: 'succeeded', "
-            "active_release: expected.source_release, active_dataset_id: 'wikidata-dataset:taxon-labels:sha256-someone-elses'});\n"
-            "assert.equal(wrongDataset.finalize_ok, false);\n"
+            "const wrongVersion = verifyFinalize({status: 'finalized', state_version: 9});\n"
+            "assert.equal(wrongVersion.finalize_ok, false);\n"
         )
         subprocess.run(["node", "-e", harness], check=True, capture_output=True, text=True)
 
@@ -964,10 +967,10 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "const assert = require('node:assert/strict');\n"
             "const assembled = {run_id: 'run-18066', source_release: 'wikidata-snapshot:2026-09-11:sha256-abc', "
             "wikidata_dataset_id: 'wikidata-dataset:taxon-labels:sha256-abc', "
-            "write_row_count: 846, candidate_count: 102};\n"
+            "expected_state_version: 7, write_row_count: 846, candidate_count: 102};\n"
             "const verifyBatches = new Function('$', '$input', " + json.dumps(VERIFY_BATCHES) + ");\n"
             "const batchOutput = verifyBatches(\n"
-            "  (name) => { if (name === 'Assemble Korean vernacular quality gates') return {first: () => ({json: assembled})}; throw new Error('unexpected: ' + name); },\n"
+            "  (name) => { if (name === 'Verify PostgreSQL ingestion run started') return {first: () => ({json: assembled})}; throw new Error('unexpected: ' + name); },\n"
             "  {all: () => [\n"
             "    {json: {batch_index: 0, batch_count: 2, loaded_vernacular_names: 846, loaded_candidates: 0}},\n"
             "    {json: {batch_index: 1, batch_count: 2, loaded_vernacular_names: 0, loaded_candidates: 102}},\n"
@@ -979,11 +982,10 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             # 'Korean vernacular load verified?' (the IF between batches and
             # Finalize) passes the item through unchanged; Finalize's own
             # Neo4j response is a fresh, unrelated set of return columns.
-            "const finalizeResponse = {finalized_run_id: 'run-18066', run_status: 'succeeded', "
-            "active_release: assembled.source_release, active_dataset_id: assembled.wikidata_dataset_id};\n"
+            "const finalizeResponse = {status: 'finalized', state_version: 8};\n"
             "const verifyFinalize = new Function('$', '$input', " + json.dumps(VERIFY_FINALIZE) + ");\n"
             "const finalOutput = verifyFinalize(\n"
-            "  (name) => { if (name === 'Verify Korean vernacular batches') return {first: () => ({json: batchOutput})}; throw new Error('unexpected: ' + name); },\n"
+            "  (name) => { if (name === 'Prepare PostgreSQL finalization') return {first: () => ({json: batchOutput})}; throw new Error('unexpected: ' + name); },\n"
             "  {first: () => ({json: finalizeResponse})}\n"
             ")[0].json;\n"
             "assert.equal(finalOutput.finalize_ok, true);\n"
@@ -1018,7 +1020,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "  )[0].json;\n"
             "}\n"
             # A run genuinely marked failed: the original reason survives untouched.
-            "const marked = recordFailure({marked_failed_run_id: 'run-9', run_status: 'failed'});\n"
+            "const marked = recordFailure({status: 'failed'});\n"
             "assert.equal(marked.run_marked_failed, true);\n"
             "assert.equal(marked.failure_reason, captured.failure_reason);\n"
             "assert.equal(marked.run_id, captured.run_id);\n"
@@ -1079,14 +1081,14 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             # from the (still-empty, since gates passed) Assemble output.
             "const batchFailed = chain(\n"
             "  {run_id: 'run-b', load_ok: false, failure_reason: 'Korean vernacular batch counts did not match'},\n"
-            "  {marked_failed_run_id: 'run-b', run_status: 'failed'}\n"
+            "  {status: 'failed'}\n"
             ");\n"
             "assert.equal(batchFailed.failure_reason, 'Korean vernacular batch counts did not match');\n"
             "assert.equal(batchFailed.run_marked_failed, true);\n"
             # Finalize failure: same shape, a different, more specific reason.
             "const finalizeFailed = chain(\n"
             "  {run_id: 'run-c', finalize_ok: false, failure_reason: 'korean-vernacular-names activation was refused: lost the optimistic-concurrency race'},\n"
-            "  {marked_failed_run_id: 'run-c', run_status: 'failed'}\n"
+            "  {status: 'failed'}\n"
             ");\n"
             "assert.equal(finalizeFailed.failure_reason, 'korean-vernacular-names activation was refused: lost the optimistic-concurrency race');\n"
             "assert.equal(finalizeFailed.run_marked_failed, true);\n"
@@ -1154,7 +1156,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "function verifyBatches(rows) {\n"
             "  const impl = new Function('$', '$input', " + json.dumps(VERIFY_BATCHES) + ");\n"
             "  return impl(\n"
-            "    (name) => { if (name === 'Assemble Korean vernacular quality gates') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
+            "    (name) => { if (name === 'Verify PostgreSQL ingestion run started') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
             "    {all: () => rows.map(json => ({json}))}\n"
             "  )[0].json;\n"
             "}\n"
@@ -1188,12 +1190,50 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "  {batch_index: 1, batch_count: 99, loaded_vernacular_names: 1, loaded_candidates: 0},\n"
             "]);\n"
             "assert.equal(inconsistentBatchCount.load_ok, false);\n"
-            # String counts are not real Neo4j numeric result values. They
-            # must fail closed instead of being coerced through Number(...).
-            "const stringCount = verifyBatches([\n"
-            "  {batch_index: 0, batch_count: 1, loaded_vernacular_names: '4', loaded_candidates: 0},\n"
+            # The Neo4j community node returns Cypher integer values as
+            # canonical decimal strings. All four fields are normalized
+            # before the existing duplicate/missing-index checks run.
+            "const canonicalStrings = verifyBatches([\n"
+            "  {batch_index: '0', batch_count: '2', loaded_vernacular_names: '3', loaded_candidates: '0'},\n"
+            "  {batch_index: '1', batch_count: '2', loaded_vernacular_names: '1', loaded_candidates: '0'},\n"
             "]);\n"
-            "assert.equal(stringCount.load_ok, false);\n"
+            "assert.equal(canonicalStrings.load_ok, true);\n"
+            "assert.equal(canonicalStrings.loaded_vernacular_names, 4);\n"
+            "const invalidValues = [' 0', '+0', '-0', '0 ', '1.0', '1e0', '00', '9007199254740992', true, false, NaN, Infinity];\n"
+            "const fields = ['batch_index', 'batch_count', 'loaded_vernacular_names', 'loaded_candidates'];\n"
+            "for (const field of fields) {\n"
+            "  for (const value of invalidValues) {\n"
+            "    const row = {batch_index: 0, batch_count: 1, loaded_vernacular_names: 4, loaded_candidates: 0};\n"
+            "    row[field] = value;\n"
+            "    assert.equal(verifyBatches([row]).load_ok, false, field + ':' + String(value));\n"
+            "  }\n"
+            "}\n"
+        )
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+
+    def test_korean_vernacular_verify_graph_normalizes_only_canonical_integer_counts(self) -> None:
+        from scripts.generate_n8n_korean_vernacular_ingest import VERIFY_GRAPH
+
+        script = (
+            "const assert = require('node:assert/strict');\n"
+            "const expected = {concept_set_id: 'reference-1', loaded_vernacular_names: 846, loaded_candidates: 102};\n"
+            "function verifyGraph(response) {\n"
+            "  const impl = new Function('$', '$input', " + json.dumps(VERIFY_GRAPH) + ");\n"
+            "  return impl(\n"
+            "    (name) => { if (name === 'Verify Korean vernacular batches') return {first: () => ({json: expected})}; throw new Error('unexpected'); },\n"
+            "    {first: () => ({json: response})}\n"
+            "  )[0].json;\n"
+            "}\n"
+            "assert.equal(verifyGraph({concept_set_id: 'reference-1', graph_vernacular_names: '846', graph_candidates: '102'}).graph_ok, true);\n"
+            "assert.equal(verifyGraph({concept_set_id: 'reference-1', graph_vernacular_names: 846, graph_candidates: 102}).graph_ok, true);\n"
+            "const invalidValues = [' 846', '+846', '-846', '846 ', '846.0', '8.46e2', '0846', '9007199254740992', true, false, NaN, Infinity];\n"
+            "for (const field of ['graph_vernacular_names', 'graph_candidates']) {\n"
+            "  for (const value of invalidValues) {\n"
+            "    const response = {concept_set_id: 'reference-1', graph_vernacular_names: '846', graph_candidates: '102'};\n"
+            "    response[field] = value;\n"
+            "    assert.equal(verifyGraph(response).graph_ok, false, field + ':' + String(value));\n"
+            "  }\n"
+            "}\n"
         )
         subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
 
@@ -1337,13 +1377,15 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
 
                 # --- (2) Retirement: species A gets no name in the new snapshot ---
                 start_batch_finalize(run_2, dataset_2, "release-2", [], run_1)
+                active_dataset = [dataset_2]
                 with Neo4jTaxonomyLineageRepository(
                     Neo4jSettings(
                         uri=os.environ["NEO4J_URI"],
                         username=os.environ["NEO4J_USERNAME"],
                         password=os.environ["NEO4J_PASSWORD"],
                         database=database,
-                    )
+                    ),
+                    lambda: active_dataset[0],
                 ) as repository:
                     # Retired: the old snapshot's name is no longer active.
                     self.assertIsNone(repository.lineage_for_korean_name("마커이름"))
@@ -1356,6 +1398,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                         {"taxon_id": taxon_b, "taxon_name": "Marker species B", "korean_name": "동명이인", "qids": ["Q2"]},
                     ]
                     start_batch_finalize(run_3, dataset_3, "release-3", homonym_rows, run_2)
+                    active_dataset[0] = dataset_3
                     self.assertIsNone(repository.lineage_for_korean_name("동명이인"))
         finally:
             with driver.session(database=database) as session:

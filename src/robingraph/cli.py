@@ -91,6 +91,32 @@ def verify_neo4j(_: argparse.Namespace) -> int:
     return 0
 
 
+def migrate_postgres(_: argparse.Namespace) -> int:
+    """Apply the forward-only ingest control-plane migrations."""
+
+    from .ingest.postgres import PostgresSettings, apply_migrations
+
+    report = apply_migrations(PostgresSettings.from_environment())
+    print(json.dumps(asdict(report), ensure_ascii=False))
+    return 0
+
+
+def verify_postgres(_: argparse.Namespace) -> int:
+    """Verify that the configured PostgreSQL ingest schema is complete."""
+
+    from .ingest.postgres import PostgresSettings, verify_schema
+
+    settings = PostgresSettings.from_environment()
+    tables = verify_schema(settings)
+    print(
+        json.dumps(
+            {"database": settings.database, "schema": settings.schema, "tables": tables},
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
 def load_neo4j_fixture(_: argparse.Namespace) -> int:
     from .graph.neo4j_client import bootstrap_schema, load_fixture as load_neo4j_fixture_graph
 
@@ -129,6 +155,21 @@ def serve_fixture(arguments: argparse.Namespace) -> int:
     return 0
 
 
+def serve_ingest(arguments: argparse.Namespace) -> int:
+    """Serve only the explicitly enabled PostgreSQL ingest control boundary."""
+
+    import uvicorn
+
+    from .api.app import create_app
+    from .ingest.postgres import PostgresSettings
+    from .ingest.store import IngestionStore
+
+    settings = PostgresSettings.from_environment()
+    app = create_app(ingest_store=IngestionStore(settings))
+    uvicorn.run(app, host=arguments.host, port=arguments.port)
+    return 0
+
+
 def serve_neo4j(arguments: argparse.Namespace) -> int:
     import uvicorn
 
@@ -141,14 +182,20 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     )
     from .api.semantic_router import SemanticRouter
     from .embeddings import EmbeddingConfigurationError, JinaEmbeddingClient
+    from .ingest.postgres import PostgresSettings
+    from .ingest.store import IngestionStore
     from .retrieval.neo4j_repository import Neo4jGraphRepository
     from .retrieval.operational_neo4j import Neo4jOperationalObservationRepository
     from .retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository
 
     settings = Neo4jSettings.from_environment()
+    ingest_store = IngestionStore(PostgresSettings.from_environment())
     repository = Neo4jGraphRepository(settings)
     operational_repository = Neo4jOperationalObservationRepository(settings)
-    lineage_repository = Neo4jTaxonomyLineageRepository(settings)
+    lineage_repository = Neo4jTaxonomyLineageRepository(
+        settings,
+        lambda: ingest_store.active_dataset_id("korean-vernacular-names"),
+    )
     # Constructing the stdlib client is configuration-only: it makes no HTTP
     # request.  A missing/invalid non-secret embedding configuration merely
     # disables auto routing; explicit chat routes and all legacy endpoints
@@ -323,12 +370,21 @@ def main() -> int:
     commands.add_parser("validate-fixture").set_defaults(handler=validate_fixture)
     commands.add_parser("evaluate-fixture").set_defaults(handler=evaluate)
     commands.add_parser("verify-neo4j").set_defaults(handler=verify_neo4j)
+    commands.add_parser("migrate-postgres").set_defaults(handler=migrate_postgres)
+    commands.add_parser("verify-postgres").set_defaults(handler=verify_postgres)
     commands.add_parser("load-neo4j-fixture").set_defaults(handler=load_neo4j_fixture)
     commands.add_parser("verify-neo4j-fixture").set_defaults(handler=verify_neo4j_fixture)
     serve = commands.add_parser("serve-fixture")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
     serve.set_defaults(handler=serve_fixture)
+    serve_ingest_api = commands.add_parser(
+        "serve-ingest",
+        help="Serve the authenticated PostgreSQL source/control ingest API",
+    )
+    serve_ingest_api.add_argument("--host", default="127.0.0.1")
+    serve_ingest_api.add_argument("--port", type=int, default=8001)
+    serve_ingest_api.set_defaults(handler=serve_ingest)
     serve_graph = commands.add_parser("serve-neo4j")
     serve_graph.add_argument("--host", default="127.0.0.1")
     serve_graph.add_argument("--port", type=int, default=8000)
@@ -349,6 +405,14 @@ def main() -> int:
     evaluate_search_parser.add_argument("--limit", type=_search_limit, default=3)
     evaluate_search_parser.set_defaults(handler=evaluate_search_neo4j)
     arguments = parser.parse_args()
+    if arguments.command in {"migrate-postgres", "verify-postgres"}:
+        from psycopg import Error as PostgresError
+
+        try:
+            return arguments.handler(arguments)
+        except (PostgresError, ValueError) as error:
+            print(f"PostgreSQL migration or verification failed: {error}", file=sys.stderr)
+            return 1
     if arguments.command in {"index-neo4j-fixture", "search-neo4j", "evaluate-search-neo4j"}:
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 

@@ -134,13 +134,11 @@ curl "https://<NAS-API-HOST>/v1/taxa/lineage?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB
 - `(Taxon:BirdTaxon)`만 조회하므로 GBIF `(ExternalTaxonConcept:BirdTaxon)`가 계통에
   섞이지 않는다. 한국어 `VernacularName` 조회도 `Taxon:BirdTaxon`에 직접 연결된
   것만 읽으며 GBIF `ExternalTaxonConcept`는 절대 조회·병합하지 않는다.
-- 한국어 `VernacularName`은 대상 조회와 계통 항목의 `korean_name` 투영 모두에서
-  `VernacularName -[:FROM_RECORD]-> SourceRecord -[:IN_DATASET]->
-  SourceDataset {policy_status: 'allowed'}` 연결이 끊기지 않아야만 조회된다.
-  이는 화면 표시 필터가 아니라 조회 자체의 경계다 — 승인된 적재 경로를 거치지
-  않았거나, 나중에 정책이 바뀌어 `review_required`/`restricted`로 내려간
-  데이터셋에 연결된 이름은 계통에서 감춰지는 게 아니라 애초에 대상을 찾지
-  못한다(적재된 적 없는 이름과 구분되지 않는다).
+- 한국어 `VernacularName`은 PostgreSQL control plane에서 조회한 활성·허용
+  dataset ID와 `VernacularName.dataset_id`가 일치하고, 도메인 노드의
+  `policy_status`도 `allowed`일 때만 대상 조회와 계통 항목 투영에 사용된다.
+  SourceRecord와 dataset/run/state 원본은 RDB에만 존재한다. 활성 상태가 없거나
+  정책이 철회되면 이름은 애초에 대상을 찾지 못한다.
 - `PARENT_OF.concept_set_id`가 활성 concept set과 일치하는 관계만 순회한다.
 - 두 조회 경로 모두 대상 `Taxon`을 `ORDER BY target.id LIMIT 1`로 결정론적으로
   하나만 선택한 뒤 조상 순회를 시작하므로, 동일한 학명이나 동일한 한국어

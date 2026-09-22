@@ -109,11 +109,6 @@ COLLECTION_POINT_ID = "korean-vernacular-wikidata-species-labels"
 KOREAN_VERNACULAR_LABELS = (
     "VernacularName",
     "VernacularNameCandidate",
-    "SourceRecord",
-    "SourceDataset",
-    "License",
-    "IngestionRun",
-    "IngestState",
 )
 
 # Live-verified 2026-09-11 against https://query.wikidata.org/sparql :
@@ -352,7 +347,14 @@ CLASSIFY_MATCHES_JS = r"""
 function classifyMatches(resolvedRows) {
   const writeRows = [];
   const candidates = [];
+  let invalidRowCount = 0;
   for (const row of resolvedRows || []) {
+    if (!row || typeof row.taxon_name !== 'string' || !row.taxon_name.trim()
+        || typeof row.korean_name !== 'string' || !row.korean_name.trim()
+        || !Array.isArray(row.qids)) {
+      invalidRowCount += 1;
+      continue;
+    }
     const matchedIds = Array.isArray(row.matched_taxon_ids) ? row.matched_taxon_ids : [];
     if (matchedIds.length === 1) {
       writeRows.push({
@@ -377,26 +379,23 @@ function classifyMatches(resolvedRows) {
       });
     }
   }
-  return {writeRows, candidates};
+  return {writeRows, candidates, invalidRowCount};
 }
 """
 
 # Always exactly one row (no UNWIND; every MATCH is OPTIONAL), regardless of
 # how many -- if any -- Wikidata candidates were parsed. Kept as a step
 # separate from RESOLVE_MATCHES_STATEMENT so state bookkeeping (the active
-# concept set, and the optimistic-concurrency token for Finalize) is
+# concept set) is
 # available even when there are zero clean candidates to resolve, instead of
 # being smuggled out of resolvedRows[0] (which doesn't exist when there are
-# no rows). `expected_prior_run_id` defaults to '' (never null) so Finalize's
-# `WHERE currentRunId = $expected_prior_run_id` guard has a stable, coalesced
-# value to compare against on both sides.
+# no rows). PostgreSQL supplies the optimistic-concurrency token when the
+# run is opened through the internal ingest API.
 READ_STATE_STATEMENT = compact_cypher(
     """
     OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'})
     OPTIONAL MATCH (conceptSet:TaxonConceptSet {id: taxState.active_concept_set_id})
-    OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'})
-    RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release,
-           coalesce(koreanState.last_successful_run_id, '') AS expected_prior_run_id
+    RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release
     """
 )
 
@@ -419,7 +418,7 @@ ASSEMBLE_GATES_JS = (
     CLASSIFY_MATCHES_JS
     + r"""
 function assembleGates(config, normalized, stateInfo, resolvedRows) {
-  const {writeRows, candidates} = classifyMatches(resolvedRows);
+  const {writeRows, candidates, invalidRowCount} = classifyMatches(resolvedRows);
   const allCandidates = [...candidates, ...normalized.conflicted_candidates];
   const reasons = [];
   // Checked first and most specifically: a failed or malformed fetch must
@@ -443,6 +442,10 @@ function assembleGates(config, normalized, stateInfo, resolvedRows) {
   if (!stateInfo.concept_set_id) {
     reasons.push('Active AviList reference-taxonomy concept set is not available');
   }
+  if ((normalized.clean_candidates || []).length > 0
+      && (invalidRowCount > 0 || writeRows.length + candidates.length !== normalized.clean_candidates.length)) {
+    reasons.push('Active taxonomy resolution returned incomplete or malformed rows');
+  }
   if (reasons.length === 0 && writeRows.length === 0 && allCandidates.length === 0 && normalized.distinct_taxon_name_count > 0) {
     reasons.push('Korean vernacular candidates were parsed but none resolved to a write row or a candidate');
   }
@@ -456,7 +459,6 @@ function assembleGates(config, normalized, stateInfo, resolvedRows) {
     distinct_taxon_name_count: normalized.distinct_taxon_name_count,
     concept_set_id: stateInfo.concept_set_id,
     taxonomy_release: stateInfo.taxonomy_release,
-    expected_prior_run_id: stateInfo.expected_prior_run_id,
     write_rows: writeRows,
     candidates: allCandidates,
     write_row_count: writeRows.length,
@@ -479,46 +481,11 @@ return [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];
 """
 )
 
-# Re-affirms `state.active_concept_set_id = $concept_set_id` (captured at
-# resolve time) rather than trusting that value blindly: if the
-# reference-taxonomy AviList pipeline flipped its active concept set in the
-# window between resolve and start, this MATCH's WHERE fails, the whole
-# query returns zero rows, and no IngestionRun/SourceDataset/License is ever
-# created for a run that would otherwise write against a taxonomy
-# generation that is no longer current.
-START_STATEMENT = compact_cypher(
-    """
-    MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id
-    MATCH (concept_set:TaxonConceptSet {id: $concept_set_id})
-    MERGE (run:IngestionRun {id: $run_id})
-    SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at,
-        run.status = 'loading', run.source_release = $source_release,
-        run.wikidata_dataset_id = $wikidata_dataset_id,
-        run.source_sha256 = $source_sha256, run.taxonomy_release = $taxonomy_release,
-        run.expected_write_rows = $write_row_count, run.expected_candidates = $candidate_count
-    MERGE (dataset:SourceDataset {id: $wikidata_dataset_id})
-    SET dataset.name = 'Wikidata taxon labels', dataset.provider = 'Wikimedia Foundation / Wikidata community',
-        dataset.version = $source_release, dataset.landing_uri = $wikidata_landing_uri,
-        dataset.snapshot_uri = $sparql_endpoint, dataset.snapshot_sha256 = $source_sha256,
-        dataset.policy_status = 'allowed'
-    MERGE (license:License {id: $wikidata_license_uri})
-    SET license.license_uri = $wikidata_license_uri, license.policy_status = 'allowed'
-    MERGE (dataset)-[:LICENSED_UNDER]->(license)
-    RETURN run.id AS started_run_id, run.status AS run_status
-    """
-)
-
 # `$wikidata_dataset_id` is content-addressed (see NORMALIZE_WIKIDATA), so
-# folding it into both the VernacularName id and the SourceRecord id makes
-# every snapshot's writes their own immutable nodes: re-running against
-# identical content MERGEs the same nodes (idempotent), while different
-# content never overwrites a prior snapshot's hash in place. All of a row's
-# `qids` get their own SourceRecord (not just qids[0]), so provenance is
-# never dropped for a name asserted by more than one Wikidata item. The
-# `HAS_VERNACULAR_NAME` edge is created as each logical batch commits, but
-# stays invisible to reads until Finalize activates this dataset id in
-# `IngestState {id: 'korean-vernacular-names'}.active_dataset_id` -- writes
-# are staged-by-construction, not by any separate staging label. Re-checking
+# folding it into the VernacularName id makes every snapshot's graph writes
+# immutable and idempotent. Source records, the run ledger, quarantine, and
+# activation state are written only through the PostgreSQL control API.
+# Re-checking
 # `state.active_concept_set_id = $concept_set_id` on every batch (not just
 # at Start) means even a taxonomy switch mid-run stops matching further
 # taxa. The NAS community Neo4j node evaluates its query once for the first
@@ -526,34 +493,25 @@ START_STATEMENT = compact_cypher(
 # batch at a time and collects all count rows for `VERIFY_BATCHES`.
 BATCH_STATEMENT = compact_cypher(
     """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
     MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id
-    MATCH (dataset:SourceDataset {id: $wikidata_dataset_id})
     MATCH (concept_set:TaxonConceptSet {id: $concept_set_id})
     CALL {
-      WITH run, dataset, concept_set
+      WITH concept_set
       UNWIND $rows AS row
       MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id
       MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id})
       SET vernacular.name = row.korean_name, vernacular.language = 'ko',
           vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id,
+          vernacular.policy_status = 'allowed',
           vernacular.source_scientific_name_claim = row.taxon_name,
           vernacular.source_qids = row.qids, vernacular.source_release = $source_release,
+          vernacular.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id],
           vernacular.retrieved_at = $retrieved_at
       MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular)
-      MERGE (run)-[:INGESTED]->(vernacular)
-      WITH vernacular, dataset, row
-      UNWIND row.qids AS qid
-      MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id})
-      SET record.record_type = 'taxon_label', record.external_id = qid,
-          record.raw_uri = 'https://www.wikidata.org/entity/' + qid,
-          record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at
-      MERGE (record)-[:IN_DATASET]->(dataset)
-      MERGE (vernacular)-[:FROM_RECORD]->(record)
       RETURN count(DISTINCT vernacular) AS loaded_vernacular_names
     }
     CALL {
-      WITH run, dataset
+      WITH state
       UNWIND $candidates AS row
       MERGE (candidate:VernacularNameCandidate {
         id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id
@@ -561,16 +519,9 @@ BATCH_STATEMENT = compact_cypher(
       SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name,
           candidate.reason_code = row.reason_code, candidate.qids = row.qids,
           candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id,
-          candidate.last_seen_at = $retrieved_at
-      MERGE (run)-[:QUARANTINED]->(candidate)
-      WITH candidate, dataset, row
-      UNWIND row.qids AS qid
-      MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id})
-      SET record.record_type = 'taxon_label', record.external_id = qid,
-          record.raw_uri = 'https://www.wikidata.org/entity/' + qid,
-          record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at
-      MERGE (record)-[:IN_DATASET]->(dataset)
-      MERGE (record)-[:HAS_VERNACULAR_CANDIDATE]->(candidate)
+          candidate.last_seen_at = $retrieved_at,
+          candidate.dataset_id = $wikidata_dataset_id,
+          candidate.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id]
       RETURN count(DISTINCT candidate) AS loaded_candidates
     }
     RETURN $batch_index AS batch_index, $batch_count AS batch_count,
@@ -578,66 +529,18 @@ BATCH_STATEMENT = compact_cypher(
     """
 )
 
-# Activation is the single atomic step that makes a snapshot visible to
-# reads (see taxonomy_lineage_neo4j.py's active_dataset_id gate) and is
-# guarded twice, both fail-closed:
-#
-# 1. `state.active_concept_set_id = $concept_set_id` -- the same
-#    mid-run-taxonomy-switch guard as Start/Batch, checked one more time at
-#    the last possible moment before anything durable (IngestState) changes.
-# 2. `currentRunId = $expected_prior_run_id` -- optimistic concurrency. Each
-#    run captures the *prior* korean-vernacular-names run id at "Read active
-#    taxonomy and Korean dataset state" (near the start of its execution).
-#    Finalize first MERGEs the unique state node, which obtains the key lock
-#    before reading and comparing `last_successful_run_id`. That ordering is
-#    essential for the first activation too: two runs can both have captured
-#    the absent state's coalesced `''`, but only the first may create/update
-#    it; the waiting transaction then reads the first run id and fails its
-#    WHERE guard. A stale, slower writer therefore cannot clobber a newer
-#    activation. Its already content-addressed writes remain unactivated.
-#
-# Retiring a name that dropped out of the new snapshot needs no explicit
-# delete: once `active_dataset_id` flips away from the taxon's old
-# dataset-scoped VernacularName id, the read path's exact-dataset-id match
-# stops finding it.
-FINALIZE_STATEMENT = compact_cypher(
+# Final graph verification is read-only. PostgreSQL performs the atomic
+# optimistic activation after this query proves the reference taxonomy has
+# not switched and the complete domain snapshot is present.
+VERIFY_GRAPH_STATEMENT = compact_cypher(
     """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
     MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id
-    MERGE (state:IngestState {id: 'korean-vernacular-names'})
-    ON CREATE SET state.last_successful_run_id = ''
-    WITH run, state, coalesce(state.last_successful_run_id, '') AS currentRunId
-    WHERE currentRunId = $expected_prior_run_id
-    SET run.status = 'succeeded', run.finished_at = datetime(),
-        run.loaded_vernacular_names = $loaded_vernacular_names,
-        run.loaded_candidates = $loaded_candidates
-    SET state.active_release = $source_release, state.active_dataset_id = $wikidata_dataset_id,
-        state.taxonomy_release = $taxonomy_release,
-        state.last_successful_run_id = $run_id, state.last_successful_at = datetime(),
-        state.loaded_vernacular_names = $loaded_vernacular_names,
-        state.loaded_candidates = $loaded_candidates
-    RETURN run.id AS finalized_run_id, run.status AS run_status,
-           state.active_release AS active_release, state.active_dataset_id AS active_dataset_id
-    """
-)
-
-# Runs on every failure branch (quality gates, Start, batch load, Finalize),
-# right before the Discord notification. The `WHERE run.status = 'loading'`
-# guard makes this a safe no-op when no run was ever started (quality gates
-# rejected the run before Start, or Start's own concept-set guard already
-# refused it) -- MATCH simply returns zero rows, and `onError:
-# continueRegularOutput` + `alwaysOutputData` (see `neo4j_node`) mean that
-# never throws. It also means this can never re-mark a run that already
-# reached 'succeeded' (Finalize already advanced it past 'loading') or that
-# a slower, duplicate failure signal already marked 'failed'. This never
-# touches `IngestState` -- the active `korean-vernacular-names` dataset is
-# only ever advanced by FINALIZE_STATEMENT, never rolled back or altered
-# here, so a failed run cannot change what reads currently see as active.
-MARK_FAILED_STATEMENT = compact_cypher(
-    """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
-    SET run.status = 'failed', run.finished_at = datetime(), run.failure_reason = $failure_reason
-    RETURN run.id AS marked_failed_run_id, run.status AS run_status
+    OPTIONAL MATCH (vernacular:VernacularName {language: 'ko', dataset_id: $wikidata_dataset_id})
+    WITH taxState, count(vernacular) AS graphVernacularNames
+    OPTIONAL MATCH (candidate:VernacularNameCandidate {dataset_id: $wikidata_dataset_id})
+    RETURN taxState.active_concept_set_id AS concept_set_id,
+           graphVernacularNames AS graph_vernacular_names,
+           count(candidate) AS graph_candidates
     """
 )
 
@@ -661,6 +564,7 @@ def prepare_batches_js(source_var: str) -> str:
           wikidata_dataset_id: source.wikidata_dataset_id,
           concept_set_id: source.concept_set_id,
           source_sha256: source.source_sha256,
+          expected_state_version: source.expected_state_version,
           batch_index: index,
           batch_count: batches.length,
           ...batch,
@@ -669,40 +573,132 @@ def prepare_batches_js(source_var: str) -> str:
     ).strip()
 
 
+PREPARE_BEGIN_REQUEST = r"""
+const source = $input.first().json;
+return [{json: {...source, ingest_request: {
+  dataset: {
+    id: source.wikidata_dataset_id,
+    source_id: 'wikidata',
+    name: 'Wikidata Korean bird labels',
+    provider: 'Wikimedia Foundation / Wikidata community',
+    landing_uri: source.wikidata_landing_uri,
+    release_strategy: 'dated_snapshot',
+    policy_status: 'allowed',
+    metadata: {license_uri: source.wikidata_license_uri, taxonomy_release: source.taxonomy_release},
+  },
+  release: {
+    id: source.source_release,
+    release_key: source.source_release,
+    retrieved_at: source.retrieved_at,
+    content_sha256: source.source_sha256,
+    raw_object_uri: source.sparql_endpoint,
+    metadata: {taxonomy_release: source.taxonomy_release, concept_set_id: source.concept_set_id},
+  },
+  run: {
+    id: source.run_id,
+    pipeline_id: source.pipeline_id,
+    started_at: source.retrieved_at,
+    manifest: {
+      orchestrator: 'n8n',
+      workflow: 'korean-vernacular-wikidata',
+      expected_write_rows: source.write_row_count,
+      expected_candidates: source.candidate_count,
+    },
+  },
+}}}];
+"""
+
+
 VERIFY_START = r"""
-const expected = $('Assemble Korean vernacular quality gates').first().json;
+const expected = $('Prepare PostgreSQL ingestion run').first().json;
 const response = $input.first().json;
-const errorText = String(response.error?.message || response.error || response.message || '');
-const startOk = !errorText && response.started_run_id === expected.run_id && response.run_status === 'loading';
-return [{json: {...expected, start_ok: startOk, failure_reason: startOk ? '' : (errorText || 'Neo4j did not start the ingestion run')}}];
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const stateVersion = response.state_version;
+const startOk = !errorText && response.status === 'started'
+  && typeof stateVersion === 'number' && Number.isSafeInteger(stateVersion) && stateVersion >= 0;
+return [{json: {...expected, expected_state_version: stateVersion, start_ok: startOk,
+  failure_reason: startOk ? '' : (errorText || 'PostgreSQL did not start the ingestion run')}}];
+"""
+
+
+PREPARE_APPEND_REQUEST = r"""
+const batch = $input.first().json;
+const qids = new Set();
+for (const row of [...batch.rows, ...batch.candidates]) {
+  for (const qid of row.qids || []) qids.add(qid);
+}
+const records = [...qids].sort().map(qid => ({
+  id: `wikidata-record:${qid}:${batch.wikidata_dataset_id}`,
+  external_id: qid,
+  record_type: 'taxon_label',
+  raw_object_uri: `https://www.wikidata.org/entity/${qid}`,
+  raw_sha256: batch.source_sha256,
+  retrieved_at: batch.retrieved_at,
+  parser_version: 'korean-vernacular-v2',
+  license_policy_status: 'allowed',
+  payload: {qid, source_release: batch.source_release, snapshot_sha256: batch.source_sha256},
+}));
+const quarantine_items = batch.candidates.map(row => ({
+  record_key: `${row.reason_code}:${(row.qids || []).join('+') || 'no-qid'}:${encodeURIComponent(row.korean_name || '')}`.slice(0, 200),
+  stage: 'resolve',
+  reason_code: row.reason_code,
+  severity: 'warning',
+  rule_version: 'korean-vernacular-v2',
+  raw_value_redacted: {qids: row.qids || [], taxon_name: row.taxon_name, proposed_name: row.korean_name},
+}));
+return [{json: {...batch, ingest_request: {records, quarantine_items}}}];
+"""
+
+
+VERIFY_APPEND = r"""
+const batch = $('Prepare PostgreSQL source batch').item.json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const appendOk = !errorText && response.status === 'appended';
+return [{json: {...batch, append_ok: appendOk,
+  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the source batch')}}];
 """
 
 VERIFY_BATCHES = r"""
-const expected = $('Assemble Korean vernacular quality gates').first().json;
+const expected = $('Verify PostgreSQL ingestion run started').first().json;
 const rows = $input.all().map(item => item.json);
 const errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);
-// Treat the Neo4j output as untrusted at this boundary. In particular, do
-// not coerce strings/booleans with Number(...): a malformed output must not
-// turn into a seemingly valid count and authorize Finalize.
-const isNonNegativeSafeInteger = value =>
-  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
-const batchCount = rows.length && isNonNegativeSafeInteger(rows[0].batch_count)
-  ? rows[0].batch_count
+// The NAS community Neo4j node serializes Cypher integer return values as
+// strings. Accept only a canonical unsigned decimal spelling (or a native
+// safe integer), then normalize every returned count/index before checking
+// batch completeness. Number(...) alone would incorrectly accept whitespace,
+// signs, decimals, exponents and booleans.
+const normalizeNonNegativeSafeInteger = value => {
+  if (typeof value === 'number') {
+    return Number.isSafeInteger(value) && value >= 0 ? value : null;
+  }
+  if (typeof value !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+};
+const normalizedRows = rows.map(row => ({
+  row,
+  batchIndex: normalizeNonNegativeSafeInteger(row?.batch_index),
+  batchCount: normalizeNonNegativeSafeInteger(row?.batch_count),
+  loadedVernacularNames: normalizeNonNegativeSafeInteger(row?.loaded_vernacular_names),
+  loadedCandidates: normalizeNonNegativeSafeInteger(row?.loaded_candidates),
+}));
+const batchCount = normalizedRows.length && normalizedRows[0].batchCount !== null
+  ? normalizedRows[0].batchCount
   : 0;
-const validBatchRows = batchCount > 0 && rows.every(row =>
-  row && typeof row === 'object'
-  && row.batch_count === batchCount
-  && isNonNegativeSafeInteger(row.batch_index)
-  && row.batch_index < batchCount
-  && isNonNegativeSafeInteger(row.loaded_vernacular_names)
-  && isNonNegativeSafeInteger(row.loaded_candidates)
+const validBatchRows = batchCount > 0 && normalizedRows.every(value =>
+  value.row && typeof value.row === 'object'
+  && value.batchCount === batchCount
+  && value.batchIndex !== null && value.batchIndex < batchCount
+  && value.loadedVernacularNames !== null
+  && value.loadedCandidates !== null
 );
-const indexes = new Set(validBatchRows ? rows.map(row => row.batch_index) : []);
+const indexes = new Set(validBatchRows ? normalizedRows.map(value => value.batchIndex) : []);
 const loadedVernacularNames = validBatchRows
-  ? rows.reduce((sum, row) => sum + row.loaded_vernacular_names, 0)
+  ? normalizedRows.reduce((sum, value) => sum + value.loadedVernacularNames, 0)
   : 0;
 const loadedCandidates = validBatchRows
-  ? rows.reduce((sum, row) => sum + row.loaded_candidates, 0)
+  ? normalizedRows.reduce((sum, value) => sum + value.loadedCandidates, 0)
   : 0;
 const loadOk = !errors.length && validBatchRows && indexes.size === batchCount && rows.length === batchCount
   && loadedVernacularNames === expected.write_row_count
@@ -713,6 +709,49 @@ return [{json: {...expected,
   loaded_candidates: loadedCandidates,
   failure_reason: loadOk ? '' : (errors.join('; ') || 'Korean vernacular batch counts did not match')
 }}];
+"""
+
+VERIFY_GRAPH = r"""
+const expected = $('Verify Korean vernacular batches').first().json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || '');
+// The Neo4j community node serializes Cypher integer return values as strings.
+// Keep this parser as strict as VERIFY_BATCHES: accept only native non-negative
+// safe integers or canonical unsigned decimal strings. In particular, do not
+// coerce whitespace, signs, decimals, exponents, booleans, or overflow.
+const normalizeNonNegativeSafeInteger = value => {
+  if (typeof value === 'number') {
+    return Number.isSafeInteger(value) && value >= 0 ? value : null;
+  }
+  if (typeof value !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value)) return null;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? parsed : null;
+};
+const graphVernacularNames = normalizeNonNegativeSafeInteger(response.graph_vernacular_names);
+const graphCandidates = normalizeNonNegativeSafeInteger(response.graph_candidates);
+const graphOk = !errorText
+  && response.concept_set_id === expected.concept_set_id
+  && graphVernacularNames !== null
+  && graphCandidates !== null
+  && graphVernacularNames === expected.loaded_vernacular_names
+  && graphCandidates === expected.loaded_candidates;
+return [{json: {...expected, graph_ok: graphOk,
+  failure_reason: graphOk ? '' : (errorText || 'Neo4j domain snapshot verification failed')}}];
+"""
+
+PREPARE_FINALIZE_REQUEST = r"""
+const source = $input.first().json;
+const qids = new Set([...source.write_rows, ...source.candidates].flatMap(row => row.qids || []));
+return [{json: {...source, ingest_request: {
+  counts: {
+    source_bindings: source.source_binding_count,
+    source_records: qids.size,
+    vernacular_names: source.loaded_vernacular_names,
+    quarantine_items: source.loaded_candidates,
+  },
+  cursor: {source_release: source.source_release, dataset_id: source.wikidata_dataset_id},
+  expected_state_version: source.expected_state_version,
+}}}];
 """
 
 # `expected` is read from 'Verify Korean vernacular batches', not 'Assemble
@@ -729,22 +768,18 @@ return [{json: {...expected,
 # vernacular load verified?' (the IF between it and Finalize) passes items
 # through unchanged.
 VERIFY_FINALIZE = r"""
-const expected = $('Verify Korean vernacular batches').first().json;
+const expected = $('Prepare PostgreSQL finalization').first().json;
 const response = $input.first().json;
-const errorText = String(response.error?.message || response.error || response.message || '');
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
 const finalizeOk = !errorText
-  && response.finalized_run_id === expected.run_id
-  && response.run_status === 'succeeded'
-  && response.active_release === expected.source_release
-  && response.active_dataset_id === expected.wikidata_dataset_id;
+  && response.status === 'finalized'
+  && response.state_version === expected.expected_state_version + 1;
 return [{json: {...expected,
   finalize_ok: finalizeOk,
   loaded_vernacular_names: expected.loaded_vernacular_names,
   loaded_candidates: expected.loaded_candidates,
   failure_reason: finalizeOk ? '' : (errorText ||
-    'korean-vernacular-names activation was refused: either the reference-taxonomy ' +
-    'active concept set changed since this run resolved matches, or a concurrent run ' +
-    'already activated a newer snapshot first (lost the optimistic-concurrency race)')
+    'PostgreSQL activation was refused because a concurrent run advanced the state version')
 }}];
 """
 
@@ -778,12 +813,52 @@ return [{json: $input.first().json}];
 RECORD_FAILURE_JS = r"""
 const expected = $('Capture Korean vernacular failure context').first().json;
 const response = $input.first().json;
-const errorText = String(response.error?.message || response.error || response.message || '');
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
 const runMarkedFailed = !errorText
-  && response.marked_failed_run_id === expected.run_id
-  && response.run_status === 'failed';
+  && response.status === 'failed';
 return [{json: {...expected, run_marked_failed: runMarkedFailed}}];
 """
+
+
+def ingest_api_node(name: str, path_expression: str, position: tuple[int, int]) -> dict[str, object]:
+    """Build an authenticated internal control-plane request without embedding secrets."""
+
+    return node(
+        name,
+        "n8n-nodes-base.httpRequest",
+        4.4,
+        {
+            "method": "POST",
+            "url": f"={{{{ $env.ROBINGRAPH_INGEST_API_URL + {path_expression} }}}}",
+            "sendHeaders": True,
+            "headerParameters": {
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}",
+                    }
+                ]
+            },
+            "sendBody": True,
+            # n8n HTTP Request 4.4 forces `useStream: true` for raw bodies,
+            # even when Response Format is JSON.  Use its native JSON-body
+            # mode so it serializes the object and parses FastAPI's JSON
+            # response before handing it to the verification Code node.
+            "contentType": "json",
+            "specifyBody": "json",
+            "jsonBody": "={{ $json.ingest_request }}",
+            "options": {"response": {"response": {"neverError": True, "responseFormat": "json"}}},
+        },
+        position,
+        onError="continueRegularOutput",
+        retryOnFail=True,
+        maxTries=3,
+        waitBetweenTries=2000,
+        notes=(
+            "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from "
+            "n8n environment variables; no credential value is stored in this workflow."
+        ),
+    )
 
 
 def main() -> None:
@@ -880,27 +955,46 @@ def main() -> None:
         resolve_matches,
         code("Assemble Korean vernacular quality gates", ASSEMBLE_KOREAN_VERNACULAR_GATES, (1000, 0)),
         boolean_if("Korean vernacular quality gates passed?", "={{ $json.ready_to_load }}", (1240, 0)),
-        neo4j_node("Start Korean vernacular ingestion run", START_STATEMENT, (1480, -180)),
-        code("Verify Korean vernacular run started", VERIFY_START, (1720, -180)),
-        boolean_if("Korean vernacular ingestion run started?", "={{ $json.start_ok }}", (1960, -180)),
+        code("Prepare PostgreSQL ingestion run", PREPARE_BEGIN_REQUEST, (1480, -180)),
+        ingest_api_node(
+            "Start PostgreSQL ingestion run", "'/internal/v1/ingest/begin'", (1720, -180)
+        ),
+        code("Verify PostgreSQL ingestion run started", VERIFY_START, (1960, -180)),
+        boolean_if("PostgreSQL ingestion run started?", "={{ $json.start_ok }}", (2200, -180)),
         code(
             "Prepare Korean vernacular batches",
-            prepare_batches_js("Assemble Korean vernacular quality gates"),
-            (2200, -180),
+            prepare_batches_js("Verify PostgreSQL ingestion run started"),
+            (2440, -180),
         ),
         node(
             "Loop Over Korean vernacular batches",
             "n8n-nodes-base.splitInBatches",
             3,
-            {"options": {}},
-            (2440, -180),
+            {"batchSize": 1, "options": {}},
+            (2680, -180),
         ),
-        neo4j_node("Upsert Korean vernacular names batch", BATCH_STATEMENT, (2680, -180)),
-        code("Verify Korean vernacular batches", VERIFY_BATCHES, (2920, -180)),
-        boolean_if("Korean vernacular load verified?", "={{ $json.load_ok }}", (3160, -180)),
-        neo4j_node("Finalize Korean vernacular active release", FINALIZE_STATEMENT, (3400, -180)),
-        code("Verify Korean vernacular release finalized", VERIFY_FINALIZE, (3640, -180)),
-        boolean_if("Korean vernacular release finalized?", "={{ $json.finalize_ok }}", (3880, -180)),
+        code("Prepare PostgreSQL source batch", PREPARE_APPEND_REQUEST, (2920, -180)),
+        ingest_api_node(
+            "Append PostgreSQL source batch",
+            "('/internal/v1/ingest/' + $json.run_id + '/append')",
+            (3160, -180),
+        ),
+        code("Verify PostgreSQL source batch appended", VERIFY_APPEND, (3400, -180)),
+        boolean_if("PostgreSQL source batch appended?", "={{ $json.append_ok }}", (3640, -180)),
+        neo4j_node("Upsert Korean vernacular names batch", BATCH_STATEMENT, (3880, -180)),
+        code("Verify Korean vernacular batches", VERIFY_BATCHES, (4120, -180)),
+        boolean_if("Korean vernacular load verified?", "={{ $json.load_ok }}", (4360, -180)),
+        neo4j_node("Verify Korean vernacular graph snapshot", VERIFY_GRAPH_STATEMENT, (4600, -180)),
+        code("Check Korean vernacular graph snapshot", VERIFY_GRAPH, (4840, -180)),
+        boolean_if("Korean vernacular graph verified?", "={{ $json.graph_ok }}", (5080, -180)),
+        code("Prepare PostgreSQL finalization", PREPARE_FINALIZE_REQUEST, (5320, -180)),
+        ingest_api_node(
+            "Finalize PostgreSQL ingestion run",
+            "('/internal/v1/ingest/' + $json.run_id + '/finalize')",
+            (5560, -180),
+        ),
+        code("Verify Korean vernacular release finalized", VERIFY_FINALIZE, (5800, -180)),
+        boolean_if("Korean vernacular release finalized?", "={{ $json.finalize_ok }}", (6040, -180)),
         # Discord nodes, like `generate_n8n_reference_ingest.py`'s "Notify
         # reference *" pair: `discord()` sets `onError: continueRegularOutput`,
         # so a workflow whose Discord credential is not (yet) wired -- this
@@ -916,11 +1010,20 @@ def main() -> None:
             "'\\nVernacularName nodes: ' + $json.loaded_vernacular_names + ', review candidates: ' + "
             "$json.loaded_candidates + '\\nActive reference-taxonomy release: ' + $json.taxonomy_release + "
             "'\\nActive Wikidata dataset: ' + $json.wikidata_dataset_id }}",
-            (4120, -280),
+            (6280, -280),
         ),
         code("Capture Korean vernacular failure context", CAPTURE_FAILURE_CONTEXT_JS, (1720, 220)),
-        neo4j_node("Mark Korean vernacular run failed", MARK_FAILED_STATEMENT, (1960, 220)),
-        code("Record Korean vernacular run failure", RECORD_FAILURE_JS, (2200, 220)),
+        code(
+            "Prepare PostgreSQL run failure",
+            "return [{json: {...$input.first().json, ingest_request: {reason: String($input.first().json.failure_reason || 'Unknown failure').slice(0, 4000)}}}];",
+            (1960, 220),
+        ),
+        ingest_api_node(
+            "Mark PostgreSQL ingestion run failed",
+            "('/internal/v1/ingest/' + $json.run_id + '/fail')",
+            (2200, 220),
+        ),
+        code("Record Korean vernacular run failure", RECORD_FAILURE_JS, (2440, 220)),
         discord(
             "Notify Korean vernacular failure",
             "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + "
@@ -928,15 +1031,15 @@ def main() -> None:
             "String($json.failure_reason || 'Unknown failure').slice(0, 1500) + "
             # A separate signal from the failure reason itself: this Discord
             # node's own onError: continueRegularOutput means it still fires
-            # even if 'Mark Korean vernacular run failed' could not reach
-            # Neo4j at all (DB down, not just the original ingest failure).
+            # even if 'Mark PostgreSQL ingestion run failed' could not reach
+            # the control API at all (DB/API down, not just the original failure).
             # An operator seeing 'not recorded' here knows the IngestionRun
-            # may still show 'loading' in the graph and needs a manual look,
+            # may still show 'loading' in PostgreSQL and needs a manual look,
             # instead of assuming the failure was already durably bookkept.
             "'\\nRun bookkeeping: ' + ($json.run_marked_failed "
-            "? 'marked failed in Neo4j' "
-            ": 'not recorded in Neo4j (no run was loading, or the bookkeeping write itself failed)') }}",
-            (2440, 220),
+            "? 'marked failed in PostgreSQL' "
+            ": 'not recorded in PostgreSQL (no run was loading, or the bookkeeping request itself failed)') }}",
+            (2680, 220),
         ),
         node(
             "Fail Korean vernacular execution",
@@ -948,9 +1051,9 @@ def main() -> None:
                     "quality or Neo4j verification node."
                 )
             },
-            (2680, 220),
+            (2920, 220),
         ),
-        node("Korean vernacular ingest finished", "n8n-nodes-base.noOp", 1, {}, (4360, -180)),
+        node("Korean vernacular ingest finished", "n8n-nodes-base.noOp", 1, {}, (6520, -180)),
     ]
 
     connections = {
@@ -975,15 +1078,16 @@ def main() -> None:
         },
         "Korean vernacular quality gates passed?": {
             "main": [
-                [edge("Start Korean vernacular ingestion run")],
+                [edge("Prepare PostgreSQL ingestion run")],
                 [edge("Capture Korean vernacular failure context")],
             ]
         },
-        "Start Korean vernacular ingestion run": {"main": [[edge("Verify Korean vernacular run started")]]},
-        "Verify Korean vernacular run started": {
-            "main": [[edge("Korean vernacular ingestion run started?")]]
+        "Prepare PostgreSQL ingestion run": {"main": [[edge("Start PostgreSQL ingestion run")]]},
+        "Start PostgreSQL ingestion run": {"main": [[edge("Verify PostgreSQL ingestion run started")]]},
+        "Verify PostgreSQL ingestion run started": {
+            "main": [[edge("PostgreSQL ingestion run started?")]]
         },
-        "Korean vernacular ingestion run started?": {
+        "PostgreSQL ingestion run started?": {
             "main": [
                 [edge("Prepare Korean vernacular batches")],
                 [edge("Capture Korean vernacular failure context")],
@@ -999,7 +1103,20 @@ def main() -> None:
                 # Sending these the other way round verifies before any
                 # write and can leave every batch unprocessed.
                 [edge("Verify Korean vernacular batches")],
+                [edge("Prepare PostgreSQL source batch")],
+            ]
+        },
+        "Prepare PostgreSQL source batch": {"main": [[edge("Append PostgreSQL source batch")]]},
+        "Append PostgreSQL source batch": {
+            "main": [[edge("Verify PostgreSQL source batch appended")]]
+        },
+        "Verify PostgreSQL source batch appended": {
+            "main": [[edge("PostgreSQL source batch appended?")]]
+        },
+        "PostgreSQL source batch appended?": {
+            "main": [
                 [edge("Upsert Korean vernacular names batch")],
+                [edge("Capture Korean vernacular failure context")],
             ]
         },
         "Upsert Korean vernacular names batch": {
@@ -1008,11 +1125,26 @@ def main() -> None:
         "Verify Korean vernacular batches": {"main": [[edge("Korean vernacular load verified?")]]},
         "Korean vernacular load verified?": {
             "main": [
-                [edge("Finalize Korean vernacular active release")],
+                [edge("Verify Korean vernacular graph snapshot")],
                 [edge("Capture Korean vernacular failure context")],
             ]
         },
-        "Finalize Korean vernacular active release": {
+        "Verify Korean vernacular graph snapshot": {
+            "main": [[edge("Check Korean vernacular graph snapshot")]]
+        },
+        "Check Korean vernacular graph snapshot": {
+            "main": [[edge("Korean vernacular graph verified?")]]
+        },
+        "Korean vernacular graph verified?": {
+            "main": [
+                [edge("Prepare PostgreSQL finalization")],
+                [edge("Capture Korean vernacular failure context")],
+            ]
+        },
+        "Prepare PostgreSQL finalization": {
+            "main": [[edge("Finalize PostgreSQL ingestion run")]]
+        },
+        "Finalize PostgreSQL ingestion run": {
             "main": [[edge("Verify Korean vernacular release finalized")]]
         },
         "Verify Korean vernacular release finalized": {
@@ -1026,9 +1158,14 @@ def main() -> None:
         },
         "Notify Korean vernacular success": {"main": [[edge("Korean vernacular ingest finished")]]},
         "Capture Korean vernacular failure context": {
-            "main": [[edge("Mark Korean vernacular run failed")]]
+            "main": [[edge("Prepare PostgreSQL run failure")]]
         },
-        "Mark Korean vernacular run failed": {"main": [[edge("Record Korean vernacular run failure")]]},
+        "Prepare PostgreSQL run failure": {
+            "main": [[edge("Mark PostgreSQL ingestion run failed")]]
+        },
+        "Mark PostgreSQL ingestion run failed": {
+            "main": [[edge("Record Korean vernacular run failure")]]
+        },
         "Record Korean vernacular run failure": {"main": [[edge("Notify Korean vernacular failure")]]},
         "Notify Korean vernacular failure": {"main": [[edge("Fail Korean vernacular execution")]]},
     }

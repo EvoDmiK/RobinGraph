@@ -20,6 +20,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         # response validation and verifies its calls at the Cypher boundary.
         self.repository = object.__new__(Neo4jTaxonomyLineageRepository)
         self.repository._settings = Neo4jSettings("bolt://localhost:7687", "neo4j", "test-only", "neo4j")
+        self.repository._active_korean_dataset_id = Mock(return_value="wikidata-dataset-active")
         self.repository._run = Mock()
 
     def test_uses_bound_exact_case_insensitive_name_in_the_active_concept_set(self) -> None:
@@ -38,7 +39,11 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.assertEqual({}, active_call.kwargs)
         self.assertEqual(_LINEAGE_QUERY, lineage_call.args[0])
         self.assertEqual(
-            {"concept_set_id": "avilist-2025b", "scientific_name": cleaned_name},
+            {
+                "concept_set_id": "avilist-2025b",
+                "scientific_name": cleaned_name,
+                "korean_dataset_id": "wikidata-dataset-active",
+            },
             lineage_call.kwargs,
         )
         self.assertIn("toLower(target.scientific_name) = toLower($scientific_name)", _LINEAGE_QUERY)
@@ -140,7 +145,11 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.assertEqual({}, active_call.kwargs)
         self.assertEqual(_LINEAGE_BY_KOREAN_NAME_QUERY, lineage_call.args[0])
         self.assertEqual(
-            {"concept_set_id": "avilist-2025b", "korean_name": cleaned_name},
+            {
+                "concept_set_id": "avilist-2025b",
+                "korean_name": cleaned_name,
+                "korean_dataset_id": "wikidata-dataset-active",
+            },
             lineage_call.kwargs,
         )
         self.assertIn("toLower(vernacular.name) = toLower($korean_name)", _LINEAGE_BY_KOREAN_NAME_QUERY)
@@ -215,40 +224,34 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Invalid AviList lineage projection"):
             self.repository.lineage_for_korean_name("흰뺨검둥오리")
 
-    def test_korean_name_target_and_ancestor_projection_require_an_allowed_license_chain(self) -> None:
-        """Not just a display filter: a Korean name that is not traceable to
-        an approved dataset must never resolve a target, and must never be
-        projected as an ancestor's korean_name -- both matter, since a name
-        planted outside the approved ingest path (or belonging to a
-        revoked/paused dataset) must be as invisible as one that was never
-        ingested at all."""
+    def test_korean_names_require_the_postgres_active_allowed_dataset_id(self) -> None:
+        for query in (_LINEAGE_QUERY, _LINEAGE_BY_KOREAN_NAME_QUERY):
+            self.assertIn("$korean_dataset_id AS koreanDatasetId", query)
+            self.assertIn("policy_status: 'allowed'", query)
+            self.assertNotIn("SourceRecord", query)
+            self.assertNotIn("SourceDataset", query)
+            self.assertNotIn("korean-vernacular-names", query)
+        self.assertIn("vernacular.dataset_id = koreanDatasetId", _LINEAGE_BY_KOREAN_NAME_QUERY)
+        self.assertIn("koreanName.dataset_id = koreanDatasetId", _LINEAGE_QUERY)
 
-        for query, dataset_var in (
-            (_LINEAGE_QUERY, "koreanDataset"),
-            (_LINEAGE_BY_KOREAN_NAME_QUERY, "matchDataset"),
-        ):
-            self.assertIn(
-                f"-[:FROM_RECORD]->(:SourceRecord)-[:IN_DATASET]->({dataset_var}:SourceDataset {{policy_status: 'allowed'}})",
-                query,
-            )
-        # Both queries additionally gate on the *currently active* Korean
-        # dataset, not merely "any allowed dataset" -- this is what lets a
-        # superseded/removed name stop resolving without an explicit delete.
-        self.assertIn("koreanState.active_dataset_id AS koreanDatasetId", _LINEAGE_QUERY)
-        self.assertIn("WHERE koreanDataset.id = koreanDatasetId", _LINEAGE_QUERY)
-        self.assertIn("koreanState.active_dataset_id AS koreanDatasetId", _LINEAGE_BY_KOREAN_NAME_QUERY)
-        self.assertIn("ancestorDataset.id = koreanDatasetId", _LINEAGE_BY_KOREAN_NAME_QUERY)
-        # The target-resolution MATCH in the Korean-name query specifically
-        # (not just the ancestor projection) must carry the chain, so an
-        # untrusted name fails to resolve a target at all rather than
-        # resolving one with a hidden/blanked-out name.
-        target_match = _LINEAGE_BY_KOREAN_NAME_QUERY.split("collect(DISTINCT target)")[0]
-        self.assertIn("MATCH (target)-[:HAS_VERNACULAR_NAME]->(vernacular:VernacularName {language: 'ko'})", target_match)
-        self.assertIn(
-            "-[:FROM_RECORD]->(:SourceRecord)-[:IN_DATASET]->(matchDataset:SourceDataset {policy_status: 'allowed'})",
-            target_match,
-        )
-        self.assertIn("matchDataset.id = koreanDatasetId", target_match)
+    def test_korean_lookup_fails_closed_without_an_active_postgres_dataset(self) -> None:
+        self.repository._active_korean_dataset_id.return_value = None
+        self.repository._run.return_value = [
+            {"concept_set_id": "avilist-2025b", "taxonomy_release": "2025b"}
+        ]
+
+        self.assertIsNone(self.repository.lineage_for_korean_name("청둥오리"))
+        self.repository._run.assert_called_once_with(_ACTIVE_CONCEPT_SET_QUERY)
+
+    def test_scientific_lookup_remains_available_without_korean_dataset(self) -> None:
+        self.repository._active_korean_dataset_id.return_value = None
+        self.repository._run.side_effect = [
+            [{"concept_set_id": "avilist-2025b", "taxonomy_release": "2025b"}],
+            [{"lineage_items": self._complete_lineage_items()}],
+        ]
+
+        self.assertIsNotNone(self.repository.lineage_for_scientific_name("Anas zonorhyncha"))
+        self.assertIsNone(self.repository._run.call_args.kwargs["korean_dataset_id"])
 
     def test_korean_name_refuses_to_arbitrarily_pick_a_target_when_the_label_is_ambiguous(self) -> None:
         """The real bug this fixes: the same Korean label attached to two

@@ -31,6 +31,7 @@ from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
+from .ingest_router import IngestStore, create_ingest_router
 from .semantic_router import ChatIntent, SemanticRouter
 
 
@@ -548,6 +549,7 @@ def create_app(
     korean_lineage_handler: LineageHandler | None = None,
     semantic_router: SemanticRouter | None = None,
     static_dir: Path | None = None,
+    ingest_store: IngestStore | None = None,
 ) -> FastAPI:
     """Create the API and, when the packaged asset bundle is complete, the chat shell.
 
@@ -561,6 +563,12 @@ def create_app(
     repository = repository or FixtureRepository(load_fixture())
     service = QuestionService(repository)
     app = FastAPI(title="RobinGraph", version="0.1.0")
+    # The public application never discovers PostgreSQL credentials or opens
+    # a write path from ambient configuration.  A private caller must inject
+    # the control-plane repository explicitly, and the router independently
+    # requires its internal bearer token from the environment.
+    if ingest_store is not None:
+        app.include_router(create_ingest_router(ingest_store))
     asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
 
     def unavailable_chat_ui() -> PlainTextResponse:
