@@ -18,6 +18,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Path, status
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, StrictInt, field_validator, model_validator
 
 from ..ingest.store import (
+    ActiveReleaseContext,
     IngestionConflictError,
     IngestionRunContext,
     IngestionRunInput,
@@ -43,6 +44,8 @@ class IngestStore(Protocol):
     ) -> None: ...
 
     def pipeline_state_version(self, pipeline_id: str) -> int: ...
+
+    def active_release_context(self, pipeline_id: str) -> ActiveReleaseContext | None: ...
 
     def run_context(self, run_id: str) -> IngestionRunContext: ...
 
@@ -253,6 +256,18 @@ class OperationResponse(_Request):
     state_version: int | None = None
 
 
+class ActiveReleaseResponse(_Request):
+    pipeline_id: str
+    dataset_id: str
+    release_id: str
+    release_key: str
+    content_sha256: str | None
+    metadata: dict[str, JsonValue]
+    cursor: dict[str, JsonValue]
+    last_successful_run_id: str
+    state_version: int
+
+
 def _run_id(value: str) -> str:
     try:
         return _identifier(value)
@@ -295,6 +310,29 @@ def create_ingest_router(store: IngestStore) -> APIRouter:
         tags=["internal-ingest"],
         dependencies=[Depends(require_internal_bearer)],
     )
+
+    @router.get("/active/{pipeline_id}", response_model=ActiveReleaseResponse)
+    def active_release(
+        pipeline_id: Annotated[str, Path(min_length=1, max_length=_IDENTIFIER_MAX_LENGTH)],
+    ) -> ActiveReleaseResponse:
+        pipeline_id = _run_id(pipeline_id)
+        try:
+            active = store.active_release_context(pipeline_id)
+        except ValueError as error:
+            raise _operation_error(error) from error
+        if active is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Active release not found")
+        return ActiveReleaseResponse(
+            pipeline_id=active.pipeline_id,
+            dataset_id=active.dataset.id,
+            release_id=active.release.id,
+            release_key=active.release.release_key,
+            content_sha256=active.release.content_sha256,
+            metadata=dict(active.release.metadata or {}),
+            cursor=dict(active.cursor),
+            last_successful_run_id=active.last_successful_run_id,
+            state_version=active.version,
+        )
 
     @router.post("/begin", response_model=OperationResponse)
     def begin(request: BeginRequest) -> OperationResponse:

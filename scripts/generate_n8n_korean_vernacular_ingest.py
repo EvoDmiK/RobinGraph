@@ -391,24 +391,16 @@ function classifyMatches(resolvedRows) {
 # being smuggled out of resolvedRows[0] (which doesn't exist when there are
 # no rows). PostgreSQL supplies the optimistic-concurrency token when the
 # run is opened through the internal ingest API.
-READ_STATE_STATEMENT = compact_cypher(
-    """
-    OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'})
-    OPTIONAL MATCH (conceptSet:TaxonConceptSet {id: taxState.active_concept_set_id})
-    RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release
-    """
-)
-
 RESOLVE_MATCHES_STATEMENT = compact_cypher(
     """
-    MATCH (state:IngestState {id: 'reference-taxonomy'})
-    MATCH (concept_set:TaxonConceptSet {id: state.active_concept_set_id})
-    WITH concept_set, state
+    MATCH (concept_set:TaxonConceptSet {id: $concept_set_id})
+    WHERE concept_set.version = $taxonomy_release AND concept_set.policy_status = 'allowed'
+    WITH concept_set
     UNWIND $clean_candidates AS row
     OPTIONAL MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set)
       WHERE toLower(taxon.scientific_name) = toLower(row.taxon_name)
-    WITH concept_set, state, row, collect(taxon.id) AS matched_taxon_ids
-    RETURN concept_set.id AS concept_set_id, state.active_release AS taxonomy_release,
+    WITH concept_set, row, collect(taxon.id) AS matched_taxon_ids
+    RETURN concept_set.id AS concept_set_id, concept_set.version AS taxonomy_release,
            row.taxon_name AS taxon_name, row.korean_name AS korean_name,
            row.qids AS qids, matched_taxon_ids
     """
@@ -475,7 +467,9 @@ ASSEMBLE_KOREAN_VERNACULAR_GATES = (
     + r"""
 const config = $('Build Korean vernacular configuration').first().json;
 const normalized = $('Normalize Korean vernacular candidates').first().json;
-const stateInfo = $('Read active taxonomy and Korean dataset state').first().json;
+  const stateResponse = $('Read active PostgreSQL taxonomy state').first().json;
+  const stateInfo = {concept_set_id: stateResponse.cursor?.concept_set_id,
+    taxonomy_release: stateResponse.cursor?.taxonomy_release};
 const resolvedRows = $input.all().map(item => item.json);
 return [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];
 """
@@ -493,8 +487,8 @@ return [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];
 # batch at a time and collects all count rows for `VERIFY_BATCHES`.
 BATCH_STATEMENT = compact_cypher(
     """
-    MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id
     MATCH (concept_set:TaxonConceptSet {id: $concept_set_id})
+    WHERE concept_set.version = $taxonomy_release AND concept_set.policy_status = 'allowed'
     CALL {
       WITH concept_set
       UNWIND $rows AS row
@@ -511,7 +505,6 @@ BATCH_STATEMENT = compact_cypher(
       RETURN count(DISTINCT vernacular) AS loaded_vernacular_names
     }
     CALL {
-      WITH state
       UNWIND $candidates AS row
       MERGE (candidate:VernacularNameCandidate {
         id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id
@@ -534,11 +527,12 @@ BATCH_STATEMENT = compact_cypher(
 # not switched and the complete domain snapshot is present.
 VERIFY_GRAPH_STATEMENT = compact_cypher(
     """
-    MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id
+    MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
+    WHERE conceptSet.version = $taxonomy_release AND conceptSet.policy_status = 'allowed'
     OPTIONAL MATCH (vernacular:VernacularName {language: 'ko', dataset_id: $wikidata_dataset_id})
-    WITH taxState, count(vernacular) AS graphVernacularNames
+    WITH conceptSet, count(vernacular) AS graphVernacularNames
     OPTIONAL MATCH (candidate:VernacularNameCandidate {dataset_id: $wikidata_dataset_id})
-    RETURN taxState.active_concept_set_id AS concept_set_id,
+    RETURN conceptSet.id AS concept_set_id,
            graphVernacularNames AS graph_vernacular_names,
            count(candidate) AS graph_candidates
     """
@@ -820,7 +814,9 @@ return [{json: {...expected, run_marked_failed: runMarkedFailed}}];
 """
 
 
-def ingest_api_node(name: str, path_expression: str, position: tuple[int, int]) -> dict[str, object]:
+def ingest_api_node(
+    name: str, path_expression: str, position: tuple[int, int], *, method: str = "POST"
+) -> dict[str, object]:
     """Build an authenticated internal control-plane request without embedding secrets."""
 
     return node(
@@ -828,7 +824,7 @@ def ingest_api_node(name: str, path_expression: str, position: tuple[int, int]) 
         "n8n-nodes-base.httpRequest",
         4.4,
         {
-            "method": "POST",
+            "method": method,
             "url": f"={{{{ $env.ROBINGRAPH_INGEST_API_URL + {path_expression} }}}}",
             "sendHeaders": True,
             "headerParameters": {
@@ -839,7 +835,7 @@ def ingest_api_node(name: str, path_expression: str, position: tuple[int, int]) 
                     }
                 ]
             },
-            "sendBody": True,
+            "sendBody": method != "GET",
             # n8n HTTP Request 4.4 forces `useStream: true` for raw bodies,
             # even when Response Format is JSON.  Use its native JSON-body
             # mode so it serializes the object and parses FastAPI's JSON
@@ -948,10 +944,19 @@ def main() -> None:
             },
             (-460, 0),
         ),
-        neo4j_node(
-            "Read active taxonomy and Korean dataset state", READ_STATE_STATEMENT, (-340, 0)
+        ingest_api_node(
+            "Read active PostgreSQL taxonomy state",
+            "'/internal/v1/ingest/active/reference-taxonomy-traits'",
+            (-340, 0),
+            method="GET",
         ),
         code("Normalize Korean vernacular candidates", NORMALIZE_WIKIDATA, (-220, 0)),
+        code(
+            "Attach active taxonomy context",
+            "const source=$input.first().json,state=$('Read active PostgreSQL taxonomy state').first().json; "
+            "return [{json:{...source,concept_set_id:state.cursor?.concept_set_id,taxonomy_release:state.cursor?.taxonomy_release}}];",
+            (20, 0),
+        ),
         resolve_matches,
         code("Assemble Korean vernacular quality gates", ASSEMBLE_KOREAN_VERNACULAR_GATES, (1000, 0)),
         boolean_if("Korean vernacular quality gates passed?", "={{ $json.ready_to_load }}", (1240, 0)),
@@ -1063,11 +1068,14 @@ def main() -> None:
         },
         "Build Korean vernacular configuration": {"main": [[edge("Fetch Wikidata Korean bird labels")]]},
         "Fetch Wikidata Korean bird labels": {"main": [[edge("Hash Wikidata response")]]},
-        "Hash Wikidata response": {"main": [[edge("Read active taxonomy and Korean dataset state")]]},
-        "Read active taxonomy and Korean dataset state": {
+        "Hash Wikidata response": {"main": [[edge("Read active PostgreSQL taxonomy state")]]},
+        "Read active PostgreSQL taxonomy state": {
             "main": [[edge("Normalize Korean vernacular candidates")]]
         },
         "Normalize Korean vernacular candidates": {
+            "main": [[edge("Attach active taxonomy context")]]
+        },
+        "Attach active taxonomy context": {
             "main": [[edge("Resolve active concept set and match candidates")]]
         },
         "Resolve active concept set and match candidates": {

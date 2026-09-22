@@ -29,21 +29,20 @@ _ALLOWED_MEDIA_LICENSE_URIS = tuple(
 )
 
 
-# This query deliberately requires the complete provenance and allowed-license
-# chain. Records written manually or left in a partially loaded state stay
-# invisible. Query input is bound as parameters; user text never becomes Cypher.
+# Source/control facts live in PostgreSQL. Neo4j keeps only domain nodes plus
+# immutable provenance identifiers and policy projections needed for fail-closed
+# reads. Query input is bound as parameters; user text never becomes Cypher.
 _OBSERVATION_SEARCH_QUERY = """
 MATCH (observation:Observation)-[:IDENTIFIED_AS]->(taxon:ExternalTaxonConcept:BirdTaxon)
 MATCH (observation)-[:WITHIN]->(place:Place)
-MATCH (observation)-[:FROM_RECORD]->(source:SourceRecord)-[:IN_DATASET]->(dataset:SourceDataset)
-MATCH (dataset)-[:LICENSED_UNDER]->(license:License)
-MATCH (evidence:EvidenceUnit)-[:FROM_RECORD]->(source)
-WHERE source.record_type = 'observation'
-  AND dataset.provider = 'GBIF'
-  AND taxon.provider = 'GBIF Backbone'
+MATCH (observation)-[:SUPPORTED_BY]->(evidence:EvidenceUnit)
+WHERE taxon.provider = 'GBIF Backbone'
   AND evidence.evidence_type = 'observation'
-  AND dataset.policy_status = 'allowed'
-  AND license.policy_status = 'allowed'
+  AND observation.policy_status = 'allowed'
+  AND evidence.policy_status = 'allowed'
+  AND observation.dataset_id = evidence.dataset_id
+  AND observation.source_record_id = evidence.source_record_id
+  AND observation.license_uri IN $allowed_observation_license_uris
   AND observation.sensitivity IN ['public', 'generalized']
   AND ($taxon_key IS NULL OR taxon.external_key = $taxon_key)
   AND (
@@ -55,19 +54,19 @@ WHERE source.record_type = 'observation'
   AND ($place IS NULL OR toLower(place.name) CONTAINS toLower($place))
   AND ($observed_from IS NULL OR substring(observation.observed_at, 0, 10) >= $observed_from)
   AND ($observed_to IS NULL OR substring(observation.observed_at, 0, 10) <= $observed_to)
-WITH observation, taxon, place, source, dataset, evidence, license
-ORDER BY source.retrieved_at DESC, source.id DESC
+WITH observation, taxon, place, evidence
+ORDER BY observation.source_retrieved_at DESC, observation.source_record_id DESC
 WITH observation, taxon, place,
      collect({
        evidence_id: evidence.id,
-       dataset_id: dataset.id,
-       dataset_name: dataset.name,
-       source_url: source.raw_uri,
-       dataset_url: dataset.landing_uri,
-       retrieved_at: source.retrieved_at,
-       source_updated_at: source.source_updated_at
+       dataset_id: observation.source_dataset_id,
+       dataset_name: 'GBIF occurrence dataset',
+       source_url: observation.source_uri,
+       dataset_url: 'https://www.gbif.org/dataset/' + replace(observation.source_dataset_id, 'gbif-dataset:', ''),
+       retrieved_at: observation.source_retrieved_at,
+       source_updated_at: observation.source_updated_at
      })[0] AS citation,
-     collect(DISTINCT coalesce(license.license_uri, license.id)) AS license_uris
+     collect(DISTINCT observation.license_uri) AS license_uris
 OPTIONAL MATCH (observation)-[:HAS_MEDIA]->(media:MediaAsset)
 WHERE media.redistribution_allowed = true AND media.license_uri IN $allowed_media_license_uris
 WITH observation, taxon, place, citation, license_uris,
@@ -170,6 +169,7 @@ class Neo4jOperationalObservationRepository:
             place=place,
             observed_from=query.observed_from,
             observed_to=query.observed_to,
+            allowed_observation_license_uris=list(_ALLOWED_MEDIA_LICENSE_URIS),
             allowed_media_license_uris=list(_ALLOWED_MEDIA_LICENSE_URIS),
             limit=query.limit,
             offset=query.offset,

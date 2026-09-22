@@ -5,9 +5,9 @@ import json
 from pathlib import Path
 
 try:
-    from .generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher
+    from .generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher, ingest_api_node
 except ImportError:
-    from generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher
+    from generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher, ingest_api_node
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "n8n/robingraph-avonet-ingest.json"
@@ -98,87 +98,53 @@ return Array.from({length: batch_count}, (_, i) => ({json: {
 # Every input profile produces exactly one record and either a unique taxon
 # mapping or an unresolved candidate. All writes in a batch are atomic.
 BATCH_CYPHER = compact_cypher("""
-MATCH (state:IngestState {id:'reference-taxonomy'})
-WHERE state.active_release = $taxonomy_release
-MATCH (concept:TaxonConceptSet {id:state.active_concept_set_id})
+MATCH (concept:TaxonConceptSet {id:$taxonomy_concept_set_id})
 WHERE concept.version=$taxonomy_release AND concept.snapshot_sha256=$taxonomy_sha256
-  AND EXISTS {
-    MATCH (concept)-[:FROM_DATASET]->(td:SourceDataset)-[:LICENSED_UNDER]->(tl:License)
-    WHERE td.version=$taxonomy_release AND td.policy_status='allowed'
-      AND td.snapshot_sha256=$taxonomy_sha256 AND tl.policy_status='allowed'
-      AND tl.license_uri='https://creativecommons.org/licenses/by/4.0/'
-  }
-MERGE (dataset:SourceDataset {id:$dataset_id})
-SET dataset.source_id='avonet', dataset.name='AVONET Supplementary dataset 1',
-    dataset.source_release=$release, dataset.source_uri=$url, dataset.version=$release,
-    dataset.snapshot_uri=$url, dataset.snapshot_sha256=$sha256,
-    dataset.landing_uri='https://doi.org/10.6084/m9.figshare.16586228.v7',
-    dataset.provider='AVONET', dataset.policy_status='allowed',
-    dataset.raw_sha256=$sha256, dataset.license_policy_status='allowed', dataset.enabled=true
-MERGE (license:License {id:'https://creativecommons.org/licenses/by/4.0/'})
-SET license.uri='https://creativecommons.org/licenses/by/4.0/',
-    license.license_uri='https://creativecommons.org/licenses/by/4.0/', license.name='CC BY 4.0',
-    license.policy_status='allowed'
-MERGE (dataset)-[:LICENSED_UNDER]->(license)
-MERGE (run:IngestionRun {id:$run_id})
-SET run.status='loading', run.source_id='avonet', run.source_release=$release,
-    run.taxonomy_release=$taxonomy_release, run.retrieved_at=$retrieved_at
-WITH concept, dataset, run
+  AND concept.policy_status='allowed'
+WITH concept
 UNWIND $profiles AS row
 OPTIONAL MATCH (taxon:Taxon {
   source_release:$taxonomy_release,
   rank:'species',
   scientific_name:row.scientific_name
 })-[:IN_CONCEPT_SET]->(concept)
-WITH dataset, run, row, collect(DISTINCT taxon) AS taxa
-MERGE (record:SourceRecord {id:row.id})
-SET record.record_type='trait_profile', record.external_id=row.sequence,
-    record.scientific_name_raw=row.scientific_name, record.raw_uri=row.source_uri,
-    record.raw_hash=$sha256, record.retrieved_at=$retrieved_at,
-    record.source_sheet=$sheet, record.source_row=row.row_number,
-    record.inference_raw=row.inference_raw, record.inferred_fields_raw=row.inferred_fields_raw,
-    record.reference_species=row.reference_species, record.sample_size=row.sample_size,
-    record.mass_source=row.mass_source, record.mass_references=row.mass_references,
-    record.avibase_id=row.avibase_id
-MERGE (record)-[:IN_DATASET]->(dataset)
-MERGE (run)-[:INGESTED]->(record)
-WITH run, row, taxa, record
+WITH row, collect(DISTINCT taxon) AS taxa
 CALL {
-  WITH run, row, taxa, record
-  WITH run, row, record, taxa[0] AS taxon WHERE size(taxa)=1
+  WITH row, taxa
+  WITH row, taxa[0] AS taxon WHERE size(taxa)=1
   MERGE (mapping:TaxonMappingClaim {id:row.id+':mapping:'+$taxonomy_release})
   SET mapping.method='exact_scientific_name_unique_in_avilist_species',
-      mapping.resolution_status='accepted_automatic', mapping.taxonomy_release=$taxonomy_release
-  MERGE (record)-[:HAS_MAPPING_CLAIM]->(mapping)
+      mapping.resolution_status='accepted_automatic', mapping.taxonomy_release=$taxonomy_release,
+      mapping.dataset_id=$dataset_id, mapping.source_record_id=row.id, mapping.policy_status='allowed'
   MERGE (mapping)-[:PROPOSES_TAXON]->(taxon)
-  WITH run,row,record,taxon
+  WITH row,taxon
   UNWIND row.claims AS value
   MERGE (evidence:EvidenceUnit {id:value.id+':evidence'})
   SET evidence.evidence_type='literature_dataset_row', evidence.locator=row.source_uri+'&field='+value.source_field,
-      evidence.citation='Tobias et al. (2022), AVONET; Figshare 16586228 v7', evidence.accessed_at=$retrieved_at
-  MERGE (evidence)-[:FROM_RECORD]->(record)
+      evidence.citation='Tobias et al. (2022), AVONET; Figshare 16586228 v7', evidence.accessed_at=$retrieved_at,
+      evidence.dataset_id=$dataset_id, evidence.source_record_id=row.id, evidence.policy_status='allowed'
   MERGE (claim:TraitClaim {id:value.id+':taxonomy:'+$taxonomy_release})
   SET claim.trait_name=value.trait_name, claim.value_num=value.value_num,
       claim.value_text=value.value_text, claim.unit=value.unit, claim.raw_value=value.raw_value,
       claim.source_field=value.source_field, claim.source_release=$release, claim.source_id='avonet',
       claim.taxonomy_release=$taxonomy_release, claim.inferred=value.inferred,
       claim.evidence_kind=value.evidence_kind, claim.summary_statistic=value.summary_statistic,
-      claim.retrieved_at=$retrieved_at
+      claim.retrieved_at=$retrieved_at, claim.dataset_id=$dataset_id,
+      claim.source_record_id=row.id, claim.policy_status='allowed'
   MERGE (claim)-[:ASSERTS_ABOUT]->(taxon)
   MERGE (claim)-[:SUPPORTED_BY]->(evidence)
-  MERGE (run)-[:INGESTED]->(claim)
   RETURN count(*) AS loaded_claims
 }
 CALL {
-  WITH run,row,taxa,record
-  WITH run,row,record,taxa WHERE size(taxa)<>1
+  WITH row,taxa
+  WITH row,taxa WHERE size(taxa)<>1
   MERGE (candidate:TaxonMappingCandidate {id:row.id+':candidate:'+$taxonomy_release})
   SET candidate.source_scientific_name=row.scientific_name,
       candidate.source_taxonomy='HBW-BirdLife v5', candidate.taxonomy_release=$taxonomy_release,
       candidate.resolution_status='open', candidate.reason_code=CASE WHEN size(taxa)=0 THEN 'no_exact_match' ELSE 'ambiguous_exact_match' END,
-      candidate.profile_json=row.profile_json
-  MERGE (record)-[:HAS_MAPPING_CANDIDATE]->(candidate)
-  MERGE (run)-[:QUARANTINED]->(candidate)
+      candidate.profile_json=row.profile_json, candidate.dataset_id=$dataset_id,
+      candidate.source_record_id=row.id, candidate.policy_status='allowed',
+      candidate.last_seen_run_id=$run_id, candidate.last_seen_at=$retrieved_at
   RETURN count(*) AS loaded_candidates
 }
 RETURN $batch_index AS batch_index, $batch_count AS batch_count,
@@ -215,27 +181,70 @@ const {profiles: unused, ...config}=expected;
 return [{json:{...config, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];
 """
 
+PREPARE_BEGIN_JS = r"""
+const source=$input.first().json;
+return [{json:{...source,ingest_request:{
+  dataset:{id:source.dataset_id,source_id:'avonet',name:'AVONET Supplementary dataset 1',
+    provider:'AVONET',landing_uri:'https://doi.org/10.6084/m9.figshare.16586228.v7',
+    release_strategy:'versioned',policy_status:'allowed',metadata:{license_uri:'https://creativecommons.org/licenses/by/4.0/'}},
+  release:{id:source.source_release,release_key:source.release,retrieved_at:source.retrieved_at,
+    content_sha256:source.sha256,raw_object_uri:source.url,
+    metadata:{sheet:source.sheet,taxonomy_release:source.taxonomy_release,taxonomy_concept_set_id:source.taxonomy_concept_set_id}},
+  run:{id:source.run_id,pipeline_id:source.pipeline_id,started_at:source.retrieved_at,
+    manifest:{orchestrator:'n8n',workflow:'avonet',expected_profiles:source.expected_rows,expected_claims:source.expected_loaded_claims}}
+}}}];
+"""
+
+VERIFY_BEGIN_JS = r"""
+const source=$('Prepare PostgreSQL AVONET run').first().json,response=$input.first().json;
+const errorText=String(response.error?.message||response.error||response.message||response.detail||'');
+const ok=!errorText&&response.status==='started'&&Number.isSafeInteger(response.state_version)&&response.state_version>=0;
+return [{json:{...source,expected_state_version:response.state_version,start_ok:ok,
+  failure_reason:ok?'':(errorText||'PostgreSQL did not start AVONET run')}}];
+"""
+
+PREPARE_APPEND_JS = r"""
+const batch=$input.first().json;
+const records=batch.profiles.map(row=>({id:row.id,external_id:String(row.sequence||row.scientific_name),
+  record_type:'trait_profile',raw_object_uri:row.source_uri,raw_sha256:batch.sha256,
+  retrieved_at:batch.retrieved_at,parser_version:'avonet-v2',license_policy_status:'allowed',
+  payload:{scientific_name:row.scientific_name,row_number:row.row_number,sheet:batch.sheet,
+    inference_raw:row.inference_raw,inferred_fields_raw:row.inferred_fields_raw,
+    reference_species:row.reference_species,sample_size:row.sample_size,avibase_id:row.avibase_id}}));
+return [{json:{...batch,ingest_request:{records,quarantine_items:[]}}}];
+"""
+
+VERIFY_APPEND_JS = r"""
+const batch=$('Prepare PostgreSQL AVONET source batch').item.json,response=$input.first().json;
+const errorText=String(response.error?.message||response.error||response.message||response.detail||'');
+if(errorText||response.status!=='appended')throw new Error(errorText||'PostgreSQL AVONET append failed');
+return [{json:batch}];
+"""
+
+PREPARE_FINALIZE_JS = r"""
+const source=$input.first().json;
+return [{json:{...source,ingest_request:{counts:{source_records:source.loaded_profiles,
+  trait_claims:source.loaded_claims,mapping_candidates:source.loaded_candidates},
+  cursor:{taxonomy_release:source.taxonomy_release,taxonomy_concept_set_id:source.taxonomy_concept_set_id},
+  expected_state_version:source.expected_state_version}}}];
+"""
+
+VERIFY_FINALIZE_JS = r"""
+const source=$('Prepare PostgreSQL AVONET finalization').first().json,response=$input.first().json;
+const errorText=String(response.error?.message||response.error||response.message||response.detail||'');
+if(errorText||response.status!=='finalized'||response.state_version!==source.expected_state_version+1)
+  throw new Error(errorText||'PostgreSQL AVONET activation failed');
+return [{json:{...source,finalize_ok:true}}];
+"""
+
 FINALIZE_CYPHER = compact_cypher("""
-MATCH (taxonomy:IngestState {id:'reference-taxonomy'}) WHERE taxonomy.active_release=$taxonomy_release
-  AND EXISTS {
-    MATCH (cs:TaxonConceptSet {id:taxonomy.active_concept_set_id})-[:FROM_DATASET]->(td:SourceDataset)-[:LICENSED_UNDER]->(tl:License)
-    WHERE cs.version=$taxonomy_release AND cs.snapshot_sha256=$taxonomy_sha256
-      AND td.version=$taxonomy_release AND td.policy_status='allowed'
-      AND td.snapshot_sha256=$taxonomy_sha256 AND tl.policy_status='allowed'
-      AND tl.license_uri='https://creativecommons.org/licenses/by/4.0/'
-  }
-MATCH (run:IngestionRun {id:$run_id}) WHERE run.status='loading'
-CALL { WITH run MATCH (run)-[:INGESTED]->(r:SourceRecord) RETURN count(DISTINCT r) AS profiles }
-CALL { WITH run MATCH (run)-[:INGESTED]->(c:TraitClaim) RETURN count(DISTINCT c) AS claims }
-CALL { WITH run MATCH (run)-[:QUARANTINED]->(c:TaxonMappingCandidate) RETURN count(DISTINCT c) AS candidates }
-WITH run, profiles, claims, candidates
-WHERE profiles=$loaded_profiles AND claims=$loaded_claims AND candidates=$loaded_candidates
-MERGE (state:IngestState {id:'reference-avonet'})
-SET state.active_release=$release, state.taxonomy_release=$taxonomy_release,
-    state.last_successful_run_id=$run_id, state.last_successful_at=datetime()
-SET run.status='succeeded',run.profile_count=profiles,run.trait_claim_count=claims,
-    run.mapping_candidate_count=candidates,run.completed_at=datetime()
-RETURN run.id AS finalized_run_id, state.active_release AS active_release, run.status AS status
+MATCH (concept:TaxonConceptSet {id:$taxonomy_concept_set_id})
+WHERE concept.version=$taxonomy_release AND concept.snapshot_sha256=$taxonomy_sha256
+  AND concept.policy_status='allowed'
+CALL { MATCH (c:TraitClaim {dataset_id:$dataset_id, policy_status:'allowed'}) RETURN count(c) AS claims }
+CALL { MATCH (c:TaxonMappingCandidate {dataset_id:$dataset_id, policy_status:'allowed'}) RETURN count(c) AS candidates }
+WITH claims, candidates WHERE claims=$loaded_claims AND candidates=$loaded_candidates
+RETURN $run_id AS finalized_run_id, $release AS active_release, 'domain_verified' AS status
 """)
 
 
@@ -255,7 +264,9 @@ def configuration() -> dict:
     if source['license_uri'] != 'https://creativecommons.org/licenses/by/4.0/':
         raise ValueError('AVONET license mismatch')
     return dict(url=URL, sha256=SHA256, release=RELEASE, sheet=SHEET,
-                expected_rows=ROW_COUNT, taxonomy_release='v2025b', batch_size=100,
+                pipeline_id='reference-avonet', source_release='avonet-release:sha256-'+SHA256,
+                expected_rows=ROW_COUNT, taxonomy_release='v2025b',
+                taxonomy_concept_set_id='rg:concept-set:avilist-v2025b', batch_size=100,
                 expected_source_claims=SOURCE_CLAIM_COUNT,
                 expected_matched_profiles=MATCHED_PROFILE_COUNT,
                 expected_loaded_claims=LOADED_CLAIM_COUNT,
@@ -275,12 +286,21 @@ def build_workflow(config: dict | None = None) -> dict:
         node('Extract AVONET species sheet','n8n-nodes-base.extractFromFile',1.1,{'operation':'xlsx','binaryPropertyName':'data','options':{'sheetName':SHEET,'headerRow':True,'includeEmptyCells':True,'rawData':False,'readAsString':False}},(600,100)),
         code('Restore AVONET snapshot binary', "const item=$('Fetch AVONET snapshot').first(); if (!item.binary?.data) throw new Error('AVONET snapshot binary missing'); return [{json:$input.first().json,binary:item.binary}];",(700,0)),
         code('Normalize AVONET species',NORMALIZE_JS,(1000,0)),
-        code('Build AVONET batches',BATCH_JS.replace('data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size)', 'data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)}))'),(1200,0)),
-        node('Loop Over AVONET batches','n8n-nodes-base.splitInBatches',3,{'options':{}},(1400,0)),
-        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(1600,100)),
-        code('Verify AVONET batches',VERIFY_JS,(1800,-100)),
-        neo4j_node('Finalize AVONET release',FINALIZE_CYPHER,(2000,-100)),
-        code('Verify AVONET release',"const row=$input.first().json; const cfg=$('Build AVONET configuration').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='succeeded') throw new Error('AVONET finalization failed'); return $input.all();",(2200,-100)),
+        code('Prepare PostgreSQL AVONET run',PREPARE_BEGIN_JS,(1200,0)),
+        ingest_api_node('Start PostgreSQL AVONET run',"'/internal/v1/ingest/begin'",(1400,0)),
+        code('Verify PostgreSQL AVONET run started',VERIFY_BEGIN_JS,(1600,0)),
+        code('Build AVONET batches',BATCH_JS.replace('data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size)', 'data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)}))'),(1800,0)),
+        node('Loop Over AVONET batches','n8n-nodes-base.splitInBatches',3,{'batchSize':1,'options':{}},(2000,0)),
+        code('Prepare PostgreSQL AVONET source batch',PREPARE_APPEND_JS,(2200,100)),
+        ingest_api_node('Append PostgreSQL AVONET source batch',"('/internal/v1/ingest/'+$json.run_id+'/append')",(2400,100)),
+        code('Verify PostgreSQL AVONET source batch',VERIFY_APPEND_JS,(2600,100)),
+        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(2800,100)),
+        code('Verify AVONET batches',VERIFY_JS,(2800,-100)),
+        neo4j_node('Verify AVONET domain release',FINALIZE_CYPHER,(3000,-100)),
+        code('Verify AVONET domain counts',"const row=$input.first().json; const cfg=$('Verify AVONET batches').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='domain_verified') throw new Error('AVONET domain verification failed'); return [{json:cfg}];",(3200,-100)),
+        code('Prepare PostgreSQL AVONET finalization',PREPARE_FINALIZE_JS,(3400,-100)),
+        ingest_api_node('Finalize PostgreSQL AVONET release',"('/internal/v1/ingest/'+$json.run_id+'/finalize')",(3600,-100)),
+        code('Verify AVONET release',VERIFY_FINALIZE_JS,(3800,-100)),
     ]
     connections = {}
     def connect(a,b,index=0): connections.setdefault(a,{'main':[[]]})['main'][0].append(edge(b,index))
@@ -290,18 +310,26 @@ def build_workflow(config: dict | None = None) -> dict:
     # Crypto v2 may remove the hashed binary; restore one item, never row fanout.
     connect('Hash AVONET snapshot','Restore AVONET snapshot binary')
     connect('Restore AVONET snapshot binary','Extract AVONET species sheet')
-    chain=['Extract AVONET species sheet','Normalize AVONET species','Build AVONET batches','Loop Over AVONET batches']
+    chain=['Extract AVONET species sheet','Normalize AVONET species','Prepare PostgreSQL AVONET run',
+           'Start PostgreSQL AVONET run','Verify PostgreSQL AVONET run started',
+           'Build AVONET batches','Loop Over AVONET batches']
     for a,b in zip(chain,chain[1:]): connect(a,b)
     # n8n 2.15 splitInBatches emits completion on output 0 and the current
     # item on output 1. The community Neo4j node evaluates only one input
     # item, so explicitly feed every batch through it before verification.
     connections['Loop Over AVONET batches']={'main':[
         [edge('Verify AVONET batches')],
-        [edge('Upsert AVONET batches')],
+        [edge('Prepare PostgreSQL AVONET source batch')],
     ]}
+    connect('Prepare PostgreSQL AVONET source batch','Append PostgreSQL AVONET source batch')
+    connect('Append PostgreSQL AVONET source batch','Verify PostgreSQL AVONET source batch')
+    connect('Verify PostgreSQL AVONET source batch','Upsert AVONET batches')
     connect('Upsert AVONET batches','Loop Over AVONET batches')
-    connect('Verify AVONET batches','Finalize AVONET release')
-    connect('Finalize AVONET release','Verify AVONET release')
+    connect('Verify AVONET batches','Verify AVONET domain release')
+    connect('Verify AVONET domain release','Verify AVONET domain counts')
+    connect('Verify AVONET domain counts','Prepare PostgreSQL AVONET finalization')
+    connect('Prepare PostgreSQL AVONET finalization','Finalize PostgreSQL AVONET release')
+    connect('Finalize PostgreSQL AVONET release','Verify AVONET release')
     return {'id':'robingraph-avonet-ingest','name':'RobinGraph — AVONET morphology and ecology reference ingest','active':False,'nodes':nodes,'connections':connections,'settings':{'executionOrder':'v1','timezone':'Asia/Seoul','concurrency':1},'pinData':{},'tags':[]}
 
 
