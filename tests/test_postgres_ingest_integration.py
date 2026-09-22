@@ -322,6 +322,12 @@ class PostgresIngestionStoreIntegrationTest(unittest.TestCase):
         )
         self.assertEqual(1, version)
         self.assertEqual(self.dataset_id, self.store.active_dataset_id(self.prefix))
+        active = self.store.active_release_context(self.prefix)
+        self.assertIsNotNone(active)
+        self.assertEqual(self.dataset_id, active.dataset.id)
+        self.assertEqual(self.release_id, active.release.id)
+        self.assertEqual(self.run_id, active.last_successful_run_id)
+        self.assertEqual(1, active.version)
         self.assertEqual(
             1,
             self.store.activate_release(
