@@ -13,6 +13,7 @@ authors = [{ name = "RobinGraph" }]
 dependencies = [
   "fastapi>=0.115,<1",
   "neo4j>=6,<7",
+  "psycopg[binary]>=3.2,<4",
   "uvicorn[standard]>=0.30,<1",
 ]
 
@@ -28,7 +29,12 @@ robingraph = "robingraph.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-robingraph = ["api/static/*.html", "api/static/*.js", "api/static/*.css"]
+robingraph = [
+  "api/static/*.html",
+  "api/static/*.js",
+  "api/static/*.css",
+  "ingest/migrations/*.sql",
+]
 
 [tool.unittest]
 start-directory = "tests"

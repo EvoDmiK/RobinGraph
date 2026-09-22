@@ -86,3 +86,43 @@ jobs:
       - run: uv sync --locked --extra test
       - name: Unit and live Neo4j tests
         run: uv run --locked --extra test python -m unittest discover -s tests -v
+
+  postgres:
+    name: PostgreSQL ingest integration
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: robingraph_test
+          POSTGRES_USER: robingraph_test_app
+          POSTGRES_PASSWORD: postgres-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U robingraph_test_app -d robingraph_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      ROBINGRAPH_POSTGRES_INTEGRATION_TESTS: "1"
+      ROBINGRAPH_PG_HOST: localhost
+      ROBINGRAPH_PG_PORT: "5432"
+      ROBINGRAPH_PG_DATABASE: robingraph_test
+      ROBINGRAPH_PG_SCHEMA: ingest
+      ROBINGRAPH_PG_USERNAME: robingraph_test_app
+      ROBINGRAPH_PG_PASSWORD: postgres-test-only
+      ROBINGRAPH_PG_SSLMODE: disable
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.11.26"
+          enable-cache: true
+      - run: uv sync --locked --extra test
+      - name: Apply and verify ingest schema
+        run: |
+          uv run --locked robingraph migrate-postgres
+          uv run --locked robingraph verify-postgres
+      - name: Run live PostgreSQL transaction and outbox tests
+        run: uv run --locked --extra test python -m unittest tests.test_postgres_ingest_integration -v
