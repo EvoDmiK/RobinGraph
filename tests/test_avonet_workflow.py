@@ -114,9 +114,13 @@ class AvonetWorkflowTest(unittest.TestCase):
             if expression:
                 process=subprocess.run(['node','-e','new Function("return ("+JSON.parse(process.argv[1])+" )")',json.dumps(expression[3:-2].strip())],capture_output=True,text=True)
                 self.assertEqual(process.returncode,0,process.stderr)
-        self.assertIn("state.active_release = $taxonomy_release",avonet.BATCH_CYPHER)
+        self.assertIn("MATCH (concept:TaxonConceptSet {id:$taxonomy_concept_set_id})",avonet.BATCH_CYPHER)
+        self.assertIn("concept.policy_status='allowed'",avonet.BATCH_CYPHER)
+        for control_label in ('SourceRecord','SourceDataset','IngestionRun','IngestState'):
+            self.assertNotIn(control_label,avonet.BATCH_CYPHER)
         self.assertIn('size(taxa)=1',avonet.BATCH_CYPHER)
-        self.assertIn('profiles=$loaded_profiles',avonet.FINALIZE_CYPHER)
+        self.assertIn('claims=$loaded_claims',avonet.FINALIZE_CYPHER)
+        self.assertIn("'domain_verified' AS status",avonet.FINALIZE_CYPHER)
         self.assertFalse(any('discord' in n['type'] for n in artifact['nodes']))
 
 

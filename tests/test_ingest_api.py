@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from robingraph.api.app import create_app
 from robingraph.fixture import load_fixture
 from robingraph.ingest.store import (
+    ActiveReleaseContext,
     IngestionConflictError,
     IngestionRunContext,
     IngestionStateError,
@@ -50,6 +51,18 @@ class FakeIngestStore:
         self._raise()
         self.calls.append(("state_version", pipeline_id))
         return self.state_version
+
+    def active_release_context(self, pipeline_id: str) -> ActiveReleaseContext | None:
+        self._raise()
+        self.calls.append(("active", pipeline_id))
+        return ActiveReleaseContext(
+            pipeline_id=pipeline_id,
+            dataset=self.context.dataset,
+            release=self.context.release,
+            last_successful_run_id="wikidata-run-a",
+            cursor={"offset": 948},
+            version=self.state_version,
+        )
 
     def run_context(self, run_id: str) -> IngestionRunContext:
         self._raise()
@@ -133,6 +146,17 @@ class IngestApiTest(unittest.TestCase):
         self.assertEqual(dataset.id, release.dataset_id)
         self.assertEqual(release.id, run.source_release_id)
         self.assertEqual(("state_version", "korean-vernacular-shadow"), self.store.calls[1])
+
+    def test_active_release_returns_only_the_allowed_server_authoritative_context(self) -> None:
+        response = self.client.get(
+            "/internal/v1/ingest/active/korean-vernacular-names", headers=self.headers
+        )
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("wikidata-dataset", response.json()["dataset_id"])
+        self.assertEqual("wikidata-release", response.json()["release_id"])
+        self.assertEqual(2, response.json()["state_version"])
+        self.assertEqual(("active", "korean-vernacular-names"), self.store.calls[-1])
 
     def test_append_keeps_source_records_in_postgres_without_projection_events(self) -> None:
         response = self.client.post(

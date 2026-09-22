@@ -192,9 +192,20 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     ingest_store = IngestionStore(PostgresSettings.from_environment())
     repository = Neo4jGraphRepository(settings)
     operational_repository = Neo4jOperationalObservationRepository(settings)
+    def active_taxonomy_context() -> tuple[str, str] | None:
+        context = ingest_store.active_release_context("reference-taxonomy-traits")
+        if context is None:
+            return None
+        concept_set_id = context.cursor.get("concept_set_id")
+        taxonomy_release = context.cursor.get("taxonomy_release")
+        if not isinstance(concept_set_id, str) or not isinstance(taxonomy_release, str):
+            return None
+        return concept_set_id, taxonomy_release
+
     lineage_repository = Neo4jTaxonomyLineageRepository(
         settings,
         lambda: ingest_store.active_dataset_id("korean-vernacular-names"),
+        active_taxonomy_context,
     )
     # Constructing the stdlib client is configuration-only: it makes no HTTP
     # request.  A missing/invalid non-secret embedding configuration merely

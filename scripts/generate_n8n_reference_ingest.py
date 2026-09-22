@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 from pathlib import Path
 from textwrap import dedent
@@ -17,9 +18,8 @@ SOURCES = ROOT / "config" / "source-registry.json"
 # MERGE must use indexed stable IDs when loading tens of thousands of claims.
 REFERENCE_LABELS = (
     "Taxon", "TaxonConceptSet", "ScientificName", "VernacularName",
-    "ExternalIdentifier", "SourceRecord", "SourceDataset", "License",
+    "ExternalIdentifier",
     "EvidenceUnit", "TraitClaim", "TaxonMappingClaim", "TaxonMappingCandidate",
-    "IngestionRun", "IngestState",
 )
 
 
@@ -156,8 +156,14 @@ def build_configuration_js(points: dict[str, dict[str, object]]) -> str:
     version = str(col["source_release"]).split(":", 1)[0]
     if not dataset_match or not doi_match:
         raise RuntimeError("ChecklistBank source_release must pin dataset and DOI")
+    bundle_sha256 = hashlib.sha256(
+        f"{avi['expected_sha256']}:{elton['expected_sha256']}:{col['source_release']}".encode()
+    ).hexdigest()
     config = {
         "pipeline_id": "reference-taxonomy-traits",
+        "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+        "source_release": f"reference-bundle:sha256-{bundle_sha256}",
+        "bundle_sha256": bundle_sha256,
         "taxonomy_release": avi["source_release"],
         "taxonomy_url": avi["endpoint_uri"],
         "taxonomy_hash": avi["expected_sha256"],
@@ -181,9 +187,9 @@ def build_configuration_js(points: dict[str, dict[str, object]]) -> str:
         "trait_license_uri": elton["source"]["license_uri"],
         "trait_landing_uri": elton["source"]["landing_uri"],
         "minimum_exact_match_ratio": 0.70,
-        "taxonomy_batch_size": 1000,
-        "trait_claim_batch_size": 2000,
-        "mapping_candidate_batch_size": 1000,
+        "taxonomy_batch_size": 500,
+        "trait_claim_batch_size": 500,
+        "mapping_candidate_batch_size": 500,
     }
     return (
         "const now = new Date();\n"
@@ -549,58 +555,57 @@ def compact_cypher(statement: str) -> str:
     return " ".join(dedent(statement).split())
 
 
+def ingest_api_node(
+    name: str,
+    path_expression: str,
+    position: tuple[int, int],
+    *,
+    method: str = "POST",
+) -> dict[str, object]:
+    parameters: dict[str, object] = {
+        "method": method,
+        "url": f"={{{{ $env.ROBINGRAPH_INGEST_API_URL + {path_expression} }}}}",
+        "sendHeaders": True,
+        "headerParameters": {"parameters": [{
+            "name": "Authorization",
+            "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}",
+        }]},
+        "options": {"response": {"response": {"neverError": True, "responseFormat": "json"}}},
+    }
+    if method != "GET":
+        parameters.update({
+            "sendBody": True,
+            "contentType": "json",
+            "specifyBody": "json",
+            "jsonBody": "={{ $json.ingest_request }}",
+        })
+    return node(
+        name, "n8n-nodes-base.httpRequest", 4.4, parameters, position,
+        onError="continueRegularOutput", retryOnFail=True, maxTries=3,
+        waitBetweenTries=2000,
+        notes="Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables.",
+    )
+
+
 START_STATEMENT = compact_cypher(
     """
-    MERGE (run:IngestionRun {id: $run_id})
-    SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at,
-        run.status = 'loading', run.taxonomy_release = $taxonomy_release,
-        run.trait_release = $trait_release, run.taxonomy_sha256 = $taxonomy_sha256,
-        run.trait_sha256 = $trait_sha256,
-        run.expected_taxa = $taxonomy_taxon_count, run.expected_trait_claims = $trait_claim_count
     MERGE (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id})
     SET concept_set.title = 'AviList global avian checklist',
         concept_set.version = $taxonomy_release, concept_set.source_uri = $taxonomy_landing_uri,
         concept_set.snapshot_uri = $taxonomy_url, concept_set.snapshot_sha256 = $taxonomy_sha256,
-        concept_set.retrieved_at = $retrieved_at
-    MERGE (taxonomy_dataset:SourceDataset {id: $taxonomy_dataset_id})
-    SET taxonomy_dataset.name = 'AviList', taxonomy_dataset.provider = 'AviList Core Team',
-        taxonomy_dataset.version = $taxonomy_release, taxonomy_dataset.landing_uri = $taxonomy_landing_uri,
-        taxonomy_dataset.snapshot_uri = $taxonomy_url, taxonomy_dataset.snapshot_sha256 = $taxonomy_sha256,
-        taxonomy_dataset.policy_status = 'allowed'
-    MERGE (taxonomy_license:License {id: $taxonomy_license_uri})
-    SET taxonomy_license.license_uri = $taxonomy_license_uri, taxonomy_license.policy_status = 'allowed'
-    MERGE (taxonomy_dataset)-[:LICENSED_UNDER]->(taxonomy_license)
-    MERGE (concept_set)-[:FROM_DATASET]->(taxonomy_dataset)
-    MERGE (trait_dataset:SourceDataset {id: $trait_dataset_id})
-    SET trait_dataset.name = 'EltonTraits 1.0', trait_dataset.provider = 'Wilman et al.',
-        trait_dataset.version = $trait_release, trait_dataset.landing_uri = $trait_landing_uri,
-        trait_dataset.snapshot_uri = $trait_url, trait_dataset.snapshot_sha256 = $trait_sha256,
-        trait_dataset.policy_status = 'allowed'
-    MERGE (trait_license:License {id: $trait_license_uri})
-    SET trait_license.license_uri = $trait_license_uri, trait_license.policy_status = 'allowed'
-    MERGE (trait_dataset)-[:LICENSED_UNDER]->(trait_license)
-    MERGE (crosswalk_dataset:SourceDataset {id: 'checklistbank-dataset:' + toString($checklistbank_dataset_key)})
-    SET crosswalk_dataset.name = 'Catalogue of Life via ChecklistBank',
-        crosswalk_dataset.version = $checklistbank_version,
-        crosswalk_dataset.doi = $checklistbank_doi,
-        crosswalk_dataset.landing_uri = $checklistbank_metadata_url,
-        crosswalk_dataset.policy_status = 'allowed'
-    MERGE (crosswalk_license:License {id: $checklistbank_license_uri})
-    SET crosswalk_license.license_uri = $checklistbank_license_uri,
-        crosswalk_license.policy_status = 'allowed'
-    MERGE (crosswalk_dataset)-[:LICENSED_UNDER]->(crosswalk_license)
-    RETURN run.id AS started_run_id, run.status AS run_status
+        concept_set.retrieved_at = $retrieved_at,
+        concept_set.dataset_id = $dataset_id, concept_set.policy_status = 'allowed',
+        concept_set.source_record_ids = []
+    RETURN concept_set.id AS initialized_concept_set_id
     """
 )
 
 
 TAXONOMY_BATCH_STATEMENT = compact_cypher(
     """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
     MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id})
-    MATCH (dataset:SourceDataset {id: $taxonomy_dataset_id})
     CALL {
-      WITH run, concept_set, dataset
+      WITH concept_set
       UNWIND $taxa AS row
       MERGE (taxon:Taxon {id: row.id})
       SET taxon:BirdTaxon, taxon.source_id = 'avilist-v2025b',
@@ -612,7 +617,9 @@ TAXONOMY_BATCH_STATEMENT = compact_cypher(
           taxon.iucn_red_list_category_raw = row.iucn_red_list_category_raw,
           taxon.birdlife_url = row.birdlife_url,
           taxon.birds_of_the_world_url = row.birds_of_the_world_url,
-          taxon.retrieved_at = row.retrieved_at
+          taxon.retrieved_at = row.retrieved_at,
+          taxon.dataset_id = $dataset_id, taxon.source_record_id = row.source_record_id,
+          taxon.policy_status = 'allowed'
       MERGE (scientific_name:ScientificName {id: row.id + ':scientific-name'})
       SET scientific_name.full_name = row.scientific_name,
           scientific_name.authorship = row.authority, scientific_name.nomenclatural_code = 'ICZN'
@@ -620,21 +627,15 @@ TAXONOMY_BATCH_STATEMENT = compact_cypher(
       FOREACH (_ IN CASE WHEN row.english_name IS NULL THEN [] ELSE [1] END |
         MERGE (vernacular:VernacularName {id: row.id + ':vernacular:en:avilist'})
         SET vernacular.name = row.english_name, vernacular.language = 'en',
-            vernacular.status = 'source-preferred', vernacular.source_release = $taxonomy_release
+            vernacular.status = 'source-preferred', vernacular.source_release = $taxonomy_release,
+            vernacular.dataset_id = $dataset_id, vernacular.source_record_id = row.source_record_id,
+            vernacular.policy_status = 'allowed'
         MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular)
       )
-      MERGE (record:SourceRecord {id: row.source_record_id})
-      SET record.record_type = 'taxon_concept', record.external_id = row.sequence,
-          record.raw_uri = row.source_uri, record.raw_hash = $taxonomy_sha256,
-          record.retrieved_at = row.retrieved_at
-      MERGE (record)-[:IN_DATASET]->(dataset)
-      MERGE (taxon)-[:FROM_RECORD]->(record)
       MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set)
-      MERGE (run)-[:INGESTED]->(taxon)
       RETURN count(*) AS loaded_taxa
     }
     CALL {
-      WITH run
       UNWIND $identifiers AS row
       MATCH (taxon:Taxon {id: row.taxon_id})
       MERGE (identifier:ExternalIdentifier {id: row.id})
@@ -643,7 +644,6 @@ TAXONOMY_BATCH_STATEMENT = compact_cypher(
       RETURN count(*) AS loaded_identifiers
     }
     CALL {
-      WITH run
       UNWIND $links AS row
       MATCH (parent:Taxon {id: row.parent_id})
       MATCH (child:Taxon {id: row.child_id})
@@ -658,51 +658,38 @@ TAXONOMY_BATCH_STATEMENT = compact_cypher(
 
 TRAIT_BATCH_STATEMENT = compact_cypher(
     """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
-    MATCH (dataset:SourceDataset {id: $trait_dataset_id})
     CALL {
-      WITH run, dataset
       UNWIND $claims AS row
       MATCH (taxon:Taxon {id: row.taxon_id})
-      MERGE (record:SourceRecord {id: row.source_record_id})
-      SET record.record_type = 'trait_profile', record.external_id = row.source_taxon_id,
-          record.scientific_name_raw = row.source_scientific_name,
-          record.raw_uri = row.source_uri, record.raw_hash = $trait_sha256,
-          record.retrieved_at = $retrieved_at
-      MERGE (record)-[:IN_DATASET]->(dataset)
       MERGE (evidence:EvidenceUnit {id: row.evidence_id})
       SET evidence.evidence_type = 'literature_dataset_row', evidence.locator = row.source_uri,
           evidence.accessed_at = $retrieved_at,
-          evidence.citation = 'Wilman et al. (2014), EltonTraits 1.0'
-      MERGE (evidence)-[:FROM_RECORD]->(record)
+          evidence.citation = 'Wilman et al. (2014), EltonTraits 1.0',
+          evidence.dataset_id = $dataset_id, evidence.source_record_id = row.source_record_id,
+          evidence.policy_status = 'allowed'
       MERGE (mapping:TaxonMappingClaim {id: 'eltontraits-mapping:v1:' + row.source_taxon_id})
       SET mapping.method = 'exact_scientific_name_unique_in_avilist_species',
           mapping.source_scientific_name = row.source_scientific_name,
           mapping.source_taxon_id = row.source_taxon_id,
           mapping.resolution_status = 'accepted_automatic', mapping.confidence = 1.0,
-          mapping.taxonomy_release = $taxonomy_release
-      MERGE (record)-[:HAS_MAPPING_CLAIM]->(mapping)
+          mapping.taxonomy_release = $taxonomy_release,
+          mapping.dataset_id = $dataset_id, mapping.source_record_id = row.source_record_id,
+          mapping.policy_status = 'allowed'
       MERGE (mapping)-[:PROPOSES_TAXON]->(taxon)
       MERGE (claim:TraitClaim {id: row.id})
       SET claim.trait_name = row.trait_name, claim.value_num = row.value_num,
           claim.value_text = row.value_text, claim.value_boolean = row.value_boolean,
           claim.value_json = row.value_json, claim.unit = row.unit,
           claim.source_note = row.source_note, claim.certainty = row.certainty,
-          claim.source_release = $trait_release, claim.retrieved_at = $retrieved_at
+          claim.source_release = $trait_release, claim.retrieved_at = $retrieved_at,
+          claim.dataset_id = $dataset_id, claim.source_record_id = row.source_record_id,
+          claim.policy_status = 'allowed'
       MERGE (claim)-[:ASSERTS_ABOUT]->(taxon)
       MERGE (claim)-[:SUPPORTED_BY]->(evidence)
-      MERGE (run)-[:INGESTED]->(claim)
       RETURN count(*) AS loaded_trait_claims
     }
     CALL {
-      WITH run, dataset
       UNWIND $candidates AS row
-      MERGE (record:SourceRecord {id: row.source_record_id})
-      SET record.record_type = 'trait_profile', record.external_id = row.source_taxon_id,
-          record.scientific_name_raw = row.source_scientific_name,
-          record.raw_uri = row.source_uri, record.raw_hash = $trait_sha256,
-          record.retrieved_at = $retrieved_at
-      MERGE (record)-[:IN_DATASET]->(dataset)
       MERGE (candidate:TaxonMappingCandidate {id: row.id})
       SET candidate.source_taxon_id = row.source_taxon_id,
           candidate.source_scientific_name = row.source_scientific_name,
@@ -711,9 +698,9 @@ TRAIT_BATCH_STATEMENT = compact_cypher(
           candidate.reason_code = row.reason_code,
           candidate.suggested_lookup_uri = row.suggested_lookup_uri,
           candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id,
-          candidate.last_seen_at = $retrieved_at
-      MERGE (record)-[:HAS_MAPPING_CANDIDATE]->(candidate)
-      MERGE (run)-[:QUARANTINED]->(candidate)
+          candidate.last_seen_at = $retrieved_at,
+          candidate.dataset_id = $dataset_id, candidate.source_record_id = row.source_record_id,
+          candidate.policy_status = 'allowed'
       RETURN count(*) AS loaded_mapping_candidates
     }
     RETURN $batch_index AS batch_index, $batch_count AS batch_count,
@@ -724,10 +711,9 @@ TRAIT_BATCH_STATEMENT = compact_cypher(
 
 FINALIZE_STATEMENT = compact_cypher(
     """
-    MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading'
     MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id})
     CALL {
-      WITH run, concept_set
+      WITH concept_set
       MATCH (external:ExternalTaxonConcept:BirdTaxon)
       MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set)
       WHERE external.rank = taxon.rank AND external.scientific_name = taxon.scientific_name
@@ -739,28 +725,8 @@ FINALIZE_STATEMENT = compact_cypher(
       MERGE (mapping)-[:PROPOSES_TAXON]->(taxon)
       RETURN count(*) AS gbif_mapping_claims
     }
-    SET run.status = 'succeeded', run.finished_at = datetime(),
-        run.taxon_count = $taxonomy_taxon_count,
-        run.taxon_link_count = $taxonomy_link_count,
-        run.trait_claim_count = $trait_claim_count,
-        run.mapping_candidate_count = $mapping_candidate_count,
-        run.trait_exact_match_count = $trait_exact_match_count,
-        run.trait_exact_match_ratio = $trait_exact_match_ratio,
-        run.gbif_mapping_claim_count = gbif_mapping_claims
-    MERGE (taxonomy_state:IngestState {id: 'reference-taxonomy'})
-    SET taxonomy_state.active_release = $taxonomy_release,
-        taxonomy_state.active_concept_set_id = $taxonomy_concept_set_id,
-        taxonomy_state.last_successful_run_id = $run_id,
-        taxonomy_state.last_successful_at = datetime()
-    MERGE (trait_state:IngestState {id: 'reference-traits'})
-    SET trait_state.active_release = $trait_release,
-        trait_state.taxonomy_release = $taxonomy_release,
-        trait_state.last_successful_run_id = $run_id,
-        trait_state.last_successful_at = datetime()
-    RETURN run.id AS finalized_run_id, run.status AS run_status,
-           taxonomy_state.active_release AS taxonomy_active_release,
-           trait_state.active_release AS trait_active_release,
-           gbif_mapping_claims
+    RETURN $run_id AS finalized_run_id, $taxonomy_release AS taxonomy_active_release,
+           $trait_release AS trait_active_release, gbif_mapping_claims
     """
 )
 
@@ -781,12 +747,74 @@ def community_cypher_expression(statement: str) -> str:
     )
 
 
-VERIFY_START = r"""
+PREPARE_BEGIN_REQUEST = r"""
 const expected = $('Assemble claims and quality gates').first().json;
+return [{json: {...expected, ingest_request: {
+  dataset: {
+    id: expected.dataset_id,
+    source_id: 'reference-taxonomy-traits',
+    name: 'AviList and EltonTraits approved reference bundle',
+    provider: 'AviList Core Team / Wilman et al. / Catalogue of Life',
+    landing_uri: expected.taxonomy_landing_uri,
+    release_strategy: 'versioned',
+    policy_status: 'allowed',
+    metadata: {
+      taxonomy_dataset_id: expected.taxonomy_dataset_id,
+      trait_dataset_id: expected.trait_dataset_id,
+      taxonomy_license_uri: expected.taxonomy_license_uri,
+      trait_license_uri: expected.trait_license_uri,
+      checklistbank_license_uri: expected.checklistbank_license_uri,
+    },
+  },
+  release: {
+    id: expected.source_release,
+    release_key: expected.source_release,
+    retrieved_at: expected.retrieved_at,
+    content_sha256: expected.bundle_sha256,
+    raw_object_uri: expected.taxonomy_url,
+    metadata: {
+      concept_set_id: expected.taxonomy_concept_set_id,
+      taxonomy_release: expected.taxonomy_release,
+      taxonomy_sha256: expected.taxonomy_sha256,
+      trait_release: expected.trait_release,
+      trait_sha256: expected.trait_sha256,
+      checklistbank_dataset_key: expected.checklistbank_dataset_key,
+    },
+  },
+  run: {
+    id: expected.run_id,
+    pipeline_id: expected.pipeline_id,
+    started_at: expected.retrieved_at,
+    manifest: {
+      orchestrator: 'n8n', workflow: 'reference-taxonomy-traits',
+      expected_taxa: expected.taxonomy_taxon_count,
+      expected_trait_claims: expected.trait_claim_count,
+      expected_mapping_candidates: expected.mapping_candidate_count,
+    },
+  },
+}}}];
+"""
+
+
+VERIFY_POSTGRES_START = r"""
+const expected = $('Prepare PostgreSQL reference run').first().json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const version = response.state_version;
+const startOk = !errorText && response.status === 'started'
+  && Number.isSafeInteger(version) && version >= 0;
+return [{json: {...expected, expected_state_version: version, start_ok: startOk,
+  failure_reason: startOk ? '' : (errorText || 'PostgreSQL did not start the reference run')}}];
+"""
+
+
+VERIFY_START = r"""
+const expected = $('Verify PostgreSQL reference run started').first().json;
 const response = $input.first().json;
 const errorText = String(response.error?.message || response.error || response.message || '');
-const startOk = !errorText && response.started_run_id === expected.run_id && response.run_status === 'loading';
-return [{json: {...expected, start_ok: startOk, failure_reason: startOk ? '' : (errorText || 'Neo4j did not start the ingestion run')}}];
+const startOk = !errorText && response.initialized_concept_set_id === expected.taxonomy_concept_set_id;
+return [{json: {...expected, start_ok: startOk,
+  failure_reason: startOk ? '' : (errorText || 'Neo4j did not initialize the reference domain projection')}}];
 """
 
 
@@ -805,6 +833,8 @@ for (let offset = 0; offset < source.taxa.length; offset += size) {
 }
 return batches.map((batch, index) => ({json: {
   run_id: source.run_id,
+  dataset_id: source.dataset_id,
+  retrieved_at: source.retrieved_at,
   taxonomy_release: source.taxonomy_release,
   taxonomy_concept_set_id: source.taxonomy_concept_set_id,
   taxonomy_dataset_id: source.taxonomy_dataset_id,
@@ -813,6 +843,36 @@ return batches.map((batch, index) => ({json: {
   batch_count: batches.length,
   ...batch
 }}));
+"""
+
+
+PREPARE_TAXONOMY_APPEND = r"""
+const batch = $input.first().json;
+const records = batch.taxa.map(row => ({
+  id: row.source_record_id,
+  external_id: String(row.sequence),
+  record_type: 'taxon_concept',
+  raw_object_uri: row.source_uri,
+  raw_sha256: batch.taxonomy_sha256,
+  retrieved_at: row.retrieved_at,
+  parser_version: 'reference-taxonomy-v3',
+  license_policy_status: 'allowed',
+  payload: {
+    source_id: 'avilist', scientific_name: row.scientific_name,
+    rank: row.rank, taxonomy_release: batch.taxonomy_release,
+  },
+}));
+return [{json: {...batch, ingest_request: {records, quarantine_items: []}}}];
+"""
+
+
+VERIFY_TAXONOMY_APPEND = r"""
+const batch = $('Prepare PostgreSQL taxonomy source batch').item.json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const appendOk = !errorText && response.status === 'appended';
+return [{json: {...batch, append_ok: appendOk,
+  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the taxonomy source batch')}}];
 """
 
 
@@ -850,6 +910,7 @@ for (let offset = 0; offset < source.mapping_candidates.length; offset += source
 }
 return batches.map((batch, index) => ({json: {
   run_id: source.run_id,
+  dataset_id: source.dataset_id,
   retrieved_at: source.retrieved_at,
   taxonomy_release: source.taxonomy_release,
   trait_release: source.trait_release,
@@ -859,6 +920,46 @@ return batches.map((batch, index) => ({json: {
   batch_count: batches.length,
   ...batch
 }}));
+"""
+
+
+PREPARE_TRAIT_APPEND = r"""
+const batch = $input.first().json;
+const byRecord = new Map();
+for (const row of [...batch.claims, ...batch.candidates]) {
+  if (!byRecord.has(row.source_record_id)) byRecord.set(row.source_record_id, row);
+}
+const records = [...byRecord.values()].map(row => ({
+  id: row.source_record_id,
+  external_id: String(row.source_taxon_id),
+  record_type: 'trait_profile',
+  raw_object_uri: row.source_uri,
+  raw_sha256: batch.trait_sha256,
+  retrieved_at: batch.retrieved_at,
+  parser_version: 'reference-traits-v3',
+  license_policy_status: 'allowed',
+  payload: {
+    source_id: 'eltontraits', scientific_name: row.source_scientific_name,
+    trait_release: batch.trait_release,
+  },
+}));
+const quarantine_items = batch.candidates.map(row => ({
+  record_key: row.source_record_id.slice(0, 200),
+  stage: 'resolve', reason_code: row.reason_code, severity: 'warning',
+  rule_version: 'reference-traits-v3',
+  raw_value_redacted: {source_taxon_id: row.source_taxon_id, scientific_name: row.source_scientific_name},
+}));
+return [{json: {...batch, ingest_request: {records, quarantine_items}}}];
+"""
+
+
+VERIFY_TRAIT_APPEND = r"""
+const batch = $('Prepare PostgreSQL trait source batch').item.json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const appendOk = !errorText && response.status === 'appended';
+return [{json: {...batch, append_ok: appendOk,
+  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the trait source batch')}}];
 """
 
 
@@ -882,22 +983,55 @@ return [{json: {...expected,
 """
 
 
-VERIFY_FINALIZE = r"""
-const expected = $('Assemble claims and quality gates').first().json;
+VERIFY_DOMAIN_FINALIZE = r"""
+const expected = $('Verify trait batches').first().json;
 const response = $input.first().json;
 const errorText = String(response.error?.message || response.error || response.message || '');
 const finalizeOk = !errorText
   && response.finalized_run_id === expected.run_id
-  && response.run_status === 'succeeded'
   && response.taxonomy_active_release === expected.taxonomy_release
   && response.trait_active_release === expected.trait_release;
 return [{json: {...expected,
-  finalize_ok: finalizeOk,
+  domain_finalize_ok: finalizeOk,
   loaded_taxa: expected.taxonomy_taxon_count,
   loaded_trait_claims: expected.trait_claim_count,
   loaded_mapping_candidates: expected.mapping_candidate_count,
   gbif_mapping_claims: Number(response.gbif_mapping_claims || 0),
-  failure_reason: finalizeOk ? '' : (errorText || 'Active reference releases were not advanced')
+  failure_reason: finalizeOk ? '' : (errorText || 'Reference domain finalization failed')
+}}];
+"""
+
+
+PREPARE_FINALIZE_REQUEST = r"""
+const source = $input.first().json;
+return [{json: {...source, ingest_request: {
+  counts: {
+    source_records: source.taxonomy_taxon_count + source.trait_valid_row_count,
+    taxa: source.loaded_taxa,
+    taxon_links: source.loaded_taxon_links,
+    trait_claims: source.loaded_trait_claims,
+    mapping_candidates: source.loaded_mapping_candidates,
+    gbif_mapping_claims: source.gbif_mapping_claims,
+  },
+  cursor: {
+    concept_set_id: source.taxonomy_concept_set_id,
+    taxonomy_release: source.taxonomy_release,
+    trait_release: source.trait_release,
+  },
+  expected_state_version: source.expected_state_version,
+}}}];
+"""
+
+
+VERIFY_FINALIZE = r"""
+const expected = $('Prepare PostgreSQL reference finalization').first().json;
+const response = $input.first().json;
+const errorText = String(response.error?.message || response.error || response.message || response.detail || '');
+const finalizeOk = !errorText && response.status === 'finalized'
+  && response.state_version === expected.expected_state_version + 1;
+return [{json: {...expected,
+  finalize_ok: finalizeOk,
+  failure_reason: finalizeOk ? '' : (errorText || 'PostgreSQL reference activation failed')
 }}];
 """
 
@@ -1043,34 +1177,60 @@ def main() -> None:
         merge("Join approved reference sources", (270, 0)),
         code("Assemble claims and quality gates", ASSEMBLE_REFERENCE, (510, 0)),
         boolean_if("Reference quality gates passed?", "={{ $json.ready_to_load }}", (760, 0)),
-        neo4j_node("Start reference ingestion run", START_STATEMENT, (1010, -180)),
-        code("Verify ingestion run started", VERIFY_START, (1250, -180)),
-        boolean_if("Ingestion run started?", "={{ $json.start_ok }}", (1490, -180)),
-        code("Prepare taxonomy batches", PREPARE_TAXONOMY_BATCHES, (1730, -300)),
+        code("Prepare PostgreSQL reference run", PREPARE_BEGIN_REQUEST, (1010, -180)),
+        ingest_api_node("Start PostgreSQL reference run", "'/internal/v1/ingest/begin'", (1250, -180)),
+        code("Verify PostgreSQL reference run started", VERIFY_POSTGRES_START, (1490, -180)),
+        boolean_if("PostgreSQL reference run started?", "={{ $json.start_ok }}", (1730, -180)),
+        neo4j_node("Initialize reference domain projection", START_STATEMENT, (1970, -180)),
+        code("Verify reference domain initialized", VERIFY_START, (2210, -180)),
+        boolean_if("Reference domain initialized?", "={{ $json.start_ok }}", (2450, -180)),
+        code("Prepare taxonomy batches", PREPARE_TAXONOMY_BATCHES, (2690, -300)),
         node(
             "Loop Over taxonomy batches",
             "n8n-nodes-base.splitInBatches",
             3,
-            {"options": {}},
-            (1970, -300),
+            {"batchSize": 1, "options": {}},
+            (2930, -300),
         ),
-        neo4j_node("Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (2210, -300)),
-        code("Verify taxonomy batches", VERIFY_TAXONOMY_BATCHES, (2210, -300)),
-        boolean_if("Taxonomy load verified?", "={{ $json.taxonomy_load_ok }}", (2450, -300)),
-        code("Prepare trait batches", PREPARE_TRAIT_BATCHES, (2690, -380)),
+        code("Prepare PostgreSQL taxonomy source batch", PREPARE_TAXONOMY_APPEND, (3170, -300)),
+        ingest_api_node(
+            "Append PostgreSQL taxonomy source batch",
+            "('/internal/v1/ingest/' + $json.run_id + '/append')",
+            (3410, -300),
+        ),
+        code("Verify PostgreSQL taxonomy source batch", VERIFY_TAXONOMY_APPEND, (3650, -300)),
+        neo4j_node("Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (3890, -300)),
+        code("Verify taxonomy batches", VERIFY_TAXONOMY_BATCHES, (3890, -300)),
+        boolean_if("Taxonomy load verified?", "={{ $json.taxonomy_load_ok }}", (4130, -300)),
+        code("Prepare trait batches", PREPARE_TRAIT_BATCHES, (4370, -380)),
         node(
             "Loop Over trait batches",
             "n8n-nodes-base.splitInBatches",
             3,
-            {"options": {}},
-            (2930, -380),
+            {"batchSize": 1, "options": {}},
+            (4610, -380),
         ),
-        neo4j_node("Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (3170, -380)),
-        code("Verify trait batches", VERIFY_TRAIT_BATCHES, (3170, -380)),
-        boolean_if("Trait load verified?", "={{ $json.trait_load_ok }}", (3410, -380)),
-        neo4j_node("Finalize active reference releases", FINALIZE_STATEMENT, (3650, -460)),
-        code("Verify active reference releases", VERIFY_FINALIZE, (3890, -460)),
-        boolean_if("Reference release finalized?", "={{ $json.finalize_ok }}", (4130, -460)),
+        code("Prepare PostgreSQL trait source batch", PREPARE_TRAIT_APPEND, (4850, -380)),
+        ingest_api_node(
+            "Append PostgreSQL trait source batch",
+            "('/internal/v1/ingest/' + $json.run_id + '/append')",
+            (5090, -380),
+        ),
+        code("Verify PostgreSQL trait source batch", VERIFY_TRAIT_APPEND, (5330, -380)),
+        neo4j_node("Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (5570, -380)),
+        code("Verify trait batches", VERIFY_TRAIT_BATCHES, (5570, -380)),
+        boolean_if("Trait load verified?", "={{ $json.trait_load_ok }}", (5810, -380)),
+        neo4j_node("Finalize reference domain projection", FINALIZE_STATEMENT, (6050, -460)),
+        code("Verify reference domain finalization", VERIFY_DOMAIN_FINALIZE, (6290, -460)),
+        boolean_if("Reference domain finalized?", "={{ $json.domain_finalize_ok }}", (6530, -460)),
+        code("Prepare PostgreSQL reference finalization", PREPARE_FINALIZE_REQUEST, (6770, -460)),
+        ingest_api_node(
+            "Finalize PostgreSQL reference release",
+            "('/internal/v1/ingest/' + $json.run_id + '/finalize')",
+            (7010, -460),
+        ),
+        code("Verify active reference releases", VERIFY_FINALIZE, (7250, -460)),
+        boolean_if("Reference release finalized?", "={{ $json.finalize_ok }}", (7490, -460)),
         discord(
             "Notify reference success",
             "={{ '✅ **RobinGraph reference ingest succeeded**\\nRun: ' + $json.run_id + "
@@ -1078,7 +1238,7 @@ def main() -> None:
             "'\\nExact trait matches: ' + $json.trait_exact_match_count + ' (' + "
             "($json.trait_exact_match_ratio * 100).toFixed(1) + '%), review candidates: ' + "
             "$json.loaded_mapping_candidates + '\\nGBIF mapping candidates: ' + $json.gbif_mapping_claims }}",
-            (4370, -540),
+            (7730, -540),
         ),
         discord(
             "Notify reference failure",
@@ -1086,16 +1246,16 @@ def main() -> None:
             "'\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) + "
             "'\\nAviList taxa: ' + Number($json.taxonomy_taxon_count || 0) + ', trait claims: ' + "
             "Number($json.trait_claim_count || 0) + ', review candidates: ' + Number($json.mapping_candidate_count || 0) }}",
-            (3890, 180),
+            (7010, 180),
         ),
         node(
             "Fail reference execution",
             "n8n-nodes-base.stopAndError",
             1,
             {"errorMessage": "RobinGraph reference ingest failed; inspect the preceding quality or Neo4j verification node."},
-            (4130, 180),
+            (7250, 180),
         ),
-        node("Reference ingest finished", "n8n-nodes-base.noOp", 1, {}, (4610, -460)),
+        node("Reference ingest finished", "n8n-nodes-base.noOp", 1, {}, (7970, -460)),
     ]
 
     connections = {
@@ -1124,20 +1284,29 @@ def main() -> None:
         "Join approved reference sources": {"main": [[edge("Assemble claims and quality gates")]]},
         "Assemble claims and quality gates": {"main": [[edge("Reference quality gates passed?")]]},
         "Reference quality gates passed?": {
-            "main": [[edge("Start reference ingestion run")], [edge("Notify reference failure")]]
+            "main": [[edge("Prepare PostgreSQL reference run")], [edge("Notify reference failure")]]
         },
-        "Start reference ingestion run": {"main": [[edge("Verify ingestion run started")]]},
-        "Verify ingestion run started": {"main": [[edge("Ingestion run started?")]]},
-        "Ingestion run started?": {
+        "Prepare PostgreSQL reference run": {"main": [[edge("Start PostgreSQL reference run")]]},
+        "Start PostgreSQL reference run": {"main": [[edge("Verify PostgreSQL reference run started")]]},
+        "Verify PostgreSQL reference run started": {"main": [[edge("PostgreSQL reference run started?")]]},
+        "PostgreSQL reference run started?": {
+            "main": [[edge("Initialize reference domain projection")], [edge("Notify reference failure")]]
+        },
+        "Initialize reference domain projection": {"main": [[edge("Verify reference domain initialized")]]},
+        "Verify reference domain initialized": {"main": [[edge("Reference domain initialized?")]]},
+        "Reference domain initialized?": {
             "main": [[edge("Prepare taxonomy batches")], [edge("Notify reference failure")]]
         },
         "Prepare taxonomy batches": {"main": [[edge("Loop Over taxonomy batches")]]},
         "Loop Over taxonomy batches": {
             "main": [
                 [edge("Verify taxonomy batches")],
-                [edge("Upsert AviList taxonomy batch")],
+                [edge("Prepare PostgreSQL taxonomy source batch")],
             ]
         },
+        "Prepare PostgreSQL taxonomy source batch": {"main": [[edge("Append PostgreSQL taxonomy source batch")]]},
+        "Append PostgreSQL taxonomy source batch": {"main": [[edge("Verify PostgreSQL taxonomy source batch")]]},
+        "Verify PostgreSQL taxonomy source batch": {"main": [[edge("Upsert AviList taxonomy batch")]]},
         "Upsert AviList taxonomy batch": {"main": [[edge("Loop Over taxonomy batches")]]},
         "Verify taxonomy batches": {"main": [[edge("Taxonomy load verified?")]]},
         "Taxonomy load verified?": {
@@ -1147,15 +1316,24 @@ def main() -> None:
         "Loop Over trait batches": {
             "main": [
                 [edge("Verify trait batches")],
-                [edge("Upsert EltonTraits batch")],
+                [edge("Prepare PostgreSQL trait source batch")],
             ]
         },
+        "Prepare PostgreSQL trait source batch": {"main": [[edge("Append PostgreSQL trait source batch")]]},
+        "Append PostgreSQL trait source batch": {"main": [[edge("Verify PostgreSQL trait source batch")]]},
+        "Verify PostgreSQL trait source batch": {"main": [[edge("Upsert EltonTraits batch")]]},
         "Upsert EltonTraits batch": {"main": [[edge("Loop Over trait batches")]]},
         "Verify trait batches": {"main": [[edge("Trait load verified?")]]},
         "Trait load verified?": {
-            "main": [[edge("Finalize active reference releases")], [edge("Notify reference failure")]]
+            "main": [[edge("Finalize reference domain projection")], [edge("Notify reference failure")]]
         },
-        "Finalize active reference releases": {"main": [[edge("Verify active reference releases")]]},
+        "Finalize reference domain projection": {"main": [[edge("Verify reference domain finalization")]]},
+        "Verify reference domain finalization": {"main": [[edge("Reference domain finalized?")]]},
+        "Reference domain finalized?": {
+            "main": [[edge("Prepare PostgreSQL reference finalization")], [edge("Notify reference failure")]]
+        },
+        "Prepare PostgreSQL reference finalization": {"main": [[edge("Finalize PostgreSQL reference release")]]},
+        "Finalize PostgreSQL reference release": {"main": [[edge("Verify active reference releases")]]},
         "Verify active reference releases": {"main": [[edge("Reference release finalized?")]]},
         "Reference release finalized?": {
             "main": [[edge("Notify reference success")], [edge("Notify reference failure")]]

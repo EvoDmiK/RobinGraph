@@ -94,17 +94,22 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertIn("HAS_ACCEPTED_NAME", body)
         self.assertIn("PARENT_OF", body)
         self.assertIn("UNWIND $observations AS row", body)
-        self.assertIn("MERGE (state:IngestState", body)
+        for control_label in ("SourceRecord", "SourceDataset", "IngestionRun", "IngestState", "QuarantineRecord"):
+            self.assertNotIn(control_label, body)
+        self.assertIn("'domain_verified' AS status", body)
 
         verify_node = by_name["Verify Neo4j response counts"]
-        self.assertIn("result['state.active_release']", verify_node["parameters"]["jsCode"])
+        self.assertIn("result.status === 'domain_verified'", verify_node["parameters"]["jsCode"])
+        self.assertIn("Start PostgreSQL GBIF run", by_name)
+        self.assertIn("Append PostgreSQL GBIF source batch", by_name)
+        self.assertIn("Finalize PostgreSQL GBIF release", by_name)
 
         self.assertEqual(
             "Notify failure",
             connections["Quality gates passed?"]["main"][1][0]["node"],
         )
         self.assertEqual(
-            "Advance n8n cursor",
+            "Prepare PostgreSQL GBIF finalization",
             connections["Atomic load verified?"]["main"][0][0]["node"],
         )
         self.assertEqual(
@@ -136,7 +141,7 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertEqual(["neo4jApi"], list(neo4j_node["credentials"]))
         serialized = json.dumps(workflow).lower()
         self.assertNotIn("-----begin private key-----", serialized)
-        self.assertNotIn("bearer ", serialized)
+        self.assertIn("robingraph_ingest_internal_token", serialized)
         self.assertNotIn("password", serialized)
         self.assertNotIn("robingraph ingest ", serialized)
 
@@ -152,13 +157,13 @@ assert.throws(() => literal({'bad`key': 1}));
 const expected = {taxon_count: 2, taxon_link_count: 1, observation_count: 19,
   media_count: 11, quarantine_count: 0, source_release: 'release'};
 const good = {loaded_taxa: 2, loaded_taxon_links: 1, loaded_observations: 19,
-  loaded_media: 11, loaded_quarantine: 0, 'state.active_release': 'release'};
+  loaded_media: 11, status: 'domain_verified'};
 """ + "const verify = new Function('$', '$input', " + json.dumps(ASSESS_NEO4J) + ");" + r"""
 const check = value => verify(() => ({first: () => ({json: expected})}),
   {first: () => ({json: value})})[0].json.load_ok;
 assert.equal(check(good), true);
 assert.equal(check({...good, loaded_observations: 18}), false);
-assert.equal(check({...good, 'state.active_release': 'old'}), false);
+assert.equal(check({...good, status: 'loading'}), false);
 assert.equal(check({error: 'connection failed'}), false);
 assert.equal(check({}), false);
 """
@@ -243,16 +248,18 @@ assert.equal(check({}), false);
         self.assertIn("taxonomy_batch_size", by_name["Prepare taxonomy batches"]["parameters"]["jsCode"])
         self.assertIn("trait_claim_batch_size", by_name["Prepare trait batches"]["parameters"]["jsCode"])
 
-        for loop_name, prepare_name, upsert_name, verify_name in (
+        for loop_name, prepare_name, source_prepare, upsert_name, verify_name in (
             (
                 "Loop Over taxonomy batches",
                 "Prepare taxonomy batches",
+                "Prepare PostgreSQL taxonomy source batch",
                 "Upsert AviList taxonomy batch",
                 "Verify taxonomy batches",
             ),
             (
                 "Loop Over trait batches",
                 "Prepare trait batches",
+                "Prepare PostgreSQL trait source batch",
                 "Upsert EltonTraits batch",
                 "Verify trait batches",
             ),
@@ -261,7 +268,7 @@ assert.equal(check({}), false);
             self.assertEqual("n8n-nodes-base.splitInBatches", loop["type"])
             self.assertEqual(loop_name, connections[prepare_name]["main"][0][0]["node"])
             self.assertEqual(verify_name, connections[loop_name]["main"][0][0]["node"])
-            self.assertEqual(upsert_name, connections[loop_name]["main"][1][0]["node"])
+            self.assertEqual(source_prepare, connections[loop_name]["main"][1][0]["node"])
             self.assertEqual(loop_name, connections[upsert_name]["main"][0][0]["node"])
 
         taxonomy_query = by_name["Upsert AviList taxonomy batch"]["parameters"]["cypherQuery"]
@@ -269,21 +276,28 @@ assert.equal(check({}), false);
         self.assertIn("HAS_ACCEPTED_NAME", taxonomy_query)
         self.assertIn("PARENT_OF", taxonomy_query)
         self.assertIn("ExternalIdentifier", taxonomy_query)
+        self.assertNotIn("SourceRecord", taxonomy_query)
+        self.assertNotIn("IngestionRun", taxonomy_query)
         trait_query = by_name["Upsert EltonTraits batch"]["parameters"]["cypherQuery"]
         self.assertIn("TraitClaim", trait_query)
         self.assertIn("TaxonMappingClaim", trait_query)
         self.assertIn("TaxonMappingCandidate", trait_query)
         self.assertIn("SUPPORTED_BY", trait_query)
-        finalize_query = by_name["Finalize active reference releases"]["parameters"]["cypherQuery"]
+        self.assertNotIn("SourceRecord", trait_query)
+        self.assertNotIn("SourceDataset", trait_query)
+        finalize_query = by_name["Finalize reference domain projection"]["parameters"]["cypherQuery"]
         self.assertIn("ExternalTaxonConcept:BirdTaxon", finalize_query)
-        self.assertIn("MERGE (taxonomy_state:IngestState", finalize_query)
-        self.assertIn("run.status = 'succeeded'", finalize_query)
+        self.assertNotIn("IngestState", finalize_query)
+        self.assertNotIn("IngestionRun", finalize_query)
+        self.assertIn("/internal/v1/ingest/begin", by_name["Start PostgreSQL reference run"]["parameters"]["url"])
 
         for gate in (
             "Reference quality gates passed?",
-            "Ingestion run started?",
+            "PostgreSQL reference run started?",
+            "Reference domain initialized?",
             "Taxonomy load verified?",
             "Trait load verified?",
+            "Reference domain finalized?",
             "Reference release finalized?",
         ):
             self.assertEqual("Notify reference failure", connections[gate]["main"][1][0]["node"])
@@ -323,9 +337,21 @@ assert.equal(check({}), false);
         self.assertEqual(
             [
                 [{"node": "Verify AVONET batches", "type": "main", "index": 0}],
-                [{"node": "Upsert AVONET batches", "type": "main", "index": 0}],
+                [{"node": "Prepare PostgreSQL AVONET source batch", "type": "main", "index": 0}],
             ],
             connections["Loop Over AVONET batches"]["main"],
+        )
+        self.assertEqual(
+            "Append PostgreSQL AVONET source batch",
+            connections["Prepare PostgreSQL AVONET source batch"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            "Verify PostgreSQL AVONET source batch",
+            connections["Append PostgreSQL AVONET source batch"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            "Upsert AVONET batches",
+            connections["Verify PostgreSQL AVONET source batch"]["main"][0][0]["node"],
         )
         self.assertEqual(
             "Loop Over AVONET batches",
@@ -333,10 +359,8 @@ assert.equal(check({}), false);
         )
         query = by_name["Upsert AVONET batches"]["parameters"]["cypherQuery"]
         self.assertIn("OPTIONAL MATCH (taxon:Taxon { source_release:$taxonomy_release, rank:'species', scientific_name:row.scientific_name })", query)
-        self.assertIn(
-            "MERGE (run)-[:INGESTED]->(record) WITH run, row, taxa, record CALL",
-            query,
-        )
+        self.assertNotIn("SourceRecord", query)
+        self.assertNotIn("IngestionRun", query)
         verifier = by_name["Verify AVONET batches"]["parameters"]["jsCode"]
         self.assertIn("row[key] = Number(row[key])", verifier)
 
@@ -423,12 +447,13 @@ assert.equal(check({}), false);
         connections = workflow["connections"]
         self.assertEqual(1, workflow["settings"]["concurrency"])
 
-        state_query = by_name["Read active taxonomy and Korean dataset state"]["parameters"]["cypherQuery"]
-        self.assertIn("OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'})", state_query)
-        self.assertNotIn("korean-vernacular-names", state_query)
+        state_read = by_name["Read active PostgreSQL taxonomy state"]
+        self.assertEqual("GET", state_read["parameters"]["method"])
+        self.assertIn("/internal/v1/ingest/active/reference-taxonomy-traits", state_read["parameters"]["url"])
 
         resolve_query = by_name["Resolve active concept set and match candidates"]["parameters"]["cypherQuery"]
-        self.assertIn("MATCH (state:IngestState {id: 'reference-taxonomy'})", resolve_query)
+        self.assertIn("MATCH (concept_set:TaxonConceptSet {id: $concept_set_id})", resolve_query)
+        self.assertNotIn("IngestState", resolve_query)
         self.assertIn("Taxon:BirdTaxon", resolve_query)
         self.assertNotIn("SET state", resolve_query)
         self.assertNotIn("ExternalTaxonConcept", resolve_query)
@@ -480,16 +505,12 @@ assert.equal(check({}), false);
         # Re-checked on every batch, not just once at Start: a mid-run
         # taxonomy switch stops matching further taxa instead of writing
         # against a superseded concept set.
-        self.assertIn(
-            "MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id",
-            batch_query,
-        )
+        self.assertIn("concept_set.version = $taxonomy_release", batch_query)
+        self.assertNotIn("IngestState", batch_query)
 
         finalize_query = by_name["Verify Korean vernacular graph snapshot"]["parameters"]["cypherQuery"]
-        self.assertIn(
-            "MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id",
-            finalize_query,
-        )
+        self.assertIn("conceptSet.version = $taxonomy_release", finalize_query)
+        self.assertNotIn("IngestState", finalize_query)
         self.assertNotIn("SET ", finalize_query)
 
         control_nodes = [
@@ -601,7 +622,7 @@ assert.equal(check({}), false);
         neo4j_nodes = [item for item in payload["nodes"] if item["type"] == "n8n-nodes-neo4j.neo4j"]
         from scripts.generate_n8n_korean_vernacular_ingest import KOREAN_VERNACULAR_LABELS
 
-        self.assertEqual(4 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
+        self.assertEqual(3 + len(KOREAN_VERNACULAR_LABELS), len(neo4j_nodes))
         self.assertTrue(all(item["credentials"]["neo4jApi"]["id"] == "neo4j-id" for item in neo4j_nodes))
         by_name = {item["name"]: item for item in payload["nodes"]}
         for name in ("Notify Korean vernacular success", "Notify Korean vernacular failure"):

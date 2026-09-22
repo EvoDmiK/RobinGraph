@@ -121,27 +121,43 @@
     },
     {
       "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'}) OPTIONAL MATCH (conceptSet:TaxonConceptSet {id: taxState.active_concept_set_id}) RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "method": "GET",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + '/internal/v1/ingest/active/reference-taxonomy-traits' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": false,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
       },
-      "id": "7d5ddc49-16c8-50b1-b830-32f98fa65700",
-      "name": "Read active taxonomy and Korean dataset state",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
+      "id": "febba9c1-73ec-5385-83a1-475e43843d44",
+      "name": "Read active PostgreSQL taxonomy state",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
       "position": [
         -340,
         0
       ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
       "onError": "continueRegularOutput",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from n8n environment variables; no credential value is stored in this workflow."
     },
     {
       "parameters": {
@@ -159,9 +175,23 @@
     },
     {
       "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$input.first().json,state=$('Read active PostgreSQL taxonomy state').first().json; return [{json:{...source,concept_set_id:state.cursor?.concept_set_id,taxonomy_release:state.cursor?.taxonomy_release}}];"
+      },
+      "id": "fc17fcab-5d79-5df9-a765-4cfc071f271d",
+      "name": "Attach active taxonomy context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        0
+      ]
+    },
+    {
+      "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"clean_candidates\": literal($json[\"clean_candidates\"])}; return \"MATCH (state:IngestState {id: 'reference-taxonomy'}) MATCH (concept_set:TaxonConceptSet {id: state.active_concept_set_id}) WITH concept_set, state UNWIND $clean_candidates AS row OPTIONAL MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE toLower(taxon.scientific_name) = toLower(row.taxon_name) WITH concept_set, state, row, collect(taxon.id) AS matched_taxon_ids RETURN concept_set.id AS concept_set_id, state.active_release AS taxonomy_release, row.taxon_name AS taxon_name, row.korean_name AS korean_name, row.qids AS qids, matched_taxon_ids\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"clean_candidates\": literal($json[\"clean_candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"])}; return \"MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) WHERE concept_set.version = $taxonomy_release AND concept_set.policy_status = 'allowed' WITH concept_set UNWIND $clean_candidates AS row OPTIONAL MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE toLower(taxon.scientific_name) = toLower(row.taxon_name) WITH concept_set, row, collect(taxon.id) AS matched_taxon_ids RETURN concept_set.id AS concept_set_id, concept_set.version AS taxonomy_release, row.taxon_name AS taxon_name, row.korean_name AS korean_name, row.qids AS qids, matched_taxon_ids\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "09178f5c-4109-5507-af9c-a7caf240dfc1",
       "name": "Resolve active concept set and match candidates",
@@ -184,7 +214,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "function classifyMatches(resolvedRows) {\n  const writeRows = [];\n  const candidates = [];\n  let invalidRowCount = 0;\n  for (const row of resolvedRows || []) {\n    if (!row || typeof row.taxon_name !== 'string' || !row.taxon_name.trim()\n        || typeof row.korean_name !== 'string' || !row.korean_name.trim()\n        || !Array.isArray(row.qids)) {\n      invalidRowCount += 1;\n      continue;\n    }\n    const matchedIds = Array.isArray(row.matched_taxon_ids) ? row.matched_taxon_ids : [];\n    if (matchedIds.length === 1) {\n      writeRows.push({\n        taxon_id: matchedIds[0],\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n      });\n    } else if (matchedIds.length === 0) {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'no_matching_avilist_taxon',\n      });\n    } else {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'ambiguous_avilist_taxon_match',\n      });\n    }\n  }\n  return {writeRows, candidates, invalidRowCount};\n}\n\nfunction assembleGates(config, normalized, stateInfo, resolvedRows) {\n  const {writeRows, candidates, invalidRowCount} = classifyMatches(resolvedRows);\n  const allCandidates = [...candidates, ...normalized.conflicted_candidates];\n  const reasons = [];\n  // Checked first and most specifically: a failed or malformed fetch must\n  // never be reported as \"zero candidates\" -- that phrasing would read as a\n  // legitimate empty result (nothing left to do) rather than an outage.\n  if (normalized.fetch_ok === false) {\n    reasons.push(normalized.fetch_failure_reason || 'Wikidata SPARQL request failed');\n  }\n  if (normalized.fetch_ok !== false && !normalized.source_sha256) {\n    reasons.push('Wikidata response was not hashed');\n  }\n  // Any structurally malformed row fails the run closed instead of being\n  // silently skipped -- it may mean the SPARQL/Wikidata schema changed and\n  // the rest of the \"clean\" rows are not trustworthy either.\n  if (normalized.fetch_ok !== false && normalized.malformed_row_count > 0) {\n    reasons.push(`${normalized.malformed_row_count} malformed Wikidata row(s) were rejected`);\n  }\n  if (normalized.fetch_ok !== false && !normalized.malformed_row_count && normalized.distinct_taxon_name_count === 0) {\n    reasons.push('No Korean vernacular candidates parsed from the Wikidata response');\n  }\n  if (!stateInfo.concept_set_id) {\n    reasons.push('Active AviList reference-taxonomy concept set is not available');\n  }\n  if ((normalized.clean_candidates || []).length > 0\n      && (invalidRowCount > 0 || writeRows.length + candidates.length !== normalized.clean_candidates.length)) {\n    reasons.push('Active taxonomy resolution returned incomplete or malformed rows');\n  }\n  if (reasons.length === 0 && writeRows.length === 0 && allCandidates.length === 0 && normalized.distinct_taxon_name_count > 0) {\n    reasons.push('Korean vernacular candidates were parsed but none resolved to a write row or a candidate');\n  }\n  return {\n    ...config,\n    source_sha256: normalized.source_sha256,\n    wikidata_dataset_id: normalized.wikidata_dataset_id,\n    source_release: normalized.source_release,\n    source_binding_count: normalized.source_binding_count,\n    malformed_row_count: normalized.malformed_row_count,\n    distinct_taxon_name_count: normalized.distinct_taxon_name_count,\n    concept_set_id: stateInfo.concept_set_id,\n    taxonomy_release: stateInfo.taxonomy_release,\n    write_rows: writeRows,\n    candidates: allCandidates,\n    write_row_count: writeRows.length,\n    candidate_count: allCandidates.length,\n    ready_to_load: reasons.length === 0,\n    failure_reason: reasons.join('; '),\n  };\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst normalized = $('Normalize Korean vernacular candidates').first().json;\nconst stateInfo = $('Read active taxonomy and Korean dataset state').first().json;\nconst resolvedRows = $input.all().map(item => item.json);\nreturn [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];"
+        "jsCode": "function classifyMatches(resolvedRows) {\n  const writeRows = [];\n  const candidates = [];\n  let invalidRowCount = 0;\n  for (const row of resolvedRows || []) {\n    if (!row || typeof row.taxon_name !== 'string' || !row.taxon_name.trim()\n        || typeof row.korean_name !== 'string' || !row.korean_name.trim()\n        || !Array.isArray(row.qids)) {\n      invalidRowCount += 1;\n      continue;\n    }\n    const matchedIds = Array.isArray(row.matched_taxon_ids) ? row.matched_taxon_ids : [];\n    if (matchedIds.length === 1) {\n      writeRows.push({\n        taxon_id: matchedIds[0],\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n      });\n    } else if (matchedIds.length === 0) {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'no_matching_avilist_taxon',\n      });\n    } else {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'ambiguous_avilist_taxon_match',\n      });\n    }\n  }\n  return {writeRows, candidates, invalidRowCount};\n}\n\nfunction assembleGates(config, normalized, stateInfo, resolvedRows) {\n  const {writeRows, candidates, invalidRowCount} = classifyMatches(resolvedRows);\n  const allCandidates = [...candidates, ...normalized.conflicted_candidates];\n  const reasons = [];\n  // Checked first and most specifically: a failed or malformed fetch must\n  // never be reported as \"zero candidates\" -- that phrasing would read as a\n  // legitimate empty result (nothing left to do) rather than an outage.\n  if (normalized.fetch_ok === false) {\n    reasons.push(normalized.fetch_failure_reason || 'Wikidata SPARQL request failed');\n  }\n  if (normalized.fetch_ok !== false && !normalized.source_sha256) {\n    reasons.push('Wikidata response was not hashed');\n  }\n  // Any structurally malformed row fails the run closed instead of being\n  // silently skipped -- it may mean the SPARQL/Wikidata schema changed and\n  // the rest of the \"clean\" rows are not trustworthy either.\n  if (normalized.fetch_ok !== false && normalized.malformed_row_count > 0) {\n    reasons.push(`${normalized.malformed_row_count} malformed Wikidata row(s) were rejected`);\n  }\n  if (normalized.fetch_ok !== false && !normalized.malformed_row_count && normalized.distinct_taxon_name_count === 0) {\n    reasons.push('No Korean vernacular candidates parsed from the Wikidata response');\n  }\n  if (!stateInfo.concept_set_id) {\n    reasons.push('Active AviList reference-taxonomy concept set is not available');\n  }\n  if ((normalized.clean_candidates || []).length > 0\n      && (invalidRowCount > 0 || writeRows.length + candidates.length !== normalized.clean_candidates.length)) {\n    reasons.push('Active taxonomy resolution returned incomplete or malformed rows');\n  }\n  if (reasons.length === 0 && writeRows.length === 0 && allCandidates.length === 0 && normalized.distinct_taxon_name_count > 0) {\n    reasons.push('Korean vernacular candidates were parsed but none resolved to a write row or a candidate');\n  }\n  return {\n    ...config,\n    source_sha256: normalized.source_sha256,\n    wikidata_dataset_id: normalized.wikidata_dataset_id,\n    source_release: normalized.source_release,\n    source_binding_count: normalized.source_binding_count,\n    malformed_row_count: normalized.malformed_row_count,\n    distinct_taxon_name_count: normalized.distinct_taxon_name_count,\n    concept_set_id: stateInfo.concept_set_id,\n    taxonomy_release: stateInfo.taxonomy_release,\n    write_rows: writeRows,\n    candidates: allCandidates,\n    write_row_count: writeRows.length,\n    candidate_count: allCandidates.length,\n    ready_to_load: reasons.length === 0,\n    failure_reason: reasons.join('; '),\n  };\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst normalized = $('Normalize Korean vernacular candidates').first().json;\n  const stateResponse = $('Read active PostgreSQL taxonomy state').first().json;\n  const stateInfo = {concept_set_id: stateResponse.cursor?.concept_set_id,\n    taxonomy_release: stateResponse.cursor?.taxonomy_release};\nconst resolvedRows = $input.all().map(item => item.json);\nreturn [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];"
       },
       "id": "890321e2-0320-532b-aee3-da5f85a77216",
       "name": "Assemble Korean vernacular quality gates",
@@ -465,7 +495,7 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"rows\": literal($json[\"rows\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) CALL { WITH concept_set UNWIND $rows AS row MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}) SET vernacular.name = row.korean_name, vernacular.language = 'ko', vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id, vernacular.policy_status = 'allowed', vernacular.source_scientific_name_claim = row.taxon_name, vernacular.source_qids = row.qids, vernacular.source_release = $source_release, vernacular.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id], vernacular.retrieved_at = $retrieved_at MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) RETURN count(DISTINCT vernacular) AS loaded_vernacular_names } CALL { WITH state UNWIND $candidates AS row MERGE (candidate:VernacularNameCandidate { id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id }) SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name, candidate.reason_code = row.reason_code, candidate.qids = row.qids, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at, candidate.dataset_id = $wikidata_dataset_id, candidate.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id] RETURN count(DISTINCT candidate) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_vernacular_names, loaded_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"rows\": literal($json[\"rows\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) WHERE concept_set.version = $taxonomy_release AND concept_set.policy_status = 'allowed' CALL { WITH concept_set UNWIND $rows AS row MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}) SET vernacular.name = row.korean_name, vernacular.language = 'ko', vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id, vernacular.policy_status = 'allowed', vernacular.source_scientific_name_claim = row.taxon_name, vernacular.source_qids = row.qids, vernacular.source_release = $source_release, vernacular.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id], vernacular.retrieved_at = $retrieved_at MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) RETURN count(DISTINCT vernacular) AS loaded_vernacular_names } CALL { UNWIND $candidates AS row MERGE (candidate:VernacularNameCandidate { id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id }) SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name, candidate.reason_code = row.reason_code, candidate.qids = row.qids, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at, candidate.dataset_id = $wikidata_dataset_id, candidate.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id] RETURN count(DISTINCT candidate) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_vernacular_names, loaded_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "8f17431a-e4bd-5eb6-8000-34f2fbf69e94",
       "name": "Upsert Korean vernacular names batch",
@@ -537,7 +567,7 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"concept_set_id\": literal($json[\"concept_set_id\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id OPTIONAL MATCH (vernacular:VernacularName {language: 'ko', dataset_id: $wikidata_dataset_id}) WITH taxState, count(vernacular) AS graphVernacularNames OPTIONAL MATCH (candidate:VernacularNameCandidate {dataset_id: $wikidata_dataset_id}) RETURN taxState.active_concept_set_id AS concept_set_id, graphVernacularNames AS graph_vernacular_names, count(candidate) AS graph_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"concept_set_id\": literal($json[\"concept_set_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id}) WHERE conceptSet.version = $taxonomy_release AND conceptSet.policy_status = 'allowed' OPTIONAL MATCH (vernacular:VernacularName {language: 'ko', dataset_id: $wikidata_dataset_id}) WITH conceptSet, count(vernacular) AS graphVernacularNames OPTIONAL MATCH (candidate:VernacularNameCandidate {dataset_id: $wikidata_dataset_id}) RETURN conceptSet.id AS concept_set_id, graphVernacularNames AS graph_vernacular_names, count(candidate) AS graph_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "e960ca6e-e8ec-5c89-90b8-e3e7c4fae6de",
       "name": "Verify Korean vernacular graph snapshot",
@@ -954,14 +984,14 @@
       "main": [
         [
           {
-            "node": "Read active taxonomy and Korean dataset state",
+            "node": "Read active PostgreSQL taxonomy state",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Read active taxonomy and Korean dataset state": {
+    "Read active PostgreSQL taxonomy state": {
       "main": [
         [
           {
@@ -973,6 +1003,17 @@
       ]
     },
     "Normalize Korean vernacular candidates": {
+      "main": [
+        [
+          {
+            "node": "Attach active taxonomy context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attach active taxonomy context": {
       "main": [
         [
           {

@@ -36,7 +36,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const state = $getWorkflowStaticData('global');\nconst now = new Date();\nconst endDate = now.toISOString().slice(0, 10);\nconst fallbackStart = new Date(now);\nfallbackStart.setUTCDate(fallbackStart.getUTCDate() - 30);\nconst startDate = state.last_successful_event_date || fallbackStart.toISOString().slice(0, 10);\n\nreturn [{\n  json: {\n    run_id: `n8n-${$execution.id}`,\n    pipeline_id: 'gbif-occurrence-kr-aves',\n    retrieved_at: now.toISOString(),\n    event_date_start: startDate,\n    event_date_end: endDate,\n    source_release: `gbif-live-${endDate}`,\n    country: 'KR',\n    aves_taxon_key: 212,\n    page_size: 300,\n    max_pages: 20,\n    maximum_rejected_ratio: 0.25\n  }\n}];"
+        "jsCode": "const state = $getWorkflowStaticData('global');\nconst now = new Date();\nconst endDate = now.toISOString().slice(0, 10);\nconst fallbackStart = new Date(now);\nfallbackStart.setUTCDate(fallbackStart.getUTCDate() - 30);\nconst startDate = state.last_successful_event_date || fallbackStart.toISOString().slice(0, 10);\n\nreturn [{\n  json: {\n    run_id: `n8n-${$execution.id}`,\n    pipeline_id: 'gbif-occurrence-kr-aves',\n    retrieved_at: now.toISOString(),\n    event_date_start: startDate,\n    event_date_end: endDate,\n    source_release: `gbif-live-${endDate}`,\n    dataset_id: 'gbif-occurrence-kr-aves',\n    country: 'KR',\n    aves_taxon_key: 212,\n    page_size: 300,\n    max_pages: 20,\n    maximum_rejected_ratio: 0.25\n  }\n}];"
       },
       "id": "c1198591-b44b-5763-8fee-b436914c0e15",
       "name": "Build run configuration",
@@ -193,17 +193,181 @@
     },
     {
       "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$input.first().json;\nreturn [{json:{...source,ingest_request:{\n  dataset:{id:source.dataset_id,source_id:'gbif',name:'GBIF Korea Aves occurrence feed',provider:'GBIF',\n    landing_uri:'https://www.gbif.org/occurrence/search',release_strategy:'dated_snapshot',\n    policy_status:'allowed',metadata:{country:source.country,taxon_key:source.aves_taxon_key}},\n  release:{id:'gbif-release:'+source.source_release,release_key:source.source_release,\n    retrieved_at:source.retrieved_at,raw_object_uri:'https://api.gbif.org/v1/occurrence/search',\n    metadata:{event_date_start:source.event_date_start,event_date_end:source.event_date_end,page_count:source.page_count}},\n  run:{id:source.run_id,pipeline_id:source.pipeline_id,started_at:source.retrieved_at,\n    manifest:{orchestrator:'n8n',workflow:'gbif-operational',source_count:source.source_count}}\n}}}];"
+      },
+      "id": "86a416ef-03f3-5d86-b80a-8bae846b7f00",
+      "name": "Prepare PostgreSQL GBIF run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        650,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + '/internal/v1/ingest/begin' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "6b9050b9-c401-5202-b967-797d69f378be",
+      "name": "Start PostgreSQL GBIF run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        880,
+        -140
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$('Prepare PostgreSQL GBIF run').first().json,response=$input.first().json;\nconst errorText=String(response.error?.message||response.error||response.message||response.detail||'');\nif(errorText||response.status!=='started'||!Number.isSafeInteger(response.state_version))\n  throw new Error(errorText||'PostgreSQL did not start GBIF run');\nreturn [{json:{...source,expected_state_version:response.state_version}}];"
+      },
+      "id": "e0d33ee8-f7c4-5db8-86f3-5be620542717",
+      "name": "Verify PostgreSQL GBIF run started",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1110,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$input.first().json;\nconst records=source.observations.map(row=>({id:row.source_record_key,external_id:row.external_id,\n  record_type:'observation',raw_object_uri:row.raw_uri,raw_sha256:row.raw_sha256,\n  retrieved_at:row.retrieved_at,source_updated_at:row.source_updated_at,\n  parser_version:'gbif-occurrence-v2',license_policy_status:'allowed',\n  payload:{occurrence_id:row.occurrence_id,event_id:row.event_id,scientific_name:row.scientific_name,\n    observed_at:row.observed_at,dataset_key:row.dataset_key,issues:row.issues}}));\nconst quarantineItems=source.quarantine.flatMap(item=>item.reason_codes.map(reason=>({\n  record_key:'gbif:'+source.source_release+':'+item.external_id,stage:item.stage,reason_code:reason,\n  severity:reason==='license_not_allowed'?'blocked':'error',rule_version:'gbif-operational-v2',\n  raw_value_redacted:item.source_uri\n})));\nconst count=Math.max(1,Math.ceil(records.length/500),Math.ceil(quarantineItems.length/500));\nreturn Array.from({length:count},(_,batch_index)=>({json:{...source,batch_index,batch_count:count,\n  ingest_request:{records:records.slice(batch_index*500,(batch_index+1)*500),\n    quarantine_items:quarantineItems.slice(batch_index*500,(batch_index+1)*500)}}}))\n  .filter(item=>item.json.ingest_request.records.length||item.json.ingest_request.quarantine_items.length);"
+      },
+      "id": "df0241d7-a560-5ea6-8b62-7931dcc632e1",
+      "name": "Build PostgreSQL GBIF source batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "675a1f97-c9d5-52d5-ae06-5e7254f39e46",
+      "name": "Loop Over PostgreSQL GBIF source batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1570,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/'+$json.run_id+'/append') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "2b7d3b43-899b-5be5-bb34-7a23cbb04baf",
+      "name": "Append PostgreSQL GBIF source batch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1800,
+        20
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch=$('Build PostgreSQL GBIF source batches').item.json,response=$input.first().json;\nconst errorText=String(response.error?.message||response.error||response.message||response.detail||'');\nif(errorText||response.status!=='appended')throw new Error(errorText||'PostgreSQL GBIF append failed');\nreturn [{json:batch}];"
+      },
+      "id": "bc33018c-c46d-58e7-bf1b-87fdf7ddb8a4",
+      "name": "Verify PostgreSQL GBIF source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2030,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$('Verify PostgreSQL GBIF run started').first().json;\nreturn [{json:source}];"
+      },
+      "id": "e68c134d-22d5-5523-83cc-f480e852f0fb",
+      "name": "Restore GBIF domain payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        -260
+      ]
+    },
+    {
+      "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"bird_taxa\": literal($json[\"bird_taxa\"]),\"event_date_end\": literal($json[\"event_date_end\"]),\"media\": literal($json[\"media\"]),\"observations\": literal($json[\"observations\"]),\"pipeline_id\": literal($json[\"pipeline_id\"]),\"quarantine\": literal($json[\"quarantine\"]),\"quarantine_count\": literal($json[\"quarantine_count\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"source_count\": literal($json[\"source_count\"]),\"source_release\": literal($json[\"source_release\"]),\"taxon_count\": literal($json[\"taxon_count\"]),\"taxon_links\": literal($json[\"taxon_links\"])}; return \"MERGE (run:IngestionRun {id: $run_id}) SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at, run.source_release = $source_release, run.status = 'loading', run.source_count = $source_count, run.taxon_count = $taxon_count, run.quarantine_count = $quarantine_count WITH run CALL { WITH run MERGE (concept_set:TaxonConceptSet {id: 'rg:concept-set:gbif-current'}) SET concept_set.title = 'GBIF taxonomic backbone', concept_set.version = 'mutable-current', concept_set.source_uri = 'https://www.gbif.org/species/search', concept_set.retrieved_at = $retrieved_at MERGE (taxonomy_dataset:SourceDataset {id: 'gbif-dataset:taxonomic-backbone'}) SET taxonomy_dataset.name = 'GBIF taxonomic backbone', taxonomy_dataset.provider = 'GBIF', taxonomy_dataset.version = 'mutable-current', taxonomy_dataset.landing_uri = 'https://www.gbif.org/species/search', taxonomy_dataset.policy_status = 'allowed' MERGE (taxonomy_license:License {id: 'https://creativecommons.org/licenses/by/4.0/'}) SET taxonomy_license.license_uri = 'https://creativecommons.org/licenses/by/4.0/', taxonomy_license.policy_status = 'allowed' MERGE (taxonomy_dataset)-[:LICENSED_UNDER]->(taxonomy_license) MERGE (concept_set)-[:FROM_DATASET]->(taxonomy_dataset) WITH run, concept_set UNWIND $bird_taxa AS row MERGE (taxon:ExternalTaxonConcept {id: row.id}) SET taxon:BirdTaxon, taxon.provider = row.provider, taxon.external_key = row.external_key, taxon.scientific_name = row.scientific_name, taxon.canonical_name = row.canonical_name, taxon.authorship = row.authorship, taxon.rank = row.rank, taxon.taxonomic_status = row.taxonomic_status, taxon.vernacular_name_raw = row.vernacular_name_raw, taxon.source_uri = row.source_uri, taxon.retrieved_at = row.retrieved_at MERGE (scientific_name:ScientificName {id: 'gbif-scientific-name:' + row.external_key}) SET scientific_name.full_name = row.scientific_name, scientific_name.canonical = row.canonical_name, scientific_name.authorship = row.authorship, scientific_name.nomenclatural_code = 'ICZN' MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name) MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set) MERGE (run)-[:INGESTED]->(taxon) RETURN count(*) AS loaded_taxa } CALL { WITH run UNWIND $taxon_links AS row MATCH (parent:ExternalTaxonConcept {id: row.parent_id}) MATCH (child:ExternalTaxonConcept {id: row.child_id}) MERGE (parent)-[:PARENT_OF {provider: 'GBIF'}]->(child) RETURN count(*) AS loaded_taxon_links } CALL { WITH run UNWIND $observations AS row MERGE (dataset:SourceDataset {id: row.dataset_id}) SET dataset.name = 'GBIF occurrence dataset', dataset.provider = 'GBIF', dataset.dataset_key = row.dataset_key, dataset.version = row.source_release, dataset.landing_uri = 'https://www.gbif.org/dataset/' + row.dataset_key, dataset.policy_status = 'allowed' MERGE (license:License {id: row.license_uri}) SET license.license_uri = row.license_uri, license.policy_status = 'allowed' MERGE (dataset)-[:LICENSED_UNDER]->(license) MERGE (source:SourceRecord {id: row.source_record_key}) SET source.external_id = row.external_id, source.record_type = 'observation', source.raw_uri = row.raw_uri, source.raw_hash = row.raw_sha256, source.retrieved_at = row.retrieved_at, source.source_updated_at = row.source_updated_at, source.issues = row.issues MERGE (source)-[:IN_DATASET]->(dataset) WITH run, row, source MATCH (taxon:ExternalTaxonConcept {id: row.external_taxon_id}) MERGE (place:Place {id: row.place_id}) SET place.name = row.place_name, place.country_code = 'KR', place.place_type = 'gbif_admin_area' MERGE (observation:Observation {id: row.id}) SET observation.occurrence_id = row.occurrence_id, observation.event_id = row.event_id, observation.scientific_name_raw = row.scientific_name_raw, observation.observed_at = row.observed_at, observation.event_date_precision = row.event_date_precision, observation.count = row.count, observation.basis = row.basis, observation.lat = row.lat, observation.lon = row.lon, observation.coordinate_uncertainty_m = row.coordinate_uncertainty_m, observation.geodetic_datum = row.geodetic_datum, observation.sensitivity = row.sensitivity, observation.source_record_key = row.source_record_key, observation.ingestion_run_id = $run_id MERGE (observation)-[:IDENTIFIED_AS]->(taxon) MERGE (observation)-[:WITHIN]->(place) MERGE (observation)-[:FROM_RECORD]->(source) MERGE (run)-[:INGESTED]->(observation) MERGE (evidence:EvidenceUnit {id: 'gbif-evidence:' + row.external_id}) SET evidence.evidence_type = 'observation', evidence.locator = row.raw_uri, evidence.accessed_at = row.retrieved_at MERGE (evidence)-[:FROM_RECORD]->(source) RETURN count(*) AS loaded_observations } CALL { WITH run UNWIND $media AS row MATCH (observation:Observation {id: row.observation_id}) MERGE (asset:MediaAsset {id: row.id}) SET asset.media_type = row.media_type, asset.format = row.format, asset.landing_uri = row.landing_uri, asset.asset_uri = row.asset_uri, asset.creator = row.creator, asset.publisher = row.publisher, asset.attribution = row.attribution, asset.license_uri = row.license_uri, asset.redistribution_allowed = true, asset.retrieved_at = row.retrieved_at MERGE (observation)-[:HAS_MEDIA]->(asset) MERGE (run)-[:INGESTED]->(asset) RETURN count(*) AS loaded_media } CALL { WITH run UNWIND $quarantine AS row MERGE (item:QuarantineRecord {id: $pipeline_id + ':' + row.external_id + ':' + row.stage}) ON CREATE SET item.first_seen_run_id = $run_id, item.first_seen_at = $retrieved_at SET item.external_id = row.external_id, item.stage = row.stage, item.reason_codes = row.reason_codes, item.source_uri = row.source_uri, item.last_seen_run_id = $run_id, item.last_seen_at = $retrieved_at, item.resolution_status = 'open' MERGE (run)-[:QUARANTINED]->(item) RETURN count(*) AS loaded_quarantine } SET run.status = 'succeeded', run.finished_at = datetime(), run.taxon_count = loaded_taxa, run.taxon_link_count = loaded_taxon_links, run.observation_count = loaded_observations, run.media_count = loaded_media MERGE (state:IngestState {id: $pipeline_id}) SET state.active_release = $source_release, state.last_successful_run_id = $run_id, state.last_successful_at = datetime(), state.event_date_end = $event_date_end RETURN loaded_taxa, loaded_taxon_links, loaded_observations, loaded_media, loaded_quarantine, state.active_release\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"bird_taxa\": literal($json[\"bird_taxa\"]),\"dataset_id\": literal($json[\"dataset_id\"]),\"media\": literal($json[\"media\"]),\"observations\": literal($json[\"observations\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"taxon_links\": literal($json[\"taxon_links\"])}; return \"CALL { MERGE (concept_set:TaxonConceptSet {id: 'rg:concept-set:gbif-current'}) SET concept_set.title = 'GBIF taxonomic backbone', concept_set.version = 'mutable-current', concept_set.source_uri = 'https://www.gbif.org/species/search', concept_set.retrieved_at = $retrieved_at, concept_set.dataset_id = $dataset_id, concept_set.policy_status = 'allowed' WITH concept_set UNWIND $bird_taxa AS row MERGE (taxon:ExternalTaxonConcept {id: row.id}) SET taxon:BirdTaxon, taxon.provider = row.provider, taxon.external_key = row.external_key, taxon.scientific_name = row.scientific_name, taxon.canonical_name = row.canonical_name, taxon.authorship = row.authorship, taxon.rank = row.rank, taxon.taxonomic_status = row.taxonomic_status, taxon.vernacular_name_raw = row.vernacular_name_raw, taxon.source_uri = row.source_uri, taxon.retrieved_at = row.retrieved_at, taxon.dataset_id = $dataset_id, taxon.policy_status = 'allowed' MERGE (scientific_name:ScientificName {id: 'gbif-scientific-name:' + row.external_key}) SET scientific_name.full_name = row.scientific_name, scientific_name.canonical = row.canonical_name, scientific_name.authorship = row.authorship, scientific_name.nomenclatural_code = 'ICZN' MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name) MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set) RETURN count(*) AS loaded_taxa } CALL { UNWIND $taxon_links AS row MATCH (parent:ExternalTaxonConcept {id: row.parent_id}) MATCH (child:ExternalTaxonConcept {id: row.child_id}) MERGE (parent)-[:PARENT_OF {provider: 'GBIF'}]->(child) RETURN count(*) AS loaded_taxon_links } CALL { UNWIND $observations AS row WITH row MATCH (taxon:ExternalTaxonConcept {id: row.external_taxon_id}) MERGE (place:Place {id: row.place_id}) SET place.name = row.place_name, place.country_code = 'KR', place.place_type = 'gbif_admin_area' MERGE (observation:Observation {id: row.id}) SET observation.occurrence_id = row.occurrence_id, observation.event_id = row.event_id, observation.scientific_name_raw = row.scientific_name_raw, observation.observed_at = row.observed_at, observation.event_date_precision = row.event_date_precision, observation.count = row.count, observation.basis = row.basis, observation.lat = row.lat, observation.lon = row.lon, observation.coordinate_uncertainty_m = row.coordinate_uncertainty_m, observation.geodetic_datum = row.geodetic_datum, observation.sensitivity = row.sensitivity, observation.source_record_key = row.source_record_key, observation.ingestion_run_id = $run_id, observation.dataset_id = $dataset_id, observation.source_dataset_id = row.dataset_id, observation.source_record_id = row.source_record_key, observation.source_uri = row.raw_uri, observation.source_retrieved_at = row.retrieved_at, observation.source_updated_at = row.source_updated_at, observation.license_uri = row.license_uri, observation.policy_status = 'allowed' MERGE (observation)-[:IDENTIFIED_AS]->(taxon) MERGE (observation)-[:WITHIN]->(place) MERGE (evidence:EvidenceUnit {id: 'gbif-evidence:' + row.external_id}) SET evidence.evidence_type = 'observation', evidence.locator = row.raw_uri, evidence.accessed_at = row.retrieved_at, evidence.dataset_id = $dataset_id, evidence.source_record_id = row.source_record_key, evidence.policy_status = 'allowed' MERGE (observation)-[:SUPPORTED_BY]->(evidence) RETURN count(*) AS loaded_observations } CALL { UNWIND $media AS row MATCH (observation:Observation {id: row.observation_id}) MERGE (asset:MediaAsset {id: row.id}) SET asset.media_type = row.media_type, asset.format = row.format, asset.landing_uri = row.landing_uri, asset.asset_uri = row.asset_uri, asset.creator = row.creator, asset.publisher = row.publisher, asset.attribution = row.attribution, asset.license_uri = row.license_uri, asset.redistribution_allowed = true, asset.retrieved_at = row.retrieved_at, asset.dataset_id = $dataset_id, asset.policy_status = 'allowed' MERGE (observation)-[:HAS_MEDIA]->(asset) RETURN count(*) AS loaded_media } RETURN loaded_taxa, loaded_taxon_links, loaded_observations, loaded_media, 'domain_verified' AS status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "14529b7c-eb1e-5079-8eef-6c323e60a66b",
       "name": "Atomic upsert to Neo4j",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        700,
-        -140
+        2030,
+        -260
       ],
       "credentials": {
         "neo4jApi": {
@@ -218,15 +382,15 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Normalize, validate and deduplicate GBIF').first().json;\nconst response = $input.first().json;\nconst result = response;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst loadOk = !errorText\n  && Number(result.loaded_taxa) === expected.taxon_count\n  && Number(result.loaded_taxon_links) === expected.taxon_link_count\n  && Number(result.loaded_observations) === expected.observation_count\n  && Number(result.loaded_media) === expected.media_count\n  && Number(result.loaded_quarantine) === expected.quarantine_count\n  && result['state.active_release'] === expected.source_release;\nreturn [{json: {\n  ...expected,\n  load_ok: loadOk,\n  loaded_taxa: Number(result.loaded_taxa || 0),\n  loaded_taxon_links: Number(result.loaded_taxon_links || 0),\n  loaded_observations: Number(result.loaded_observations || 0),\n  loaded_media: Number(result.loaded_media || 0),\n  loaded_quarantine: Number(result.loaded_quarantine || 0),\n  failure_reason: loadOk ? '' : (errorText || 'Neo4j result counts or active release do not match')\n}}];"
+        "jsCode": "const expected = $('Normalize, validate and deduplicate GBIF').first().json;\nconst response = $input.first().json;\nconst result = response;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst loadOk = !errorText\n  && Number(result.loaded_taxa) === expected.taxon_count\n  && Number(result.loaded_taxon_links) === expected.taxon_link_count\n  && Number(result.loaded_observations) === expected.observation_count\n  && Number(result.loaded_media) === expected.media_count\n  && result.status === 'domain_verified';\nreturn [{json: {\n  ...expected,\n  load_ok: loadOk,\n  loaded_taxa: Number(result.loaded_taxa || 0),\n  loaded_taxon_links: Number(result.loaded_taxon_links || 0),\n  loaded_observations: Number(result.loaded_observations || 0),\n  loaded_media: Number(result.loaded_media || 0),\n  loaded_quarantine: expected.quarantine_count,\n  failure_reason: loadOk ? '' : (errorText || 'Neo4j domain result counts do not match')\n}}];"
       },
       "id": "6b44696c-8925-59b5-ad25-c3b9679b08a1",
       "name": "Verify Neo4j response counts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        990,
-        -140
+        2260,
+        -260
       ]
     },
     {
@@ -259,8 +423,76 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1270,
-        -140
+        2490,
+        -260
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$input.first().json;\nreturn [{json:{...source,ingest_request:{counts:{source_records:source.observation_count,\n  quarantined:source.quarantine_count,taxa:source.loaded_taxa,taxon_links:source.loaded_taxon_links,\n  observations:source.loaded_observations,media:source.loaded_media},\n  cursor:{event_date_end:source.event_date_end},expected_state_version:source.expected_state_version}}}];"
+      },
+      "id": "fc6310b4-b7eb-50c3-8e55-27c6b7da604a",
+      "name": "Prepare PostgreSQL GBIF finalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        -380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/'+$json.run_id+'/finalize') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "88a27888-dc15-5351-973a-511713f97558",
+      "name": "Finalize PostgreSQL GBIF release",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2950,
+        -380
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source=$('Prepare PostgreSQL GBIF finalization').first().json,response=$input.first().json;\nconst errorText=String(response.error?.message||response.error||response.message||response.detail||'');\nif(errorText||response.status!=='finalized'||response.state_version!==source.expected_state_version+1)\n  throw new Error(errorText||'PostgreSQL GBIF activation failed');\nreturn [{json:{...source,finalize_ok:true}}];"
+      },
+      "id": "1f7f1a4e-08c6-5b22-b01e-8748e5fcd8f1",
+      "name": "Verify PostgreSQL GBIF release",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3180,
+        -380
       ]
     },
     {
@@ -273,8 +505,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1540,
-        -260
+        3410,
+        -380
       ]
     },
     {
@@ -292,8 +524,8 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        1810,
-        -260
+        3640,
+        -380
       ],
       "onError": "continueRegularOutput",
       "notes": "Map the RobinGraph Operations Discord Webhook credential after import. The webhook URL must remain only in n8n's credential store."
@@ -313,7 +545,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        1540,
+        2720,
         180
       ],
       "onError": "continueRegularOutput",
@@ -328,7 +560,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        1810,
+        2950,
         180
       ]
     },
@@ -339,8 +571,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        2080,
-        -60
+        3870,
+        -100
       ]
     }
   ],
@@ -416,7 +648,7 @@
       "main": [
         [
           {
-            "node": "Atomic upsert to Neo4j",
+            "node": "Prepare PostgreSQL GBIF run",
             "type": "main",
             "index": 0
           }
@@ -424,6 +656,101 @@
         [
           {
             "node": "Notify failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL GBIF run": {
+      "main": [
+        [
+          {
+            "node": "Start PostgreSQL GBIF run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start PostgreSQL GBIF run": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL GBIF run started",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL GBIF run started": {
+      "main": [
+        [
+          {
+            "node": "Build PostgreSQL GBIF source batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build PostgreSQL GBIF source batches": {
+      "main": [
+        [
+          {
+            "node": "Loop Over PostgreSQL GBIF source batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over PostgreSQL GBIF source batches": {
+      "main": [
+        [
+          {
+            "node": "Restore GBIF domain payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append PostgreSQL GBIF source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append PostgreSQL GBIF source batch": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL GBIF source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL GBIF source batch": {
+      "main": [
+        [
+          {
+            "node": "Loop Over PostgreSQL GBIF source batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore GBIF domain payload": {
+      "main": [
+        [
+          {
+            "node": "Atomic upsert to Neo4j",
             "type": "main",
             "index": 0
           }
@@ -456,7 +783,7 @@
       "main": [
         [
           {
-            "node": "Advance n8n cursor",
+            "node": "Prepare PostgreSQL GBIF finalization",
             "type": "main",
             "index": 0
           }
@@ -464,6 +791,39 @@
         [
           {
             "node": "Notify failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL GBIF finalization": {
+      "main": [
+        [
+          {
+            "node": "Finalize PostgreSQL GBIF release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize PostgreSQL GBIF release": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL GBIF release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL GBIF release": {
+      "main": [
+        [
+          {
+            "node": "Advance n8n cursor",
             "type": "main",
             "index": 0
           }

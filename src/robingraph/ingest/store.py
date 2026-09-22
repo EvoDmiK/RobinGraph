@@ -110,6 +110,18 @@ class IngestionRunContext:
     release: SourceReleaseInput
 
 
+@dataclass(frozen=True)
+class ActiveReleaseContext:
+    """Active allowed release and its optimistic activation version."""
+
+    pipeline_id: str
+    dataset: SourceDatasetInput
+    release: SourceReleaseInput
+    last_successful_run_id: str
+    cursor: Mapping[str, Any]
+    version: int
+
+
 class IngestionConflictError(ValueError):
     """An idempotency key was reused with different immutable content."""
 
@@ -330,6 +342,45 @@ class IngestionStore:
                 (pipeline_id,),
             ).fetchone()
         return None if row is None else str(row[0])
+
+    def active_release_context(self, pipeline_id: str) -> ActiveReleaseContext | None:
+        """Return the active allowed release with metadata needed by readers."""
+
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT dataset.id, dataset.source_id, dataset.name, dataset.provider,
+                       dataset.landing_uri, dataset.release_strategy, dataset.policy_status,
+                       dataset.metadata, release.id, release.release_key,
+                       release.retrieved_at, release.content_sha256,
+                       release.raw_object_uri, release.metadata,
+                       state.last_successful_run_id, state.cursor, state.version
+                FROM ingest_state AS state
+                JOIN source_release AS release ON release.id = state.active_release_id
+                JOIN source_dataset AS dataset ON dataset.id = release.dataset_id
+                WHERE state.pipeline_id = %s
+                  AND dataset.policy_status = 'allowed'
+                """,
+                (pipeline_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        dataset = SourceDatasetInput(
+            id=row[0], source_id=row[1], name=row[2], provider=row[3],
+            landing_uri=row[4], release_strategy=row[5], policy_status=row[6], metadata=row[7],
+        )
+        release = SourceReleaseInput(
+            id=row[8], dataset_id=dataset.id, release_key=row[9], retrieved_at=row[10],
+            content_sha256=row[11], raw_object_uri=row[12], metadata=row[13],
+        )
+        return ActiveReleaseContext(
+            pipeline_id=pipeline_id,
+            dataset=dataset,
+            release=release,
+            last_successful_run_id=str(row[14]),
+            cursor=row[15],
+            version=int(row[16]),
+        )
 
     def run_context(self, run_id: str) -> IngestionRunContext:
         """Return the server-authoritative dataset and release for ``run_id``.

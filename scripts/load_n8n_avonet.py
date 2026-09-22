@@ -39,14 +39,6 @@ DEFAULT_SOURCE = ROOT / ".cache" / "avonet-34480856.xlsx"
 SHEET_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 REL_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
 PACKAGE_REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
-FAIL_CYPHER = (
-    "MATCH (run:IngestionRun {id:$run_id}) WHERE run.status='loading' "
-    "SET run.status='failed', run.failed_at=datetime(), "
-    "run.failure_reason='verified_avonet_batch_loader_failed' "
-    "RETURN run.id AS failed_run_id, run.status AS status"
-)
-
-
 def _tag(namespace: str, local: str) -> str:
     return f"{{{namespace}}}{local}"
 
@@ -372,7 +364,7 @@ def create_gateway(
              "data": {"user": username, "password": password}},
         )
         credential_ids.append(str(basic["id"]))
-        operations = {"batch": BATCH_CYPHER, "finalize": FINALIZE_CYPHER, "fail": FAIL_CYPHER}
+        operations = {"batch": BATCH_CYPHER, "finalize": FINALIZE_CYPHER}
         nodes: list[dict[str, object]] = []
         connections: dict[str, object] = {}
         paths: dict[str, str] = {}
@@ -448,8 +440,55 @@ def _load_batch(gateway: TemporaryGateway, config: dict[str, object], run_id: st
     print(f"avonet_batch={batch_index + 1}/{batch_count}", flush=True)
 
 
+def _control_request(method: str, path: str, payload: dict[str, object] | None = None) -> dict[str, object]:
+    base = os.environ["ROBINGRAPH_INGEST_API_URL"].rstrip("/")
+    body = None if payload is None else json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
+    request = Request(
+        base + path,
+        data=body,
+        headers={
+            "Authorization": "Bearer " + os.environ["ROBINGRAPH_INGEST_INTERNAL_TOKEN"],
+            "Content-Type": "application/json",
+            "User-Agent": "RobinGraph verified AVONET loader",
+        },
+        method=method,
+    )
+    with urlopen(request, timeout=60) as response:
+        result = json.loads(response.read())
+    if not isinstance(result, dict):
+        raise RuntimeError("Ingest control API returned a non-object response")
+    return result
+
+
+def _append_source_batch(config: dict[str, object], run_id: str, retrieved_at: str,
+                         profiles: list[dict[str, object]]) -> None:
+    records = [{
+        "id": profile["id"],
+        "external_id": str(profile.get("sequence") or profile["scientific_name"]),
+        "record_type": "trait_profile",
+        "raw_object_uri": profile["source_uri"],
+        "raw_sha256": config["sha256"],
+        "retrieved_at": retrieved_at,
+        "parser_version": "avonet-v2",
+        "license_policy_status": "allowed",
+        "payload": {
+            "scientific_name": profile["scientific_name"],
+            "row_number": profile["row_number"],
+            "sheet": config["sheet"],
+            "sample_size": profile["sample_size"],
+        },
+    } for profile in profiles]
+    response = _control_request(
+        "POST", f"/internal/v1/ingest/{quote(run_id, safe='')}/append",
+        {"records": records, "quarantine_items": []},
+    )
+    if response.get("status") != "appended":
+        raise RuntimeError("PostgreSQL AVONET source batch was not acknowledged")
+
+
 def load_remote(path: Path, config: dict[str, object]) -> dict[str, object]:
-    required = ["ROBINGRAPH_N8N_API_URL", "ROBINGRAPH_N8N_API_KEY", "NEO4J_USERNAME", "NEO4J_PASSWORD"]
+    required = ["ROBINGRAPH_N8N_API_URL", "ROBINGRAPH_N8N_API_KEY", "NEO4J_USERNAME", "NEO4J_PASSWORD",
+                "ROBINGRAPH_INGEST_API_URL", "ROBINGRAPH_INGEST_INTERNAL_TOKEN"]
     missing = [name for name in required if not os.environ.get(name, "").strip()]
     if missing:
         raise RuntimeError("Missing required environment settings: " + ", ".join(missing))
@@ -469,17 +508,38 @@ def load_remote(path: Path, config: dict[str, object]) -> dict[str, object]:
               "matched_profiles": 0}
     current: list[dict[str, object]] = []
     primary_error: Exception | None = None
+    run_started = False
     try:
+        started = _control_request("POST", "/internal/v1/ingest/begin", {
+            "dataset": {"id": config["dataset_id"], "source_id": "avonet",
+                "name": "AVONET Supplementary dataset 1", "provider": "AVONET",
+                "landing_uri": "https://doi.org/10.6084/m9.figshare.16586228.v7",
+                "release_strategy": "versioned", "policy_status": "allowed",
+                "metadata": {"license_uri": "https://creativecommons.org/licenses/by/4.0/"}},
+            "release": {"id": config["source_release"], "release_key": config["release"],
+                "retrieved_at": retrieved_at, "content_sha256": config["sha256"],
+                "raw_object_uri": config["url"], "metadata": {"sheet": config["sheet"],
+                    "taxonomy_release": config["taxonomy_release"],
+                    "taxonomy_concept_set_id": config["taxonomy_concept_set_id"]}},
+            "run": {"id": run_id, "pipeline_id": config["pipeline_id"], "started_at": retrieved_at,
+                "manifest": {"orchestrator": "temporary-n8n-gateway", "workflow": "avonet"}},
+        })
+        if started.get("status") != "started" or not isinstance(started.get("state_version"), int):
+            raise RuntimeError("PostgreSQL AVONET run was not started")
+        expected_state_version = int(started["state_version"])
+        run_started = True
         gateway.activate()
         for profile in iter_profiles(path, config):
             profile["profile_json"] = json.dumps(profile, ensure_ascii=False, separators=(",", ":"))
             current.append(profile)
             if len(current) < batch_size:
                 continue
+            _append_source_batch(config, run_id, retrieved_at, current)
             _load_batch(gateway, config, run_id, retrieved_at, current, totals,
                         totals["loaded_profiles"] // batch_size, batch_count)
             current = []
         if current:
+            _append_source_batch(config, run_id, retrieved_at, current)
             _load_batch(gateway, config, run_id, retrieved_at, current, totals,
                         totals["loaded_profiles"] // batch_size, batch_count)
         expected = {
@@ -495,14 +555,24 @@ def load_remote(path: Path, config: dict[str, object]) -> dict[str, object]:
         })
         if (finalized.get("finalized_run_id") != run_id or
                 finalized.get("active_release") != config["release"] or
-                finalized.get("status") != "succeeded"):
+                finalized.get("status") != "domain_verified"):
             raise RuntimeError("AVONET finalization did not acknowledge the verified run")
+        activated = _control_request("POST", f"/internal/v1/ingest/{quote(run_id, safe='')}/finalize", {
+            "counts": {"source_records": totals["loaded_profiles"],
+                "trait_claims": totals["loaded_claims"], "mapping_candidates": totals["loaded_candidates"]},
+            "cursor": {"taxonomy_release": config["taxonomy_release"],
+                "taxonomy_concept_set_id": config["taxonomy_concept_set_id"]},
+            "expected_state_version": expected_state_version,
+        })
+        if activated.get("status") != "finalized" or activated.get("state_version") != expected_state_version + 1:
+            raise RuntimeError("PostgreSQL AVONET release activation failed")
         return {"run_id": run_id, **totals, "active_release": finalized["active_release"]}
     except Exception as error:
         primary_error = error
-        if gateway.active:
+        if run_started:
             try:
-                gateway.post("fail", {"run_id": run_id})
+                _control_request("POST", f"/internal/v1/ingest/{quote(run_id, safe='')}/fail",
+                                 {"reason": "verified_avonet_batch_loader_failed"})
             except Exception:
                 pass
         raise

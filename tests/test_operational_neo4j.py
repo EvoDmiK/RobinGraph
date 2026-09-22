@@ -74,10 +74,12 @@ class OperationalNeo4jRepositoryTest(unittest.TestCase):
         query = self.repository._run.call_args.args[0]
         parameters = self.repository._run.call_args.kwargs
         self.assertIn("$scientific_name", query)
-        self.assertIn("dataset.policy_status = 'allowed'", query)
-        self.assertIn("license.policy_status = 'allowed'", query)
+        self.assertIn("observation.policy_status = 'allowed'", query)
+        self.assertIn("evidence.policy_status = 'allowed'", query)
+        self.assertIn("observation.license_uri IN $allowed_observation_license_uris", query)
         self.assertIn("media.license_uri IN $allowed_media_license_uris", query)
-        self.assertIn("ORDER BY source.retrieved_at DESC, source.id DESC", query)
+        self.assertIn("ORDER BY observation.source_retrieved_at DESC", query)
+        self.assertNotIn("SourceRecord", query)
         self.assertIn("})[0] AS citation", query)
         self.assertNotIn("2498349", query)
         self.assertEqual("2498349", parameters["taxon_key"])

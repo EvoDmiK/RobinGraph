@@ -5,9 +5,8 @@ workflow (`scripts/generate_n8n_reference_ingest.py`), never the fixture
 graph or the GBIF operational graph. Every query below:
 
 - is read-only, parameterized Cypher (no query text built from request input);
-- is scoped to the currently active `reference-taxonomy` `IngestState` and
-  its `active_concept_set_id`, so a superseded or partially loaded AviList
-  release is never surfaced;
+- is scoped to the active concept-set context supplied by PostgreSQL, so a
+  superseded or partially loaded AviList release is never surfaced;
 - matches only `Taxon:BirdTaxon` nodes. `ExternalTaxonConcept:BirdTaxon`
   (the GBIF operational taxonomy) shares the `BirdTaxon` label but never the
   `Taxon` label, so the label pair `Taxon:BirdTaxon` structurally excludes
@@ -50,9 +49,8 @@ from neo4j import GraphDatabase
 from ..graph.settings import Neo4jSettings
 from .taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
-# The active concept set for the reference taxonomy is read from IngestState,
-# never guessed from "the newest TaxonConceptSet" -- a concept set that is
-# loaded but not yet promoted to active must stay invisible here.
+# Legacy fallback for direct library callers. The deployed ``serve-neo4j``
+# path always supplies PostgreSQL active context and never executes this query.
 _ACTIVE_CONCEPT_SET_QUERY = """
 MATCH (state:IngestState {id: 'reference-taxonomy'})
 MATCH (conceptSet:TaxonConceptSet {id: state.active_concept_set_id})
@@ -205,9 +203,11 @@ class Neo4jTaxonomyLineageRepository:
         self,
         settings: Neo4jSettings,
         active_korean_dataset_id: Callable[[], str | None] | None = None,
+        active_taxonomy_context: Callable[[], tuple[str, str] | None] | None = None,
     ) -> None:
         self._settings = settings
         self._active_korean_dataset_id = active_korean_dataset_id or (lambda: None)
+        self._active_taxonomy_context = active_taxonomy_context
         self._driver = GraphDatabase.driver(settings.uri, auth=(settings.username, settings.password))
 
     def close(self) -> None:
@@ -228,17 +228,22 @@ class Neo4jTaxonomyLineageRepository:
         return rows[0] if rows else {}
 
     def _active_concept_set(self) -> tuple[str, str]:
-        active = self._single(_ACTIVE_CONCEPT_SET_QUERY)
-        concept_set_id = active.get("concept_set_id")
-        if not concept_set_id:
-            # The reference-taxonomy IngestState or its active concept set is
-            # missing -- the AviList projection itself is unavailable, which
-            # is a different failure than "this name doesn't exist".
+        provider = getattr(self, "_active_taxonomy_context", None)
+        if provider is None:
+            row = self._single(_ACTIVE_CONCEPT_SET_QUERY)
+            active = (row.get("concept_set_id"), row.get("taxonomy_release")) if row else None
+        else:
+            active = provider()
+        if active is None:
             raise ValueError("Active AviList reference-taxonomy concept set is not available")
-        taxonomy_release = active.get("taxonomy_release")
+        raw_concept_set_id, raw_taxonomy_release = active
+        concept_set_id = "" if raw_concept_set_id is None else str(raw_concept_set_id).strip()
+        taxonomy_release = "" if raw_taxonomy_release is None else str(raw_taxonomy_release).strip()
+        if not concept_set_id:
+            raise ValueError("Active AviList reference-taxonomy concept set is not available")
         if not taxonomy_release:
             raise ValueError("Active AviList reference-taxonomy release is not available")
-        return str(concept_set_id), str(taxonomy_release)
+        return concept_set_id, taxonomy_release
 
     def _korean_dataset_id(self) -> str | None:
         dataset_id = self._active_korean_dataset_id()

@@ -36,7 +36,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const now = new Date();\nconst config = {\"pipeline_id\": \"reference-taxonomy-traits\", \"taxonomy_release\": \"v2025b\", \"taxonomy_url\": \"https://explore.avilist.org/data/avilist-2025b.json\", \"taxonomy_hash\": \"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411\", \"taxonomy_expected_rows\": 33684, \"taxonomy_dataset_id\": \"avilist-dataset:v2025b\", \"taxonomy_concept_set_id\": \"rg:concept-set:avilist-v2025b\", \"taxonomy_license_uri\": \"https://creativecommons.org/licenses/by/4.0/\", \"taxonomy_landing_uri\": \"https://www.avilist.org/checklist/v2025b/\", \"checklistbank_dataset_key\": 316115, \"checklistbank_version\": \"2026-08-20\", \"checklistbank_doi\": \"10.48580/dgywk\", \"checklistbank_metadata_url\": \"https://api.checklistbank.org/dataset/316115\", \"checklistbank_search_url\": \"https://api.checklistbank.org/dataset/316115/nameusage/search\", \"checklistbank_license_uri\": \"https://creativecommons.org/licenses/by/4.0/\", \"trait_release\": \"figshare-article-3559887-v1:file-5631081\", \"trait_url\": \"https://ndownloader.figshare.com/files/5631081\", \"trait_hash\": \"97216eb1797da077169ebb1ebea275db293b09fc62f8bb8911f9beb98c50d321\", \"trait_expected_rows\": 9995, \"trait_expected_valid_rows\": 9993, \"trait_dataset_id\": \"eltontraits-dataset:v1\", \"trait_license_uri\": \"https://creativecommons.org/publicdomain/zero/1.0/\", \"trait_landing_uri\": \"https://doi.org/10.6084/m9.figshare.c.3306933.v1\", \"minimum_exact_match_ratio\": 0.7, \"taxonomy_batch_size\": 1000, \"trait_claim_batch_size\": 2000, \"mapping_candidate_batch_size\": 1000};\nreturn [{json: {...config, run_id: `n8n-reference-${$execution.id}`, retrieved_at: now.toISOString()}}];"
+        "jsCode": "const now = new Date();\nconst config = {\"pipeline_id\": \"reference-taxonomy-traits\", \"dataset_id\": \"reference-bundle:avilist-v2025b:eltontraits-v1\", \"source_release\": \"reference-bundle:sha256-fd3749be71afd154155b46c3e065e32485bd4106c1883b928a2064aa5c39822f\", \"bundle_sha256\": \"fd3749be71afd154155b46c3e065e32485bd4106c1883b928a2064aa5c39822f\", \"taxonomy_release\": \"v2025b\", \"taxonomy_url\": \"https://explore.avilist.org/data/avilist-2025b.json\", \"taxonomy_hash\": \"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411\", \"taxonomy_expected_rows\": 33684, \"taxonomy_dataset_id\": \"avilist-dataset:v2025b\", \"taxonomy_concept_set_id\": \"rg:concept-set:avilist-v2025b\", \"taxonomy_license_uri\": \"https://creativecommons.org/licenses/by/4.0/\", \"taxonomy_landing_uri\": \"https://www.avilist.org/checklist/v2025b/\", \"checklistbank_dataset_key\": 316115, \"checklistbank_version\": \"2026-08-20\", \"checklistbank_doi\": \"10.48580/dgywk\", \"checklistbank_metadata_url\": \"https://api.checklistbank.org/dataset/316115\", \"checklistbank_search_url\": \"https://api.checklistbank.org/dataset/316115/nameusage/search\", \"checklistbank_license_uri\": \"https://creativecommons.org/licenses/by/4.0/\", \"trait_release\": \"figshare-article-3559887-v1:file-5631081\", \"trait_url\": \"https://ndownloader.figshare.com/files/5631081\", \"trait_hash\": \"97216eb1797da077169ebb1ebea275db293b09fc62f8bb8911f9beb98c50d321\", \"trait_expected_rows\": 9995, \"trait_expected_valid_rows\": 9993, \"trait_dataset_id\": \"eltontraits-dataset:v1\", \"trait_license_uri\": \"https://creativecommons.org/publicdomain/zero/1.0/\", \"trait_landing_uri\": \"https://doi.org/10.6084/m9.figshare.c.3306933.v1\", \"minimum_exact_match_ratio\": 0.7, \"taxonomy_batch_size\": 500, \"trait_claim_batch_size\": 500, \"mapping_candidate_batch_size\": 500};\nreturn [{json: {...config, run_id: `n8n-reference-${$execution.id}`, retrieved_at: now.toISOString()}}];"
       },
       "id": "0d3cfce4-1f83-5171-9d93-e5105ae039a0",
       "name": "Build reference configuration",
@@ -318,16 +318,118 @@
     },
     {
       "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Assemble claims and quality gates').first().json;\nreturn [{json: {...expected, ingest_request: {\n  dataset: {\n    id: expected.dataset_id,\n    source_id: 'reference-taxonomy-traits',\n    name: 'AviList and EltonTraits approved reference bundle',\n    provider: 'AviList Core Team / Wilman et al. / Catalogue of Life',\n    landing_uri: expected.taxonomy_landing_uri,\n    release_strategy: 'versioned',\n    policy_status: 'allowed',\n    metadata: {\n      taxonomy_dataset_id: expected.taxonomy_dataset_id,\n      trait_dataset_id: expected.trait_dataset_id,\n      taxonomy_license_uri: expected.taxonomy_license_uri,\n      trait_license_uri: expected.trait_license_uri,\n      checklistbank_license_uri: expected.checklistbank_license_uri,\n    },\n  },\n  release: {\n    id: expected.source_release,\n    release_key: expected.source_release,\n    retrieved_at: expected.retrieved_at,\n    content_sha256: expected.bundle_sha256,\n    raw_object_uri: expected.taxonomy_url,\n    metadata: {\n      concept_set_id: expected.taxonomy_concept_set_id,\n      taxonomy_release: expected.taxonomy_release,\n      taxonomy_sha256: expected.taxonomy_sha256,\n      trait_release: expected.trait_release,\n      trait_sha256: expected.trait_sha256,\n      checklistbank_dataset_key: expected.checklistbank_dataset_key,\n    },\n  },\n  run: {\n    id: expected.run_id,\n    pipeline_id: expected.pipeline_id,\n    started_at: expected.retrieved_at,\n    manifest: {\n      orchestrator: 'n8n', workflow: 'reference-taxonomy-traits',\n      expected_taxa: expected.taxonomy_taxon_count,\n      expected_trait_claims: expected.trait_claim_count,\n      expected_mapping_candidates: expected.mapping_candidate_count,\n    },\n  },\n}}}];"
+      },
+      "id": "3131cc9d-657d-52a4-88ec-b5400ed4bb93",
+      "name": "Prepare PostgreSQL reference run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1010,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + '/internal/v1/ingest/begin' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "8cf32d63-967f-5bc1-b828-611f62966ac9",
+      "name": "Start PostgreSQL reference run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1250,
+        -180
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Prepare PostgreSQL reference run').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst version = response.state_version;\nconst startOk = !errorText && response.status === 'started'\n  && Number.isSafeInteger(version) && version >= 0;\nreturn [{json: {...expected, expected_state_version: version, start_ok: startOk,\n  failure_reason: startOk ? '' : (errorText || 'PostgreSQL did not start the reference run')}}];"
+      },
+      "id": "198bfbfe-a0fb-5c77-a9f9-d9aa4909f892",
+      "name": "Verify PostgreSQL reference run started",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1490,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9e6a1526-3f0c-5d42-82c0-7d9efe19251f",
+              "leftValue": "={{ $json.start_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "672e3156-e2a4-5ab6-af46-95473ef63bc4",
+      "name": "PostgreSQL reference run started?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1730,
+        -180
+      ]
+    },
+    {
+      "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"checklistbank_dataset_key\": literal($json[\"checklistbank_dataset_key\"]),\"checklistbank_doi\": literal($json[\"checklistbank_doi\"]),\"checklistbank_license_uri\": literal($json[\"checklistbank_license_uri\"]),\"checklistbank_metadata_url\": literal($json[\"checklistbank_metadata_url\"]),\"checklistbank_version\": literal($json[\"checklistbank_version\"]),\"pipeline_id\": literal($json[\"pipeline_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_dataset_id\": literal($json[\"taxonomy_dataset_id\"]),\"taxonomy_landing_uri\": literal($json[\"taxonomy_landing_uri\"]),\"taxonomy_license_uri\": literal($json[\"taxonomy_license_uri\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"]),\"taxonomy_taxon_count\": literal($json[\"taxonomy_taxon_count\"]),\"taxonomy_url\": literal($json[\"taxonomy_url\"]),\"trait_claim_count\": literal($json[\"trait_claim_count\"]),\"trait_dataset_id\": literal($json[\"trait_dataset_id\"]),\"trait_landing_uri\": literal($json[\"trait_landing_uri\"]),\"trait_license_uri\": literal($json[\"trait_license_uri\"]),\"trait_release\": literal($json[\"trait_release\"]),\"trait_sha256\": literal($json[\"trait_sha256\"]),\"trait_url\": literal($json[\"trait_url\"])}; return \"MERGE (run:IngestionRun {id: $run_id}) SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at, run.status = 'loading', run.taxonomy_release = $taxonomy_release, run.trait_release = $trait_release, run.taxonomy_sha256 = $taxonomy_sha256, run.trait_sha256 = $trait_sha256, run.expected_taxa = $taxonomy_taxon_count, run.expected_trait_claims = $trait_claim_count MERGE (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) SET concept_set.title = 'AviList global avian checklist', concept_set.version = $taxonomy_release, concept_set.source_uri = $taxonomy_landing_uri, concept_set.snapshot_uri = $taxonomy_url, concept_set.snapshot_sha256 = $taxonomy_sha256, concept_set.retrieved_at = $retrieved_at MERGE (taxonomy_dataset:SourceDataset {id: $taxonomy_dataset_id}) SET taxonomy_dataset.name = 'AviList', taxonomy_dataset.provider = 'AviList Core Team', taxonomy_dataset.version = $taxonomy_release, taxonomy_dataset.landing_uri = $taxonomy_landing_uri, taxonomy_dataset.snapshot_uri = $taxonomy_url, taxonomy_dataset.snapshot_sha256 = $taxonomy_sha256, taxonomy_dataset.policy_status = 'allowed' MERGE (taxonomy_license:License {id: $taxonomy_license_uri}) SET taxonomy_license.license_uri = $taxonomy_license_uri, taxonomy_license.policy_status = 'allowed' MERGE (taxonomy_dataset)-[:LICENSED_UNDER]->(taxonomy_license) MERGE (concept_set)-[:FROM_DATASET]->(taxonomy_dataset) MERGE (trait_dataset:SourceDataset {id: $trait_dataset_id}) SET trait_dataset.name = 'EltonTraits 1.0', trait_dataset.provider = 'Wilman et al.', trait_dataset.version = $trait_release, trait_dataset.landing_uri = $trait_landing_uri, trait_dataset.snapshot_uri = $trait_url, trait_dataset.snapshot_sha256 = $trait_sha256, trait_dataset.policy_status = 'allowed' MERGE (trait_license:License {id: $trait_license_uri}) SET trait_license.license_uri = $trait_license_uri, trait_license.policy_status = 'allowed' MERGE (trait_dataset)-[:LICENSED_UNDER]->(trait_license) MERGE (crosswalk_dataset:SourceDataset {id: 'checklistbank-dataset:' + toString($checklistbank_dataset_key)}) SET crosswalk_dataset.name = 'Catalogue of Life via ChecklistBank', crosswalk_dataset.version = $checklistbank_version, crosswalk_dataset.doi = $checklistbank_doi, crosswalk_dataset.landing_uri = $checklistbank_metadata_url, crosswalk_dataset.policy_status = 'allowed' MERGE (crosswalk_license:License {id: $checklistbank_license_uri}) SET crosswalk_license.license_uri = $checklistbank_license_uri, crosswalk_license.policy_status = 'allowed' MERGE (crosswalk_dataset)-[:LICENSED_UNDER]->(crosswalk_license) RETURN run.id AS started_run_id, run.status AS run_status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"dataset_id\": literal($json[\"dataset_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_landing_uri\": literal($json[\"taxonomy_landing_uri\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"]),\"taxonomy_url\": literal($json[\"taxonomy_url\"])}; return \"MERGE (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) SET concept_set.title = 'AviList global avian checklist', concept_set.version = $taxonomy_release, concept_set.source_uri = $taxonomy_landing_uri, concept_set.snapshot_uri = $taxonomy_url, concept_set.snapshot_sha256 = $taxonomy_sha256, concept_set.retrieved_at = $retrieved_at, concept_set.dataset_id = $dataset_id, concept_set.policy_status = 'allowed', concept_set.source_record_ids = [] RETURN concept_set.id AS initialized_concept_set_id\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
-      "id": "c679877b-d331-5367-ad2e-97b8a8d47735",
-      "name": "Start reference ingestion run",
+      "id": "e46e81c6-25d7-5c01-b80f-4b683952f269",
+      "name": "Initialize reference domain projection",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        1010,
+        1970,
         -180
       ],
       "credentials": {
@@ -343,14 +445,14 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble claims and quality gates').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst startOk = !errorText && response.started_run_id === expected.run_id && response.run_status === 'loading';\nreturn [{json: {...expected, start_ok: startOk, failure_reason: startOk ? '' : (errorText || 'Neo4j did not start the ingestion run')}}];"
+        "jsCode": "const expected = $('Verify PostgreSQL reference run started').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst startOk = !errorText && response.initialized_concept_set_id === expected.taxonomy_concept_set_id;\nreturn [{json: {...expected, start_ok: startOk,\n  failure_reason: startOk ? '' : (errorText || 'Neo4j did not initialize the reference domain projection')}}];"
       },
-      "id": "e1005861-e217-579b-8adf-a16bb2dfc27e",
-      "name": "Verify ingestion run started",
+      "id": "84885081-32a8-5353-8224-5e0aa3e051c8",
+      "name": "Verify reference domain initialized",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1250,
+        2210,
         -180
       ]
     },
@@ -365,7 +467,7 @@
           },
           "conditions": [
             {
-              "id": "b66f8319-b1f7-5390-85e5-36c3ac07052d",
+              "id": "4e69a8a6-356c-53b3-a666-f821cc1cf46f",
               "leftValue": "={{ $json.start_ok }}",
               "rightValue": true,
               "operator": {
@@ -379,31 +481,32 @@
         },
         "options": {}
       },
-      "id": "91b07575-df20-51be-b0fd-4cd78c81bcf1",
-      "name": "Ingestion run started?",
+      "id": "e0465d1e-2e39-5305-8288-2b82a58e5564",
+      "name": "Reference domain initialized?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        1490,
+        2450,
         -180
       ]
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const source = $('Assemble claims and quality gates').first().json;\nconst size = source.taxonomy_batch_size;\nconst batches = [];\nfor (let offset = 0; offset < source.taxa.length; offset += size) {\n  const taxa = source.taxa.slice(offset, offset + size);\n  const ids = new Set(taxa.map(row => row.id));\n  batches.push({\n    taxa,\n    identifiers: source.taxon_identifiers.filter(row => ids.has(row.taxon_id)),\n    links: source.taxon_links.filter(row => ids.has(row.child_id))\n  });\n}\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  taxonomy_release: source.taxonomy_release,\n  taxonomy_concept_set_id: source.taxonomy_concept_set_id,\n  taxonomy_dataset_id: source.taxonomy_dataset_id,\n  taxonomy_sha256: source.taxonomy_sha256,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch\n}}));"
+        "jsCode": "const source = $('Assemble claims and quality gates').first().json;\nconst size = source.taxonomy_batch_size;\nconst batches = [];\nfor (let offset = 0; offset < source.taxa.length; offset += size) {\n  const taxa = source.taxa.slice(offset, offset + size);\n  const ids = new Set(taxa.map(row => row.id));\n  batches.push({\n    taxa,\n    identifiers: source.taxon_identifiers.filter(row => ids.has(row.taxon_id)),\n    links: source.taxon_links.filter(row => ids.has(row.child_id))\n  });\n}\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  dataset_id: source.dataset_id,\n  retrieved_at: source.retrieved_at,\n  taxonomy_release: source.taxonomy_release,\n  taxonomy_concept_set_id: source.taxonomy_concept_set_id,\n  taxonomy_dataset_id: source.taxonomy_dataset_id,\n  taxonomy_sha256: source.taxonomy_sha256,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch\n}}));"
       },
       "id": "1d9b8e54-96e3-580c-bd85-8f4ee32d844d",
       "name": "Prepare taxonomy batches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1730,
+        2690,
         -300
       ]
     },
     {
       "parameters": {
+        "batchSize": 1,
         "options": {}
       },
       "id": "0edc9964-620a-5119-b8a6-af2d04882c78",
@@ -411,7 +514,75 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        1970,
+        2930,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $input.first().json;\nconst records = batch.taxa.map(row => ({\n  id: row.source_record_id,\n  external_id: String(row.sequence),\n  record_type: 'taxon_concept',\n  raw_object_uri: row.source_uri,\n  raw_sha256: batch.taxonomy_sha256,\n  retrieved_at: row.retrieved_at,\n  parser_version: 'reference-taxonomy-v3',\n  license_policy_status: 'allowed',\n  payload: {\n    source_id: 'avilist', scientific_name: row.scientific_name,\n    rank: row.rank, taxonomy_release: batch.taxonomy_release,\n  },\n}));\nreturn [{json: {...batch, ingest_request: {records, quarantine_items: []}}}];"
+      },
+      "id": "3a65e50c-7dad-5e4a-a85f-29383dd29381",
+      "name": "Prepare PostgreSQL taxonomy source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3170,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/append') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "dc06f9ce-0d5e-5ed6-833b-2117daf1d0ad",
+      "name": "Append PostgreSQL taxonomy source batch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3410,
+        -300
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $('Prepare PostgreSQL taxonomy source batch').item.json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst appendOk = !errorText && response.status === 'appended';\nreturn [{json: {...batch, append_ok: appendOk,\n  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the taxonomy source batch')}}];"
+      },
+      "id": "a758d2b6-6293-5bdb-8403-5cc1309f8420",
+      "name": "Verify PostgreSQL taxonomy source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3650,
         -300
       ]
     },
@@ -419,14 +590,14 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"identifiers\": literal($json[\"identifiers\"]),\"links\": literal($json[\"links\"]),\"run_id\": literal($json[\"run_id\"]),\"taxa\": literal($json[\"taxa\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_dataset_id\": literal($json[\"taxonomy_dataset_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) MATCH (dataset:SourceDataset {id: $taxonomy_dataset_id}) CALL { WITH run, concept_set, dataset UNWIND $taxa AS row MERGE (taxon:Taxon {id: row.id}) SET taxon:BirdTaxon, taxon.source_id = 'avilist-v2025b', taxon.source_release = $taxonomy_release, taxon.source_taxon_id = row.sequence, taxon.rank = row.rank, taxon.scientific_name = row.scientific_name, taxon.authority = row.authority, taxon.order_name = row.order_name, taxon.family_name = row.family_name, taxon.family_english_name = row.family_english_name, taxon.range_text = row.range_text, taxon.extinct_status = row.extinct_status, taxon.iucn_red_list_category_raw = row.iucn_red_list_category_raw, taxon.birdlife_url = row.birdlife_url, taxon.birds_of_the_world_url = row.birds_of_the_world_url, taxon.retrieved_at = row.retrieved_at MERGE (scientific_name:ScientificName {id: row.id + ':scientific-name'}) SET scientific_name.full_name = row.scientific_name, scientific_name.authorship = row.authority, scientific_name.nomenclatural_code = 'ICZN' MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name) FOREACH (_ IN CASE WHEN row.english_name IS NULL THEN [] ELSE [1] END | MERGE (vernacular:VernacularName {id: row.id + ':vernacular:en:avilist'}) SET vernacular.name = row.english_name, vernacular.language = 'en', vernacular.status = 'source-preferred', vernacular.source_release = $taxonomy_release MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) ) MERGE (record:SourceRecord {id: row.source_record_id}) SET record.record_type = 'taxon_concept', record.external_id = row.sequence, record.raw_uri = row.source_uri, record.raw_hash = $taxonomy_sha256, record.retrieved_at = row.retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (taxon)-[:FROM_RECORD]->(record) MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set) MERGE (run)-[:INGESTED]->(taxon) RETURN count(*) AS loaded_taxa } CALL { WITH run UNWIND $identifiers AS row MATCH (taxon:Taxon {id: row.taxon_id}) MERGE (identifier:ExternalIdentifier {id: row.id}) SET identifier.scheme = row.scheme, identifier.value = row.value MERGE (taxon)-[:HAS_EXTERNAL_IDENTIFIER]->(identifier) RETURN count(*) AS loaded_identifiers } CALL { WITH run UNWIND $links AS row MATCH (parent:Taxon {id: row.parent_id}) MATCH (child:Taxon {id: row.child_id}) MERGE (parent)-[:PARENT_OF {concept_set_id: $taxonomy_concept_set_id}]->(child) RETURN count(*) AS loaded_taxon_links } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_taxa, loaded_identifiers, loaded_taxon_links\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"dataset_id\": literal($json[\"dataset_id\"]),\"identifiers\": literal($json[\"identifiers\"]),\"links\": literal($json[\"links\"]),\"taxa\": literal($json[\"taxa\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"])}; return \"MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) CALL { WITH concept_set UNWIND $taxa AS row MERGE (taxon:Taxon {id: row.id}) SET taxon:BirdTaxon, taxon.source_id = 'avilist-v2025b', taxon.source_release = $taxonomy_release, taxon.source_taxon_id = row.sequence, taxon.rank = row.rank, taxon.scientific_name = row.scientific_name, taxon.authority = row.authority, taxon.order_name = row.order_name, taxon.family_name = row.family_name, taxon.family_english_name = row.family_english_name, taxon.range_text = row.range_text, taxon.extinct_status = row.extinct_status, taxon.iucn_red_list_category_raw = row.iucn_red_list_category_raw, taxon.birdlife_url = row.birdlife_url, taxon.birds_of_the_world_url = row.birds_of_the_world_url, taxon.retrieved_at = row.retrieved_at, taxon.dataset_id = $dataset_id, taxon.source_record_id = row.source_record_id, taxon.policy_status = 'allowed' MERGE (scientific_name:ScientificName {id: row.id + ':scientific-name'}) SET scientific_name.full_name = row.scientific_name, scientific_name.authorship = row.authority, scientific_name.nomenclatural_code = 'ICZN' MERGE (taxon)-[:HAS_ACCEPTED_NAME]->(scientific_name) FOREACH (_ IN CASE WHEN row.english_name IS NULL THEN [] ELSE [1] END | MERGE (vernacular:VernacularName {id: row.id + ':vernacular:en:avilist'}) SET vernacular.name = row.english_name, vernacular.language = 'en', vernacular.status = 'source-preferred', vernacular.source_release = $taxonomy_release, vernacular.dataset_id = $dataset_id, vernacular.source_record_id = row.source_record_id, vernacular.policy_status = 'allowed' MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) ) MERGE (taxon)-[:IN_CONCEPT_SET]->(concept_set) RETURN count(*) AS loaded_taxa } CALL { UNWIND $identifiers AS row MATCH (taxon:Taxon {id: row.taxon_id}) MERGE (identifier:ExternalIdentifier {id: row.id}) SET identifier.scheme = row.scheme, identifier.value = row.value MERGE (taxon)-[:HAS_EXTERNAL_IDENTIFIER]->(identifier) RETURN count(*) AS loaded_identifiers } CALL { UNWIND $links AS row MATCH (parent:Taxon {id: row.parent_id}) MATCH (child:Taxon {id: row.child_id}) MERGE (parent)-[:PARENT_OF {concept_set_id: $taxonomy_concept_set_id}]->(child) RETURN count(*) AS loaded_taxon_links } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_taxa, loaded_identifiers, loaded_taxon_links\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "fc75f169-b899-5ac2-a008-3ff1ab4bd927",
       "name": "Upsert AviList taxonomy batch",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        2210,
+        3890,
         -300
       ],
       "credentials": {
@@ -449,7 +620,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2210,
+        3890,
         -300
       ]
     },
@@ -483,26 +654,27 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2450,
+        4130,
         -300
       ]
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const source = $('Assemble claims and quality gates').first().json;\nconst batches = [];\nfor (let offset = 0; offset < source.trait_claims.length; offset += source.trait_claim_batch_size) {\n  batches.push({claims: source.trait_claims.slice(offset, offset + source.trait_claim_batch_size), candidates: []});\n}\nfor (let offset = 0; offset < source.mapping_candidates.length; offset += source.mapping_candidate_batch_size) {\n  batches.push({claims: [], candidates: source.mapping_candidates.slice(offset, offset + source.mapping_candidate_batch_size)});\n}\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  retrieved_at: source.retrieved_at,\n  taxonomy_release: source.taxonomy_release,\n  trait_release: source.trait_release,\n  trait_dataset_id: source.trait_dataset_id,\n  trait_sha256: source.trait_sha256,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch\n}}));"
+        "jsCode": "const source = $('Assemble claims and quality gates').first().json;\nconst batches = [];\nfor (let offset = 0; offset < source.trait_claims.length; offset += source.trait_claim_batch_size) {\n  batches.push({claims: source.trait_claims.slice(offset, offset + source.trait_claim_batch_size), candidates: []});\n}\nfor (let offset = 0; offset < source.mapping_candidates.length; offset += source.mapping_candidate_batch_size) {\n  batches.push({claims: [], candidates: source.mapping_candidates.slice(offset, offset + source.mapping_candidate_batch_size)});\n}\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  dataset_id: source.dataset_id,\n  retrieved_at: source.retrieved_at,\n  taxonomy_release: source.taxonomy_release,\n  trait_release: source.trait_release,\n  trait_dataset_id: source.trait_dataset_id,\n  trait_sha256: source.trait_sha256,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch\n}}));"
       },
       "id": "02d8d89a-df2f-5440-8db0-d5fea8c34b6e",
       "name": "Prepare trait batches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2690,
+        4370,
         -380
       ]
     },
     {
       "parameters": {
+        "batchSize": 1,
         "options": {}
       },
       "id": "77518ad4-163f-52fb-85d2-e30953eb28aa",
@@ -510,7 +682,75 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        2930,
+        4610,
+        -380
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $input.first().json;\nconst byRecord = new Map();\nfor (const row of [...batch.claims, ...batch.candidates]) {\n  if (!byRecord.has(row.source_record_id)) byRecord.set(row.source_record_id, row);\n}\nconst records = [...byRecord.values()].map(row => ({\n  id: row.source_record_id,\n  external_id: String(row.source_taxon_id),\n  record_type: 'trait_profile',\n  raw_object_uri: row.source_uri,\n  raw_sha256: batch.trait_sha256,\n  retrieved_at: batch.retrieved_at,\n  parser_version: 'reference-traits-v3',\n  license_policy_status: 'allowed',\n  payload: {\n    source_id: 'eltontraits', scientific_name: row.source_scientific_name,\n    trait_release: batch.trait_release,\n  },\n}));\nconst quarantine_items = batch.candidates.map(row => ({\n  record_key: row.source_record_id.slice(0, 200),\n  stage: 'resolve', reason_code: row.reason_code, severity: 'warning',\n  rule_version: 'reference-traits-v3',\n  raw_value_redacted: {source_taxon_id: row.source_taxon_id, scientific_name: row.source_scientific_name},\n}));\nreturn [{json: {...batch, ingest_request: {records, quarantine_items}}}];"
+      },
+      "id": "cea6a44f-aad6-51eb-84f9-10c93b876254",
+      "name": "Prepare PostgreSQL trait source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4850,
+        -380
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/append') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "650398f5-32cf-5439-83ef-fed64c9140dc",
+      "name": "Append PostgreSQL trait source batch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        5090,
+        -380
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $('Prepare PostgreSQL trait source batch').item.json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst appendOk = !errorText && response.status === 'appended';\nreturn [{json: {...batch, append_ok: appendOk,\n  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the trait source batch')}}];"
+      },
+      "id": "a511b5c6-638b-5404-80ef-8333645ad747",
+      "name": "Verify PostgreSQL trait source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5330,
         -380
       ]
     },
@@ -518,14 +758,14 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"claims\": literal($json[\"claims\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"trait_dataset_id\": literal($json[\"trait_dataset_id\"]),\"trait_release\": literal($json[\"trait_release\"]),\"trait_sha256\": literal($json[\"trait_sha256\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (dataset:SourceDataset {id: $trait_dataset_id}) CALL { WITH run, dataset UNWIND $claims AS row MATCH (taxon:Taxon {id: row.taxon_id}) MERGE (record:SourceRecord {id: row.source_record_id}) SET record.record_type = 'trait_profile', record.external_id = row.source_taxon_id, record.scientific_name_raw = row.source_scientific_name, record.raw_uri = row.source_uri, record.raw_hash = $trait_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (evidence:EvidenceUnit {id: row.evidence_id}) SET evidence.evidence_type = 'literature_dataset_row', evidence.locator = row.source_uri, evidence.accessed_at = $retrieved_at, evidence.citation = 'Wilman et al. (2014), EltonTraits 1.0' MERGE (evidence)-[:FROM_RECORD]->(record) MERGE (mapping:TaxonMappingClaim {id: 'eltontraits-mapping:v1:' + row.source_taxon_id}) SET mapping.method = 'exact_scientific_name_unique_in_avilist_species', mapping.source_scientific_name = row.source_scientific_name, mapping.source_taxon_id = row.source_taxon_id, mapping.resolution_status = 'accepted_automatic', mapping.confidence = 1.0, mapping.taxonomy_release = $taxonomy_release MERGE (record)-[:HAS_MAPPING_CLAIM]->(mapping) MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) MERGE (claim:TraitClaim {id: row.id}) SET claim.trait_name = row.trait_name, claim.value_num = row.value_num, claim.value_text = row.value_text, claim.value_boolean = row.value_boolean, claim.value_json = row.value_json, claim.unit = row.unit, claim.source_note = row.source_note, claim.certainty = row.certainty, claim.source_release = $trait_release, claim.retrieved_at = $retrieved_at MERGE (claim)-[:ASSERTS_ABOUT]->(taxon) MERGE (claim)-[:SUPPORTED_BY]->(evidence) MERGE (run)-[:INGESTED]->(claim) RETURN count(*) AS loaded_trait_claims } CALL { WITH run, dataset UNWIND $candidates AS row MERGE (record:SourceRecord {id: row.source_record_id}) SET record.record_type = 'trait_profile', record.external_id = row.source_taxon_id, record.scientific_name_raw = row.source_scientific_name, record.raw_uri = row.source_uri, record.raw_hash = $trait_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (candidate:TaxonMappingCandidate {id: row.id}) SET candidate.source_taxon_id = row.source_taxon_id, candidate.source_scientific_name = row.source_scientific_name, candidate.source_taxonomy = row.source_taxonomy, candidate.profile_json = row.profile_json, candidate.reason_code = row.reason_code, candidate.suggested_lookup_uri = row.suggested_lookup_uri, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at MERGE (record)-[:HAS_MAPPING_CANDIDATE]->(candidate) MERGE (run)-[:QUARANTINED]->(candidate) RETURN count(*) AS loaded_mapping_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_trait_claims, loaded_mapping_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"claims\": literal($json[\"claims\"]),\"dataset_id\": literal($json[\"dataset_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"trait_release\": literal($json[\"trait_release\"])}; return \"CALL { UNWIND $claims AS row MATCH (taxon:Taxon {id: row.taxon_id}) MERGE (evidence:EvidenceUnit {id: row.evidence_id}) SET evidence.evidence_type = 'literature_dataset_row', evidence.locator = row.source_uri, evidence.accessed_at = $retrieved_at, evidence.citation = 'Wilman et al. (2014), EltonTraits 1.0', evidence.dataset_id = $dataset_id, evidence.source_record_id = row.source_record_id, evidence.policy_status = 'allowed' MERGE (mapping:TaxonMappingClaim {id: 'eltontraits-mapping:v1:' + row.source_taxon_id}) SET mapping.method = 'exact_scientific_name_unique_in_avilist_species', mapping.source_scientific_name = row.source_scientific_name, mapping.source_taxon_id = row.source_taxon_id, mapping.resolution_status = 'accepted_automatic', mapping.confidence = 1.0, mapping.taxonomy_release = $taxonomy_release, mapping.dataset_id = $dataset_id, mapping.source_record_id = row.source_record_id, mapping.policy_status = 'allowed' MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) MERGE (claim:TraitClaim {id: row.id}) SET claim.trait_name = row.trait_name, claim.value_num = row.value_num, claim.value_text = row.value_text, claim.value_boolean = row.value_boolean, claim.value_json = row.value_json, claim.unit = row.unit, claim.source_note = row.source_note, claim.certainty = row.certainty, claim.source_release = $trait_release, claim.retrieved_at = $retrieved_at, claim.dataset_id = $dataset_id, claim.source_record_id = row.source_record_id, claim.policy_status = 'allowed' MERGE (claim)-[:ASSERTS_ABOUT]->(taxon) MERGE (claim)-[:SUPPORTED_BY]->(evidence) RETURN count(*) AS loaded_trait_claims } CALL { UNWIND $candidates AS row MERGE (candidate:TaxonMappingCandidate {id: row.id}) SET candidate.source_taxon_id = row.source_taxon_id, candidate.source_scientific_name = row.source_scientific_name, candidate.source_taxonomy = row.source_taxonomy, candidate.profile_json = row.profile_json, candidate.reason_code = row.reason_code, candidate.suggested_lookup_uri = row.suggested_lookup_uri, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at, candidate.dataset_id = $dataset_id, candidate.source_record_id = row.source_record_id, candidate.policy_status = 'allowed' RETURN count(*) AS loaded_mapping_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_trait_claims, loaded_mapping_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "27017cbc-0ed8-5eb5-834f-233de7945f50",
       "name": "Upsert EltonTraits batch",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        3170,
+        5570,
         -380
       ],
       "credentials": {
@@ -548,7 +788,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3170,
+        5570,
         -380
       ]
     },
@@ -582,7 +822,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3410,
+        5810,
         -380
       ]
     },
@@ -590,14 +830,14 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"mapping_candidate_count\": literal($json[\"mapping_candidate_count\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_link_count\": literal($json[\"taxonomy_link_count\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_taxon_count\": literal($json[\"taxonomy_taxon_count\"]),\"trait_claim_count\": literal($json[\"trait_claim_count\"]),\"trait_exact_match_count\": literal($json[\"trait_exact_match_count\"]),\"trait_exact_match_ratio\": literal($json[\"trait_exact_match_ratio\"]),\"trait_release\": literal($json[\"trait_release\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) CALL { WITH run, concept_set MATCH (external:ExternalTaxonConcept:BirdTaxon) MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE external.rank = taxon.rank AND external.scientific_name = taxon.scientific_name MERGE (mapping:TaxonMappingClaim {id: 'gbif-avilist-exact:' + external.id + ':' + taxon.id}) SET mapping.method = 'exact_scientific_name_and_rank', mapping.confidence = 1.0, mapping.resolution_status = 'candidate', mapping.taxonomy_release = $taxonomy_release, mapping.created_by_run_id = $run_id MERGE (external)-[:HAS_MAPPING_CLAIM]->(mapping) MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) RETURN count(*) AS gbif_mapping_claims } SET run.status = 'succeeded', run.finished_at = datetime(), run.taxon_count = $taxonomy_taxon_count, run.taxon_link_count = $taxonomy_link_count, run.trait_claim_count = $trait_claim_count, run.mapping_candidate_count = $mapping_candidate_count, run.trait_exact_match_count = $trait_exact_match_count, run.trait_exact_match_ratio = $trait_exact_match_ratio, run.gbif_mapping_claim_count = gbif_mapping_claims MERGE (taxonomy_state:IngestState {id: 'reference-taxonomy'}) SET taxonomy_state.active_release = $taxonomy_release, taxonomy_state.active_concept_set_id = $taxonomy_concept_set_id, taxonomy_state.last_successful_run_id = $run_id, taxonomy_state.last_successful_at = datetime() MERGE (trait_state:IngestState {id: 'reference-traits'}) SET trait_state.active_release = $trait_release, trait_state.taxonomy_release = $taxonomy_release, trait_state.last_successful_run_id = $run_id, trait_state.last_successful_at = datetime() RETURN run.id AS finalized_run_id, run.status AS run_status, taxonomy_state.active_release AS taxonomy_active_release, trait_state.active_release AS trait_active_release, gbif_mapping_claims\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"run_id\": literal($json[\"run_id\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"trait_release\": literal($json[\"trait_release\"])}; return \"MATCH (concept_set:TaxonConceptSet {id: $taxonomy_concept_set_id}) CALL { WITH concept_set MATCH (external:ExternalTaxonConcept:BirdTaxon) MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE external.rank = taxon.rank AND external.scientific_name = taxon.scientific_name MERGE (mapping:TaxonMappingClaim {id: 'gbif-avilist-exact:' + external.id + ':' + taxon.id}) SET mapping.method = 'exact_scientific_name_and_rank', mapping.confidence = 1.0, mapping.resolution_status = 'candidate', mapping.taxonomy_release = $taxonomy_release, mapping.created_by_run_id = $run_id MERGE (external)-[:HAS_MAPPING_CLAIM]->(mapping) MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) RETURN count(*) AS gbif_mapping_claims } RETURN $run_id AS finalized_run_id, $taxonomy_release AS taxonomy_active_release, $trait_release AS trait_active_release, gbif_mapping_claims\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
-      "id": "7b89cfd8-862c-5ede-8a43-9b873bf4a3e5",
-      "name": "Finalize active reference releases",
+      "id": "3556056b-774b-5edf-99fe-d15cca0eb6ee",
+      "name": "Finalize reference domain projection",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        3650,
+        6050,
         -460
       ],
       "credentials": {
@@ -613,14 +853,116 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble claims and quality gates').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst finalizeOk = !errorText\n  && response.finalized_run_id === expected.run_id\n  && response.run_status === 'succeeded'\n  && response.taxonomy_active_release === expected.taxonomy_release\n  && response.trait_active_release === expected.trait_release;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  loaded_taxa: expected.taxonomy_taxon_count,\n  loaded_trait_claims: expected.trait_claim_count,\n  loaded_mapping_candidates: expected.mapping_candidate_count,\n  gbif_mapping_claims: Number(response.gbif_mapping_claims || 0),\n  failure_reason: finalizeOk ? '' : (errorText || 'Active reference releases were not advanced')\n}}];"
+        "jsCode": "const expected = $('Verify trait batches').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst finalizeOk = !errorText\n  && response.finalized_run_id === expected.run_id\n  && response.taxonomy_active_release === expected.taxonomy_release\n  && response.trait_active_release === expected.trait_release;\nreturn [{json: {...expected,\n  domain_finalize_ok: finalizeOk,\n  loaded_taxa: expected.taxonomy_taxon_count,\n  loaded_trait_claims: expected.trait_claim_count,\n  loaded_mapping_candidates: expected.mapping_candidate_count,\n  gbif_mapping_claims: Number(response.gbif_mapping_claims || 0),\n  failure_reason: finalizeOk ? '' : (errorText || 'Reference domain finalization failed')\n}}];"
+      },
+      "id": "84f376f4-15a2-5856-a6f6-28821b3bd0f9",
+      "name": "Verify reference domain finalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6290,
+        -460
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1745b48-284c-5dd7-9ddf-31e267107a04",
+              "leftValue": "={{ $json.domain_finalize_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "41cf91ea-6b7c-5e76-9a24-a96b84f27c45",
+      "name": "Reference domain finalized?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        6530,
+        -460
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source = $input.first().json;\nreturn [{json: {...source, ingest_request: {\n  counts: {\n    source_records: source.taxonomy_taxon_count + source.trait_valid_row_count,\n    taxa: source.loaded_taxa,\n    taxon_links: source.loaded_taxon_links,\n    trait_claims: source.loaded_trait_claims,\n    mapping_candidates: source.loaded_mapping_candidates,\n    gbif_mapping_claims: source.gbif_mapping_claims,\n  },\n  cursor: {\n    concept_set_id: source.taxonomy_concept_set_id,\n    taxonomy_release: source.taxonomy_release,\n    trait_release: source.trait_release,\n  },\n  expected_state_version: source.expected_state_version,\n}}}];"
+      },
+      "id": "66e701e0-6c5a-54f0-af35-28a7b6ac5592",
+      "name": "Prepare PostgreSQL reference finalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6770,
+        -460
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/finalize') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}"
+      },
+      "id": "44dd77f9-0298-5420-b86b-4c58bf186c88",
+      "name": "Finalize PostgreSQL reference release",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        7010,
+        -460
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Authenticated PostgreSQL ingest control-plane request; secrets stay in n8n environment variables."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Prepare PostgreSQL reference finalization').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst finalizeOk = !errorText && response.status === 'finalized'\n  && response.state_version === expected.expected_state_version + 1;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  failure_reason: finalizeOk ? '' : (errorText || 'PostgreSQL reference activation failed')\n}}];"
       },
       "id": "01c409c4-4800-5e21-86e9-56d1e20c8359",
       "name": "Verify active reference releases",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3890,
+        7250,
         -460
       ]
     },
@@ -654,7 +996,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4130,
+        7490,
         -460
       ]
     },
@@ -673,7 +1015,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        4370,
+        7730,
         -540
       ],
       "onError": "continueRegularOutput",
@@ -694,7 +1036,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        3890,
+        7010,
         180
       ],
       "onError": "continueRegularOutput",
@@ -709,7 +1051,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        4130,
+        7250,
         180
       ]
     },
@@ -720,7 +1062,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        4610,
+        7970,
         -460
       ]
     },
@@ -848,78 +1190,6 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_sourcerecord_id IF NOT EXISTS FOR (node:SourceRecord) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "e8987c82-737b-58d8-ac91-ded5cc3d900f",
-      "name": "Ensure SourceRecord ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -300,
-        -950
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_sourcedataset_id IF NOT EXISTS FOR (node:SourceDataset) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "85f53ab9-9985-565a-9340-521b6b081943",
-      "name": "Ensure SourceDataset ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -40,
-        -950
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_license_id IF NOT EXISTS FOR (node:License) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "0aed5fa2-09b5-516a-b0c8-aac0d3ace863",
-      "name": "Ensure License ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -1600,
-        -780
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
         "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_evidenceunit_id IF NOT EXISTS FOR (node:EvidenceUnit) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "f7b58f94-f3be-5485-8456-bda19d31f855",
@@ -927,8 +1197,8 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        -1340,
-        -780
+        -300,
+        -950
       ],
       "credentials": {
         "neo4jApi": {
@@ -951,8 +1221,8 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        -1080,
-        -780
+        -40,
+        -950
       ],
       "credentials": {
         "neo4jApi": {
@@ -975,7 +1245,7 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        -820,
+        -1600,
         -780
       ],
       "credentials": {
@@ -999,55 +1269,7 @@
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        -560,
-        -780
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_ingestionrun_id IF NOT EXISTS FOR (node:IngestionRun) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "8a8b843b-59e1-53f7-8b8c-798d6d8336dc",
-      "name": "Ensure IngestionRun ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -300,
-        -780
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_reference_ingeststate_id IF NOT EXISTS FOR (node:IngestState) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "124405d6-bf77-5d2a-8e10-3a6e84e523d9",
-      "name": "Ensure IngestState ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -40,
+        -1340,
         -780
       ],
       "credentials": {
@@ -1277,7 +1499,7 @@
       "main": [
         [
           {
-            "node": "Start reference ingestion run",
+            "node": "Prepare PostgreSQL reference run",
             "type": "main",
             "index": 0
           }
@@ -1291,29 +1513,80 @@
         ]
       ]
     },
-    "Start reference ingestion run": {
+    "Prepare PostgreSQL reference run": {
       "main": [
         [
           {
-            "node": "Verify ingestion run started",
+            "node": "Start PostgreSQL reference run",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Verify ingestion run started": {
+    "Start PostgreSQL reference run": {
       "main": [
         [
           {
-            "node": "Ingestion run started?",
+            "node": "Verify PostgreSQL reference run started",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Ingestion run started?": {
+    "Verify PostgreSQL reference run started": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL reference run started?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL reference run started?": {
+      "main": [
+        [
+          {
+            "node": "Initialize reference domain projection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify reference failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize reference domain projection": {
+      "main": [
+        [
+          {
+            "node": "Verify reference domain initialized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify reference domain initialized": {
+      "main": [
+        [
+          {
+            "node": "Reference domain initialized?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reference domain initialized?": {
       "main": [
         [
           {
@@ -1351,6 +1624,39 @@
             "index": 0
           }
         ],
+        [
+          {
+            "node": "Prepare PostgreSQL taxonomy source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL taxonomy source batch": {
+      "main": [
+        [
+          {
+            "node": "Append PostgreSQL taxonomy source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append PostgreSQL taxonomy source batch": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL taxonomy source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL taxonomy source batch": {
+      "main": [
         [
           {
             "node": "Upsert AviList taxonomy batch",
@@ -1422,6 +1728,39 @@
         ],
         [
           {
+            "node": "Prepare PostgreSQL trait source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL trait source batch": {
+      "main": [
+        [
+          {
+            "node": "Append PostgreSQL trait source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append PostgreSQL trait source batch": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL trait source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL trait source batch": {
+      "main": [
+        [
+          {
             "node": "Upsert EltonTraits batch",
             "type": "main",
             "index": 0
@@ -1455,7 +1794,7 @@
       "main": [
         [
           {
-            "node": "Finalize active reference releases",
+            "node": "Finalize reference domain projection",
             "type": "main",
             "index": 0
           }
@@ -1469,7 +1808,58 @@
         ]
       ]
     },
-    "Finalize active reference releases": {
+    "Finalize reference domain projection": {
+      "main": [
+        [
+          {
+            "node": "Verify reference domain finalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify reference domain finalization": {
+      "main": [
+        [
+          {
+            "node": "Reference domain finalized?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reference domain finalized?": {
+      "main": [
+        [
+          {
+            "node": "Prepare PostgreSQL reference finalization",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify reference failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL reference finalization": {
+      "main": [
+        [
+          {
+            "node": "Finalize PostgreSQL reference release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize PostgreSQL reference release": {
       "main": [
         [
           {
@@ -1579,39 +1969,6 @@
       "main": [
         [
           {
-            "node": "Ensure SourceRecord ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure SourceRecord ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure SourceDataset ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure SourceDataset ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure License ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure License ID constraint": {
-      "main": [
-        [
-          {
             "node": "Ensure EvidenceUnit ID constraint",
             "type": "main",
             "index": 0
@@ -1653,28 +2010,6 @@
       ]
     },
     "Ensure TaxonMappingCandidate ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure IngestionRun ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure IngestionRun ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure IngestState ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure IngestState ID constraint": {
       "main": [
         [
           {
