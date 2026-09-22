@@ -1,5 +1,13 @@
 # n8n 한국어 일반명(Korean vernacular name) 수집 런북
 
+> **PostgreSQL control-plane 전환 구현(2026-09-22).** 이 workflow는 이제
+> `SourceDataset`, `SourceRelease`, `SourceRecord`, `IngestionRun`, quarantine,
+> `IngestState`를 Neo4j에 직접 쓰지 않고 인증된 내부 ingest API를 통해
+> PostgreSQL에 기록한다. Neo4j에는 `VernacularName`,
+> `VernacularNameCandidate`와 기존 `Taxon` 연결만 쓴다. 현재 단계는 test DB
+> shadow 검증용이며, production workflow 재배포·실행은 별도 승인 전까지 하지
+> 않는다.
+
 > **오프라인 구현·테스트 완료 / 라이브 검증 완료(2026-09-12), NAS 이미지 재배포 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 오프라인 체크포인트를 마무리했고, 2026-09-12에 canonical workflow `Hmjfi1zAIOKR5YE5` 생성과 임시 webhook 복사본을 통한 실제 실행(execution `18066`, Wikidata 948건 → write 846/candidate 102, `load_ok=true`/`finalize_ok=true`), 그리고 운영 API `GET /v1/taxa/lineage?name=청둥오리`의 실제 `200` 응답까지 라이브로 확인했다. 다만 같은 확인 과정에서 공개 `aviary.dove-nest.com`이 이 필드(`korean_name_status`)를 추가하기 이전의 NAS 이미지를 여전히 서비스 중임을 발견했다 — 아래 "현재 검증 상태"와 [NAS 배포 런북 §8](../nas-deployment.md)의 재배포·재검증 절차를 따른다. 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md)과 [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
 
 ## 배경
@@ -69,11 +77,12 @@ flowchart LR
   H --> N[Normalize: dedupe + detect conflicting ko labels]
   N --> R[Resolve active concept set and match Taxon by scientific_name]
   R --> A[Assemble quality gates]
-  A -->|pass| S[Start ingestion run]
+  A -->|pass| S
   A -->|fail| Fail[Discord and fail]
-  S --> B[Batch MERGE VernacularName + VernacularNameCandidate]
-  B --> V[Verify batch counts]
-  V --> Fin[Finalize korean-vernacular-names IngestState]
+  S[POST begin to PostgreSQL ingest API] --> P[POST SourceRecord + quarantine batches]
+  P --> B[Batch MERGE only VernacularName + VernacularNameCandidate in Neo4j]
+  B --> V[Verify graph batch counts and active reference taxonomy]
+  V --> Fin[POST optimistic finalize to PostgreSQL]
   Fin --> D[Discord success]
 ```
 
@@ -90,9 +99,10 @@ flowchart LR
   항목 간 불일치)에는 **어느 쪽도 임의로 선택하지 않고** 둘 다
   `reason_code: 'conflicting_korean_labels'` 후보로 남긴다.
 - `VernacularName`은 `id: <taxon_id>:vernacular:ko:wikidata:<wikidata_dataset_id>`로
-  `MERGE`한다. `SourceRecord`도 QID와 같은 dataset ID로 스코프한다. 따라서
-  같은 응답은 같은 불변 노드를 다시 사용하고, 다른 snapshot은 이전 provenance
-  속성을 갱신하지 않는다.
+  `MERGE`한다. QID별 `SourceRecord`는 같은 dataset ID로 스코프해 PostgreSQL에
+  저장하고, Neo4j domain node에는 `source_record_ids`만 둔다. 따라서 같은 응답은
+  같은 불변 레코드/노드를 다시 사용하고, 다른 snapshot은 이전 provenance를
+  덮어쓰지 않는다.
 - `korea-nibr-species`처럼 `enabled: false`이거나
   `license_policy_status`가 `allowed`가 아닌 collection point로는 이 workflow를
   생성할 수 없다 —
@@ -106,11 +116,11 @@ flowchart LR
   `fetch_ok: false` 신호로 명시적으로 실패 처리한다(`Normalize Korean
   vernacular candidates`, `Assemble Korean vernacular quality gates` 노드).
   부분적으로만 받은 snapshot을 완전한 결과인 것처럼 다루지 않는다.
-- 읽기 API(`taxonomy_lineage_neo4j.py`)는 한국어 이름을 대상 조회·계통 투영
-  양쪽에서 `VernacularName -[:FROM_RECORD]-> SourceRecord -[:IN_DATASET]->
-  SourceDataset {policy_status: 'allowed'}` 연결이 끊기지 않은 경우에만
-  반환한다. 승인된 적재 경로를 거치지 않은 한국어 이름은 감춰지는 게
-  아니라 애초에 조회에 잡히지 않는다(적재된 적 없는 이름과 구분되지 않음).
+- 읽기 API(`taxonomy_lineage_neo4j.py`)는 PostgreSQL `ingest_state`가 가리키는
+  활성 release의 dataset이 여전히 `allowed`인지 확인하고, 그 dataset ID와
+  `VernacularName.dataset_id`가 일치하는 이름만 반환한다. 도메인 노드 자체도
+  `policy_status: 'allowed'`여야 한다. 상태가 없거나 철회되면 fail-closed로
+  이름 조회에 잡히지 않는다(적재된 적 없는 이름과 구분되지 않음).
   자세한 내용은 [분류 계통 API](../taxonomy-lineage-api.md)의 "데이터 경계와
   실패 처리" 절.
 - 적재한 `VernacularName`은 `status: 'community-sourced'`,
@@ -118,11 +128,10 @@ flowchart LR
   `source_qids`(매칭에 쓰인 Wikidata Q-ID들)를 함께 저장해 감사 추적이
   가능하게 한다. `/v1/taxa/lineage`는 `status`를 `lineage[].korean_name_status`로
   그대로 노출해 "공식 국명이 아님"을 API 응답 자체에서 알 수 있게 한다.
-- `Finalize`는 활성 상태 노드를 먼저 `MERGE`해 유일 ID 잠금을 잡은 뒤,
-  시작 시 읽어 둔 `last_successful_run_id`와 현재 값을 비교한다. 따라서 첫
-  실행 두 개가 모두 기존 상태 없음(`''`)을 봤더라도 하나만 활성화하고, 대기한
-  다른 실행은 갱신된 run ID를 보고 실패한다. 활성 AviList concept set도 Start,
-  각 batch, Finalize에서 다시 확인한다.
+- `begin` 응답의 PostgreSQL `state_version`을 `finalize`의
+  `expected_state_version`으로 보낸다. 따라서 동시에 시작한 실행 중 하나만 active
+  release를 전진시키며 뒤늦은 실행은 409로 실패한다. 활성 AviList concept set은
+  resolve, 각 graph batch, 최종 graph 검증에서 다시 확인한다.
 - NAS의 `n8n-nodes-neo4j` 노드는 여러 입력 item 중 첫 item에 대해서만 query를
   실행하는 동작이 확인됐다. 따라서 `Prepare Korean vernacular batches`가 만든
   300건 단위 item을 `Loop Over Korean vernacular batches`가 하나씩 Neo4j 노드에
@@ -217,7 +226,8 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
 ## 첫 실행 검증 (스모크 테스트)
 
 1. workflow가 inactive인지 확인한다.
-2. 모든 Neo4j 노드와 Discord 노드의 credential을 확인한다.
+2. 모든 Neo4j 노드와 Discord 노드의 credential을 확인하고 n8n 실행 환경에
+   `ROBINGRAPH_INGEST_API_URL`, `ROBINGRAPH_INGEST_INTERNAL_TOKEN`을 설정한다.
 3. Manual Trigger로 실행한다.
 4. `Normalize Korean vernacular candidates`의 `source_binding_count`,
    `distinct_taxon_name_count`가 0보다 큰지 확인한다(0이면 SPARQL 응답 파싱
@@ -248,10 +258,9 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
    오래됐다면 응답에 `korean_name_status` 필드가 빠질 수 있다 — 그 경우
    `scripts/verify_api_deployment.py`로 확인하고 [NAS 배포 런북 §8](../nas-deployment.md)의
    재배포 절차를 따른다.)
-8. `IngestState {id: 'korean-vernacular-names'}`의 `active_release`,
-   `loaded_vernacular_names`, `loaded_candidates`를 확인하고,
-   `IngestState {id: 'reference-taxonomy'}`가 이 실행으로 바뀌지 않았음을
-   확인한다.
+8. PostgreSQL `ingest.ingest_state`, `ingestion_run`, `source_record`,
+   `quarantine_item`의 release/count를 확인하고, Neo4j
+   `IngestState {id: 'reference-taxonomy'}`가 이 실행으로 바뀌지 않았음을 확인한다.
 9. Discord credential을 설정했다면 성공 알림을 확인한다(선택 사항 — 설정하지
    않았다면 이 단계는 건너뛰고 나머지 count/API 확인 결과만으로 판단한다).
    그 뒤에만 월간 schedule 활성화를 검토한다.
@@ -327,7 +336,9 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
 - 수집 포인트: `config/collection-points.json`의
   `korean-vernacular-wikidata-species-labels`, `config/source-registry.json`의
   `wikidata-taxon-labels`
-- 읽기 경로 라이선스 체인: `src/robingraph/retrieval/taxonomy_lineage_neo4j.py`
+- 읽기 경로 활성 dataset 경계: PostgreSQL `ingest_state`에서 활성·허용된
+  dataset ID를 조회한 뒤 `src/robingraph/retrieval/taxonomy_lineage_neo4j.py`
+  Neo4j 쿼리에 parameter로 전달한다. Source/control 노드는 Neo4j에 만들지 않는다.
   (`_LINEAGE_QUERY`, `_LINEAGE_BY_KOREAN_NAME_QUERY`), 도메인 계약:
   `src/robingraph/retrieval/taxonomy_lineage.py`
   (`LineageTaxon.korean_name_status`), API 계약: `src/robingraph/api/app.py`
@@ -340,7 +351,7 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
 - 읽기 경로 계약 테스트: `tests/test_taxonomy_lineage_neo4j.py`
   (`test_korean_name_resolves_a_freshly_ingested_mallard_from_the_wikidata_pipeline`,
   `test_korean_name_lookup_returns_none_for_a_species_not_yet_ingested`,
-  `test_korean_name_target_and_ancestor_projection_require_an_allowed_license_chain`)
+  `test_korean_names_require_the_postgres_active_allowed_dataset_id`)
 - NAS 배포 연동 테스트: `tests/test_nas_deployment.py`
   (`test_deploy_workflows_action_includes_korean_vernacular`,
   `test_ingest_example_and_compose_pass_through_korean_vernacular_workflow_id`)

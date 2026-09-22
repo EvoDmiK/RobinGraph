@@ -22,26 +22,14 @@ ancestor chain and both project each ancestor's own Korean vernacular name
 writes `ExternalTaxonConcept`, and neither ever invents a Korean name that
 is not already present as a licensed `VernacularName` node.
 
-Every `VernacularName {language: 'ko'}` match -- both as a search target in
-`lineage_for_korean_name` and as an ancestor's projected `korean_name` in
-both paths -- additionally requires an unbroken `-[:FROM_RECORD]->
-SourceRecord -[:IN_DATASET]-> SourceDataset {policy_status: 'allowed'}`
-chain, AND that the matched `SourceDataset.id` equals the *currently active*
-`IngestState {id: 'korean-vernacular-names'}.active_dataset_id`. This is a
-fail-closed trust boundary, not a display filter: a Korean name that is not
-traceable to the dataset this project has approved *and currently activated*
-(`docs/decisions/0003-license-policy.md`,
-`docs/n8n/korean-vernacular-ingest.md`) never resolves a target and never
-appears in a lineage item, indistinguishable from a name that was never
-ingested. It cannot "leak" through cross-talk with another pipeline, a
-revoked/paused/superseded dataset, or a manually-added node that skipped the
-approved ingest path. The active-dataset check is what lets a name from a
-species that dropped out of a later Wikidata snapshot ("retire removed
-names") stop resolving without any explicit delete: it is simply no longer
-linked to the dataset id `IngestState` currently points at. If no Korean
-ingest has ever run, `active_dataset_id` is absent and every Korean-name
-match naturally resolves to nothing -- `scientific_name=` lookups are
-unaffected either way, since they don't depend on this state at all.
+Every `VernacularName {language: 'ko'}` match -- both as a search target and
+as an ancestor's projected Korean name -- must have `policy_status: 'allowed'`
+and a `dataset_id` equal to the active dataset resolved from PostgreSQL's
+ingest control plane. Source records, releases, runs, and Korean ingest state
+remain RDB-only; Neo4j contains domain nodes and their provenance identifiers,
+not duplicate control-plane nodes. Missing or revoked PostgreSQL state fails
+closed for Korean-name lookup and suppresses Korean labels from scientific
+name results.
 
 `lineage_for_korean_name` additionally refuses to silently pick a target
 when the same Korean name resolves to more than one *distinct* `Taxon`
@@ -54,6 +42,7 @@ either one wrong is worse than reporting "not found".
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from neo4j import GraphDatabase
@@ -94,15 +83,13 @@ WHERE toLower(target.scientific_name) = toLower($scientific_name)
 WITH target
 ORDER BY target.id
 LIMIT 1
-OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'})
-WITH target, koreanState.active_dataset_id AS koreanDatasetId
+WITH target, $korean_dataset_id AS koreanDatasetId
 OPTIONAL MATCH ancestorPath =
   (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
 WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
 WITH ancestor, length(ancestorPath) AS depth, koreanDatasetId
-OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko'})
-  -[:FROM_RECORD]->(:SourceRecord)-[:IN_DATASET]->(koreanDataset:SourceDataset {policy_status: 'allowed'})
-WHERE koreanDataset.id = koreanDatasetId
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko', policy_status: 'allowed'})
+WHERE koreanName.dataset_id = koreanDatasetId
 WITH ancestor, depth,
      [k IN collect(koreanName) WHERE k IS NOT NULL | {name: k.name, status: k.status}] AS koreanCandidates
 WITH ancestor, depth,
@@ -128,18 +115,10 @@ RETURN collect({
 # the caller can report the resolved canonical scientific name alongside the
 # Korean query that produced it.
 #
-# Both the target-resolution MATCH and the ancestor OPTIONAL MATCH require an
-# unbroken `VernacularName -[:FROM_RECORD]-> SourceRecord -[:IN_DATASET]->
-# SourceDataset {policy_status: 'allowed'}` chain, further narrowed to the
-# dataset id the currently active `IngestState {id:
-# 'korean-vernacular-names'}` points at. A Korean name is never surfaced --
-# as a search target or as an ancestor label -- unless it is traceable to a
-# dataset this project has actually approved *and currently active* (see
-# docs/decisions/0003-license-policy.md). This also means a name attached by
-# mistake, by a future revoked/paused/superseded dataset, or by anything
-# other than an approved ingest pipeline simply does not resolve: it is not
-# filtered out of an otherwise-successful response, it makes that response
-# 404/absent, same as a name that was never ingested at all.
+# Both the target-resolution MATCH and the ancestor OPTIONAL MATCH require
+# `policy_status: 'allowed'` on the domain node and the dataset id supplied by
+# PostgreSQL's active ingest state. Source/control-plane nodes are deliberately
+# absent from this Neo4j query.
 #
 # `collect(DISTINCT target)` followed by `WHERE size(targets) = 1` is the
 # fix for a real bug: the previous `WITH DISTINCT target ORDER BY target.id
@@ -152,12 +131,10 @@ RETURN collect({
 # the wrong bird.
 _LINEAGE_BY_KOREAN_NAME_QUERY = """
 MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
-OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'})
-WITH conceptSet, koreanState.active_dataset_id AS koreanDatasetId
+WITH conceptSet, $korean_dataset_id AS koreanDatasetId
 MATCH (target:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(conceptSet)
-MATCH (target)-[:HAS_VERNACULAR_NAME]->(vernacular:VernacularName {language: 'ko'})
-  -[:FROM_RECORD]->(:SourceRecord)-[:IN_DATASET]->(matchDataset:SourceDataset {policy_status: 'allowed'})
-WHERE toLower(vernacular.name) = toLower($korean_name) AND matchDataset.id = koreanDatasetId
+MATCH (target)-[:HAS_VERNACULAR_NAME]->(vernacular:VernacularName {language: 'ko', policy_status: 'allowed'})
+WHERE toLower(vernacular.name) = toLower($korean_name) AND vernacular.dataset_id = koreanDatasetId
 WITH koreanDatasetId, collect(DISTINCT target) AS targets
 WHERE size(targets) = 1
 WITH targets[0] AS target, koreanDatasetId
@@ -166,9 +143,8 @@ OPTIONAL MATCH ancestorPath =
   (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
 WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
 WITH targetScientificName, ancestor, length(ancestorPath) AS depth, koreanDatasetId
-OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko'})
-  -[:FROM_RECORD]->(:SourceRecord)-[:IN_DATASET]->(ancestorDataset:SourceDataset {policy_status: 'allowed'})
-WHERE ancestorDataset.id = koreanDatasetId
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko', policy_status: 'allowed'})
+WHERE koreanName.dataset_id = koreanDatasetId
 WITH targetScientificName, ancestor, depth,
      [k IN collect(koreanName) WHERE k IS NOT NULL | {name: k.name, status: k.status}] AS koreanCandidates
 WITH targetScientificName, ancestor, depth,
@@ -225,8 +201,13 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
 class Neo4jTaxonomyLineageRepository:
     """Read the active AviList reference-taxonomy lineage graph."""
 
-    def __init__(self, settings: Neo4jSettings) -> None:
+    def __init__(
+        self,
+        settings: Neo4jSettings,
+        active_korean_dataset_id: Callable[[], str | None] | None = None,
+    ) -> None:
         self._settings = settings
+        self._active_korean_dataset_id = active_korean_dataset_id or (lambda: None)
         self._driver = GraphDatabase.driver(settings.uri, auth=(settings.username, settings.password))
 
     def close(self) -> None:
@@ -259,6 +240,15 @@ class Neo4jTaxonomyLineageRepository:
             raise ValueError("Active AviList reference-taxonomy release is not available")
         return str(concept_set_id), str(taxonomy_release)
 
+    def _korean_dataset_id(self) -> str | None:
+        dataset_id = self._active_korean_dataset_id()
+        if dataset_id is None:
+            return None
+        cleaned = str(dataset_id).strip()
+        if not cleaned:
+            raise ValueError("Active Korean vernacular dataset id must not be blank")
+        return cleaned
+
     def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
         cleaned = scientific_name.strip()
         if not cleaned:
@@ -266,7 +256,12 @@ class Neo4jTaxonomyLineageRepository:
 
         concept_set_id, taxonomy_release = self._active_concept_set()
 
-        rows = self._run(_LINEAGE_QUERY, concept_set_id=concept_set_id, scientific_name=cleaned)
+        rows = self._run(
+            _LINEAGE_QUERY,
+            concept_set_id=concept_set_id,
+            scientific_name=cleaned,
+            korean_dataset_id=self._korean_dataset_id(),
+        )
         if not rows:
             return None
         projection = rows[0]
@@ -295,7 +290,16 @@ class Neo4jTaxonomyLineageRepository:
 
         concept_set_id, taxonomy_release = self._active_concept_set()
 
-        rows = self._run(_LINEAGE_BY_KOREAN_NAME_QUERY, concept_set_id=concept_set_id, korean_name=cleaned)
+        korean_dataset_id = self._korean_dataset_id()
+        if korean_dataset_id is None:
+            return None
+
+        rows = self._run(
+            _LINEAGE_BY_KOREAN_NAME_QUERY,
+            concept_set_id=concept_set_id,
+            korean_name=cleaned,
+            korean_dataset_id=korean_dataset_id,
+        )
         if not rows:
             return None
         projection = rows[0]

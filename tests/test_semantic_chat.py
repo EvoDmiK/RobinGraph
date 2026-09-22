@@ -397,6 +397,7 @@ class ServeNeo4jWiringTest(unittest.TestCase):
             self.assertEqual(200, response.status_code)
 
         with patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
              patch("robingraph.embeddings.JinaEmbeddingClient.from_env", return_value=embedding_client), \
              patch("uvicorn.run", side_effect=run_app):
             # Imports inside serve_neo4j bind classes from their source module,
@@ -443,6 +444,7 @@ class ServeNeo4jWiringTest(unittest.TestCase):
             side_effect=EmbeddingConfigurationError("secret endpoint")
         )
         with patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
              patch("robingraph.embeddings.JinaEmbeddingClient.from_env", configuration), \
              patch("robingraph.retrieval.neo4j_hybrid.search", return_value=sample_evidence(with_fallback_warning=False)), \
              patch("uvicorn.run", side_effect=run_app), \

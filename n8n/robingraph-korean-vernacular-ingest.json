@@ -123,7 +123,7 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'}) OPTIONAL MATCH (conceptSet:TaxonConceptSet {id: taxState.active_concept_set_id}) OPTIONAL MATCH (koreanState:IngestState {id: 'korean-vernacular-names'}) RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release, coalesce(koreanState.last_successful_run_id, '') AS expected_prior_run_id\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"OPTIONAL MATCH (taxState:IngestState {id: 'reference-taxonomy'}) OPTIONAL MATCH (conceptSet:TaxonConceptSet {id: taxState.active_concept_set_id}) RETURN conceptSet.id AS concept_set_id, taxState.active_release AS taxonomy_release\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "7d5ddc49-16c8-50b1-b830-32f98fa65700",
       "name": "Read active taxonomy and Korean dataset state",
@@ -184,7 +184,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "function classifyMatches(resolvedRows) {\n  const writeRows = [];\n  const candidates = [];\n  for (const row of resolvedRows || []) {\n    const matchedIds = Array.isArray(row.matched_taxon_ids) ? row.matched_taxon_ids : [];\n    if (matchedIds.length === 1) {\n      writeRows.push({\n        taxon_id: matchedIds[0],\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n      });\n    } else if (matchedIds.length === 0) {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'no_matching_avilist_taxon',\n      });\n    } else {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'ambiguous_avilist_taxon_match',\n      });\n    }\n  }\n  return {writeRows, candidates};\n}\n\nfunction assembleGates(config, normalized, stateInfo, resolvedRows) {\n  const {writeRows, candidates} = classifyMatches(resolvedRows);\n  const allCandidates = [...candidates, ...normalized.conflicted_candidates];\n  const reasons = [];\n  // Checked first and most specifically: a failed or malformed fetch must\n  // never be reported as \"zero candidates\" -- that phrasing would read as a\n  // legitimate empty result (nothing left to do) rather than an outage.\n  if (normalized.fetch_ok === false) {\n    reasons.push(normalized.fetch_failure_reason || 'Wikidata SPARQL request failed');\n  }\n  if (normalized.fetch_ok !== false && !normalized.source_sha256) {\n    reasons.push('Wikidata response was not hashed');\n  }\n  // Any structurally malformed row fails the run closed instead of being\n  // silently skipped -- it may mean the SPARQL/Wikidata schema changed and\n  // the rest of the \"clean\" rows are not trustworthy either.\n  if (normalized.fetch_ok !== false && normalized.malformed_row_count > 0) {\n    reasons.push(`${normalized.malformed_row_count} malformed Wikidata row(s) were rejected`);\n  }\n  if (normalized.fetch_ok !== false && !normalized.malformed_row_count && normalized.distinct_taxon_name_count === 0) {\n    reasons.push('No Korean vernacular candidates parsed from the Wikidata response');\n  }\n  if (!stateInfo.concept_set_id) {\n    reasons.push('Active AviList reference-taxonomy concept set is not available');\n  }\n  if (reasons.length === 0 && writeRows.length === 0 && allCandidates.length === 0 && normalized.distinct_taxon_name_count > 0) {\n    reasons.push('Korean vernacular candidates were parsed but none resolved to a write row or a candidate');\n  }\n  return {\n    ...config,\n    source_sha256: normalized.source_sha256,\n    wikidata_dataset_id: normalized.wikidata_dataset_id,\n    source_release: normalized.source_release,\n    source_binding_count: normalized.source_binding_count,\n    malformed_row_count: normalized.malformed_row_count,\n    distinct_taxon_name_count: normalized.distinct_taxon_name_count,\n    concept_set_id: stateInfo.concept_set_id,\n    taxonomy_release: stateInfo.taxonomy_release,\n    expected_prior_run_id: stateInfo.expected_prior_run_id,\n    write_rows: writeRows,\n    candidates: allCandidates,\n    write_row_count: writeRows.length,\n    candidate_count: allCandidates.length,\n    ready_to_load: reasons.length === 0,\n    failure_reason: reasons.join('; '),\n  };\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst normalized = $('Normalize Korean vernacular candidates').first().json;\nconst stateInfo = $('Read active taxonomy and Korean dataset state').first().json;\nconst resolvedRows = $input.all().map(item => item.json);\nreturn [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];"
+        "jsCode": "function classifyMatches(resolvedRows) {\n  const writeRows = [];\n  const candidates = [];\n  let invalidRowCount = 0;\n  for (const row of resolvedRows || []) {\n    if (!row || typeof row.taxon_name !== 'string' || !row.taxon_name.trim()\n        || typeof row.korean_name !== 'string' || !row.korean_name.trim()\n        || !Array.isArray(row.qids)) {\n      invalidRowCount += 1;\n      continue;\n    }\n    const matchedIds = Array.isArray(row.matched_taxon_ids) ? row.matched_taxon_ids : [];\n    if (matchedIds.length === 1) {\n      writeRows.push({\n        taxon_id: matchedIds[0],\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n      });\n    } else if (matchedIds.length === 0) {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'no_matching_avilist_taxon',\n      });\n    } else {\n      candidates.push({\n        taxon_name: row.taxon_name,\n        korean_name: row.korean_name,\n        qids: row.qids,\n        reason_code: 'ambiguous_avilist_taxon_match',\n      });\n    }\n  }\n  return {writeRows, candidates, invalidRowCount};\n}\n\nfunction assembleGates(config, normalized, stateInfo, resolvedRows) {\n  const {writeRows, candidates, invalidRowCount} = classifyMatches(resolvedRows);\n  const allCandidates = [...candidates, ...normalized.conflicted_candidates];\n  const reasons = [];\n  // Checked first and most specifically: a failed or malformed fetch must\n  // never be reported as \"zero candidates\" -- that phrasing would read as a\n  // legitimate empty result (nothing left to do) rather than an outage.\n  if (normalized.fetch_ok === false) {\n    reasons.push(normalized.fetch_failure_reason || 'Wikidata SPARQL request failed');\n  }\n  if (normalized.fetch_ok !== false && !normalized.source_sha256) {\n    reasons.push('Wikidata response was not hashed');\n  }\n  // Any structurally malformed row fails the run closed instead of being\n  // silently skipped -- it may mean the SPARQL/Wikidata schema changed and\n  // the rest of the \"clean\" rows are not trustworthy either.\n  if (normalized.fetch_ok !== false && normalized.malformed_row_count > 0) {\n    reasons.push(`${normalized.malformed_row_count} malformed Wikidata row(s) were rejected`);\n  }\n  if (normalized.fetch_ok !== false && !normalized.malformed_row_count && normalized.distinct_taxon_name_count === 0) {\n    reasons.push('No Korean vernacular candidates parsed from the Wikidata response');\n  }\n  if (!stateInfo.concept_set_id) {\n    reasons.push('Active AviList reference-taxonomy concept set is not available');\n  }\n  if ((normalized.clean_candidates || []).length > 0\n      && (invalidRowCount > 0 || writeRows.length + candidates.length !== normalized.clean_candidates.length)) {\n    reasons.push('Active taxonomy resolution returned incomplete or malformed rows');\n  }\n  if (reasons.length === 0 && writeRows.length === 0 && allCandidates.length === 0 && normalized.distinct_taxon_name_count > 0) {\n    reasons.push('Korean vernacular candidates were parsed but none resolved to a write row or a candidate');\n  }\n  return {\n    ...config,\n    source_sha256: normalized.source_sha256,\n    wikidata_dataset_id: normalized.wikidata_dataset_id,\n    source_release: normalized.source_release,\n    source_binding_count: normalized.source_binding_count,\n    malformed_row_count: normalized.malformed_row_count,\n    distinct_taxon_name_count: normalized.distinct_taxon_name_count,\n    concept_set_id: stateInfo.concept_set_id,\n    taxonomy_release: stateInfo.taxonomy_release,\n    write_rows: writeRows,\n    candidates: allCandidates,\n    write_row_count: writeRows.length,\n    candidate_count: allCandidates.length,\n    ready_to_load: reasons.length === 0,\n    failure_reason: reasons.join('; '),\n  };\n}\n\nconst config = $('Build Korean vernacular configuration').first().json;\nconst normalized = $('Normalize Korean vernacular candidates').first().json;\nconst stateInfo = $('Read active taxonomy and Korean dataset state').first().json;\nconst resolvedRows = $input.all().map(item => item.json);\nreturn [{json: assembleGates(config, normalized, stateInfo, resolvedRows)}];"
       },
       "id": "890321e2-0320-532b-aee3-da5f85a77216",
       "name": "Assemble Korean vernacular quality gates",
@@ -231,39 +231,69 @@
     },
     {
       "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"candidate_count\": literal($json[\"candidate_count\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"pipeline_id\": literal($json[\"pipeline_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"source_sha256\": literal($json[\"source_sha256\"]),\"sparql_endpoint\": literal($json[\"sparql_endpoint\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"]),\"wikidata_landing_uri\": literal($json[\"wikidata_landing_uri\"]),\"wikidata_license_uri\": literal($json[\"wikidata_license_uri\"]),\"write_row_count\": literal($json[\"write_row_count\"])}; return \"MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) MERGE (run:IngestionRun {id: $run_id}) SET run.pipeline_id = $pipeline_id, run.started_at = $retrieved_at, run.status = 'loading', run.source_release = $source_release, run.wikidata_dataset_id = $wikidata_dataset_id, run.source_sha256 = $source_sha256, run.taxonomy_release = $taxonomy_release, run.expected_write_rows = $write_row_count, run.expected_candidates = $candidate_count MERGE (dataset:SourceDataset {id: $wikidata_dataset_id}) SET dataset.name = 'Wikidata taxon labels', dataset.provider = 'Wikimedia Foundation / Wikidata community', dataset.version = $source_release, dataset.landing_uri = $wikidata_landing_uri, dataset.snapshot_uri = $sparql_endpoint, dataset.snapshot_sha256 = $source_sha256, dataset.policy_status = 'allowed' MERGE (license:License {id: $wikidata_license_uri}) SET license.license_uri = $wikidata_license_uri, license.policy_status = 'allowed' MERGE (dataset)-[:LICENSED_UNDER]->(license) RETURN run.id AS started_run_id, run.status AS run_status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source = $input.first().json;\nreturn [{json: {...source, ingest_request: {\n  dataset: {\n    id: source.wikidata_dataset_id,\n    source_id: 'wikidata',\n    name: 'Wikidata Korean bird labels',\n    provider: 'Wikimedia Foundation / Wikidata community',\n    landing_uri: source.wikidata_landing_uri,\n    release_strategy: 'dated_snapshot',\n    policy_status: 'allowed',\n    metadata: {license_uri: source.wikidata_license_uri, taxonomy_release: source.taxonomy_release},\n  },\n  release: {\n    id: source.source_release,\n    release_key: source.source_release,\n    retrieved_at: source.retrieved_at,\n    content_sha256: source.source_sha256,\n    raw_object_uri: source.sparql_endpoint,\n    metadata: {taxonomy_release: source.taxonomy_release, concept_set_id: source.concept_set_id},\n  },\n  run: {\n    id: source.run_id,\n    pipeline_id: source.pipeline_id,\n    started_at: source.retrieved_at,\n    manifest: {\n      orchestrator: 'n8n',\n      workflow: 'korean-vernacular-wikidata',\n      expected_write_rows: source.write_row_count,\n      expected_candidates: source.candidate_count,\n    },\n  },\n}}}];"
       },
-      "id": "f0afc090-1acd-59fe-a77b-399fb8de5797",
-      "name": "Start Korean vernacular ingestion run",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
+      "id": "cd2051e4-3aa5-56e9-bcae-cfaf6fae559a",
+      "name": "Prepare PostgreSQL ingestion run",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         1480,
         -180
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + '/internal/v1/ingest/begin' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
         }
       },
+      "id": "83c8be13-1aad-5083-a4de-35c59922f3ed",
+      "name": "Start PostgreSQL ingestion run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1720,
+        -180
+      ],
       "onError": "continueRegularOutput",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from n8n environment variables; no credential value is stored in this workflow."
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble Korean vernacular quality gates').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst startOk = !errorText && response.started_run_id === expected.run_id && response.run_status === 'loading';\nreturn [{json: {...expected, start_ok: startOk, failure_reason: startOk ? '' : (errorText || 'Neo4j did not start the ingestion run')}}];"
+        "jsCode": "const expected = $('Prepare PostgreSQL ingestion run').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst stateVersion = response.state_version;\nconst startOk = !errorText && response.status === 'started'\n  && typeof stateVersion === 'number' && Number.isSafeInteger(stateVersion) && stateVersion >= 0;\nreturn [{json: {...expected, expected_state_version: stateVersion, start_ok: startOk,\n  failure_reason: startOk ? '' : (errorText || 'PostgreSQL did not start the ingestion run')}}];"
       },
-      "id": "19eeac64-9a60-5129-8055-f4622454d1ef",
-      "name": "Verify Korean vernacular run started",
+      "id": "c1cb9016-09e2-5185-b235-974cb705e967",
+      "name": "Verify PostgreSQL ingestion run started",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1720,
+        1960,
         -180
       ]
     },
@@ -278,7 +308,7 @@
           },
           "conditions": [
             {
-              "id": "158ca977-c09e-561a-a148-4aa63b323a37",
+              "id": "47457469-8237-57f8-931d-bdb0150c5dc0",
               "leftValue": "={{ $json.start_ok }}",
               "rightValue": true,
               "operator": {
@@ -292,24 +322,10 @@
         },
         "options": {}
       },
-      "id": "7a9235fc-fc4d-5be4-8056-e7c3e239b03d",
-      "name": "Korean vernacular ingestion run started?",
+      "id": "152c6bb2-693c-5de9-a683-3ce40ea9d86e",
+      "name": "PostgreSQL ingestion run started?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
-      "position": [
-        1960,
-        -180
-      ]
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "const source = $('Assemble Korean vernacular quality gates').first().json;\nconst batches = [];\nfor (let offset = 0; offset < source.write_rows.length; offset += source.batch_size) {\n  batches.push({rows: source.write_rows.slice(offset, offset + source.batch_size), candidates: []});\n}\nfor (let offset = 0; offset < source.candidates.length; offset += source.batch_size) {\n  batches.push({rows: [], candidates: source.candidates.slice(offset, offset + source.batch_size)});\n}\nif (batches.length === 0) batches.push({rows: [], candidates: []});\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  retrieved_at: source.retrieved_at,\n  source_release: source.source_release,\n  wikidata_dataset_id: source.wikidata_dataset_id,\n  concept_set_id: source.concept_set_id,\n  source_sha256: source.source_sha256,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch,\n}}));"
-      },
-      "id": "9998adc4-02ff-5fed-98a0-4d04448e39e3",
-      "name": "Prepare Korean vernacular batches",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
       "position": [
         2200,
         -180
@@ -317,12 +333,13 @@
     },
     {
       "parameters": {
-        "options": {}
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source = $('Verify PostgreSQL ingestion run started').first().json;\nconst batches = [];\nfor (let offset = 0; offset < source.write_rows.length; offset += source.batch_size) {\n  batches.push({rows: source.write_rows.slice(offset, offset + source.batch_size), candidates: []});\n}\nfor (let offset = 0; offset < source.candidates.length; offset += source.batch_size) {\n  batches.push({rows: [], candidates: source.candidates.slice(offset, offset + source.batch_size)});\n}\nif (batches.length === 0) batches.push({rows: [], candidates: []});\nreturn batches.map((batch, index) => ({json: {\n  run_id: source.run_id,\n  retrieved_at: source.retrieved_at,\n  source_release: source.source_release,\n  wikidata_dataset_id: source.wikidata_dataset_id,\n  concept_set_id: source.concept_set_id,\n  source_sha256: source.source_sha256,\n  expected_state_version: source.expected_state_version,\n  batch_index: index,\n  batch_count: batches.length,\n  ...batch,\n}}));"
       },
-      "id": "d6d45843-98e7-567e-aeba-93baf1734ffa",
-      "name": "Loop Over Korean vernacular batches",
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "id": "9998adc4-02ff-5fed-98a0-4d04448e39e3",
+      "name": "Prepare Korean vernacular batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         2440,
         -180
@@ -330,16 +347,132 @@
     },
     {
       "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "d6d45843-98e7-567e-aeba-93baf1734ffa",
+      "name": "Loop Over Korean vernacular batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2680,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $input.first().json;\nconst qids = new Set();\nfor (const row of [...batch.rows, ...batch.candidates]) {\n  for (const qid of row.qids || []) qids.add(qid);\n}\nconst records = [...qids].sort().map(qid => ({\n  id: `wikidata-record:${qid}:${batch.wikidata_dataset_id}`,\n  external_id: qid,\n  record_type: 'taxon_label',\n  raw_object_uri: `https://www.wikidata.org/entity/${qid}`,\n  raw_sha256: batch.source_sha256,\n  retrieved_at: batch.retrieved_at,\n  parser_version: 'korean-vernacular-v2',\n  license_policy_status: 'allowed',\n  payload: {qid, source_release: batch.source_release, snapshot_sha256: batch.source_sha256},\n}));\nconst quarantine_items = batch.candidates.map(row => ({\n  record_key: `${row.reason_code}:${(row.qids || []).join('+') || 'no-qid'}:${encodeURIComponent(row.korean_name || '')}`.slice(0, 200),\n  stage: 'resolve',\n  reason_code: row.reason_code,\n  severity: 'warning',\n  rule_version: 'korean-vernacular-v2',\n  raw_value_redacted: {qids: row.qids || [], taxon_name: row.taxon_name, proposed_name: row.korean_name},\n}));\nreturn [{json: {...batch, ingest_request: {records, quarantine_items}}}];"
+      },
+      "id": "4ab07ae7-3b2e-520d-8ac5-0a02a77292f5",
+      "name": "Prepare PostgreSQL source batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2920,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/append') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "bc90e4b9-db9a-59ef-837c-b90a6d36a77c",
+      "name": "Append PostgreSQL source batch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3160,
+        -180
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from n8n environment variables; no credential value is stored in this workflow."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const batch = $('Prepare PostgreSQL source batch').item.json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst appendOk = !errorText && response.status === 'appended';\nreturn [{json: {...batch, append_ok: appendOk,\n  failure_reason: appendOk ? '' : (errorText || 'PostgreSQL did not append the source batch')}}];"
+      },
+      "id": "75789c2b-55a7-517b-aa7d-0f26132fa188",
+      "name": "Verify PostgreSQL source batch appended",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3400,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "75635547-86d8-5f14-a88a-062fae867b98",
+              "leftValue": "={{ $json.append_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "170f8255-4ee2-563d-b0aa-d5fcae521425",
+      "name": "PostgreSQL source batch appended?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3640,
+        -180
+      ]
+    },
+    {
+      "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"rows\": literal($json[\"rows\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"source_sha256\": literal($json[\"source_sha256\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id MATCH (dataset:SourceDataset {id: $wikidata_dataset_id}) MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) CALL { WITH run, dataset, concept_set UNWIND $rows AS row MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}) SET vernacular.name = row.korean_name, vernacular.language = 'ko', vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id, vernacular.source_scientific_name_claim = row.taxon_name, vernacular.source_qids = row.qids, vernacular.source_release = $source_release, vernacular.retrieved_at = $retrieved_at MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) MERGE (run)-[:INGESTED]->(vernacular) WITH vernacular, dataset, row UNWIND row.qids AS qid MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id}) SET record.record_type = 'taxon_label', record.external_id = qid, record.raw_uri = 'https://www.wikidata.org/entity/' + qid, record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (vernacular)-[:FROM_RECORD]->(record) RETURN count(DISTINCT vernacular) AS loaded_vernacular_names } CALL { WITH run, dataset UNWIND $candidates AS row MERGE (candidate:VernacularNameCandidate { id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id }) SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name, candidate.reason_code = row.reason_code, candidate.qids = row.qids, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at MERGE (run)-[:QUARANTINED]->(candidate) WITH candidate, dataset, row UNWIND row.qids AS qid MERGE (record:SourceRecord {id: 'wikidata-record:' + qid + ':' + $wikidata_dataset_id}) SET record.record_type = 'taxon_label', record.external_id = qid, record.raw_uri = 'https://www.wikidata.org/entity/' + qid, record.raw_hash = $source_sha256, record.retrieved_at = $retrieved_at MERGE (record)-[:IN_DATASET]->(dataset) MERGE (record)-[:HAS_VERNACULAR_CANDIDATE]->(candidate) RETURN count(DISTINCT candidate) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_vernacular_names, loaded_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"candidates\": literal($json[\"candidates\"]),\"concept_set_id\": literal($json[\"concept_set_id\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"rows\": literal($json[\"rows\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (state:IngestState {id: 'reference-taxonomy'}) WHERE state.active_concept_set_id = $concept_set_id MATCH (concept_set:TaxonConceptSet {id: $concept_set_id}) CALL { WITH concept_set UNWIND $rows AS row MATCH (taxon:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(concept_set) WHERE taxon.id = row.taxon_id MERGE (vernacular:VernacularName {id: row.taxon_id + ':vernacular:ko:wikidata:' + $wikidata_dataset_id}) SET vernacular.name = row.korean_name, vernacular.language = 'ko', vernacular.status = 'community-sourced', vernacular.dataset_id = $wikidata_dataset_id, vernacular.policy_status = 'allowed', vernacular.source_scientific_name_claim = row.taxon_name, vernacular.source_qids = row.qids, vernacular.source_release = $source_release, vernacular.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id], vernacular.retrieved_at = $retrieved_at MERGE (taxon)-[:HAS_VERNACULAR_NAME]->(vernacular) RETURN count(DISTINCT vernacular) AS loaded_vernacular_names } CALL { WITH state UNWIND $candidates AS row MERGE (candidate:VernacularNameCandidate { id: 'ko-vernacular-candidate:wikidata:' + row.reason_code + ':' + coalesce(row.qids[0], row.taxon_name) + ':' + $wikidata_dataset_id }) SET candidate.taxon_name = row.taxon_name, candidate.proposed_name = row.korean_name, candidate.reason_code = row.reason_code, candidate.qids = row.qids, candidate.resolution_status = 'open', candidate.last_seen_run_id = $run_id, candidate.last_seen_at = $retrieved_at, candidate.dataset_id = $wikidata_dataset_id, candidate.source_record_ids = [qid IN row.qids | 'wikidata-record:' + qid + ':' + $wikidata_dataset_id] RETURN count(DISTINCT candidate) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, loaded_vernacular_names, loaded_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "8f17431a-e4bd-5eb6-8000-34f2fbf69e94",
       "name": "Upsert Korean vernacular names batch",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        2680,
+        3880,
         -180
       ],
       "credentials": {
@@ -355,14 +488,14 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Assemble Korean vernacular quality gates').first().json;\nconst rows = $input.all().map(item => item.json);\nconst errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);\n// Treat the Neo4j output as untrusted at this boundary. In particular, do\n// not coerce strings/booleans with Number(...): a malformed output must not\n// turn into a seemingly valid count and authorize Finalize.\nconst isNonNegativeSafeInteger = value =>\n  typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;\nconst batchCount = rows.length && isNonNegativeSafeInteger(rows[0].batch_count)\n  ? rows[0].batch_count\n  : 0;\nconst validBatchRows = batchCount > 0 && rows.every(row =>\n  row && typeof row === 'object'\n  && row.batch_count === batchCount\n  && isNonNegativeSafeInteger(row.batch_index)\n  && row.batch_index < batchCount\n  && isNonNegativeSafeInteger(row.loaded_vernacular_names)\n  && isNonNegativeSafeInteger(row.loaded_candidates)\n);\nconst indexes = new Set(validBatchRows ? rows.map(row => row.batch_index) : []);\nconst loadedVernacularNames = validBatchRows\n  ? rows.reduce((sum, row) => sum + row.loaded_vernacular_names, 0)\n  : 0;\nconst loadedCandidates = validBatchRows\n  ? rows.reduce((sum, row) => sum + row.loaded_candidates, 0)\n  : 0;\nconst loadOk = !errors.length && validBatchRows && indexes.size === batchCount && rows.length === batchCount\n  && loadedVernacularNames === expected.write_row_count\n  && loadedCandidates === expected.candidate_count;\nreturn [{json: {...expected,\n  load_ok: loadOk,\n  loaded_vernacular_names: loadedVernacularNames,\n  loaded_candidates: loadedCandidates,\n  failure_reason: loadOk ? '' : (errors.join('; ') || 'Korean vernacular batch counts did not match')\n}}];"
+        "jsCode": "const expected = $('Verify PostgreSQL ingestion run started').first().json;\nconst rows = $input.all().map(item => item.json);\nconst errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);\n// The NAS community Neo4j node serializes Cypher integer return values as\n// strings. Accept only a canonical unsigned decimal spelling (or a native\n// safe integer), then normalize every returned count/index before checking\n// batch completeness. Number(...) alone would incorrectly accept whitespace,\n// signs, decimals, exponents and booleans.\nconst normalizeNonNegativeSafeInteger = value => {\n  if (typeof value === 'number') {\n    return Number.isSafeInteger(value) && value >= 0 ? value : null;\n  }\n  if (typeof value !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value)) return null;\n  const parsed = Number(value);\n  return Number.isSafeInteger(parsed) ? parsed : null;\n};\nconst normalizedRows = rows.map(row => ({\n  row,\n  batchIndex: normalizeNonNegativeSafeInteger(row?.batch_index),\n  batchCount: normalizeNonNegativeSafeInteger(row?.batch_count),\n  loadedVernacularNames: normalizeNonNegativeSafeInteger(row?.loaded_vernacular_names),\n  loadedCandidates: normalizeNonNegativeSafeInteger(row?.loaded_candidates),\n}));\nconst batchCount = normalizedRows.length && normalizedRows[0].batchCount !== null\n  ? normalizedRows[0].batchCount\n  : 0;\nconst validBatchRows = batchCount > 0 && normalizedRows.every(value =>\n  value.row && typeof value.row === 'object'\n  && value.batchCount === batchCount\n  && value.batchIndex !== null && value.batchIndex < batchCount\n  && value.loadedVernacularNames !== null\n  && value.loadedCandidates !== null\n);\nconst indexes = new Set(validBatchRows ? normalizedRows.map(value => value.batchIndex) : []);\nconst loadedVernacularNames = validBatchRows\n  ? normalizedRows.reduce((sum, value) => sum + value.loadedVernacularNames, 0)\n  : 0;\nconst loadedCandidates = validBatchRows\n  ? normalizedRows.reduce((sum, value) => sum + value.loadedCandidates, 0)\n  : 0;\nconst loadOk = !errors.length && validBatchRows && indexes.size === batchCount && rows.length === batchCount\n  && loadedVernacularNames === expected.write_row_count\n  && loadedCandidates === expected.candidate_count;\nreturn [{json: {...expected,\n  load_ok: loadOk,\n  loaded_vernacular_names: loadedVernacularNames,\n  loaded_candidates: loadedCandidates,\n  failure_reason: loadOk ? '' : (errors.join('; ') || 'Korean vernacular batch counts did not match')\n}}];"
       },
       "id": "937e9f99-3cbd-5376-87ca-bc6a1bb66b38",
       "name": "Verify Korean vernacular batches",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2920,
+        4120,
         -180
       ]
     },
@@ -396,7 +529,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3160,
+        4360,
         -180
       ]
     },
@@ -404,14 +537,14 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"concept_set_id\": literal($json[\"concept_set_id\"]),\"expected_prior_run_id\": literal($json[\"expected_prior_run_id\"]),\"loaded_candidates\": literal($json[\"loaded_candidates\"]),\"loaded_vernacular_names\": literal($json[\"loaded_vernacular_names\"]),\"run_id\": literal($json[\"run_id\"]),\"source_release\": literal($json[\"source_release\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id MERGE (state:IngestState {id: 'korean-vernacular-names'}) ON CREATE SET state.last_successful_run_id = '' WITH run, state, coalesce(state.last_successful_run_id, '') AS currentRunId WHERE currentRunId = $expected_prior_run_id SET run.status = 'succeeded', run.finished_at = datetime(), run.loaded_vernacular_names = $loaded_vernacular_names, run.loaded_candidates = $loaded_candidates SET state.active_release = $source_release, state.active_dataset_id = $wikidata_dataset_id, state.taxonomy_release = $taxonomy_release, state.last_successful_run_id = $run_id, state.last_successful_at = datetime(), state.loaded_vernacular_names = $loaded_vernacular_names, state.loaded_candidates = $loaded_candidates RETURN run.id AS finalized_run_id, run.status AS run_status, state.active_release AS active_release, state.active_dataset_id AS active_dataset_id\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"concept_set_id\": literal($json[\"concept_set_id\"]),\"wikidata_dataset_id\": literal($json[\"wikidata_dataset_id\"])}; return \"MATCH (taxState:IngestState {id: 'reference-taxonomy'}) WHERE taxState.active_concept_set_id = $concept_set_id OPTIONAL MATCH (vernacular:VernacularName {language: 'ko', dataset_id: $wikidata_dataset_id}) WITH taxState, count(vernacular) AS graphVernacularNames OPTIONAL MATCH (candidate:VernacularNameCandidate {dataset_id: $wikidata_dataset_id}) RETURN taxState.active_concept_set_id AS concept_set_id, graphVernacularNames AS graph_vernacular_names, count(candidate) AS graph_candidates\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
-      "id": "653fc296-b547-5566-98aa-cbb3b9a96678",
-      "name": "Finalize Korean vernacular active release",
+      "id": "e960ca6e-e8ec-5c89-90b8-e3e7c4fae6de",
+      "name": "Verify Korean vernacular graph snapshot",
       "type": "n8n-nodes-neo4j.neo4j",
       "typeVersion": 1,
       "position": [
-        3400,
+        4600,
         -180
       ],
       "credentials": {
@@ -427,14 +560,116 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Verify Korean vernacular batches').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst finalizeOk = !errorText\n  && response.finalized_run_id === expected.run_id\n  && response.run_status === 'succeeded'\n  && response.active_release === expected.source_release\n  && response.active_dataset_id === expected.wikidata_dataset_id;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  loaded_vernacular_names: expected.loaded_vernacular_names,\n  loaded_candidates: expected.loaded_candidates,\n  failure_reason: finalizeOk ? '' : (errorText ||\n    'korean-vernacular-names activation was refused: either the reference-taxonomy ' +\n    'active concept set changed since this run resolved matches, or a concurrent run ' +\n    'already activated a newer snapshot first (lost the optimistic-concurrency race)')\n}}];"
+        "jsCode": "const expected = $('Verify Korean vernacular batches').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\n// The Neo4j community node serializes Cypher integer return values as strings.\n// Keep this parser as strict as VERIFY_BATCHES: accept only native non-negative\n// safe integers or canonical unsigned decimal strings. In particular, do not\n// coerce whitespace, signs, decimals, exponents, booleans, or overflow.\nconst normalizeNonNegativeSafeInteger = value => {\n  if (typeof value === 'number') {\n    return Number.isSafeInteger(value) && value >= 0 ? value : null;\n  }\n  if (typeof value !== 'string' || !/^(?:0|[1-9][0-9]*)$/.test(value)) return null;\n  const parsed = Number(value);\n  return Number.isSafeInteger(parsed) ? parsed : null;\n};\nconst graphVernacularNames = normalizeNonNegativeSafeInteger(response.graph_vernacular_names);\nconst graphCandidates = normalizeNonNegativeSafeInteger(response.graph_candidates);\nconst graphOk = !errorText\n  && response.concept_set_id === expected.concept_set_id\n  && graphVernacularNames !== null\n  && graphCandidates !== null\n  && graphVernacularNames === expected.loaded_vernacular_names\n  && graphCandidates === expected.loaded_candidates;\nreturn [{json: {...expected, graph_ok: graphOk,\n  failure_reason: graphOk ? '' : (errorText || 'Neo4j domain snapshot verification failed')}}];"
+      },
+      "id": "6d5ffcd1-c656-5031-9597-fd1513399615",
+      "name": "Check Korean vernacular graph snapshot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4840,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b23d0269-be92-578c-9950-46fa930f020a",
+              "leftValue": "={{ $json.graph_ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "98053bf3-ef04-5037-97ba-73e712b24f1b",
+      "name": "Korean vernacular graph verified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        5080,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const source = $input.first().json;\nconst qids = new Set([...source.write_rows, ...source.candidates].flatMap(row => row.qids || []));\nreturn [{json: {...source, ingest_request: {\n  counts: {\n    source_bindings: source.source_binding_count,\n    source_records: qids.size,\n    vernacular_names: source.loaded_vernacular_names,\n    quarantine_items: source.loaded_candidates,\n  },\n  cursor: {source_release: source.source_release, dataset_id: source.wikidata_dataset_id},\n  expected_state_version: source.expected_state_version,\n}}}];"
+      },
+      "id": "c01b5bb3-3e91-545b-879b-93d0a68446db",
+      "name": "Prepare PostgreSQL finalization",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5320,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/finalize') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "f0b69d46-6a8f-5299-ade4-9f3fd82dd459",
+      "name": "Finalize PostgreSQL ingestion run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        5560,
+        -180
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from n8n environment variables; no credential value is stored in this workflow."
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const expected = $('Prepare PostgreSQL finalization').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst finalizeOk = !errorText\n  && response.status === 'finalized'\n  && response.state_version === expected.expected_state_version + 1;\nreturn [{json: {...expected,\n  finalize_ok: finalizeOk,\n  loaded_vernacular_names: expected.loaded_vernacular_names,\n  loaded_candidates: expected.loaded_candidates,\n  failure_reason: finalizeOk ? '' : (errorText ||\n    'PostgreSQL activation was refused because a concurrent run advanced the state version')\n}}];"
       },
       "id": "d3bbc19f-1cd4-5ab1-beca-5acd2f1ff2af",
       "name": "Verify Korean vernacular release finalized",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3640,
+        5800,
         -180
       ]
     },
@@ -468,7 +703,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3880,
+        6040,
         -180
       ]
     },
@@ -487,7 +722,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        4120,
+        6280,
         -280
       ],
       "onError": "continueRegularOutput",
@@ -509,39 +744,69 @@
     },
     {
       "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"failure_reason\": literal($json[\"failure_reason\"]),\"run_id\": literal($json[\"run_id\"])}; return \"MATCH (run:IngestionRun {id: $run_id}) WHERE run.status = 'loading' SET run.status = 'failed', run.finished_at = datetime(), run.failure_reason = $failure_reason RETURN run.id AS marked_failed_run_id, run.status AS run_status\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{json: {...$input.first().json, ingest_request: {reason: String($input.first().json.failure_reason || 'Unknown failure').slice(0, 4000)}}}];"
       },
-      "id": "7fc005e8-afb0-54e0-87ab-4a91afd1c216",
-      "name": "Mark Korean vernacular run failed",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
+      "id": "64ba1ecd-0370-568b-a548-d91752f06f0a",
+      "name": "Prepare PostgreSQL run failure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
         1960,
         220
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.ROBINGRAPH_INGEST_API_URL + ('/internal/v1/ingest/' + $json.run_id + '/fail') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.ROBINGRAPH_INGEST_INTERNAL_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.ingest_request }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
         }
       },
+      "id": "66fda41f-1abc-58f2-85df-7c3152d51a21",
+      "name": "Mark PostgreSQL ingestion run failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2200,
+        220
+      ],
       "onError": "continueRegularOutput",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Calls the private PostgreSQL ingest API. Base URL and bearer token are read from n8n environment variables; no credential value is stored in this workflow."
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Capture Korean vernacular failure context').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || '');\nconst runMarkedFailed = !errorText\n  && response.marked_failed_run_id === expected.run_id\n  && response.run_status === 'failed';\nreturn [{json: {...expected, run_marked_failed: runMarkedFailed}}];"
+        "jsCode": "const expected = $('Capture Korean vernacular failure context').first().json;\nconst response = $input.first().json;\nconst errorText = String(response.error?.message || response.error || response.message || response.detail || '');\nconst runMarkedFailed = !errorText\n  && response.status === 'failed';\nreturn [{json: {...expected, run_marked_failed: runMarkedFailed}}];"
       },
       "id": "259a0ddd-bce3-5262-98f1-c50759d81fbf",
       "name": "Record Korean vernacular run failure",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2200,
+        2440,
         220
       ]
     },
@@ -549,7 +814,7 @@
       "parameters": {
         "authentication": "webhook",
         "operation": "sendLegacy",
-        "content": "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + String($json.run_id || 'not-started') + '\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) + '\\nRun bookkeeping: ' + ($json.run_marked_failed ? 'marked failed in Neo4j' : 'not recorded in Neo4j (no run was loading, or the bookkeeping write itself failed)') }}",
+        "content": "={{ '❌ **RobinGraph Korean vernacular-name ingest blocked or failed**\\nRun: ' + String($json.run_id || 'not-started') + '\\nReason: ' + String($json.failure_reason || 'Unknown failure').slice(0, 1500) + '\\nRun bookkeeping: ' + ($json.run_marked_failed ? 'marked failed in PostgreSQL' : 'not recorded in PostgreSQL (no run was loading, or the bookkeeping request itself failed)') }}",
         "options": {
           "username": "RobinGraph Operations",
           "wait": true
@@ -560,7 +825,7 @@
       "type": "n8n-nodes-base.discord",
       "typeVersion": 2,
       "position": [
-        2440,
+        2680,
         220
       ],
       "onError": "continueRegularOutput",
@@ -575,7 +840,7 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        2680,
+        2920,
         220
       ]
     },
@@ -586,7 +851,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        4360,
+        6520,
         -180
       ]
     },
@@ -627,126 +892,6 @@
       "position": [
         -1120,
         -420
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_korean_vernacular_sourcerecord_id IF NOT EXISTS FOR (node:SourceRecord) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "e8987c82-737b-58d8-ac91-ded5cc3d900f",
-      "name": "Ensure SourceRecord ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -860,
-        -420
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_korean_vernacular_sourcedataset_id IF NOT EXISTS FOR (node:SourceDataset) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "85f53ab9-9985-565a-9340-521b6b081943",
-      "name": "Ensure SourceDataset ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -600,
-        -420
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_korean_vernacular_license_id IF NOT EXISTS FOR (node:License) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "0aed5fa2-09b5-516a-b0c8-aac0d3ace863",
-      "name": "Ensure License ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -1380,
-        -250
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_korean_vernacular_ingestionrun_id IF NOT EXISTS FOR (node:IngestionRun) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "8a8b843b-59e1-53f7-8b8c-798d6d8336dc",
-      "name": "Ensure IngestionRun ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -1120,
-        -250
-      ],
-      "credentials": {
-        "neo4jApi": {
-          "id": "DvmTD1qB0Kb7TRml",
-          "name": "Neo4j"
-        }
-      },
-      "onError": "stopWorkflow",
-      "alwaysOutputData": true,
-      "notes": "Uses the Neo4j community node. External values are encoded as Cypher literals and substituted only into a fixed query template because this node version has no parameter input."
-    },
-    {
-      "parameters": {
-        "resource": "graphDb",
-        "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {}; return \"CREATE CONSTRAINT robingraph_korean_vernacular_ingeststate_id IF NOT EXISTS FOR (node:IngestState) REQUIRE node.id IS UNIQUE\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
-      },
-      "id": "124405d6-bf77-5d2a-8e10-3a6e84e523d9",
-      "name": "Ensure IngestState ID constraint",
-      "type": "n8n-nodes-neo4j.neo4j",
-      "typeVersion": 1,
-      "position": [
-        -860,
-        -250
       ],
       "credentials": {
         "neo4jApi": {
@@ -864,7 +1009,7 @@
       "main": [
         [
           {
-            "node": "Start Korean vernacular ingestion run",
+            "node": "Prepare PostgreSQL ingestion run",
             "type": "main",
             "index": 0
           }
@@ -878,29 +1023,40 @@
         ]
       ]
     },
-    "Start Korean vernacular ingestion run": {
+    "Prepare PostgreSQL ingestion run": {
       "main": [
         [
           {
-            "node": "Verify Korean vernacular run started",
+            "node": "Start PostgreSQL ingestion run",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Verify Korean vernacular run started": {
+    "Start PostgreSQL ingestion run": {
       "main": [
         [
           {
-            "node": "Korean vernacular ingestion run started?",
+            "node": "Verify PostgreSQL ingestion run started",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Korean vernacular ingestion run started?": {
+    "Verify PostgreSQL ingestion run started": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL ingestion run started?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL ingestion run started?": {
       "main": [
         [
           {
@@ -940,7 +1096,58 @@
         ],
         [
           {
+            "node": "Prepare PostgreSQL source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL source batch": {
+      "main": [
+        [
+          {
+            "node": "Append PostgreSQL source batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append PostgreSQL source batch": {
+      "main": [
+        [
+          {
+            "node": "Verify PostgreSQL source batch appended",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify PostgreSQL source batch appended": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL source batch appended?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL source batch appended?": {
+      "main": [
+        [
+          {
             "node": "Upsert Korean vernacular names batch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Capture Korean vernacular failure context",
             "type": "main",
             "index": 0
           }
@@ -973,7 +1180,7 @@
       "main": [
         [
           {
-            "node": "Finalize Korean vernacular active release",
+            "node": "Verify Korean vernacular graph snapshot",
             "type": "main",
             "index": 0
           }
@@ -987,7 +1194,58 @@
         ]
       ]
     },
-    "Finalize Korean vernacular active release": {
+    "Verify Korean vernacular graph snapshot": {
+      "main": [
+        [
+          {
+            "node": "Check Korean vernacular graph snapshot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Korean vernacular graph snapshot": {
+      "main": [
+        [
+          {
+            "node": "Korean vernacular graph verified?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Korean vernacular graph verified?": {
+      "main": [
+        [
+          {
+            "node": "Prepare PostgreSQL finalization",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Capture Korean vernacular failure context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PostgreSQL finalization": {
+      "main": [
+        [
+          {
+            "node": "Finalize PostgreSQL ingestion run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize PostgreSQL ingestion run": {
       "main": [
         [
           {
@@ -1042,14 +1300,25 @@
       "main": [
         [
           {
-            "node": "Mark Korean vernacular run failed",
+            "node": "Prepare PostgreSQL run failure",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Mark Korean vernacular run failed": {
+    "Prepare PostgreSQL run failure": {
+      "main": [
+        [
+          {
+            "node": "Mark PostgreSQL ingestion run failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark PostgreSQL ingestion run failed": {
       "main": [
         [
           {
@@ -1094,61 +1363,6 @@
       ]
     },
     "Ensure VernacularNameCandidate ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure SourceRecord ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure SourceRecord ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure SourceDataset ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure SourceDataset ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure License ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure License ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure IngestionRun ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure IngestionRun ID constraint": {
-      "main": [
-        [
-          {
-            "node": "Ensure IngestState ID constraint",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Ensure IngestState ID constraint": {
       "main": [
         [
           {

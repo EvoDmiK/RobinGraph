@@ -4,7 +4,7 @@ from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
 import json
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from fastapi.testclient import TestClient
 
@@ -21,6 +21,12 @@ class SearchCLITest(unittest.TestCase):
         self.settings = patch('robingraph.cli.Neo4jSettings.from_environment', return_value=settings)
         self.settings.start()
         self.addCleanup(self.settings.stop)
+        self.postgres_settings = patch(
+            "robingraph.ingest.postgres.PostgresSettings.from_environment",
+            return_value=Mock(),
+        )
+        self.postgres_settings.start()
+        self.addCleanup(self.postgres_settings.stop)
         self.environment = patch('robingraph.cli.load_local_environment')
         self.environment.start()
         self.addCleanup(self.environment.stop)
