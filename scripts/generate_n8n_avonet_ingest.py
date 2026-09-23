@@ -5,9 +5,9 @@ import json
 from pathlib import Path
 
 try:
-    from .generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher, ingest_api_node
+    from .generate_n8n_reference_ingest import code, node, edge, boolean_if, neo4j_node, compact_cypher, ingest_api_node
 except ImportError:
-    from generate_n8n_reference_ingest import code, node, edge, neo4j_node, compact_cypher, ingest_api_node
+    from generate_n8n_reference_ingest import code, node, edge, boolean_if, neo4j_node, compact_cypher, ingest_api_node
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "n8n/robingraph-avonet-ingest.json"
@@ -157,7 +157,7 @@ RETURN $batch_index AS batch_index, $batch_count AS batch_count,
 """)
 
 VERIFY_JS = r"""
-const expected = $('Normalize AVONET species').first().json;
+const expected = $('Build AVONET configuration').first().json;
 const numericKeys = ['batch_index','batch_count','loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims'];
 const rows = $input.all().map(x => {
   const row = {...x.json};
@@ -179,8 +179,7 @@ for (const row of rows) {
 if (profiles!==expected.expected_rows || matched!==expected.expected_matched_profiles ||
     claims!==expected.expected_loaded_claims || candidates!==expected.expected_mapping_candidates)
   throw new Error('AVONET mapping quality gate failed');
-const {profiles: unused, ...config}=expected;
-return [{json:{...config, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];
+return [{json:{...expected, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];
 """
 
 PREPARE_BEGIN_JS = r"""
@@ -216,13 +215,6 @@ const records=batch.profiles.map(row=>({id:row.id,external_id:externalId(row),
     inference_raw:row.inference_raw,inferred_fields_raw:row.inferred_fields_raw,
     reference_species:row.reference_species,sample_size:row.sample_size,avibase_id:row.avibase_id}}));
 return [{json:{...batch,ingest_request:{records,quarantine_items:[]}}}];
-"""
-
-VERIFY_APPEND_JS = r"""
-const batch=$('Prepare PostgreSQL AVONET source batch').item.json,response=$input.first().json;
-const errorText=String(response.error?.message||response.error||response.message||response.detail||'');
-if(errorText||response.status!=='appended')throw new Error(errorText||'PostgreSQL AVONET append failed');
-return [{json:batch}];
 """
 
 PREPARE_FINALIZE_JS = r"""
@@ -297,8 +289,10 @@ def build_workflow(config: dict | None = None) -> dict:
         node('Loop Over AVONET batches','n8n-nodes-base.splitInBatches',3,{'batchSize':1,'options':{}},(2000,0)),
         code('Prepare PostgreSQL AVONET source batch',PREPARE_APPEND_JS,(2200,100)),
         ingest_api_node('Append PostgreSQL AVONET source batch',"('/internal/v1/ingest/'+$json.run_id+'/append')",(2400,100)),
-        code('Verify PostgreSQL AVONET source batch',VERIFY_APPEND_JS,(2600,100)),
-        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(2800,100)),
+        boolean_if('PostgreSQL AVONET source batch appended?',"={{ $json.status === 'appended' }}",(2600,100)),
+        neo4j_node('Upsert AVONET batches',BATCH_CYPHER,(2800,100),source_node='Prepare PostgreSQL AVONET source batch'),
+        node('Fail AVONET append','n8n-nodes-base.stopAndError',1,
+             {'errorMessage':'PostgreSQL AVONET source append failed; inspect the preceding HTTP response.'},(2800,280)),
         code('Verify AVONET batches',VERIFY_JS,(2800,-100)),
         neo4j_node('Verify AVONET domain release',FINALIZE_CYPHER,(3000,-100)),
         code('Verify AVONET domain counts',"const row=$input.first().json; const cfg=$('Verify AVONET batches').first().json; if(row.finalized_run_id!==cfg.run_id || row.active_release!==cfg.release || row.status!=='domain_verified') throw new Error('AVONET domain verification failed'); return [{json:cfg}];",(3200,-100)),
@@ -326,8 +320,10 @@ def build_workflow(config: dict | None = None) -> dict:
         [edge('Prepare PostgreSQL AVONET source batch')],
     ]}
     connect('Prepare PostgreSQL AVONET source batch','Append PostgreSQL AVONET source batch')
-    connect('Append PostgreSQL AVONET source batch','Verify PostgreSQL AVONET source batch')
-    connect('Verify PostgreSQL AVONET source batch','Upsert AVONET batches')
+    connect('Append PostgreSQL AVONET source batch','PostgreSQL AVONET source batch appended?')
+    connections['PostgreSQL AVONET source batch appended?']={'main':[
+        [edge('Upsert AVONET batches')], [edge('Fail AVONET append')],
+    ]}
     connect('Upsert AVONET batches','Loop Over AVONET batches')
     connect('Verify AVONET batches','Verify AVONET domain release')
     connect('Verify AVONET domain release','Verify AVONET domain counts')
