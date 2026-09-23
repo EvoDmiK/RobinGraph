@@ -527,7 +527,8 @@ const quarantineItems=source.quarantine.flatMap(item=>item.reason_codes.map(reas
   raw_value_redacted:item.source_uri
 })));
 const count=Math.max(1,Math.ceil(records.length/500),Math.ceil(quarantineItems.length/500));
-return Array.from({length:count},(_,batch_index)=>({json:{...source,batch_index,batch_count:count,
+const {observations, quarantine, ingest_request, ...context}=source;
+return Array.from({length:count},(_,batch_index)=>({json:{...context,batch_index,batch_count:count,
   ingest_request:{records:records.slice(batch_index*500,(batch_index+1)*500),
     quarantine_items:quarantineItems.slice(batch_index*500,(batch_index+1)*500)}}}))
   .filter(item=>item.json.ingest_request.records.length||item.json.ingest_request.quarantine_items.length);
@@ -775,7 +776,7 @@ def main() -> None:
             "executionOrder": "v1",
             "timezone": "Asia/Seoul",
             "saveManualExecutions": True,
-            "saveExecutionProgress": True,
+            "saveExecutionProgress": False,
             "saveDataErrorExecution": "all",
             "saveDataSuccessExecution": "none",
             "callerPolicy": "workflowsFromSameOwner",

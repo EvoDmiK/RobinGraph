@@ -103,6 +103,11 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertIn("Start PostgreSQL GBIF run", by_name)
         self.assertIn("Append PostgreSQL GBIF source batch", by_name)
         self.assertIn("Finalize PostgreSQL GBIF release", by_name)
+        self.assertFalse(workflow["settings"]["saveExecutionProgress"])
+        self.assertIn(
+            "const {observations, quarantine, ingest_request, ...context}=source;",
+            by_name["Build PostgreSQL GBIF source batches"]["parameters"]["jsCode"],
+        )
 
         self.assertEqual(
             "Notify failure",
@@ -243,6 +248,7 @@ assert.equal(check({}), false);
         by_name = {item["name"]: item for item in workflow["nodes"]}
         connections = workflow["connections"]
         self.assertEqual(1, workflow["settings"]["concurrency"])
+        self.assertFalse(workflow["settings"]["saveExecutionProgress"])
         self.assertIn("AviList SHA-256 mismatch", by_name["Assemble claims and quality gates"]["parameters"]["jsCode"])
         self.assertIn("Exact trait mapping ratio", by_name["Assemble claims and quality gates"]["parameters"]["jsCode"])
         self.assertIn("taxonomy_batch_size", by_name["Prepare taxonomy batches"]["parameters"]["jsCode"])
@@ -272,6 +278,12 @@ assert.equal(check({}), false);
             self.assertEqual(loop_name, connections[upsert_name]["main"][0][0]["node"])
 
         taxonomy_query = by_name["Upsert AviList taxonomy batch"]["parameters"]["cypherQuery"]
+        self.assertIn('$("Prepare PostgreSQL taxonomy source batch").item.json', taxonomy_query)
+        self.assertNotIn("Verify PostgreSQL taxonomy source batch", by_name)
+        self.assertEqual(
+            "PostgreSQL taxonomy source batch appended?",
+            connections["Append PostgreSQL taxonomy source batch"]["main"][0][0]["node"],
+        )
         self.assertIn("MERGE (taxon:Taxon", taxonomy_query)
         self.assertIn("HAS_ACCEPTED_NAME", taxonomy_query)
         self.assertIn("PARENT_OF", taxonomy_query)
@@ -279,6 +291,12 @@ assert.equal(check({}), false);
         self.assertNotIn("SourceRecord", taxonomy_query)
         self.assertNotIn("IngestionRun", taxonomy_query)
         trait_query = by_name["Upsert EltonTraits batch"]["parameters"]["cypherQuery"]
+        self.assertIn('$("Prepare PostgreSQL trait source batch").item.json', trait_query)
+        self.assertNotIn("Verify PostgreSQL trait source batch", by_name)
+        self.assertEqual(
+            "PostgreSQL trait source batch appended?",
+            connections["Append PostgreSQL trait source batch"]["main"][0][0]["node"],
+        )
         self.assertIn("TraitClaim", trait_query)
         self.assertIn("TaxonMappingClaim", trait_query)
         self.assertIn("TaxonMappingCandidate", trait_query)
@@ -363,6 +381,11 @@ assert.equal(check({}), false);
         self.assertNotIn("IngestionRun", query)
         verifier = by_name["Verify AVONET batches"]["parameters"]["jsCode"]
         self.assertIn("row[key] = Number(row[key])", verifier)
+        self.assertFalse(workflow["settings"]["saveExecutionProgress"])
+        self.assertIn(
+            "const {profiles, ingest_request, ...context} = data;",
+            by_name["Build AVONET batches"]["parameters"]["jsCode"],
+        )
 
     def test_reference_code_nodes_and_cypher_expressions_parse_as_javascript(self) -> None:
         workflow = load(REFERENCE)
