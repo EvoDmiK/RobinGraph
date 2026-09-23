@@ -80,6 +80,19 @@ class AvonetWorkflowTest(unittest.TestCase):
         self.assertEqual(len({p['id'] for p in result['profiles']}),2)
         self.assertIsNone(result['profiles'][0]['sequence'])
 
+    def test_source_external_id_has_no_whitespace_when_sequence_is_missing(self):
+        batch = {
+            'profiles': [
+                {'id': 'avonet:known', 'sequence': '42', 'scientific_name': 'Known bird', 'claims': []},
+                {'id': 'avonet:Missing%20bird', 'sequence': None, 'scientific_name': 'Missing bird', 'claims': []},
+            ],
+            'sha256': avonet.SHA256,
+            'retrieved_at': '2026-09-23T00:00:00Z',
+            'sheet': avonet.SHEET,
+        }
+        records = execute_js(avonet.PREPARE_APPEND_JS, [batch])[0]['json']['ingest_request']['records']
+        self.assertEqual([record['external_id'] for record in records], ['42', 'avonet:Missing%20bird'])
+
     def test_batch_gate_rejects_missing_duplicate_and_wrong_counts(self):
         config={
             **self.config(),

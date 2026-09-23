@@ -207,7 +207,9 @@ return [{json:{...source,expected_state_version:response.state_version,start_ok:
 
 PREPARE_APPEND_JS = r"""
 const batch=$input.first().json;
-const records=batch.profiles.map(row=>({id:row.id,external_id:String(row.sequence||row.scientific_name),
+const externalId=row=>{const sequence=String(row.sequence??'').trim();
+  return sequence&&!/\s/.test(sequence)?sequence:row.id;};
+const records=batch.profiles.map(row=>({id:row.id,external_id:externalId(row),
   record_type:'trait_profile',raw_object_uri:row.source_uri,raw_sha256:batch.sha256,
   retrieved_at:batch.retrieved_at,parser_version:'avonet-v2',license_policy_status:'allowed',
   payload:{scientific_name:row.scientific_name,row_number:row.row_number,sheet:batch.sheet,
