@@ -187,12 +187,12 @@ def build_configuration_js(points: dict[str, dict[str, object]]) -> str:
         "trait_license_uri": elton["source"]["license_uri"],
         "trait_landing_uri": elton["source"]["landing_uri"],
         "minimum_exact_match_ratio": 0.70,
-        # The community Neo4j node interpolates parameters into one Cypher
-        # string. Keep batches below n8n's 300-second JS task ceiling; the
-        # ingest API permits 500, but that is not a safe graph-render size.
-        "taxonomy_batch_size": 100,
-        "trait_claim_batch_size": 100,
-        "mapping_candidate_batch_size": 100,
+        # The ingest API accepts at most 500 records per append. Keep each
+        # graph batch within that bound and avoid copying the assembled source
+        # arrays through later Code nodes.
+        "taxonomy_batch_size": 500,
+        "trait_claim_batch_size": 500,
+        "mapping_candidate_batch_size": 500,
     }
     return (
         "const now = new Date();\n"
@@ -734,10 +734,11 @@ FINALIZE_STATEMENT = compact_cypher(
 )
 
 
-def community_cypher_expression(statement: str) -> str:
+def community_cypher_expression(statement: str, *, source_node: str | None = None) -> str:
     keys = sorted(set(re.findall(r"\$([A-Za-z_][A-Za-z0-9_]*)", statement)))
+    source = "$json" if source_node is None else "$(" + json.dumps(source_node) + ").item.json"
     values = ",".join(
-        json.dumps(key) + ": literal($json[" + json.dumps(key) + "])" for key in keys
+        json.dumps(key) + ": literal(" + source + "[" + json.dumps(key) + "])" for key in keys
     )
     return (
         "={{ (() => { "
@@ -752,7 +753,8 @@ def community_cypher_expression(statement: str) -> str:
 
 PREPARE_BEGIN_REQUEST = r"""
 const expected = $('Assemble claims and quality gates').first().json;
-return [{json: {...expected, ingest_request: {
+const {taxa, taxon_identifiers, taxon_links, trait_claims, mapping_candidates, ...context} = expected;
+return [{json: {...context, ingest_request: {
   dataset: {
     id: expected.dataset_id,
     source_id: 'reference-taxonomy-traits',
@@ -881,6 +883,7 @@ return [{json: {...batch, append_ok: appendOk,
 
 VERIFY_TAXONOMY_BATCHES = r"""
 const expected = $('Assemble claims and quality gates').first().json;
+const {taxa, taxon_identifiers, taxon_links, trait_claims, mapping_candidates, ...context} = expected;
 const rows = $input.all().map(item => item.json);
 const errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);
 const indexes = new Set(rows.map(row => Number(row.batch_index)).filter(Number.isInteger));
@@ -892,7 +895,7 @@ const taxonomyLoadOk = !errors.length && batchCount > 0 && indexes.size === batc
   && loadedTaxa === expected.taxonomy_taxon_count
   && loadedLinks === expected.taxonomy_link_count
   && loadedIdentifiers === expected.taxonomy_identifier_count;
-return [{json: {...expected,
+return [{json: {...context,
   taxonomy_load_ok: taxonomyLoadOk,
   loaded_taxa: loadedTaxa,
   loaded_taxon_links: loadedLinks,
@@ -968,6 +971,7 @@ return [{json: {...batch, append_ok: appendOk,
 
 VERIFY_TRAIT_BATCHES = r"""
 const expected = $('Assemble claims and quality gates').first().json;
+const {taxa, taxon_identifiers, taxon_links, trait_claims, mapping_candidates, ...context} = expected;
 const rows = $input.all().map(item => item.json);
 const errors = rows.map(row => String(row.error?.message || row.error || row.message || '')).filter(Boolean);
 const indexes = new Set(rows.map(row => Number(row.batch_index)).filter(Number.isInteger));
@@ -977,7 +981,7 @@ const loadedCandidates = rows.reduce((sum, row) => sum + Number(row.loaded_mappi
 const traitLoadOk = !errors.length && batchCount > 0 && indexes.size === batchCount && rows.length === batchCount
   && loadedClaims === expected.trait_claim_count
   && loadedCandidates === expected.mapping_candidate_count;
-return [{json: {...expected,
+return [{json: {...context,
   trait_load_ok: traitLoadOk,
   loaded_trait_claims: loadedClaims,
   loaded_mapping_candidates: loadedCandidates,
@@ -1039,7 +1043,9 @@ return [{json: {...expected,
 """
 
 
-def neo4j_node(name: str, statement: str, position: tuple[int, int]) -> dict[str, object]:
+def neo4j_node(
+    name: str, statement: str, position: tuple[int, int], *, source_node: str | None = None
+) -> dict[str, object]:
     return node(
         name,
         "n8n-nodes-neo4j.neo4j",
@@ -1047,7 +1053,7 @@ def neo4j_node(name: str, statement: str, position: tuple[int, int]) -> dict[str
         {
             "resource": "graphDb",
             "operation": "executeQuery",
-            "cypherQuery": community_cypher_expression(statement),
+            "cypherQuery": community_cypher_expression(statement, source_node=source_node),
         },
         position,
         credentials={"neo4jApi": {"id": "DvmTD1qB0Kb7TRml", "name": "Neo4j"}},
@@ -1201,8 +1207,11 @@ def main() -> None:
             "('/internal/v1/ingest/' + $json.run_id + '/append')",
             (3410, -300),
         ),
-        code("Verify PostgreSQL taxonomy source batch", VERIFY_TAXONOMY_APPEND, (3650, -300)),
-        neo4j_node("Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (3890, -300)),
+        boolean_if("PostgreSQL taxonomy source batch appended?", "={{ $json.status === 'appended' }}", (3650, -300)),
+        neo4j_node(
+            "Upsert AviList taxonomy batch", TAXONOMY_BATCH_STATEMENT, (3890, -300),
+            source_node="Prepare PostgreSQL taxonomy source batch",
+        ),
         code("Verify taxonomy batches", VERIFY_TAXONOMY_BATCHES, (3890, -300)),
         boolean_if("Taxonomy load verified?", "={{ $json.taxonomy_load_ok }}", (4130, -300)),
         code("Prepare trait batches", PREPARE_TRAIT_BATCHES, (4370, -380)),
@@ -1219,8 +1228,11 @@ def main() -> None:
             "('/internal/v1/ingest/' + $json.run_id + '/append')",
             (5090, -380),
         ),
-        code("Verify PostgreSQL trait source batch", VERIFY_TRAIT_APPEND, (5330, -380)),
-        neo4j_node("Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (5570, -380)),
+        boolean_if("PostgreSQL trait source batch appended?", "={{ $json.status === 'appended' }}", (5330, -380)),
+        neo4j_node(
+            "Upsert EltonTraits batch", TRAIT_BATCH_STATEMENT, (5570, -380),
+            source_node="Prepare PostgreSQL trait source batch",
+        ),
         code("Verify trait batches", VERIFY_TRAIT_BATCHES, (5570, -380)),
         boolean_if("Trait load verified?", "={{ $json.trait_load_ok }}", (5810, -380)),
         neo4j_node("Finalize reference domain projection", FINALIZE_STATEMENT, (6050, -460)),
@@ -1308,8 +1320,10 @@ def main() -> None:
             ]
         },
         "Prepare PostgreSQL taxonomy source batch": {"main": [[edge("Append PostgreSQL taxonomy source batch")]]},
-        "Append PostgreSQL taxonomy source batch": {"main": [[edge("Verify PostgreSQL taxonomy source batch")]]},
-        "Verify PostgreSQL taxonomy source batch": {"main": [[edge("Upsert AviList taxonomy batch")]]},
+        "Append PostgreSQL taxonomy source batch": {"main": [[edge("PostgreSQL taxonomy source batch appended?")]]},
+        "PostgreSQL taxonomy source batch appended?": {
+            "main": [[edge("Upsert AviList taxonomy batch")], [edge("Notify reference failure")]]
+        },
         "Upsert AviList taxonomy batch": {"main": [[edge("Loop Over taxonomy batches")]]},
         "Verify taxonomy batches": {"main": [[edge("Taxonomy load verified?")]]},
         "Taxonomy load verified?": {
@@ -1323,8 +1337,10 @@ def main() -> None:
             ]
         },
         "Prepare PostgreSQL trait source batch": {"main": [[edge("Append PostgreSQL trait source batch")]]},
-        "Append PostgreSQL trait source batch": {"main": [[edge("Verify PostgreSQL trait source batch")]]},
-        "Verify PostgreSQL trait source batch": {"main": [[edge("Upsert EltonTraits batch")]]},
+        "Append PostgreSQL trait source batch": {"main": [[edge("PostgreSQL trait source batch appended?")]]},
+        "PostgreSQL trait source batch appended?": {
+            "main": [[edge("Upsert EltonTraits batch")], [edge("Notify reference failure")]]
+        },
         "Upsert EltonTraits batch": {"main": [[edge("Loop Over trait batches")]]},
         "Verify trait batches": {"main": [[edge("Trait load verified?")]]},
         "Trait load verified?": {
@@ -1387,7 +1403,10 @@ def main() -> None:
             "executionOrder": "v1",
             "timezone": "Asia/Seoul",
             "saveManualExecutions": True,
-            "saveExecutionProgress": True,
+            # The assembled reference snapshot is large. Persisting the full
+            # execution after every node makes each batch rewrite hundreds of
+            # megabytes of n8n run data and stalls long reference loads.
+            "saveExecutionProgress": False,
             "saveDataErrorExecution": "all",
             "saveDataSuccessExecution": "none",
             "callerPolicy": "workflowsFromSameOwner",

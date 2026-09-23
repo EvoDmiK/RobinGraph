@@ -262,7 +262,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const source=$input.first().json;\nconst records=source.observations.map(row=>({id:row.source_record_key,external_id:row.external_id,\n  record_type:'observation',raw_object_uri:row.raw_uri,raw_sha256:row.raw_sha256,\n  retrieved_at:row.retrieved_at,source_updated_at:row.source_updated_at,\n  parser_version:'gbif-occurrence-v2',license_policy_status:'allowed',\n  payload:{occurrence_id:row.occurrence_id,event_id:row.event_id,scientific_name:row.scientific_name,\n    observed_at:row.observed_at,dataset_key:row.dataset_key,issues:row.issues}}));\nconst quarantineItems=source.quarantine.flatMap(item=>item.reason_codes.map(reason=>({\n  record_key:'gbif:'+source.source_release+':'+item.external_id,stage:item.stage,reason_code:reason,\n  severity:reason==='license_not_allowed'?'blocked':'error',rule_version:'gbif-operational-v2',\n  raw_value_redacted:item.source_uri\n})));\nconst count=Math.max(1,Math.ceil(records.length/500),Math.ceil(quarantineItems.length/500));\nreturn Array.from({length:count},(_,batch_index)=>({json:{...source,batch_index,batch_count:count,\n  ingest_request:{records:records.slice(batch_index*500,(batch_index+1)*500),\n    quarantine_items:quarantineItems.slice(batch_index*500,(batch_index+1)*500)}}}))\n  .filter(item=>item.json.ingest_request.records.length||item.json.ingest_request.quarantine_items.length);"
+        "jsCode": "const source=$input.first().json;\nconst records=source.observations.map(row=>({id:row.source_record_key,external_id:row.external_id,\n  record_type:'observation',raw_object_uri:row.raw_uri,raw_sha256:row.raw_sha256,\n  retrieved_at:row.retrieved_at,source_updated_at:row.source_updated_at,\n  parser_version:'gbif-occurrence-v2',license_policy_status:'allowed',\n  payload:{occurrence_id:row.occurrence_id,event_id:row.event_id,scientific_name:row.scientific_name,\n    observed_at:row.observed_at,dataset_key:row.dataset_key,issues:row.issues}}));\nconst quarantineItems=source.quarantine.flatMap(item=>item.reason_codes.map(reason=>({\n  record_key:'gbif:'+source.source_release+':'+item.external_id,stage:item.stage,reason_code:reason,\n  severity:reason==='license_not_allowed'?'blocked':'error',rule_version:'gbif-operational-v2',\n  raw_value_redacted:item.source_uri\n})));\nconst count=Math.max(1,Math.ceil(records.length/500),Math.ceil(quarantineItems.length/500));\nconst {observations, quarantine, ingest_request, ...context}=source;\nreturn Array.from({length:count},(_,batch_index)=>({json:{...context,batch_index,batch_count:count,\n  ingest_request:{records:records.slice(batch_index*500,(batch_index+1)*500),\n    quarantine_items:quarantineItems.slice(batch_index*500,(batch_index+1)*500)}}}))\n  .filter(item=>item.json.ingest_request.records.length||item.json.ingest_request.quarantine_items.length);"
       },
       "id": "df0241d7-a560-5ea6-8b62-7931dcc632e1",
       "name": "Build PostgreSQL GBIF source batches",
@@ -869,7 +869,7 @@
     "executionOrder": "v1",
     "timezone": "Asia/Seoul",
     "saveManualExecutions": true,
-    "saveExecutionProgress": true,
+    "saveExecutionProgress": false,
     "saveDataErrorExecution": "all",
     "saveDataSuccessExecution": "none",
     "callerPolicy": "workflowsFromSameOwner",

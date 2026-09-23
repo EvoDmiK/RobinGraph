@@ -89,8 +89,10 @@ return [{json: {...config, profiles, claim_count}}];
 BATCH_JS = r"""
 const data = $input.first().json;
 const batch_count = Math.ceil(data.profiles.length / data.batch_size);
+const {profiles, ingest_request, ...context} = data;
 return Array.from({length: batch_count}, (_, i) => ({json: {
-  ...data, profiles: data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size),
+  ...context, profiles: profiles.slice(i*data.batch_size,(i+1)*data.batch_size)
+    .map(profile => ({...profile, profile_json: JSON.stringify(profile)})),
   batch_index: i, batch_count
 }}));
 """
@@ -289,7 +291,7 @@ def build_workflow(config: dict | None = None) -> dict:
         code('Prepare PostgreSQL AVONET run',PREPARE_BEGIN_JS,(1200,0)),
         ingest_api_node('Start PostgreSQL AVONET run',"'/internal/v1/ingest/begin'",(1400,0)),
         code('Verify PostgreSQL AVONET run started',VERIFY_BEGIN_JS,(1600,0)),
-        code('Build AVONET batches',BATCH_JS.replace('data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size)', 'data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)}))'),(1800,0)),
+        code('Build AVONET batches',BATCH_JS,(1800,0)),
         node('Loop Over AVONET batches','n8n-nodes-base.splitInBatches',3,{'batchSize':1,'options':{}},(2000,0)),
         code('Prepare PostgreSQL AVONET source batch',PREPARE_APPEND_JS,(2200,100)),
         ingest_api_node('Append PostgreSQL AVONET source batch',"('/internal/v1/ingest/'+$json.run_id+'/append')",(2400,100)),
@@ -330,7 +332,7 @@ def build_workflow(config: dict | None = None) -> dict:
     connect('Verify AVONET domain counts','Prepare PostgreSQL AVONET finalization')
     connect('Prepare PostgreSQL AVONET finalization','Finalize PostgreSQL AVONET release')
     connect('Finalize PostgreSQL AVONET release','Verify AVONET release')
-    return {'id':'robingraph-avonet-ingest','name':'RobinGraph — AVONET morphology and ecology reference ingest','active':False,'nodes':nodes,'connections':connections,'settings':{'executionOrder':'v1','timezone':'Asia/Seoul','concurrency':1},'pinData':{},'tags':[]}
+    return {'id':'robingraph-avonet-ingest','name':'RobinGraph — AVONET morphology and ecology reference ingest','active':False,'nodes':nodes,'connections':connections,'settings':{'executionOrder':'v1','timezone':'Asia/Seoul','concurrency':1,'saveExecutionProgress':False},'pinData':{},'tags':[]}
 
 
 if __name__ == '__main__':

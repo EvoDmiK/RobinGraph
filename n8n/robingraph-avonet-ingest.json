@@ -188,7 +188,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const data = $input.first().json;\nconst batch_count = Math.ceil(data.profiles.length / data.batch_size);\nreturn Array.from({length: batch_count}, (_, i) => ({json: {\n  ...data, profiles: data.profiles.slice(i*data.batch_size,(i+1)*data.batch_size).map(p=>({...p,profile_json:JSON.stringify(p)})),\n  batch_index: i, batch_count\n}}));"
+        "jsCode": "const data = $input.first().json;\nconst batch_count = Math.ceil(data.profiles.length / data.batch_size);\nconst {profiles, ingest_request, ...context} = data;\nreturn Array.from({length: batch_count}, (_, i) => ({json: {\n  ...context, profiles: profiles.slice(i*data.batch_size,(i+1)*data.batch_size)\n    .map(profile => ({...profile, profile_json: JSON.stringify(profile)})),\n  batch_index: i, batch_count\n}}));"
       },
       "id": "d307472b-0964-59c5-bd55-6248c078c8b7",
       "name": "Build AVONET batches",
@@ -669,7 +669,8 @@
   "settings": {
     "executionOrder": "v1",
     "timezone": "Asia/Seoul",
-    "concurrency": 1
+    "concurrency": 1,
+    "saveExecutionProgress": false
   },
   "pinData": {},
   "tags": []
