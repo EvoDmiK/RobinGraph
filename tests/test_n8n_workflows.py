@@ -298,6 +298,10 @@ assert.equal(check({}), false);
             connections["Append PostgreSQL trait source batch"]["main"][0][0]["node"],
         )
         self.assertIn("TraitClaim", trait_query)
+        self.assertIn(
+            "external_id: `eltontraits:${row.source_taxon_id}`",
+            by_name["Prepare PostgreSQL trait source batch"]["parameters"]["jsCode"],
+        )
         self.assertIn("TaxonMappingClaim", trait_query)
         self.assertIn("TaxonMappingCandidate", trait_query)
         self.assertIn("SUPPORTED_BY", trait_query)
