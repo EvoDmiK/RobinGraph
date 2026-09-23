@@ -103,9 +103,9 @@ class AvonetWorkflowTest(unittest.TestCase):
             'profiles':[],
         }
         rows=[{'batch_index':i,'batch_count':2,'loaded_profiles':n,'loaded_claims':n*13,'expected_claims':n*13,'loaded_candidates':0,'matched_profiles':n} for i,n in enumerate([100,1])]
-        self.assertEqual(execute_js(avonet.VERIFY_JS,rows,normalized=config)[0]['json']['loaded_profiles'],101)
+        self.assertEqual(execute_js(avonet.VERIFY_JS,rows,config=config)[0]['json']['loaded_profiles'],101)
         for invalid in [rows[:1],[rows[0],rows[0]],[rows[0],{**rows[1],'loaded_claims':0}]]:
-            with self.assertRaises(ValueError): execute_js(avonet.VERIFY_JS,invalid,normalized=config)
+            with self.assertRaises(ValueError): execute_js(avonet.VERIFY_JS,invalid,config=config)
 
     def test_artifact_reproducible_connections_and_javascript(self):
         artifact=json.loads(avonet.OUTPUT.read_text(encoding='utf8'))

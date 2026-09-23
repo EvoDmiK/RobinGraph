@@ -269,13 +269,33 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForAllItems",
-        "jsCode": "const batch=$('Prepare PostgreSQL AVONET source batch').item.json,response=$input.first().json;\nconst errorText=String(response.error?.message||response.error||response.message||response.detail||'');\nif(errorText||response.status!=='appended')throw new Error(errorText||'PostgreSQL AVONET append failed');\nreturn [{json:batch}];"
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5181105b-243f-58e4-a8c4-af21070b113f",
+              "leftValue": "={{ $json.status === 'appended' }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
       },
-      "id": "ea814510-853d-5bd4-abb1-d71cfe129bdb",
-      "name": "Verify PostgreSQL AVONET source batch",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
+      "id": "92dfb0b3-1e06-5cf6-bedc-00983f3322bf",
+      "name": "PostgreSQL AVONET source batch appended?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
       "position": [
         2600,
         100
@@ -285,7 +305,7 @@
       "parameters": {
         "resource": "graphDb",
         "operation": "executeQuery",
-        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($json[\"batch_count\"]),\"batch_index\": literal($json[\"batch_index\"]),\"dataset_id\": literal($json[\"dataset_id\"]),\"profiles\": literal($json[\"profiles\"]),\"release\": literal($json[\"release\"]),\"retrieved_at\": literal($json[\"retrieved_at\"]),\"run_id\": literal($json[\"run_id\"]),\"taxonomy_concept_set_id\": literal($json[\"taxonomy_concept_set_id\"]),\"taxonomy_release\": literal($json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($json[\"taxonomy_sha256\"])}; return \"MATCH (concept:TaxonConceptSet {id:$taxonomy_concept_set_id}) WHERE concept.version=$taxonomy_release AND concept.snapshot_sha256=$taxonomy_sha256 AND concept.policy_status='allowed' WITH concept UNWIND $profiles AS row OPTIONAL MATCH (taxon:Taxon { source_release:$taxonomy_release, rank:'species', scientific_name:row.scientific_name })-[:IN_CONCEPT_SET]->(concept) WITH row, collect(DISTINCT taxon) AS taxa CALL { WITH row, taxa WITH row, taxa[0] AS taxon WHERE size(taxa)=1 MERGE (mapping:TaxonMappingClaim {id:row.id+':mapping:'+$taxonomy_release}) SET mapping.method='exact_scientific_name_unique_in_avilist_species', mapping.resolution_status='accepted_automatic', mapping.taxonomy_release=$taxonomy_release, mapping.dataset_id=$dataset_id, mapping.source_record_id=row.id, mapping.policy_status='allowed' MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) WITH row,taxon UNWIND row.claims AS value MERGE (evidence:EvidenceUnit {id:value.id+':evidence'}) SET evidence.evidence_type='literature_dataset_row', evidence.locator=row.source_uri+'&field='+value.source_field, evidence.citation='Tobias et al. (2022), AVONET; Figshare 16586228 v7', evidence.accessed_at=$retrieved_at, evidence.dataset_id=$dataset_id, evidence.source_record_id=row.id, evidence.policy_status='allowed' MERGE (claim:TraitClaim {id:value.id+':taxonomy:'+$taxonomy_release}) SET claim.trait_name=value.trait_name, claim.value_num=value.value_num, claim.value_text=value.value_text, claim.unit=value.unit, claim.raw_value=value.raw_value, claim.source_field=value.source_field, claim.source_release=$release, claim.source_id='avonet', claim.taxonomy_release=$taxonomy_release, claim.inferred=value.inferred, claim.evidence_kind=value.evidence_kind, claim.summary_statistic=value.summary_statistic, claim.retrieved_at=$retrieved_at, claim.dataset_id=$dataset_id, claim.source_record_id=row.id, claim.policy_status='allowed' MERGE (claim)-[:ASSERTS_ABOUT]->(taxon) MERGE (claim)-[:SUPPORTED_BY]->(evidence) RETURN count(*) AS loaded_claims } CALL { WITH row,taxa WITH row,taxa WHERE size(taxa)<>1 MERGE (candidate:TaxonMappingCandidate {id:row.id+':candidate:'+$taxonomy_release}) SET candidate.source_scientific_name=row.scientific_name, candidate.source_taxonomy='HBW-BirdLife v5', candidate.taxonomy_release=$taxonomy_release, candidate.resolution_status='open', candidate.reason_code=CASE WHEN size(taxa)=0 THEN 'no_exact_match' ELSE 'ambiguous_exact_match' END, candidate.profile_json=row.profile_json, candidate.dataset_id=$dataset_id, candidate.source_record_id=row.id, candidate.policy_status='allowed', candidate.last_seen_run_id=$run_id, candidate.last_seen_at=$retrieved_at RETURN count(*) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, count(*) AS loaded_profiles, sum(loaded_claims) AS loaded_claims, sum(loaded_candidates) AS loaded_candidates, sum(CASE WHEN size(taxa)=1 THEN 1 ELSE 0 END) AS matched_profiles, sum(CASE WHEN size(taxa)=1 THEN size(row.claims) ELSE 0 END) AS expected_claims\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
+        "cypherQuery": "={{ (() => { \nconst literal = value => {\n  if (value === null) return 'null';\n  if (typeof value === 'string') return \"'\" + value.replace(/\\\\/g, '\\\\\\\\').replace(/'/g, \"\\\\'\").replace(/[\\u0000-\\u001f\\u007f]/g, c => '\\\\u' + c.charCodeAt(0).toString(16).padStart(4, '0')) + \"'\";\n  if (typeof value === 'boolean') return String(value);\n  if (typeof value === 'number' && Number.isFinite(value)) return String(value);\n  if (Array.isArray(value)) return '[' + value.map(literal).join(',') + ']';\n  if (typeof value === 'object' && value !== null) return '{' + Object.entries(value).map(([key, val]) => {\n    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) throw new Error('Invalid Cypher map key');\n    return key + ':' + literal(val);\n  }).join(',') + '}';\n  throw new Error('Unsupported Cypher value');\n};\nconst values = {\"batch_count\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"batch_count\"]),\"batch_index\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"batch_index\"]),\"dataset_id\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"dataset_id\"]),\"profiles\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"profiles\"]),\"release\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"release\"]),\"retrieved_at\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"retrieved_at\"]),\"run_id\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"run_id\"]),\"taxonomy_concept_set_id\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"taxonomy_concept_set_id\"]),\"taxonomy_release\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"taxonomy_release\"]),\"taxonomy_sha256\": literal($(\"Prepare PostgreSQL AVONET source batch\").item.json[\"taxonomy_sha256\"])}; return \"MATCH (concept:TaxonConceptSet {id:$taxonomy_concept_set_id}) WHERE concept.version=$taxonomy_release AND concept.snapshot_sha256=$taxonomy_sha256 AND concept.policy_status='allowed' WITH concept UNWIND $profiles AS row OPTIONAL MATCH (taxon:Taxon { source_release:$taxonomy_release, rank:'species', scientific_name:row.scientific_name })-[:IN_CONCEPT_SET]->(concept) WITH row, collect(DISTINCT taxon) AS taxa CALL { WITH row, taxa WITH row, taxa[0] AS taxon WHERE size(taxa)=1 MERGE (mapping:TaxonMappingClaim {id:row.id+':mapping:'+$taxonomy_release}) SET mapping.method='exact_scientific_name_unique_in_avilist_species', mapping.resolution_status='accepted_automatic', mapping.taxonomy_release=$taxonomy_release, mapping.dataset_id=$dataset_id, mapping.source_record_id=row.id, mapping.policy_status='allowed' MERGE (mapping)-[:PROPOSES_TAXON]->(taxon) WITH row,taxon UNWIND row.claims AS value MERGE (evidence:EvidenceUnit {id:value.id+':evidence'}) SET evidence.evidence_type='literature_dataset_row', evidence.locator=row.source_uri+'&field='+value.source_field, evidence.citation='Tobias et al. (2022), AVONET; Figshare 16586228 v7', evidence.accessed_at=$retrieved_at, evidence.dataset_id=$dataset_id, evidence.source_record_id=row.id, evidence.policy_status='allowed' MERGE (claim:TraitClaim {id:value.id+':taxonomy:'+$taxonomy_release}) SET claim.trait_name=value.trait_name, claim.value_num=value.value_num, claim.value_text=value.value_text, claim.unit=value.unit, claim.raw_value=value.raw_value, claim.source_field=value.source_field, claim.source_release=$release, claim.source_id='avonet', claim.taxonomy_release=$taxonomy_release, claim.inferred=value.inferred, claim.evidence_kind=value.evidence_kind, claim.summary_statistic=value.summary_statistic, claim.retrieved_at=$retrieved_at, claim.dataset_id=$dataset_id, claim.source_record_id=row.id, claim.policy_status='allowed' MERGE (claim)-[:ASSERTS_ABOUT]->(taxon) MERGE (claim)-[:SUPPORTED_BY]->(evidence) RETURN count(*) AS loaded_claims } CALL { WITH row,taxa WITH row,taxa WHERE size(taxa)<>1 MERGE (candidate:TaxonMappingCandidate {id:row.id+':candidate:'+$taxonomy_release}) SET candidate.source_scientific_name=row.scientific_name, candidate.source_taxonomy='HBW-BirdLife v5', candidate.taxonomy_release=$taxonomy_release, candidate.resolution_status='open', candidate.reason_code=CASE WHEN size(taxa)=0 THEN 'no_exact_match' ELSE 'ambiguous_exact_match' END, candidate.profile_json=row.profile_json, candidate.dataset_id=$dataset_id, candidate.source_record_id=row.id, candidate.policy_status='allowed', candidate.last_seen_run_id=$run_id, candidate.last_seen_at=$retrieved_at RETURN count(*) AS loaded_candidates } RETURN $batch_index AS batch_index, $batch_count AS batch_count, count(*) AS loaded_profiles, sum(loaded_claims) AS loaded_claims, sum(loaded_candidates) AS loaded_candidates, sum(CASE WHEN size(taxa)=1 THEN 1 ELSE 0 END) AS matched_profiles, sum(CASE WHEN size(taxa)=1 THEN size(row.claims) ELSE 0 END) AS expected_claims\".replace(/\\$([A-Za-z_][A-Za-z0-9_]*)/g, (_, key) => values[key]); })() }}"
       },
       "id": "d503a2e6-1b28-55e5-b384-67e10ba18bb2",
       "name": "Upsert AVONET batches",
@@ -307,8 +327,21 @@
     },
     {
       "parameters": {
+        "errorMessage": "PostgreSQL AVONET source append failed; inspect the preceding HTTP response."
+      },
+      "id": "3847ed58-0706-5aae-9319-d4e22b0d2d94",
+      "name": "Fail AVONET append",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2800,
+        280
+      ]
+    },
+    {
+      "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const expected = $('Normalize AVONET species').first().json;\nconst numericKeys = ['batch_index','batch_count','loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims'];\nconst rows = $input.all().map(x => {\n  const row = {...x.json};\n  for (const key of numericKeys) row[key] = Number(row[key]);\n  return row;\n});\nconst count = Math.ceil(expected.expected_rows/expected.batch_size);\nif (rows.length !== count) throw new Error('Missing batch results');\nconst indices = new Set();\nlet profiles=0, claims=0, candidates=0, matched=0;\nfor (const row of rows) {\n  if (row.error || !Number.isInteger(row.batch_index) || row.batch_index<0 || row.batch_index>=count || indices.has(row.batch_index) || row.batch_count!==count) throw new Error('Invalid batch acknowledgement');\n  indices.add(row.batch_index);\n  const wanted=Math.min(expected.batch_size,expected.expected_rows-row.batch_index*expected.batch_size);\n  if (row.loaded_profiles!==wanted || row.loaded_claims!==row.expected_claims || row.matched_profiles+row.loaded_candidates!==wanted) throw new Error('Batch count mismatch');\n  for (const key of numericKeys.slice(2)) if (!Number.isInteger(row[key]) || row[key]<0) throw new Error('Invalid count');\n  profiles+=row.loaded_profiles; claims+=row.loaded_claims; candidates+=row.loaded_candidates; matched+=row.matched_profiles;\n}\nif (profiles!==expected.expected_rows || matched!==expected.expected_matched_profiles ||\n    claims!==expected.expected_loaded_claims || candidates!==expected.expected_mapping_candidates)\n  throw new Error('AVONET mapping quality gate failed');\nconst {profiles: unused, ...config}=expected;\nreturn [{json:{...config, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];"
+        "jsCode": "const expected = $('Build AVONET configuration').first().json;\nconst numericKeys = ['batch_index','batch_count','loaded_profiles','loaded_claims','loaded_candidates','matched_profiles','expected_claims'];\nconst rows = $input.all().map(x => {\n  const row = {...x.json};\n  for (const key of numericKeys) row[key] = Number(row[key]);\n  return row;\n});\nconst count = Math.ceil(expected.expected_rows/expected.batch_size);\nif (rows.length !== count) throw new Error('Missing batch results');\nconst indices = new Set();\nlet profiles=0, claims=0, candidates=0, matched=0;\nfor (const row of rows) {\n  if (row.error || !Number.isInteger(row.batch_index) || row.batch_index<0 || row.batch_index>=count || indices.has(row.batch_index) || row.batch_count!==count) throw new Error('Invalid batch acknowledgement');\n  indices.add(row.batch_index);\n  const wanted=Math.min(expected.batch_size,expected.expected_rows-row.batch_index*expected.batch_size);\n  if (row.loaded_profiles!==wanted || row.loaded_claims!==row.expected_claims || row.matched_profiles+row.loaded_candidates!==wanted) throw new Error('Batch count mismatch');\n  for (const key of numericKeys.slice(2)) if (!Number.isInteger(row[key]) || row[key]<0) throw new Error('Invalid count');\n  profiles+=row.loaded_profiles; claims+=row.loaded_claims; candidates+=row.loaded_candidates; matched+=row.matched_profiles;\n}\nif (profiles!==expected.expected_rows || matched!==expected.expected_matched_profiles ||\n    claims!==expected.expected_loaded_claims || candidates!==expected.expected_mapping_candidates)\n  throw new Error('AVONET mapping quality gate failed');\nreturn [{json:{...expected, loaded_profiles:profiles, loaded_claims:claims, loaded_candidates:candidates, matched_profiles:matched}}];"
       },
       "id": "3817e9ab-63fd-50aa-bd27-95f25d7ad58f",
       "name": "Verify AVONET batches",
@@ -581,18 +614,25 @@
       "main": [
         [
           {
-            "node": "Verify PostgreSQL AVONET source batch",
+            "node": "PostgreSQL AVONET source batch appended?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Verify PostgreSQL AVONET source batch": {
+    "PostgreSQL AVONET source batch appended?": {
       "main": [
         [
           {
             "node": "Upsert AVONET batches",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fail AVONET append",
             "type": "main",
             "index": 0
           }
