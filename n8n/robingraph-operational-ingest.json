@@ -430,7 +430,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const source=$input.first().json;\nreturn [{json:{...source,ingest_request:{counts:{source_records:source.observation_count,\n  quarantined:source.quarantine_count,taxa:source.loaded_taxa,taxon_links:source.loaded_taxon_links,\n  observations:source.loaded_observations,media:source.loaded_media},\n  cursor:{event_date_end:source.event_date_end},expected_state_version:source.expected_state_version}}}];"
+        "jsCode": "const source=$input.first().json;\nconst expectedStateVersion=$('Verify PostgreSQL GBIF run started').first().json.expected_state_version;\nreturn [{json:{...source,ingest_request:{counts:{source_records:source.observation_count,\n  quarantined:source.quarantine_count,taxa:source.loaded_taxa,taxon_links:source.loaded_taxon_links,\n  observations:source.loaded_observations,media:source.loaded_media},\n  cursor:{event_date_end:source.event_date_end},expected_state_version:expectedStateVersion},\n  expected_state_version:expectedStateVersion}}];"
       },
       "id": "fc6310b4-b7eb-50c3-8e55-27c6b7da604a",
       "name": "Prepare PostgreSQL GBIF finalization",

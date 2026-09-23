@@ -103,6 +103,9 @@ class N8nWorkflowArtifactTest(unittest.TestCase):
         self.assertIn("Start PostgreSQL GBIF run", by_name)
         self.assertIn("Append PostgreSQL GBIF source batch", by_name)
         self.assertIn("Finalize PostgreSQL GBIF release", by_name)
+        finalize_code = by_name["Prepare PostgreSQL GBIF finalization"]["parameters"]["jsCode"]
+        self.assertIn("$('Verify PostgreSQL GBIF run started').first().json.expected_state_version", finalize_code)
+        self.assertIn("expected_state_version:expectedStateVersion", finalize_code)
         self.assertFalse(workflow["settings"]["saveExecutionProgress"])
         self.assertIn(
             "const {observations, quarantine, ingest_request, ...context}=source;",

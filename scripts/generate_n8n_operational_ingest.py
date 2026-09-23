@@ -551,10 +551,12 @@ return [{json:source}];
 
 PREPARE_FINALIZE = r"""
 const source=$input.first().json;
+const expectedStateVersion=$('Verify PostgreSQL GBIF run started').first().json.expected_state_version;
 return [{json:{...source,ingest_request:{counts:{source_records:source.observation_count,
   quarantined:source.quarantine_count,taxa:source.loaded_taxa,taxon_links:source.loaded_taxon_links,
   observations:source.loaded_observations,media:source.loaded_media},
-  cursor:{event_date_end:source.event_date_end},expected_state_version:source.expected_state_version}}}];
+  cursor:{event_date_end:source.event_date_end},expected_state_version:expectedStateVersion},
+  expected_state_version:expectedStateVersion}}];
 """
 
 
