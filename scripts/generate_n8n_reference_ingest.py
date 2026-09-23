@@ -937,7 +937,9 @@ for (const row of [...batch.claims, ...batch.candidates]) {
 }
 const records = [...byRecord.values()].map(row => ({
   id: row.source_record_id,
-  external_id: String(row.source_taxon_id),
+  // The shared reference release also contains AviList sequence numbers.
+  // Namespace EltonTraits ids so PostgreSQL's release/external-id key is unique.
+  external_id: `eltontraits:${row.source_taxon_id}`,
   record_type: 'trait_profile',
   raw_object_uri: row.source_uri,
   raw_sha256: batch.trait_sha256,
