@@ -216,7 +216,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const batch=$input.first().json;\nconst records=batch.profiles.map(row=>({id:row.id,external_id:String(row.sequence||row.scientific_name),\n  record_type:'trait_profile',raw_object_uri:row.source_uri,raw_sha256:batch.sha256,\n  retrieved_at:batch.retrieved_at,parser_version:'avonet-v2',license_policy_status:'allowed',\n  payload:{scientific_name:row.scientific_name,row_number:row.row_number,sheet:batch.sheet,\n    inference_raw:row.inference_raw,inferred_fields_raw:row.inferred_fields_raw,\n    reference_species:row.reference_species,sample_size:row.sample_size,avibase_id:row.avibase_id}}));\nreturn [{json:{...batch,ingest_request:{records,quarantine_items:[]}}}];"
+        "jsCode": "const batch=$input.first().json;\nconst externalId=row=>{const sequence=String(row.sequence??'').trim();\n  return sequence&&!/\\s/.test(sequence)?sequence:row.id;};\nconst records=batch.profiles.map(row=>({id:row.id,external_id:externalId(row),\n  record_type:'trait_profile',raw_object_uri:row.source_uri,raw_sha256:batch.sha256,\n  retrieved_at:batch.retrieved_at,parser_version:'avonet-v2',license_policy_status:'allowed',\n  payload:{scientific_name:row.scientific_name,row_number:row.row_number,sheet:batch.sheet,\n    inference_raw:row.inference_raw,inferred_fields_raw:row.inferred_fields_raw,\n    reference_species:row.reference_species,sample_size:row.sample_size,avibase_id:row.avibase_id}}));\nreturn [{json:{...batch,ingest_request:{records,quarantine_items:[]}}}];"
       },
       "id": "8cd574da-1a2d-5f98-a685-1393eb253022",
       "name": "Prepare PostgreSQL AVONET source batch",
