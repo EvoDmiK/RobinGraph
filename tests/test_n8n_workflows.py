@@ -368,18 +368,23 @@ assert.equal(check({}), false);
             connections["Prepare PostgreSQL AVONET source batch"]["main"][0][0]["node"],
         )
         self.assertEqual(
-            "Verify PostgreSQL AVONET source batch",
+            "PostgreSQL AVONET source batch appended?",
             connections["Append PostgreSQL AVONET source batch"]["main"][0][0]["node"],
         )
         self.assertEqual(
             "Upsert AVONET batches",
-            connections["Verify PostgreSQL AVONET source batch"]["main"][0][0]["node"],
+            connections["PostgreSQL AVONET source batch appended?"]["main"][0][0]["node"],
+        )
+        self.assertEqual(
+            "Fail AVONET append",
+            connections["PostgreSQL AVONET source batch appended?"]["main"][1][0]["node"],
         )
         self.assertEqual(
             "Loop Over AVONET batches",
             connections["Upsert AVONET batches"]["main"][0][0]["node"],
         )
         query = by_name["Upsert AVONET batches"]["parameters"]["cypherQuery"]
+        self.assertIn('$("Prepare PostgreSQL AVONET source batch").item.json', query)
         self.assertIn("OPTIONAL MATCH (taxon:Taxon { source_release:$taxonomy_release, rank:'species', scientific_name:row.scientific_name })", query)
         self.assertNotIn("SourceRecord", query)
         self.assertNotIn("IngestionRun", query)
