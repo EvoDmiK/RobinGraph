@@ -601,7 +601,12 @@ def create_app(
 
     @app.get("/health")
     def health() -> dict[str, str]:
-        return {"status": "ok", "mode": repository.mode, "taxonomy_release": repository.taxonomy_release}
+        return {
+            "status": "ok",
+            "mode": repository.mode,
+            "taxonomy_release": repository.taxonomy_release,
+            "deployment_target": os.getenv("ROBINGRAPH_DEPLOY_TARGET", "legacy"),
+        }
 
     @app.post("/v1/answers", response_model=AnswerResponse)
     def answer_question(request: QuestionRequest) -> AnswerResponse:
@@ -735,10 +740,19 @@ def create_app(
             warnings = []
             if any(value.coordinate_disclosure == "withheld" for value in observations):
                 warnings.append("일반화된 관찰 기록의 좌표는 공개하지 않습니다.")
+            if observations:
+                first = observations[0]
+                answer_text = (
+                    f"조회된 관찰 기록 {len(observations)}건 중 첫 기록: "
+                    f"{first.taxon.scientific_name}, 관찰일 {first.observed_at}, "
+                    f"장소 {first.place.name}. [{first.citation.evidence_id}]"
+                )
+            else:
+                answer_text = "일치하는 관찰 기록을 확인하지 못했습니다."
             return ChatResponse(
                 selected_intent=selected, route_method=method,
                 disposition="answer" if observations else "abstain",
-                answer_text="관찰 기록을 확인했습니다." if observations else "일치하는 관찰 기록을 확인하지 못했습니다.",
+                answer_text=answer_text,
                 warnings=warnings,
                 result=ChatObservationsResult(
                     results=[_operational_observation_response(value) for value in observations], limit=filters.limit

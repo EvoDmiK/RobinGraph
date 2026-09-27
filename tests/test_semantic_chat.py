@@ -205,6 +205,11 @@ class SemanticChatApiTest(unittest.TestCase):
         self.assertIsNone(observation_payload["result"]["results"][0]["latitude"])
         self.assertEqual("2025-01-02", observation_payload["result"]["results"][0]["observed_at"])
         self.assertEqual("2025-01-03", observation_payload["result"]["results"][0]["citation"]["retrieved_at"])
+        self.assertEqual(
+            "조회된 관찰 기록 1건 중 첫 기록: Anas platyrhynchos, 관찰일 2025-01-02, "
+            "장소 Seoul. [evidence:1]",
+            observation_payload["answer_text"],
+        )
         self.assertNotIn("data_cutoff", observation_payload)
         self.assertEqual(1, observation_queries[0].limit)
         self.assertEqual("Seoul", observation_queries[0].place)
@@ -271,6 +276,7 @@ class SemanticChatApiTest(unittest.TestCase):
         self.assertEqual("observations", payload["selected_intent"])
         self.assertEqual("semantic", payload["route_method"])
         self.assertEqual("answer", payload["disposition"])
+        self.assertIn("[evidence:1]", payload["answer_text"])
         self.assertEqual(2, payload["result"]["limit"])
         self.assertEqual(1, len(payload["result"]["results"]))
         self.assertEqual(1, len(observation_queries))

@@ -150,6 +150,8 @@ activemq-data/
 # Environments
 .env
 .env.nas
+.env.nas.test
+.env.nas.prod
 .env.nas.ingest
 .envrc
 .venv

@@ -279,6 +279,71 @@ class NasDeployLifecycleTest(unittest.TestCase):
         result, _ = self._run_with_stub_docker("preflight", {}, network_ok=True)
         self.assertEqual(0, result.returncode, result.stderr)
 
+    def test_invalid_target_and_ambiguous_override_fail_before_docker(self) -> None:
+        for selector, expected in (
+            ("staging", "ROBINGRAPH_DEPLOY_TARGET must be test or prod"),
+            ("test", "ROBINGRAPH_NAS_API_ENV cannot override"),
+        ):
+            with self.subTest(selector=selector):
+                result, calls = self._run_with_stub_docker(
+                    "preflight", {}, stub_env={"ROBINGRAPH_DEPLOY_TARGET": selector}
+                )
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(expected, result.stderr)
+                self.assertEqual("", calls.strip())
+
+    def test_test_and_prod_targets_select_distinct_files_and_stacks(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            (root / "scripts").mkdir()
+            script = root / "scripts" / "deploy_nas.sh"
+            script.write_bytes(DEPLOY_SCRIPT.read_bytes())
+            (root / "compose.nas.yml").write_bytes((ROOT / "compose.nas.yml").read_bytes())
+            for target in ("test", "prod"):
+                (root / f".env.nas.{target}").write_text(
+                    "ROBINGRAPH_EDGE_NETWORK=robingraph-edge\n"
+                    "ROBINGRAPH_API_MODE=serve-fixture\n"
+                    f"ROBINGRAPH_IMAGE=robingraph-api:{target}-local\n",
+                    encoding="utf-8",
+                )
+            bin_dir = root / "bin"
+            bin_dir.mkdir()
+            docker = bin_dir / "docker"
+            docker.write_text(
+                FAKE_DOCKER.replace(
+                    'printf \'%s\\n\' "$*" >> "$log"',
+                    'printf \'%s|project=%s|container=%s|env=%s\\n\' "$*" '
+                    '"${ROBINGRAPH_COMPOSE_PROJECT:-}" "${ROBINGRAPH_API_CONTAINER:-}" '
+                    '"${ROBINGRAPH_ENV_FILE:-}" >> "$log"',
+                ),
+                encoding="utf-8",
+            )
+            docker.chmod(0o755)
+            for target, project, container in (
+                ("test", "robingraph-test", "robingraph-api-test"),
+                ("prod", "robingraph", "robingraph-api"),
+            ):
+                with self.subTest(target=target):
+                    call_log = root / f"{target}.log"
+                    call_log.write_text("", encoding="utf-8")
+                    env = dict(os.environ)
+                    env.pop("ROBINGRAPH_NAS_API_ENV", None)
+                    env.update(
+                        PATH=f"{bin_dir}:{env['PATH']}",
+                        DOCKER_CALL_LOG=str(call_log),
+                        DOCKER_STUB_NETWORK="robingraph-edge",
+                        ROBINGRAPH_DEPLOY_TARGET=target,
+                    )
+                    result = subprocess.run(
+                        ["sh", str(script), "dry-run"], capture_output=True, text=True, env=env, cwd=root
+                    )
+                    self.assertEqual(0, result.returncode, result.stderr)
+                    calls = call_log.read_text(encoding="utf-8")
+                    self.assertIn(f"--env-file {root / f'.env.nas.{target}'}", calls)
+                    self.assertIn(f"project={project}|container={container}|env={root / f'.env.nas.{target}'}", calls)
+                    self.assertNotIn("build --pull", calls)
+                    self.assertNotIn("up -d", calls)
+
     def test_stop_action_only_issues_a_non_destructive_compose_stop(self) -> None:
         result, calls = self._run_with_stub_docker("stop", {}, network_ok=True)
         self.assertEqual(0, result.returncode, result.stderr)

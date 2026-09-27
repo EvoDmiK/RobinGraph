@@ -41,9 +41,45 @@ cp .env.nas.ingest.example .env.nas.ingest
 chmod 600 .env.nas .env.nas.ingest
 ```
 
-`.env.nas`와 `.env.nas.ingest`는 Git에 추가하지 않는다. API 파일에는 Neo4j/Jina
+`.env.nas`와 `.env.nas.ingest`는 Git에 추가하지 않는다. API 파일에는 Neo4j/PostgreSQL/Jina
 값만 두고, n8n API key와 일회성 적재 자격정보는 ingest 파일에만 둔다. 첫 프록시
 검증은 `ROBINGRAPH_API_MODE=serve-fixture`로 진행한다.
+
+### TEST/PROD API 전환
+
+한 NAS에서 두 API를 독립적으로 준비하려면 `.env.nas.example`을 각각
+`.env.nas.test`와 `.env.nas.prod`로 복사하고 권한을 `0600`으로 둔다. 각 파일에
+해당 환경의 `NEO4J_*`, `ROBINGRAPH_PG_*`, 필요하면 `ROBINGRAPH_JINA_*`를
+설정한다. 두 파일 모두 실제 관찰을 조회할 때는
+`ROBINGRAPH_API_MODE=serve-neo4j`로 설정한다. **PROD 자격 증명을 TEST 파일에
+넣지 않는다.** TEST Neo4j의 Bolt 주소가 NAS의 `robingraph-edge` 네트워크에서
+도달 가능한지도 별도로 확인한다.
+
+```sh
+cp .env.nas.example .env.nas.test
+cp .env.nas.example .env.nas.prod
+chmod 600 .env.nas.test .env.nas.prod
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh preflight
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh dry-run
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh deploy
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh verify
+```
+
+이후 명령 앞의 변수 **하나만** `test`에서 `prod`로 바꾸면 PROD 파일과 스택을
+선택한다. `test`는 Compose 프로젝트 `robingraph-test`와 컨테이너
+`robingraph-api-test`를, `prod`는 `robingraph`와 `robingraph-api`를 사용한다.
+따라서 TEST 배포는 기존 PROD API 컨테이너를 재생성하지 않는다. TEST 이미지는
+`.env.nas.test`에서 `ROBINGRAPH_IMAGE=robingraph-api:test-local`처럼 PROD와
+별도 태그를 지정한다. 기존 무변수 호출은 `.env.nas`를 사용하는 레거시 경로로
+남는다. 타깃을 선택했을 때는 `ROBINGRAPH_NAS_API_ENV` 수동 덮어쓰기를 허용하지
+않는다. n8n workflow/적재 도구는 이 전환 기능의 대상이 아니므로 기존
+`.env.nas.ingest`와 무변수 명령을 쓴다.
+
+`verify`의 `/health` 출력에는 `deployment_target`이 표시된다. TEST는 공용
+NPM 호스트에 자동으로 연결되지 않으며, 공개하기 전까지 Docker 내부 네트워크에서
+`http://robingraph-api-test:8000`으로 확인한다. 현재 공개 도메인은 PROD의
+`robingraph-api:8000`으로 유지한다. `verify`는 프로세스 health만 확인하므로
+실제 관찰·채팅 결과와 출처는 별도 읽기 전용 스모크 테스트로 확인해야 한다.
 
 ## 2. 공용 Docker 네트워크 준비
 
