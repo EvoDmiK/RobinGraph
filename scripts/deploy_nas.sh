@@ -4,7 +4,6 @@ set -eu
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 ROOT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
 COMPOSE_FILE="$ROOT_DIR/compose.nas.yml"
-API_ENV=${ROBINGRAPH_NAS_API_ENV:-"$ROOT_DIR/.env.nas"}
 TOOLS_ENV=${ROBINGRAPH_NAS_TOOLS_ENV:-"$ROOT_DIR/.env.nas.ingest"}
 
 die() {
@@ -18,6 +17,32 @@ die() {
 [ "$#" -gt 0 ] || die "usage: $0 {preflight|build|deploy|update|verify|status|logs|stop|rollback|dry-run|deploy-workflows|preflight-korean-vernacular|deploy-korean-vernacular|verify-korean-vernacular|status-korean-vernacular|activate-korean-vernacular|deactivate-korean-vernacular|validate-avonet|ingest-avonet|package}"
 ACTION=$1
 shift
+
+# One selector chooses an isolated API stack and its secret file. The legacy
+# unset path preserves existing NAS deployments; test/prod never share a
+# Compose project or container. An explicit API_ENV override is legacy-only.
+case ${ROBINGRAPH_DEPLOY_TARGET:-legacy} in
+  legacy)
+    API_ENV=${ROBINGRAPH_NAS_API_ENV:-"$ROOT_DIR/.env.nas"}
+    ROBINGRAPH_COMPOSE_PROJECT=robingraph
+    ROBINGRAPH_API_CONTAINER=robingraph-api
+    ;;
+  test)
+    [ -z "${ROBINGRAPH_NAS_API_ENV:-}" ] || die "ROBINGRAPH_NAS_API_ENV cannot override a selected deployment target"
+    API_ENV="$ROOT_DIR/.env.nas.test"
+    ROBINGRAPH_COMPOSE_PROJECT=robingraph-test
+    ROBINGRAPH_API_CONTAINER=robingraph-api-test
+    ;;
+  prod)
+    [ -z "${ROBINGRAPH_NAS_API_ENV:-}" ] || die "ROBINGRAPH_NAS_API_ENV cannot override a selected deployment target"
+    API_ENV="$ROOT_DIR/.env.nas.prod"
+    ROBINGRAPH_COMPOSE_PROJECT=robingraph
+    ROBINGRAPH_API_CONTAINER=robingraph-api
+    ;;
+  *) die "ROBINGRAPH_DEPLOY_TARGET must be test or prod (or unset for legacy)" ;;
+esac
+ROBINGRAPH_ENV_FILE=$API_ENV
+export ROBINGRAPH_ENV_FILE ROBINGRAPH_COMPOSE_PROJECT ROBINGRAPH_API_CONTAINER
 
 require_command() {
   command -v "$1" >/dev/null 2>&1 || die "required command not found: $1"
@@ -76,6 +101,23 @@ preflight_api() {
   docker compose version >/dev/null
   require_file "$API_ENV"
   check_network "$API_ENV"
+  if [ "${ROBINGRAPH_DEPLOY_TARGET:-legacy}" = test ]; then
+    test_image=$(env_value ROBINGRAPH_IMAGE "$API_ENV")
+    [ -n "$test_image" ] && [ "$test_image" != robingraph-api:local ] ||
+      die "TEST requires a dedicated ROBINGRAPH_IMAGE tag in $API_ENV"
+    if [ -f "$ROOT_DIR/.env.nas.prod" ]; then
+      prod_image=$(env_value ROBINGRAPH_IMAGE "$ROOT_DIR/.env.nas.prod")
+      [ "$test_image" != "$prod_image" ] || die "TEST and PROD must use different image tags"
+      test_neo4j=$(env_value NEO4J_URI "$API_ENV")
+      prod_neo4j=$(env_value NEO4J_URI "$ROOT_DIR/.env.nas.prod")
+      [ -z "$prod_neo4j" ] || [ "$test_neo4j" != "$prod_neo4j" ] ||
+        die "TEST and PROD must use different Neo4j URIs"
+      test_database=$(env_value ROBINGRAPH_PG_DATABASE "$API_ENV")
+      prod_database=$(env_value ROBINGRAPH_PG_DATABASE "$ROOT_DIR/.env.nas.prod")
+      [ -z "$prod_database" ] || [ "$test_database" != "$prod_database" ] ||
+        die "TEST and PROD must use different PostgreSQL databases"
+    fi
+  fi
   mode=$(env_value ROBINGRAPH_API_MODE "$API_ENV")
   mode=${mode:-serve-fixture}
   case "$mode" in
@@ -84,13 +126,27 @@ preflight_api() {
       require_env_value NEO4J_URI "$API_ENV"
       require_env_value NEO4J_USERNAME "$API_ENV"
       require_env_value NEO4J_PASSWORD "$API_ENV"
+      require_env_value ROBINGRAPH_PG_HOST "$API_ENV"
+      require_env_value ROBINGRAPH_PG_DATABASE "$API_ENV"
+      require_env_value ROBINGRAPH_PG_USERNAME "$API_ENV"
+      require_env_value ROBINGRAPH_PG_PASSWORD "$API_ENV"
       ;;
     *) die "ROBINGRAPH_API_MODE must be serve-fixture or serve-neo4j" ;;
   esac
+  # Shell variables outrank --env-file in Compose interpolation. Pin the
+  # target-sensitive values to the selected file before resolving the stack.
+  ROBINGRAPH_API_MODE=$mode
+  ROBINGRAPH_IMAGE=$(env_value ROBINGRAPH_IMAGE "$API_ENV")
+  ROBINGRAPH_IMAGE=${ROBINGRAPH_IMAGE:-robingraph-api:local}
+  ROBINGRAPH_EDGE_NETWORK=$(env_value ROBINGRAPH_EDGE_NETWORK "$API_ENV")
+  ROBINGRAPH_EDGE_NETWORK=${ROBINGRAPH_EDGE_NETWORK:-robingraph-edge}
+  export ROBINGRAPH_API_MODE ROBINGRAPH_IMAGE ROBINGRAPH_EDGE_NETWORK
   compose_api config --quiet
 }
 
 preflight_tools() {
+  [ "${ROBINGRAPH_DEPLOY_TARGET:-legacy}" = legacy ] ||
+    die "workflow/ingest actions do not use ROBINGRAPH_DEPLOY_TARGET; unset it and use the dedicated tools configuration"
   require_command docker
   docker compose version >/dev/null
   require_file "$TOOLS_ENV"
@@ -185,8 +241,9 @@ case "$ACTION" in
     ;;
   verify)
     preflight_api
+    expected_target=${ROBINGRAPH_DEPLOY_TARGET:-legacy}
     compose_api exec -T api python -c \
-      "import json,urllib.request; print(json.dumps(json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)), ensure_ascii=False))"
+      "import json,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)); assert data.get('deployment_target') == '$expected_target', 'API target mismatch'; print(json.dumps(data, ensure_ascii=False))"
     ;;
   status)
     preflight_api

@@ -24,7 +24,7 @@ class NasDeploymentTest(unittest.TestCase):
     def test_api_and_privileged_one_shot_tools_are_separate(self) -> None:
         compose = (ROOT / "compose.nas.yml").read_text(encoding="utf-8")
         api, tools = compose.split("  nas-tools:", 1)
-        self.assertIn("container_name: robingraph-api", api)
+        self.assertIn("container_name: ${ROBINGRAPH_API_CONTAINER:-robingraph-api}", api)
         self.assertIn("expose:", api)
         self.assertNotIn("ports:", api)
         self.assertNotIn("ROBINGRAPH_N8N_API_KEY", api)
@@ -55,6 +55,7 @@ class NasDeploymentTest(unittest.TestCase):
         self.assertIn("docker network inspect", script)
         self.assertIn("config --quiet", script)
         self.assertIn("wait_for_api", script)
+        self.assertIn("API target mismatch", script)
         self.assertIn("deploy-workflows)", script)
         self.assertIn("ingest-avonet)", script)
         self.assertNotIn("source \"$", script)

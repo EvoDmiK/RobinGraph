@@ -58,9 +58,11 @@ class ApiTest(unittest.TestCase):
         cls.static_directory.cleanup()
 
     def test_health_discloses_fixture_mode(self) -> None:
-        response = self.client.get("/health")
+        with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
+            response = self.client.get("/health")
         self.assertEqual(200, response.status_code)
         self.assertEqual("fixture", response.json()["mode"])
+        self.assertEqual("test", response.json()["deployment_target"])
 
     def test_chat_shell_and_same_origin_assets_are_served(self) -> None:
         for path in ("/", "/chat"):
