@@ -80,9 +80,9 @@ class GeminiRequestShapeTest(unittest.TestCase):
         self.assertEqual(5.0, captured["timeout"])
 
         body = json.loads(request.data.decode("utf-8"))  # type: ignore[attr-defined]
-        response_format = body["generationConfig"]["responseFormat"]["text"]
-        self.assertEqual("application/json", response_format["mimeType"])
-        self.assertEqual("object", response_format["schema"]["type"])
+        generation_config = body["generationConfig"]
+        self.assertEqual("application/json", generation_config["responseMimeType"])
+        self.assertEqual("OBJECT", generation_config["responseSchema"]["type"])
         prompt = body["contents"][0]["parts"][0]["text"]
         self.assertIn("Where do robins nest?", prompt)
         self.assertIn("Robins nest in shrubs.", prompt)
