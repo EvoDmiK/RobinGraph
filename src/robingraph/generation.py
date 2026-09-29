@@ -32,10 +32,10 @@ MAX_RESPONSE_BYTES = 2 * 1024 * 1024
 _BLOCKED_FINISH_REASONS = {"SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII"}
 
 _RESPONSE_SCHEMA = {
-    "type": "object",
+    "type": "OBJECT",
     "properties": {
-        "text": {"type": "string"},
-        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+        "text": {"type": "STRING"},
+        "evidence_ids": {"type": "ARRAY", "items": {"type": "STRING"}},
     },
     "required": ["text", "evidence_ids"],
 }
@@ -98,9 +98,8 @@ class GeminiAnswerer:
         payload = {
             "contents": [{"role": "user", "parts": [{"text": prompt}]}],
             "generationConfig": {
-                "responseFormat": {
-                    "text": {"mimeType": "application/json", "schema": _RESPONSE_SCHEMA}
-                },
+                "responseMimeType": "application/json",
+                "responseSchema": _RESPONSE_SCHEMA,
             },
         }
         request = urllib_request.Request(
