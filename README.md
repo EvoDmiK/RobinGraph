@@ -20,6 +20,7 @@
 - [NAS 배포 런북](docs/nas-deployment.md)
 - [기술 의사결정 기록](docs/decisions/)
 - [평가 fixture와 gold 질문](docs/evaluation.md)
+- [PMC 실제 문헌 1편 TEST 적재 파일럿](docs/pmc-literature-pilot.md)
 - [현재 구현 상태](docs/current-implementation.md)
 - [개발환경과 자동 테스트](docs/development.md)
 - [다음 구현 배치와 담당 작업](docs/next-implementation-batch.md)
