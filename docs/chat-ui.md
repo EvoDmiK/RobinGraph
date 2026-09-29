@@ -26,18 +26,14 @@ evidence에는 원문 발췌·인용·채널·hybrid fallback 경고를 담는�
 조회하고, `auto`가 evidence를 선택한 경우에만 hybrid 검색과 그 fallback
 경고가 적용될 수 있다. 필터 없는 관찰 전체 조회는 실행하지 않는다.
 
-## 정직하게 밝혀둘 것: LLM이 아니다
+## 답변 생성 범위
 
-이 화면은 Hermes를 포함한 어떤 생성형 언어모델(LLM)도 사용하지 않는다.
-기존 `/v1/answers`의 `answer_text`는 `QuestionService`
-(`src/robingraph/slice.py`)가 그래프 근거를 결정론적 규칙으로 조합한다.
-`/v1/chat`은 기존의 계통·관찰·문헌 핸들러 결과와 고정 한국어 설명만
-반환하며, 근거가 부족하면 추측 대신 `disposition: "abstain"` 또는
-`"clarify"`로 답변을 보류한다
-([current-implementation.md](current-implementation.md)의 "Hermes 연동은
-후속" 메모 참고). UI는 이 사실을 배너 문구로 명시적으로 드러내고,
-Hermes/LLM이 이 화면의 답변을 만든다고 암시하는 문구는 두지 않는다.
-Hermes(또는 다른 LLM)가 실제로 연동되면 이 문구부터 갱신해야 한다.
+`/v1/answers`는 `QuestionService`가 그래프 근거를 결정론적 규칙으로
+조합한다. `/v1/chat`의 분류·관찰 경로도 조회 결과를 정해진 규칙으로
+표시한다. 근거 문서 경로는 `GEMINI_API_KEY`가 설정되면 검색된 문헌
+청크만 Gemini API에 전달해 답변을 생성할 수 있다. 서버는 생성 응답의
+근거 ID가 실제 검색 결과에 있는지 검사한다. 근거가 없으면 답변을
+보류하고, 생성·검증에 실패하면 검색 결과만 보여준다. UI 배너도 이 조건을 안내한다.
 
 ## 화면 구성과 상호작용
 

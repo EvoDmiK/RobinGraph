@@ -1,5 +1,11 @@
 # RobinGraph 현재 구현 상태
 
+최신 추가(2026-09-29): `serve-neo4j`에 `GEMINI_API_KEY`를 설정하면 `/v1/chat`의
+문헌 근거 경로가 검색된 청크를 Gemini API에 보내 답변을 생성한다. 응답에 포함된
+근거 ID는 검색 결과와 대조하며, 생성이나 검증에 실패하면 기존 검색 결과만
+표시한다. API 키가 없어 실제 Gemini 호출은 아직 검증하지 않았다. 아래
+Hermes 관련 문구와 테스트 수치는 당시의 구현 기록이다.
+
 최신 추가(2026-09-12): NAS 공개 API의 배포 버전이 실제로 이 checkout의 API
 계약과 일치하는지 확인하는 읽기 전용 검증기 `scripts/verify_api_deployment.py`를
 추가했다. 라이브 확인 과정에서 `https://aviary.dove-nest.com`이

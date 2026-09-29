@@ -7,7 +7,7 @@
 
 ## 1. 결론과 설계 원칙
 
-보유 인프라를 반영한 MVP는 **Neo4j + Python/FastAPI + Jina-embeddings-v3 API + HermesAgent + Streamlit** 조합을 권장한다. Neo4j 한 인스턴스에서 속성 그래프, 전문 인덱스, 벡터 인덱스를 함께 사용하면 Graph DB와 Vector DB를 따로 동기화할 필요가 없다. 데이터 수집과 정제는 Python, Polars, DuckDB, Parquet으로 처리하고 n8n은 이 작업을 호출·예약만 한다. Prometheus와 Grafana는 API와 수집 파이프라인을 관측한다. 외부 모델과 저장소는 작은 인터페이스 뒤에 둔다.
+보유 인프라를 반영한 MVP는 **Neo4j + Python/FastAPI + Jina-embeddings-v3 API + Gemini API** 조합을 권장한다. Neo4j 한 인스턴스에서 속성 그래프, 전문 인덱스, 벡터 인덱스를 함께 사용하면 Graph DB와 Vector DB를 따로 동기화할 필요가 없다. 데이터 수집과 정제는 Python, Polars, DuckDB, Parquet으로 처리하고 n8n은 이 작업을 호출·예약만 한다. Prometheus와 Grafana는 API와 수집 파이프라인을 관측한다. 외부 모델과 저장소는 작은 인터페이스 뒤에 둔다.
 
 Neo4j Community는 단일 인스턴스 개발과 소규모 서비스에 적합하지만 고가용성·온라인 백업·세밀한 권한 관리가 필요한 시점에는 한계가 있다. 관찰 기록이 수백만 건으로 늘어나면 관찰 원본과 공간 집계는 PostgreSQL/PostGIS 또는 Parquet/DuckDB에 두고, Neo4j에는 분류·문헌·서식지·집계 결과와 근거 연결만 유지하는 구조로 옮긴다.
 
@@ -169,12 +169,12 @@ Neo4j Community는 단일 인스턴스에서 Cypher, 전문 및 벡터 인덱스
 
 | 역할 | 권장 | 선택 이유 | 대안과 트레이드오프 |
 |---|---|---|---|
-| 생성/에이전트 API | **HermesAgent** | 이미 운영 중인 서비스를 재사용하고 GraphRAG 백엔드가 모델 세부사항에서 분리됨 | 구조화 출력이나 한국어 근거 답변 품질이 부족하면 Ollama 또는 호스팅 LLM adapter 추가 |
-| 생성 모델 | **HermesAgent → gpt-5.6-sol** | 구조화 출력과 function calling을 지원하며 복합 GraphRAG 답변에 충분한 모델 | 비용·지연이 병목이면 단순 질문에 더 작은 모델을 별도 평가 |
+| 생성 API | **Gemini API** | 검색된 근거만 전달하고 구조화된 답변·근거 ID를 검증 | 다른 제공자는 실제 필요가 생기면 추가 |
+| 생성 모델 | **gemini-3.8-flash** | 안정 버전을 설정으로 고정해 근거 문서 답변에 사용 | 품질·지연·비용을 측정한 뒤 변경 |
 | 임베딩 | **기존 Jina-embeddings-v3 API** | 새 모델 서버 없이 다국어 임베딩 인프라를 재사용 | BGE-M3, multilingual-e5. 같은 gold set에서 교체 효과를 검증 |
 | 재순위화 | **BAAI/bge-reranker-v2-m3**, 필요할 때만 | 다국어 cross-encoder로 상위 후보의 순서를 개선 | 초기에는 생략해 지연과 복잡도를 줄임 |
 
-모델명은 영구 결정이 아니다. `LLMProvider`, `EmbeddingProvider`, `Reranker` 경계를 두고 HermesAgent의 `gpt-5.6-sol` 모델 ID·reasoning 설정과 Jina API의 모델 ID·출력 차원·task 설정·정규화 방식·프롬프트 버전을 기록한다. Jina 서버의 실제 출력 차원은 설정을 확인한 후 Neo4j vector index에 고정한다. 임베딩 모델이나 차원을 바꾸면 기존 벡터와 섞지 않고 새 인덱스를 만든 뒤 오프라인 평가를 통과한 후 전환한다.
+모델명은 영구 결정이 아니다. Gemini 모델 ID와 Jina API의 모델 ID·출력 차원·task 설정·정규화 방식·프롬프트 버전을 기록한다. Jina 서버의 실제 출력 차원은 설정을 확인한 후 Neo4j vector index에 고정한다. 임베딩 모델이나 차원을 바꾸면 기존 벡터와 섞지 않고 새 인덱스를 만든 뒤 오프라인 평가를 통과한 후 전환한다.
 
 ### 4.4 백엔드와 개발 도구
 

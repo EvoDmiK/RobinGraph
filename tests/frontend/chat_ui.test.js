@@ -288,18 +288,11 @@ test("index.html declares every required interactive control and accessibility l
   assert.equal(htmlSource.includes("common-name"), false, "unsupported common-name observation filter must not be exposed");
 });
 
-test("index.html honestly discloses this is a deterministic, evidence-grounded UI, not an LLM/Hermes chatbot", () => {
-  assert.ok(htmlSource.includes("Hermes"), "the disclaimer should name Hermes in order to explicitly disclaim it");
-  assert.ok(htmlSource.includes("생성형 언어모델"));
-  assert.ok(htmlSource.includes("결정론"));
-
-  // The sentence naming Hermes must be phrased as a negation ("...하지
-  // 않고/않습니다"), not an affirmative claim that Hermes powers this UI.
-  const hermesSentenceMatch = htmlSource.match(/[^.]*Hermes[^.]*\./);
-  assert.ok(hermesSentenceMatch, "expected to find a sentence mentioning Hermes");
-  const hermesSentence = hermesSentenceMatch[0];
-  assert.ok(hermesSentence.includes("않"), "the Hermes sentence must explicitly negate/disclaim it: " + hermesSentence);
-  assert.equal(/사용합니다|기반입니다|기반으로 (작동|동작)합니다/.test(hermesSentence), false);
+test("index.html discloses optional Gemini generation and evidence limits", () => {
+  assert.ok(htmlSource.includes("Gemini API"));
+  assert.ok(htmlSource.includes("설정된 경우"));
+  assert.ok(htmlSource.includes("조회된 근거"));
+  assert.ok(htmlSource.includes("답변을 보류"));
 });
 
 test("index.html only references same-origin local assets, never a remote script/stylesheet", () => {

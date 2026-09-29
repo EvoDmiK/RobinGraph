@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import math
+import os
+import sys
+import types
 import unittest
 from unittest.mock import Mock, patch
 
@@ -18,6 +22,35 @@ from robingraph.retrieval.hybrid import HybridResult, HybridSearchOutcome
 from robingraph.retrieval.operational import OperationalCitation, OperationalObservation, OperationalPlace, OperationalTaxon
 from robingraph.retrieval.repository import SourceCitation
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
+
+
+@dataclass(frozen=True)
+class FakeGeneratedAnswer:
+    """Mirrors the shared `GeneratedAnswer` adapter shape without importing it.
+
+    `robingraph.generation` is owned by another workstream; the app only
+    depends on the duck-typed `.text` / `.evidence_ids` shape, so tests can
+    exercise that contract with a local stand-in instead of coupling to that
+    module's presence or implementation.
+    """
+
+    text: str
+    evidence_ids: tuple[str, ...]
+
+
+class FakeAnswerGenerator:
+    def __init__(self, *, text: str = "합성된 답변입니다.", evidence_ids=None, error: Exception | None = None):
+        self._text = text
+        self._evidence_ids = evidence_ids
+        self._error = error
+        self.calls: list[tuple[str, tuple[HybridResult, ...]]] = []
+
+    def __call__(self, question: str, evidence: tuple[HybridResult, ...]) -> FakeGeneratedAnswer:
+        self.calls.append((question, evidence))
+        if self._error is not None:
+            raise self._error
+        ids = self._evidence_ids if self._evidence_ids is not None else tuple(result.chunk_id for result in evidence)
+        return FakeGeneratedAnswer(self._text, tuple(ids))
 
 
 class FakeEmbeddings:
@@ -62,6 +95,18 @@ def sample_evidence(*, with_fallback_warning: bool = True) -> HybridSearchOutcom
         (HybridResult("chunk:1", "grounded excerpt", 0.2, ("fulltext",),
                       SourceCitation("source:1", "https://example.invalid", "p. 1", "CC-BY")),),
         (("Embedding request failed; results are keyword-only fulltext",) if with_fallback_warning else ()),
+    )
+
+
+def sample_multi_evidence() -> HybridSearchOutcome:
+    return HybridSearchOutcome(
+        (
+            HybridResult("chunk:1", "grounded excerpt one", 0.3, ("fulltext",),
+                         SourceCitation("source:1", "https://example.invalid/1", "p. 1", "CC-BY")),
+            HybridResult("chunk:2", "grounded excerpt two", 0.2, ("fulltext",),
+                         SourceCitation("source:2", "https://example.invalid/2", "p. 2", "CC-BY")),
+        ),
+        (),
     )
 
 
@@ -384,6 +429,118 @@ class SemanticChatApiTest(unittest.TestCase):
         self.assertEqual(4, len(result_schema["oneOf"]))
 
 
+class EvidenceAnswerGeneratorTest(unittest.TestCase):
+    """`/v1/chat` evidence-route generation: fail-closed, never inventive."""
+
+    def make_client(self, **kwargs) -> TestClient:
+        return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
+
+    def test_generated_answer_includes_verifiable_citations(self) -> None:
+        generator = FakeAnswerGenerator(text="청둥오리에 대한 합성 답변입니다.")
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_multi_evidence(),
+            answer_generator=generator,
+        ).post("/v1/chat", json={"question": "청둥오리 근거", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual("청둥오리에 대한 합성 답변입니다. [chunk:1, chunk:2]", payload["answer_text"])
+        # The typed search result is preserved unchanged alongside the answer.
+        self.assertEqual(2, len(payload["result"]["search"]["results"]))
+        self.assertEqual("chunk:1", payload["result"]["search"]["results"][0]["chunk_id"])
+        self.assertEqual(1, len(generator.calls))
+        called_question, called_evidence = generator.calls[0]
+        self.assertEqual("청둥오리 근거", called_question)
+        self.assertEqual(("chunk:1", "chunk:2"), tuple(result.chunk_id for result in called_evidence))
+
+    def test_generator_not_called_and_default_text_kept_when_no_evidence(self) -> None:
+        generator = FakeAnswerGenerator()
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: HybridSearchOutcome((), ()),
+            answer_generator=generator,
+        ).post("/v1/chat", json={"question": "근거 없음", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual("abstain", payload["disposition"])
+        self.assertEqual("일치하는 근거 문서를 확인하지 못했습니다.", payload["answer_text"])
+        self.assertEqual([], generator.calls)
+
+    def test_unknown_evidence_id_falls_back_to_retrieval_only_answer(self) -> None:
+        generator = FakeAnswerGenerator(text="근거 없는 주장", evidence_ids=("chunk:not-retrieved",))
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_evidence(with_fallback_warning=False),
+            answer_generator=generator,
+        ).post("/v1/chat", json={"question": "x", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual("근거 문서를 확인했습니다.", payload["answer_text"])
+        self.assertNotIn("근거 없는 주장", payload["answer_text"])
+        self.assertEqual(1, len(payload["result"]["search"]["results"]))
+
+    def test_duplicate_evidence_ids_fall_back_to_retrieval_only_answer(self) -> None:
+        generator = FakeAnswerGenerator(text="중복 인용", evidence_ids=("chunk:1", "chunk:1"))
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_multi_evidence(),
+            answer_generator=generator,
+        ).post("/v1/chat", json={"question": "x", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual("근거 문서를 확인했습니다.", payload["answer_text"])
+
+    def test_provider_failure_falls_back_without_leaking_error_details(self) -> None:
+        generator = FakeAnswerGenerator(error=RuntimeError("secret-provider-detail"))
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_evidence(with_fallback_warning=False),
+            answer_generator=generator,
+        ).post("/v1/chat", json={"question": "x", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual("근거 문서를 확인했습니다.", payload["answer_text"])
+        self.assertNotIn("secret-provider-detail", str(payload))
+
+    def test_malformed_generator_output_falls_back(self) -> None:
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_evidence(with_fallback_warning=False),
+            answer_generator=lambda _q, _e: object(),
+        ).post("/v1/chat", json={"question": "x", "intent": "evidence"})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("근거 문서를 확인했습니다.", response.json()["answer_text"])
+
+    def test_unaffected_routes_never_call_generator(self) -> None:
+        generator = FakeAnswerGenerator()
+        response = self.make_client(
+            lineage_handler=lambda _name: sample_lineage(),
+            observation_handler=lambda _query: (sample_observation(),),
+            answer_generator=generator,
+        )
+        taxonomy_payload = response.post(
+            "/v1/chat", json={"question": "x", "intent": "taxonomy"}
+        ).json()
+        observation_payload = response.post(
+            "/v1/chat",
+            json={"question": "x", "intent": "observations", "filters": {"kind": "observations", "place": "Seoul"}},
+        ).json()
+
+        self.assertEqual("answer", taxonomy_payload["disposition"])
+        self.assertEqual("answer", observation_payload["disposition"])
+        self.assertEqual([], generator.calls)
+
+    def test_unconfigured_generator_preserves_legacy_evidence_answer(self) -> None:
+        response = self.make_client(
+            search_handler=lambda _q, _l, _h: sample_evidence(with_fallback_warning=False),
+        ).post("/v1/chat", json={"question": "x", "intent": "evidence"})
+        payload = response.json()
+
+        self.assertEqual("answer", payload["disposition"])
+        self.assertEqual("근거 문서를 확인했습니다.", payload["answer_text"])
+
+
 class ServeNeo4jWiringTest(unittest.TestCase):
     def test_factory_injects_lazy_client_and_router_without_provider_call(self) -> None:
         arguments = Mock(host="127.0.0.1", port=9999)
@@ -402,7 +559,8 @@ class ServeNeo4jWiringTest(unittest.TestCase):
             served["payload"] = response.json()
             self.assertEqual(200, response.status_code)
 
-        with patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+        with patch.dict(os.environ, {"GEMINI_API_KEY": ""}), \
+             patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
              patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
              patch("robingraph.embeddings.JinaEmbeddingClient.from_env", return_value=embedding_client), \
              patch("uvicorn.run", side_effect=run_app):
@@ -449,7 +607,8 @@ class ServeNeo4jWiringTest(unittest.TestCase):
         configuration = Mock(
             side_effect=EmbeddingConfigurationError("secret endpoint")
         )
-        with patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+        with patch.dict(os.environ, {"GEMINI_API_KEY": ""}), \
+             patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
              patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
              patch("robingraph.embeddings.JinaEmbeddingClient.from_env", configuration), \
              patch("robingraph.retrieval.neo4j_hybrid.search", return_value=sample_evidence(with_fallback_warning=False)), \
@@ -465,3 +624,81 @@ class ServeNeo4jWiringTest(unittest.TestCase):
         self.assertEqual(1, configuration.call_count)
         for payload in served.values():
             self.assertNotIn("secret endpoint", str(payload))
+
+    def test_gemini_api_key_wires_generator_using_configured_model_after_retrieval(self) -> None:
+        arguments = Mock(host="127.0.0.1", port=9999)
+        repository = graph_repository_mock()
+        operational, lineage = Mock(), Mock()
+        constructed = []
+
+        fake_generation_module = types.ModuleType("robingraph.generation")
+
+        class FakeGeminiAnswerer:
+            def __init__(self, api_key, model, timeout_seconds=20.0):
+                constructed.append((api_key, model, timeout_seconds))
+
+            def __call__(self, question, evidence):
+                return FakeGeneratedAnswer(
+                    f"Gemini answer for {question}",
+                    tuple(result.chunk_id for result in evidence),
+                )
+
+        fake_generation_module.GeminiAnswerer = FakeGeminiAnswerer
+        served = {}
+
+        def run_app(app, **_kwargs):
+            served["evidence"] = TestClient(app).post(
+                "/v1/chat", json={"question": "청둥오리", "intent": "evidence"}
+            ).json()
+
+        with patch.dict(sys.modules, {"robingraph.generation": fake_generation_module}), \
+             patch.dict(os.environ, {"GEMINI_API_KEY": "test-key", "ROBINGRAPH_GEMINI_MODEL": "gemini-test-model"}), \
+             patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.embeddings.JinaEmbeddingClient.from_env", side_effect=EmbeddingConfigurationError("x")), \
+             patch("robingraph.retrieval.neo4j_hybrid.search", return_value=sample_evidence(with_fallback_warning=False)), \
+             patch("uvicorn.run", side_effect=run_app), \
+             patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository", return_value=repository), \
+             patch("robingraph.retrieval.operational_neo4j.Neo4jOperationalObservationRepository", return_value=operational), \
+             patch("robingraph.retrieval.taxonomy_lineage_neo4j.Neo4jTaxonomyLineageRepository", return_value=lineage):
+            serve_neo4j(arguments)
+
+        self.assertEqual(1, len(constructed))
+        self.assertEqual("test-key", constructed[0][0])
+        self.assertEqual("gemini-test-model", constructed[0][1])
+        self.assertEqual("answer", served["evidence"]["disposition"])
+        self.assertEqual("Gemini answer for 청둥오리 [chunk:1]", served["evidence"]["answer_text"])
+
+    def test_gemini_api_key_without_model_override_uses_default_model(self) -> None:
+        arguments = Mock(host="127.0.0.1", port=9999)
+        repository = graph_repository_mock()
+        operational, lineage = Mock(), Mock()
+        constructed = []
+
+        fake_generation_module = types.ModuleType("robingraph.generation")
+
+        class FakeGeminiAnswerer:
+            def __init__(self, api_key, model, timeout_seconds=20.0):
+                constructed.append((api_key, model))
+
+            def __call__(self, question, evidence):
+                return FakeGeneratedAnswer("ok", tuple(result.chunk_id for result in evidence))
+
+        fake_generation_module.GeminiAnswerer = FakeGeminiAnswerer
+
+        with patch.dict(sys.modules, {"robingraph.generation": fake_generation_module}), \
+             patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"}, clear=False), \
+             patch("robingraph.cli.Neo4jSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.ingest.postgres.PostgresSettings.from_environment", return_value=Mock()), \
+             patch("robingraph.embeddings.JinaEmbeddingClient.from_env", side_effect=EmbeddingConfigurationError("x")), \
+             patch("robingraph.retrieval.neo4j_hybrid.search", return_value=sample_evidence(with_fallback_warning=False)), \
+             patch("uvicorn.run", side_effect=lambda app, **_kwargs: None), \
+             patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository", return_value=repository), \
+             patch("robingraph.retrieval.operational_neo4j.Neo4jOperationalObservationRepository", return_value=operational), \
+             patch("robingraph.retrieval.taxonomy_lineage_neo4j.Neo4jTaxonomyLineageRepository", return_value=lineage):
+            os.environ.pop("ROBINGRAPH_GEMINI_MODEL", None)
+            serve_neo4j(arguments)
+
+        self.assertEqual(1, len(constructed))
+        self.assertEqual("test-key", constructed[0][0])
+        self.assertEqual("gemini-3.8-flash", constructed[0][1])

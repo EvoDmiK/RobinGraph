@@ -6,6 +6,7 @@ import argparse
 from dataclasses import asdict
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -218,10 +219,22 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         semantic_router = SemanticRouter(embedding_client)
     except EmbeddingConfigurationError:
         pass
+    # Gemini answer generation is opt-in: only a configured API key wires it
+    # in, and construction alone makes no request, consistent with the lazy
+    # embedding client above. Unconfigured deployments keep the legacy
+    # retrieval-only evidence response untouched.
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    answer_generator = None
+    if gemini_api_key:
+        from .generation import GeminiAnswerer
+
+        gemini_model = os.getenv("ROBINGRAPH_GEMINI_MODEL", "gemini-3.8-flash")
+        answer_generator = GeminiAnswerer(gemini_api_key, gemini_model)
     try:
         app = create_app(
             repository,
             search_handler=create_neo4j_search_handler(settings, embedding_client=embedding_client),
+            answer_generator=answer_generator,
             observation_handler=create_neo4j_observation_handler(operational_repository),
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),
             korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
