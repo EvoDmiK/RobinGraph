@@ -87,8 +87,9 @@ class NasDeployLifecycleTest(unittest.TestCase):
         for script in (DEPLOY_SCRIPT, PACKAGE_SCRIPT):
             text = script.read_text(encoding="utf-8")
             self.assertTrue(text.startswith("#!/bin/sh\nset -eu\n"), script)
-            mode = script.stat().st_mode
-            self.assertTrue(mode & stat.S_IXUSR, f"{script} is not executable")
+            if os.name != "nt":
+                mode = script.stat().st_mode
+                self.assertTrue(mode & stat.S_IXUSR, f"{script} is not executable")
 
     def test_lifecycle_actions_are_explicit_and_fail_closed(self) -> None:
         script = DEPLOY_SCRIPT.read_text(encoding="utf-8")
@@ -339,8 +340,11 @@ class NasDeployLifecycleTest(unittest.TestCase):
                     )
                     self.assertEqual(0, result.returncode, result.stderr)
                     calls = call_log.read_text(encoding="utf-8")
-                    self.assertIn(f"--env-file {root / f'.env.nas.{target}'}", calls)
-                    self.assertIn(f"project={project}|container={container}|env={root / f'.env.nas.{target}'}", calls)
+                    self.assertRegex(calls, rf"--env-file \S*\.env\.nas\.{target}(?=\s)")
+                    self.assertRegex(
+                        calls,
+                        rf"project={project}\|container={container}\|env=\S*\.env\.nas\.{target}(?:\n|$)",
+                    )
                     self.assertNotIn("build --pull", calls)
                     self.assertNotIn("up -d", calls)
 

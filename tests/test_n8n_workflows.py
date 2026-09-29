@@ -1299,7 +1299,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
     )
     def test_korean_vernacular_neo4j_statements_are_idempotent_and_reject_homonym_ambiguity(self) -> None:
         """Live (opt-in) integration test covering three adversarial cases
-        against a real Neo4j: (1) running the exact same batch/finalize
+        against a real Neo4j: (1) running the exact same batch
         sequence twice produces the same node count, not duplicates
         (idempotence across two runs); (2) once a second, different
         snapshot is activated, the taxon's old dataset-scoped name stops
@@ -1316,8 +1316,6 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
         from robingraph.retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository
         from scripts.generate_n8n_korean_vernacular_ingest import (
             BATCH_STATEMENT,
-            FINALIZE_STATEMENT,
-            START_STATEMENT,
         )
 
         marker = "n8n-korean-vernacular-integration-test"
@@ -1335,33 +1333,13 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
         )
         database = os.environ.get("NEO4J_DATABASE", "neo4j")
 
-        def start_batch_finalize(run_id, dataset_id, source_release, rows, expected_prior_run_id):
+        def write_batch(run_id, dataset_id, source_release, rows):
             with driver.session(database=database) as session:
-                session.run(
-                    "MATCH (state:IngestState {id: 'reference-taxonomy'}) "
-                    "WHERE state.active_concept_set_id = $concept_set_id RETURN 1"
-                ).consume()
-                start = session.run(
-                    START_STATEMENT,
-                    concept_set_id=concept_set_id,
-                    run_id=run_id,
-                    pipeline_id="korean-vernacular-names",
-                    retrieved_at="2026-09-11T00:00:00Z",
-                    source_release=source_release,
-                    wikidata_dataset_id=dataset_id,
-                    source_sha256="0" * 64,
-                    taxonomy_release=marker,
-                    write_row_count=len(rows),
-                    candidate_count=0,
-                    wikidata_landing_uri="https://www.wikidata.org/wiki/Wikidata:WikiProject_Taxonomy",
-                    sparql_endpoint="https://query.wikidata.org/sparql",
-                    wikidata_license_uri="https://creativecommons.org/publicdomain/zero/1.0/",
-                ).single(strict=True)
-                self.assertEqual(run_id, start["started_run_id"])
                 batch = session.run(
                     BATCH_STATEMENT,
                     run_id=run_id,
                     concept_set_id=concept_set_id,
+                    taxonomy_release=marker,
                     wikidata_dataset_id=dataset_id,
                     batch_index=0,
                     batch_count=1,
@@ -1372,42 +1350,12 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                     source_sha256="0" * 64,
                 ).single(strict=True)
                 self.assertEqual(len(rows), batch["loaded_vernacular_names"])
-                finalize = session.run(
-                    FINALIZE_STATEMENT,
-                    run_id=run_id,
-                    concept_set_id=concept_set_id,
-                    expected_prior_run_id=expected_prior_run_id,
-                    loaded_vernacular_names=len(rows),
-                    loaded_candidates=0,
-                    source_release=source_release,
-                    wikidata_dataset_id=dataset_id,
-                    taxonomy_release=marker,
-                ).single(strict=True)
-                self.assertEqual(run_id, finalize["finalized_run_id"])
-                self.assertEqual(dataset_id, finalize["active_dataset_id"])
-
-        # This test temporarily repoints the two shared singleton IngestState
-        # nodes ('reference-taxonomy', 'korean-vernacular-names') at
-        # throwaway marker-scoped data. Both are captured here and restored
-        # verbatim in `finally` -- including deleting them again if they
-        # did not exist before -- so this test is safe to run against a
-        # Neo4j instance that already has real active state, not only an
-        # empty throwaway database.
-        with driver.session(database=database) as session:
-            prior_states = {
-                row["id"]: dict(row["props"])
-                for row in session.run(
-                    "MATCH (state:IngestState) WHERE state.id IN ['reference-taxonomy', 'korean-vernacular-names'] "
-                    "RETURN state.id AS id, properties(state) AS props"
-                )
-            }
 
         try:
             with driver.session(database=database) as session:
                 session.run(
                     "MERGE (cs:TaxonConceptSet {id: $id}) "
-                    "MERGE (state:IngestState {id: 'reference-taxonomy'}) "
-                    "SET state.active_concept_set_id = $id, state.active_release = $release "
+                    "SET cs.version = $release, cs.policy_status = 'allowed' "
                     "MERGE (a:Taxon:BirdTaxon {id: $taxon_a}) "
                     "SET a.scientific_name = 'Marker species A', a.rank = 'species' "
                     "MERGE (a)-[:IN_CONCEPT_SET]->(cs) "
@@ -1424,15 +1372,15 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                 rows_v1 = [
                     {"taxon_id": taxon_a, "taxon_name": "Marker species A", "korean_name": "마커이름", "qids": ["Q1"]}
                 ]
-                start_batch_finalize(run_1, dataset_1, "release-1", rows_v1, "")
-                start_batch_finalize(run_1, dataset_1, "release-1", rows_v1, "")  # re-run, same content
+                write_batch(run_1, dataset_1, "release-1", rows_v1)
+                write_batch(run_1, dataset_1, "release-1", rows_v1)  # re-run, same content
                 count_after_rerun = session.run(
                     "MATCH (v:VernacularName {dataset_id: $dataset_id}) RETURN count(v) AS n", dataset_id=dataset_1
                 ).single(strict=True)["n"]
                 self.assertEqual(1, count_after_rerun)
 
                 # --- (2) Retirement: species A gets no name in the new snapshot ---
-                start_batch_finalize(run_2, dataset_2, "release-2", [], run_1)
+                write_batch(run_2, dataset_2, "release-2", [])
                 active_dataset = [dataset_2]
                 with Neo4jTaxonomyLineageRepository(
                     Neo4jSettings(
@@ -1442,6 +1390,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                         database=database,
                     ),
                     lambda: active_dataset[0],
+                    lambda: (concept_set_id, marker),
                 ) as repository:
                     # Retired: the old snapshot's name is no longer active.
                     self.assertIsNone(repository.lineage_for_korean_name("마커이름"))
@@ -1453,7 +1402,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                         {"taxon_id": taxon_a, "taxon_name": "Marker species A", "korean_name": "동명이인", "qids": ["Q1"]},
                         {"taxon_id": taxon_b, "taxon_name": "Marker species B", "korean_name": "동명이인", "qids": ["Q2"]},
                     ]
-                    start_batch_finalize(run_3, dataset_3, "release-3", homonym_rows, run_2)
+                    write_batch(run_3, dataset_3, "release-3", homonym_rows)
                     active_dataset[0] = dataset_3
                     self.assertIsNone(repository.lineage_for_korean_name("동명이인"))
         finally:
@@ -1461,17 +1410,6 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                 session.run(
                     "MATCH (node) WHERE node.id CONTAINS $marker DETACH DELETE node", marker=marker
                 ).consume()
-                for state_id in ("reference-taxonomy", "korean-vernacular-names"):
-                    if state_id in prior_states:
-                        session.run(
-                            "MATCH (state:IngestState {id: $id}) SET state = $props",
-                            id=state_id,
-                            props=prior_states[state_id],
-                        ).consume()
-                    else:
-                        session.run(
-                            "MATCH (state:IngestState {id: $id}) DETACH DELETE state", id=state_id
-                        ).consume()
             driver.close()
 
     @unittest.skipUnless(
@@ -1489,6 +1427,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
         observation_id = f"gbif-observation:{run_id}"
         parameters = {
             "run_id": run_id,
+            "dataset_id": f"gbif-dataset:{run_id}",
             "pipeline_id": f"gbif-occurrence-kr-aves:{run_id}",
             "retrieved_at": "2026-09-07T00:00:00Z",
             "source_release": "gbif-live-integration-test",
@@ -1557,7 +1496,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                     "dataset_id": f"gbif-dataset:{run_id}",
                     "dataset_key": run_id,
                     "publisher_key": None,
-                    "license_uri": f"https://example.invalid/license/{run_id}",
+                    "license_uri": "https://creativecommons.org/licenses/by/4.0/",
                     "source_record_key": f"gbif:integration:{run_id}",
                     "source_release": "gbif-live-integration-test",
                     "raw_uri": f"https://example.invalid/occurrence/{run_id}",
@@ -1581,8 +1520,7 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
                 self.assertEqual(1, result["loaded_taxon_links"])
                 self.assertEqual(1, result["loaded_observations"])
                 self.assertEqual(0, result["loaded_media"])
-                self.assertEqual(0, result["loaded_quarantine"])
-                self.assertEqual(parameters["source_release"], result["state.active_release"])
+                self.assertEqual("domain_verified", result["status"])
                 with Neo4jOperationalObservationRepository(
                     Neo4jSettings(
                         uri=os.environ["NEO4J_URI"],
