@@ -2,7 +2,7 @@
 
 그래프 데이터베이스와 LLM을 이용해 근거가 확인되는 조류 정보를 제공하는 GraphRAG 프로젝트입니다.
 
-합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. AviList 분류·EltonTraits 식성·체중과 AVONET 형태 측정치·서식 환경을 수집하는 두 n8n workflow를 제공한다. 메모리 제한을 피하는 검증 배치 로더로 실제 AVONET 11,009종과 128,331개 형질 claim까지 NAS Neo4j에 적재했다. HermesAgent 답변 생성은 후속 단계다.
+합성 fixture로 정책 필터·출처 추적·답변 검증을 실행하고, 같은 데이터를 실제 Neo4j에 적재해 검색할 수 있다. 실제 Jina의 512차원 임베딩을 Neo4j에 저장하고 전문·벡터 결합 검색과 출처 반환까지 확인했다. NAS n8n이 GBIF 한국 조류 관찰 데이터를 직접 수집·검증해 Neo4j에 적재하는 경로도 실제 실행으로 검증했다. AviList 분류·EltonTraits 식성·체중과 AVONET 형태 측정치·서식 환경을 수집하는 두 n8n workflow를 제공한다. 메모리 제한을 피하는 검증 배치 로더로 실제 AVONET 11,009종과 128,331개 형질 claim까지 NAS Neo4j에 적재했다. `GEMINI_API_KEY`를 설정한 `serve-neo4j`의 `/v1/chat`에서 Gemini API가 문헌 근거 답변을 생성한다.
 
 - [시스템 설계](docs/system-design.md)
 - [그래프 DB 스키마](docs/graph-database-schema.md)
@@ -149,8 +149,10 @@ curl "http://127.0.0.1:8000/v1/observations?scientific_name=Anas%20zonorhyncha&o
 완전한 레코드만 반환한다. `sensitivity: generalized`인 관찰은 저장된 공개 좌표도
 API에서 숨기며 `coordinate_disclosure: withheld`와 경고를 반환한다.
 
-이 endpoint는 구조화된 관찰 검색이다. 문헌 전문·벡터 검색인 `/v1/search`와
-Hermes 기반 자연어 답변 생성은 별도 경로다. `serve-fixture`에서는 계약만
+이 endpoint는 구조화된 관찰 검색이다. 문헌 전문·벡터 검색은 `/v1/search`에서,
+검색 근거를 사용한 자연어 답변은 `/v1/chat`에서 제공한다. `serve-neo4j`에
+`GEMINI_API_KEY`를 설정하면 Gemini API가 근거 답변을 생성한다. 모델은
+`ROBINGRAPH_GEMINI_MODEL`로 지정할 수 있다. `serve-fixture`에서는 계약만
 노출하고 호출은 HTTP 503을 반환한다.
 
 한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.

@@ -12,7 +12,7 @@ from datetime import date
 import os
 from pathlib import Path
 import stat
-from typing import Annotated, Callable, Literal, cast
+from typing import TYPE_CHECKING, Annotated, Callable, Literal, cast
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import PlainTextResponse, Response
@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from ..embeddings import EmbeddingClient
 from ..fixture import load_fixture
 from ..graph.settings import Neo4jSettings
-from ..retrieval.hybrid import FULLTEXT_CHANNEL, VECTOR_CHANNEL, HybridSearchOutcome
+from ..retrieval.hybrid import FULLTEXT_CHANNEL, VECTOR_CHANNEL, HybridResult, HybridSearchOutcome
 from ..retrieval.operational import (
     OperationalObservation,
     OperationalObservationQuery,
@@ -33,6 +33,13 @@ from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageReposit
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
 from .semantic_router import ChatIntent, SemanticRouter
+
+if TYPE_CHECKING:
+    # The evidence-route answer generator is an optional integration seam.
+    # Typing it against the real adapter without importing it at runtime
+    # keeps this module loadable in deployments that never configure
+    # generation (fixture mode, unconfigured Neo4j serving).
+    from ..generation import GeneratedAnswer
 
 
 class QuestionRequest(BaseModel):
@@ -61,6 +68,7 @@ class AnswerResponse(BaseModel):
 
 SearchMode = Literal["fulltext", "hybrid"]
 SearchHandler = Callable[[str, int, bool], HybridSearchOutcome]
+AnswerGenerator = Callable[[str, "tuple[HybridResult, ...]"], "GeneratedAnswer"]
 
 
 class DocumentSearchRequest(BaseModel):
@@ -385,6 +393,38 @@ def _search_response(outcome: HybridSearchOutcome, *, requested_mode: SearchMode
     )
 
 
+def _generated_evidence_answer(
+    generator: AnswerGenerator, question: str, results: tuple[HybridResult, ...]
+) -> str | None:
+    """Return a citation-qualified answer, or ``None`` to fail closed.
+
+    A provider error, a blank/duplicate evidence id, or an evidence id
+    outside the retrieved chunk set must never surface as an invented
+    answer or leak provider details -- the caller falls back to the
+    existing retrieval-only response text in every such case.
+    """
+
+    try:
+        generated = generator(question, results)
+        evidence_ids = tuple(generated.evidence_ids)
+        answer_text = generated.text
+    except Exception:
+        return None
+    if not evidence_ids or any(
+        not isinstance(evidence_id, str) or not evidence_id.strip()
+        for evidence_id in evidence_ids
+    ):
+        return None
+    if len(set(evidence_ids)) != len(evidence_ids):
+        return None
+    retrieved_ids = {result.chunk_id for result in results}
+    if not set(evidence_ids) <= retrieved_ids:
+        return None
+    if not isinstance(answer_text, str) or not answer_text.strip():
+        return None
+    return f"{answer_text} [{', '.join(evidence_ids)}]"
+
+
 def _operational_observation_response(
     observation: OperationalObservation,
 ) -> OperationalObservationResponse:
@@ -544,6 +584,7 @@ def create_app(
     repository: GraphRepository | None = None,
     *,
     search_handler: SearchHandler | None = None,
+    answer_generator: AnswerGenerator | None = None,
     observation_handler: ObservationSearchHandler | None = None,
     lineage_handler: LineageHandler | None = None,
     korean_lineage_handler: LineageHandler | None = None,
@@ -558,6 +599,12 @@ def create_app(
     A missing, empty, or unreadable required chat asset deliberately does not
     stop the API from starting: all UI requests receive a generic 503 rather
     than an absolute server path or a partial chat shell.
+
+    ``answer_generator`` is an optional integration seam for the `/v1/chat`
+    evidence route only: when configured, it runs after retrieval to turn
+    already-fetched hybrid results into a cited answer. Any generator error,
+    or output that fails citation validation, falls back to the existing
+    retrieval-only response rather than inventing an answer.
     """
 
     repository = repository or FixtureRepository(load_fixture())
@@ -793,10 +840,15 @@ def create_app(
                 )),
             )
         evidence = _search_response(outcome, requested_mode=requested_mode)
+        answer_text = "근거 문서를 확인했습니다." if evidence.results else "일치하는 근거 문서를 확인하지 못했습니다."
+        if answer_generator is not None and outcome.results:
+            generated_text = _generated_evidence_answer(answer_generator, request.question, outcome.results)
+            if generated_text is not None:
+                answer_text = generated_text
         return ChatResponse(
             selected_intent="evidence", route_method=method,
             disposition="answer" if evidence.results else "abstain",
-            answer_text="근거 문서를 확인했습니다." if evidence.results else "일치하는 근거 문서를 확인하지 못했습니다.",
+            answer_text=answer_text,
             warnings=list(evidence.warnings), result=ChatEvidenceResult(search=evidence),
         )
 
