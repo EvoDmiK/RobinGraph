@@ -9,6 +9,7 @@ have to guess.
 from __future__ import annotations
 
 from datetime import date
+import logging
 import os
 from pathlib import Path
 import stat
@@ -472,7 +473,8 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
 
 
 def create_neo4j_search_handler(
-    settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None
+    settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None,
+    english_search_terms: Callable[[str], str] | None = None,
 ) -> SearchHandler:
     """Build the read-only Neo4j/Jina search boundary used by FastAPI."""
 
@@ -482,10 +484,22 @@ def create_neo4j_search_handler(
         from ..embeddings import EmbeddingConfigurationError, EmbeddingError, JinaEmbeddingClient
         from ..retrieval.neo4j_hybrid import HybridSearchRequest, QueryEmbedderLike, search
 
+        search_question = question
+        translation_warning = None
+        if not hybrid and english_search_terms is not None and any("\uac00" <= char <= "\ud7a3" for char in question):
+            try:
+                terms = english_search_terms(question)
+                if not isinstance(terms, str) or not terms.strip() or len(terms) > 300:
+                    raise ValueError("Invalid translated search terms")
+                search_question = f"{question} {terms}"
+                translation_warning = "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+            except Exception as error:
+                logging.getLogger(__name__).warning("English search-term conversion failed (%s)", type(error).__name__)
+                translation_warning = "영어 검색어 변환에 실패해 원래 질문으로만 검색했습니다."
         top_k = max(25, limit)
         channels = (FULLTEXT_CHANNEL, VECTOR_CHANNEL) if hybrid else (FULLTEXT_CHANNEL,)
         request = HybridSearchRequest(
-            query_text=question,
+            query_text=search_question,
             limit=limit,
             fulltext_top_k=top_k,
             vector_top_k=top_k,
@@ -493,7 +507,11 @@ def create_neo4j_search_handler(
         )
         try:
             if not hybrid:
-                return search(settings, request)
+                outcome = search(settings, request)
+                return HybridSearchOutcome(
+                    results=outcome.results,
+                    warnings=(*outcome.warnings, translation_warning) if translation_warning else outcome.warnings,
+                )
             try:
                 client = embedding_client if embedding_client is not None else JinaEmbeddingClient.from_env()
             except EmbeddingConfigurationError as error:

@@ -646,6 +646,40 @@ class Neo4jApiSearchHandlerTest(unittest.TestCase):
         self.assertEqual(("fulltext",), search.call_args.args[1].channels)
         self.assertNotIn("query_embedder", search.call_args.kwargs)
 
+    def test_korean_fulltext_preserves_original_and_adds_english_terms(self) -> None:
+        translated = []
+        handler = create_neo4j_search_handler(
+            self.settings, english_search_terms=lambda q: translated.append(q) or "water birds",
+        )
+        with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+            outcome = handler("물새", 3, False)
+        self.assertEqual(["물새"], translated)
+        self.assertEqual("물새 water birds", search.call_args.args[1].query_text)
+        self.assertEqual(self.outcome.results, outcome.results)
+        self.assertIn("영어 검색어", outcome.warnings[-1])
+
+    def test_translation_failure_uses_original_without_exposing_provider_details(self) -> None:
+        def fail(_q):
+            raise RuntimeError("secret provider details")
+        for translator in [fail, lambda q: "", lambda q: "x" * 301]:
+            with self.subTest(translator=translator):
+                handler = create_neo4j_search_handler(self.settings, english_search_terms=translator)
+                with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+                    outcome = handler("물새", 3, False)
+                self.assertEqual("물새", search.call_args.args[1].query_text)
+                self.assertIn("변환에 실패", outcome.warnings[-1])
+                self.assertNotIn("secret", str(outcome.warnings))
+
+    def test_english_and_hybrid_search_do_not_translate(self) -> None:
+        def forbidden(_q):
+            self.fail("Translation must not be called")
+        handler = create_neo4j_search_handler(self.settings, embedding_client=object(), english_search_terms=forbidden)
+        with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+            handler("birds", 3, False)
+            self.assertEqual("birds", search.call_args.args[1].query_text)
+            handler("물새", 3, True)
+            self.assertEqual("물새", search.call_args.args[1].query_text)
+
     def test_hybrid_mode_passes_embedding_client(self) -> None:
         handler = create_neo4j_search_handler(self.settings)
         embedder = object()

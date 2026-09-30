@@ -637,6 +637,9 @@ class ServeNeo4jWiringTest(unittest.TestCase):
             def __init__(self, api_key, model, timeout_seconds=20.0):
                 constructed.append((api_key, model, timeout_seconds))
 
+            def english_search_terms(self, question):
+                return "mallard"
+
             def __call__(self, question, evidence):
                 return FakeGeneratedAnswer(
                     f"Gemini answer for {question}",
@@ -680,6 +683,9 @@ class ServeNeo4jWiringTest(unittest.TestCase):
         class FakeGeminiAnswerer:
             def __init__(self, api_key, model, timeout_seconds=20.0):
                 constructed.append((api_key, model))
+
+            def english_search_terms(self, question):
+                return "mallard"
 
             def __call__(self, question, evidence):
                 return FakeGeneratedAnswer("ok", tuple(result.chunk_id for result in evidence))
