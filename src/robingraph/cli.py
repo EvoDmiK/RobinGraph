@@ -233,7 +233,10 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     try:
         app = create_app(
             repository,
-            search_handler=create_neo4j_search_handler(settings, embedding_client=embedding_client),
+            search_handler=create_neo4j_search_handler(
+                settings, embedding_client=embedding_client,
+                english_search_terms=answer_generator.english_search_terms if answer_generator is not None else None,
+            ),
             answer_generator=answer_generator,
             observation_handler=create_neo4j_observation_handler(operational_repository),
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),

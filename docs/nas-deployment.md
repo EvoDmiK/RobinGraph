@@ -41,7 +41,7 @@ cp .env.nas.ingest.example .env.nas.ingest
 chmod 600 .env.nas .env.nas.ingest
 ```
 
-`.env.nas`와 `.env.nas.ingest`는 Git에 추가하지 않는다. API 파일에는 Neo4j/PostgreSQL/Jina
+`.env.nas`와 `.env.nas.ingest`는 Git에 추가하지 않는다. API 파일에는 Neo4j/PostgreSQL/Jina/Gemini
 값만 두고, n8n API key와 일회성 적재 자격정보는 ingest 파일에만 둔다. 첫 프록시
 검증은 `ROBINGRAPH_API_MODE=serve-fixture`로 진행한다.
 
@@ -80,6 +80,41 @@ NPM 호스트에 자동으로 연결되지 않으며, 공개하기 전까지 Doc
 `http://robingraph-api-test:8000`으로 확인한다. 현재 공개 도메인은 PROD의
 `robingraph-api:8000`으로 유지한다. `verify`는 프로세스 health만 확인하므로
 실제 관찰·채팅 결과와 출처는 별도 읽기 전용 스모크 테스트로 확인해야 한다.
+
+### 2026-09-30 검증된 TEST 설정으로 배포
+
+로컬에서 준비한 `.env.nas.test`는 테스트 Neo4j와 PostgreSQL을 사용한다.
+PostgreSQL 주소는 연결 확인된 `100.93.181.111:5433`, DB는 `robingraph_test`이다.
+Gemini 모델은 한국어 문헌 응답을 확인한 `gemini-3.5-flash-lite`로 지정했다.
+이 파일에는 실제 비밀번호와 API 키가 있으므로 Git에 넣지 않는다. NAS의 기존
+`.env.nas.test`에 해당 설정을 적용하고 `chmod 600 .env.nas.test`를 실행한다.
+파일이 없으면 `.env.nas.example`을 복사한 뒤 테스트 DB 자격정보와 Gemini API 키를
+입력한다. `ROBINGRAPH_API_MODE=serve-neo4j`, 전용 이미지 태그
+`ROBINGRAPH_IMAGE=robingraph-api:test-20260930`도 설정한다.
+
+NAS의 저장소에서 `dev` 브랜치를 pull한 뒤 실행한다.
+`robingraph-edge`는 위 §2대로 준비해야 한다. NAS 컨테이너에서도 테스트 Neo4j의
+주소와 PostgreSQL Tailscale 주소로 TCP 연결이 가능해야 한다.
+
+```sh
+git switch dev
+git pull --ff-only origin dev
+chmod 600 .env.nas.test
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh preflight
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh deploy
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh verify
+docker exec robingraph-api-test python scripts/verify_api_deployment.py \
+  --base-url http://127.0.0.1:8000 \
+  --lineage-name 대륙검은지빠귀 \
+  --expected-scientific-name 'Turdus mandarinus' --json
+```
+
+마지막 검증의 `passed: true`는 health뿐 아니라 활성 AviList 분류와 한국어 이름
+조회까지 정상임을 뜻한다. TEST를 브라우저에서 열려면 NPM의 별도 테스트 호스트를
+`http://robingraph-api-test:8000`으로 연결한다.
+
+2026-09-30 로컬 Docker 이미지 빌드와 동일한 읽기 전용·비루트 실행 설정에서
+위 검증이 통과했다. NAS에서는 SSH 인증이 완료되지 않아 아직 배포하지 않았다.
 
 ## 2. 공용 Docker 네트워크 준비
 

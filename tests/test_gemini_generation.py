@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import unittest
+from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 
 from robingraph.generation import (
@@ -60,6 +61,35 @@ def _candidate_document(answer_text: str, evidence_ids: list[str]) -> dict:
 
 
 class GeminiRequestShapeTest(unittest.TestCase):
+    def test_service_unavailable_retries_once_and_persistent_failure_stays_bounded(self) -> None:
+        for succeeds in [True, False]:
+            with self.subTest(succeeds=succeeds), patch("robingraph.generation.time.sleep"):
+                unavailable = lambda: HTTPError("https://example.invalid", 503, "private error", {}, None)
+                opener = Mock(side_effect=[unavailable(), _Response(_candidate_document("Birds.", ["chunk-1"])) if succeeds else unavailable()])
+                answerer = GeminiAnswerer("test-key", urlopen=opener)
+                if succeeds:
+                    self.assertEqual("Birds.", answerer("Birds?", (_evidence(),)).text)
+                else:
+                    with self.assertRaisesRegex(GeminiAnswerError, "Gemini HTTP error 503"):
+                        answerer("Birds?", (_evidence(),))
+                self.assertEqual(2, opener.call_count)
+
+    def test_english_search_terms_use_bounded_schema_and_reject_invalid_output(self) -> None:
+        captured = {}
+
+        def fake_urlopen(request, timeout):
+            captured.update(json.loads(request.data))
+            return _Response({"candidates": [{"content": {"parts": [{"text": json.dumps({"terms": "Los Angeles climate land use birds"})}]}}]})
+
+        answerer = GeminiAnswerer("test-key", urlopen=fake_urlopen)
+        self.assertEqual("Los Angeles climate land use birds", answerer.english_search_terms("로스앤젤레스 기후와 새"))
+        self.assertIn("terms", captured["generationConfig"]["responseSchema"]["properties"])
+        for invalid in ["", "한국어", "birds:*"] + ["birds " * 21, ["birds"], "b" * 301]:
+            with self.subTest(invalid=invalid):
+                answerer._urlopen = lambda _r, timeout: _Response({"candidates": [{"content": {"parts": [{"text": json.dumps({"terms": invalid})}]}}]})
+                with self.assertRaises(GeminiAnswerError):
+                    answerer.english_search_terms("새")
+
     def test_request_targets_v1beta_endpoint_with_api_key_header(self) -> None:
         captured: dict[str, object] = {}
 
