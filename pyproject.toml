@@ -34,6 +34,7 @@ robingraph = [
   "api/static/*.js",
   "api/static/*.css",
   "ingest/migrations/*.sql",
+  "retrieval/*.json",
 ]
 
 [tool.unittest]

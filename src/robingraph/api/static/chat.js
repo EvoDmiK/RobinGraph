@@ -181,8 +181,12 @@
     }
     if (result.kind === "taxonomy" && result.lineage && Array.isArray(result.lineage.lineage)) {
       return result.lineage.lineage.slice(0, 20).map(function (item) {
-        var label = [item.rank, item.scientific_name].filter(Boolean).join(" · ");
-        return item.korean_name ? label + " (" + item.korean_name + ")" : label;
+        var ranks = { order: "목", family: "과", genus: "속", species: "종", subspecies: "아종" };
+        var rank = ranks[item.rank] ? ranks[item.rank] + " (" + item.rank + ")" : item.rank;
+        var label = [rank, item.scientific_name].filter(Boolean).join(" · ");
+        return item.korean_name
+          ? label + " (" + item.korean_name + ")" + (item.korean_name_source_url ? " · 참고 국명" : "")
+          : label + " · 한국어 이름 미등록";
       });
     }
     if (result.kind === "observations" && Array.isArray(result.results)) {
@@ -334,9 +338,20 @@
       if (resultLines.length > 0) {
         var resultList = doc.createElement("ul");
         resultList.className = "route-results";
-        resultLines.forEach(function (line) {
+        resultLines.forEach(function (line, index) {
           var resultItem = doc.createElement("li");
           resultItem.textContent = line;
+          if (result.kind === "taxonomy") {
+            var sourceUrl = sanitizeUrl(result.lineage.lineage[index].korean_name_source_url);
+            if (sourceUrl) {
+              var sourceLink = doc.createElement("a");
+              sourceLink.href = sourceUrl;
+              sourceLink.textContent = " [Wikidata]";
+              sourceLink.target = "_blank";
+              sourceLink.rel = "noopener noreferrer";
+              resultItem.appendChild(sourceLink);
+            }
+          }
           resultList.appendChild(resultItem);
         });
         item.appendChild(resultList);

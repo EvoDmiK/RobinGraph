@@ -11,6 +11,7 @@ from __future__ import annotations
 from datetime import date
 import logging
 import os
+import re
 from pathlib import Path
 import stat
 from typing import TYPE_CHECKING, Annotated, Callable, Literal, cast
@@ -194,6 +195,7 @@ class LineageTaxonResponse(BaseModel):
     authority: str | None
     korean_name: str | None
     korean_name_status: str | None = None
+    korean_name_source_url: str | None = None
 
 
 class TaxonomyLineageResponse(BaseModel):
@@ -472,6 +474,23 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
     )
 
 
+_KOREAN_RANKS = {"order": "목", "family": "과", "genus": "속", "species": "종", "subspecies": "아종"}
+_RANK_QUESTION = re.compile(r"(?:무슨|어느|어떤)\s*(아종|목|과|속|종)(?=에|이|인|야|입|\s|[?？]|$)")
+
+
+def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool]:
+    requested = _RANK_QUESTION.search(question)
+    if requested is None:
+        return "분류 계통을 확인했습니다.", True
+    rank_label = requested.group(1)
+    target = next((item for item in lineage.items if _KOREAN_RANKS.get(item.rank) == rank_label), None)
+    if target is None:
+        return f"조회된 계보에 {rank_label} 정보가 없어 답변을 확인하지 못했습니다.", False
+    subject = lineage.items[-1].korean_name or lineage.resolved_query_scientific_name or lineage.query_scientific_name
+    name = f"{target.korean_name}({target.scientific_name})" if target.korean_name else target.scientific_name
+    return f"{subject}의 {rank_label} 분류는 {name}입니다.", True
+
+
 def create_neo4j_search_handler(
     settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None,
     english_search_terms: Callable[[str], str] | None = None,
@@ -723,7 +742,14 @@ def create_app(
                 if filters
                 else request.question
             )
-            handler = korean_lineage_handler if filters and filters.name is not None else lineage_handler
+            if not filters or not (filters.scientific_name or filters.name):
+                # Only strip a recognizable rank question; exact-name lookups stay unchanged.
+                prefix = re.match(r"^(.+?)(?:은|는|이|가)\s+(?:무슨|어느|어떤)\s*(?:아종|목|과|속|종)", query)
+                if prefix:
+                    query = prefix.group(1).strip()
+                handler = korean_lineage_handler if prefix and any("\uac00" <= char <= "\ud7a3" for char in query) else lineage_handler
+            else:
+                handler = korean_lineage_handler if filters.name is not None else lineage_handler
             if handler is None:
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
@@ -751,9 +777,10 @@ def create_app(
                     warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
                     result=ChatTaxonomyResult(lineage=None),
                 )
+            answer_text, supported = _taxonomy_answer(request.question, lineage)
             return ChatResponse(
-                selected_intent=selected, route_method=method, disposition="answer",
-                answer_text="분류 계통을 확인했습니다.", warnings=[],
+                selected_intent=selected, route_method=method, disposition="answer" if supported else "abstain",
+                answer_text=answer_text, warnings=[],
                 result=ChatTaxonomyResult(lineage=_lineage_response(lineage)),
             )
 

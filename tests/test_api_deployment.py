@@ -27,6 +27,7 @@ CURRENT_LINEAGE_ITEM = {
     "authority": "Linnaeus, C, 1758",
     "korean_name": "청둥오리",
     "korean_name_status": "community-sourced",
+    "korean_name_source_url": None,
 }
 
 STALE_LINEAGE_ITEM = {
@@ -261,6 +262,7 @@ class VerifyDeploymentCanaryTest(unittest.TestCase):
             "authority": None,
             "korean_name": "타조",
             "korean_name_status": "community-sourced",
+            "korean_name_source_url": None,
         }
         responses = _passing_responses()
         responses["name=%ED%83%80%EC%A1%B0"] = (200, _lineage_body(item))

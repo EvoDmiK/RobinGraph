@@ -20,6 +20,9 @@ than fabricate a translation when no Korean `VernacularName` exists.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
+import json
+from pathlib import Path
 from typing import Literal, Protocol
 
 MatchedBy = Literal["scientific_name", "korean_name"]
@@ -40,6 +43,13 @@ class LineageTaxon:
     # docs/decisions/0002-taxonomy-backbone.md and
     # docs/n8n/korean-vernacular-ingest.md.
     korean_name_status: str | None = None
+    korean_name_source_url: str | None = None
+
+
+@cache
+def reference_korean_names() -> dict:
+    """Pinned CC0 Wikidata display labels; never replace active graph names."""
+    return json.loads(Path(__file__).with_name("taxonomy_ko_labels.json").read_text(encoding="utf-8"))["labels"]
 
 
 @dataclass(frozen=True)
