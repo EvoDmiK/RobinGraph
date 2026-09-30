@@ -1,0 +1,1515 @@
+{
+  "source": "Wikidata",
+  "license": "CC0-1.0",
+  "retrieved_at": "2026-09-30",
+  "response_sha256": "a7daffb47a03c8fddfc7acde59760cbc8723eddda349559fdea97bc04c2e4e53",
+  "endpoint": "https://query.wikidata.org/sparql",
+  "query": "SELECT DISTINCT ?item ?taxonName ?rank ?itemLabel WHERE { VALUES ?rank { wd:Q36602 wd:Q35409 wd:Q34740 } ?item wdt:P105 ?rank; wdt:P171* wd:Q5113; wdt:P225 ?taxonName; rdfs:label ?itemLabel. FILTER(LANG(?itemLabel) = \"ko\") } ORDER BY ?taxonName ?item",
+  "ambiguous_names_excluded": 0,
+  "labels": {
+    "family:acanthisittidae": {
+      "name": "뉴질랜드굴뚝새과",
+      "source_url": "https://www.wikidata.org/wiki/Q537702"
+    },
+    "family:acanthizidae": {
+      "name": "오스트레일리아솔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q782355"
+    },
+    "family:accipitridae": {
+      "name": "수리과",
+      "source_url": "https://www.wikidata.org/wiki/Q25510"
+    },
+    "family:acrocephalidae": {
+      "name": "개개비과",
+      "source_url": "https://www.wikidata.org/wiki/Q366974"
+    },
+    "family:aegithalidae": {
+      "name": "오목눈이류",
+      "source_url": "https://www.wikidata.org/wiki/Q473939"
+    },
+    "family:aegithinidae": {
+      "name": "큰나뭇잎새류",
+      "source_url": "https://www.wikidata.org/wiki/Q15013811"
+    },
+    "family:aepyornithidae": {
+      "name": "코끼리새",
+      "source_url": "https://www.wikidata.org/wiki/Q214508"
+    },
+    "family:alaudidae": {
+      "name": "종다리과",
+      "source_url": "https://www.wikidata.org/wiki/Q29858"
+    },
+    "family:alcedinidae": {
+      "name": "물총새과",
+      "source_url": "https://www.wikidata.org/wiki/Q8154335"
+    },
+    "family:alcidae": {
+      "name": "바다오리과",
+      "source_url": "https://www.wikidata.org/wiki/Q28294"
+    },
+    "family:anatidae": {
+      "name": "오리과",
+      "source_url": "https://www.wikidata.org/wiki/Q7556"
+    },
+    "family:anhimidae": {
+      "name": "떠들썩오리과",
+      "source_url": "https://www.wikidata.org/wiki/Q217484"
+    },
+    "family:anhingidae": {
+      "name": "뱀목가마우지류",
+      "source_url": "https://www.wikidata.org/wiki/Q19370"
+    },
+    "family:apodidae": {
+      "name": "칼새과",
+      "source_url": "https://www.wikidata.org/wiki/Q26617"
+    },
+    "family:ardeidae": {
+      "name": "왜가리과",
+      "source_url": "https://www.wikidata.org/wiki/Q18789"
+    },
+    "family:artamidae": {
+      "name": "숲제비과",
+      "source_url": "https://www.wikidata.org/wiki/Q842378"
+    },
+    "family:bernieridae": {
+      "name": "마다가스카르솔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q2071911"
+    },
+    "family:brachypteraciidae": {
+      "name": "땅파랑새류",
+      "source_url": "https://www.wikidata.org/wiki/Q539783"
+    },
+    "family:bucconidae": {
+      "name": "뻐끔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q621861"
+    },
+    "family:bucerotidae": {
+      "name": "코뿔새과",
+      "source_url": "https://www.wikidata.org/wiki/Q26773"
+    },
+    "family:burhinidae": {
+      "name": "돌물떼새류",
+      "source_url": "https://www.wikidata.org/wiki/Q145854"
+    },
+    "family:cacatuidae": {
+      "name": "코카투",
+      "source_url": "https://www.wikidata.org/wiki/Q31448"
+    },
+    "family:calcariidae": {
+      "name": "긴발톱멧새과",
+      "source_url": "https://www.wikidata.org/wiki/Q1041780"
+    },
+    "family:callaeidae": {
+      "name": "아랫볏찌르레기과",
+      "source_url": "https://www.wikidata.org/wiki/Q835712"
+    },
+    "family:campephagidae": {
+      "name": "할미새사촌과",
+      "source_url": "https://www.wikidata.org/wiki/Q732881"
+    },
+    "family:capitonidae": {
+      "name": "오색조과",
+      "source_url": "https://www.wikidata.org/wiki/Q809613"
+    },
+    "family:caprimulgidae": {
+      "name": "쏙독새과",
+      "source_url": "https://www.wikidata.org/wiki/Q27244"
+    },
+    "family:cardinalidae": {
+      "name": "홍관조과",
+      "source_url": "https://www.wikidata.org/wiki/Q223402"
+    },
+    "family:cariamidae": {
+      "name": "느시사촌류",
+      "source_url": "https://www.wikidata.org/wiki/Q754030"
+    },
+    "family:casuariidae": {
+      "name": "화식조과",
+      "source_url": "https://www.wikidata.org/wiki/Q756871"
+    },
+    "family:cathartidae": {
+      "name": "콘도르과",
+      "source_url": "https://www.wikidata.org/wiki/Q184858"
+    },
+    "family:certhiidae": {
+      "name": "나무발바리과",
+      "source_url": "https://www.wikidata.org/wiki/Q205938"
+    },
+    "family:cettiidae": {
+      "name": "휘파람새과",
+      "source_url": "https://www.wikidata.org/wiki/Q222432"
+    },
+    "family:chaetopidae": {
+      "name": "카이톱스과",
+      "source_url": "https://www.wikidata.org/wiki/Q613589"
+    },
+    "family:charadriidae": {
+      "name": "물떼새과",
+      "source_url": "https://www.wikidata.org/wiki/Q28449"
+    },
+    "family:chloropseidae": {
+      "name": "나뭇잎새류",
+      "source_url": "https://www.wikidata.org/wiki/Q843381"
+    },
+    "family:ciconiidae": {
+      "name": "황새과",
+      "source_url": "https://www.wikidata.org/wiki/Q28507"
+    },
+    "family:cinclosomatidae": {
+      "name": "메추리꼬리치레과",
+      "source_url": "https://www.wikidata.org/wiki/Q1089786"
+    },
+    "family:cisticolidae": {
+      "name": "개개비사촌과",
+      "source_url": "https://www.wikidata.org/wiki/Q550595"
+    },
+    "family:climacteridae": {
+      "name": "나무타기류",
+      "source_url": "https://www.wikidata.org/wiki/Q614518"
+    },
+    "family:cnemophilidae": {
+      "name": "크네모필루스과",
+      "source_url": "https://www.wikidata.org/wiki/Q571013"
+    },
+    "family:coliidae": {
+      "name": "쥐새과",
+      "source_url": "https://www.wikidata.org/wiki/Q180691"
+    },
+    "family:columbidae": {
+      "name": "비둘기",
+      "source_url": "https://www.wikidata.org/wiki/Q10856"
+    },
+    "family:conopophagidae": {
+      "name": "모기잡이새류",
+      "source_url": "https://www.wikidata.org/wiki/Q840128"
+    },
+    "family:coraciidae": {
+      "name": "파랑새과",
+      "source_url": "https://www.wikidata.org/wiki/Q44245"
+    },
+    "family:corcoracidae": {
+      "name": "오스트레일리아흙둥지새과",
+      "source_url": "https://www.wikidata.org/wiki/Q579399"
+    },
+    "family:corvidae": {
+      "name": "까마귀과",
+      "source_url": "https://www.wikidata.org/wiki/Q25565"
+    },
+    "family:cotingidae": {
+      "name": "장식새류",
+      "source_url": "https://www.wikidata.org/wiki/Q647533"
+    },
+    "family:cracidae": {
+      "name": "봉관조과",
+      "source_url": "https://www.wikidata.org/wiki/Q725342"
+    },
+    "family:cuculidae": {
+      "name": "뻐꾸기과",
+      "source_url": "https://www.wikidata.org/wiki/Q26381"
+    },
+    "family:dicaeidae": {
+      "name": "꽃새류",
+      "source_url": "https://www.wikidata.org/wiki/Q755540"
+    },
+    "family:dicruridae": {
+      "name": "바람까마귀류",
+      "source_url": "https://www.wikidata.org/wiki/Q839526"
+    },
+    "family:diomedeidae": {
+      "name": "알바트로스과",
+      "source_url": "https://www.wikidata.org/wiki/Q55805"
+    },
+    "family:emberizidae": {
+      "name": "멧새과",
+      "source_url": "https://www.wikidata.org/wiki/Q28486"
+    },
+    "family:estrildidae": {
+      "name": "밀랍부리류",
+      "source_url": "https://www.wikidata.org/wiki/Q214462"
+    },
+    "family:eurylaimidae": {
+      "name": "넓적부리새류",
+      "source_url": "https://www.wikidata.org/wiki/Q214621"
+    },
+    "family:falconidae": {
+      "name": "매과",
+      "source_url": "https://www.wikidata.org/wiki/Q21744"
+    },
+    "family:falcunculidae": {
+      "name": "팔쿤쿨루스과",
+      "source_url": "https://www.wikidata.org/wiki/Q10621783"
+    },
+    "family:formicariidae": {
+      "name": "개미지빠귀류",
+      "source_url": "https://www.wikidata.org/wiki/Q461021"
+    },
+    "family:fringillidae": {
+      "name": "되새과",
+      "source_url": "https://www.wikidata.org/wiki/Q160835"
+    },
+    "family:furnariidae": {
+      "name": "화덕딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q839859"
+    },
+    "family:galbulidae": {
+      "name": "자카마류",
+      "source_url": "https://www.wikidata.org/wiki/Q212942"
+    },
+    "family:gaviidae": {
+      "name": "아비과",
+      "source_url": "https://www.wikidata.org/wiki/Q21666"
+    },
+    "family:glareolidae": {
+      "name": "제비물떼새과",
+      "source_url": "https://www.wikidata.org/wiki/Q217272"
+    },
+    "family:grallariidae": {
+      "name": "땅개미새류",
+      "source_url": "https://www.wikidata.org/wiki/Q1027867"
+    },
+    "family:grallinidae": {
+      "name": "흙둥지새과",
+      "source_url": "https://www.wikidata.org/wiki/Q281735"
+    },
+    "family:gruidae": {
+      "name": "두루미과",
+      "source_url": "https://www.wikidata.org/wiki/Q25365"
+    },
+    "family:heliornithidae": {
+      "name": "지느러미발과",
+      "source_url": "https://www.wikidata.org/wiki/Q661898"
+    },
+    "family:hemiprocnidae": {
+      "name": "뿔칼새류",
+      "source_url": "https://www.wikidata.org/wiki/Q31836"
+    },
+    "family:hirundinidae": {
+      "name": "제비과",
+      "source_url": "https://www.wikidata.org/wiki/Q39861"
+    },
+    "family:hydrobatidae": {
+      "name": "바다제비과",
+      "source_url": "https://www.wikidata.org/wiki/Q193404"
+    },
+    "family:icteridae": {
+      "name": "찌르레기사촌류",
+      "source_url": "https://www.wikidata.org/wiki/Q748159"
+    },
+    "family:indicatoridae": {
+      "name": "벌꿀길잡이새류",
+      "source_url": "https://www.wikidata.org/wiki/Q214137"
+    },
+    "family:jacanidae": {
+      "name": "물꿩과",
+      "source_url": "https://www.wikidata.org/wiki/Q212929"
+    },
+    "family:laniidae": {
+      "name": "때까치과",
+      "source_url": "https://www.wikidata.org/wiki/Q171052"
+    },
+    "family:laridae": {
+      "name": "갈매기과",
+      "source_url": "https://www.wikidata.org/wiki/Q27589"
+    },
+    "family:leiothrichidae": {
+      "name": "상사조과",
+      "source_url": "https://www.wikidata.org/wiki/Q1951184"
+    },
+    "family:locustellidae": {
+      "name": "섬개개비과",
+      "source_url": "https://www.wikidata.org/wiki/Q774034"
+    },
+    "family:lybiidae": {
+      "name": "아프리카오색조류",
+      "source_url": "https://www.wikidata.org/wiki/Q2527969"
+    },
+    "family:macrosphenidae": {
+      "name": "아프리카솔새과",
+      "source_url": "https://www.wikidata.org/wiki/Q2101364"
+    },
+    "family:malaconotidae": {
+      "name": "덤불때까치류",
+      "source_url": "https://www.wikidata.org/wiki/Q833811"
+    },
+    "family:maluridae": {
+      "name": "요정굴뚝새과",
+      "source_url": "https://www.wikidata.org/wiki/Q420841"
+    },
+    "family:megalaimidae": {
+      "name": "아시아오색조류",
+      "source_url": "https://www.wikidata.org/wiki/Q935463"
+    },
+    "family:megapodiidae": {
+      "name": "메거포드과",
+      "source_url": "https://www.wikidata.org/wiki/Q213536"
+    },
+    "family:melanocharitidae": {
+      "name": "멜라노카리스과",
+      "source_url": "https://www.wikidata.org/wiki/Q654728"
+    },
+    "family:melanopareiidae": {
+      "name": "초승달가슴새류",
+      "source_url": "https://www.wikidata.org/wiki/Q1062795"
+    },
+    "family:meliphagidae": {
+      "name": "꿀빨기새류",
+      "source_url": "https://www.wikidata.org/wiki/Q211670"
+    },
+    "family:meropidae": {
+      "name": "벌잡이새류",
+      "source_url": "https://www.wikidata.org/wiki/Q183147"
+    },
+    "family:mesitornithidae": {
+      "name": "메사이트과",
+      "source_url": "https://www.wikidata.org/wiki/Q659657"
+    },
+    "family:mimidae": {
+      "name": "흉내지빠귀과",
+      "source_url": "https://www.wikidata.org/wiki/Q753221"
+    },
+    "family:mohoidae": {
+      "name": "오오과",
+      "source_url": "https://www.wikidata.org/wiki/Q134010"
+    },
+    "family:momotidae": {
+      "name": "벌잡이새사촌류",
+      "source_url": "https://www.wikidata.org/wiki/Q734720"
+    },
+    "family:monarchidae": {
+      "name": "까치딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q681374"
+    },
+    "family:motacillidae": {
+      "name": "할미새과",
+      "source_url": "https://www.wikidata.org/wiki/Q205943"
+    },
+    "family:muscicapidae": {
+      "name": "솔딱새과",
+      "source_url": "https://www.wikidata.org/wiki/Q200989"
+    },
+    "family:musophagidae": {
+      "name": "부채머리과",
+      "source_url": "https://www.wikidata.org/wiki/Q213827"
+    },
+    "family:nectariniidae": {
+      "name": "태양새",
+      "source_url": "https://www.wikidata.org/wiki/Q208221"
+    },
+    "family:neosittidae": {
+      "name": "오스트레일리아동고비류",
+      "source_url": "https://www.wikidata.org/wiki/Q13220216"
+    },
+    "family:nestoridae": {
+      "name": "케아과",
+      "source_url": "https://www.wikidata.org/wiki/Q1217143"
+    },
+    "family:numididae": {
+      "name": "뿔닭과",
+      "source_url": "https://www.wikidata.org/wiki/Q171953"
+    },
+    "family:odontophoridae": {
+      "name": "신대륙메추라기과",
+      "source_url": "https://www.wikidata.org/wiki/Q72968"
+    },
+    "family:oriolidae": {
+      "name": "꾀꼬리과",
+      "source_url": "https://www.wikidata.org/wiki/Q202955"
+    },
+    "family:orthonychidae": {
+      "name": "나무달리기딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q782767"
+    },
+    "family:otididae": {
+      "name": "느시과",
+      "source_url": "https://www.wikidata.org/wiki/Q21755"
+    },
+    "family:pachycephalidae": {
+      "name": "때까치딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q518502"
+    },
+    "family:paradisaeidae": {
+      "name": "극락조류",
+      "source_url": "https://www.wikidata.org/wiki/Q179333"
+    },
+    "family:paradoxornithidae": {
+      "name": "붉은머리오목눈이과",
+      "source_url": "https://www.wikidata.org/wiki/Q103813094"
+    },
+    "family:paramythiidae": {
+      "name": "파라미티아과",
+      "source_url": "https://www.wikidata.org/wiki/Q520316"
+    },
+    "family:paridae": {
+      "name": "박새과",
+      "source_url": "https://www.wikidata.org/wiki/Q168473"
+    },
+    "family:parulidae": {
+      "name": "아메리카솔새과",
+      "source_url": "https://www.wikidata.org/wiki/Q739200"
+    },
+    "family:passerellidae": {
+      "name": "신대륙참새과",
+      "source_url": "https://www.wikidata.org/wiki/Q1425706"
+    },
+    "family:passeridae": {
+      "name": "참새과",
+      "source_url": "https://www.wikidata.org/wiki/Q28922"
+    },
+    "family:pellorneidae": {
+      "name": "땅꼬리치레과",
+      "source_url": "https://www.wikidata.org/wiki/Q2787489"
+    },
+    "family:petroicidae": {
+      "name": "오스트레일리아울새과",
+      "source_url": "https://www.wikidata.org/wiki/Q829925"
+    },
+    "family:phalacrocoracidae": {
+      "name": "가마우지과",
+      "source_url": "https://www.wikidata.org/wiki/Q3901247"
+    },
+    "family:phasianidae": {
+      "name": "꿩과",
+      "source_url": "https://www.wikidata.org/wiki/Q26375"
+    },
+    "family:philepittidae": {
+      "name": "눈매팔색조과",
+      "source_url": "https://www.wikidata.org/wiki/Q756777"
+    },
+    "family:phoeniculidae": {
+      "name": "후투티사촌류",
+      "source_url": "https://www.wikidata.org/wiki/Q752529"
+    },
+    "family:phorusrhacidae": {
+      "name": "포르수라키드",
+      "source_url": "https://www.wikidata.org/wiki/Q752173"
+    },
+    "family:phylloscopidae": {
+      "name": "솔새과",
+      "source_url": "https://www.wikidata.org/wiki/Q1929497"
+    },
+    "family:picidae": {
+      "name": "딱따구리과",
+      "source_url": "https://www.wikidata.org/wiki/Q25439"
+    },
+    "family:pipridae": {
+      "name": "무희새류",
+      "source_url": "https://www.wikidata.org/wiki/Q379200"
+    },
+    "family:pittidae": {
+      "name": "팔색조속",
+      "source_url": "https://www.wikidata.org/wiki/Q217472"
+    },
+    "family:platysteiridae": {
+      "name": "안경딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q916830"
+    },
+    "family:ploceidae": {
+      "name": "베짜는새류",
+      "source_url": "https://www.wikidata.org/wiki/Q211601"
+    },
+    "family:podargidae": {
+      "name": "넓은부리쏙독새과",
+      "source_url": "https://www.wikidata.org/wiki/Q788536"
+    },
+    "family:podicipedidae": {
+      "name": "논병아리목",
+      "source_url": "https://www.wikidata.org/wiki/Q21695"
+    },
+    "family:polioptilidae": {
+      "name": "모기잡이류",
+      "source_url": "https://www.wikidata.org/wiki/Q752549"
+    },
+    "family:pomatostomidae": {
+      "name": "오스트레일리아꼬리치레류",
+      "source_url": "https://www.wikidata.org/wiki/Q782352"
+    },
+    "family:prionopidae": {
+      "name": "헬멧때까치류",
+      "source_url": "https://www.wikidata.org/wiki/Q577681"
+    },
+    "family:procellariidae": {
+      "name": "슴새과",
+      "source_url": "https://www.wikidata.org/wiki/Q207767"
+    },
+    "family:promeropidae": {
+      "name": "사탕새과",
+      "source_url": "https://www.wikidata.org/wiki/Q855761"
+    },
+    "family:prunellidae": {
+      "name": "바위종다리류",
+      "source_url": "https://www.wikidata.org/wiki/Q3709179"
+    },
+    "family:psittacidae": {
+      "name": "앵무과",
+      "source_url": "https://www.wikidata.org/wiki/Q8327"
+    },
+    "family:psittaculidae": {
+      "name": "목도리앵무과",
+      "source_url": "https://www.wikidata.org/wiki/Q7256090"
+    },
+    "family:psittrichasiidae": {
+      "name": "독수리앵무과",
+      "source_url": "https://www.wikidata.org/wiki/Q7256093"
+    },
+    "family:psophiidae": {
+      "name": "나팔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q253499"
+    },
+    "family:pteroclidae": {
+      "name": "사막꿩과",
+      "source_url": "https://www.wikidata.org/wiki/Q179983"
+    },
+    "family:ptilogonatidae": {
+      "name": "비단털여새류",
+      "source_url": "https://www.wikidata.org/wiki/Q935513"
+    },
+    "family:ptilonorhynchidae": {
+      "name": "바우어새",
+      "source_url": "https://www.wikidata.org/wiki/Q215603"
+    },
+    "family:pycnonotidae": {
+      "name": "직박구리과",
+      "source_url": "https://www.wikidata.org/wiki/Q188854"
+    },
+    "family:rallidae": {
+      "name": "뜸부기과",
+      "source_url": "https://www.wikidata.org/wiki/Q26623"
+    },
+    "family:ramphastidae": {
+      "name": "왕부리새류",
+      "source_url": "https://www.wikidata.org/wiki/Q1325045"
+    },
+    "family:raphidae": {
+      "name": "도도과",
+      "source_url": "https://www.wikidata.org/wiki/Q551092"
+    },
+    "family:remizidae": {
+      "name": "스윈호오목눈이류",
+      "source_url": "https://www.wikidata.org/wiki/Q692828"
+    },
+    "family:rhinocryptidae": {
+      "name": "꼬리세움새류",
+      "source_url": "https://www.wikidata.org/wiki/Q390189"
+    },
+    "family:rhynochetidae": {
+      "name": "카구속",
+      "source_url": "https://www.wikidata.org/wiki/Q2639899"
+    },
+    "family:rostratulidae": {
+      "name": "호사도요과",
+      "source_url": "https://www.wikidata.org/wiki/Q494623"
+    },
+    "family:scolopacidae": {
+      "name": "도요과",
+      "source_url": "https://www.wikidata.org/wiki/Q26626"
+    },
+    "family:semnornithidae": {
+      "name": "왕부리오색조류",
+      "source_url": "https://www.wikidata.org/wiki/Q16777485"
+    },
+    "family:sittidae": {
+      "name": "동고비과",
+      "source_url": "https://www.wikidata.org/wiki/Q205857"
+    },
+    "family:spheniscidae": {
+      "name": "펭귄",
+      "source_url": "https://www.wikidata.org/wiki/Q9147"
+    },
+    "family:stenostiridae": {
+      "name": "요정솔딱새과",
+      "source_url": "https://www.wikidata.org/wiki/Q1073271"
+    },
+    "family:stercorariidae": {
+      "name": "도둑갈매기류",
+      "source_url": "https://www.wikidata.org/wiki/Q205323"
+    },
+    "family:sternidae": {
+      "name": "제비갈매기류",
+      "source_url": "https://www.wikidata.org/wiki/Q875769"
+    },
+    "family:strigidae": {
+      "name": "올빼미과",
+      "source_url": "https://www.wikidata.org/wiki/Q26012"
+    },
+    "family:strigopidae": {
+      "name": "뉴질랜드앵무류",
+      "source_url": "https://www.wikidata.org/wiki/Q788544"
+    },
+    "family:struthionidae": {
+      "name": "타조과",
+      "source_url": "https://www.wikidata.org/wiki/Q1569770"
+    },
+    "family:sturnidae": {
+      "name": "찌르레기과",
+      "source_url": "https://www.wikidata.org/wiki/Q185237"
+    },
+    "family:sulidae": {
+      "name": "가다랭이잡이과",
+      "source_url": "https://www.wikidata.org/wiki/Q208492"
+    },
+    "family:sylviidae": {
+      "name": "흰턱딱새과",
+      "source_url": "https://www.wikidata.org/wiki/Q187014"
+    },
+    "family:tetraoninae": {
+      "name": "그라우스",
+      "source_url": "https://www.wikidata.org/wiki/Q201240"
+    },
+    "family:thamnophilidae": {
+      "name": "개미새류",
+      "source_url": "https://www.wikidata.org/wiki/Q427512"
+    },
+    "family:thinocoridae": {
+      "name": "씨도요과",
+      "source_url": "https://www.wikidata.org/wiki/Q748145"
+    },
+    "family:thraupidae": {
+      "name": "풍금조과",
+      "source_url": "https://www.wikidata.org/wiki/Q666222"
+    },
+    "family:threskiornithidae": {
+      "name": "저어새과",
+      "source_url": "https://www.wikidata.org/wiki/Q162085"
+    },
+    "family:timaliidae": {
+      "name": "꼬리치레과",
+      "source_url": "https://www.wikidata.org/wiki/Q408457"
+    },
+    "family:tinamidae": {
+      "name": "도요타조",
+      "source_url": "https://www.wikidata.org/wiki/Q19172"
+    },
+    "family:tityridae": {
+      "name": "타이티라새과",
+      "source_url": "https://www.wikidata.org/wiki/Q1069958"
+    },
+    "family:trochilidae": {
+      "name": "벌새",
+      "source_url": "https://www.wikidata.org/wiki/Q43624"
+    },
+    "family:troglodytidae": {
+      "name": "굴뚝새류",
+      "source_url": "https://www.wikidata.org/wiki/Q208304"
+    },
+    "family:trogonidae": {
+      "name": "비단날개새",
+      "source_url": "https://www.wikidata.org/wiki/Q191469"
+    },
+    "family:turdidae": {
+      "name": "지빠귀과",
+      "source_url": "https://www.wikidata.org/wiki/Q26050"
+    },
+    "family:turnicidae": {
+      "name": "세가락메추라기류",
+      "source_url": "https://www.wikidata.org/wiki/Q205320"
+    },
+    "family:tyrannidae": {
+      "name": "산적딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q217478"
+    },
+    "family:tytonidae": {
+      "name": "가면올빼미과",
+      "source_url": "https://www.wikidata.org/wiki/Q27112"
+    },
+    "family:vangidae": {
+      "name": "큰부리때까치류",
+      "source_url": "https://www.wikidata.org/wiki/Q587527"
+    },
+    "family:viduidae": {
+      "name": "천인조과",
+      "source_url": "https://www.wikidata.org/wiki/Q577363"
+    },
+    "family:vireonidae": {
+      "name": "비레오새류",
+      "source_url": "https://www.wikidata.org/wiki/Q748220"
+    },
+    "family:zosteropidae": {
+      "name": "동박새과",
+      "source_url": "https://www.wikidata.org/wiki/Q371086"
+    },
+    "genus:acanthorhynchus": {
+      "name": "가시부리새류",
+      "source_url": "https://www.wikidata.org/wiki/Q481686"
+    },
+    "genus:accipiter": {
+      "name": "새매속",
+      "source_url": "https://www.wikidata.org/wiki/Q188737"
+    },
+    "genus:aegithalos": {
+      "name": "오목눈이속",
+      "source_url": "https://www.wikidata.org/wiki/Q310850"
+    },
+    "genus:aegotheles": {
+      "name": "부엉이쏙독새속",
+      "source_url": "https://www.wikidata.org/wiki/Q575930"
+    },
+    "genus:agapornis": {
+      "name": "러브버드",
+      "source_url": "https://www.wikidata.org/wiki/Q515217"
+    },
+    "genus:aix": {
+      "name": "원앙속",
+      "source_url": "https://www.wikidata.org/wiki/Q131450"
+    },
+    "genus:anas": {
+      "name": "오리속",
+      "source_url": "https://www.wikidata.org/wiki/Q214264"
+    },
+    "genus:anser": {
+      "name": "기러기속",
+      "source_url": "https://www.wikidata.org/wiki/Q183361"
+    },
+    "genus:aptenodytes": {
+      "name": "황제펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q652976"
+    },
+    "genus:apteryx": {
+      "name": "키위",
+      "source_url": "https://www.wikidata.org/wiki/Q43642"
+    },
+    "genus:aquila": {
+      "name": "검독수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q30085"
+    },
+    "genus:ardeola": {
+      "name": "흰날개해오라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q776739"
+    },
+    "genus:argentavis": {
+      "name": "아르젠타비스",
+      "source_url": "https://www.wikidata.org/wiki/Q645107"
+    },
+    "genus:astur": {
+      "name": "아스투르속",
+      "source_url": "https://www.wikidata.org/wiki/Q25263522"
+    },
+    "genus:athene": {
+      "name": "금눈쇠올빼미속",
+      "source_url": "https://www.wikidata.org/wiki/Q663507"
+    },
+    "genus:atrichornis": {
+      "name": "덤불새류",
+      "source_url": "https://www.wikidata.org/wiki/Q122250"
+    },
+    "genus:aviceda": {
+      "name": "검은댕기수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q582264"
+    },
+    "genus:balearica": {
+      "name": "관두루미속",
+      "source_url": "https://www.wikidata.org/wiki/Q789358"
+    },
+    "genus:bombycilla": {
+      "name": "여새류",
+      "source_url": "https://www.wikidata.org/wiki/Q208940"
+    },
+    "genus:bostrychia": {
+      "name": "올리브따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q223302"
+    },
+    "genus:botaurus": {
+      "name": "알락해오라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q739050"
+    },
+    "genus:branta": {
+      "name": "흑기러기속",
+      "source_url": "https://www.wikidata.org/wiki/Q210416"
+    },
+    "genus:bubo": {
+      "name": "수리부엉이속",
+      "source_url": "https://www.wikidata.org/wiki/Q214293"
+    },
+    "genus:bucorvus": {
+      "name": "땅코뿔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q1063141"
+    },
+    "genus:buphagus": {
+      "name": "소등쪼기새류",
+      "source_url": "https://www.wikidata.org/wiki/Q644442"
+    },
+    "genus:butastur": {
+      "name": "왕새매속",
+      "source_url": "https://www.wikidata.org/wiki/Q852334"
+    },
+    "genus:buteo": {
+      "name": "말똥가리속",
+      "source_url": "https://www.wikidata.org/wiki/Q235152"
+    },
+    "genus:butorides": {
+      "name": "검은댕기해오라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q132906"
+    },
+    "genus:callaeas": {
+      "name": "코카코",
+      "source_url": "https://www.wikidata.org/wiki/Q15059422"
+    },
+    "genus:calyptorhynchus": {
+      "name": "붉은꼬리검은유황앵무속",
+      "source_url": "https://www.wikidata.org/wiki/Q834904"
+    },
+    "genus:casuarius": {
+      "name": "화식조",
+      "source_url": "https://www.wikidata.org/wiki/Q201231"
+    },
+    "genus:centropus": {
+      "name": "코칼류",
+      "source_url": "https://www.wikidata.org/wiki/Q657775"
+    },
+    "genus:cercibis": {
+      "name": "바늘꼬리따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q15873811"
+    },
+    "genus:cettia": {
+      "name": "세티아속",
+      "source_url": "https://www.wikidata.org/wiki/Q859842"
+    },
+    "genus:chaetops": {
+      "name": "카이톱스속",
+      "source_url": "https://www.wikidata.org/wiki/Q10745345"
+    },
+    "genus:charadrius": {
+      "name": "물떼새속",
+      "source_url": "https://www.wikidata.org/wiki/Q736322"
+    },
+    "genus:chionis": {
+      "name": "깍지부리물떼새류",
+      "source_url": "https://www.wikidata.org/wiki/Q734677"
+    },
+    "genus:chrysolophus": {
+      "name": "금계속",
+      "source_url": "https://www.wikidata.org/wiki/Q179112"
+    },
+    "genus:ciconia": {
+      "name": "황새속",
+      "source_url": "https://www.wikidata.org/wiki/Q6471715"
+    },
+    "genus:cinclus": {
+      "name": "물까마귀과",
+      "source_url": "https://www.wikidata.org/wiki/Q192575"
+    },
+    "genus:circus": {
+      "name": "개구리매속",
+      "source_url": "https://www.wikidata.org/wiki/Q207796"
+    },
+    "genus:cissa": {
+      "name": "녹까치속",
+      "source_url": "https://www.wikidata.org/wiki/Q943396"
+    },
+    "genus:clanga": {
+      "name": "항라머리검독수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q9160388"
+    },
+    "genus:columba": {
+      "name": "비둘기속",
+      "source_url": "https://www.wikidata.org/wiki/Q209239"
+    },
+    "genus:corvus": {
+      "name": "까마귀속",
+      "source_url": "https://www.wikidata.org/wiki/Q43365"
+    },
+    "genus:coturnix": {
+      "name": "메추라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q1869243"
+    },
+    "genus:cracticus": {
+      "name": "백정새속",
+      "source_url": "https://www.wikidata.org/wiki/Q2718273"
+    },
+    "genus:crossvallia": {
+      "name": "크로스발리아(Crossvallia)",
+      "source_url": "https://www.wikidata.org/wiki/Q30692744"
+    },
+    "genus:curruca": {
+      "name": "쇠흰턱딱새속",
+      "source_url": "https://www.wikidata.org/wiki/Q12814009"
+    },
+    "genus:cyanopica": {
+      "name": "물까치속",
+      "source_url": "https://www.wikidata.org/wiki/Q2717364"
+    },
+    "genus:cygnus": {
+      "name": "고니속",
+      "source_url": "https://www.wikidata.org/wiki/Q29564928"
+    },
+    "genus:daphoenositta": {
+      "name": "오스트레일리아동고비류",
+      "source_url": "https://www.wikidata.org/wiki/Q510044"
+    },
+    "genus:dasyornis": {
+      "name": "수염솔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q657743"
+    },
+    "genus:delichon": {
+      "name": "델리숑",
+      "source_url": "https://www.wikidata.org/wiki/Q310857"
+    },
+    "genus:dendrocygna": {
+      "name": "고니오리류",
+      "source_url": "https://www.wikidata.org/wiki/Q1006681"
+    },
+    "genus:egretta": {
+      "name": "백로속",
+      "source_url": "https://www.wikidata.org/wiki/Q312272"
+    },
+    "genus:emberiza": {
+      "name": "멧새속",
+      "source_url": "https://www.wikidata.org/wiki/Q614481"
+    },
+    "genus:eudocimus": {
+      "name": "아메리카따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q992312"
+    },
+    "genus:eudyptes": {
+      "name": "왕관펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q591480"
+    },
+    "genus:eudyptula": {
+      "name": "쇠푸른펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q3021378"
+    },
+    "genus:falco": {
+      "name": "매속",
+      "source_url": "https://www.wikidata.org/wiki/Q43489"
+    },
+    "genus:ficedula": {
+      "name": "황금새속",
+      "source_url": "https://www.wikidata.org/wiki/Q388003"
+    },
+    "genus:fregata": {
+      "name": "군함조과",
+      "source_url": "https://www.wikidata.org/wiki/Q203472"
+    },
+    "genus:fulica": {
+      "name": "물닭속",
+      "source_url": "https://www.wikidata.org/wiki/Q637533"
+    },
+    "genus:gallinago": {
+      "name": "꺅도요속",
+      "source_url": "https://www.wikidata.org/wiki/Q786045"
+    },
+    "genus:gallus": {
+      "name": "닭속",
+      "source_url": "https://www.wikidata.org/wiki/Q222951"
+    },
+    "genus:garrulus": {
+      "name": "어치속",
+      "source_url": "https://www.wikidata.org/wiki/Q311248"
+    },
+    "genus:gastornis": {
+      "name": "가스토르니스",
+      "source_url": "https://www.wikidata.org/wiki/Q131477"
+    },
+    "genus:gavia": {
+      "name": "아비속",
+      "source_url": "https://www.wikidata.org/wiki/Q3758978"
+    },
+    "genus:geopelia": {
+      "name": "박설구속",
+      "source_url": "https://www.wikidata.org/wiki/Q905420"
+    },
+    "genus:geronticus": {
+      "name": "대머리따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q913200"
+    },
+    "genus:grus": {
+      "name": "두루미속",
+      "source_url": "https://www.wikidata.org/wiki/Q47549"
+    },
+    "genus:gyps": {
+      "name": "고산대머리수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q126630"
+    },
+    "genus:haematopus": {
+      "name": "검은머리물떼새류",
+      "source_url": "https://www.wikidata.org/wiki/Q27515"
+    },
+    "genus:halcyon": {
+      "name": "호반새속",
+      "source_url": "https://www.wikidata.org/wiki/Q371767"
+    },
+    "genus:haliaeetus": {
+      "name": "흰꼬리수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q147403"
+    },
+    "genus:haliastur": {
+      "name": "휘파람솔개속",
+      "source_url": "https://www.wikidata.org/wiki/Q1032919"
+    },
+    "genus:hieraaetus": {
+      "name": "흰점어깨수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q255035"
+    },
+    "genus:horornis": {
+      "name": "휘파람새속",
+      "source_url": "https://www.wikidata.org/wiki/Q9293884"
+    },
+    "genus:hyliota": {
+      "name": "힐리오타속",
+      "source_url": "https://www.wikidata.org/wiki/Q431516"
+    },
+    "genus:irena": {
+      "name": "파랑나뭇잎새류",
+      "source_url": "https://www.wikidata.org/wiki/Q3154331"
+    },
+    "genus:ixobrychus": {
+      "name": "덤불해오라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q244078"
+    },
+    "genus:kelenken": {
+      "name": "켈렌켄",
+      "source_url": "https://www.wikidata.org/wiki/Q133129"
+    },
+    "genus:ketupa": {
+      "name": "고기잡이부엉이속",
+      "source_url": "https://www.wikidata.org/wiki/Q549291"
+    },
+    "genus:lagopus": {
+      "name": "뇌조속",
+      "source_url": "https://www.wikidata.org/wiki/Q162029"
+    },
+    "genus:larus": {
+      "name": "갈매기속",
+      "source_url": "https://www.wikidata.org/wiki/Q1887740"
+    },
+    "genus:laterallus": {
+      "name": "검정뜸부기속",
+      "source_url": "https://www.wikidata.org/wiki/Q786422"
+    },
+    "genus:limnodromus": {
+      "name": "긴부리도요속",
+      "source_url": "https://www.wikidata.org/wiki/Q838747"
+    },
+    "genus:limosa": {
+      "name": "흑꼬리도요속",
+      "source_url": "https://www.wikidata.org/wiki/Q585636"
+    },
+    "genus:lonchura": {
+      "name": "마니킨방울새속",
+      "source_url": "https://www.wikidata.org/wiki/Q852860"
+    },
+    "genus:lophospiza": {
+      "name": "머리깃참매속",
+      "source_url": "https://www.wikidata.org/wiki/Q109358288"
+    },
+    "genus:lophotibis": {
+      "name": "마다가스카르따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q15293161"
+    },
+    "genus:macronectes": {
+      "name": "남극큰바다제비",
+      "source_url": "https://www.wikidata.org/wiki/Q598979"
+    },
+    "genus:megadyptes": {
+      "name": "노란눈펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q2726035"
+    },
+    "genus:megalurus": {
+      "name": "메갈루루스속",
+      "source_url": "https://www.wikidata.org/wiki/Q262063"
+    },
+    "genus:melampitta": {
+      "name": "멜람피타류",
+      "source_url": "https://www.wikidata.org/wiki/Q2706005"
+    },
+    "genus:melanopareia": {
+      "name": "초승달가슴새류",
+      "source_url": "https://www.wikidata.org/wiki/Q2080466"
+    },
+    "genus:meleagris": {
+      "name": "칠면조속",
+      "source_url": "https://www.wikidata.org/wiki/Q43794"
+    },
+    "genus:menura": {
+      "name": "금조",
+      "source_url": "https://www.wikidata.org/wiki/Q214096"
+    },
+    "genus:mergus": {
+      "name": "비오리속",
+      "source_url": "https://www.wikidata.org/wiki/Q253789"
+    },
+    "genus:mesembrinibis": {
+      "name": "녹색따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q15637143"
+    },
+    "genus:milvus": {
+      "name": "솔개속",
+      "source_url": "https://www.wikidata.org/wiki/Q600204"
+    },
+    "genus:motacilla": {
+      "name": "할미새속",
+      "source_url": "https://www.wikidata.org/wiki/Q230042"
+    },
+    "genus:nicator": {
+      "name": "니카토르류",
+      "source_url": "https://www.wikidata.org/wiki/Q1093632"
+    },
+    "genus:ninox": {
+      "name": "솔부엉이속",
+      "source_url": "https://www.wikidata.org/wiki/Q913555"
+    },
+    "genus:nipponia": {
+      "name": "따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q14860497"
+    },
+    "genus:nisaetus": {
+      "name": "뿔매속",
+      "source_url": "https://www.wikidata.org/wiki/Q1978121"
+    },
+    "genus:nyctibius": {
+      "name": "포투",
+      "source_url": "https://www.wikidata.org/wiki/Q858186"
+    },
+    "genus:nycticorax": {
+      "name": "해오라기속",
+      "source_url": "https://www.wikidata.org/wiki/Q133003"
+    },
+    "genus:nymphicus": {
+      "name": "왕관앵무속",
+      "source_url": "https://www.wikidata.org/wiki/Q10801919"
+    },
+    "genus:otus": {
+      "name": "소쩍새속",
+      "source_url": "https://www.wikidata.org/wiki/Q832329"
+    },
+    "genus:pardalotus": {
+      "name": "보석새류",
+      "source_url": "https://www.wikidata.org/wiki/Q840522"
+    },
+    "genus:passer": {
+      "name": "참새속",
+      "source_url": "https://www.wikidata.org/wiki/Q28753"
+    },
+    "genus:pavo": {
+      "name": "공작속",
+      "source_url": "https://www.wikidata.org/wiki/Q3917160"
+    },
+    "genus:pelecanoides": {
+      "name": "잠수바다제비류",
+      "source_url": "https://www.wikidata.org/wiki/Q539433"
+    },
+    "genus:pelecanus": {
+      "name": "사다새과",
+      "source_url": "https://www.wikidata.org/wiki/Q19413"
+    },
+    "genus:pericrocotus": {
+      "name": "할미새사촌속",
+      "source_url": "https://www.wikidata.org/wiki/Q1082724"
+    },
+    "genus:pernis": {
+      "name": "벌매속",
+      "source_url": "https://www.wikidata.org/wiki/Q6377551"
+    },
+    "genus:phaethon": {
+      "name": "열대새",
+      "source_url": "https://www.wikidata.org/wiki/Q19264"
+    },
+    "genus:phalacrocorax": {
+      "name": "가마우지속",
+      "source_url": "https://www.wikidata.org/wiki/Q19401"
+    },
+    "genus:phasianus": {
+      "name": "꿩속",
+      "source_url": "https://www.wikidata.org/wiki/Q737426"
+    },
+    "genus:phimosus": {
+      "name": "민얼굴따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q10805368"
+    },
+    "genus:phoenicopterus": {
+      "name": "홍학",
+      "source_url": "https://www.wikidata.org/wiki/Q41994"
+    },
+    "genus:phorusrhacos": {
+      "name": "포루스라코스",
+      "source_url": "https://www.wikidata.org/wiki/Q131317"
+    },
+    "genus:phylloscopus": {
+      "name": "솔새속",
+      "source_url": "https://www.wikidata.org/wiki/Q214627"
+    },
+    "genus:pica": {
+      "name": "까치속",
+      "source_url": "https://www.wikidata.org/wiki/Q271634"
+    },
+    "genus:picathartes": {
+      "name": "바위새류",
+      "source_url": "https://www.wikidata.org/wiki/Q1440714"
+    },
+    "genus:picus": {
+      "name": "청딱따구리속",
+      "source_url": "https://www.wikidata.org/wiki/Q310935"
+    },
+    "genus:pitohui": {
+      "name": "피토휘",
+      "source_url": "https://www.wikidata.org/wiki/Q1066573"
+    },
+    "genus:platalea": {
+      "name": "저어새류",
+      "source_url": "https://www.wikidata.org/wiki/Q208488"
+    },
+    "genus:platycercus": {
+      "name": "로젤라",
+      "source_url": "https://www.wikidata.org/wiki/Q850942"
+    },
+    "genus:plegadis": {
+      "name": "유리따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q933293"
+    },
+    "genus:pluvialis": {
+      "name": "개꿩속",
+      "source_url": "https://www.wikidata.org/wiki/Q2359014"
+    },
+    "genus:pnoepyga": {
+      "name": "프노이피가속",
+      "source_url": "https://www.wikidata.org/wiki/Q1880170"
+    },
+    "genus:podiceps": {
+      "name": "뿔논병아리속",
+      "source_url": "https://www.wikidata.org/wiki/Q1237815"
+    },
+    "genus:polyplectron": {
+      "name": "소공작",
+      "source_url": "https://www.wikidata.org/wiki/Q852812"
+    },
+    "genus:pseudibis": {
+      "name": "개따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q931539"
+    },
+    "genus:psophia": {
+      "name": "나팔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q10809431"
+    },
+    "genus:pygoscelis": {
+      "name": "젠투펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q609432"
+    },
+    "genus:recurvirostra": {
+      "name": "장다리물떼새과",
+      "source_url": "https://www.wikidata.org/wiki/Q286072"
+    },
+    "genus:regulus": {
+      "name": "상모솔새류",
+      "source_url": "https://www.wikidata.org/wiki/Q208716"
+    },
+    "genus:rhea": {
+      "name": "레아",
+      "source_url": "https://www.wikidata.org/wiki/Q19171"
+    },
+    "genus:rhipidura": {
+      "name": "부채꼬리딱새류",
+      "source_url": "https://www.wikidata.org/wiki/Q771870"
+    },
+    "genus:rostratula": {
+      "name": "호사도요속",
+      "source_url": "https://www.wikidata.org/wiki/Q674094"
+    },
+    "genus:rynchops": {
+      "name": "집게제비갈매기류",
+      "source_url": "https://www.wikidata.org/wiki/Q212941"
+    },
+    "genus:salpornis": {
+      "name": "별나무발바리속",
+      "source_url": "https://www.wikidata.org/wiki/Q10812337"
+    },
+    "genus:sarothrura": {
+      "name": "난쟁이쇠뜸부기류",
+      "source_url": "https://www.wikidata.org/wiki/Q975809"
+    },
+    "genus:spheniscus": {
+      "name": "줄무늬펭귄속",
+      "source_url": "https://www.wikidata.org/wiki/Q902912"
+    },
+    "genus:spilornis": {
+      "name": "관수리속",
+      "source_url": "https://www.wikidata.org/wiki/Q540883"
+    },
+    "genus:streptopelia": {
+      "name": "멧비둘기속",
+      "source_url": "https://www.wikidata.org/wiki/Q30944"
+    },
+    "genus:strix": {
+      "name": "올빼미속",
+      "source_url": "https://www.wikidata.org/wiki/Q241515"
+    },
+    "genus:struthio": {
+      "name": "타조속",
+      "source_url": "https://www.wikidata.org/wiki/Q2576337"
+    },
+    "genus:sturnus": {
+      "name": "찌르레기속",
+      "source_url": "https://www.wikidata.org/wiki/Q333842"
+    },
+    "genus:sula": {
+      "name": "얼가니새속",
+      "source_url": "https://www.wikidata.org/wiki/Q612817"
+    },
+    "genus:suthora": {
+      "name": "붉은머리오목눈이속",
+      "source_url": "https://www.wikidata.org/wiki/Q2188600"
+    },
+    "genus:sylvia": {
+      "name": "실비아속",
+      "source_url": "https://www.wikidata.org/wiki/Q1293045"
+    },
+    "genus:tachybaptus": {
+      "name": "논병아리속",
+      "source_url": "https://www.wikidata.org/wiki/Q1051101"
+    },
+    "genus:tachyspiza": {
+      "name": "타키스피자속",
+      "source_url": "https://www.wikidata.org/wiki/Q109466912"
+    },
+    "genus:tetraogallus": {
+      "name": "눈꿩",
+      "source_url": "https://www.wikidata.org/wiki/Q829334"
+    },
+    "genus:tetrastes": {
+      "name": "들꿩속",
+      "source_url": "https://www.wikidata.org/wiki/Q926064"
+    },
+    "genus:thaumatibis": {
+      "name": "큰따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q27882424"
+    },
+    "genus:theristicus": {
+      "name": "납빛따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q763601"
+    },
+    "genus:threskiornis": {
+      "name": "검은머리흰따오기속",
+      "source_url": "https://www.wikidata.org/wiki/Q917005"
+    },
+    "genus:titanis": {
+      "name": "티타니스",
+      "source_url": "https://www.wikidata.org/wiki/Q427685"
+    },
+    "genus:todus": {
+      "name": "난쟁이새류",
+      "source_url": "https://www.wikidata.org/wiki/Q726375"
+    },
+    "genus:turdus": {
+      "name": "개똥지빠귀속",
+      "source_url": "https://www.wikidata.org/wiki/Q115661"
+    },
+    "genus:urile": {
+      "name": "쇠가마우지속",
+      "source_url": "https://www.wikidata.org/wiki/Q82980656"
+    },
+    "genus:urocissa": {
+      "name": "청까치속",
+      "source_url": "https://www.wikidata.org/wiki/Q904303"
+    },
+    "genus:vanellus": {
+      "name": "댕기물떼새속",
+      "source_url": "https://www.wikidata.org/wiki/Q13426919"
+    },
+    "genus:vireolanius": {
+      "name": "비레오때까치속",
+      "source_url": "https://www.wikidata.org/wiki/Q261172"
+    },
+    "order:accipitriformes": {
+      "name": "수리목",
+      "source_url": "https://www.wikidata.org/wiki/Q21736"
+    },
+    "order:anseriformes": {
+      "name": "기러기목",
+      "source_url": "https://www.wikidata.org/wiki/Q21651"
+    },
+    "order:apodiformes": {
+      "name": "칼새목",
+      "source_url": "https://www.wikidata.org/wiki/Q25950"
+    },
+    "order:bucerotiformes": {
+      "name": "코뿔새목",
+      "source_url": "https://www.wikidata.org/wiki/Q20740"
+    },
+    "order:caprimulgiformes": {
+      "name": "쏙독새목",
+      "source_url": "https://www.wikidata.org/wiki/Q26125"
+    },
+    "order:cariamiformes": {
+      "name": "느시사촌목",
+      "source_url": "https://www.wikidata.org/wiki/Q1207101"
+    },
+    "order:casuariiformes": {
+      "name": "화식조목",
+      "source_url": "https://www.wikidata.org/wiki/Q19173"
+    },
+    "order:charadriiformes": {
+      "name": "도요목",
+      "source_url": "https://www.wikidata.org/wiki/Q25978"
+    },
+    "order:ciconiiformes": {
+      "name": "황새목",
+      "source_url": "https://www.wikidata.org/wiki/Q21716"
+    },
+    "order:columbiformes": {
+      "name": "비둘기목",
+      "source_url": "https://www.wikidata.org/wiki/Q28078"
+    },
+    "order:coraciiformes": {
+      "name": "파랑새목",
+      "source_url": "https://www.wikidata.org/wiki/Q484131"
+    },
+    "order:cuculiformes": {
+      "name": "뻐꾸기목",
+      "source_url": "https://www.wikidata.org/wiki/Q183364"
+    },
+    "order:dinornithiformes": {
+      "name": "모아",
+      "source_url": "https://www.wikidata.org/wiki/Q452969"
+    },
+    "order:eurypygiformes": {
+      "name": "뱀눈새목",
+      "source_url": "https://www.wikidata.org/wiki/Q147907"
+    },
+    "order:falconiformes": {
+      "name": "매목",
+      "source_url": "https://www.wikidata.org/wiki/Q25370"
+    },
+    "order:galliformes": {
+      "name": "닭목",
+      "source_url": "https://www.wikidata.org/wiki/Q21659"
+    },
+    "order:gruiformes": {
+      "name": "두루미목",
+      "source_url": "https://www.wikidata.org/wiki/Q25557"
+    },
+    "order:passeriformes": {
+      "name": "참새목",
+      "source_url": "https://www.wikidata.org/wiki/Q25341"
+    },
+    "order:pelecaniformes": {
+      "name": "사다새목",
+      "source_url": "https://www.wikidata.org/wiki/Q19338"
+    },
+    "order:piciformes": {
+      "name": "딱따구리목",
+      "source_url": "https://www.wikidata.org/wiki/Q25934"
+    },
+    "order:procellariiformes": {
+      "name": "슴새목",
+      "source_url": "https://www.wikidata.org/wiki/Q21685"
+    },
+    "order:psittaciformes": {
+      "name": "앵무새",
+      "source_url": "https://www.wikidata.org/wiki/Q31431"
+    },
+    "order:sphenisciformes": {
+      "name": "펭귄목",
+      "source_url": "https://www.wikidata.org/wiki/Q12198609"
+    },
+    "order:strigiformes": {
+      "name": "올빼미목",
+      "source_url": "https://www.wikidata.org/wiki/Q25222"
+    },
+    "order:struthioniformes": {
+      "name": "타조목",
+      "source_url": "https://www.wikidata.org/wiki/Q840849"
+    },
+    "order:suliformes": {
+      "name": "가다랭이잡이목",
+      "source_url": "https://www.wikidata.org/wiki/Q21728"
+    }
+  }
+}

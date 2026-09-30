@@ -193,6 +193,32 @@ class SemanticChatApiTest(unittest.TestCase):
     def make_client(self, **kwargs) -> TestClient:
         return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
 
+    def test_rank_question_answers_from_lineage_and_resolves_only_the_name(self) -> None:
+        queries = []
+        lineage = TaxonomyLineage(
+            "Anas platyrhynchos", "AviList", "2025b", "avilist:2025b",
+            (LineageTaxon("order:1", "order", "Anseriformes", None, "기러기목"),
+             LineageTaxon("family:1", "family", "Anatidae", None, "오리과"),
+             LineageTaxon("genus:1", "genus", "Anas", None, "오리속"),
+             LineageTaxon("species:1", "species", "Anas platyrhynchos", None, "청둥오리")),
+        )
+        def handler(name):
+            queries.append(name)
+            return lineage
+        client = self.make_client(korean_lineage_handler=handler)
+        for rank, expected in (("목", "기러기목(Anseriformes)"), ("과", "오리과(Anatidae)"), ("속", "오리속(Anas)")):
+            result = client.post("/v1/chat", json={
+                "question": f"청둥오리는 무슨 {rank}에 속해?", "intent": "taxonomy",
+                "filters": {"kind": "taxonomy"},
+            }).json()
+            self.assertEqual("answer", result["disposition"])
+            self.assertEqual(f"청둥오리의 {rank} 분류는 {expected}입니다.", result["answer_text"])
+            self.assertEqual(4, len(result["result"]["lineage"]["lineage"]))
+        self.assertEqual(["청둥오리"] * 3, queries)
+        missing = client.post("/v1/chat", json={"question": "청둥오리는 무슨 아종이야?", "intent": "taxonomy"}).json()
+        self.assertEqual("abstain", missing["disposition"])
+        self.assertIn("아종 정보가 없어", missing["answer_text"])
+
     def test_auto_route_and_explicit_bypass_preserve_typed_results(self) -> None:
         auto = self.make_client(
             semantic_router=SemanticRouter(FakeEmbeddings(((1.0, 0.0), (0.0, 1.0), (-1.0, 0.0)), (1.0, 0.0))),

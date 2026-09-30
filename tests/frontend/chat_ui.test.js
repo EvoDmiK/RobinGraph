@@ -91,7 +91,14 @@ test("resultSummaryLines exposes typed lineage, public observations, and grounde
   assert.deepEqual(chat.resultSummaryLines({
     kind: "taxonomy",
     lineage: { lineage: [{ rank: "species", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" }] },
-  }), ["species · Anas platyrhynchos (청둥오리)"]);
+  }), ["종 (species) · Anas platyrhynchos (청둥오리)"]);
+  assert.deepEqual(chat.resultSummaryLines({
+    kind: "taxonomy",
+    lineage: { lineage: [
+      { rank: "genus", scientific_name: "Anas", korean_name: "오리속", korean_name_source_url: "https://www.wikidata.org/wiki/Q214264" },
+      { rank: "family", scientific_name: "UnknownFamily", korean_name: null },
+    ] },
+  }), ["속 (genus) · Anas (오리속) · 참고 국명", "과 (family) · UnknownFamily · 한국어 이름 미등록"]);
   assert.deepEqual(chat.resultSummaryLines({
     kind: "observations",
     results: [{ observed_at: "2025-01-02", taxon: { scientific_name: "Anas platyrhynchos" }, place: { name: "Seoul" }, coordinate_disclosure: "withheld" }],

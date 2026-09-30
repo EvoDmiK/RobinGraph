@@ -15,6 +15,22 @@ from robingraph.retrieval.taxonomy_lineage_neo4j import (
 
 
 class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
+    def test_reference_names_are_only_a_display_fallback(self) -> None:
+        from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
+        items = _parse_lineage_items([
+            {"taxon_id": "1", "rank": "genus", "scientific_name": "Anas"},
+            {"taxon_id": "2", "rank": "genus", "scientific_name": "Anas", "korean_name": "등록된 이름", "korean_name_status": "source-preferred"},
+            {"taxon_id": "3", "rank": "genus", "scientific_name": "UnknownGenus"},
+            {"taxon_id": "4", "rank": "family", "scientific_name": "Anas"},
+        ])
+        self.assertEqual("오리속", items[0].korean_name)
+        self.assertEqual("https://www.wikidata.org/wiki/Q214264", items[0].korean_name_source_url)
+        self.assertEqual("등록된 이름", items[1].korean_name)
+        self.assertEqual("source-preferred", items[1].korean_name_status)
+        self.assertIsNone(items[1].korean_name_source_url)
+        self.assertIsNone(items[2].korean_name)
+        self.assertIsNone(items[3].korean_name)
+
     def setUp(self) -> None:
         # Avoid creating a driver: each test exercises the reader's pure
         # response validation and verifies its calls at the Cypher boundary.
@@ -94,7 +110,9 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.assertEqual("Anas zonorhyncha", lineage.resolved_query_scientific_name)
         self.assertEqual("scientific_name", lineage.matched_by)
         self.assertEqual("흰뺨검둥오리", lineage.items[-1].korean_name)
-        self.assertIsNone(lineage.items[0].korean_name)
+        self.assertEqual("기러기목", lineage.items[0].korean_name)
+        self.assertEqual("community-sourced-reference", lineage.items[0].korean_name_status)
+        self.assertEqual("https://www.wikidata.org/wiki/Q21651", lineage.items[0].korean_name_source_url)
 
     def test_scientific_name_returns_none_when_target_is_not_found(self) -> None:
         self.repository._run.side_effect = [
@@ -356,8 +374,8 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         )
         self.assertEqual("청둥오리", lineage.items[-1].korean_name)
         self.assertEqual("community-sourced", lineage.items[-1].korean_name_status)
-        self.assertIsNone(lineage.items[0].korean_name)
-        self.assertIsNone(lineage.items[0].korean_name_status)
+        self.assertEqual("기러기목", lineage.items[0].korean_name)
+        self.assertEqual("community-sourced-reference", lineage.items[0].korean_name_status)
 
     def test_korean_name_lookup_returns_none_for_a_species_not_yet_ingested(self) -> None:
         """A species that exists in AviList but has no Wikidata match (or was

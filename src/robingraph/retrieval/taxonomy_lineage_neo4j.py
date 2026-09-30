@@ -18,8 +18,8 @@ Two independent read paths are exposed: `lineage_for_scientific_name`
 directly attached `VernacularName {language: 'ko'}`). Both walk the same
 ancestor chain and both project each ancestor's own Korean vernacular name
 (nullable) into `LineageTaxon.korean_name`. Neither path ever reads or
-writes `ExternalTaxonConcept`, and neither ever invents a Korean name that
-is not already present as a licensed `VernacularName` node.
+writes `ExternalTaxonConcept`. Graph queries only project licensed
+`VernacularName` nodes; the display fallback described below is separately sourced.
 
 Every `VernacularName {language: 'ko'}` match -- both as a search target and
 as an ancestor's projected Korean name -- must have `policy_status: 'allowed'`
@@ -28,7 +28,10 @@ ingest control plane. Source records, releases, runs, and Korean ingest state
 remain RDB-only; Neo4j contains domain nodes and their provenance identifiers,
 not duplicate control-plane nodes. Missing or revoked PostgreSQL state fails
 closed for Korean-name lookup and suppresses Korean labels from scientific
-name results.
+name results. A separate pinned CC0 Wikidata snapshot can fill missing
+order/family/genus display labels after projection; these are marked
+community-sourced-reference with a source URL and never become lookup keys
+or replace active graph names.
 
 `lineage_for_korean_name` additionally refuses to silently pick a target
 when the same Korean name resolves to more than one *distinct* `Taxon`
@@ -47,7 +50,7 @@ from typing import Any
 from neo4j import GraphDatabase
 
 from ..graph.settings import Neo4jSettings
-from .taxonomy_lineage import LineageTaxon, TaxonomyLineage
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, reference_korean_names
 
 # Legacy fallback for direct library callers. The deployed ``serve-neo4j``
 # path always supplies PostgreSQL active context and never executes this query.
@@ -177,6 +180,12 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
             None if korean_name is None or not str(korean_name).strip() else str(korean_name)
         )
         korean_name_status = item.get("korean_name_status")
+        reference = None if cleaned_korean_name else reference_korean_names().get(
+            f"{item['rank']}:{str(item['scientific_name']).casefold()}"
+        )
+        if reference:
+            cleaned_korean_name = reference["name"]
+            korean_name_status = "community-sourced-reference"
         items.append(
             LineageTaxon(
                 taxon_id=str(item["taxon_id"]),
@@ -184,6 +193,7 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
                 scientific_name=str(item["scientific_name"]),
                 authority=None if item.get("authority") is None else str(item["authority"]),
                 korean_name=cleaned_korean_name,
+                korean_name_source_url=reference["source_url"] if reference else None,
                 # Only meaningful when a Korean name was actually found --
                 # never report a status for a name that isn't there.
                 korean_name_status=(
