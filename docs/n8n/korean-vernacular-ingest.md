@@ -355,3 +355,31 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
 - NAS 배포 연동 테스트: `tests/test_nas_deployment.py`
   (`test_deploy_workflows_action_includes_korean_vernacular`,
   `test_ingest_example_and_compose_pass_through_korean_vernacular_workflow_id`)
+
+### 검토된 한국어 이름 충돌 (2026-10-01)
+
+원본 스냅샷에서 Q1268169 (`Anas zonorhyncha`)와 Q839542
+(`Anas poecilorhyncha`) 모두 `흰뺨검둥오리`로 기록되어 두 이름이
+`ambiguous_korean_name_across_taxa`로 보류되었다. AviList는 두 종을 구분하며,
+[새와 생명의 터 2024 조류목록](https://www.birdskoreablog.org/wp-content/uploads/2024/08/Birds-Korea-checklist-Kor-2024-final-with-quick-fix-20240827.pdf)은
+흰뺨검둥오리를 `Anas zonorhyncha`로 명시한다.
+
+`config/korean-name-reviews.json`은 이 검토의 근거와 정확한 원본 triple을
+보존한다. 수집기는 Q839542/Anas poecilorhyncha/흰뺨검둥오리 조합만
+`reviewed_misapplied_korean_label`로 보류하므로, 다음 수집에서는 Q1268169의
+이름이 정상 적재된다. 다른 동명 충돌은 계속 보류하며 원본 값을 번역하거나
+변경하지 않는다.
+
+기존 활성 스냅샷에는 환경 변수를 설정한 뒤
+`python scripts/repair_reviewed_korean_names.py`로 먼저 확인하고 `--apply`로
+검토 결과를 적용한다. 활성·허용된 스냅샷의 정확한 후보와 유일한 종만
+처리하며, 원본 후보·source record·수집 활성 상태는 보존한다. 별도 검토
+이름 노드와 후보의 검토 결과에 근거 URL을 기록한다. 새 스냅샷은 수정된
+수집기를 통해 처리하므로 이 보정은 기존 보류 데이터에만 필요하다.
+
+NAS의 기존 canonical workflow `Hmjfi1zAIOKR5YE5`는 로컬의 전체 workflow와
+버전이 달라(기존 32노드, 현재 로컬 41노드), 이번에는 이름 정규화 노드의
+`classifyWikidataRows` 함수와 검토 목록만 교체했다. 다른 노드·설정과 비활성
+상태는 유지하고 API 재조회로 확인했다. 전체 workflow의 일치나 실제 수집
+실행을 검증한 것으로 간주하지 않는다. 현재 서비스 데이터 보정과 실제
+대화·카드·관련 종 조회는 별도로 확인했다.

@@ -189,12 +189,14 @@ def build_configuration_js(point: dict[str, object]) -> str:
 
 # Pure function, deliberately free of n8n globals ($input, $, $json) so it can
 # be executed directly under plain `node` in tests with fixture arrays.
-CLASSIFY_WIKIDATA_ROWS_JS = r"""
+_KOREAN_NAME_REVIEWS = json.loads((Path(__file__).resolve().parents[1] / "config/korean-name-reviews.json").read_text(encoding="utf-8"))
+CLASSIFY_WIKIDATA_ROWS_JS = "const reviewedRejectedNames = " + json.dumps(_KOREAN_NAME_REVIEWS["rejected"], ensure_ascii=False) + ";\n" + r"""
 function classifyWikidataRows(bindings) {
   const qidOf = uri => String(uri || '').split('/').pop();
   const text = value => value == null ? '' : String(value).trim();
   const seenTriples = new Set();
   const byTaxonName = new Map();
+  const conflicted = [];
   // The SPARQL query projects item/taxonName/itemLabel as mandatory
   // (none are OPTIONAL in SPARQL_QUERY), so a binding missing any of them
   // is never an expected, legitimate shape -- it signals a schema change
@@ -211,12 +213,17 @@ function classifyWikidataRows(bindings) {
     const tripleKey = qid + '::' + taxonName + '::' + koreanName;
     if (seenTriples.has(tripleKey)) continue;
     seenTriples.add(tripleKey);
+    // Exact reviewed source triples only. Keep rejected assertions in quarantine;
+    // never invent a replacement label or relax the general ambiguity guard.
+    if (reviewedRejectedNames.some(row => row.qid === qid && row.scientific_name === taxonName && row.korean_name === koreanName)) {
+      conflicted.push({taxon_name: taxonName, korean_name: koreanName, qids: [qid], reason_code: 'reviewed_misapplied_korean_label'});
+      continue;
+    }
     const group = byTaxonName.get(taxonName) || [];
     group.push({qid, taxonName, koreanName});
     byTaxonName.set(taxonName, group);
   }
   const perTaxonClean = [];
-  const conflicted = [];
   for (const [taxonName, rows] of byTaxonName) {
     const distinctNames = [...new Set(rows.map(row => row.koreanName))];
     if (distinctNames.length > 1) {
