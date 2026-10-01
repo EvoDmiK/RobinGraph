@@ -679,6 +679,7 @@ def create_app(
     korean_lineage_handler: LineageHandler | None = None,
     semantic_router: SemanticRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
+    related_species_handler: Callable[[str], dict] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
 ) -> FastAPI:
@@ -719,6 +720,19 @@ def create_app(
         return {**state, "answer_text": text}
 
     evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
+
+    @app.get("/v1/taxa/related")
+    def species_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
+        if not name.strip():
+            raise HTTPException(status_code=422, detail="A species name is required")
+        if related_species_handler is None:
+            raise HTTPException(status_code=503, detail="Species relations are unavailable")
+        try:
+            return related_species_handler(name.strip())
+        except SpeciesNotFoundError as error:
+            raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
+        except Exception as error:
+            raise HTTPException(status_code=503, detail="Species relations are temporarily unavailable") from error
 
     @app.get("/v1/taxa/profile")
     def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)]):
