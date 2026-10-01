@@ -532,11 +532,13 @@
     panel.appendChild(note);
     var card = buildSpeciesCard(doc, right);
     if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); }
+    panel.appendChild(buildRelatedExplorer(doc, right));
     return panel;
   }
 
   function buildRelatedExplorer(doc, profile, fetcher) {
     var section = doc.createElement("section"); section.className = "species-related";
+    section.setAttribute("aria-label", (profile.taxon.korean_name || profile.taxon.scientific_name || "새") + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
@@ -774,7 +776,6 @@
     frontNote.className = "species-front-note";
     frontNote.textContent = "수치는 종 평균 · 사진과 자료 출처는 뒷면";
     front.appendChild(frontNote);
-    front.appendChild(buildRelatedExplorer(doc, profile));
 
     var traitNote = doc.createElement("p");
     traitNote.className = "species-note";
@@ -1247,6 +1248,7 @@
       if (result && result.kind === "profile") {
         var speciesCard = buildSpeciesCard(doc, result.profile);
         if (speciesCard) {
+          (structured || item).appendChild(buildRelatedExplorer(doc, result.profile));
           item.appendChild(buildSpeciesBrief(doc, result.profile));
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
         }
