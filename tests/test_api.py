@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -86,6 +87,27 @@ class ApiTest(unittest.TestCase):
         self.assertEqual(200, client.get("/").status_code)
         self.assertEqual(200, client.get("/chat").status_code)
         self.assertEqual(200, client.get("/static/chat.js").status_code)
+
+    def test_asset_urls_change_when_deployed_contents_change(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "index.html").write_text(
+                '<link href="/static/styles.css"><script src="/static/chat.js"></script>'
+            )
+            (root / "styles.css").write_text("body {color:green}")
+            (root / "chat.js").write_text("// old renderer")
+            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            before = client.get("/chat")
+            old_url = re.search(r'src="([^"]+)"', before.text).group(1)
+            self.assertIn("?v=", old_url)
+            self.assertIn("no-cache", before.headers["cache-control"])
+            (root / "chat.js").write_text("// profile renderer")
+            after = client.get("/chat")
+            new_url = re.search(r'src="([^"]+)"', after.text).group(1)
+            self.assertNotEqual(old_url, new_url)
+            script = client.get(new_url)
+            self.assertEqual("// profile renderer", script.text)
+            self.assertIn("must-revalidate", script.headers["cache-control"])
 
     def test_missing_chat_assets_return_sanitized_service_unavailable(self) -> None:
         missing_static_root = self.static_root / "missing"
