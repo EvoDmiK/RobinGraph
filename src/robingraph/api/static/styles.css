@@ -1025,3 +1025,15 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-popup-trigger.risk-cr { border-left-color: #c2185b; }
 .species-popup-trigger.risk-ew { border-left-color: #5e35b1; }
 .species-popup-trigger.risk-ex { border-left-color: #1b1b1b; }
+
+.species-related { margin-top: .75rem; border-top: 1px solid #789551; padding-top: .65rem; }
+.species-related button { width: 100%; margin: .25rem 0; padding: .55rem; border: 1px solid #789551; border-radius: .6rem; background: #ffffffb8; color: #193619; text-align: left; }
+.species-related h3 { font-size: 1rem; margin: .8rem 0 .4rem; }
+.species-related p { overflow-wrap: anywhere; }
+.species-comparison { margin-top: 1rem; }
+.species-comparison table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .85rem; }
+.species-comparison th, .species-comparison td { border: 1px solid #789551; padding: .4rem; vertical-align: top; overflow-wrap: anywhere; }
+.species-comparison th:first-child { width: 20%; }
+.species-comparison td p { margin: .3rem 0; }
+.species-comparison details { font-size: .75rem; }
+.species-comparison caption { text-align: left; margin-bottom: .5rem; }
