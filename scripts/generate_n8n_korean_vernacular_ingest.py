@@ -72,6 +72,7 @@ Snapshot model (fixes applied after GPT-5.6 Sol's initial review, see
 from __future__ import annotations
 
 import json
+from hashlib import sha256
 from pathlib import Path
 from textwrap import dedent
 
@@ -190,7 +191,8 @@ def build_configuration_js(point: dict[str, object]) -> str:
 # Pure function, deliberately free of n8n globals ($input, $, $json) so it can
 # be executed directly under plain `node` in tests with fixture arrays.
 _KOREAN_NAME_REVIEWS = json.loads((Path(__file__).resolve().parents[1] / "config/korean-name-reviews.json").read_text(encoding="utf-8"))
-CLASSIFY_WIKIDATA_ROWS_JS = "const reviewedRejectedNames = " + json.dumps(_KOREAN_NAME_REVIEWS["rejected"], ensure_ascii=False) + ";\n" + r"""
+_REVIEW_POLICY_HASH = sha256(json.dumps(_KOREAN_NAME_REVIEWS["rejected"], sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
+CLASSIFY_WIKIDATA_ROWS_JS = "const reviewedNamePolicyHash = " + json.dumps(_REVIEW_POLICY_HASH) + ";\nconst reviewedRejectedNames = " + json.dumps(_KOREAN_NAME_REVIEWS["rejected"]) + ";\n" + r"""
 function classifyWikidataRows(bindings) {
   const qidOf = uri => String(uri || '').split('/').pop();
   const text = value => value == null ? '' : String(value).trim();
@@ -329,8 +331,12 @@ const fetchOk = statusCode === 200 && wellFormed;
 // computed on a genuinely successful, hashed fetch; a failed/malformed
 // fetch has nothing meaningful to anchor an identity to.
 const dateStamp = String(config.retrieved_at || '').slice(0, 10) || 'unknown-date';
-const wikidataDatasetId = (fetchOk && hash) ? `wikidata-dataset:taxon-labels:sha256-${hash}` : null;
-const sourceRelease = (fetchOk && hash) ? `wikidata-snapshot:${dateStamp}:sha256-${hash.slice(0, 12)}` : null;
+// A review changes the interpreted snapshot even if the fetch bytes are identical.
+// Give it a separate identity so prior quarantined nodes and verification counts
+// cannot collide with the newly accepted name in an immutable raw snapshot.
+const reviewSuffix = conflicted.some(row => row.reason_code === 'reviewed_misapplied_korean_label') ? `:review-${reviewedNamePolicyHash}` : '';
+const wikidataDatasetId = (fetchOk && hash) ? `wikidata-dataset:taxon-labels:sha256-${hash}${reviewSuffix}` : null;
+const sourceRelease = (fetchOk && hash) ? `wikidata-snapshot:${dateStamp}:sha256-${hash.slice(0, 12)}${reviewSuffix}` : null;
 return [{json: {
   source_sha256: hash,
   wikidata_dataset_id: wikidataDatasetId,
