@@ -818,6 +818,26 @@ body:has(.species-popup[open]) { overflow: hidden; }
   font-weight: 700;
   cursor: pointer;
 }
+.species-popup[data-flipping="true"] { will-change: transform, filter; }
+.species-popup[data-flipping="true"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 25%, #ffffff08 38%, #ffffff85 49%, #ffffff18 59%, transparent 72%);
+  animation: species-flip-glint 660ms ease-in-out both;
+}
+.species-card-flip:disabled { cursor: progress; }
+@keyframes species-flip-glint {
+  0% { opacity: 0; }
+  40% { opacity: .8; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .species-popup[data-flipping="true"]::after { animation: none; display: none; }
+}
 @media (max-width: 420px) {
   .species-card-footer { bottom: -16px; }
   .species-quick-facts { font-size: .82rem; }

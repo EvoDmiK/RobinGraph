@@ -929,8 +929,50 @@
       flip.setAttribute("aria-pressed", String(showBack));
       if (card.parentNode) { card.parentNode.scrollTop = 0; }
     }
-    card.showFront = function () { showFace(false); };
-    flip.addEventListener("click", function () { showFace(back.hidden); });
+    var flipAnimation = null;
+    var flipTarget = null;
+    var flipGeneration = 0;
+    function resetFlip() {
+      flipGeneration += 1;
+      if (flipAnimation) { flipAnimation.cancel(); flipAnimation = null; }
+      if (flipTarget) { flipTarget.setAttribute("data-flipping", "false"); }
+      flip.disabled = false;
+    }
+    card.showFront = function () { resetFlip(); showFace(false); };
+    flip.addEventListener("click", function () {
+      if (flip.disabled) { return; }
+      var showBack = back.hidden;
+      var view = doc.defaultView;
+      var reducedMotion = view && view.matchMedia && view.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var target = card.parentNode && card.parentNode.tagName.toLowerCase() === "dialog" ? card.parentNode : card;
+      if (reducedMotion || typeof target.animate !== "function") { showFace(showBack); return; }
+      flipTarget = target;
+      flip.disabled = true;
+      target.setAttribute("data-flipping", "true");
+      var generation = ++flipGeneration;
+      var direction = showBack ? 1 : -1;
+      function pose(angle, tilt, scale) {
+        return "perspective(1100px) rotateY(" + angle + "deg) rotateZ(" + tilt + "deg) scale(" + scale + ")";
+      }
+      flipAnimation = target.animate([
+        { transform: pose(0, 0, 1), filter: "brightness(1)" },
+        { transform: pose(90 * direction, -3 * direction, .94), filter: "brightness(1.2)" }
+      ], { duration: 270, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
+      flipAnimation.onfinish = function () {
+        if (generation !== flipGeneration) { return; }
+        var outgoing = flipAnimation;
+        showFace(showBack);
+        flipAnimation = target.animate([
+          { transform: pose(-90 * direction, 3 * direction, .94), filter: "brightness(1.2)" },
+          { transform: pose(5 * direction, -.6 * direction, 1.01), filter: "brightness(1.03)", offset: .82 },
+          { transform: pose(0, 0, 1), filter: "brightness(1)" }
+        ], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
+        outgoing.cancel();
+        flipAnimation.onfinish = function () {
+          if (generation === flipGeneration) { resetFlip(); }
+        };
+      };
+    });
     footer.appendChild(flip);
     card.appendChild(footer);
     return card;
@@ -1051,6 +1093,7 @@
       dialog.showModal();
     });
     close.addEventListener("click", function () { dialog.close(); });
+    dialog.addEventListener("close", function () { if (card.showFront) { card.showFront(); } });
     dialog.addEventListener("click", function (event) {
       // The dialog's padded interior is still part of the card, not backdrop.
       if (event.target !== dialog) { return; }
