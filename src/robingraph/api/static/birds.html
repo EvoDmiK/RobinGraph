@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RobinGraph 새 정보</title><link rel="stylesheet" href="/static/styles.css">
+<style>
+.species-layout {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.species-layout figure {margin:0 0 20px}.species-layout img {width:100%;height:auto;border-radius:12px}
+.species-layout figcaption {font-size:.85rem;line-height:1.6}.species-layout h2 {margin-top:0}
+.trait {padding:12px 0;border-bottom:1px solid #bbb5}.trait strong {display:block}
+.trait small {display:block;line-height:1.7}.bird-card {padding:24px;border:1px solid #bbb6;border-radius:14px;margin-top:20px}
+.bird-form {display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.bird-form input {flex:1;min-width:160px}
+@media(max-width:650px){.species-layout{grid-template-columns:1fr}.bird-card{padding:16px}}
+</style><script src="/static/birds.js" defer></script></head>
+<body><div class="page"><header><a href="/chat">← 질의응답</a><h1>새 정보</h1>
+<p>활성 분류와 형질 자료에서 확인한 특징·먹이·서식 환경을 보여줍니다. 사진은 Wikimedia Commons의 대표 사진입니다.</p></header>
+<main><form id="bird-form"><label for="bird-name">국명 또는 학명</label><div class="bird-form">
+<input id="bird-name" name="name" value="청둥오리" maxlength="200" required autocomplete="off">
+<button id="bird-submit" type="submit">정보 보기</button></div></form>
+<p id="bird-status" role="status" aria-live="polite"></p><article id="bird-card" class="bird-card" hidden></article></main>
+</div></body></html>

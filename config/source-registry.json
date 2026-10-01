@@ -168,5 +168,22 @@
     "adapter_owner": "RobinGraph conservation",
     "enabled": false,
     "license_policy_status": "restricted"
+  },
+  {
+    "source_id": "wikimedia-commons-species-images",
+    "name": "Wikimedia Commons species images",
+    "provider": "Wikimedia Commons contributors",
+    "landing_uri": "https://commons.wikimedia.org/",
+    "access_method": "api",
+    "auth_method": "none",
+    "release_strategy": "mutable",
+    "incremental_cursor": null,
+    "rate_limit_note": "Read at most two P18 files after exact scientific-name/species-rank resolution. Cache metadata hourly. Require per-file creator, unrestricted CC BY/CC BY-SA 2.0–4.0, CC0 or public-domain metadata; unknown or restricted licenses are omitted.",
+    "license_uri": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+    "license_name": "Per-file license; verified before display",
+    "terms_uri": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+    "adapter_owner": "RobinGraph species profiles",
+    "enabled": true,
+    "license_policy_status": "allowed"
   }
 ]
