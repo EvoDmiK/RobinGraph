@@ -194,6 +194,18 @@ class SemanticChatApiTest(unittest.TestCase):
     def make_client(self, **kwargs) -> TestClient:
         return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
 
+    def test_profile_chat_displays_summary_and_falls_back_safely(self) -> None:
+        profile = {'taxon': {'korean_name':'청둥오리'}, 'traits':[], 'warnings':[],
+                   'summary':'청둥오리 — 서식 환경: 습지. 먹이 유형: 잡식.'}
+        client = self.make_client(species_profile_handler=lambda _: profile)
+        result = client.post('/v1/chat', json={'question':'청둥오리에 대해 알려줘.'}).json()
+        self.assertEqual(profile['summary'], result['answer_text'])
+        for missing in (None, '', ' ', 123):
+            profile['summary'] = missing
+            result = client.post('/v1/chat', json={'question':'청둥오리에 대해 알려줘.'}).json()
+            self.assertIn('아직 확인하지 못했습니다', result['answer_text'])
+            self.assertNotIn('출처를 확인했습니다', result['answer_text'])
+
     def test_natural_species_questions_use_exact_names_without_embedding_router(self) -> None:
         profile = {
             "taxon": {"scientific_name": "Anas platyrhynchos", "korean_name": "청둥오리"},

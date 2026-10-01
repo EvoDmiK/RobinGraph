@@ -603,14 +603,18 @@ function createFakeElement(tagName) {
       return Object.prototype.hasOwnProperty.call(this.attributes, name) ? this.attributes[name] : null;
     },
     appendChild(child) {
+      if (child.parentNode) child.parentNode.removeChild(child);
       this.children.push(child);
+      child.parentNode = this;
       return child;
     },
     removeChild(child) {
       const index = this.children.indexOf(child);
-      if (index !== -1) {
-        this.children.splice(index, 1);
+      if (index === -1) {
+        throw new Error("NotFoundError: node is not a child");
       }
+      this.children.splice(index, 1);
+      child.parentNode = null;
       return child;
     },
     get firstChild() {
@@ -1146,7 +1150,8 @@ test("renders a species profile card with validated photos, sourced trait fact c
   assert.ok(renderedText.includes("사진 제공처를 현재 조회할 수 없습니다."));
 
   // Lineage is tucked behind a collapsed-by-default <details>.
-  const lineageDetails = allNodes.find((node) => node.tagName === "details");
+  const lineageDetails = allNodes.find((node) => node.tagName === "details" &&
+    node.children.some(child => child.tagName === "summary" && child.textContent.includes("분류 계통 보기")));
   assert.ok(lineageDetails, "expected a <details> element for the collapsible lineage");
   assert.notEqual(lineageDetails.open, true, "lineage must be collapsed by default");
   const lineageSummary = lineageDetails.children.find((child) => child.tagName === "summary");
@@ -1308,4 +1313,304 @@ test("sanitizeErrorMessage: the http branch never reads context.detail for any r
     false,
     "sanitizeErrorMessage must not read context.detail anywhere -- fixed messages only"
   );
+});
+
+test("species popup opens from its trigger and closes only from close or outside the card", () => {
+  const doc = { createElement: createFakeElement };
+  const card = createFakeElement("div");
+  const popup = chat.buildSpeciesPopup(doc, card, { taxon: { korean_name: "청둥오리" } });
+  const [trigger, dialog] = popup.children;
+  let opens = 0;
+  let closes = 0;
+  dialog.showModal = () => { opens += 1; };
+  dialog.close = () => { closes += 1; };
+  dialog.getBoundingClientRect = () => ({ left: 100, right: 500, top: 100, bottom: 700 });
+  assert.equal(trigger.getAttribute("aria-haspopup"), "dialog");
+  assert.equal(dialog.getAttribute("aria-label"), "청둥오리 도감 카드");
+  trigger.dispatch("click");
+  assert.equal(opens, 1);
+  dialog.dispatch("click", { target: card, clientX: 200, clientY: 200 });
+  dialog.dispatch("click", { target: dialog, clientX: 110, clientY: 110 });
+  assert.equal(closes, 0, "clicks inside the card must preserve it");
+  dialog.dispatch("click", { target: dialog, clientX: 20, clientY: 200 });
+  assert.equal(closes, 1);
+  dialog.children[0].dispatch("click");
+  assert.equal(closes, 2);
+  trigger.dispatch("click");
+  assert.equal(opens, 2, "a closed card can be reopened");
+});
+
+test("card front contains compact facts; photo attribution and full trait sources are on the reversible back", () => {
+  const profile = fakeProfilePayload().result.profile;
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const front = card.children.find(node => node.className === "species-card-front");
+  const back = card.children.find(node => node.className === "species-card-back");
+  const flip = collectAllNodes(card).find(node => node.className === "species-card-flip");
+  assert.equal(back.hidden, true);
+  assert.equal(front.hidden, false);
+  assert.ok(collectedText(front).includes("1083.3 g"));
+  assert.equal(collectAllNodes(front).some(node => node.tagName === "a"), false);
+  assert.equal(collectAllNodes(front).filter(node => node.tagName === "dt").length, 1);
+  assert.ok(collectedText(back).includes("Some Credit"));
+  assert.ok(collectedText(back).includes("AVONET"));
+  assert.ok(collectAllNodes(back).some(node => node.href === "https://creativecommons.org/licenses/by-sa/4.0"));
+  flip.dispatch("click");
+  assert.equal(back.hidden, false);
+  assert.equal(front.hidden, true);
+  assert.equal(flip.getAttribute("aria-pressed"), "true");
+  flip.dispatch("click");
+  assert.equal(front.hidden, false);
+  assert.equal(back.hidden, true);
+  flip.dispatch("click");
+  card.showFront();
+  assert.equal(front.hidden, false);
+  assert.equal(back.hidden, true);
+});
+
+test("consecutive questions send and render without clearing; clearing then restarting remains valid", async () => {
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(
+    url === "/health" ? {mode:"fixture"} : fakeProfilePayload()
+  )));
+  chat.init(dom.doc, dom.win);
+  for (const question of ["청둥오리에 대해 알고 싶어", "해오라기에 대해 알고 싶어", "참새에 대해 알고 싶어"]) {
+    dom.elementsById["question-input"].value = question;
+    pressKey(dom, {});
+    await settleEventPath();
+    assert.equal(dom.elementsById["question-input"].disabled, false);
+  }
+  assert.equal(dom.fetchCalls.filter(call => call.url === "/v1/chat").length, 3);
+  assert.equal(messageRows(dom.elementsById["history"]).length, 6);
+  dom.elementsById["clear-button"].dispatch("click");
+  assert.equal(dom.elementsById["history-empty-state"].parentNode, dom.elementsById["history"]);
+  dom.elementsById["question-input"].value = "다시 청둥오리에 대해 알고 싶어";
+  pressKey(dom, {});
+  await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(call => call.url === "/v1/chat").length, 4);
+  assert.equal(messageRows(dom.elementsById["history"]).length, 2);
+});
+
+test("photo buttons move between validated images and sources start collapsed", () => {
+  const profile = fakeProfilePayload().result.profile;
+  profile.images = [profile.images[0], Object.assign({}, profile.images[0], {image_url: "https://upload.wikimedia.org/second.jpg", title: "두 번째 사진"})];
+  const card = chat.buildSpeciesCard({createElement: createFakeElement}, profile);
+  const all = collectAllNodes(card);
+  const figures = all.filter(node => node.tagName === "figure");
+  const previous = all.find(node => node.getAttribute("aria-label") === "이전 사진");
+  const next = all.find(node => node.getAttribute("aria-label") === "다음 사진");
+  const count = all.find(node => node.getAttribute("aria-live") === "polite");
+  assert.deepEqual(figures.map(node => node.hidden), [false, true]);
+  assert.equal(previous.disabled, true);
+  assert.equal(count.textContent, "사진 1 / 2");
+  next.dispatch("click");
+  assert.deepEqual(figures.map(node => node.hidden), [true, false]);
+  assert.equal(next.disabled, true);
+  assert.equal(previous.disabled, false);
+  assert.equal(count.textContent, "사진 2 / 2");
+  previous.dispatch("click");
+  assert.deepEqual(figures.map(node => node.hidden), [false, true]);
+  for (const details of all.filter(node => ["species-photo-sources", "trait-source-toggle"].includes(node.className))) {
+    assert.notEqual(details.open, true);
+    assert.equal(details.children[0].tagName, "summary");
+    assert.ok(collectedText(details).includes("CC"));
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Habitat emblem + verified Red List palette.
+// ---------------------------------------------------------------------------
+
+const cssSourceForCards = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+const HABITAT_VALUES = ["Forest", "Shrubland", "Woodland", "Grassland", "Rock", "Wetland", "Human Modified", "Coastal", "Marine", "Riverine", "Desert"];
+
+function svgCapableDoc() {
+  return {
+    createElement: createFakeElement,
+    createElementNS(namespace, tagName) {
+      const el = createFakeElement(tagName);
+      el.namespaceURI = namespace;
+      return el;
+    },
+  };
+}
+
+function habitatProfile(value, conservation) {
+  const profile = fakeProfilePayload().result.profile;
+  profile.traits = profile.traits.concat(value === undefined ? [] : [{ name: "habitat", label: "서식 환경", value: value, display: value }]);
+  if (conservation !== undefined) profile.conservation = conservation;
+  return profile;
+}
+
+const VERIFIED_SOURCE = { source_name: "IUCN Red List", source_url: "https://www.iucnredlist.org/species/22680186", source_release: "2025-1" };
+
+test("habitatEmblemInfo maps every raw AVONET habitat value to a distinct emblem and falls back to unknown", () => {
+  const infos = HABITAT_VALUES.map((value) => chat.habitatEmblemInfo(habitatProfile(value)));
+  assert.equal(new Set(infos.map((info) => info.slug)).size, HABITAT_VALUES.length);
+  assert.equal(new Set(infos.map((info) => info.path)).size, HABITAT_VALUES.length);
+  assert.equal(new Set(infos.map((info) => info.label)).size, HABITAT_VALUES.length);
+  assert.ok(infos.every((info) => info.known && /[가-힣]/.test(info.label)));
+  assert.equal(chat.habitatEmblemInfo(habitatProfile("Forest")).label, "숲");
+  assert.equal(chat.habitatEmblemInfo(habitatProfile(" human modified ")).slug, "human-modified");
+  for (const odd of [undefined, "Aquatic", "", 42, null, "<svg onload=x>"]) {
+    const info = chat.habitatEmblemInfo(habitatProfile(odd));
+    assert.equal(info.slug, "unknown", "expected unknown fallback for " + JSON.stringify(odd));
+    assert.equal(info.known, false);
+  }
+  assert.equal(chat.habitatEmblemInfo(null).slug, "unknown");
+});
+
+test("the card's top-right emblem is an accessible SVG chosen by habitat, with a text fallback", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Marine"));
+  const emblem = collectAllNodes(card).find((node) => (node.className || "").startsWith("species-emblem"));
+  assert.equal(emblem.className, "species-emblem habitat-marine");
+  assert.equal(emblem.getAttribute("role"), "img");
+  assert.equal(emblem.getAttribute("aria-label"), "서식 환경: 바다");
+  const svg = emblem.children[0];
+  assert.equal(svg.tagName, "svg");
+  assert.match(svg.namespaceURI, /\/2000\/svg$/);
+  assert.equal(svg.getAttribute("aria-hidden"), "true");
+  assert.equal(svg.children[0].getAttribute("d"), chat.habitatEmblemInfo(habitatProfile("Marine")).path);
+
+  const fallback = chat.buildSpeciesCard({ createElement: createFakeElement }, habitatProfile(undefined));
+  const unknownEmblem = collectAllNodes(fallback).find((node) => (node.className || "").startsWith("species-emblem"));
+  assert.equal(unknownEmblem.className, "species-emblem habitat-unknown");
+  assert.equal(unknownEmblem.getAttribute("aria-label"), "서식 환경 미확인");
+  assert.equal(unknownEmblem.children.length, 0);
+  assert.ok(unknownEmblem.textContent.length > 0);
+});
+
+test("conservationInfo trusts only exact category codes with a source; DD/NE/unknown stay neutral", () => {
+  const expected = { LC: ["관심대상", "lc"], NT: ["준위협", "nt"], VU: ["취약", "vu"], EN: ["위기", "en"], CR: ["위급", "cr"], EW: ["야생절멸", "ew"], EX: ["절멸", "ex"] };
+  for (const [code, [label, tier]] of Object.entries(expected)) {
+    const info = chat.conservationInfo(Object.assign({ category: code, label: "무시됨" }, VERIFIED_SOURCE));
+    assert.deepEqual([info.label, info.tier, info.verified], [label, tier, true]);
+    assert.equal(info.badgeText, "IUCN 적색목록 " + label + " (" + code + ")");
+  }
+  for (const [code, label] of [["DD", "정보부족"], ["NE", "미평가"]]) {
+    const info = chat.conservationInfo(Object.assign({ category: code }, VERIFIED_SOURCE));
+    assert.equal(info.tier, "unconfirmed");
+    assert.equal(info.verified, false);
+    assert.equal(info.badgeText, "IUCN 적색목록 " + label + " (" + code + ")");
+  }
+  for (const raw of ["CR (PE)", "CR (PEW)"]) {
+    const info = chat.conservationInfo(Object.assign({ category: raw }, VERIFIED_SOURCE));
+    assert.deepEqual([info.category, info.tier, info.badgeText], ["CR", "cr", "IUCN 적색목록 위급 (CR)"]);
+  }
+  const unconfirmedInputs = [
+    { category: "CR (XX)", source_name: "IUCN" }, { category: "CR(PE)", source_name: "IUCN" },
+    null, undefined, "EN", {}, { category: null }, { category: "en", source_name: "IUCN" },
+    { category: ["EN"], source_name: "IUCN" }, { category: "toString", source_name: "IUCN" },
+    { category: "CR" }, { category: "CR", source_name: "  " },
+  ];
+  for (const input of unconfirmedInputs) {
+    const info = chat.conservationInfo(input);
+    assert.equal(info.tier, "unconfirmed", JSON.stringify(input));
+    assert.equal(info.category, null);
+    assert.equal(info.badgeText, "멸종위기 등급 미확인");
+  }
+});
+
+test("card, dialog, and chat button carry the verified tier; sources and the abundance caveat sit on the back", () => {
+  const profile = habitatProfile("Wetland", Object.assign({ category: "EN", label: "위기" }, VERIFIED_SOURCE));
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.className, "species-card risk-en");
+  const badge = card.children.find((node) => node.className === "species-conservation-badge");
+  assert.equal(badge.textContent, "IUCN 적색목록 위기 (EN)");
+  assert.match(badge.getAttribute("title"), /실제로 보기 드문지/);
+
+  const front = card.children.find((node) => node.className === "species-card-front");
+  const back = card.children.find((node) => node.className === "species-card-back");
+  assert.equal(collectAllNodes(front).some((node) => node.tagName === "a"), false, "front stays link-free");
+  const sources = collectAllNodes(back).find((node) => node.className === "species-conservation-sources");
+  assert.equal(sources.tagName, "details");
+  assert.notEqual(sources.open, true);
+  assert.equal(sources.children[0].textContent, "멸종위기 등급 출처");
+  assert.ok(collectAllNodes(sources).some((node) => node.tagName === "a" && node.textContent === "IUCN Red List" && node.href === VERIFIED_SOURCE.source_url && node.rel === "noopener noreferrer"));
+  assert.ok(collectedText(sources).includes("릴리스 2025-1 기준"));
+  assert.ok(collectedText(sources).includes("현재 최신 평가와 다를 수 있습니다"));
+  assert.ok(collectedText(sources).includes("개체 수·관찰 빈도"));
+  for (const node of collectAllNodes(card)) {
+    assert.equal((node.textContent || "").includes("희귀"), false, "never label the species as rare");
+  }
+
+  const popup = chat.buildSpeciesPopup(svgCapableDoc(), card, profile);
+  assert.equal(popup.children[0].className, "species-popup-trigger risk-en");
+  assert.equal(popup.children[1].className, "species-popup risk-en");
+});
+
+test("hostile or unverified conservation data renders neutral, inert text", () => {
+  const profile = habitatProfile("Forest", { category: "CR", label: "<b>x</b>", source_name: "evil", source_url: "javascript:alert(1)" });
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.className, "species-card risk-cr");
+  const nodes = collectAllNodes(card);
+  assert.equal(nodes.some((node) => node.href === "javascript:alert(1)"), false);
+  assert.ok(nodes.some((node) => node.tagName === "span" && node.textContent === "evil"));
+  assert.equal(collectedText(card).includes("<b>x</b>"), false, "backend label is never echoed");
+
+  const neutral = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", { category: "DD", source_name: "IUCN" }));
+  assert.equal(neutral.className, "species-card risk-unconfirmed");
+  const missing = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest"));
+  assert.equal(missing.className, "species-card risk-unconfirmed");
+  const missingSources = collectAllNodes(missing).find((node) => node.className === "species-conservation-sources");
+  assert.ok(collectedText(missingSources).includes("중립"));
+});
+
+test("chat shows the summary answer, a brief habitat/Red List line, then the card button", async () => {
+  const payload = fakeProfilePayload();
+  payload.answer_text = "청둥오리는 습지에 사는 오리입니다.";
+  payload.result.profile = habitatProfile("Wetland", Object.assign({ category: "LC", label: "관심대상" }, VERIFIED_SOURCE));
+  payload.result.profile.summary = payload.answer_text;
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리에 대해 알고 싶어";
+  pressKey(dom, {});
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById["history"])[1];
+  const textIndex = answer.children.findIndex((node) => node.tagName === "p" && node.textContent === payload.answer_text);
+  const briefIndex = answer.children.findIndex((node) => node.className === "species-chat-brief risk-lc");
+  const popupIndex = answer.children.findIndex((node) => node.className === "species-popup-entry");
+  assert.ok(textIndex !== -1 && textIndex < briefIndex && briefIndex < popupIndex);
+  const brief = answer.children[briefIndex];
+  assert.ok(collectedText(brief).includes("서식 환경: 습지"));
+  assert.ok(collectedText(brief).includes("IUCN 적색목록 관심대상 (LC)"));
+  assert.equal(brief.children[0].className, "species-emblem habitat-wetland");
+  assert.match(answer.children[popupIndex].children[0].textContent, /도감 카드 보기/);
+});
+
+test("styles.css defines every habitat emblem, every risk tier, and a reduced-motion guard for foil", () => {
+  for (const value of HABITAT_VALUES.concat(["unknown"])) {
+    const slug = value === "unknown" ? "unknown" : chat.habitatEmblemInfo(habitatProfile(value)).slug;
+    assert.match(cssSourceForCards, new RegExp("\\.species-emblem\\.habitat-" + slug + "\\s*\\{"));
+  }
+  for (const tier of ["unconfirmed", "nt", "vu", "en", "cr", "ew", "ex"]) {
+    assert.match(cssSourceForCards, new RegExp("\\.species-popup\\.risk-" + tier + "[\\s,{]"));
+    assert.match(cssSourceForCards, new RegExp("\\.species-card\\.risk-" + tier + "\\s*\\{"));
+  }
+  assert.match(cssSourceForCards, /prefers-reduced-motion: reduce\)\s*\{[^}]*risk-cr[^}]*animation: none/);
+});
+
+ test("possibly extinct source flags stay visible without changing the CR palette", () => {
+  for (const [raw, label] of [["CR (PE)", "절멸 가능성"], ["CR (PEW)", "야생절멸 가능성"]]) {
+    const info = chat.conservationInfo(Object.assign({ category: "CR", category_raw: raw }, VERIFIED_SOURCE));
+    assert.equal(info.tier, "cr");
+    assert.ok(info.badgeText.includes(label));
+  }
+});
+
+test("structured species answers preserve sections, source attribution, unknown facts and inert hostile text", () => {
+  const profile = { taxon: { korean_name: "청둥오리" }, sections: [
+    { title: "외관 특징", items: [{ text: "성체 수컷의 머리는 녹색입니다.", source_name: "Wikipedia", source_url: "https://en.wikipedia.org/w/index.php?oldid=123", license_name: "CC BY-SA 4.0", license_url: "https://creativecommons.org/licenses/by-sa/4.0/" }] },
+    { title: "재미있는 사실", items: [], empty_text: "출처를 아직 확인하지 못했습니다." },
+    { title: "자료", items: [{ text: "<script>alert(1)</script>", source_name: "unsafe", source_url: "javascript:alert(1)" }] },
+  ] };
+  const answer = chat.buildSpeciesAnswer({ createElement: createFakeElement }, profile);
+  const nodes = collectAllNodes(answer);
+  assert.deepEqual(nodes.filter((n) => n.tagName === "h4").map((n) => n.textContent), ["외관 특징", "재미있는 사실", "자료"]);
+  assert.ok(nodes.some((n) => n.textContent === "출처를 아직 확인하지 못했습니다."));
+  assert.ok(nodes.some((n) => n.textContent === "<script>alert(1)</script>"));
+  assert.equal(nodes.filter((n) => n.tagName === "script").length, 0);
+  const sources = nodes.find((n) => n.className === "species-answer-sources");
+  assert.equal(sources.open, undefined);
+  assert.equal(nodes.filter((n) => n.tagName === "a").length, 2);
+  assert.ok(nodes.filter((n) => n.tagName === "a").every((n) => n.href.startsWith("https://")));
+  assert.equal(chat.buildSpeciesAnswer({ createElement: createFakeElement }, {}), null);
 });
