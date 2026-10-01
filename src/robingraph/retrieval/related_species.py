@@ -23,16 +23,15 @@ WHERE peer.id <> $target_id
       WHERE r.concept_set_id=$concept_set_id
   })
 WITH DISTINCT concept, peer
-ORDER BY peer.scientific_name, peer.id
-LIMIT 13
-OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'ko', policy_status:'allowed'})
-WHERE name.dataset_id=$korean_dataset_id
+MATCH (peer)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'ko', policy_status:'allowed'})
+WHERE name.dataset_id=$korean_dataset_id AND name.name =~ '.*[가-힣].*'
 WITH concept, peer, name ORDER BY name.name, name.id
 WITH concept, peer, head(collect(name)) AS chosen
 RETURN {taxon_id:peer.id, rank:peer.rank, scientific_name:peer.scientific_name,
         authority:peer.authority, korean_name:chosen.name, korean_name_status:chosen.status} AS taxon,
        concept.snapshot_uri AS source_url, concept.title AS source_name
-ORDER BY peer.scientific_name, peer.id
+ORDER BY chosen.name, peer.scientific_name, peer.id
+LIMIT 13
 """
 
 
@@ -66,5 +65,5 @@ def related_species(repository, resolve, name):
                        'source_url':source['source_url'], 'source_name':source['source_name']})
     return {'taxon':asdict(target), 'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release, 'concept_set_id':lineage.concept_set_id,
-            'groups':groups,
-            'note':'같은 속·과에 속한다는 분류 관계입니다. 진화적 거리나 계통상 가장 가까운 종을 뜻하지 않습니다.'}
+            'groups':groups, 'name_filter':'korean_names_only',
+            'note':'한국어 이름이 확인된 종만 표시합니다. 같은 속·과에 속한다는 분류 관계입니다. 진화적 거리나 계통상 가장 가까운 종을 뜻하지 않습니다.'}

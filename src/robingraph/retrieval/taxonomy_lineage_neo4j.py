@@ -97,6 +97,9 @@ WITH ancestor, depth,
      CASE WHEN size(koreanCandidates) = 0 THEN null
           ELSE reduce(best = koreanCandidates[0], k IN koreanCandidates | CASE WHEN k.name < best.name THEN k ELSE best END)
      END AS chosenKorean
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(englishName:VernacularName {language:'en', policy_status:'allowed', status:'source-preferred'})
+WHERE englishName.dataset_id=ancestor.dataset_id AND englishName.source_release=ancestor.source_release
+WITH ancestor, depth, chosenKorean, min(englishName.name) AS chosenEnglish
 ORDER BY depth DESC, ancestor.id
 RETURN collect({
   taxon_id: ancestor.id,
@@ -104,7 +107,8 @@ RETURN collect({
   scientific_name: ancestor.scientific_name,
   authority: ancestor.authority,
   korean_name: chosenKorean.name,
-  korean_name_status: chosenKorean.status
+  korean_name_status: chosenKorean.status,
+  english_name: chosenEnglish
 }) AS lineage_items
 """
 
@@ -152,6 +156,9 @@ WITH targetScientificName, ancestor, depth,
      CASE WHEN size(koreanCandidates) = 0 THEN null
           ELSE reduce(best = koreanCandidates[0], k IN koreanCandidates | CASE WHEN k.name < best.name THEN k ELSE best END)
      END AS chosenKorean
+OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(englishName:VernacularName {language:'en', policy_status:'allowed', status:'source-preferred'})
+WHERE englishName.dataset_id=ancestor.dataset_id AND englishName.source_release=ancestor.source_release
+WITH targetScientificName, ancestor, depth, chosenKorean, min(englishName.name) AS chosenEnglish
 ORDER BY depth DESC, ancestor.id
 RETURN targetScientificName,
        collect({
@@ -160,7 +167,8 @@ RETURN targetScientificName,
          scientific_name: ancestor.scientific_name,
          authority: ancestor.authority,
          korean_name: chosenKorean.name,
-         korean_name_status: chosenKorean.status
+         korean_name_status: chosenKorean.status,
+  english_name: chosenEnglish
        }) AS lineage_items
 """
 
@@ -193,6 +201,7 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
                 scientific_name=str(item["scientific_name"]),
                 authority=None if item.get("authority") is None else str(item["authority"]),
                 korean_name=cleaned_korean_name,
+                english_name=(item["english_name"].strip() if isinstance(item.get("english_name"), str) and item["english_name"].strip() else None),
                 korean_name_source_url=reference["source_url"] if reference else None,
                 # Only meaningful when a Korean name was actually found --
                 # never report a status for a name that isn't there.
