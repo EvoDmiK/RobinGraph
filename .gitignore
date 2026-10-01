@@ -150,6 +150,9 @@ activemq-data/
 # Environments
 .env
 .env.nas
+.env.nas.test
+.env.nas.prod
+.env.nas.ingest
 .envrc
 .venv
 env/
@@ -206,6 +209,9 @@ tempCodeRunnerFile.py
 
 # Ruff stuff:
 .ruff_cache/
+
+# Graphify generated knowledge graph, reports, and local extraction caches
+graphify-out/
 
 # PyPI configuration file
 .pypirc

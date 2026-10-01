@@ -1,5 +1,38 @@
 # RobinGraph 현재 구현 상태
 
+최신 추가(2026-09-29): `serve-neo4j`에 `GEMINI_API_KEY`를 설정하면 `/v1/chat`의
+문헌 근거 경로가 검색된 청크를 Gemini API에 보내 답변을 생성한다. 응답에 포함된
+근거 ID는 검색 결과와 대조하며, 생성이나 검증에 실패하면 기존 검색 결과만
+표시한다. 이후 실제 Gemini 호출에서 구조화된 응답과 근거 ID 반환을 확인했다. 아래
+Hermes 관련 문구와 테스트 수치는 당시의 구현 기록이다.
+
+최신 추가(2026-09-12): NAS 공개 API의 배포 버전이 실제로 이 checkout의 API
+계약과 일치하는지 확인하는 읽기 전용 검증기 `scripts/verify_api_deployment.py`를
+추가했다. 라이브 확인 과정에서 `https://aviary.dove-nest.com`이
+`LineageTaxonResponse.korean_name_status` 필드가 없는 오래된 이미지를 서비스
+중임을 발견했다. 또한 §1의 `GET /health`가 반환하는 `taxonomy_release`는
+아래(§1, §12)에서 설명하는 fixture corpus의 릴리스일 뿐이며, AviList
+분류·한국어 이름 계통을 다루는 `GET /v1/taxa/lineage`의 `taxonomy_release`
+(활성 AviList `reference-taxonomy` concept set 릴리스, 예: `v2025b`)와는
+서로 다른, 비교 대상이 아닌 별개의 값이다 — 이 문서가 다루는 fixture/Neo4j
+그래프 슬라이스와 [분류 계통 API](taxonomy-lineage-api.md)가 다루는 AviList
+reference-taxonomy는 애초에 다른 데이터 영역이기 때문이다(자세한 배경은
+[graph-database-schema.md](graph-database-schema.md), 검증기 사용법은
+[NAS 배포 런북 §8](nas-deployment.md) 참고). 아래 §1~12의 테스트 수치는 이
+문서가 다루는 fixture/Neo4j 그래프 슬라이스에 한정된 2026-09-04 시점
+기록이며, 그 이후 추가된 taxonomy-lineage·Korean vernacular·NAS 배포
+테스트는 포함하지 않는다 — 현재 저장소 전체 오프라인 스위트의 최신 수치는
+[한국어 일반명 수집 런북의 "현재 검증 상태"](n8n/korean-vernacular-ingest.md#현재-검증-상태-정직하게-보고)에
+기록한다.
+
+최신 추가(2026-09-10): n8n에서 AviList 분류·EltonTraits 식성/체중과 AVONET
+형태 측정치/서식 환경을 수집하는 두 workflow를 제공한다. 실제 원본 전체를
+검증하고, 선택 시트 스트리밍·100종 배치 로더로 NAS Neo4j에 AVONET 11,009종,
+형질 claim 128,331개, 미매핑 후보 1,130개를 실제 적재했다.
+[종별 정보 수집 가이드](n8n/species-information-ingest.md)와
+[9월 10일 적재 기록](work-log/2026-09-10.md)을 참고한다. 아래 내용은 이전 단계의
+구현 기록이다.
+
 - 상태: In progress
 - 기준일: 2026-09-04
 - 범위: 합성 fixture + 라이선스 정책·provenance + Neo4j 그래프/전문/벡터 검색 + Jina 호환 HTTP 어댑터
@@ -135,6 +168,14 @@ uv run --locked robingraph ask-neo4j --question "2025년 1월 fixture 호수에�
 {"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"}
 ```
 
+패키지 정적 채팅 셸은 `/`와 `/chat`, 그 자산은 `/static/`에서 같은 origin으로
+제공된다. UI는 `/v1/answers`만 답변 계약으로 사용한다: `answer_text`를 본문으로,
+`disposition`을 answer/abstain/clarify 상태로, `citations`을 출처·라이선스 표시로,
+`warnings`를 비치명적 안내로, `taxonomy_release`와 `data_cutoff`을 근거 메타데이터로
+매핑한다. `/v1/search`의 청크는 답변 대체재가 아니므로 검색 결과로 chat answer를
+합성하지 않는다. 정적 산출물이 누락되면 API·건강 확인은 계속 제공하고 UI 및 정적
+경로만 세부 설정을 드러내지 않는 503으로 실패한다.
+
 Neo4j 모드는 `POST /v1/search`도 제공한다. 요청의 `mode`는 `fulltext` 또는
 `hybrid`이며 결과에 청크 본문, 점수, 기여 채널, citation, 경고를 반환한다.
 fixture 모드에서는 같은 endpoint가 503을 반환한다.
@@ -185,7 +226,7 @@ CI의 `.github/workflows/ci.yml`에 별도 Ubuntu `neo4j` job이 구현돼 있�
 ## 10. 남은 한계
 
 - 모호한 이름(예: "물새") 해소는 여전히 코드 상수 alias 표에 의존한다. 분류 백본에 synonym/group vocabulary 노드가 생기면 그쪽으로 옮겨야 한다.
-- Jina 호환 어댑터와 별도 문헌 검색 CLI는 §12에서 추가했고, 이후 실제 Jina 문서·검색어 임베딩을 확인했다. HermesAgent 생성과 외부 source adapter는 아직 없다.
+- Jina 호환 어댑터와 별도 문헌 검색 CLI는 §12에서 추가했고, 이후 실제 Jina 문서·검색어 임베딩을 확인했다. GBIF 관찰 수집은 n8n, 구조화 조회는 §14에서 연결했지만 HermesAgent 생성과 실제 문헌 source adapter는 아직 없다.
 - License 판정은 fixture의 `license_policy_status`/tri-state 플래그를 그대로 신뢰한다(단, §2처럼 그래프 투영과 조회 양쪽에서 fail-closed로 재확인은 한다). 실제 라이선스 문구를 SPDX ID로 정규화하는 절차는 아직 없다(§11의 "다음 운영 단계 입력" 항목).
 - reconciliation은 이번 fixture 규모(노드 수백 개)에서는 매 적재마다 라벨별 전체 스캔으로 충분하지만, 노드가 크게 늘어나면(운영 규모) `ingestion_run_id` 기반 증분 정리나 인덱스 보강이 필요할 수 있다.
 
@@ -200,7 +241,10 @@ CI의 `.github/workflows/ci.yml`에 별도 Ubuntu `neo4j` job이 구현돼 있�
 - 문헌별 실제 full text, Chunk, embedding 허용 상태(정책 *엔진*은 이제 준비됐다 — §2)
 - HermesAgent와 Jina API의 endpoint, 인증, 구조화 출력, token usage, embedding dimension/task/normalization 계약
 
-운영 소스가 확정되면 fixture 전용 repository를 source adapter, Neo4j retrieval(이제 `Neo4jGraphRepository`로 준비되고 실 서버에서 검증됨), Jina embedding, HermesAgent structured generation으로 교체한다. API의 provenance와 citation validation 계약은 유지한다.
+운영 문헌 소스가 확정되면 fixture 전용 문헌 repository를 source adapter와 운영
+Neo4j retrieval로 교체하고 Jina embedding, HermesAgent structured generation을
+연결한다. GBIF 관찰은 §14의 별도 운영 repository에서 읽는다. API의 provenance와
+citation validation 계약은 유지한다.
 
 ## 12. 하이브리드 검색 배치 완료
 
@@ -230,3 +274,26 @@ GPT-5.6 Luna가 Jina 호환 HTTP 어댑터를, Claude가 Neo4j 전문/벡터 검
 ## 13. 한국어 검색 baseline
 
 `data/eval/v1/search-questions.jsonl`에 4개 relevance와 1개 정책 제외 질문을 추가했다. `evaluate-search-neo4j --mode all --limit 3`는 fulltext, vector, hybrid(RRF)를 개별 실행해 recall@k, MRR, 평균/p95 지연시간과 정책 제외 여부를 JSON으로 반환한다. 실제 fixture baseline은 fulltext recall@3 `0.75`, vector/hybrid `1.00`, 전 모드 `policy_safe=true`였다. 4개 허용 문헌 Chunk로는 운영 한국어 검색 품질을 판정할 수 없으므로, 승인된 실제 corpus 이후 질문 수와 난이도를 확대해야 한다.
+
+## 14. 운영 GBIF 관찰 API
+
+n8n workflow가 적재한 비-fixture 그래프를 읽는
+`Neo4jOperationalObservationRepository`와 `GET /v1/observations`를 추가했다.
+GBIF taxon key, 학명·원본 일반명, 장소, 관찰일 범위, limit/offset을 모두
+고정 Cypher와 bound parameter로 처리한다.
+
+- `Observation -[:IDENTIFIED_AS]-> ExternalTaxonConcept:BirdTaxon` 경로를 조회한다.
+- `SourceRecord → SourceDataset → License`가 완전하고 dataset/provider와 양쪽
+  정책 상태가 허용된 관찰만 노출한다.
+- 각 결과에 EvidenceUnit, GBIF 원본 URL, dataset URL, license URI와 재배포가
+  허용된 media metadata를 반환한다.
+- `sensitivity = generalized`인 관찰은 좌표와 불확실성 값을 응답에서 숨긴다.
+- `/v1/answers`와 문헌 `/v1/search`는 아직 fixture 기반이며 운영 관찰 API와
+  자동으로 결합되지 않는다.
+- DB 없는 기본 테스트에서 query parameter binding, fail-closed 라이선스,
+  좌표 비공개와 HTTP 계약을 검증한다.
+- 실제 `dove-graph` Neo4j 2026.07.1에서 fixture 상태와 운영 Cypher를 검증했다.
+  운영 관찰 19건과 허용 media 11건을 읽었고 19건 모두 `generalized`라 좌표를
+  숨겼다. TestClient를 통한 HTTP 응답도 status 200, `mode: operational`,
+  `fixture_only: false`를 확인했다. 쓰기를 수행하는 opt-in 통합 suite는 운영 DB
+  보호를 위해 실행하지 않았다.

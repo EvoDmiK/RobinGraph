@@ -12,7 +12,9 @@ license = { text = "Proprietary" }
 authors = [{ name = "RobinGraph" }]
 dependencies = [
   "fastapi>=0.115,<1",
+  "langchain-core>=1,<2",
   "neo4j>=6,<7",
+  "psycopg[binary]>=3.2,<4",
   "uvicorn[standard]>=0.30,<1",
 ]
 
@@ -26,6 +28,15 @@ robingraph = "robingraph.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+robingraph = [
+  "api/static/*.html",
+  "api/static/*.js",
+  "api/static/*.css",
+  "ingest/migrations/*.sql",
+  "retrieval/*.json",
+]
 
 [tool.unittest]
 start-directory = "tests"

@@ -1,28 +1,185 @@
 from __future__ import annotations
 
+import os
+import re
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from robingraph.api.app import SearchBackendUnavailableError, create_app, create_neo4j_search_handler
+from robingraph.api.app import (
+    OperationalBackendUnavailableError,
+    SearchBackendUnavailableError,
+    TaxonomyLineageBackendUnavailableError,
+    create_app,
+    create_neo4j_korean_lineage_handler,
+    create_neo4j_lineage_handler,
+    create_neo4j_observation_handler,
+    create_neo4j_search_handler,
+)
 from robingraph.embeddings import EmbeddingConfigurationError, EmbeddingHTTPError
 from robingraph.fixture import load_fixture
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.retrieval.fixture_repository import FixtureRepository
 from robingraph.retrieval.hybrid import HybridResult, HybridSearchOutcome
+from robingraph.retrieval.operational import (
+    OperationalCitation,
+    OperationalMedia,
+    OperationalObservation,
+    OperationalObservationQuery,
+    OperationalPlace,
+    OperationalTaxon,
+)
 from robingraph.retrieval.repository import SourceCitation
+from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
+
+
+class MockedNeo4jRepository(FixtureRepository):
+    """Fixture records with the active-mode shape of the Neo4j repository."""
+
+    mode = "neo4j"
 
 
 class ApiTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = TestClient(create_app(FixtureRepository(load_fixture())))
+        cls.static_directory = TemporaryDirectory()
+        cls.static_root = Path(cls.static_directory.name)
+        (cls.static_root / "index.html").write_text(
+            "<!doctype html><html lang=\"ko\"><body>RobinGraph 채팅</body></html>", encoding="utf-8"
+        )
+        (cls.static_root / "chat.js").write_text("console.log('chat');", encoding="utf-8")
+        (cls.static_root / "styles.css").write_text("body { color: #123; }", encoding="utf-8")
+        cls.client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=cls.static_root))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.static_directory.cleanup()
 
     def test_health_discloses_fixture_mode(self) -> None:
-        response = self.client.get("/health")
+        with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
+            response = self.client.get("/health")
         self.assertEqual(200, response.status_code)
         self.assertEqual("fixture", response.json()["mode"])
+        self.assertEqual("test", response.json()["deployment_target"])
+
+    def test_chat_shell_and_same_origin_assets_are_served(self) -> None:
+        for path in ("/", "/chat"):
+            response = self.client.get(path)
+            self.assertEqual(200, response.status_code)
+            self.assertIn("RobinGraph 채팅", response.text)
+            self.assertIn("text/html", response.headers["content-type"])
+
+        script = self.client.get("/static/chat.js")
+        stylesheet = self.client.get("/static/styles.css")
+        self.assertEqual(200, script.status_code)
+        self.assertEqual(200, stylesheet.status_code)
+        self.assertIn("console.log", script.text)
+        self.assertIn("color", stylesheet.text)
+
+    def test_mocked_neo4j_app_keeps_chat_and_health_routes_available(self) -> None:
+        client = TestClient(
+            create_app(MockedNeo4jRepository(load_fixture()), static_dir=self.static_root)
+        )
+        self.assertEqual("neo4j", client.get("/health").json()["mode"])
+        self.assertEqual(200, client.get("/").status_code)
+        self.assertEqual(200, client.get("/chat").status_code)
+        self.assertEqual(200, client.get("/static/chat.js").status_code)
+
+    def test_asset_urls_change_when_deployed_contents_change(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "index.html").write_text(
+                '<link href="/static/styles.css"><script src="/static/chat.js"></script>'
+            )
+            (root / "styles.css").write_text("body {color:green}")
+            (root / "chat.js").write_text("// old renderer")
+            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            before = client.get("/chat")
+            old_url = re.search(r'src="([^"]+)"', before.text).group(1)
+            self.assertIn("?v=", old_url)
+            self.assertIn("no-cache", before.headers["cache-control"])
+            (root / "chat.js").write_text("// profile renderer")
+            after = client.get("/chat")
+            new_url = re.search(r'src="([^"]+)"', after.text).group(1)
+            self.assertNotEqual(old_url, new_url)
+            script = client.get(new_url)
+            self.assertEqual("// profile renderer", script.text)
+            self.assertIn("must-revalidate", script.headers["cache-control"])
+
+    def test_missing_chat_assets_return_sanitized_service_unavailable(self) -> None:
+        missing_static_root = self.static_root / "missing"
+        client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=missing_static_root))
+        for path in ("/", "/chat", "/static/chat.js"):
+            response = client.get(path)
+            self.assertEqual(503, response.status_code)
+            self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+            self.assertNotIn(str(missing_static_root), response.text)
+
+    def test_partial_chat_asset_bundle_returns_sanitized_service_unavailable(self) -> None:
+        required_assets = {
+            "index.html": "<!doctype html><html lang=\"ko\"><body>RobinGraph 채팅</body></html>",
+            "chat.js": "console.log('chat');",
+            "styles.css": "body { color: #123; }",
+        }
+        for missing_asset in required_assets:
+            with self.subTest(missing_asset=missing_asset), TemporaryDirectory() as directory:
+                static_root = Path(directory)
+                for asset_name, content in required_assets.items():
+                    if asset_name != missing_asset:
+                        (static_root / asset_name).write_text(content, encoding="utf-8")
+
+                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                for path in ("/", "/chat", "/static/chat.js", "/static/styles.css"):
+                    response = client.get(path)
+                    self.assertEqual(503, response.status_code)
+                    self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                    self.assertNotIn(str(static_root), response.text)
+
+    def test_empty_required_chat_assets_fail_closed_while_api_routes_remain_available(self) -> None:
+        required_assets = {
+            "index.html": "<!doctype html><html><body>RobinGraph</body></html>",
+            "chat.js": "console.log('chat');",
+            "styles.css": "body { color: #123; }",
+        }
+        for empty_asset in required_assets:
+            with self.subTest(empty_asset=empty_asset), TemporaryDirectory() as directory:
+                static_root = Path(directory)
+                for asset_name, content in required_assets.items():
+                    (static_root / asset_name).write_text(
+                        "" if asset_name == empty_asset else content,
+                        encoding="utf-8",
+                    )
+
+                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                for path in ("/", "/chat", "/static/index.html", "/static/chat.js", "/static/styles.css"):
+                    response = client.get(path)
+                    self.assertEqual(503, response.status_code)
+                    self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                    self.assertNotIn(str(static_root), response.text)
+                self.assertEqual(200, client.get("/health").status_code)
+                self.assertEqual(
+                    200,
+                    client.post("/v1/answers", json={"question": "fixture 호수에 물새가 있나?"}).status_code,
+                )
+
+    def test_unreadable_required_chat_asset_fails_closed_without_path_leakage(self) -> None:
+        original_open = os.open
+
+        def reject_stylesheet(path: str | Path, flags: int, mode: int = 0o777) -> int:
+            if Path(path).name == "styles.css":
+                raise PermissionError("styles.css must not be disclosed")
+            return original_open(path, flags, mode)
+
+        with patch("robingraph.api.app.os.open", side_effect=reject_stylesheet):
+            for path in ("/", "/chat", "/static/chat.js"):
+                response = self.client.get(path)
+                self.assertEqual(503, response.status_code)
+                self.assertEqual("Chat UI is temporarily unavailable.", response.text)
+                self.assertNotIn(str(self.static_root), response.text)
+        self.assertEqual(200, self.client.get("/health").status_code)
 
     def test_answer_contains_only_allowed_evidence(self) -> None:
         response = self.client.post("/v1/answers", json={"question": "2025년 1월 fixture 호수에서 흰뺨검둥오리가 관찰됐나?"})
@@ -46,6 +203,10 @@ class ApiTest(unittest.TestCase):
     def test_search_is_declared_but_unavailable_in_fixture_mode(self) -> None:
         operation = self.client.get("/openapi.json").json()["paths"]["/v1/search"]["post"]
         self.assertIn("503", operation["responses"])
+        self.assertEqual(
+            "#/components/schemas/DocumentSearchResponse",
+            operation["responses"]["200"]["content"]["application/json"]["schema"]["$ref"],
+        )
         response = self.client.post("/v1/search", json={"question": "물새", "mode": "hybrid", "limit": 5})
         self.assertEqual(503, response.status_code)
 
@@ -95,12 +256,400 @@ class ApiTest(unittest.TestCase):
 
     def test_search_backend_failure_is_503(self) -> None:
         def unavailable(_question: str, _limit: int, _hybrid: bool) -> HybridSearchOutcome:
-            raise SearchBackendUnavailableError("Neo4j search is unavailable")
+            raise SearchBackendUnavailableError("upstream token=not-for-client")
 
         client = TestClient(create_app(FixtureRepository(load_fixture()), search_handler=unavailable))
         response = client.post("/v1/search", json={"question": "물새"})
         self.assertEqual(503, response.status_code)
-        self.assertEqual("Neo4j search is unavailable", response.json()["detail"])
+        self.assertEqual("Document search is temporarily unavailable.", response.json()["detail"])
+        self.assertNotIn("token", response.json()["detail"])
+
+    def test_operational_observations_are_declared_but_unavailable_in_fixture_mode(self) -> None:
+        operation = self.client.get("/openapi.json").json()["paths"]["/v1/observations"]["get"]
+        self.assertIn("503", operation["responses"])
+        response = self.client.get("/v1/observations")
+        self.assertEqual(503, response.status_code)
+
+    def test_operational_observations_pass_filters_and_disclose_provenance(self) -> None:
+        calls: list[OperationalObservationQuery] = []
+        observation = OperationalObservation(
+            observation_id="gbif-observation:123",
+            occurrence_id="123",
+            observed_at="2026-09-07T10:00:00Z",
+            count=2,
+            basis="human_observation",
+            sensitivity="public",
+            latitude=37.5,
+            longitude=127.0,
+            coordinate_uncertainty_m=25.0,
+            taxon=OperationalTaxon(
+                taxon_id="gbif-taxon:2498349",
+                external_key="2498349",
+                scientific_name="Anas zonorhyncha",
+                canonical_name="Anas zonorhyncha",
+                vernacular_name_raw="Eastern Spot-billed Duck",
+                rank="species",
+            ),
+            place=OperationalPlace("gbif-place:KR:Seoul", "Seoul", "KR"),
+            citation=OperationalCitation(
+                evidence_id="gbif-evidence:123",
+                dataset_id="gbif-dataset:dataset-1",
+                dataset_name="GBIF occurrence dataset",
+                source_url="https://api.gbif.org/v1/occurrence/123",
+                dataset_url="https://www.gbif.org/dataset/dataset-1",
+                license_uris=("https://creativecommons.org/licenses/by/4.0/",),
+                retrieved_at="2026-09-08T00:00:00Z",
+                source_updated_at="2026-09-07T12:00:00Z",
+            ),
+            media=(
+                OperationalMedia(
+                    media_id="gbif-media:123",
+                    media_type="stillimage",
+                    format="image/jpeg",
+                    landing_uri="https://example.invalid/media/123",
+                    asset_uri="https://example.invalid/media/123.jpg",
+                    creator="Observer",
+                    publisher="Publisher",
+                    attribution="Observer / CC BY 4.0",
+                    license_uri="https://creativecommons.org/licenses/by/4.0/",
+                ),
+            ),
+        )
+
+        def handler(query: OperationalObservationQuery) -> tuple[OperationalObservation, ...]:
+            calls.append(query)
+            return (observation,)
+
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), observation_handler=handler)
+        )
+        response = client.get(
+            "/v1/observations",
+            params={
+                "taxon_key": "2498349",
+                "scientific_name": "Anas",
+                "place": "Seoul",
+                "observed_from": "2026-09-01",
+                "observed_to": "2026-09-08",
+                "limit": 10,
+                "offset": 5,
+            },
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(
+            OperationalObservationQuery(
+                taxon_key="2498349",
+                scientific_name="Anas",
+                place="Seoul",
+                observed_from="2026-09-01",
+                observed_to="2026-09-08",
+                limit=10,
+                offset=5,
+            ),
+            calls[0],
+        )
+        payload = response.json()
+        self.assertEqual("operational", payload["mode"])
+        self.assertEqual("gbif", payload["data_source"])
+        self.assertFalse(payload["fixture_only"])
+        self.assertEqual("public", payload["results"][0]["coordinate_disclosure"])
+        self.assertEqual(37.5, payload["results"][0]["latitude"])
+        self.assertEqual("gbif-evidence:123", payload["results"][0]["citation"]["evidence_id"])
+        self.assertEqual(
+            ["https://creativecommons.org/licenses/by/4.0/"],
+            payload["results"][0]["citation"]["license_uris"],
+        )
+        self.assertEqual("gbif-media:123", payload["results"][0]["media"][0]["media_id"])
+
+    def test_generalized_observation_coordinates_are_withheld(self) -> None:
+        observation = OperationalObservation(
+            observation_id="gbif-observation:generalized",
+            occurrence_id="generalized",
+            observed_at="2026-09-07",
+            count=None,
+            basis="human_observation",
+            sensitivity="generalized",
+            latitude=None,
+            longitude=None,
+            coordinate_uncertainty_m=None,
+            taxon=OperationalTaxon("gbif-taxon:1", "1", "Bird one", None, None, "species"),
+            place=OperationalPlace("gbif-place:KR:x", "Somewhere", "KR"),
+            citation=OperationalCitation(
+                "gbif-evidence:generalized",
+                "gbif-dataset:x",
+                "GBIF occurrence dataset",
+                "https://api.gbif.org/v1/occurrence/generalized",
+                "https://www.gbif.org/dataset/x",
+                ("https://creativecommons.org/publicdomain/zero/1.0/",),
+                "2026-09-08T00:00:00Z",
+                None,
+            ),
+            media=(),
+        )
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                observation_handler=lambda _query: (observation,),
+            )
+        )
+        payload = client.get("/v1/observations").json()
+        self.assertEqual("withheld", payload["results"][0]["coordinate_disclosure"])
+        self.assertIsNone(payload["results"][0]["latitude"])
+        self.assertIn("generalized", payload["warnings"][0])
+
+    def test_operational_observation_filters_are_validated(self) -> None:
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), observation_handler=lambda _query: ())
+        )
+        self.assertEqual(422, client.get("/v1/observations?limit=101").status_code)
+        self.assertEqual(422, client.get("/v1/observations?offset=-1").status_code)
+        self.assertEqual(422, client.get("/v1/observations?place=%20%20").status_code)
+        self.assertEqual(
+            422,
+            client.get(
+                "/v1/observations?observed_from=2026-09-08&observed_to=2026-09-01"
+            ).status_code,
+        )
+
+    def test_taxonomy_lineage_scientific_name_trims_the_query_and_returns_full_response_contract(self) -> None:
+        calls: list[str] = []
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(
+                LineageTaxon("order:anseriformes", "order", "Anseriformes", None, None),
+                LineageTaxon("family:anatidae", "family", "Anatidae", "Leach, 1820", None),
+                LineageTaxon("genus:anas", "genus", "Anas", "Linnaeus, 1758", None),
+                LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),
+            ),
+            query_name="Anas zonorhyncha",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="scientific_name",
+        )
+
+        def handler(scientific_name: str) -> TaxonomyLineage:
+            calls.append(scientific_name)
+            return lineage
+
+        client = TestClient(create_app(FixtureRepository(load_fixture()), lineage_handler=handler))
+        response = client.get("/v1/taxa/lineage", params={"scientific_name": "  Anas zonorhyncha  "})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(["Anas zonorhyncha"], calls)
+        self.assertEqual(
+            {
+                "query_name": "Anas zonorhyncha",
+                "query_scientific_name": "Anas zonorhyncha",
+                "resolved_query_scientific_name": "Anas zonorhyncha",
+                "matched_by": "scientific_name",
+                "taxonomy_source": "AviList",
+                "taxonomy_release": "2025b",
+                "concept_set_id": "avilist-2025b",
+                "lineage": [
+                    {
+                        "taxon_id": "order:anseriformes",
+                        "rank": "order",
+                        "scientific_name": "Anseriformes",
+                        "authority": None,
+                        "korean_name": None,
+                        "korean_name_status": None,
+                        "korean_name_source_url": None,
+                    },
+                    {
+                        "taxon_id": "family:anatidae",
+                        "rank": "family",
+                        "scientific_name": "Anatidae",
+                        "authority": "Leach, 1820",
+                        "korean_name": None,
+                        "korean_name_status": None,
+                        "korean_name_source_url": None,
+                    },
+                    {
+                        "taxon_id": "genus:anas",
+                        "rank": "genus",
+                        "scientific_name": "Anas",
+                        "authority": "Linnaeus, 1758",
+                        "korean_name": None,
+                        "korean_name_status": None,
+                        "korean_name_source_url": None,
+                    },
+                    {
+                        "taxon_id": "species:anas-zonorhyncha",
+                        "rank": "species",
+                        "scientific_name": "Anas zonorhyncha",
+                        "authority": None,
+                        "korean_name": "흰뺨검둥오리",
+                        "korean_name_status": None,
+                        "korean_name_source_url": None,
+                    },
+                ],
+            },
+            response.json(),
+        )
+
+    def test_taxonomy_lineage_response_defaults_new_fields_when_repository_omits_them(self) -> None:
+        # A legacy `TaxonomyLineage` constructed without the new keyword
+        # fields (as old callers do) must still render a complete response:
+        # `query_name` and `resolved_query_scientific_name` fall back to
+        # `query_scientific_name`, and `matched_by` defaults to
+        # "scientific_name".
+        legacy_lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),),
+        )
+        client = TestClient(
+            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: legacy_lineage)
+        )
+        payload = client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").json()
+        self.assertEqual("Anas zonorhyncha", payload["query_name"])
+        self.assertEqual("Anas zonorhyncha", payload["resolved_query_scientific_name"])
+        self.assertEqual("scientific_name", payload["matched_by"])
+        self.assertIsNone(payload["lineage"][0]["korean_name"])
+
+    def test_taxonomy_lineage_name_param_uses_the_korean_handler_and_reports_matched_by_korean_name(
+        self,
+    ) -> None:
+        calls: list[str] = []
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(
+                LineageTaxon("order:anseriformes", "order", "Anseriformes", None, None),
+                LineageTaxon(
+                    "species:anas-zonorhyncha",
+                    "species",
+                    "Anas zonorhyncha",
+                    None,
+                    "흰뺨검둥오리",
+                    "community-sourced",
+                ),
+            ),
+            query_name="흰뺨검둥오리",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="korean_name",
+        )
+
+        def scientific_handler(_scientific_name: str) -> TaxonomyLineage:
+            raise AssertionError("scientific_name handler must not be invoked for name= queries")
+
+        def korean_handler(name: str) -> TaxonomyLineage:
+            calls.append(name)
+            return lineage
+
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=scientific_handler,
+                korean_lineage_handler=korean_handler,
+            )
+        )
+        response = client.get("/v1/taxa/lineage", params={"name": "  흰뺨검둥오리  "})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(["흰뺨검둥오리"], calls)
+        payload = response.json()
+        self.assertEqual("흰뺨검둥오리", payload["query_name"])
+        self.assertEqual("Anas zonorhyncha", payload["query_scientific_name"])
+        self.assertEqual("Anas zonorhyncha", payload["resolved_query_scientific_name"])
+        self.assertEqual("korean_name", payload["matched_by"])
+        self.assertEqual("흰뺨검둥오리", payload["lineage"][-1]["korean_name"])
+        self.assertEqual("community-sourced", payload["lineage"][-1]["korean_name_status"])
+        self.assertIsNone(payload["lineage"][0]["korean_name_status"])
+
+    def test_taxonomy_lineage_requires_exactly_one_of_scientific_name_or_name(self) -> None:
+        client = TestClient(create_app(FixtureRepository(load_fixture())))
+        self.assertEqual(422, client.get("/v1/taxa/lineage").status_code)
+        self.assertEqual(
+            422,
+            client.get(
+                "/v1/taxa/lineage",
+                params={"scientific_name": "Anas zonorhyncha", "name": "흰뺨검둥오리"},
+            ).status_code,
+        )
+
+    def test_taxonomy_lineage_rejects_blank_and_overlong_queries(self) -> None:
+        client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=lambda _name: None,
+                korean_lineage_handler=lambda _name: None,
+            )
+        )
+        self.assertEqual(422, client.get("/v1/taxa/lineage?scientific_name=%20").status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage", params={"scientific_name": "x" * 201}).status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage?name=%20").status_code)
+        self.assertEqual(422, client.get("/v1/taxa/lineage", params={"name": "x" * 201}).status_code)
+
+    def test_taxonomy_lineage_scientific_name_not_found_and_unavailable_are_distinguished(self) -> None:
+        missing_client = TestClient(
+            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None)
+        )
+        response = missing_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha")
+        self.assertEqual(404, response.status_code)
+        self.assertIn("scientific_name", response.json()["detail"])
+
+        unavailable_client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                lineage_handler=lambda _name: (_ for _ in ()).throw(
+                    TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")
+                ),
+            )
+        )
+        response = unavailable_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha")
+        self.assertEqual(503, response.status_code)
+        self.assertEqual("AviList reference taxonomy is unavailable", response.json()["detail"])
+
+    def test_taxonomy_lineage_name_not_found_and_unavailable_are_distinguished(self) -> None:
+        missing_client = TestClient(
+            create_app(FixtureRepository(load_fixture()), korean_lineage_handler=lambda _name: None)
+        )
+        response = missing_client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"})
+        self.assertEqual(404, response.status_code)
+        self.assertIn("Korean vernacular name", response.json()["detail"])
+
+        unavailable_client = TestClient(
+            create_app(
+                FixtureRepository(load_fixture()),
+                korean_lineage_handler=lambda _name: (_ for _ in ()).throw(
+                    TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")
+                ),
+            )
+        )
+        response = unavailable_client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"})
+        self.assertEqual(503, response.status_code)
+        self.assertEqual("AviList reference taxonomy is unavailable", response.json()["detail"])
+
+    def test_taxonomy_lineage_is_declared_but_unavailable_without_a_neo4j_handler(self) -> None:
+        operation = self.client.get("/openapi.json").json()["paths"]["/v1/taxa/lineage"]["get"]
+        parameters = {value["name"]: value for value in operation["parameters"]}
+        self.assertEqual({"scientific_name", "name"}, parameters.keys())
+        for query_param_name in ("scientific_name", "name"):
+            parameter = parameters[query_param_name]
+            self.assertEqual("query", parameter["in"])
+            string_schema = next(
+                candidate for candidate in parameter["schema"]["anyOf"] if candidate.get("type") == "string"
+            )
+            self.assertEqual(1, string_schema["minLength"])
+            self.assertEqual(200, string_schema["maxLength"])
+        self.assertIn("404", operation["responses"])
+        self.assertIn("422", operation["responses"])
+        self.assertIn("503", operation["responses"])
+        self.assertEqual(
+            503,
+            self.client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").status_code,
+        )
+        self.assertEqual(
+            503,
+            self.client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"}).status_code,
+        )
 
 
 class Neo4jApiSearchHandlerTest(unittest.TestCase):
@@ -122,6 +671,40 @@ class Neo4jApiSearchHandlerTest(unittest.TestCase):
         client.assert_not_called()
         self.assertEqual(("fulltext",), search.call_args.args[1].channels)
         self.assertNotIn("query_embedder", search.call_args.kwargs)
+
+    def test_korean_fulltext_preserves_original_and_adds_english_terms(self) -> None:
+        translated = []
+        handler = create_neo4j_search_handler(
+            self.settings, english_search_terms=lambda q: translated.append(q) or "water birds",
+        )
+        with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+            outcome = handler("물새", 3, False)
+        self.assertEqual(["물새"], translated)
+        self.assertEqual("물새 water birds", search.call_args.args[1].query_text)
+        self.assertEqual(self.outcome.results, outcome.results)
+        self.assertIn("영어 검색어", outcome.warnings[-1])
+
+    def test_translation_failure_uses_original_without_exposing_provider_details(self) -> None:
+        def fail(_q):
+            raise RuntimeError("secret provider details")
+        for translator in [fail, lambda q: "", lambda q: "x" * 301]:
+            with self.subTest(translator=translator):
+                handler = create_neo4j_search_handler(self.settings, english_search_terms=translator)
+                with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+                    outcome = handler("물새", 3, False)
+                self.assertEqual("물새", search.call_args.args[1].query_text)
+                self.assertIn("변환에 실패", outcome.warnings[-1])
+                self.assertNotIn("secret", str(outcome.warnings))
+
+    def test_english_and_hybrid_search_do_not_translate(self) -> None:
+        def forbidden(_q):
+            self.fail("Translation must not be called")
+        handler = create_neo4j_search_handler(self.settings, embedding_client=object(), english_search_terms=forbidden)
+        with patch("robingraph.retrieval.neo4j_hybrid.search", return_value=self.outcome) as search:
+            handler("birds", 3, False)
+            self.assertEqual("birds", search.call_args.args[1].query_text)
+            handler("물새", 3, True)
+            self.assertEqual("물새", search.call_args.args[1].query_text)
 
     def test_hybrid_mode_passes_embedding_client(self) -> None:
         handler = create_neo4j_search_handler(self.settings)
@@ -149,5 +732,106 @@ class Neo4jApiSearchHandlerTest(unittest.TestCase):
         with patch(
             "robingraph.embeddings.JinaEmbeddingClient.from_env",
             side_effect=EmbeddingConfigurationError("missing endpoint"),
-        ), self.assertRaisesRegex(SearchBackendUnavailableError, "missing endpoint"):
+        ), self.assertRaisesRegex(SearchBackendUnavailableError, "temporarily unavailable"):
             handler("물새", 5, True)
+
+
+class Neo4jOperationalHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def search_observations(self, _query: OperationalObservationQuery):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_observation_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            OperationalBackendUnavailableError, "Operational GBIF observation search is unavailable"
+        ) as caught:
+            handler(OperationalObservationQuery())
+        self.assertNotIn("raw graph details", str(caught.exception))
+
+
+class Neo4jLineageHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def lineage_for_scientific_name(self, _scientific_name: str):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_lineage_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            TaxonomyLineageBackendUnavailableError, "AviList reference-taxonomy lineage is unavailable"
+        ) as caught:
+            handler("Anas zonorhyncha")
+        self.assertNotIn("raw graph details", str(caught.exception))
+
+    def test_neo4j_driver_error_is_mapped_to_safe_error(self) -> None:
+        from neo4j.exceptions import ServiceUnavailable
+
+        class BrokenRepository:
+            def lineage_for_scientific_name(self, _scientific_name: str):
+                raise ServiceUnavailable("connection refused")
+
+        handler = create_neo4j_lineage_handler(BrokenRepository())
+        with self.assertRaises(TaxonomyLineageBackendUnavailableError):
+            handler("Anas zonorhyncha")
+
+    def test_repository_success_passes_lineage_through_unchanged(self) -> None:
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),),
+        )
+
+        class Repository:
+            def lineage_for_scientific_name(self, scientific_name: str):
+                return lineage if scientific_name == "Anas zonorhyncha" else None
+
+        handler = create_neo4j_lineage_handler(Repository())
+        self.assertIs(lineage, handler("Anas zonorhyncha"))
+        self.assertIsNone(handler("Not a real bird"))
+
+
+class Neo4jKoreanLineageHandlerTest(unittest.TestCase):
+    def test_repository_failure_is_hidden_behind_safe_error(self) -> None:
+        class BrokenRepository:
+            def lineage_for_korean_name(self, _korean_name: str):
+                raise ValueError("raw graph details")
+
+        handler = create_neo4j_korean_lineage_handler(BrokenRepository())
+        with self.assertRaisesRegex(
+            TaxonomyLineageBackendUnavailableError, "AviList reference-taxonomy lineage is unavailable"
+        ) as caught:
+            handler("흰뺨검둥오리")
+        self.assertNotIn("raw graph details", str(caught.exception))
+
+    def test_neo4j_driver_error_is_mapped_to_safe_error(self) -> None:
+        from neo4j.exceptions import ServiceUnavailable
+
+        class BrokenRepository:
+            def lineage_for_korean_name(self, _korean_name: str):
+                raise ServiceUnavailable("connection refused")
+
+        handler = create_neo4j_korean_lineage_handler(BrokenRepository())
+        with self.assertRaises(TaxonomyLineageBackendUnavailableError):
+            handler("흰뺨검둥오리")
+
+    def test_repository_success_passes_lineage_through_unchanged(self) -> None:
+        lineage = TaxonomyLineage(
+            query_scientific_name="Anas zonorhyncha",
+            taxonomy_source="AviList",
+            taxonomy_release="2025b",
+            concept_set_id="avilist-2025b",
+            items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None, "흰뺨검둥오리"),),
+            query_name="흰뺨검둥오리",
+            resolved_query_scientific_name="Anas zonorhyncha",
+            matched_by="korean_name",
+        )
+
+        class Repository:
+            def lineage_for_korean_name(self, korean_name: str):
+                return lineage if korean_name == "흰뺨검둥오리" else None
+
+        handler = create_neo4j_korean_lineage_handler(Repository())
+        self.assertIs(lineage, handler("흰뺨검둥오리"))
+        self.assertIsNone(handler("존재하지않는이름"))
