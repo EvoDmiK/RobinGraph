@@ -772,6 +772,24 @@ assert.ok(homonyms.every(row => row.korean_name === '동명이인'));
 """
         subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
 
+    def test_reviewed_spot_billed_name_resolves_only_the_supported_species(self) -> None:
+        from scripts.generate_n8n_korean_vernacular_ingest import CLASSIFY_WIKIDATA_ROWS_JS
+
+        script = CLASSIFY_WIKIDATA_ROWS_JS + r"""
+const assert = require('node:assert/strict');
+const row = (qid, science, name) => ({item: {value: 'http://www.wikidata.org/entity/' + qid}, taxonName: {value: science}, itemLabel: {value: name}});
+const eastern = row('Q1268169', 'Anas zonorhyncha', '흰뺨검둥오리');
+const indian = row('Q839542', 'Anas poecilorhyncha', '흰뺨검둥오리');
+const result = classifyWikidataRows([eastern, indian]);
+assert.deepEqual(result.clean, [{taxon_name: 'Anas zonorhyncha', korean_name: '흰뺨검둥오리', qids: ['Q1268169']}]);
+assert.equal(result.conflicted[0].reason_code, 'reviewed_misapplied_korean_label');
+// A different source QID is not covered by this review: ambiguity still fails closed.
+assert.equal(classifyWikidataRows([eastern, row('Qother', 'Anas poecilorhyncha', '흰뺨검둥오리')]).clean.length, 0);
+// An upstream corrected name passes through unchanged.
+assert.equal(classifyWikidataRows([row('Q839542', 'Anas poecilorhyncha', '수정된이름')]).clean[0].korean_name, '수정된이름');
+"""
+        subprocess.run(["node", "-e", script], check=True, capture_output=True, text=True)
+
     def test_korean_vernacular_classify_matches_reports_missing_and_ambiguous_taxa(self) -> None:
         from scripts.generate_n8n_korean_vernacular_ingest import CLASSIFY_MATCHES_JS
 
@@ -962,6 +980,12 @@ assert.doesNotMatch(fetchFailed.failure_reason, /No Korean vernacular candidates
             "const runB = run({statusCode: 200, data: wellFormedBody}, hash);\n"
             "assert.equal(runA.wikidata_dataset_id, runB.wikidata_dataset_id);\n"
             "assert.equal(runA.source_release, runB.source_release);\n"
+            "const reviewedBody = JSON.stringify({head:{vars:['item','taxonName','itemLabel']},results:{bindings:[{item:{value:'http://www.wikidata.org/entity/Q839542'},taxonName:{value:'Anas poecilorhyncha'},itemLabel:{value:'흰뺨검둥오리'}}]}});\n"
+            "const reviewed = run({statusCode:200,data:reviewedBody}, hash);\n"
+            "assert.equal(reviewed.source_sha256, hash);\n"
+            "assert.match(reviewed.wikidata_dataset_id, /:review-[a-f0-9]{12}$/);\n"
+            "assert.notEqual(reviewed.wikidata_dataset_id, 'wikidata-dataset:taxon-labels:sha256-' + hash);\n"
+            "assert.equal(reviewed.wikidata_dataset_id, run({statusCode:200,data:reviewedBody}, hash).wikidata_dataset_id);\n"
             "assert.ok(runA.wikidata_dataset_id.startsWith('wikidata-dataset:taxon-labels:sha256-'));\n"
             "const runDifferentContent = run({statusCode: 200, data: differentBody}, hash2);\n"
             "assert.notEqual(runDifferentContent.wikidata_dataset_id, runA.wikidata_dataset_id);\n"
