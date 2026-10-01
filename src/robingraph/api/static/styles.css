@@ -1037,3 +1037,4 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-comparison td p { margin: .3rem 0; }
 .species-comparison details { font-size: .75rem; }
 .species-comparison caption { text-align: left; margin-bottom: .5rem; }
+.species-related h3, .species-comparison h3 { color: var(--color-text); }
