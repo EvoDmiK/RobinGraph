@@ -1671,3 +1671,24 @@ test("related explorer can retry outages and refuses stale relationship response
   assert.equal(calls, 2);
   assert.equal(collectAllNodes(explorer).filter(n => n.tagName === "h3").length, 0);
 });
+
+test("related exploration stays in the explanation and comparison, outside every species card", async () => {
+  const payload = fakeProfilePayload();
+  payload.result.profile.sections = [{title:"기본 정보",items:[{text:"청둥오리"}]}];
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? {mode:"fixture"} : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById["history"])[1];
+  const explanation = collectAllNodes(answer).find(n => n.className === "species-answer");
+  assert.equal(explanation.children.filter(n => n.className === "species-related").length, 1);
+  const cards = collectAllNodes(answer).filter(n => n.className.startsWith("species-card risk-"));
+  assert.equal(cards.length, 1);
+  assert.equal(collectAllNodes(cards[0]).some(n => n.className === "species-related"), false);
+  const comparison = chat.buildSpeciesComparison({createElement:createFakeElement}, payload.result.profile, payload.result.profile);
+  assert.equal(comparison.children.filter(n => n.className === "species-related").length, 1);
+  for (const card of collectAllNodes(comparison).filter(n => n.className.startsWith("species-card risk-"))) {
+    assert.equal(collectAllNodes(card).some(n => n.className === "species-related"), false);
+  }
+});
