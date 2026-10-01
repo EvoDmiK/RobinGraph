@@ -234,6 +234,18 @@ class TaxonomyChatFilters(_ChatModel):
         return self
 
 
+class ProfileChatFilters(_ChatModel):
+    kind: Literal["profile"] = "profile"
+    name: str | None = Field(default=None, max_length=200)
+
+    @field_validator("name")
+    @classmethod
+    def nonblank_name(cls, value: str | None) -> str | None:
+        if value is not None and not value.strip():
+            raise ValueError("profile name must not be blank")
+        return value
+
+
 class ObservationChatFilters(_ChatModel):
     kind: Literal["observations"] = "observations"
     taxon_key: str | None = Field(default=None, max_length=50)
@@ -259,14 +271,14 @@ class EvidenceChatFilters(_ChatModel):
 
 
 ChatFilters = Annotated[
-    TaxonomyChatFilters | ObservationChatFilters | EvidenceChatFilters,
+    TaxonomyChatFilters | ProfileChatFilters | ObservationChatFilters | EvidenceChatFilters,
     Field(discriminator="kind"),
 ]
 
 
 class ChatRequest(_ChatModel):
     question: str = Field(min_length=1, max_length=2_000)
-    intent: Literal["auto", "taxonomy", "observations", "evidence"] = "auto"
+    intent: Literal["auto", "taxonomy", "profile", "observations", "evidence"] = "auto"
     filters: ChatFilters | None = None
 
     @field_validator("question")
@@ -289,6 +301,11 @@ class ChatTaxonomyResult(_ChatModel):
     lineage: TaxonomyLineageResponse | None
 
 
+class ChatSpeciesResult(_ChatModel):
+    kind: Literal["profile"] = "profile"
+    profile: dict | None
+
+
 class ChatObservationsResult(_ChatModel):
     kind: Literal["observations"] = "observations"
     results: list[OperationalObservationResponse]
@@ -306,14 +323,14 @@ class ChatClarifyResult(_ChatModel):
 
 
 ChatResult = Annotated[
-    ChatTaxonomyResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult,
+    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult,
     Field(discriminator="kind"),
 ]
 
 
 class ChatResponse(_ChatModel):
     selected_intent: ChatIntent | None
-    route_method: Literal["semantic", "explicit"]
+    route_method: Literal["semantic", "explicit", "deterministic"]
     disposition: Literal["answer", "abstain", "clarify"]
     answer_text: str
     warnings: list[str]
@@ -480,6 +497,24 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
 
 _KOREAN_RANKS = {"order": "목", "family": "과", "genus": "속", "species": "종", "subspecies": "아종"}
 _RANK_QUESTION = re.compile(r"(?:무슨|어느|어떤)\s*(아종|목|과|속|종)(?=에|이|인|야|입|\s|[?？]|$)")
+_SPECIES_NAME = r"(?P<name>[가-힣]+?|[A-Za-z][a-z]+\s+[a-z]+)"
+_TAXONOMY_QUESTION = re.compile(
+    rf"^{_SPECIES_NAME}(?:의|은|는|이|가)?\s+(?:분류\s*체계|분류|계통)(?:에\s*대해)?\s*(?:알려줘|알려주세요|설명해줘|설명해주세요|알고\s*싶어(?:요)?)[.!?？]*$"
+)
+_PROFILE_QUESTION = re.compile(
+    rf"^{_SPECIES_NAME}(?:에\s*대해|에\s*관해)\s*(?:알고\s*싶어(?:요)?|알려줘|알려주세요|설명해줘|설명해주세요)[.!?？]*$"
+)
+_AUTO_RANK_QUESTION = re.compile(
+    rf"^{_SPECIES_NAME}(?:은|는|이|가)\s+(?:무슨|어느|어떤)\s*(?:아종|목|과|속|종)(?:에\s*속해|이야|인가요|입니까|인가|입니까)?[.!?？]*$"
+)
+
+
+def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"], str] | None:
+    for pattern, intent in ((_TAXONOMY_QUESTION, "taxonomy"), (_AUTO_RANK_QUESTION, "taxonomy"), (_PROFILE_QUESTION, "profile")):
+        match = pattern.fullmatch(question)
+        if match:
+            return intent, match.group("name")
+    return None
 
 
 def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool]:
@@ -747,17 +782,18 @@ def create_app(
         or provider outage cannot affect established operational workflows.
         """
 
+        recognized = _species_chat_question(request.question) if request.intent == "auto" else None
         if request.intent == "auto":
-            selected = semantic_router.classify(request.question) if semantic_router is not None else None
-            method: Literal["semantic", "explicit"] = "semantic"
+            selected = recognized[0] if recognized else (semantic_router.classify(request.question) if semantic_router is not None else None)
+            method: Literal["semantic", "explicit", "deterministic"] = "deterministic" if recognized else "semantic"
             if selected is None:
                 return ChatResponse(
                     selected_intent=None,
                     route_method=method,
                     disposition="clarify",
-                    answer_text="질문의 종류를 판단하지 못했습니다. 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+                    answer_text="질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
                     warnings=["자동 분류가 확실하지 않아 조회하지 않았습니다."],
-                    result=ChatClarifyResult(prompt="분류, 관찰, 근거 중 하나를 선택해 주세요."),
+                    result=ChatClarifyResult(prompt="종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."),
                 )
         else:
             selected = request.intent
@@ -773,14 +809,51 @@ def create_app(
                 result=ChatClarifyResult(prompt="선택된 조회 유형에 맞는 필터를 사용해 주세요."),
             )
 
+        if selected == "profile":
+            filters = request.filters if isinstance(request.filters, ProfileChatFilters) else None
+            name = (filters.name if filters and filters.name is not None else recognized[1] if recognized else request.question).strip()
+            if species_profile_handler is None:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="종 정보를 현재 조회할 수 없습니다.",
+                    warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
+                    result=ChatSpeciesResult(profile=None),
+                )
+            try:
+                profile = species_profile_handler(name)
+            except SpeciesNotFoundError:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="입력한 이름의 종 정보를 확인하지 못했습니다.",
+                    warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
+                    result=ChatSpeciesResult(profile=None),
+                )
+            except Exception:
+                return ChatResponse(
+                    selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="종 정보를 현재 조회할 수 없습니다.",
+                    warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
+                    result=ChatSpeciesResult(profile=None),
+                )
+            taxon = profile.get("taxon", {})
+            display_name = taxon.get("korean_name") or taxon.get("scientific_name") or name
+            return ChatResponse(
+                selected_intent=selected, route_method=method, disposition="answer",
+                answer_text=f"{display_name}의 종 정보와 출처를 확인했습니다.",
+                warnings=profile.get("warnings", []),
+                result=ChatSpeciesResult(profile=profile),
+            )
+
         if selected == "taxonomy":
             filters = request.filters if isinstance(request.filters, TaxonomyChatFilters) else None
             query = (
-                (filters.scientific_name or filters.name or request.question)
+                (filters.scientific_name or filters.name or (recognized[1] if recognized else request.question))
                 if filters
-                else request.question
+                else (recognized[1] if recognized else request.question)
             )
-            if not filters or not (filters.scientific_name or filters.name):
+            if recognized and (not filters or not (filters.scientific_name or filters.name)):
+                handler = korean_lineage_handler if any("\uac00" <= char <= "\ud7a3" for char in query) else lineage_handler
+            elif not filters or not (filters.scientific_name or filters.name):
                 # Only strip a recognizable rank question; exact-name lookups stay unchanged.
                 prefix = re.match(r"^(.+?)(?:은|는|이|가)\s+(?:무슨|어느|어떤)\s*(?:아종|목|과|속|종)", query)
                 if prefix:

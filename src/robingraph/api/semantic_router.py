@@ -15,7 +15,7 @@ from typing import Literal, Sequence
 from ..embeddings import EmbeddingClient
 
 
-ChatIntent = Literal["taxonomy", "observations", "evidence"]
+ChatIntent = Literal["taxonomy", "profile", "observations", "evidence"]
 
 
 # Keep these short: they are capability descriptions, not training data.  The

@@ -21,6 +21,7 @@ from robingraph.retrieval.fixture_repository import FixtureRepository
 from robingraph.retrieval.hybrid import HybridResult, HybridSearchOutcome
 from robingraph.retrieval.operational import OperationalCitation, OperationalObservation, OperationalPlace, OperationalTaxon
 from robingraph.retrieval.repository import SourceCitation
+from robingraph.retrieval.species_profile import SpeciesNotFoundError
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
 
@@ -192,6 +193,74 @@ class SemanticRouterTest(unittest.TestCase):
 class SemanticChatApiTest(unittest.TestCase):
     def make_client(self, **kwargs) -> TestClient:
         return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
+
+    def test_natural_species_questions_use_exact_names_without_embedding_router(self) -> None:
+        profile = {
+            "taxon": {"scientific_name": "Anas platyrhynchos", "korean_name": "청둥오리"},
+            "lineage": {"items": []}, "traits": [], "images": [], "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+        }
+        names = []
+        router = Mock()
+        router.classify.side_effect = AssertionError("recognized question used embeddings")
+        client = self.make_client(
+            semantic_router=router,
+            species_profile_handler=lambda name: (names.append(name), profile)[1],
+            korean_lineage_handler=lambda name: (names.append(name), sample_lineage())[1],
+            lineage_handler=lambda name: (names.append(name), sample_lineage())[1],
+        )
+        shown = client.post("/v1/chat", json={"question": "청둥오리에 대해 알고 싶어."}).json()
+        self.assertEqual("profile", shown["selected_intent"])
+        self.assertEqual("deterministic", shown["route_method"])
+        self.assertEqual("answer", shown["disposition"])
+        self.assertEqual(profile, shown["result"]["profile"])
+        self.assertEqual(client.get("/v1/taxa/profile", params={"name": "청둥오리"}).json(), shown["result"]["profile"])
+        classified = client.post("/v1/chat", json={"question": "청둥오리 분류체계에 대해 알려줘."}).json()
+        self.assertEqual("taxonomy", classified["selected_intent"])
+        self.assertEqual("answer", classified["disposition"])
+        self.assertEqual("AviList", classified["result"]["lineage"]["taxonomy_source"])
+        latin = client.post("/v1/chat", json={"question": "Anas platyrhynchos에 대해 알려줘?"}).json()
+        self.assertEqual("profile", latin["result"]["kind"])
+        possessive = client.post("/v1/chat", json={"question": "청둥오리의 분류체계에 대해 알려줘."}).json()
+        self.assertEqual("taxonomy", possessive["selected_intent"])
+        rank = client.post("/v1/chat", json={"question": "청둥오리는 무슨 과에 속해?"}).json()
+        self.assertEqual("taxonomy", rank["selected_intent"])
+        lowercase = client.post("/v1/chat", json={"question": "anas platyrhynchos 분류체계에 대해 알려줘."}).json()
+        self.assertEqual("taxonomy", lowercase["selected_intent"])
+        self.assertEqual(
+            ["청둥오리", "청둥오리", "청둥오리", "Anas platyrhynchos", "청둥오리", "청둥오리", "anas platyrhynchos"],
+            names,
+        )
+        router.classify.assert_not_called()
+
+    def test_profile_abstains_safely_and_rejects_mismatched_filters(self) -> None:
+        calls = []
+        def unavailable(name):
+            calls.append(name)
+            raise SpeciesNotFoundError("secret name")
+        client = self.make_client(species_profile_handler=unavailable)
+        missing = client.post("/v1/chat", json={"question": "없는새에 대해 알고 싶어."}).json()
+        self.assertEqual("abstain", missing["disposition"])
+        self.assertIsNone(missing["result"]["profile"])
+        self.assertNotIn("secret", str(missing))
+        self.assertEqual(["없는새"], calls)
+        mismatch = client.post("/v1/chat", json={
+            "question": "청둥오리에 대해 알고 싶어.", "filters": {"kind": "taxonomy", "name": "청둥오리"},
+        }).json()
+        self.assertEqual("clarify", mismatch["disposition"])
+        self.assertEqual(["없는새"], calls)
+        self.assertEqual(422, client.post("/v1/chat", json={
+            "question": "x", "intent": "taxonomy", "filters": {"kind": "profile", "name": "청둥오리"},
+        }).status_code)
+        self.assertEqual(422, client.post("/v1/chat", json={
+            "question": "x", "intent": "profile", "filters": {"kind": "profile", "name": " "},
+        }).status_code)
+        broken = self.make_client(species_profile_handler=lambda _name: (_ for _ in ()).throw(RuntimeError("secret provider")))
+        failed = broken.post("/v1/chat", json={
+            "question": "새 정보", "intent": "profile", "filters": {"kind": "profile", "name": "청둥오리"},
+        }).json()
+        self.assertEqual("abstain", failed["disposition"])
+        self.assertNotIn("secret", str(failed))
 
     def test_rank_question_answers_from_lineage_and_resolves_only_the_name(self) -> None:
         queries = []
@@ -452,7 +521,7 @@ class SemanticChatApiTest(unittest.TestCase):
         self.assertIn("route_method", response_schema["required"])
         result_schema = response_schema["properties"]["result"]
         self.assertEqual("kind", result_schema["discriminator"]["propertyName"])
-        self.assertEqual(4, len(result_schema["oneOf"]))
+        self.assertEqual(5, len(result_schema["oneOf"]))
 
 
 class EvidenceAnswerGeneratorTest(unittest.TestCase):
