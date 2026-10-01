@@ -15,7 +15,7 @@ SOURCE = {'source_name':'AviList', 'source_url':'https://www.avilist.org/snapsho
 
 def peer(index):
     return {'taxon':{'taxon_id':f'p{index}', 'rank':'species',
-                     'scientific_name':f'Anas species{index}', 'authority':None}, **SOURCE}
+                     'scientific_name':f'Anas species{index}', 'authority':None, 'korean_name':f'한국어새{index}'}, **SOURCE}
 
 
 class RelatedSpeciesTest(unittest.TestCase):
@@ -43,6 +43,11 @@ class RelatedSpeciesTest(unittest.TestCase):
         self.assertIn('all(node IN nodes(path)', RELATED_QUERY)
         self.assertIn('node:Taxon AND node:BirdTaxon', RELATED_QUERY)
         self.assertIn('peer.id <> $target_id', RELATED_QUERY)
+        self.assertIn("name.name =~ '.*[가-힣].*'", RELATED_QUERY)
+        self.assertLess(RELATED_QUERY.index('name.dataset_id=$korean_dataset_id'), RELATED_QUERY.index('LIMIT 13'))
+        self.assertNotIn('OPTIONAL MATCH', RELATED_QUERY)
+        self.assertEqual('korean_names_only', result['name_filter'])
+        self.assertTrue(all(item['korean_name'] for item in genus['items']))
 
     def test_missing_species_and_revoked_or_invalid_provenance_fail_closed(self):
         repo = Mock()

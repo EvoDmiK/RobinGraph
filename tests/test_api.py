@@ -456,6 +456,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name": None,
                         "korean_name_status": None,
                         "korean_name_source_url": None,
+                        "english_name": None,
                     },
                     {
                         "taxon_id": "family:anatidae",
@@ -465,6 +466,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name": None,
                         "korean_name_status": None,
                         "korean_name_source_url": None,
+                        "english_name": None,
                     },
                     {
                         "taxon_id": "genus:anas",
@@ -474,6 +476,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name": None,
                         "korean_name_status": None,
                         "korean_name_source_url": None,
+                        "english_name": None,
                     },
                     {
                         "taxon_id": "species:anas-zonorhyncha",
@@ -483,6 +486,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name": "흰뺨검둥오리",
                         "korean_name_status": None,
                         "korean_name_source_url": None,
+                        "english_name": None,
                     },
                 ],
             },
