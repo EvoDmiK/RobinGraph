@@ -9,6 +9,7 @@ have to guess.
 from __future__ import annotations
 
 from datetime import date
+from hashlib import sha256
 import logging
 import os
 import re
@@ -381,6 +382,18 @@ def _read_chat_asset_bundle(asset_root: Path, asset_names: tuple[str, ...] = _RE
     return assets
 
 
+def _chat_asset_response(assets: dict[str, bytes], name: str) -> Response:
+    content = assets[name]
+    if name.endswith(".html"):
+        for asset_name, asset_content in assets.items():
+            if asset_name.endswith((".js", ".css")):
+                url = f"/static/{asset_name}".encode()
+                version = sha256(asset_content).hexdigest()[:16].encode()
+                content = content.replace(url, url + b"?v=" + version)
+    return Response(content, media_type=_CHAT_ASSET_MEDIA_TYPES[name],
+                    headers={"Cache-Control": "no-cache, must-revalidate"})
+
+
 def _response(answer: Answer) -> AnswerResponse:
     return AnswerResponse(
         answer_id=answer.answer_id,
@@ -725,7 +738,7 @@ def create_app(
         assets = _read_chat_asset_bundle(asset_root, ("birds.html", "birds.js", "styles.css"))
         if assets is None:
             return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
-        return Response(assets["birds.html"], media_type=_CHAT_ASSET_MEDIA_TYPES["birds.html"])
+        return _chat_asset_response(assets, "birds.html")
 
     def unavailable_chat_ui() -> PlainTextResponse:
         return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
@@ -734,7 +747,7 @@ def create_app(
         assets = _read_chat_asset_bundle(asset_root)
         if assets is None:
             return unavailable_chat_ui()
-        return Response(content=assets["index.html"], media_type=_CHAT_ASSET_MEDIA_TYPES["index.html"])
+        return _chat_asset_response(assets, "index.html")
 
     @app.get("/static/{asset_path:path}", include_in_schema=False, response_model=None)
     def static_asset(asset_path: str) -> Response | PlainTextResponse:
@@ -746,7 +759,7 @@ def create_app(
             return unavailable_chat_ui()
         if asset_path not in assets:
             raise HTTPException(status_code=404, detail="Not Found")
-        return Response(content=assets[asset_path], media_type=_CHAT_ASSET_MEDIA_TYPES[asset_path])
+        return _chat_asset_response(assets, asset_path)
 
     @app.get("/", include_in_schema=False, response_model=None)
     def root() -> Response | PlainTextResponse:
