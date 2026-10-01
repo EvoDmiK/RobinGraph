@@ -1367,6 +1367,41 @@ test("card front contains compact facts; photo attribution and full trait source
   assert.equal(back.hidden, true);
 });
 
+test("card flips at the edge, ignores repeated clicks, and cancels stale transitions on reset", () => {
+  const doc = { createElement: createFakeElement, defaultView: { matchMedia: () => ({matches:false}) } };
+  const card = chat.buildSpeciesCard(doc, fakeProfilePayload().result.profile);
+  const front = card.children.find(node => node.className === "species-card-front");
+  const back = card.children.find(node => node.className === "species-card-back");
+  const flip = collectAllNodes(card).find(node => node.className === "species-card-flip");
+  const animations = [];
+  card.animate = (frames, options) => {
+    const animation = {frames, options, cancelled:false, cancel() {this.cancelled=true;}};
+    animations.push(animation); return animation;
+  };
+  flip.dispatch("click");
+  assert.equal(back.hidden, true, "keep front visible until the card reaches its edge");
+  flip.dispatch("click");
+  assert.equal(animations.length, 1);
+  animations[0].onfinish();
+  assert.equal(back.hidden, false);
+  assert.equal(front.hidden, true);
+  assert.equal(animations[0].cancelled, true);
+  assert.match(animations[1].frames[0].transform, /rotateY\(-90deg\)/);
+  animations[1].onfinish();
+  assert.equal(flip.disabled, false);
+  flip.dispatch("click");
+  const stale = animations[2].onfinish;
+  card.showFront();
+  stale();
+  assert.equal(animations.length, 3, "a cancelled transition cannot resume after reopening");
+  assert.equal(front.hidden, false);
+  assert.equal(flip.disabled, false);
+  doc.defaultView.matchMedia = () => ({matches:true});
+  flip.dispatch("click");
+  assert.equal(animations.length, 3, "reduced motion switches immediately");
+  assert.equal(back.hidden, false);
+});
+
 test("consecutive questions send and render without clearing; clearing then restarting remains valid", async () => {
   const dom = createFakeDom((url) => Promise.resolve(jsonResponse(
     url === "/health" ? {mode:"fixture"} : fakeProfilePayload()
