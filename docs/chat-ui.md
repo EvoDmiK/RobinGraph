@@ -1,4 +1,4 @@
-# RobinGraph 채팅 테스트 UI
+# RobinGraph 통합 대화 화면
 
 `src/robingraph/api/static/`에 있는 정적 자산(`index.html`, `styles.css`,
 `chat.js`)은 사람이 수동으로 `GET /health`와 `POST /v1/chat`를 눈으로
@@ -10,13 +10,15 @@
 
 `POST /v1/chat`은 기존 API를 대체하지 않는 추가 경로다. `question`은 공백이
 아닌 최대 2,000자이며 `intent`는 `auto`, `taxonomy`, `observations`,
-`evidence` 중 하나다. 명시 모드는 임베딩 없이 기존의 계통·관찰·문헌 조회
-핸들러를 바로 사용한다. `auto`만 Jina 임베딩의 `retrieval.passage` 능력
+`profile`, `evidence` 중 하나다. 명시 모드는 임베딩 없이 기존의 계통·관찰·문헌 조회
+핸들러를 바로 사용한다. 알아볼 수 있는 종 정보·분류 질문은 국명 또는 학명과 조회 유형을 먼저 추출한다.
+이 경우 임베딩이 없어도 동작하며 `route_method`는 `deterministic`이다.
+나머지 `auto` 질문은 Jina 임베딩의 `retrieval.passage` 능력
 프로토타입과 `retrieval.query` 질문 벡터를 비교한다. 임베딩 설정/제공자/형식,
 신뢰도 또는 승자 차이가 불확실하면 조회하지 않고 안전한 한국어 추가 확인
 응답을 반환한다. 유사도는 검색 경로 선택 신호일 뿐 사실을 생성하지 않는다.
 
-응답의 `result`는 `kind`가 `taxonomy`, `observations`, `evidence`, `clarify`
+응답의 `result`는 `kind`가 `profile`, `taxonomy`, `observations`, `evidence`, `clarify`
 중 하나인 판별 유니온이다. taxonomy에는 AviList 출처·릴리스·개념집합과 순서가
 보장된 계통을, observations에는 기존 공개/비공개 좌표 및 출처 매퍼 결과를,
 evidence에는 원문 발췌·인용·채널·hybrid fallback 경고를 담는다. 관찰 필터는
@@ -226,7 +228,17 @@ Python API 계약 테스트(`tests/test_api.py`)는 fixture와 모의 Neo4j 모�
 
 ## 새 정보 카드와 LangChain
 
-`/birds`에서 국명 또는 학명으로 **종**을 조회합니다. 예: 청둥오리 / Anas platyrhynchos.
+기본 대화 화면 `/chat`에서 질문하면 같은 대화 안에 **종** 정보 카드를 표시합니다.
+
+- `청둥오리에 대해 알고 싶어.` → 사진·특징·먹이·서식 환경 카드.
+- `청둥오리 분류체계에 대해 알려줘.` → 국명·학명을 함께 표시한 분류 계통.
+- `청둥오리는 무슨 속에 속해?` → 질문한 단계의 답과 계통.
+
+고급 옵션은 기본적으로 접혀 있고 예시 질문 버튼으로 시작할 수 있습니다. 사진의 촬영자·크레딧·라이선스와 형질 출처를 표시하며, 같은 측정값은 묶고 나머지 측정값·분류 계통은 펼쳐볼 수 있습니다. 대화 지우기는 처음 안내 화면을 복원합니다.
+
+명시 요청은 `intent: "profile"`, `filters: {"kind":"profile", "name":"청둥오리"}`를 사용합니다. `result.kind: "profile"`의 `profile`은 아래 프로필 API와 같은 데이터입니다. 미확인 종·제공처 장애는 안전한 보류 응답이며 내부 오류를 노출하지 않습니다.
+
+`/birds`는 기존 주소 호환용으로 유지합니다. 국명 또는 학명 예: 청둥오리 / Anas platyrhynchos.
 `GET /v1/taxa/profile?name=청둥오리`가 동일한 카드 데이터를 반환합니다.
 
 - 활성 AviList 종 확인 → 형질·사진 조회 병렬 실행 → 카드 조합은 LangChain Core의 LCEL `RunnableLambda` / `RunnableParallel`로 구성합니다.
