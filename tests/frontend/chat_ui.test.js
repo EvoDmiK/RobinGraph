@@ -61,7 +61,7 @@ test("chat.js wires the fail-closed disposition guard into the /v1/chat success 
   assert.ok(guardIndex < renderIndex, "the recognized-disposition guard must run before rendering the answer");
 });
 
-test("chat.js only ever fetches same-origin /health and /v1/chat", () => {
+test("chat submission and health checks fetch same-origin /health and /v1/chat", () => {
   const calls = Array.from(jsSource.matchAll(/\.fetch\(\s*"([^"]+)"/g)).map((match) => match[1]);
   assert.deepEqual(calls.sort(), ["/health", "/v1/chat"]);
   assert.equal(jsSource.includes("https://"), false, "no absolute/remote URL literal is allowed in chat.js");
@@ -1613,4 +1613,61 @@ test("structured species answers preserve sections, source attribution, unknown 
   assert.equal(nodes.filter((n) => n.tagName === "a").length, 2);
   assert.ok(nodes.filter((n) => n.tagName === "a").every((n) => n.href.startsWith("https://")));
   assert.equal(chat.buildSpeciesAnswer({ createElement: createFakeElement }, {}), null);
+});
+
+test("related explorer loads lazily, toggles, compares attributed values and rejects a changed taxonomy", async () => {
+  const left = {taxon:{taxon_id:"mallard", scientific_name:"Anas platyrhynchos", korean_name:"청둥오리"},
+    lineage:{concept_set_id:"active", taxonomy_release:"v2025b"}, traits:[], images:[]};
+  const right = {taxon:{taxon_id:"peer", scientific_name:"Anas acuta", korean_name:"고방오리"},
+    lineage:{concept_set_id:"active", taxonomy_release:"v2025b"}, traits:[
+      {name:"habitat", display:"습지", source_name:"AVONET", source_url:"https://example.org/avonet", release:"v1"},
+      {name:"diet_category", display:"invented", source_name:"bad", source_url:"javascript:bad"}], images:[]};
+  const calls = [];
+  const fetcher = async (url, options) => {
+    calls.push({url,options});
+    return {ok:true, json:async () => url.startsWith("/v1/taxa/related") ? {
+      ...left.lineage, taxon:left.taxon, taxonomy_source:"AviList", note:"분류 관계",
+      groups:[{rank:"genus",label:"같은 속의 새", ancestor:{scientific_name:"Anas"},
+        items:[right.taxon], source_name:"AviList", source_url:"https://example.org/taxonomy"}]
+    } : right};
+  };
+  const doc = {createElement:createFakeElement};
+  const explorer = chat.buildRelatedExplorer(doc, left, fetcher);
+  assert.equal(calls.length, 0);
+  explorer.children[0].dispatch("click");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].options.credentials, "omit");
+  explorer.children[0].dispatch("click");
+  assert.equal(explorer.children[1].hidden, true);
+  explorer.children[0].dispatch("click");
+  assert.equal(calls.length, 1);
+  const choose = collectAllNodes(explorer).find(n => n.textContent === "고방오리 · 비교하기");
+  choose.dispatch("click");
+  await new Promise(resolve => setImmediate(resolve));
+  let all = collectAllNodes(explorer);
+  assert.ok(all.some(n => n.tagName === "table"));
+  assert.ok(all.some(n => n.textContent === "습지"));
+  assert.ok(all.some(n => n.textContent === "확인된 자료 없음"));
+  assert.ok(!all.some(n => n.tagName === "td" && n.textContent.includes("invented")));
+  assert.ok(all.some(n => n.tagName === "a" && n.href === "https://example.org/avonet"));
+  right.lineage.taxonomy_release = "new";
+  choose.dispatch("click");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.match(explorer.children[1].children[0].textContent, /분류 자료가 갱신/);
+});
+
+test("related explorer can retry outages and refuses stale relationship responses", async () => {
+  const profile = {taxon:{taxon_id:"t",scientific_name:"Bird name"}, lineage:{concept_set_id:"active",taxonomy_release:"v1"}};
+  let calls = 0;
+  const explorer = chat.buildRelatedExplorer({createElement:createFakeElement}, profile, async () => {
+    calls++; return {ok:calls > 1, json:async () => ({taxon:profile.taxon,concept_set_id:"old",taxonomy_release:"v0",groups:[]})};
+  });
+  explorer.children[0].dispatch("click");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.match(explorer.children[1].children[0].textContent, /再|재시도/);
+  explorer.children[0].dispatch("click"); explorer.children[0].dispatch("click");
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(calls, 2);
+  assert.equal(collectAllNodes(explorer).filter(n => n.tagName === "h3").length, 0);
 });
