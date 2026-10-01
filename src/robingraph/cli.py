@@ -6,6 +6,7 @@ import argparse
 from dataclasses import asdict
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import sys
 
@@ -18,6 +19,26 @@ from .slice import QuestionService, validate_answer
 
 def _gold_questions(root: Path) -> list[dict[str, object]]:
     return [json.loads(line) for line in (root / "gold-questions.jsonl").read_text(encoding="utf-8").splitlines() if line]
+
+
+def list_collection_points(arguments: argparse.Namespace) -> int:
+    """Print validated collection boundaries without fetching external data."""
+
+    from .ingest.collection_points import load_collection_points, serialize_points
+
+    registry = load_collection_points()
+    points = registry.select(scope=arguments.scope, include_blocked=arguments.include_blocked)
+    print(
+        json.dumps(
+            {
+                "registry_version": registry.registry_version,
+                "selected_design": registry.selected_design,
+                "collection_points": serialize_points(points),
+            },
+            ensure_ascii=False,
+        )
+    )
+    return 0
 
 
 def validate_fixture(_: argparse.Namespace) -> int:
@@ -71,6 +92,32 @@ def verify_neo4j(_: argparse.Namespace) -> int:
     return 0
 
 
+def migrate_postgres(_: argparse.Namespace) -> int:
+    """Apply the forward-only ingest control-plane migrations."""
+
+    from .ingest.postgres import PostgresSettings, apply_migrations
+
+    report = apply_migrations(PostgresSettings.from_environment())
+    print(json.dumps(asdict(report), ensure_ascii=False))
+    return 0
+
+
+def verify_postgres(_: argparse.Namespace) -> int:
+    """Verify that the configured PostgreSQL ingest schema is complete."""
+
+    from .ingest.postgres import PostgresSettings, verify_schema
+
+    settings = PostgresSettings.from_environment()
+    tables = verify_schema(settings)
+    print(
+        json.dumps(
+            {"database": settings.database, "schema": settings.schema, "tables": tables},
+            ensure_ascii=False,
+        )
+    )
+    return 0
+
+
 def load_neo4j_fixture(_: argparse.Namespace) -> int:
     from .graph.neo4j_client import bootstrap_schema, load_fixture as load_neo4j_fixture_graph
 
@@ -109,18 +156,113 @@ def serve_fixture(arguments: argparse.Namespace) -> int:
     return 0
 
 
+def serve_ingest(arguments: argparse.Namespace) -> int:
+    """Serve only the explicitly enabled PostgreSQL ingest control boundary."""
+
+    import uvicorn
+
+    from .api.app import create_app
+    from .ingest.postgres import PostgresSettings
+    from .ingest.store import IngestionStore
+
+    settings = PostgresSettings.from_environment()
+    app = create_app(ingest_store=IngestionStore(settings))
+    uvicorn.run(app, host=arguments.host, port=arguments.port)
+    return 0
+
+
 def serve_neo4j(arguments: argparse.Namespace) -> int:
     import uvicorn
 
-    from .api.app import create_app, create_neo4j_search_handler
+    from .api.app import (
+        create_app,
+        create_neo4j_korean_lineage_handler,
+        create_neo4j_lineage_handler,
+        create_neo4j_observation_handler,
+        create_neo4j_search_handler,
+    )
+    from .api.semantic_router import SemanticRouter
+    from .embeddings import EmbeddingConfigurationError, JinaEmbeddingClient
+    from .ingest.postgres import PostgresSettings
+    from .ingest.store import IngestionStore
     from .retrieval.neo4j_repository import Neo4jGraphRepository
+    from .retrieval.operational_neo4j import Neo4jOperationalObservationRepository
+    from .retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository
 
     settings = Neo4jSettings.from_environment()
+    ingest_store = IngestionStore(PostgresSettings.from_environment())
     repository = Neo4jGraphRepository(settings)
+    operational_repository = Neo4jOperationalObservationRepository(settings)
+    def active_taxonomy_context() -> tuple[str, str] | None:
+        context = ingest_store.active_release_context("reference-taxonomy-traits")
+        if context is None:
+            return None
+        concept_set_id = context.cursor.get("concept_set_id")
+        taxonomy_release = context.cursor.get("taxonomy_release")
+        if not isinstance(concept_set_id, str) or not isinstance(taxonomy_release, str):
+            return None
+        return concept_set_id, taxonomy_release
+
+    lineage_repository = Neo4jTaxonomyLineageRepository(
+        settings,
+        lambda: ingest_store.active_dataset_id("korean-vernacular-names"),
+        active_taxonomy_context,
+    )
+    from .retrieval.species_profile import create_species_flow, read_traits, read_conservation
+
+    def resolve_species(name):
+        if any("\uac00" <= char <= "\ud7a3" for char in name):
+            return lineage_repository.lineage_for_korean_name(name)
+        return lineage_repository.lineage_for_scientific_name(name)
+
+    # Constructing the stdlib client is configuration-only: it makes no HTTP
+    # request.  A missing/invalid non-secret embedding configuration merely
+    # disables auto routing; explicit chat routes and all legacy endpoints
+    # remain available.
+    embedding_client = None
+    semantic_router = None
     try:
-        app = create_app(repository, search_handler=create_neo4j_search_handler(settings))
+        embedding_client = JinaEmbeddingClient.from_env()
+        semantic_router = SemanticRouter(embedding_client)
+    except EmbeddingConfigurationError:
+        pass
+    # Gemini answer generation is opt-in: only a configured API key wires it
+    # in, and construction alone makes no request, consistent with the lazy
+    # embedding client above. Unconfigured deployments keep the legacy
+    # retrieval-only evidence response untouched.
+    gemini_api_key = os.getenv("GEMINI_API_KEY")
+    answer_generator = None
+    if gemini_api_key:
+        from .generation import GeminiAnswerer
+
+        gemini_model = os.getenv("ROBINGRAPH_GEMINI_MODEL", "gemini-3.8-flash")
+        answer_generator = GeminiAnswerer(gemini_api_key, gemini_model)
+    from .retrieval.species_notes import create_species_notes
+
+    summarize_notes = getattr(answer_generator, 'species_notes', None)
+    species_flow = create_species_flow(
+        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+        conservation=lambda lineage: read_conservation(lineage_repository, lineage),
+        notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
+    )
+    try:
+        app = create_app(
+            repository,
+            search_handler=create_neo4j_search_handler(
+                settings, embedding_client=embedding_client,
+                english_search_terms=answer_generator.english_search_terms if answer_generator is not None else None,
+            ),
+            answer_generator=answer_generator,
+            observation_handler=create_neo4j_observation_handler(operational_repository),
+            lineage_handler=create_neo4j_lineage_handler(lineage_repository),
+            korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
+            semantic_router=semantic_router,
+            species_profile_handler=species_flow.invoke,
+        )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:
+        lineage_repository.close()
+        operational_repository.close()
         repository.close()
     return 0
 
@@ -254,15 +396,38 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(prog="robingraph")
     commands = parser.add_subparsers(dest="command", required=True)
+    collection_points = commands.add_parser(
+        "collection-points",
+        help="List policy-validated taxonomy, trait, habitat, and vegetation collection points",
+    )
+    collection_points.add_argument(
+        "--scope",
+        choices=("taxonomy", "traits", "habitat", "vegetation", "conservation"),
+    )
+    collection_points.add_argument(
+        "--include-blocked",
+        action="store_true",
+        help="Include disabled review-required and restricted collection points",
+    )
+    collection_points.set_defaults(handler=list_collection_points)
     commands.add_parser("validate-fixture").set_defaults(handler=validate_fixture)
     commands.add_parser("evaluate-fixture").set_defaults(handler=evaluate)
     commands.add_parser("verify-neo4j").set_defaults(handler=verify_neo4j)
+    commands.add_parser("migrate-postgres").set_defaults(handler=migrate_postgres)
+    commands.add_parser("verify-postgres").set_defaults(handler=verify_postgres)
     commands.add_parser("load-neo4j-fixture").set_defaults(handler=load_neo4j_fixture)
     commands.add_parser("verify-neo4j-fixture").set_defaults(handler=verify_neo4j_fixture)
     serve = commands.add_parser("serve-fixture")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
     serve.set_defaults(handler=serve_fixture)
+    serve_ingest_api = commands.add_parser(
+        "serve-ingest",
+        help="Serve the authenticated PostgreSQL source/control ingest API",
+    )
+    serve_ingest_api.add_argument("--host", default="127.0.0.1")
+    serve_ingest_api.add_argument("--port", type=int, default=8001)
+    serve_ingest_api.set_defaults(handler=serve_ingest)
     serve_graph = commands.add_parser("serve-neo4j")
     serve_graph.add_argument("--host", default="127.0.0.1")
     serve_graph.add_argument("--port", type=int, default=8000)
@@ -283,6 +448,14 @@ def main() -> int:
     evaluate_search_parser.add_argument("--limit", type=_search_limit, default=3)
     evaluate_search_parser.set_defaults(handler=evaluate_search_neo4j)
     arguments = parser.parse_args()
+    if arguments.command in {"migrate-postgres", "verify-postgres"}:
+        from psycopg import Error as PostgresError
+
+        try:
+            return arguments.handler(arguments)
+        except (PostgresError, ValueError) as error:
+            print(f"PostgreSQL migration or verification failed: {error}", file=sys.stderr)
+            return 1
     if arguments.command in {"index-neo4j-fixture", "search-neo4j", "evaluate-search-neo4j"}:
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
