@@ -1,6 +1,6 @@
 /**
  * RobinGraph manual test UI. Talks only to same-origin `/health` and
- * `/v1/chat`. No innerHTML/insertAdjacentHTML/document.write is used
+ * `/v1/chat` and read-only species exploration endpoints. No innerHTML/insertAdjacentHTML/document.write is used
  * anywhere in this file -- all dynamic content is inserted via
  * `textContent`/`createElement`, which never interprets its input as
  * markup. The one place hostile *server* content could still reach an
@@ -479,6 +479,139 @@
    * above. Returns null for a missing/malformed profile so a caller can
    * skip appending anything rather than render a broken card.
    */
+  function buildSpeciesComparison(doc, left, right) {
+    var panel = doc.createElement("section");
+    panel.className = "species-comparison";
+    var heading = doc.createElement("h3");
+    heading.textContent = "두 새 비교";
+    panel.appendChild(heading);
+    var table = doc.createElement("table");
+    var caption = doc.createElement("caption");
+    caption.textContent = "먹이 · 서식 환경 · 생활 방식 · 체중";
+    table.appendChild(caption);
+    var head = doc.createElement("thead");
+    var titles = doc.createElement("tr");
+    ["특징", left.taxon.korean_name || left.taxon.scientific_name,
+      right.taxon.korean_name || right.taxon.scientific_name].forEach(function (text) {
+      var th = doc.createElement("th"); th.scope = "col"; th.textContent = text; titles.appendChild(th);
+    });
+    head.appendChild(titles); table.appendChild(head);
+    var body = doc.createElement("tbody");
+    [["diet_category", "먹이 유형"], ["trophic_niche", "먹이 생태 범주"],
+      ["habitat", "서식 환경"], ["primary_lifestyle", "주 생활 방식"], ["body_mass", "체중"]].forEach(function (field) {
+      var row = doc.createElement("tr");
+      var label = doc.createElement("th"); label.scope = "row"; label.textContent = field[1]; row.appendChild(label);
+      [left, right].forEach(function (profile) {
+        var cell = doc.createElement("td");
+        var traits = (Array.isArray(profile.traits) ? profile.traits : []).filter(function (trait) {
+          return trait && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
+        });
+        if (!traits.length) { cell.textContent = "확인된 자료 없음"; }
+        groupTraits(traits).forEach(function (group) {
+          var trait = group.trait;
+          var value = doc.createElement("p");
+          value.textContent = trait.display + (trait.unit && trait.unit !== "percent" ? " " + trait.unit : "") + (trait.inferred ? " (추정값)" : "");
+          cell.appendChild(value);
+          var details = doc.createElement("details");
+          var summary = doc.createElement("summary"); summary.textContent = "출처"; details.appendChild(summary);
+          group.sources.forEach(function (source) {
+            details.appendChild(safeLink(doc, source.source_name, source.source_url));
+            var meta = doc.createElement("p");
+            meta.textContent = [source.release, source.license_name, source.summary_statistic === "mean" ? "종 평균" : null, source.citation].filter(Boolean).join(" · ");
+            details.appendChild(meta);
+          });
+          cell.appendChild(details);
+        });
+        row.appendChild(cell);
+      });
+      body.appendChild(row);
+    });
+    table.appendChild(body); panel.appendChild(table);
+    var note = doc.createElement("p"); note.className = "species-note";
+    note.textContent = "자료별 범주와 측정 기준이 다를 수 있습니다. 자료가 없는 항목은 차이로 판단하지 않습니다.";
+    panel.appendChild(note);
+    var card = buildSpeciesCard(doc, right);
+    if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); }
+    return panel;
+  }
+
+  function buildRelatedExplorer(doc, profile, fetcher) {
+    var section = doc.createElement("section"); section.className = "species-related";
+    var open = doc.createElement("button"); open.type = "button";
+    open.textContent = "같은 속·과의 새 살펴보기";
+    open.setAttribute("aria-expanded", "false"); section.appendChild(open);
+    var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
+    var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
+    var results = doc.createElement("div"); content.appendChild(results);
+    var comparison = doc.createElement("div"); content.appendChild(comparison);
+    var loaded = false;
+    var selecting = false;
+    function fetchJson(path, name) {
+      var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
+      if (!transport) { return Promise.reject(new Error("unavailable")); }
+      return transport(path + "?name=" + encodeURIComponent(name), {credentials:"omit", signal:typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(path === "/v1/taxa/profile" ? 60000 : 30000) : undefined}).then(function (response) {
+        if (!response.ok) { throw new Error("unavailable"); } return response.json();
+      });
+    }
+    function matchesRelease(data) {
+      return profile.lineage && data.concept_set_id === profile.lineage.concept_set_id && data.taxonomy_release === profile.lineage.taxonomy_release;
+    }
+    function selectPeer(peer, group) {
+      if (selecting) { return; }
+      selecting = true; content.setAttribute("aria-busy", "true");
+      while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); }
+      status.textContent = "비교할 새의 자료를 불러오는 중입니다.";
+      return fetchJson("/v1/taxa/profile", peer.scientific_name).then(function (other) {
+        if (!other.taxon || other.taxon.taxon_id !== peer.taxon_id || !other.lineage || !matchesRelease(other.lineage)) { throw new Error("changed"); }
+        while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); }
+        var panel = buildSpeciesComparison(doc, profile, other);
+        var relation = doc.createElement("p");
+        relation.textContent = "공유 분류군: " + (group.ancestor.korean_name || group.ancestor.scientific_name) + " (" + (RANK_LABELS[group.rank] || group.rank) + ") · " + profile.lineage.taxonomy_release;
+        panel.appendChild(relation);
+        comparison.appendChild(panel);
+        if (typeof panel.scrollIntoView === "function") { panel.scrollIntoView({block:"start"}); }
+        status.textContent = "비교 자료를 불러왔습니다.";
+      }).catch(function () {
+        status.textContent = "비교 자료를 불러오지 못했습니다. 분류 자료가 갱신된 경우 카드를 다시 열어주세요.";
+      }).finally(function () { selecting = false; content.setAttribute("aria-busy", "false"); });
+    }
+    open.addEventListener("click", function () {
+      content.hidden = !content.hidden; open.setAttribute("aria-expanded", String(!content.hidden));
+      if (content.hidden || loaded) { return; }
+      loaded = true; status.textContent = "분류 관계를 조회하는 중입니다.";
+      fetchJson("/v1/taxa/related", profile.taxon.scientific_name).then(function (data) {
+        if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
+        while (results.firstChild) { results.removeChild(results.firstChild); }
+        var note = doc.createElement("p"); note.className = "species-note"; note.textContent = data.note; results.appendChild(note);
+        var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
+        (Array.isArray(data.groups) ? data.groups : []).forEach(function (group) {
+          var block = doc.createElement("section");
+          var title = doc.createElement("h3");
+          title.textContent = group.label + (group.ancestor ? " · " + (group.ancestor.korean_name || group.ancestor.scientific_name) : ""); block.appendChild(title);
+          var peers = Array.isArray(group.items) ? group.items : [];
+          if (!peers.length) {
+            var empty = doc.createElement("p"); empty.textContent = "현재 분류 자료에서 다른 종을 확인하지 못했습니다."; block.appendChild(empty);
+          }
+          peers.slice(0, 12).forEach(function (peer) {
+            var button = doc.createElement("button"); button.type = "button";
+            button.textContent = (peer.korean_name || peer.scientific_name) + " · 비교하기";
+            button.addEventListener("click", function () { selectPeer(peer, group); }); block.appendChild(button);
+          });
+          if (group.has_more) { var more = doc.createElement("p"); more.textContent = "학명순으로 최대 12종을 표시합니다."; block.appendChild(more); }
+          var source = doc.createElement("details");
+          var summary = doc.createElement("summary"); summary.textContent = "분류 관계의 출처"; source.appendChild(summary);
+          source.appendChild(safeLink(doc, group.source_name || data.taxonomy_source, group.source_url));
+          var release = doc.createElement("p"); release.textContent = "분류 버전: " + data.taxonomy_release; source.appendChild(release);
+          block.appendChild(source); results.appendChild(block);
+        });
+        status.textContent = "비교할 새를 선택하세요.";
+      }).catch(function () {
+        loaded = false; status.textContent = "분류 관계를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
+      });
+    });
+    return section;
+  }
+
   function buildSpeciesCard(doc, profile) {
     if (!profile || typeof profile !== "object" || !profile.taxon) {
       return null;
@@ -641,6 +774,7 @@
     frontNote.className = "species-front-note";
     frontNote.textContent = "수치는 종 평균 · 사진과 자료 출처는 뒷면";
     front.appendChild(frontNote);
+    front.appendChild(buildRelatedExplorer(doc, profile));
 
     var traitNote = doc.createElement("p");
     traitNote.className = "species-note";
@@ -1361,6 +1495,8 @@
     buildChatPayload: buildChatPayload,
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
+    buildRelatedExplorer: buildRelatedExplorer,
+    buildSpeciesComparison: buildSpeciesComparison,
     buildSpeciesPopup: buildSpeciesPopup,
     buildSpeciesBrief: buildSpeciesBrief,
     habitatEmblemInfo: habitatEmblemInfo,
