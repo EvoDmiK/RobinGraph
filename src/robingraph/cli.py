@@ -208,6 +208,16 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         lambda: ingest_store.active_dataset_id("korean-vernacular-names"),
         active_taxonomy_context,
     )
+    from .retrieval.species_profile import create_species_flow, read_traits
+
+    def resolve_species(name):
+        if any("\uac00" <= char <= "\ud7a3" for char in name):
+            return lineage_repository.lineage_for_korean_name(name)
+        return lineage_repository.lineage_for_scientific_name(name)
+
+    species_flow = create_species_flow(
+        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+    )
     # Constructing the stdlib client is configuration-only: it makes no HTTP
     # request.  A missing/invalid non-secret embedding configuration merely
     # disables auto routing; explicit chat routes and all legacy endpoints
@@ -242,6 +252,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),
             korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
             semantic_router=semantic_router,
+            species_profile_handler=species_flow.invoke,
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:

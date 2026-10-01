@@ -17,6 +17,7 @@ import stat
 from typing import TYPE_CHECKING, Annotated, Callable, Literal, cast
 
 from fastapi import FastAPI, HTTPException, Query
+from langchain_core.runnables import RunnableLambda
 from fastapi.responses import PlainTextResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -31,6 +32,7 @@ from ..retrieval.operational import (
 )
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
+from ..retrieval.species_profile import SpeciesNotFoundError
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
@@ -326,10 +328,12 @@ _CHAT_ASSET_MEDIA_TYPES = {
     "index.html": "text/html; charset=utf-8",
     "chat.js": "application/javascript",
     "styles.css": "text/css; charset=utf-8",
+    "birds.html": "text/html; charset=utf-8",
+    "birds.js": "application/javascript",
 }
 
 
-def _read_chat_asset_bundle(asset_root: Path) -> dict[str, bytes] | None:
+def _read_chat_asset_bundle(asset_root: Path, asset_names: tuple[str, ...] = _REQUIRED_CHAT_ASSETS) -> dict[str, bytes] | None:
     """Read a complete, non-empty chat bundle or return ``None`` without leaking errors.
 
     Each response reads every required asset before serving anything.  Reading the
@@ -340,7 +344,7 @@ def _read_chat_asset_bundle(asset_root: Path) -> dict[str, bytes] | None:
 
     assets: dict[str, bytes] = {}
     try:
-        for asset_name in _REQUIRED_CHAT_ASSETS:
+        for asset_name in asset_names:
             descriptor = os.open(asset_root / asset_name, os.O_RDONLY)
             try:
                 with os.fdopen(descriptor, "rb") as asset_file:
@@ -626,6 +630,7 @@ def create_app(
     lineage_handler: LineageHandler | None = None,
     korean_lineage_handler: LineageHandler | None = None,
     semantic_router: SemanticRouter | None = None,
+    species_profile_handler: Callable[[str], dict] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
 ) -> FastAPI:
@@ -655,6 +660,38 @@ def create_app(
         app.include_router(create_ingest_router(ingest_store))
     asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
 
+    def retrieve_evidence(state):
+        return {**state, "outcome": search_handler(state["question"], state["limit"], state["hybrid"])}
+
+    def answer_evidence(state):
+        outcome = state["outcome"]
+        text = "근거 문서를 확인했습니다." if outcome.results else "일치하는 근거 문서를 확인하지 못했습니다."
+        if answer_generator is not None and outcome.results:
+            text = _generated_evidence_answer(answer_generator, state["question"], outcome.results) or text
+        return {**state, "answer_text": text}
+
+    evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
+
+    @app.get("/v1/taxa/profile")
+    def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)]):
+        if not name.strip():
+            raise HTTPException(status_code=422, detail="A species name is required")
+        if species_profile_handler is None:
+            raise HTTPException(status_code=503, detail="Species profiles are unavailable")
+        try:
+            return species_profile_handler(name.strip())
+        except SpeciesNotFoundError as error:
+            raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
+        except Exception as error:
+            raise HTTPException(status_code=503, detail="Species profiles are temporarily unavailable") from error
+
+    @app.get("/birds", include_in_schema=False, response_model=None)
+    def birds_ui():
+        assets = _read_chat_asset_bundle(asset_root, ("birds.html", "birds.js", "styles.css"))
+        if assets is None:
+            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
+        return Response(assets["birds.html"], media_type=_CHAT_ASSET_MEDIA_TYPES["birds.html"])
+
     def unavailable_chat_ui() -> PlainTextResponse:
         return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
 
@@ -666,7 +703,8 @@ def create_app(
 
     @app.get("/static/{asset_path:path}", include_in_schema=False, response_model=None)
     def static_asset(asset_path: str) -> Response | PlainTextResponse:
-        assets = _read_chat_asset_bundle(asset_root)
+        names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
+        assets = _read_chat_asset_bundle(asset_root, names)
         if assets is None:
             # Do not reflect asset_path: it could contain deployment details or
             # be used to probe the server's filesystem layout.
@@ -870,7 +908,8 @@ def create_app(
                 )),
             )
         try:
-            outcome = search_handler(request.question, filters.limit, requested_mode == "hybrid")
+            flow_result = evidence_flow.invoke({"question":request.question, "limit":filters.limit, "hybrid":requested_mode == "hybrid"})
+            outcome = flow_result["outcome"]
         except Exception:
             return ChatResponse(
                 selected_intent="evidence", route_method=method, disposition="abstain",
@@ -885,11 +924,7 @@ def create_app(
                 )),
             )
         evidence = _search_response(outcome, requested_mode=requested_mode)
-        answer_text = "근거 문서를 확인했습니다." if evidence.results else "일치하는 근거 문서를 확인하지 못했습니다."
-        if answer_generator is not None and outcome.results:
-            generated_text = _generated_evidence_answer(answer_generator, request.question, outcome.results)
-            if generated_text is not None:
-                answer_text = generated_text
+        answer_text = flow_result["answer_text"]
         return ChatResponse(
             selected_intent="evidence", route_method=method,
             disposition="answer" if evidence.results else "abstain",
