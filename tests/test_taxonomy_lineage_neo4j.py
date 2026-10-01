@@ -427,3 +427,18 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class EnglishNameProjectionTest(unittest.TestCase):
+    def test_english_name_is_a_display_field_and_uses_same_allowed_taxonomy_release(self):
+        from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
+        row = {'taxon_id':'bird', 'rank':'species', 'scientific_name':'Anas albogularis',
+               'authority':None, 'korean_name':None, 'english_name':' Andaman Teal '}
+        item = _parse_lineage_items([row])[0]
+        self.assertEqual('Andaman Teal', item.english_name)
+        self.assertIsNone(item.korean_name)
+        for query in (_LINEAGE_QUERY, _LINEAGE_BY_KOREAN_NAME_QUERY):
+            self.assertIn("language:'en', policy_status:'allowed', status:'source-preferred'", query)
+            self.assertIn('englishName.dataset_id=ancestor.dataset_id', query)
+            self.assertIn('englishName.source_release=ancestor.source_release', query)
+        for value in (None, '', ' ', 42, []):
+            self.assertIsNone(_parse_lineage_items([{**row, 'english_name':value}])[0].english_name)

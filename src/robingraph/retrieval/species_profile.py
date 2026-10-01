@@ -109,7 +109,7 @@ def species_summary(taxon, traits):
         sentences.append(f"{statistic}체중은 {weight['display']}{unit}입니다.")
     if not sentences:
         return '출처가 있는 서식 환경·먹이·생활 방식·체중 정보를 아직 확인하지 못했습니다.'
-    name = taxon.get('korean_name') or taxon.get('scientific_name')
+    name = taxon.get('korean_name') or taxon.get('english_name') or taxon.get('scientific_name')
     return (f'{name}의 ' if name else '') + ' '.join(sentences)
 VALUES = {'PlantSeed':'식물·씨앗', 'FruiNect':'열매·꽃꿀',
           'Invertebrate':'무척추동물', 'VertFishScav':'척추동물·물고기·사체',
