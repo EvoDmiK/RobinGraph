@@ -44,6 +44,7 @@ class LineageTaxon:
     # docs/n8n/korean-vernacular-ingest.md.
     korean_name_status: str | None = None
     korean_name_source_url: str | None = None
+    english_name: str | None = None
 
 
 @cache

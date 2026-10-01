@@ -199,6 +199,7 @@ class LineageTaxonResponse(BaseModel):
     korean_name: str | None
     korean_name_status: str | None = None
     korean_name_source_url: str | None = None
+    english_name: str | None = None
 
 
 class TaxonomyLineageResponse(BaseModel):
@@ -538,8 +539,9 @@ def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool
     target = next((item for item in lineage.items if _KOREAN_RANKS.get(item.rank) == rank_label), None)
     if target is None:
         return f"조회된 계보에 {rank_label} 정보가 없어 답변을 확인하지 못했습니다.", False
-    subject = lineage.items[-1].korean_name or lineage.resolved_query_scientific_name or lineage.query_scientific_name
-    name = f"{target.korean_name}({target.scientific_name})" if target.korean_name else target.scientific_name
+    subject = lineage.items[-1].korean_name or lineage.items[-1].english_name or lineage.resolved_query_scientific_name or lineage.query_scientific_name
+    common_name = target.korean_name or target.english_name
+    name = f"{common_name}({target.scientific_name})" if common_name else target.scientific_name
     return f"{subject}의 {rank_label} 분류는 {name}입니다.", True
 
 

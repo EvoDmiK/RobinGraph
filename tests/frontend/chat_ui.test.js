@@ -1628,7 +1628,7 @@ test("related explorer loads lazily, toggles, compares attributed values and rej
     return {ok:true, json:async () => url.startsWith("/v1/taxa/related") ? {
       ...left.lineage, taxon:left.taxon, taxonomy_source:"AviList", note:"분류 관계",
       groups:[{rank:"genus",label:"같은 속의 새", ancestor:{scientific_name:"Anas"},
-        items:[right.taxon], source_name:"AviList", source_url:"https://example.org/taxonomy"}]
+        items:[right.taxon,{taxon_id:"unknown",scientific_name:"Anas unknown",korean_name:null}], source_name:"AviList", source_url:"https://example.org/taxonomy"}]
     } : right};
   };
   const doc = {createElement:createFakeElement};
@@ -1642,6 +1642,7 @@ test("related explorer loads lazily, toggles, compares attributed values and rej
   assert.equal(explorer.children[1].hidden, true);
   explorer.children[0].dispatch("click");
   assert.equal(calls.length, 1);
+  assert.equal(collectAllNodes(explorer).some(n => n.textContent === "Anas unknown · 비교하기"), false);
   const choose = collectAllNodes(explorer).find(n => n.textContent === "고방오리 · 비교하기");
   choose.dispatch("click");
   await new Promise(resolve => setImmediate(resolve));
@@ -1691,4 +1692,16 @@ test("related exploration stays in the explanation and comparison, outside every
   for (const card of collectAllNodes(comparison).filter(n => n.className.startsWith("species-card risk-"))) {
     assert.equal(collectAllNodes(card).some(n => n.className === "species-related"), false);
   }
+});
+
+test("species headings use Korean names first, then sourced English common names, retaining scientific identity", () => {
+  const doc = {createElement:createFakeElement};
+  const profile = {taxon:{scientific_name:"Anas albogularis",english_name:"Andaman Teal"},
+    lineage:{items:[]},traits:[],images:[],sections:[{title:"기본 정보",items:[]}]};
+  const card = chat.buildSpeciesCard(doc, profile);
+  assert.equal(collectAllNodes(card).find(n => n.className === "species-title").textContent, "Andaman Teal");
+  assert.equal(collectAllNodes(card).find(n => n.className === "species-scientific-name").textContent, "Anas albogularis");
+  assert.equal(chat.buildSpeciesAnswer(doc, profile).children[0].textContent, "Andaman Teal");
+  profile.taxon.korean_name = "한국어 이름";
+  assert.equal(chat.buildSpeciesAnswer(doc, profile).children[0].textContent, "한국어 이름");
 });
