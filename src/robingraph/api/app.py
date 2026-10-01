@@ -33,7 +33,7 @@ from ..retrieval.operational import (
 )
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
-from ..retrieval.species_profile import SpeciesNotFoundError
+from ..retrieval.species_profile import SpeciesNotFoundError, species_summary
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
@@ -848,11 +848,12 @@ def create_app(
                     warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
                     result=ChatSpeciesResult(profile=None),
                 )
-            taxon = profile.get("taxon", {})
-            display_name = taxon.get("korean_name") or taxon.get("scientific_name") or name
+            summary = profile.get("summary")
+            if not isinstance(summary, str) or not summary.strip():
+                summary = species_summary(profile.get("taxon") or {}, profile.get("traits") or [])
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer",
-                answer_text=f"{display_name}의 종 정보와 출처를 확인했습니다.",
+                answer_text=summary,
                 warnings=profile.get("warnings", []),
                 result=ChatSpeciesResult(profile=profile),
             )

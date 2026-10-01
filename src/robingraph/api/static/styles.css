@@ -607,3 +607,421 @@ body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* A collectible field-guide card, inspired by silver-framed nature cards. */
+.species-popup-trigger {
+  margin-top: .8rem;
+  padding: .8rem 1.1rem;
+  color: #203f23;
+  border: 1px solid #8ca762;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #eff7cf, #d1eaa4);
+  box-shadow: inset 0 1px 0 #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.species-popup {
+  --color-text: #20351d;
+  --color-muted: #405635;
+  --color-accent: #244e2c;
+  --color-surface: #f2f8cf;
+  --color-border: #8fAA65;
+  --color-answer-bg: #e5edb8;
+  --color-answer-border: #9cac76;
+  --color-warning: #704700;
+  color-scheme: light;
+  color: var(--color-text);
+  width: min(540px, calc(100vw - 24px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  padding: 12px;
+  border: 0;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #eeeeed, #959a95 36%, #dce0da 58%, #b7bcb5);
+  box-shadow: 0 24px 80px #0007, inset 0 1px 2px #fff;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.species-popup::backdrop {
+  background: #122316b8;
+  backdrop-filter: blur(6px);
+}
+body:has(.species-popup[open]) { overflow: hidden; }
+.species-popup-close {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: block;
+  margin: 0 0 -44px auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #fff9;
+  border-radius: 50%;
+  background: #f5f8e9;
+  color: #253e26;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px #24382133;
+}
+.species-popup .species-card {
+  margin: 0;
+  padding: 20px;
+  border: 1px solid #91ad59;
+  border-radius: 17px;
+  background:
+    repeating-radial-gradient(ellipse at 18% 32%, #ffffff15 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at 20% 65%, #edfa9f, transparent 65%),
+    linear-gradient(135deg, #8fbb5c, #def19a 45%, #b2d260);
+  box-shadow: inset 0 0 0 3px #e6f4ab88;
+}
+.species-card-heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 28px;
+}
+.species-category {
+  position: absolute;
+  left: -20px;
+  top: -12px;
+  padding: 3px 20px 3px 12px;
+  border-radius: 0 0 22px 0;
+  background: linear-gradient(#fff, #c6ccc2 52%, #f4f6ed);
+  color: #33452d;
+  font-size: .72rem;
+  font-weight: 800;
+  box-shadow: 0 2px 3px #42533255;
+}
+.species-popup .species-title {
+  font-size: clamp(1.6rem, 6vw, 2.3rem);
+  font-weight: 800;
+  color: #172f18;
+  letter-spacing: -.05em;
+  overflow-wrap: anywhere;
+}
+.species-emblem {
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  height: 38px;
+  margin-left: auto;
+  border: 2px solid #e6f3ac;
+  border-radius: 50%;
+  color: #e5f3b1;
+  background: radial-gradient(circle at 30% 20%, #709844, #153a23);
+  box-shadow: 0 0 0 1px #71904a;
+}
+.species-popup .species-scientific-name { margin: 0 0 14px; }
+.species-popup .species-media {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 12px;
+  margin-top: 14px;
+}
+.species-popup .species-media figure {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  border: 3px solid #dde4cd;
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px #71845c;
+}
+.species-popup .species-media img { aspect-ratio: 4 / 3; }
+.species-popup .species-media figcaption {
+  background: linear-gradient(#fffefa, #d8dfce, #f3f4e8);
+  color: #35452e;
+}
+.species-popup a { color: #244e2c; }
+.species-popup .species-traits { grid-template-columns: 1fr; gap: 0; }
+.species-popup .trait-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  padding: 14px 2px;
+  border: 0;
+  border-bottom: 1px solid #67844966;
+  border-radius: 0;
+  background: transparent;
+}
+.species-popup .trait-card strong { font-size: 1rem; }
+.species-popup .trait-card .trait-value {
+  margin: 0;
+  max-width: 230px;
+  text-align: right;
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.species-popup .trait-source { grid-column: 1 / -1; }
+.species-popup .card-details { padding-top: 10px; border-top: 3px double #698447; }
+.species-popup .vegetation-note { background: #eff5cf99; }
+.species-popup-trigger:focus-visible, .species-popup :focus-visible {
+  outline: 3px solid #264f32;
+  outline-offset: 3px;
+}
+@media (max-width: 420px) {
+  .species-popup { padding: 8px; border-radius: 20px; }
+  .species-popup .species-card { padding: 16px; }
+  .species-popup .trait-card .trait-value { max-width: 150px; }
+  .species-category { left: -16px; }
+}
+
+/* The front is a brief field-guide summary; the back retains full attribution. */
+.species-popup { width: min(460px, calc(100vw - 24px)); }
+.species-card-front[hidden], .species-card-back[hidden] { display: none; }
+.species-popup .species-card-heading { padding-top: 30px; }
+.species-popup .species-title { font-size: clamp(1.5rem, 6vw, 2rem); }
+.species-popup .species-scientific-name { margin-bottom: 10px; }
+.species-popup .species-media { margin-top: 10px; }
+.species-popup .species-media img {
+  aspect-ratio: 16 / 10;
+  max-height: min(240px, 28dvh);
+}
+.species-quick-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 7px 12px;
+  margin: 14px 0 10px;
+  font-size: .9rem;
+}
+.species-quick-facts dt { color: #405635; }
+.species-quick-facts dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.species-front-note { margin: 6px 0; color: #405635; font-size: .7rem; }
+.species-card-back h3 { margin: 14px 0; font-size: 1.05rem; }
+.species-photo-source { padding: 10px 0; border-bottom: 1px solid #67844966; font-size: .75rem; }
+.species-photo-source strong { display: block; margin-bottom: 4px; }
+.species-card-footer {
+  position: sticky;
+  bottom: -20px;
+  padding: 12px 0 0;
+  margin-top: 12px;
+  background: #ddefa0;
+  border-top: 3px double #698447;
+}
+.species-card-flip {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid #72934c;
+  border-radius: 9px;
+  color: #203f23;
+  background: linear-gradient(#f3f9d6, #d9eab4);
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+@media (max-width: 420px) {
+  .species-card-footer { bottom: -16px; }
+  .species-quick-facts { font-size: .82rem; }
+}
+
+.species-popup .species-media figure[hidden] { display: none; }
+.species-popup .species-media img { max-height: min(240px, 24dvh); }
+.species-photo-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  color: #405635;
+  font-size: .75rem;
+}
+.species-photo-controls button {
+  width: 40px;
+  height: 32px;
+  border: 1px solid #72934c;
+  border-radius: 7px;
+  background: #f3f9d6;
+  color: #203f23;
+  font-size: 18px;
+  cursor: pointer;
+}
+.species-photo-controls button:disabled { opacity: .4; cursor: default; }
+.trait-source-toggle { grid-column: 1 / -1; font-size: .75rem; }
+.trait-source-toggle summary, .species-photo-sources summary {
+  color: #405635;
+  cursor: pointer;
+}
+.species-photo-sources { margin: 12px 0; font-size: .82rem; }
+.species-answer { margin: 14px 0; line-height: 1.65; }
+.species-answer h3 { margin: 0 0 14px; color: #244d38; font-size: 1.15rem; }
+.species-answer-section { margin: 12px 0; }
+.species-answer-section h4 { margin: 0 0 4px; color: #244d38; font-size: .95rem; }
+.species-answer-section ul { margin: 0; padding-left: 1.25rem; }
+.species-answer-section li { margin: 4px 0; overflow-wrap: anywhere; }
+.species-answer-empty { margin: 0; color: #6c7567; font-size: .85rem; }
+.species-answer-sources { margin-top: 14px; font-size: .8rem; overflow-wrap: anywhere; }
+.species-answer-sources summary { color: #405635; cursor: pointer; }
+.species-answer-sources p { margin: 6px 0; }
+
+/* Habitat emblem (top right): one stroked SVG per raw AVONET habitat value. */
+.species-emblem svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.species-popup .species-emblem { flex-basis: 44px; height: 44px; }
+.species-emblem.habitat-forest { background: radial-gradient(circle at 30% 20%, #4f8a3c, #12361d); color: #e3f5c4; }
+.species-emblem.habitat-shrubland { background: radial-gradient(circle at 30% 20%, #8c9a45, #3e4a19); color: #f2f1c4; }
+.species-emblem.habitat-woodland { background: radial-gradient(circle at 30% 20%, #79a24f, #2f4d1f); color: #f1f8d6; }
+.species-emblem.habitat-grassland { background: radial-gradient(circle at 30% 20%, #c4c95a, #6b7a1e); color: #232e0a; }
+.species-emblem.habitat-rock { background: radial-gradient(circle at 30% 20%, #9a9c9a, #45494c); color: #f4f4ef; }
+.species-emblem.habitat-wetland { background: radial-gradient(circle at 30% 20%, #4f9c8f, #164a45); color: #dff7ef; }
+.species-emblem.habitat-human-modified { background: radial-gradient(circle at 30% 20%, #b07a5a, #5a3424); color: #fbeee2; }
+.species-emblem.habitat-coastal { background: radial-gradient(circle at 30% 20%, #e3cf96, #4a87a8); color: #1d3442; }
+.species-emblem.habitat-marine { background: radial-gradient(circle at 30% 20%, #3d73b8, #0d2850); color: #e2efff; }
+.species-emblem.habitat-riverine { background: radial-gradient(circle at 30% 20%, #5aa6d6, #1d4f78); color: #eaf6ff; }
+.species-emblem.habitat-desert { background: radial-gradient(circle at 30% 20%, #e7bb6a, #96571f); color: #3a1f06; }
+.species-emblem.habitat-unknown { background: radial-gradient(circle at 30% 20%, #b9bcb5, #6c706a); color: #fbfbf7; border-style: dashed; }
+
+/* Red List badge: names the assessed category; never a local-abundance claim. */
+.species-conservation-badge {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 3px 10px;
+  border: 1px solid #0003;
+  border-radius: 999px;
+  background: #fff9;
+  color: #222;
+  font-size: .75rem;
+  font-weight: 750;
+}
+.species-conservation-sources { margin: 12px 0; font-size: .82rem; }
+.species-conservation-sources summary { color: #405635; cursor: pointer; }
+.species-conservation-sources p { margin: 6px 0; }
+
+/* Chat brief beside the card button. */
+.species-chat-brief {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: .6rem 0 0;
+  font-size: .85rem;
+}
+.species-chat-brief .species-emblem {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  border-width: 1px;
+}
+.species-chat-brief .species-emblem svg { width: 18px; height: 18px; }
+.species-chat-brief .species-conservation-badge { margin: 0; }
+
+/* Card palette by verified Red List tier: higher assessed risk -> rarer-
+   looking frame (plain -> silver -> gold -> foil -> holographic). Text stays
+   dark on light card stock in every tier. Unverified/DD/NE are neutral. */
+.species-card { --card-footer-bg: #ddefa0; }
+.species-popup .species-card-footer { background: var(--card-footer-bg); }
+
+.species-popup.risk-unconfirmed { background: linear-gradient(135deg, #e6e7e4, #b5b8b3 50%, #d9dbd6); }
+.species-popup .species-card.risk-unconfirmed {
+  --card-footer-bg: #e3e5df;
+  border-color: #a5aa9f;
+  background: linear-gradient(135deg, #d9ddd3, #eef0ea 50%, #d2d6cc);
+  box-shadow: inset 0 0 0 3px #f6f7f388;
+}
+.species-conservation-badge { background: #f1f2ee; }
+
+/* LC keeps the original green field card on the silver frame. */
+.risk-lc .species-conservation-badge { background: #e3f2c4; border-color: #7f9c55; color: #233d1c; }
+
+.species-popup.risk-nt { background: linear-gradient(135deg, #f4f8fa, #8fa7b2 35%, #e6eef1 58%, #9db3bc); }
+.species-popup .species-card.risk-nt {
+  --card-footer-bg: #cfeadf;
+  border-color: #6fa290;
+  background: radial-gradient(ellipse at 20% 65%, #e9fbf2, transparent 65%), linear-gradient(135deg, #8fc7b0, #d8f1e6 45%, #9fd0bd);
+}
+.risk-nt .species-conservation-badge { background: #d3efe3; border-color: #4f8a75; color: #12382c; }
+
+.species-popup.risk-vu { background: linear-gradient(135deg, #fff6cf, #c9a13b 30%, #fbe7a1 52%, #a97f1d 78%, #f5df98); box-shadow: 0 24px 80px #0007, 0 0 0 1px #8a6614, inset 0 1px 2px #fff; }
+.species-popup .species-card.risk-vu {
+  --card-footer-bg: #f7e6a8;
+  border-color: #b8902b;
+  background: radial-gradient(ellipse at 20% 65%, #fffbe2, transparent 65%), linear-gradient(135deg, #e8c86a, #fbf0c4 45%, #e3c25a);
+}
+.risk-vu .species-conservation-badge { background: #fbeab0; border-color: #a17a14; color: #3f2c00; }
+
+.species-popup.risk-en {
+  background:
+    repeating-linear-gradient(115deg, #ffffff00 0 14px, #ffffff40 14px 18px),
+    linear-gradient(135deg, #ffd9b8, #c4622c 30%, #f7b07a 55%, #8f3a12 80%, #f2a46c);
+  box-shadow: 0 24px 80px #0007, 0 0 18px #e0763a66, inset 0 1px 2px #fff;
+}
+.species-popup .species-card.risk-en {
+  --card-footer-bg: #fbd6b8;
+  border-color: #c06a36;
+  background: radial-gradient(ellipse at 20% 65%, #fff1e4, transparent 65%), linear-gradient(135deg, #f2a774, #fde4cf 45%, #ee9e66);
+}
+.risk-en .species-conservation-badge { background: #fdd9bd; border-color: #a24a17; color: #431800; }
+
+.species-popup.risk-cr, .species-popup.risk-ew, .species-popup.risk-ex {
+  background-size: 300% 300%;
+  animation: species-foil 9s ease-in-out infinite alternate;
+}
+.species-popup.risk-cr {
+  background-image: linear-gradient(120deg, #ffd1dc, #c2185b 18%, #ffcc80 34%, #e5396b 50%, #ffe0f0 66%, #8e0f3d 82%, #ffb3c6);
+  box-shadow: 0 24px 80px #0008, 0 0 26px #e5396b88, inset 0 1px 2px #fff;
+}
+.species-popup .species-card.risk-cr {
+  --card-footer-bg: #fbd0dc;
+  border-color: #c2185b;
+  background: radial-gradient(ellipse at 20% 65%, #fff0f4, transparent 65%), linear-gradient(135deg, #f3a0b8, #fde3ea 45%, #ee8eaa);
+}
+.risk-cr .species-conservation-badge { background: #fcd3df; border-color: #9c1046; color: #43001a; }
+
+.species-popup.risk-ew {
+  background-image: linear-gradient(120deg, #e6d6ff, #5e35b1 18%, #80deea 34%, #9c4dcc 50%, #f3e5f5 66%, #311b92 82%, #b39ddb);
+  box-shadow: 0 24px 80px #0008, 0 0 26px #9c4dcc88, inset 0 1px 2px #fff;
+}
+.species-popup .species-card.risk-ew {
+  --card-footer-bg: #e2d6f7;
+  border-color: #6a4bb0;
+  background: radial-gradient(ellipse at 20% 65%, #f6f0ff, transparent 65%), linear-gradient(135deg, #c5b0ee, #efe7fd 45%, #b9a3e6);
+}
+.risk-ew .species-conservation-badge { background: #e4d8fa; border-color: #4a2d91; color: #1e0b4a; }
+
+.species-popup.risk-ex {
+  background-image: linear-gradient(120deg, #111, #3a3a3a 16%, #7fd6c2 30%, #1b1b1b 44%, #c79bf2 58%, #0c0c0c 72%, #f2c879 86%, #222);
+  box-shadow: 0 24px 80px #000a, 0 0 22px #c79bf266, inset 0 1px 2px #fff6;
+}
+.species-popup.risk-ex .species-popup-close { border-color: #fff6; }
+.species-popup .species-card.risk-ex {
+  --card-footer-bg: #dedce4;
+  border-color: #3b3b44;
+  background: radial-gradient(ellipse at 20% 65%, #f7f6fb, transparent 65%), linear-gradient(135deg, #b9b6c4, #ecebf1 45%, #aeabbb);
+}
+.risk-ex .species-conservation-badge { background: #2a2a30; border-color: #000; color: #f4f2ff; }
+
+@keyframes species-foil {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .species-popup.risk-cr, .species-popup.risk-ew, .species-popup.risk-ex { animation: none; }
+}
+
+/* Chat card button picks up the same tier accent on its left edge. */
+.species-popup-trigger { border-left-width: 5px; }
+.species-popup-trigger.risk-unconfirmed { border-left-color: #9a9e96; }
+.species-popup-trigger.risk-nt { border-left-color: #4f8a75; }
+.species-popup-trigger.risk-vu { border-left-color: #c9a13b; }
+.species-popup-trigger.risk-en { border-left-color: #c4622c; }
+.species-popup-trigger.risk-cr { border-left-color: #c2185b; }
+.species-popup-trigger.risk-ew { border-left-color: #5e35b1; }
+.species-popup-trigger.risk-ex { border-left-color: #1b1b1b; }

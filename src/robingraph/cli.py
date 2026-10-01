@@ -208,16 +208,13 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         lambda: ingest_store.active_dataset_id("korean-vernacular-names"),
         active_taxonomy_context,
     )
-    from .retrieval.species_profile import create_species_flow, read_traits
+    from .retrieval.species_profile import create_species_flow, read_traits, read_conservation
 
     def resolve_species(name):
         if any("\uac00" <= char <= "\ud7a3" for char in name):
             return lineage_repository.lineage_for_korean_name(name)
         return lineage_repository.lineage_for_scientific_name(name)
 
-    species_flow = create_species_flow(
-        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
-    )
     # Constructing the stdlib client is configuration-only: it makes no HTTP
     # request.  A missing/invalid non-secret embedding configuration merely
     # disables auto routing; explicit chat routes and all legacy endpoints
@@ -240,6 +237,14 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
 
         gemini_model = os.getenv("ROBINGRAPH_GEMINI_MODEL", "gemini-3.8-flash")
         answer_generator = GeminiAnswerer(gemini_api_key, gemini_model)
+    from .retrieval.species_notes import create_species_notes
+
+    summarize_notes = getattr(answer_generator, 'species_notes', None)
+    species_flow = create_species_flow(
+        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+        conservation=lambda lineage: read_conservation(lineage_repository, lineage),
+        notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
+    )
     try:
         app = create_app(
             repository,

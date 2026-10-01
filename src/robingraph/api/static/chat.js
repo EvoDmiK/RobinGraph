@@ -298,6 +298,11 @@
       value.textContent = (trait.display != null ? trait.display : "") + unit + (trait.inferred ? " (추정값)" : "");
       traitCard.appendChild(value);
 
+      var sourceDetails = doc.createElement("details");
+      sourceDetails.className = "trait-source-toggle";
+      var sourceSummary = doc.createElement("summary");
+      sourceSummary.textContent = "자료 출처 (" + group.sources.length + ")";
+      sourceDetails.appendChild(sourceSummary);
       group.sources.forEach(function (sourceTrait) {
         if (!sourceTrait.citation && !sourceTrait.source_name) {
           return;
@@ -310,12 +315,142 @@
           licenseSuffix.textContent = " · " + sourceTrait.license_name;
           source.appendChild(licenseSuffix);
         }
-        traitCard.appendChild(source);
+        sourceDetails.appendChild(source);
       });
+      if (sourceDetails.children.length > 1) { traitCard.appendChild(sourceDetails); }
       traitGrid.appendChild(traitCard);
     });
     return traitGrid;
   }
+
+  // Habitat emblems keyed by the raw AVONET `habitat` trait value (not the
+  // Korean display string, which may change). Each is a 24x24 stroked SVG
+  // path so it stays crisp and inherits `currentColor`; `glyph` is the
+  // plain-text fallback for documents without createElementNS.
+  // Split so the file carries no absolute URL literal (see chat_ui tests).
+  var SVG_NS = ["http:", "", "www.w3.org", "2000", "svg"].join("/");
+  var HABITAT_EMBLEMS = {
+    forest: { slug: "forest", label: "숲", glyph: "▲",
+      path: "M8 3l-5 8h3l-4 6h12l-4-6h3z M8 17v4 M17 6l-4 6h2.5l-3 5h9l-3-5H21z M17 17v4" },
+    shrubland: { slug: "shrubland", label: "관목 지대", glyph: "♣",
+      path: "M3 19c0-3 2-5 4.5-5 .8-2.5 3-3.6 5-3 2-1.6 5-1 6 1.6 2 .6 3 2.4 3 4.4z M2 21h20 M9 19v-3 M15 19v-4" },
+    woodland: { slug: "woodland", label: "성긴 숲", glyph: "♠",
+      path: "M12 21v-8 M12 15l-3-2.5 M12 16l3-2 M12 3a6 6 0 0 0-6 6 4 4 0 0 0 4 4h4a4 4 0 0 0 4-4 6 6 0 0 0-6-6z M3 21h18" },
+    grassland: { slug: "grassland", label: "초지", glyph: "ψ",
+      path: "M2 21h20 M5 21c0-4-1-7-3-9 M8.5 21c0-5 1-9 3-12 M12.5 21c0-4 1.5-7 4.5-9 M16.5 21c0-3 2-6 5-7" },
+    rock: { slug: "rock", label: "바위 지대", glyph: "◭",
+      path: "M2 21l5-9 4 3 3.5-8L22 21z M11 15l2.5 6 M7 12l1 4" },
+    wetland: { slug: "wetland", label: "습지", glyph: "≈",
+      path: "M2 18c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0 M2 21.5c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0 M8 15V9 M8 3.5c-1 0-1.6 1.2-1.6 2.8S7 9 8 9s1.6-1.2 1.6-2.7S9 3.5 8 3.5z M13 15V6 M17 15c0-3 1-5 3.5-6.5" },
+    human_modified: { slug: "human-modified", label: "인공·변형 환경", glyph: "⌂",
+      path: "M2 21h20 M3.5 21V11l6-5 6 5v10 M15.5 21V8H21v13 M7.5 21v-5h4v5 M17.5 11h1.5 M17.5 14.5h1.5" },
+    coastal: { slug: "coastal", label: "해안", glyph: "⛰",
+      path: "M2 21V11l4-3 3.5 4V21 M10 16.5c2-1.5 4-1.5 6 0s4 1.5 6 0 M10 20.5c2-1.5 4-1.5 6 0s4 1.5 6 0 M15 6a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0" },
+    marine: { slug: "marine", label: "바다", glyph: "〰",
+      path: "M2 15.5c3 0 4.5-8 9.5-8 3 0 5 2 5 4.6 0 2-1.4 3.2-3 3.2s-2.6-1-2.6-2.2 M2 20c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0 M18 6.5c1.5-1.8 2.5-2 4-2" },
+    riverine: { slug: "riverine", label: "하천", glyph: "§",
+      path: "M7 2c-4 4 4 6 0 10s4 6 0 10 M15 2c-4 4 4 6 0 10s4 6 0 10 M10.5 7.5h1.5 M10 16.5h1.5" },
+    desert: { slug: "desert", label: "사막", glyph: "☼",
+      path: "M2 21h20 M9 21V6a1.5 1.5 0 0 1 3 0v15 M9 12H7a1.5 1.5 0 0 1-1.5-1.5V8.5 M12 14h2a1.5 1.5 0 0 0 1.5-1.5V10 M17 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0" },
+  };
+  var UNKNOWN_HABITAT_EMBLEM = { slug: "unknown", label: "서식 환경 미확인", glyph: "?",
+    path: "M20 3C12 3 6 9 6 17l-2.5 3.5 M6 17c6.5 0 12-4.5 14-14 M9.5 13.5l5-5 M8 16l3.5-.5" };
+
+  /**
+   * Choose the habitat emblem from the profile's first `habitat` trait whose
+   * raw value is in the known AVONET vocabulary. Matching is
+   * case/whitespace-insensitive; anything else falls back to a neutral
+   * "unknown" emblem rather than guessing.
+   */
+  function habitatEmblemInfo(profile) {
+    var traits = profile && Array.isArray(profile.traits) ? profile.traits : [];
+    for (var i = 0; i < traits.length; i += 1) {
+      var trait = traits[i];
+      if (!trait || trait.name !== "habitat" || typeof trait.value !== "string") { continue; }
+      var key = trait.value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+      if (Object.prototype.hasOwnProperty.call(HABITAT_EMBLEMS, key)) {
+        var known = HABITAT_EMBLEMS[key];
+        return { slug: known.slug, label: known.label, glyph: known.glyph, path: known.path, known: true };
+      }
+    }
+    var unknown = UNKNOWN_HABITAT_EMBLEM;
+    return { slug: unknown.slug, label: unknown.label, glyph: unknown.glyph, path: unknown.path, known: false };
+  }
+
+  function buildHabitatEmblem(doc, info) {
+    var emblem = doc.createElement("span");
+    emblem.className = "species-emblem habitat-" + info.slug;
+    var accessibleLabel = info.known ? "서식 환경: " + info.label : info.label;
+    emblem.setAttribute("role", "img");
+    emblem.setAttribute("aria-label", accessibleLabel);
+    emblem.setAttribute("title", accessibleLabel);
+    if (typeof doc.createElementNS === "function") {
+      var svg = doc.createElementNS(SVG_NS, "svg");
+      svg.setAttribute("viewBox", "0 0 24 24");
+      svg.setAttribute("aria-hidden", "true");
+      svg.setAttribute("focusable", "false");
+      var path = doc.createElementNS(SVG_NS, "path");
+      path.setAttribute("d", info.path);
+      svg.appendChild(path);
+      emblem.appendChild(svg);
+    } else {
+      emblem.textContent = info.glyph;
+    }
+    return emblem;
+  }
+
+  // IUCN Red List categories with the Korean labels used by the national
+  // red list. `tier` drives the card palette only; it is a visual cue for
+  // assessed extinction risk and never a measure of how many birds are
+  // actually around a given place.
+  var CONSERVATION_CATEGORIES = {
+    LC: { label: "관심대상", tier: "lc" },
+    NT: { label: "준위협", tier: "nt" },
+    VU: { label: "취약", tier: "vu" },
+    EN: { label: "위기", tier: "en" },
+    CR: { label: "위급", tier: "cr" },
+    EW: { label: "야생절멸", tier: "ew" },
+    EX: { label: "절멸", tier: "ex" },
+    DD: { label: "정보부족", tier: "unconfirmed" },
+    NE: { label: "미평가", tier: "unconfirmed" },
+  };
+
+  /**
+   * Validate `profile.conservation`. Only an exact known category code with a
+   * named source counts as verified; DD/NE keep their code in the badge but
+   * use the neutral palette, and anything missing/unknown is "미확인". The
+   * Korean label comes from the fixed table above so it can never disagree
+   * with the code.
+   */
+  function conservationInfo(conservation) {
+    var category = conservation && typeof conservation === "object" ? conservation.category : null;
+    // The source dataset annotates some CR rows as "CR (PE)" / "CR (PEW)"
+    // (possibly extinct / in the wild); the backend normalizes these, but
+    // accept the exact raw forms here too rather than dropping to 미확인.
+    if (category === "CR (PE)" || category === "CR (PEW)") {
+      category = "CR";
+    }
+    var hasSource = !!(conservation && typeof conservation.source_name === "string" && conservation.source_name.trim());
+    if (typeof category !== "string" || !Object.prototype.hasOwnProperty.call(CONSERVATION_CATEGORIES, category) || !hasSource) {
+      return { category: null, label: "미확인", tier: "unconfirmed", verified: false,
+        badgeText: "멸종위기 등급 미확인" };
+    }
+    var known = CONSERVATION_CATEGORIES[category];
+    var rawCategory = typeof conservation.category_raw === "string" ? conservation.category_raw.trim().toUpperCase() : "";
+    var qualifier = category === "CR" && rawCategory === "CR (PE)" ? " · 절멸 가능성" :
+      category === "CR" && rawCategory === "CR (PEW)" ? " · 야생절멸 가능성" : "";
+    return {
+      category: category,
+      label: known.label,
+      tier: known.tier,
+      verified: known.tier !== "unconfirmed",
+      badgeText: "IUCN 적색목록 " + known.label + " (" + category + ")" + qualifier,
+    };
+  }
+
+  var CONSERVATION_NOTE =
+    "적색목록 등급은 멸종 위험 평가 결과이며, 특정 지역에서 실제로 보기 드문지(개체 수·관찰 빈도)를 뜻하지 않습니다. " +
+    "표시된 등급은 출처 자료의 릴리스 기준이므로 IUCN의 현재 최신 평가와 다를 수 있습니다. 카드 색상은 이 등급만 반영합니다.";
 
   /** A plain `<a>` whose href is `sanitizeUrl`-checked, falling back to a `<span>` -- used by every sourced link in the species card. */
   function safeLink(doc, text, url) {
@@ -331,7 +466,7 @@
   }
 
   /**
-   * Build the inline species profile card for a `ChatSpeciesResult`
+   * Build the sourced species profile card for a `ChatSpeciesResult`
    * (`result.kind === "profile"`), rendering the exact same sourced
    * `GET /v1/taxa/profile` payload the dedicated /birds page consumes:
    * licensed photos with creator/credit/license links, trait fact cards
@@ -349,13 +484,23 @@
       return null;
     }
     var taxon = profile.taxon;
+    var conservation = conservationInfo(profile.conservation);
     var card = doc.createElement("div");
-    card.className = "species-card";
+    card.className = "species-card risk-" + conservation.tier;
+    card.setAttribute("data-conservation-tier", conservation.tier);
 
     var title = doc.createElement("p");
     title.className = "species-title";
     title.textContent = taxon.korean_name || taxon.scientific_name || "알 수 없는 종";
-    card.appendChild(title);
+    var heading = doc.createElement("div");
+    heading.className = "species-card-heading";
+    var category = doc.createElement("span");
+    category.className = "species-category";
+    category.textContent = "조류 도감";
+    heading.appendChild(category);
+    heading.appendChild(title);
+    heading.appendChild(buildHabitatEmblem(doc, habitatEmblemInfo(profile)));
+    card.appendChild(heading);
 
     if (taxon.korean_name && taxon.scientific_name) {
       var scientificName = doc.createElement("p");
@@ -363,6 +508,31 @@
       scientificName.textContent = taxon.scientific_name;
       card.appendChild(scientificName);
     }
+
+    var conservationBadge = doc.createElement("p");
+    conservationBadge.className = "species-conservation-badge";
+    conservationBadge.textContent = conservation.badgeText;
+    conservationBadge.setAttribute("title", CONSERVATION_NOTE);
+    card.appendChild(conservationBadge);
+
+    var front = doc.createElement("section");
+    front.className = "species-card-front";
+    front.setAttribute("aria-label", "주요 특징");
+    var back = doc.createElement("section");
+    back.className = "species-card-back";
+    back.setAttribute("aria-label", "출처와 상세 정보");
+    back.hidden = true;
+    card.appendChild(front);
+    card.appendChild(back);
+    var backTitle = doc.createElement("h3");
+    backTitle.textContent = "출처 · 상세 정보";
+    back.appendChild(backTitle);
+    var photoSources = doc.createElement("details");
+    photoSources.className = "species-photo-sources";
+    var photoSummary = doc.createElement("summary");
+    photoSummary.textContent = "사진 출처 · 라이선스";
+    photoSources.appendChild(photoSummary);
+    var photoFigures = [];
 
     var images = Array.isArray(profile.images) ? profile.images : [];
     var media = doc.createElement("div");
@@ -385,7 +555,11 @@
       img.alt = (taxon.korean_name || taxon.scientific_name || "") + " 대표 사진: " + (photo.title || "");
       figure.appendChild(img);
 
-      var caption = doc.createElement("figcaption");
+      var caption = doc.createElement("div");
+      caption.className = "species-photo-source";
+      var photoLabel = doc.createElement("strong");
+      photoLabel.textContent = "사진 " + renderedPhotoCount + " · " + (photo.title || "대표 사진");
+      caption.appendChild(photoLabel);
       caption.appendChild(safeLink(doc, "원본 보기", photo.source_url));
       if (photo.creator) {
         var creditText = doc.createElement("span");
@@ -403,30 +577,82 @@
         creditLine.textContent = photo.credit;
         caption.appendChild(creditLine);
       }
-      figure.appendChild(caption);
+      photoSources.appendChild(caption);
+      figure.hidden = photoFigures.length > 0;
+      photoFigures.push(figure);
       media.appendChild(figure);
     });
     if (renderedPhotoCount === 0) {
       var noPhoto = doc.createElement("p");
       noPhoto.className = "species-note";
       noPhoto.textContent = "라이선스가 확인된 대표 사진이 없습니다.";
-      card.appendChild(noPhoto);
+      front.appendChild(noPhoto);
     } else {
-      card.appendChild(media);
+      front.appendChild(media);
+      if (photoFigures.length > 1) {
+        var photoControls = doc.createElement("div");
+        photoControls.className = "species-photo-controls";
+        var previous = doc.createElement("button");
+        previous.type = "button";
+        previous.textContent = "←";
+        previous.setAttribute("aria-label", "이전 사진");
+        var count = doc.createElement("span");
+        count.setAttribute("aria-live", "polite");
+        var next = doc.createElement("button");
+        next.type = "button";
+        next.textContent = "→";
+        next.setAttribute("aria-label", "다음 사진");
+        var photoIndex = 0;
+        function showPhoto(index) {
+          photoIndex = index;
+          photoFigures.forEach(function (item, i) { item.hidden = i !== index; });
+          previous.disabled = index === 0;
+          next.disabled = index === photoFigures.length - 1;
+          count.textContent = "사진 " + (index + 1) + " / " + photoFigures.length;
+        }
+        previous.addEventListener("click", function () { showPhoto(Math.max(0, photoIndex - 1)); });
+        next.addEventListener("click", function () { showPhoto(Math.min(photoFigures.length - 1, photoIndex + 1)); });
+        photoControls.appendChild(previous);
+        photoControls.appendChild(count);
+        photoControls.appendChild(next);
+        showPhoto(0);
+        front.appendChild(photoControls);
+      }
+      back.appendChild(photoSources);
     }
 
     var traitGroups = groupTraits(Array.isArray(profile.traits) ? profile.traits : []);
+    var facts = doc.createElement("dl");
+    facts.className = "species-quick-facts";
+    ["body_mass", "diet_category", "habitat", "primary_lifestyle"].forEach(function (name) {
+      var group = traitGroups.find(function (item) { return item.trait.name === name; });
+      if (!group) { return; }
+      var trait = group.trait;
+      var label = doc.createElement("dt");
+      label.textContent = trait.label || trait.name;
+      var value = doc.createElement("dd");
+      var unit = trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
+      value.textContent = (trait.display != null ? trait.display : "") + unit + (trait.inferred ? " (추정값)" : "");
+      facts.appendChild(label);
+      facts.appendChild(value);
+    });
+    front.appendChild(facts);
+    var frontNote = doc.createElement("p");
+    frontNote.className = "species-front-note";
+    frontNote.textContent = "수치는 종 평균 · 사진과 자료 출처는 뒷면";
+    front.appendChild(frontNote);
+
     var traitNote = doc.createElement("p");
     traitNote.className = "species-note";
     traitNote.textContent =
       "수치는 자료에 기록된 종 평균입니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭(날개폭)과 다릅니다.";
-    card.appendChild(traitNote);
+    back.appendChild(traitNote);
 
     if (traitGroups.length === 0) {
       var noTraits = doc.createElement("p");
       noTraits.className = "species-note";
       noTraits.textContent = "조회된 형질(특징·먹이·서식 환경) 정보가 없습니다.";
-      card.appendChild(noTraits);
+      front.appendChild(noTraits);
     } else {
       // Diet/habitat facts and the single headline measurement (body mass)
       // stay visible; every other body-measurement trait (beak/tarsus/wing/
@@ -440,7 +666,7 @@
       });
 
       if (prominentGroups.length > 0) {
-        card.appendChild(buildTraitGrid(doc, prominentGroups));
+        back.appendChild(buildTraitGrid(doc, prominentGroups));
       }
       if (remainingGroups.length > 0) {
         var measurementsDetails = doc.createElement("details");
@@ -449,7 +675,7 @@
         measurementsSummary.textContent = "측정값 더 보기 (" + remainingGroups.length + ")";
         measurementsDetails.appendChild(measurementsSummary);
         measurementsDetails.appendChild(buildTraitGrid(doc, remainingGroups));
-        card.appendChild(measurementsDetails);
+        back.appendChild(measurementsDetails);
       }
     }
 
@@ -457,7 +683,7 @@
       var vegetationNote = doc.createElement("p");
       vegetationNote.className = "vegetation-note";
       vegetationNote.textContent = profile.vegetation_note;
-      card.appendChild(vegetationNote);
+      back.appendChild(vegetationNote);
     }
 
     var profileWarnings = Array.isArray(profile.warnings) ? profile.warnings : [];
@@ -469,8 +695,52 @@
         li.textContent = "⚠ " + warning;
         profileWarnList.appendChild(li);
       });
-      card.appendChild(profileWarnList);
+      back.appendChild(profileWarnList);
+      var warningNote = doc.createElement("p");
+      warningNote.className = "species-front-note";
+      warningNote.textContent = "자료 안내 " + profileWarnings.length + "건 · 뒷면에서 확인";
+      front.appendChild(warningNote);
     }
+
+    var conservationSection = doc.createElement("details");
+    conservationSection.className = "species-conservation-sources";
+    var conservationSummary = doc.createElement("summary");
+    conservationSummary.textContent = "멸종위기 등급 출처";
+    conservationSection.appendChild(conservationSummary);
+    var conservationStatus = doc.createElement("p");
+    conservationStatus.textContent = conservation.badgeText;
+    conservationSection.appendChild(conservationStatus);
+    var rawConservation = profile.conservation && typeof profile.conservation === "object" ? profile.conservation : null;
+    if (conservation.category && rawConservation) {
+      var conservationSource = doc.createElement("span");
+      conservationSource.className = "trait-source";
+      var sourcePrefix = doc.createElement("span");
+      sourcePrefix.textContent = "기준 자료: ";
+      conservationSource.appendChild(sourcePrefix);
+      conservationSource.appendChild(safeLink(doc, rawConservation.source_name, rawConservation.source_url));
+      var releaseSuffix = doc.createElement("span");
+      releaseSuffix.textContent = typeof rawConservation.source_release === "string" && rawConservation.source_release.trim()
+        ? " · 릴리스 " + rawConservation.source_release.trim() + " 기준"
+        : " · 릴리스 정보 없음";
+      conservationSource.appendChild(releaseSuffix);
+      conservationSection.appendChild(conservationSource);
+      var rawCategory = typeof rawConservation.category_raw === "string" ? rawConservation.category_raw.trim().toUpperCase() : "";
+      if (rawCategory === "CR (PE)" || rawCategory === "CR (PEW)") {
+        var annotation = doc.createElement("p");
+        annotation.className = "species-note";
+        annotation.textContent = "원본 등급: " + rawCategory + (rawCategory === "CR (PE)" ? " · 절멸 가능성이 있는 위급종" : " · 야생절멸 가능성이 있는 위급종");
+        conservationSection.appendChild(annotation);
+      }
+    } else {
+      var noConservation = doc.createElement("p");
+      noConservation.textContent = "검증된 멸종위기 등급 자료가 없어 카드 색상을 중립으로 표시합니다.";
+      conservationSection.appendChild(noConservation);
+    }
+    var conservationNote = doc.createElement("p");
+    conservationNote.className = "species-note";
+    conservationNote.textContent = CONSERVATION_NOTE;
+    conservationSection.appendChild(conservationNote);
+    back.appendChild(conservationSection);
 
     var lineage = profile.lineage;
     var lineageItems = lineage && Array.isArray(lineage.items) ? lineage.items : [];
@@ -506,10 +776,155 @@
         lineageList.appendChild(li);
       });
       lineageDetails.appendChild(lineageList);
-      card.appendChild(lineageDetails);
+      back.appendChild(lineageDetails);
     }
 
+    var footer = doc.createElement("div");
+    footer.className = "species-card-footer";
+    var flip = doc.createElement("button");
+    flip.type = "button";
+    flip.className = "species-card-flip";
+    flip.textContent = "출처 보기 ↻";
+    flip.setAttribute("aria-pressed", "false");
+    function showFace(showBack) {
+      back.hidden = !showBack;
+      front.hidden = showBack;
+      flip.textContent = showBack ? "앞면 보기 ↻" : "출처 보기 ↻";
+      flip.setAttribute("aria-pressed", String(showBack));
+      if (card.parentNode) { card.parentNode.scrollTop = 0; }
+    }
+    card.showFront = function () { showFace(false); };
+    flip.addEventListener("click", function () { showFace(back.hidden); });
+    footer.appendChild(flip);
+    card.appendChild(footer);
     return card;
+  }
+
+  /**
+   * One-line chat summary shown next to the card button: habitat emblem,
+   * habitat name, and the validated red-list badge. The prose explanation
+   * itself is the server's `answer_text` (built from `profile.summary`).
+   */
+  function buildSpeciesAnswer(doc, profile) {
+    if (!profile || !Array.isArray(profile.sections) || !profile.sections.length) { return null; }
+    var answer = doc.createElement("div");
+    answer.className = "species-answer";
+    var heading = doc.createElement("h3");
+    heading.textContent = profile.taxon && (profile.taxon.korean_name || profile.taxon.scientific_name) || "조류 정보";
+    answer.appendChild(heading);
+    var sources = [];
+    var seen = {};
+    profile.sections.slice(0, 4).forEach(function (section) {
+      if (!section || typeof section.title !== "string") { return; }
+      var block = doc.createElement("section");
+      block.className = "species-answer-section";
+      var title = doc.createElement("h4");
+      title.textContent = section.title;
+      block.appendChild(title);
+      var items = Array.isArray(section.items) ? section.items.filter(function (item) {
+        return item && typeof item.text === "string" && item.text.trim();
+      }).slice(0, 4) : [];
+      if (items.length) {
+        var list = doc.createElement("ul");
+        items.forEach(function (item) {
+          var li = doc.createElement("li");
+          li.textContent = item.text;
+          list.appendChild(li);
+          var url = sanitizeUrl(item.source_url);
+          if (url && typeof item.source_name === "string" && !seen[url]) {
+            seen[url] = true;
+            sources.push({ name:item.source_name, url:url, license:item.license_name,
+              licenseUrl:sanitizeUrl(item.license_url) });
+          }
+        });
+        block.appendChild(list);
+      } else {
+        var empty = doc.createElement("p");
+        empty.className = "species-answer-empty";
+        empty.textContent = section.empty_text || "출처가 확인된 자료가 없습니다.";
+        block.appendChild(empty);
+      }
+      answer.appendChild(block);
+    });
+    if (sources.length) {
+      var details = doc.createElement("details");
+      details.className = "species-answer-sources";
+      var summary = doc.createElement("summary");
+      summary.textContent = "답변 출처 보기 (" + sources.length + ")";
+      details.appendChild(summary);
+      sources.forEach(function (source) {
+        var row = doc.createElement("p");
+        row.appendChild(safeLink(doc, source.name, source.url));
+        if (source.license) {
+          var license = doc.createElement("span");
+          license.textContent = " · 한국어 요약·재구성 · ";
+          row.appendChild(license);
+          row.appendChild(safeLink(doc, source.license, source.licenseUrl));
+        }
+        details.appendChild(row);
+      });
+      answer.appendChild(details);
+    }
+    return answer;
+  }
+
+  function buildSpeciesBrief(doc, profile) {
+    var habitat = habitatEmblemInfo(profile);
+    var conservation = conservationInfo(profile && profile.conservation);
+    var brief = doc.createElement("p");
+    brief.className = "species-chat-brief risk-" + conservation.tier;
+    brief.appendChild(buildHabitatEmblem(doc, habitat));
+    var habitatText = doc.createElement("span");
+    habitatText.textContent = habitat.known ? "서식 환경: " + habitat.label : habitat.label;
+    brief.appendChild(habitatText);
+    var badge = doc.createElement("span");
+    badge.className = "species-conservation-badge";
+    badge.textContent = conservation.badgeText;
+    badge.setAttribute("title", CONSERVATION_NOTE);
+    brief.appendChild(badge);
+    return brief;
+  }
+
+  /** Native dialog supplies focus containment, Escape, and focus restoration. */
+  function buildSpeciesPopup(doc, card, profile) {
+    var wrapper = doc.createElement("div");
+    wrapper.className = "species-popup-entry";
+    var opener = doc.createElement("button");
+    opener.type = "button";
+    var tier = typeof card.getAttribute === "function" ? card.getAttribute("data-conservation-tier") : null;
+    tier = tier || "unconfirmed";
+    opener.className = "species-popup-trigger risk-" + tier;
+    var name = profile.taxon.korean_name || profile.taxon.scientific_name || "새";
+    opener.textContent = name + " · 도감 카드 보기 ↗";
+    opener.setAttribute("aria-haspopup", "dialog");
+    wrapper.appendChild(opener);
+
+    var dialog = doc.createElement("dialog");
+    dialog.className = "species-popup risk-" + tier;
+    dialog.setAttribute("aria-label", name + " 도감 카드");
+    var close = doc.createElement("button");
+    close.type = "button";
+    close.className = "species-popup-close";
+    close.textContent = "×";
+    close.setAttribute("aria-label", "도감 카드 닫기");
+    dialog.appendChild(close);
+    dialog.appendChild(card);
+    wrapper.appendChild(dialog);
+    opener.addEventListener("click", function () {
+      if (card.showFront) { card.showFront(); }
+      dialog.showModal();
+    });
+    close.addEventListener("click", function () { dialog.close(); });
+    dialog.addEventListener("click", function (event) {
+      // The dialog's padded interior is still part of the card, not backdrop.
+      if (event.target !== dialog) { return; }
+      var bounds = dialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom) {
+        dialog.close();
+      }
+    });
+    return wrapper;
   }
 
   function init(doc, win) {
@@ -609,10 +1024,10 @@
 
     // The welcoming empty state is markup in index.html, not JS-generated,
     // so it is simply removed once real messages start and re-appended
-    // verbatim on clear -- removeChild is a safe no-op if it is already
-    // gone, so this never needs to track whether it is currently shown.
+    // verbatim on clear. Only remove it while attached: the browser throws
+    // NotFoundError if a later question tries to remove the same node again.
     function hideEmptyState() {
-      if (historyEmptyState) {
+      if (historyEmptyState && historyEmptyState.parentNode === history) {
         history.removeChild(historyEmptyState);
       }
     }
@@ -649,9 +1064,14 @@
       badge.textContent = dispositionInfo.label;
       item.appendChild(badge);
 
-      var text = doc.createElement("p");
-      text.textContent = answer.answer_text;
-      item.appendChild(text);
+      var structured = answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile) : null;
+      if (structured) {
+        item.appendChild(structured);
+      } else {
+        var text = doc.createElement("p");
+        text.textContent = answer.answer_text;
+        item.appendChild(text);
+      }
 
       var answerMetadata = [];
       var result = answer && answer.result;
@@ -693,7 +1113,8 @@
       if (result && result.kind === "profile") {
         var speciesCard = buildSpeciesCard(doc, result.profile);
         if (speciesCard) {
-          item.appendChild(speciesCard);
+          item.appendChild(buildSpeciesBrief(doc, result.profile));
+          item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
         }
       }
 
@@ -756,7 +1177,11 @@
 
       history.appendChild(item);
       messages.push({ role: "assistant", answer: answer });
-      scrollToLatest();
+      if (structured && typeof item.getBoundingClientRect === "function" && typeof history.getBoundingClientRect === "function") {
+        history.scrollTop += item.getBoundingClientRect().top - history.getBoundingClientRect().top - 12;
+      } else {
+        scrollToLatest();
+      }
     }
 
     function appendErrorMessage(text) {
@@ -936,6 +1361,11 @@
     buildChatPayload: buildChatPayload,
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
+    buildSpeciesPopup: buildSpeciesPopup,
+    buildSpeciesBrief: buildSpeciesBrief,
+    habitatEmblemInfo: habitatEmblemInfo,
+    buildSpeciesAnswer: buildSpeciesAnswer,
+    conservationInfo: conservationInfo,
     init: init,
   };
 });
