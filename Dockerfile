@@ -24,7 +24,7 @@ RUN groupadd --gid 10001 robingraph \
 WORKDIR /app
 
 COPY --chown=robingraph:robingraph pyproject.toml uv.lock README.md .python-version ./
-RUN uv sync --python /usr/local/bin/python --locked --no-dev --no-install-project
+RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing --no-install-project
 
 COPY --chown=robingraph:robingraph src ./src
 COPY --chown=robingraph:robingraph data/eval/v1 ./data/eval/v1
@@ -34,7 +34,7 @@ COPY --chown=robingraph:robingraph scripts ./scripts
 RUN test -s src/robingraph/api/static/index.html \
     && test -s src/robingraph/api/static/chat.js \
     && test -s src/robingraph/api/static/styles.css
-RUN uv sync --python /usr/local/bin/python --locked --no-dev
+RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing
 
 RUN install -d -o robingraph -g robingraph /app/.cache /home/robingraph/.local/state
 

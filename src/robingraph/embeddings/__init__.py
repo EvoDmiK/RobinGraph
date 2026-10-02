@@ -20,7 +20,7 @@ from urllib import error as urllib_error
 from urllib import parse as urllib_parse
 from urllib import request as urllib_request
 
-from .. import policy
+from .. import policy, tracing
 from ..fixture import FixtureCorpus
 
 
@@ -310,7 +310,27 @@ class JinaEmbeddingClient:
             raise EmbeddingConfigurationError("BirdsNest inputs must be non-blank and at most 20000 characters")
 
     def _embed_batch(self, texts: Sequence[str], task: str) -> tuple[tuple[float, ...], ...]:
+        # The endpoint and Authorization header are deployment secrets; record
+        # only the non-secret profile so the query/passage task stays auditable.
+        with tracing.span(
+            "jina.embed",
+            tracing.EMBEDDING,
+            {
+                "embedding.provider": "jina",
+                "embedding.api_format": self.settings.api_format,
+                "embedding.model": self.profile.model,
+                "embedding.dimensions": self.profile.dimensions,
+                "embedding.task": task,
+            },
+        ) as span:
+            span.set_inputs({"task": task, "input_count": len(texts), "input_chars": sum(len(text) for text in texts)})
+            vectors = self._embed_batch_with_retries(texts, task, span)
+            span.set_outputs({"vector_count": len(vectors), "dimensions": len(vectors[0]) if vectors else 0})
+            return vectors
+
+    def _embed_batch_with_retries(self, texts: Sequence[str], task: str, span: Any) -> tuple[tuple[float, ...], ...]:
         for attempt in range(self.settings.max_retries + 1):
+            span.set_attribute("robingraph.attempts", attempt + 1)
             try:
                 return self._request_batch(texts, task)
             except (EmbeddingHTTPError, EmbeddingTransportError) as error:
