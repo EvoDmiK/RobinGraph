@@ -312,8 +312,12 @@ curl "https://aviary.dove-nest.com/v1/observations?place=Seoul&observed_from=202
 `offset`을 지원한다. provenance와 허용 라이선스 체인이 온전한 GBIF 레코드만
 반환하며, 일반화된 관찰의 좌표는 API 응답에서 숨긴다.
 
-임베딩 서버는 내부 IP의 HTTP endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과
-secret을 설정한다. API 키의 실제 값은 Git이나 명령 출력에 남기지 않는다.
+NAS에서는 임베딩 서버(Mac mini)를 내부망 주소로 직접 호출한다. 공개 endpoint
+`https://embed.dove-nest.com`은 Cloudflare(홍콩)를 거쳐 다시 NAS NPM을 지나므로
+호출마다 약 0.4~0.6초가 더해진다(2026-10-02 측정: 공개 0.79초, 내부 0.20초).
+내부망 구간은 HTTP이므로 API 키는 집 내부망 안에서만 오간다. 공개 endpoint는 NAS
+밖에서 개발·테스트할 때만 사용한다. `.env.nas.*`에 BirdsNest 호환 프로필과 secret을
+설정한다. API 키의 실제 값은 Git이나 명령 출력에 남기지 않는다.
 
 ```dotenv
 ROBINGRAPH_JINA_ENDPOINT=http://192.168.219.98:8765/v1/embeddings
@@ -324,7 +328,7 @@ ROBINGRAPH_JINA_NORMALIZED=true
 ROBINGRAPH_JINA_API_KEY=<secret>
 ```
 
-API 컨테이너에서 임베딩 서버의 내부 IP·HTTP 도달성을 확인한다.
+API 컨테이너에서 임베딩 서버의 HTTP 도달성을 확인한다.
 
 ```sh
 docker exec robingraph-api python -c "import urllib.request; print(urllib.request.urlopen('http://192.168.219.98:8765/healthz', timeout=10).read().decode())"
