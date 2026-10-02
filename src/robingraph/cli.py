@@ -15,6 +15,7 @@ from .fixture import default_fixture_root, load_fixture
 from .graph.settings import Neo4jSettings
 from .retrieval.fixture_repository import FixtureRepository
 from .slice import QuestionService, validate_answer
+from .tracing import configure_tracing
 
 
 def _gold_questions(root: Path) -> list[dict[str, object]]:
@@ -152,6 +153,8 @@ def verify_neo4j_fixture(_: argparse.Namespace) -> int:
 def serve_fixture(arguments: argparse.Namespace) -> int:
     import uvicorn
 
+    configure_tracing()
+
     uvicorn.run("robingraph.api.app:app", host=arguments.host, port=arguments.port)
     return 0
 
@@ -166,6 +169,7 @@ def serve_ingest(arguments: argparse.Namespace) -> int:
     from .ingest.store import IngestionStore
 
     settings = PostgresSettings.from_environment()
+    configure_tracing()
     app = create_app(ingest_store=IngestionStore(settings))
     uvicorn.run(app, host=arguments.host, port=arguments.port)
     return 0
@@ -190,6 +194,9 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     from .retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository
 
     settings = Neo4jSettings.from_environment()
+    # Fail-open and synchronous: autolog must be enabled before the LCEL
+    # flows run, and an unreachable tracking server only disables tracing.
+    configure_tracing()
     ingest_store = IngestionStore(PostgresSettings.from_environment())
     repository = Neo4jGraphRepository(settings)
     operational_repository = Neo4jOperationalObservationRepository(settings)

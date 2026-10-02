@@ -9,6 +9,7 @@ have to guess.
 from __future__ import annotations
 
 from datetime import date
+import functools
 from hashlib import sha256
 import logging
 import os
@@ -22,6 +23,7 @@ from langchain_core.runnables import RunnableLambda
 from fastapi.responses import PlainTextResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from .. import tracing
 from ..embeddings import EmbeddingClient
 from ..fixture import load_fixture
 from ..graph.settings import Neo4jSettings
@@ -545,6 +547,46 @@ def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool
     return f"{subject}의 {rank_label} 분류는 {name}입니다.", True
 
 
+def _trace_payload(value: object) -> object:
+    if isinstance(value, BaseModel):
+        return value.model_dump(mode="json")
+    return value
+
+
+def _traced_route(name: str) -> Callable[[Callable], Callable]:
+    """Make each API request one MLflow trace whose children are its retrieval/model calls.
+
+    FastAPI runs sync endpoints in a worker thread; opening the parent span
+    inside that thread keeps every child span (including LangChain autolog
+    spans) in the same context.  Disabled tracing adds one attribute check.
+    """
+
+    def decorate(endpoint: Callable) -> Callable:
+        @functools.wraps(endpoint)
+        def traced(*args, **kwargs):
+            if not tracing.is_enabled():
+                return endpoint(*args, **kwargs)
+            with tracing.span(name, tracing.CHAIN, {"http.route": name}) as span:
+                span.set_inputs({key: _trace_payload(value) for key, value in kwargs.items()})
+                try:
+                    result = endpoint(*args, **kwargs)
+                except HTTPException as error:
+                    span.set_attribute("http.status_code", error.status_code)
+                    raise
+                if isinstance(result, ChatResponse):
+                    span.set_attributes({
+                        "robingraph.selected_intent": result.selected_intent or "none",
+                        "robingraph.route_method": result.route_method,
+                        "robingraph.disposition": result.disposition,
+                    })
+                span.set_outputs(_trace_payload(result))
+                return result
+
+        return traced
+
+    return decorate
+
+
 def create_neo4j_search_handler(
     settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None,
     english_search_terms: Callable[[str], str] | None = None,
@@ -578,9 +620,36 @@ def create_neo4j_search_handler(
             vector_top_k=top_k,
             channels=channels,
         )
+        def traced_search(search_request: HybridSearchRequest, query_embedder=None, *, fallback: bool = False):
+            # Parameterized Cypher stays inside `search`; the span records only
+            # the bounded request shape and the policy-checked result ids.
+            with tracing.span(
+                "neo4j.hybrid_search",
+                tracing.RETRIEVER,
+                {
+                    "retrieval.backend": "neo4j",
+                    "retrieval.channels": list(search_request.channels),
+                    "retrieval.limit": search_request.limit,
+                    "retrieval.top_k": search_request.fulltext_top_k,
+                    "retrieval.embedding_fallback": fallback,
+                },
+            ) as span:
+                span.set_inputs({"query_text": search_request.query_text})
+                if query_embedder is None:
+                    outcome = search(settings, search_request)
+                else:
+                    outcome = search(settings, search_request, query_embedder=query_embedder)
+                if tracing.is_enabled():
+                    span.set_attributes({"retrieval.result_count": len(outcome.results), "retrieval.warnings": list(outcome.warnings)})
+                    span.set_outputs([
+                        {"chunk_id": item.chunk_id, "score": item.score, "channels": list(item.channels)}
+                        for item in outcome.results
+                    ])
+                return outcome
+
         try:
             if not hybrid:
-                outcome = search(settings, request)
+                outcome = traced_search(request)
                 return HybridSearchOutcome(
                     results=outcome.results,
                     warnings=(*outcome.warnings, translation_warning) if translation_warning else outcome.warnings,
@@ -593,11 +662,7 @@ def create_neo4j_search_handler(
                 # for server-side diagnostics.
                 raise SearchBackendUnavailableError(_SEARCH_UNAVAILABLE) from error
             try:
-                return search(
-                    settings,
-                    request,
-                    query_embedder=cast(QueryEmbedderLike, client),
-                )
+                return traced_search(request, cast(QueryEmbedderLike, client))
             except EmbeddingError:
                 fallback_request = HybridSearchRequest(
                     query_text=question,
@@ -606,7 +671,7 @@ def create_neo4j_search_handler(
                     vector_top_k=top_k,
                     channels=(FULLTEXT_CHANNEL,),
                 )
-                outcome = search(settings, fallback_request)
+                outcome = traced_search(fallback_request, fallback=True)
                 return HybridSearchOutcome(
                     results=outcome.results,
                     warnings=(*outcome.warnings, "Embedding request failed; results are keyword-only fulltext"),
@@ -626,7 +691,11 @@ def create_neo4j_observation_handler(
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
         try:
-            return repository.search_observations(query)
+            with tracing.span("neo4j.operational_observations", tracing.RETRIEVER, {"retrieval.backend": "neo4j"}) as span:
+                span.set_inputs(query.__dict__)
+                observations = repository.search_observations(query)
+                span.set_outputs({"returned": len(observations)})
+                return observations
         except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
             raise OperationalBackendUnavailableError(
                 "Operational GBIF observation search is unavailable"
@@ -642,7 +711,11 @@ def create_neo4j_lineage_handler(repository: TaxonomyLineageRepository) -> Linea
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
         try:
-            return repository.lineage_for_scientific_name(scientific_name)
+            with tracing.span("neo4j.taxonomy_lineage", tracing.RETRIEVER, {"retrieval.backend": "neo4j", "lineage.matched_by": "scientific_name"}) as span:
+                span.set_inputs({"scientific_name": scientific_name})
+                lineage = repository.lineage_for_scientific_name(scientific_name)
+                span.set_outputs({"found": lineage is not None})
+                return lineage
         except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
             raise TaxonomyLineageBackendUnavailableError(
                 "AviList reference-taxonomy lineage is unavailable"
@@ -662,7 +735,11 @@ def create_neo4j_korean_lineage_handler(repository: TaxonomyLineageRepository) -
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
 
         try:
-            return repository.lineage_for_korean_name(korean_name)
+            with tracing.span("neo4j.taxonomy_lineage", tracing.RETRIEVER, {"retrieval.backend": "neo4j", "lineage.matched_by": "korean_name"}) as span:
+                span.set_inputs({"korean_name": korean_name})
+                lineage = repository.lineage_for_korean_name(korean_name)
+                span.set_outputs({"found": lineage is not None})
+                return lineage
         except (Neo4jError, ServiceUnavailable, SessionExpired, ValueError) as error:
             raise TaxonomyLineageBackendUnavailableError(
                 "AviList reference-taxonomy lineage is unavailable"
@@ -724,6 +801,7 @@ def create_app(
     evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
 
     @app.get("/v1/taxa/related")
+    @_traced_route("GET /v1/taxa/related")
     def species_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
         if not name.strip():
             raise HTTPException(status_code=422, detail="A species name is required")
@@ -737,6 +815,7 @@ def create_app(
             raise HTTPException(status_code=503, detail="Species relations are temporarily unavailable") from error
 
     @app.get("/v1/taxa/profile")
+    @_traced_route("GET /v1/taxa/profile")
     def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)]):
         if not name.strip():
             raise HTTPException(status_code=422, detail="A species name is required")
@@ -795,6 +874,7 @@ def create_app(
         }
 
     @app.post("/v1/answers", response_model=AnswerResponse)
+    @_traced_route("POST /v1/answers")
     def answer_question(request: QuestionRequest) -> AnswerResponse:
         answer = service.answer(request.question)
         try:
@@ -804,6 +884,7 @@ def create_app(
         return _response(answer)
 
     @app.post("/v1/chat", response_model=ChatResponse)
+    @_traced_route("POST /v1/chat")
     def integrated_chat(request: ChatRequest) -> ChatResponse:
         """Route a bounded chat request without inventing facts or filters.
 
@@ -813,7 +894,15 @@ def create_app(
 
         recognized = _species_chat_question(request.question) if request.intent == "auto" else None
         if request.intent == "auto":
-            selected = recognized[0] if recognized else (semantic_router.classify(request.question) if semantic_router is not None else None)
+            if recognized:
+                selected = recognized[0]
+            elif semantic_router is not None:
+                with tracing.span("semantic_router.classify", tracing.CHAIN) as route_span:
+                    route_span.set_inputs({"question": request.question})
+                    selected = semantic_router.classify(request.question)
+                    route_span.set_outputs({"selected_intent": selected})
+            else:
+                selected = None
             method: Literal["semantic", "explicit", "deterministic"] = "deterministic" if recognized else "semantic"
             if selected is None:
                 return ChatResponse(
@@ -1040,6 +1129,7 @@ def create_app(
         response_model=DocumentSearchResponse,
         responses={503: {"description": "Neo4j mode or a configured search dependency is unavailable"}},
     )
+    @_traced_route("POST /v1/search")
     def search_documents(request: DocumentSearchRequest) -> DocumentSearchResponse:
         if search_handler is None:
             raise HTTPException(status_code=503, detail="Document search is available only in Neo4j mode")
@@ -1056,6 +1146,7 @@ def create_app(
         response_model=OperationalObservationSearchResponse,
         responses={503: {"description": "The operational GBIF observation graph is unavailable"}},
     )
+    @_traced_route("GET /v1/observations")
     def search_operational_observations(
         taxon_key: str | None = Query(default=None, min_length=1, max_length=50),
         scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
@@ -1112,6 +1203,7 @@ def create_app(
             503: {"description": "The AviList reference-taxonomy projection is unavailable"},
         },
     )
+    @_traced_route("GET /v1/taxa/lineage")
     def get_taxonomy_lineage(
         scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
         name: str | None = Query(default=None, min_length=1, max_length=200),

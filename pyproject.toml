@@ -22,6 +22,14 @@ dependencies = [
 test = [
   "httpx2>=2.12,<3",
 ]
+tracing = [
+  # MLflow's LangChain autolog version gate imports `langchain`; 3.14 is
+  # validated through langchain 1.3.x and matches the NAS tracking server.
+  "langchain>=1,<1.4",
+  # Native Gemini path for mlflow.gemini.autolog (validated through 2.8.x).
+  "google-genai>=1.21,<2.9",
+  "mlflow-tracing~=3.14.0",
+]
 
 [project.scripts]
 robingraph = "robingraph.cli:main"

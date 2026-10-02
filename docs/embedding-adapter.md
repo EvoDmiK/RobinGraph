@@ -2,9 +2,9 @@
 
 ## BirdsNest API 계약과 연결 결과 (2026-09-04)
 
-사용자가 제공한 `API-USAGE.md`에 맞춰 `ROBINGRAPH_JINA_API_FORMAT=birdsnest` 프로필을 추가했다. `.env.example`에 공개 endpoint와 설정을 반영했고 API 키는 저장하지 않았다.
+사용자가 제공한 `API-USAGE.md`에 맞춰 `ROBINGRAPH_JINA_API_FORMAT=birdsnest` 프로필을 추가했다. `.env.example`에 내부 IP endpoint와 설정을 반영했고 API 키는 저장하지 않았다.
 
-- Endpoint: `https://embed.dove-nest.com/v1/embeddings`
+- Endpoint: `http://192.168.219.98:8765/v1/embeddings`
 - 모델: `jinaai/jina-embeddings-v3`. 짧은 별칭 `jina-embeddings-v3`도 설정으로 받되 요청·저장 프로필은 정식 이름으로 통일한다.
 - 차원: 512 기본 설정. 서버가 지원하는 32/64/128/256/512/768/1024만 허용한다.
 - 문서 `retrieval.passage`, 질문 `retrieval.query`, `encoding_format=float`, `max_length=1024`를 명시한다.

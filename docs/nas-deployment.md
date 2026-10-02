@@ -312,11 +312,11 @@ curl "https://aviary.dove-nest.com/v1/observations?place=Seoul&observed_from=202
 `offset`을 지원한다. provenance와 허용 라이선스 체인이 온전한 GBIF 레코드만
 반환하며, 일반화된 관찰의 좌표는 API 응답에서 숨긴다.
 
-임베딩 서버는 HTTPS endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과
+임베딩 서버는 내부 IP의 HTTP endpoint로 호출한다. `.env.nas`에 BirdsNest 호환 프로필과
 secret을 설정한다. API 키의 실제 값은 Git이나 명령 출력에 남기지 않는다.
 
 ```dotenv
-ROBINGRAPH_JINA_ENDPOINT=https://embed.dove-nest.com/v1/embeddings
+ROBINGRAPH_JINA_ENDPOINT=http://192.168.219.98:8765/v1/embeddings
 ROBINGRAPH_JINA_API_FORMAT=birdsnest
 ROBINGRAPH_JINA_MODEL=jinaai/jina-embeddings-v3
 ROBINGRAPH_JINA_DIMENSIONS=512
@@ -324,10 +324,10 @@ ROBINGRAPH_JINA_NORMALIZED=true
 ROBINGRAPH_JINA_API_KEY=<secret>
 ```
 
-API 컨테이너에서 임베딩 서버의 DNS, TLS, HTTP 도달성을 확인한다.
+API 컨테이너에서 임베딩 서버의 내부 IP·HTTP 도달성을 확인한다.
 
 ```sh
-docker exec robingraph-api python -c "import urllib.request; print(urllib.request.urlopen('https://embed.dove-nest.com/healthz', timeout=10).read().decode())"
+docker exec robingraph-api python -c "import urllib.request; print(urllib.request.urlopen('http://192.168.219.98:8765/healthz', timeout=10).read().decode())"
 ```
 
 임베딩 인덱싱은 명시적인 쓰기 작업이므로 아래 CLI로만 실행한다. 검색은 같은
