@@ -223,3 +223,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# macOS AppleDouble files created on network shares
+._*
+
+# Local backups of NAS env files (contain secrets)
+.env.nas.*-backup-*
