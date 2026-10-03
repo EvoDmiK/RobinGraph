@@ -1120,3 +1120,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-photo-broken p { margin: 0; }
 .species-photo-reload, .species-photo-retry { min-height: 36px; padding: 6px 12px; border: 1px solid currentColor; border-radius: 999px; background: #fffdf8; color: #2f6f4f; font: inherit; font-size: .82rem; cursor: pointer; }
 .species-photo-reload:disabled, .species-photo-retry:disabled { opacity: .5; cursor: progress; }
+
+.species-parent { font-size: .82rem; color: var(--muted); margin: .3rem 0 .65rem; }
+.species-reference { border-left: 3px solid #aab7ad; padding-left: .7rem; }
+.species-reference-provenance { font-size: .78rem; color: var(--muted); }
+.species-subspecies { margin-top: .8rem; }
+.species-subspecies button { margin: .25rem .4rem .25rem 0; }
+.species-subspecies-description { font-size: .88rem; line-height: 1.55; margin: .4rem 0 .7rem; }
+.species-subspecies-sources blockquote { margin: .6rem 0; padding-left: .6rem; border-left: 2px solid #aab7ad; font-size: .78rem; overflow-wrap: anywhere; }

@@ -1794,7 +1794,7 @@ test("name_relations chat result renders labelled, noted ambiguity choices in th
   assert.ok(nodes.some((n) => n.textContent === "집오리는 청둥오리에서 가축화된 품종군입니다."));
   assert.ok(nodes.some((n) => n.textContent === "관련 야생종: 청둥오리 · Mallard · Anas platyrhynchos"));
   const buttons = nodes.filter((n) => n.className === "name-relation-choose");
-  assert.deepEqual(buttons.map((b) => b.textContent), ["청둥오리 · 관련 야생종 자료 보기", "흰뺨검둥오리 · 관련 야생종 자료 보기"]);
+  assert.deepEqual(buttons.map((b) => b.textContent), ["청둥오리 · 관련 야생종 자료 보기", "흰뺨검둥오리 · 연결된 종 자료 보기"]);
   assert.equal(dom.fetchCalls.filter((c) => c.url.startsWith("/v1/taxa/")).length, 0, "choices must not prefetch profiles");
 
   buttons[0].dispatch("click");
@@ -2515,4 +2515,96 @@ test("RG-006 follow-up: unsafe claim source URLs render as inert text", () => {
   const claim = collectAllNodes(card).find((n) => n.className === "trait-source-claim");
   assert.equal(collectAllNodes(claim).some((n) => n.tagName === "a"), false);
   assert.ok(collectAllNodes(claim).some((n) => n.tagName === "span" && n.textContent === "AVONET"));
+});
+
+test("single common-name graph target automatically loads a closed card; multiple targets require choice", async () => {
+  const relation = fakeNameRelations().relations[1];
+  let requests = 0;
+  const single = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations({ relations: [relation] }), async () => {
+    requests++;
+    return jsonResponse(profileFor(relation.taxon));
+  });
+  await tick();
+  assert.equal(requests, 1);
+  assert.ok(collectAllNodes(single).some(n => /^species-chat-brief /.test(n.className || "")));
+  assert.match(collectedText(single), /그래프에서 연결된/);
+  assert.equal(collectAllNodes(single).some(n => n.tagName === "dialog" && n.open), false);
+  const second = Object.assign({}, relation, { taxon: { taxon_id: "other", scientific_name: "Other species" } });
+  chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations({ relations: [relation, second] }), async () => { requests++; });
+  await tick();
+  assert.equal(requests, 1, "never arbitrarily choose between graph targets");
+});
+
+test("subspecies references retain parent provenance without becoming own stats, habitat, photos or risk", () => {
+  const parent = { scientific_name: "Anas platyrhynchos", taxon_id: "t1", rank: "species" };
+  const profile = profileFor({ scientific_name: "Anas platyrhynchos test", taxon_id: "sub1", rank: "subspecies" });
+  profile.traits = [];
+  profile.images = [];
+  profile.conservation = { code: "unknown" };
+  profile.parent_species = { taxon: parent };
+  profile.reference_traits = [{ name: "body_mass", label: "체중", display: "999", unit: "g", reference_scope: "species", reference_taxon: parent }];
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const nodes = collectAllNodes(card);
+  assert.equal(nodes.find(n => n.className === "species-category").textContent, "아종");
+  assert.match(nodes.find(n => n.className === "species-parent").textContent, /소속 종: Anas platyrhynchos/);
+  const reference = nodes.find(n => n.className === "card-details species-reference");
+  assert.equal(reference.tagName, "details");
+  assert.match(collectedText(reference), /종 수준 참고 정보/);
+  assert.match(collectedText(reference), /Anas platyrhynchos/);
+  assert.equal(collectedText(nodes.find(n => n.className === "species-quick-facts")).includes("999"), false);
+  assert.equal(card.getAttribute("data-conservation-tier"), "unconfirmed");
+  assert.equal(nodes.some(n => n.tagName === "img"), false);
+});
+
+test("automatic common-name profile settling after clear is discarded", async () => {
+  const pending = deferred();
+  let active = true;
+  const relation = fakeNameRelations().relations[1];
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations({ relations: [relation] }), () => pending.promise, () => active);
+  active = false;
+  pending.resolve(jsonResponse(profileFor(relation.taxon)));
+  await tick();
+  assert.equal(collectAllNodes(section).some(n => /^species-chat-brief /.test(n.className || "")), false);
+});
+
+test("subspecies explorer fetches lazily and rejects a selected profile from another release", async () => {
+  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos" });
+  const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos test" };
+  let calls = 0;
+  const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async url => {
+    calls++;
+    if (url.startsWith("/v1/taxa/subspecies")) {
+      return jsonResponse({ parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b", subspecies: [sub], has_more: true, source_name: "AviList", source_url: "https://www.avilist.org/" });
+    }
+    const other = profileFor(sub);
+    other.lineage.taxonomy_release = "stale";
+    return jsonResponse(other);
+  });
+  assert.equal(calls, 0);
+  explorer.children[0].dispatch("click");
+  await tick();
+  assert.equal(calls, 1);
+  assert.match(collectedText(explorer), /일부 아종만 표시/);
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /아종 자료 보기/.test(n.textContent)).dispatch("click");
+  await tick();
+  assert.equal(calls, 2);
+  assert.match(collectedText(explorer), /아종 자료를 확인하지 못했습니다/);
+  assert.equal(collectAllNodes(explorer).some(n => /^species-chat-brief /.test(n.className || "")), false);
+});
+
+test("subspecies card shows only its sourced reviewed description and keeps raw range in source details", () => {
+  const profile = profileFor({ rank: "subspecies", scientific_name: "Anas platyrhynchos test", taxon_id: "sub1" });
+  profile.subspecies_metadata = { section: { key: "subspecies_taxonomy", items: ["분류 문장", "검토된 아종 고유 분포 설명"] }, source_url: "https://www.avilist.org/", source_name: "AviList", range_raw: "Reviewed source range <script>inert</script>" };
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const front = collectAllNodes(card).find(n => n.className === "species-card-front");
+  assert.match(collectedText(front), /검토된 아종 고유 분포 설명/);
+  assert.doesNotMatch(collectedText(front), /Reviewed source range/);
+  const sources = collectAllNodes(card).find(n => n.className === "card-details species-subspecies-sources");
+  assert.match(collectedText(sources), /분류·아종 설명 출처/);
+  assert.match(collectedText(sources), /Reviewed source range/);
+  assert.equal(collectAllNodes(sources).find(n => n.tagName === "a").href, "https://www.avilist.org/");
+  profile.subspecies_metadata.source_url = "javascript:alert(1)";
+  const unsafe = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  assert.doesNotMatch(collectedText(unsafe), /검토된 아종 고유 분포 설명|Reviewed source range/);
+  assert.match(collectedText(unsafe), /아직 확인하지 못했습니다/);
 });

@@ -58,6 +58,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
             {
                 "concept_set_id": "avilist-2025b",
                 "scientific_name": cleaned_name,
+                "taxonomy_release": "2025b",
                 "korean_dataset_id": "wikidata-dataset-active",
             },
             lineage_call.kwargs,
@@ -166,6 +167,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
             {
                 "concept_set_id": "avilist-2025b",
                 "korean_name": cleaned_name,
+                "taxonomy_release": "2025b",
                 "korean_dataset_id": "wikidata-dataset-active",
             },
             lineage_call.kwargs,

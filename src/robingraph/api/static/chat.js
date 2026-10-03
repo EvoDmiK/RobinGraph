@@ -994,6 +994,14 @@
     var data = relationships;
     var active = typeof isActive === "function" ? isActive : function () { return true; };
     var queryName = typeof data.query_name === "string" && data.query_name.trim() ? data.query_name.trim() : "검색어";
+    var targets = [];
+    data.relations.forEach(function (relation) {
+      var taxon = relation && relation.taxon;
+      if (!taxon || !taxon.scientific_name) { return; }
+      var key = taxon.taxon_id || taxon.scientific_name;
+      if (!targets.some(function (item) { return (item.taxon.taxon_id || item.taxon.scientific_name) === key; })) { targets.push(relation); }
+    });
+    var automatic = targets.length === 1 && data.relations.every(function (relation) { return !isDomesticRelation(relation); }) && /common_name/.test([targets[0].relation_type, targets[0].entity_kind].join(" "));
     var section = doc.createElement("section");
     section.className = "name-relations";
     section.setAttribute("aria-label", queryName + " 이름 관계");
@@ -1007,7 +1015,7 @@
       summary.textContent = data.summary;
       section.appendChild(summary);
     }
-    if (data.is_search_term === true) {
+    if (data.is_search_term === true && !automatic) {
       var searchTerm = doc.createElement("p");
       searchTerm.className = "species-note";
       searchTerm.textContent = "‘" + queryName + "’은(는) 여러 종이나 가축형을 함께 가리키는 데에도 쓰이는 이름입니다. 통칭의 사용 범위·가축형 관계를 구분해 확인합니다. 아래 관련 종 중 하나를 골라 확인하세요.";
@@ -1073,7 +1081,8 @@
         caveat.setAttribute("role", "note");
         caveat.textContent = "아래는 ‘" + queryName + "’(이)라는 이름이 가리키는 범위 전체의 자료가 아니라, 출처에서 ‘" + relation.name + "’과(와) " +
           (typeof relation.relation_label === "string" && relation.relation_label.trim() ? "‘" + relation.relation_label.trim() + "’ 관계로 " : "") +
-          "연결된 관련 야생종 " + candidateName + "의 자료입니다." + (isDomesticRelation(relation) ? " " + DOMESTIC_WARNING : "");
+          (isDomesticRelation(relation) ? "연결된 관련 야생종 " : "연결된 종 ") + candidateName + "의 자료입니다." + (isDomesticRelation(relation) ? " " + DOMESTIC_WARNING : "");
+        if (automatic) { caveat.textContent = "‘" + queryName + "’과(와) 그래프에서 연결된 " + candidateName + "의 자료입니다."; }
         selection.appendChild(caveat);
         var explanation = buildSpeciesAnswer(doc, profile);
         if (explanation) {
@@ -1085,7 +1094,9 @@
         }
         var card = buildSpeciesCard(doc, profile, { fetcher: fetcher, isActive: active });
         if (card) {
-          if (profile.lineage) { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active })); }
+          if (profile.lineage && profile.taxon.rank !== "subspecies") { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active })); }
+          if (profile.taxon.rank !== "subspecies") { selection.appendChild(buildSubspeciesExplorer(doc, profile, fetcher, active)); }
+          else { selection.appendChild(buildParentSpeciesExplorer(doc, profile, fetcher, active)); }
           selection.appendChild(buildSpeciesBrief(doc, profile));
           selection.appendChild(buildSpeciesPopup(doc, card, profile));
         }
@@ -1118,7 +1129,7 @@
       if (taxonLabel) {
         var taxonLine = doc.createElement("p");
         taxonLine.className = "name-relation-taxon";
-        taxonLine.textContent = "관련 야생종: " + taxonLabel;
+        taxonLine.textContent = (domestic ? "관련 야생종: " : "연결된 종: ") + taxonLabel;
         li.appendChild(taxonLine);
       }
       if (typeof relation.note === "string" && relation.note.trim()) {
@@ -1156,7 +1167,7 @@
         var button = doc.createElement("button");
         button.type = "button";
         button.className = "name-relation-choose";
-        button.textContent = (taxon.korean_name || taxon.english_name || taxon.scientific_name) + " · 관련 야생종 자료 보기";
+        button.textContent = (taxon.korean_name || taxon.english_name || taxon.scientific_name) + (domestic ? " · 관련 야생종 자료 보기" : " · 연결된 종 자료 보기");
         button.addEventListener("click", function () { choose(relation); });
         li.appendChild(button);
       }
@@ -1165,6 +1176,7 @@
     section.appendChild(list);
     section.appendChild(status);
     section.appendChild(selection);
+    if (automatic) { choose(targets[0]); }
     return section;
   }
 
@@ -1174,6 +1186,95 @@
    * by collapsing and expanding again, and repeated clicks while a request
    * is in flight never start a second one.
    */
+  function buildParentSpeciesExplorer(doc, profile, fetcher, isActive) {
+    var section = doc.createElement("section");
+    section.className = "species-parent-explorer";
+    var parent = profile.parent_species && profile.parent_species.taxon;
+    if (!parent) { return section; }
+    var button = doc.createElement("button");
+    button.type = "button";
+    button.textContent = "상위 종 " + nameRelationTaxonLabel(parent) + " 자료 보기";
+    var content = doc.createElement("div");
+    section.appendChild(button);
+    section.appendChild(content);
+    var pending = false;
+    button.addEventListener("click", function () {
+      if (pending) { return; }
+      pending = true;
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", parent.scientific_name, 60000).then(function (other) {
+        pending = false;
+        if (typeof isActive === "function" && !isActive()) { return; }
+        if (!other.taxon || other.taxon.taxon_id !== parent.taxon_id || !other.lineage || !profile.lineage || other.lineage.concept_set_id !== profile.lineage.concept_set_id || other.lineage.taxonomy_release !== profile.lineage.taxonomy_release) { throw new Error("changed"); }
+        while (content.firstChild) { content.removeChild(content.firstChild); }
+        var answer = buildSpeciesAnswer(doc, other);
+        if (answer) { content.appendChild(answer); }
+        content.appendChild(buildSpeciesBrief(doc, other));
+        content.appendChild(buildSpeciesPopup(doc, buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: isActive }), other));
+      }).catch(function () { pending = false; if (typeof isActive !== "function" || isActive()) { content.textContent = "상위 종 자료를 확인하지 못했습니다. 다시 눌러 재시도하세요."; } });
+    });
+    return section;
+  }
+
+  function buildSubspeciesExplorer(doc, profile, fetcher, isActive) {
+    var active = typeof isActive === "function" ? isActive : function () { return true; };
+    var section = doc.createElement("section");
+    section.className = "species-subspecies";
+    var button = doc.createElement("button");
+    button.type = "button";
+    button.textContent = "이 종의 아종 살펴보기";
+    var content = doc.createElement("div");
+    var status = doc.createElement("p");
+    status.setAttribute("role", "status");
+    section.appendChild(button);
+    section.appendChild(status);
+    section.appendChild(content);
+    var loaded = false;
+    var pending = false;
+    var generation = 0;
+    function matches(data) {
+      return profile.lineage && data.concept_set_id === profile.lineage.concept_set_id && data.taxonomy_release === profile.lineage.taxonomy_release;
+    }
+    button.addEventListener("click", function () {
+      if (loaded) { content.hidden = !content.hidden; return; }
+      if (pending) { return; }
+      pending = true;
+      status.textContent = "아종 목록을 불러오는 중입니다.";
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/subspecies", profile.taxon.scientific_name, 30000).then(function (data) {
+        pending = false;
+        if (!active()) { return; }
+        if (!matches(data) || !data.parent_species || !data.parent_species.taxon || data.parent_species.taxon.taxon_id !== profile.taxon.taxon_id || !Array.isArray(data.subspecies)) { throw new Error("changed"); }
+        loaded = true;
+        status.textContent = data.subspecies.length ? "그래프에 연결된 아종을 선택하세요." : "이 분류 기준에서 연결된 아종이 없습니다.";
+        if (data.source_url) { content.appendChild(safeLink(doc, data.source_name || "분류 출처", data.source_url)); }
+        if (data.has_more) { var notice = doc.createElement("p"); notice.textContent = "일부 아종만 표시합니다. 전체 목록은 분류 출처에서 확인하세요."; content.appendChild(notice); }
+        var selected = doc.createElement("div");
+        data.subspecies.forEach(function (taxon) {
+          var choice = doc.createElement("button");
+          choice.type = "button";
+          choice.textContent = nameRelationTaxonLabel(taxon) + " · 아종 자료 보기";
+          choice.addEventListener("click", function () {
+            var current = ++generation;
+            status.textContent = "아종 자료를 불러오는 중입니다.";
+            fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (other) {
+              if (!active() || current !== generation) { return; }
+              if (!other.taxon || other.taxon.rank !== "subspecies" || other.taxon.taxon_id !== taxon.taxon_id || !other.lineage || !matches(other.lineage)) { throw new Error("changed"); }
+              while (selected.firstChild) { selected.removeChild(selected.firstChild); }
+              var answer = buildSpeciesAnswer(doc, other);
+              if (answer) { selected.appendChild(answer); }
+              var card = buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: active });
+              selected.appendChild(buildSpeciesBrief(doc, other));
+              selected.appendChild(buildSpeciesPopup(doc, card, other));
+              status.textContent = "선택한 아종의 자료를 불러왔습니다.";
+            }).catch(function () { if (active() && current === generation) { status.textContent = "아종 자료를 확인하지 못했습니다. 다시 선택하세요."; } });
+          });
+          content.appendChild(choice);
+        });
+        content.appendChild(selected);
+      }).catch(function () { pending = false; if (active()) { status.textContent = "아종 목록을 확인하지 못했습니다. 다시 눌러 재시도하세요."; } });
+    });
+    return section;
+  }
+
   function buildNameRelationsExplorer(doc, profile, fetcher, isActive) {
     var active = typeof isActive === "function" ? isActive : function () { return true; };
     var section = doc.createElement("section");
@@ -1262,7 +1363,7 @@
     heading.className = "species-card-heading";
     var category = doc.createElement("span");
     category.className = "species-category";
-    category.textContent = "조류 도감";
+    category.textContent = taxon.rank === "subspecies" ? "아종" : "조류 도감";
     heading.appendChild(category);
     heading.appendChild(title);
     heading.appendChild(buildHabitatEmblem(doc, habitatEmblemInfo(profile)));
@@ -1275,6 +1376,12 @@
       card.appendChild(scientificName);
     }
 
+    if (taxon.rank === "subspecies" && profile.parent_species && profile.parent_species.taxon) {
+      var parent = doc.createElement("p");
+      parent.className = "species-parent";
+      parent.textContent = "소속 종: " + nameRelationTaxonLabel(profile.parent_species.taxon);
+      card.appendChild(parent);
+    }
     var conservationBadge = doc.createElement("p");
     conservationBadge.className = "species-conservation-badge";
     conservationBadge.textContent = conservation.badgeText;
@@ -1293,6 +1400,31 @@
     var backTitle = doc.createElement("h3");
     backTitle.textContent = "출처 · 상세 정보";
     back.appendChild(backTitle);
+    if (taxon.rank === "subspecies") {
+      var metadata = profile.subspecies_metadata;
+      var metadataSection = metadata && metadata.section;
+      var metadataSource = metadata && sanitizeUrl(metadata.source_url);
+      var description = doc.createElement("p");
+      description.className = "species-subspecies-description";
+      var descriptions = metadataSection && metadataSection.key === "subspecies_taxonomy" && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1).filter(function (item) { return typeof item === "string" && item.trim(); }) : [];
+      description.textContent = metadataSource && descriptions.length ? descriptions.join(" ") : "이 아종만의 외형·분포 차이는 검토된 자료에서 아직 확인하지 못했습니다.";
+      front.appendChild(description);
+      if (metadataSource) {
+        var metadataDetails = doc.createElement("details");
+        metadataDetails.className = "card-details species-subspecies-sources";
+        var metadataSummary = doc.createElement("summary");
+        metadataSummary.textContent = "분류·아종 설명 출처";
+        metadataDetails.appendChild(metadataSummary);
+        metadataDetails.appendChild(safeLink(doc, metadata.source_name || "분류 출처", metadataSource));
+        if (typeof metadata.range_raw === "string" && metadata.range_raw.trim()) {
+          var rawRange = doc.createElement("blockquote");
+          rawRange.textContent = metadata.range_raw;
+          metadataDetails.appendChild(rawRange);
+        }
+        back.appendChild(metadataDetails);
+      }
+    }
+
     // Photos live in their own slots so a provider retry can re-render them
     // without touching the facts, flip state, or the explanation.
     var photoArea = doc.createElement("div");
@@ -1526,6 +1658,7 @@
     var frontNote = doc.createElement("p");
     frontNote.className = "species-front-note";
     frontNote.textContent = "수치는 종 평균 · 사진과 자료 출처는 뒷면";
+    if (taxon.rank === "subspecies") { frontNote.textContent = "아종에 직접 연결된 자료 · 출처는 뒷면"; }
     front.appendChild(frontNote);
 
     var traitNote = doc.createElement("p");
@@ -1533,6 +1666,25 @@
     traitNote.textContent =
       "수치는 자료에 기록된 종 평균입니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭(날개폭)과 다릅니다.";
     back.appendChild(traitNote);
+    if (taxon.rank === "subspecies") { traitNote.textContent = "아종에 직접 연결된 형질입니다. 종 수준 참고 정보는 별도로 표시합니다."; }
+    if (taxon.rank === "subspecies" && Array.isArray(profile.reference_traits) && profile.reference_traits.length) {
+      var reference = doc.createElement("details");
+      reference.className = "card-details species-reference";
+      var referenceHeading = doc.createElement("summary");
+      referenceHeading.textContent = "종 수준 참고 정보";
+      reference.appendChild(referenceHeading);
+      var referenceNote = doc.createElement("p");
+      referenceNote.textContent = "상위 종의 자료이며 이 아종의 측정값·먹이·서식지로 확정할 수 없습니다.";
+      reference.appendChild(referenceNote);
+      profile.reference_traits.filter(function (trait) { return trait.reference_scope === "species" && trait.reference_taxon; }).forEach(function (trait) {
+        var provenance = doc.createElement("p");
+        provenance.className = "species-reference-provenance";
+        provenance.textContent = "종 수준 참고 · " + nameRelationTaxonLabel(trait.reference_taxon);
+        reference.appendChild(provenance);
+        reference.appendChild(buildTraitGrid(doc, groupTraits([trait])));
+      });
+      back.appendChild(reference);
+    }
 
     if (traitGroups.length === 0) {
       var noTraits = doc.createElement("p");
@@ -2068,7 +2220,9 @@
       if (result && result.kind === "profile") {
         var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
         if (speciesCard) {
-          (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, { onComparison: appendComparisonMessage, isActive: conversationGuard() }));
+          if (result.profile.taxon.rank !== "subspecies") { (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, { onComparison: appendComparisonMessage, isActive: conversationGuard() })); }
+          if (result.profile.taxon.rank !== "subspecies") { (structured || item).appendChild(buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
+          else { (structured || item).appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
           (structured || item).appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
           item.appendChild(buildSpeciesBrief(doc, result.profile));
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
@@ -2359,6 +2513,7 @@
     speciesLabel: speciesLabel,
     buildNameRelations: buildNameRelations,
     buildNameRelationsExplorer: buildNameRelationsExplorer,
+    buildSubspeciesExplorer: buildSubspeciesExplorer,
     isNameRelationsPayload: isNameRelationsPayload,
     buildSpeciesComparison: buildSpeciesComparison,
     buildSpeciesPopup: buildSpeciesPopup,

@@ -71,7 +71,7 @@ class TaxonomyLineageRepository(Protocol):
     """Read-only access to the active AviList reference-taxonomy lineage."""
 
     def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
-        """Ordered order->family->genus->species lineage for an exact name match.
+        """Ordered order->family->genus->species[->subspecies] lineage for an exact name match.
 
         `scientific_name` is matched case-insensitively against the exact
         scientific name of a `Taxon:BirdTaxon` in the currently active
@@ -82,7 +82,7 @@ class TaxonomyLineageRepository(Protocol):
         ...
 
     def lineage_for_korean_name(self, korean_name: str) -> TaxonomyLineage | None:
-        """Ordered order->family->genus->species lineage for an exact Korean-name match.
+        """Ordered order->family->genus->species[->subspecies] lineage for an exact Korean-name match.
 
         `korean_name` is matched case-insensitively against a
         `VernacularName {language: 'ko'}` directly attached

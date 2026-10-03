@@ -3,7 +3,8 @@
 ## 목적
 
 NAS에 배포한 RobinGraph API에서 학명 또는 한국어 일반명을 기준으로 활성 AviList
-분류체계의 목(order) → 과(family) → 속(genus) → 종(species) 계통을 조회한다.
+분류체계의 목(order) → 과(family) → 속(genus) → 종(species) → 아종(subspecies, 해당하는 경우) 계통을 조회한다.
+아종 카드와 부모 종 참고 자료는 [아종 카드 정책](subspecies-cards.md)을 따른다.
 운영 GBIF 관찰 데이터의 `ExternalTaxonConcept`와 AviList 기준 분류의 `Taxon`은
 합치지 않는다.
 

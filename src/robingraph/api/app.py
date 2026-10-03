@@ -519,7 +519,7 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
 
 _KOREAN_RANKS = {"order": "목", "family": "과", "genus": "속", "species": "종", "subspecies": "아종"}
 _RANK_QUESTION = re.compile(r"(?:무슨|어느|어떤)\s*(아종|목|과|속|종)(?=에|이|인|야|입|\s|[?？]|$)")
-_SPECIES_NAME = r"(?P<name>[가-힣]+?|[A-Za-z][a-z]+\s+[a-z]+)"
+_SPECIES_NAME = r"(?P<name>[가-힣]+?|[A-Za-z][a-z]+\s+[a-z]+(?:\s+[a-z]+)?)"
 _TAXONOMY_QUESTION = re.compile(
     rf"^{_SPECIES_NAME}(?:의|은|는|이|가)?\s+(?:분류\s*체계|분류|계통)(?:에\s*대해)?\s*(?:알려줘|알려주세요|설명해줘|설명해주세요|알고\s*싶어(?:요)?)[.!?？]*$"
 )
@@ -773,6 +773,7 @@ def create_app(
     semantic_router: SemanticRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
+    subspecies_handler: Callable[[str], dict] | None = None,
     name_relations_handler: Callable[[str], dict | None] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
@@ -843,6 +844,20 @@ def create_app(
             raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
         except Exception as error:
             raise HTTPException(status_code=503, detail="Species relations are temporarily unavailable") from error
+
+    @app.get("/v1/taxa/subspecies")
+    @_traced_route("GET /v1/taxa/subspecies")
+    def subspecies(name: Annotated[str, Query(min_length=1,max_length=200)]):
+        if not name.strip():
+            raise HTTPException(status_code=422,detail="A taxon name is required")
+        if subspecies_handler is None:
+            raise HTTPException(status_code=503,detail="Subspecies lookup is unavailable")
+        try:
+            return subspecies_handler(name.strip())
+        except SpeciesNotFoundError as error:
+            raise HTTPException(status_code=404,detail="Taxon not found in active taxonomy") from error
+        except Exception as error:
+            raise HTTPException(status_code=503,detail="Subspecies lookup is temporarily unavailable") from error
 
     @app.get("/v1/taxa/profile")
     @_traced_route("GET /v1/taxa/profile")
@@ -933,7 +948,7 @@ def create_app(
             relation_name = request.filters.name
         scientific_filter = isinstance(request.filters, TaxonomyChatFilters) and request.filters.scientific_name is not None
         relevant_filter = request.filters is None or isinstance(request.filters, (ProfileChatFilters, TaxonomyChatFilters))
-        scientific_query = (re.fullmatch(r"[A-Za-z][a-z]+\s+[a-z]+", relation_name.strip()) is not None
+        scientific_query = (re.fullmatch(r"[A-Za-z][a-z]+\s+[a-z]+(?:\s+[a-z]+)?", relation_name.strip()) is not None
                             and relation_name.strip().lower() not in reviewed_search_terms())
         if name_relations_handler is not None and request.intent in ("auto", "profile", "taxonomy") and relevant_filter and not scientific_filter and not scientific_query:
             try:
@@ -951,9 +966,12 @@ def create_app(
                     )
                 relationships = None
             if relationships and relationships.get("is_search_term") and relationships.get("relations"):
+                relations=relationships["relations"]
+                targets={r.get("taxon",{}).get("taxon_id") for r in relations}
+                single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
                 return ChatResponse(
                     selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile", route_method="deterministic" if request.intent == "auto" else "explicit",
-                    disposition="clarify", answer_text=relationships["summary"], warnings=[],
+                    disposition="answer" if single_common else "clarify", answer_text=relationships["summary"], warnings=[],
                     result=ChatNameRelationsResult(relationships=relationships),
                 )
             if relation_name.strip().lower() in reviewed_search_terms():

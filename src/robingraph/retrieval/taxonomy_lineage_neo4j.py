@@ -78,15 +78,15 @@ RETURN conceptSet.id AS concept_set_id,
 # instead of independently `min`-ing two properties that could come from two
 # different nodes.
 _LINEAGE_QUERY = """
-MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
-MATCH (target:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(conceptSet)
+MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
+MATCH (target:Taxon:BirdTaxon {source_release:$taxonomy_release, policy_status:'allowed'})-[:IN_CONCEPT_SET]->(conceptSet)
 WHERE toLower(target.scientific_name) = toLower($scientific_name)
 WITH target
 ORDER BY target.id
 LIMIT 1
 WITH target, $korean_dataset_id AS koreanDatasetId
 OPTIONAL MATCH ancestorPath =
-  (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
+  (target)<-[parentLinks:PARENT_OF*0..4]-(ancestor:Taxon:BirdTaxon {source_release:$taxonomy_release,policy_status:'allowed'})-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
 WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
 WITH ancestor, length(ancestorPath) AS depth, koreanDatasetId
 OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko', policy_status: 'allowed'})
@@ -135,9 +135,9 @@ RETURN collect({
 # (404) as a name that matches nothing -- rather than confidently returning
 # the wrong bird.
 _LINEAGE_BY_KOREAN_NAME_QUERY = """
-MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id})
+MATCH (conceptSet:TaxonConceptSet {id: $concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
 WITH conceptSet, $korean_dataset_id AS koreanDatasetId
-MATCH (target:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(conceptSet)
+MATCH (target:Taxon:BirdTaxon {source_release:$taxonomy_release, policy_status:'allowed'})-[:IN_CONCEPT_SET]->(conceptSet)
 MATCH (target)-[:HAS_VERNACULAR_NAME]->(vernacular:VernacularName {language: 'ko', policy_status: 'allowed'})
 WHERE toLower(vernacular.name) = toLower($korean_name) AND vernacular.dataset_id = koreanDatasetId
 WITH koreanDatasetId, collect(DISTINCT target) AS targets
@@ -145,7 +145,7 @@ WHERE size(targets) = 1
 WITH targets[0] AS target, koreanDatasetId
 WITH target, koreanDatasetId, target.scientific_name AS targetScientificName
 OPTIONAL MATCH ancestorPath =
-  (target)<-[parentLinks:PARENT_OF*0..3]-(ancestor:Taxon:BirdTaxon)-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
+  (target)<-[parentLinks:PARENT_OF*0..4]-(ancestor:Taxon:BirdTaxon {source_release:$taxonomy_release,policy_status:'allowed'})-[:IN_CONCEPT_SET]->(:TaxonConceptSet {id: $concept_set_id})
 WHERE all(parentLink IN parentLinks WHERE parentLink.concept_set_id = $concept_set_id)
 WITH targetScientificName, ancestor, length(ancestorPath) AS depth, koreanDatasetId
 OPTIONAL MATCH (ancestor)-[:HAS_VERNACULAR_NAME]->(koreanName:VernacularName {language: 'ko', policy_status: 'allowed'})
@@ -284,6 +284,7 @@ class Neo4jTaxonomyLineageRepository:
             _LINEAGE_QUERY,
             concept_set_id=concept_set_id,
             scientific_name=cleaned,
+            taxonomy_release=taxonomy_release,
             korean_dataset_id=self._korean_dataset_id(),
         )
         if not rows:
@@ -322,6 +323,7 @@ class Neo4jTaxonomyLineageRepository:
             _LINEAGE_BY_KOREAN_NAME_QUERY,
             concept_set_id=concept_set_id,
             korean_name=cleaned,
+            taxonomy_release=taxonomy_release,
             korean_dataset_id=korean_dataset_id,
         )
         if not rows:
