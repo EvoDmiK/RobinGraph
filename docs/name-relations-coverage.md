@@ -68,4 +68,4 @@
 
 - 원본: https://explore.avilist.org/data/avilist-2025b.json
 - SHA-256: `3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411`
-- 실제 NAS의 활성 한국어 이름과 관계 적재 검증은 접속 복구 후 수행해야 한다. 로컬 전용 PostgreSQL·Neo4j 검증과 운영 데이터 검증을 구분한다.
+- NAS TEST 활성 분류판에서 37개 대상·47개 관계 적재와 70개 검색어 조회를 검증했다. [검증 기록](verification/2026-10-03-name-relations-expansion.md) 참조. 표준 한국어 이름 전체의 언어학적 품질 검토는 별도이며 이번 작업에서 이름 원천 자료를 수정하지 않았다.
