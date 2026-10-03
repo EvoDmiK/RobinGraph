@@ -247,6 +247,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     from .retrieval.species_notes import create_species_notes
 
     from .retrieval.related_species import related_species
+    from .retrieval.subspecies import subspecies_for, subspecies_metadata
     from .retrieval.name_relations import NameRelationRepository, PIPELINE as NAME_RELATIONS_PIPELINE
 
     name_relations_repository = NameRelationRepository(
@@ -258,6 +259,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
         conservation=lambda lineage: read_conservation(lineage_repository, lineage),
         notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
+        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
     )
     try:
         app = create_app(
@@ -274,6 +276,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             species_profile_handler=species_flow.invoke,
             related_species_handler=lambda name: related_species(lineage_repository, resolve_species, name),
             name_relations_handler=name_relations_repository.for_name,
+            subspecies_handler=lambda name: subspecies_for(lineage_repository,resolve_species,name),
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:

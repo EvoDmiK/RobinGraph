@@ -139,6 +139,7 @@ ALLOW_FILES = frozenset(
         "scripts/load_n8n_avonet.py",
         "scripts/load_name_relations.py",
         "docs/name-relations.md",
+        "docs/subspecies-cards.md",
         "docs/graph-exploration-expansion.md",
         "docs/research/rg006-nocturnal-diagnosis.md",
         "docs/name-relations-research.md",

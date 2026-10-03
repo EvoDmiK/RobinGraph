@@ -1,5 +1,5 @@
 """Sourced species cards, composed with LangChain's LCEL runnables."""
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from functools import lru_cache
 from html.parser import HTMLParser
 import json
@@ -268,9 +268,12 @@ class PhotoLookup(list):
 
 
 @lru_cache(maxsize=128)
-def _licensed_images(scientific_name, hour):
+def _licensed_images(scientific_name, hour, rank="species"):
     # ponytail: hourly bounded metadata cache; shared cache only if traffic warrants it.
-    query = 'SELECT ?item ?image WHERE { ?item wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:Q7432; wdt:P18 ?image. FILTER NOT EXISTS { ?other wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:Q7432. FILTER (?other != ?item) } } LIMIT 2'
+    if rank not in ('species', 'subspecies'):
+        raise ValueError('Unsupported photo taxon rank')
+    wikidata_rank = 'Q68947' if rank == 'subspecies' else 'Q7432'
+    query = 'SELECT ?item ?image WHERE { ?item wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:' + wikidata_rank + '; wdt:P18 ?image. FILTER NOT EXISTS { ?other wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:' + wikidata_rank + '. FILTER (?other != ?item) } } LIMIT 2'
     bindings = _json_get('https://query.wikidata.org/sparql', {'query':query, 'format':'json'})['results']['bindings']
     identities = {r['item']['value'] for r in bindings}
     if len(identities) != 1:
@@ -292,8 +295,8 @@ def _licensed_images(scientific_name, hour):
     return PhotoLookup(images, 'available' if images else 'no_licensed_photo')
 
 
-def licensed_images(scientific_name):
-    return _licensed_images(scientific_name, int(time.time() // 3600))
+def licensed_images(scientific_name, rank="species"):
+    return _licensed_images(scientific_name, int(time.time() // 3600), rank)
 
 
 def species_sections(taxon, traits, notes):
@@ -329,16 +332,33 @@ def species_sections(taxon, traits, notes):
             )]
 
 
-def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None):
+def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None):
     """Resolve once, collect independent sources, then assemble a sourced response."""
     def resolve_species(query):
         lineage = resolve(query)
-        if lineage is None or not lineage.items or lineage.items[-1].rank != 'species':
+        if lineage is None or not lineage.items or lineage.items[-1].rank not in ('species','subspecies'):
             raise SpeciesNotFoundError('Species not found')
+        if lineage.items[-1].rank == 'subspecies':
+            if len(lineage.items)<2 or lineage.items[-2].rank!='species' or subspecies_info is None:
+                raise SpeciesNotFoundError('Confirmed subspecies parent is required')
         return lineage
+    def parent_lineage(lineage):
+        return replace(lineage,items=lineage.items[:-1],query_scientific_name=lineage.items[-2].scientific_name,
+                       resolved_query_scientific_name=lineage.items[-2].scientific_name,query_name=lineage.items[-2].scientific_name,matched_by='scientific_name')
+    def reference_stage(lineage):
+        if lineage.items[-1].rank != 'subspecies':
+            return {'traits':[], 'warnings':[]}
+        parent=parent_lineage(lineage)
+        try:
+            return {'traits':[{**t,'reference_scope':'species','reference_taxon':asdict(parent.items[-1])} for t in traits(parent)],'warnings':[]}
+        except Exception:
+            return {'traits':[],'warnings':['종 수준 참고 정보를 현재 조회할 수 없습니다.']}
+    def metadata_stage(lineage):
+        return subspecies_info(lineage) if lineage.items[-1].rank=='subspecies' else {}
     def image_stage(lineage):
         try:
-            images = photos(lineage.items[-1].scientific_name)
+            target=lineage.items[-1]
+            images = photos(target.scientific_name,rank=target.rank) if photos is licensed_images else photos(target.scientific_name)
             if not isinstance(images, list):
                 raise ValueError('Invalid photo result')
             status = getattr(images, 'status', 'available' if images else 'no_licensed_photo')
@@ -354,6 +374,8 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         except Exception:
             return {'traits':[], 'warnings':['종 특성 제공처를 현재 조회할 수 없습니다.']}
     def conservation_stage(lineage):
+        if lineage.items[-1].rank == 'subspecies':
+            return {'conservation':unconfirmed_conservation(),'warnings':[]}
         try:
             value = conservation(lineage) if conservation is not None else None
             return {'conservation':value or unconfirmed_conservation(), 'warnings':[]}
@@ -361,6 +383,8 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             return {'conservation':unconfirmed_conservation(),
                     'warnings':['보전 상태를 현재 확인할 수 없습니다.']}
     def notes_stage(lineage):
+        if lineage.items[-1].rank == 'subspecies':
+            return {'notes':{},'warnings':[]}
         try:
             value = notes(lineage) if notes is not None else {}
             return {'notes':value or {}, 'warnings':[]}
@@ -369,14 +393,24 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
     def assemble(state):
         lineage = state['lineage']
         taxon = asdict(lineage.items[-1])
-        return {'taxon':taxon, 'lineage':asdict(lineage),
+        result = {'taxon':taxon, 'lineage':asdict(lineage),
                 'traits':state['traits']['traits'], 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
                 'conservation':state['conservation']['conservation'],
                 'summary':species_summary(taxon, state['traits']['traits']),
                 'sections':species_sections(taxon, state['traits']['traits'], state['notes']['notes']),
-                'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'],
+                'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'],
                 'vegetation_note':'구체적인 식물·식생 목록은 아직 수집되지 않았습니다.'}
+        if taxon['rank']=='subspecies':
+            metadata=state['metadata']
+            parent=parent_lineage(lineage)
+            result['parent_species']={'taxon':asdict(parent.items[-1]),'lineage':asdict(parent),
+                                      'source_url':metadata['source_url'],'source_name':metadata['source_name']}
+            result['reference_traits']=state['reference']['traits']
+            result['subspecies_metadata']=metadata
+            result['sections'].insert(0,metadata['section'])
+            result['summary']=metadata['section']['items'][0]['text']
+        return result
     return (RunnableLambda(resolve_species)
-            | RunnableParallel(lineage=RunnablePassthrough(), traits=RunnableLambda(trait_stage), media=RunnableLambda(image_stage), conservation=RunnableLambda(conservation_stage), notes=RunnableLambda(notes_stage))
+            | RunnableParallel(lineage=RunnablePassthrough(), traits=RunnableLambda(trait_stage), media=RunnableLambda(image_stage), conservation=RunnableLambda(conservation_stage), notes=RunnableLambda(notes_stage),reference=RunnableLambda(reference_stage),metadata=RunnableLambda(metadata_stage))
             | RunnableLambda(assemble))

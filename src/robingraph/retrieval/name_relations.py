@@ -146,6 +146,10 @@ class NameRelationRepository:
             summary = "이 종에 대해 검토·등록된 통칭 또는 가축형 관계가 없습니다."
         elif any(r["entity_kind"] == "domestic_form" for r in relations):
             summary = "가축형과 관련 야생종을 구분해 확인해 주세요. 선택 후 표시되는 야생종 자료는 가축형의 사진·체중·생태를 뜻하지 않습니다."
+        elif len({r["taxon"]["taxon_id"] for r in relations}) == 1:
+            target=relations[0]["taxon"]
+            label=target.get("korean_name") or target.get("english_name") or target["scientific_name"]
+            summary=f"그래프에서 ‘{name}’과 연결된 {label}의 종 정보를 확인했습니다."
         else:
             summary = "이 이름은 사용 맥락에 따라 여러 대상을 가리킬 수 있습니다. 조회할 종을 선택해 주세요."
         return {"query_name": name, "summary": summary, "is_search_term": is_search_term,
