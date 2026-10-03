@@ -36,6 +36,7 @@ from ..retrieval.operational import (
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.species_profile import SpeciesNotFoundError, species_summary
+from ..retrieval.name_relations import reviewed_search_terms
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
@@ -326,8 +327,13 @@ class ChatClarifyResult(_ChatModel):
     prompt: str
 
 
+class ChatNameRelationsResult(_ChatModel):
+    kind: Literal["name_relations"] = "name_relations"
+    relationships: dict
+
+
 ChatResult = Annotated[
-    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult,
+    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult | ChatNameRelationsResult,
     Field(discriminator="kind"),
 ]
 
@@ -759,6 +765,7 @@ def create_app(
     semantic_router: SemanticRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
+    name_relations_handler: Callable[[str], dict | None] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
 ) -> FastAPI:
@@ -799,6 +806,21 @@ def create_app(
         return {**state, "answer_text": text}
 
     evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
+
+    @app.get("/v1/taxa/name-relations")
+    @_traced_route("GET /v1/taxa/name-relations")
+    def name_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
+        if not name.strip():
+            raise HTTPException(status_code=422, detail="A name is required")
+        if name_relations_handler is None:
+            raise HTTPException(status_code=503, detail="Name relationships are unavailable")
+        try:
+            result = name_relations_handler(name.strip())
+        except Exception:
+            raise HTTPException(status_code=503, detail="Name relationships are unavailable") from None
+        if result is None:
+            raise HTTPException(status_code=503, detail="No active reviewed name relationship snapshot")
+        return result
 
     @app.get("/v1/taxa/related")
     @_traced_route("GET /v1/taxa/related")
@@ -893,6 +915,45 @@ def create_app(
         """
 
         recognized = _species_chat_question(request.question) if request.intent == "auto" else None
+        # A reviewed common-name graph takes precedence over semantic routing,
+        # but never over explicit evidence/observation or scientific-name filters.
+        relation_question = recognized or _species_chat_question(request.question)
+        relation_name = relation_question[1] if relation_question else request.question
+        if isinstance(request.filters, ProfileChatFilters) and request.filters.name:
+            relation_name = request.filters.name
+        elif isinstance(request.filters, TaxonomyChatFilters) and request.filters.name:
+            relation_name = request.filters.name
+        scientific_filter = isinstance(request.filters, TaxonomyChatFilters) and request.filters.scientific_name is not None
+        relevant_filter = request.filters is None or isinstance(request.filters, (ProfileChatFilters, TaxonomyChatFilters))
+        scientific_query = re.fullmatch(r"[A-Za-z][a-z]+\s+[a-z]+", relation_name.strip()) is not None
+        if name_relations_handler is not None and request.intent in ("auto", "profile", "taxonomy") and relevant_filter and not scientific_filter and not scientific_query:
+            try:
+                relationships = name_relations_handler(relation_name)
+            except Exception as error:
+                logging.getLogger(__name__).warning("Name relationship lookup failed (%s)", type(error).__name__)
+                is_name_request = request.intent in ("profile", "taxonomy") or relation_question is not None or request.filters is not None or re.fullmatch(r"[가-힣]+|[A-Za-z][A-Za-z .-]+", relation_name) is not None
+                if is_name_request:
+                    return ChatResponse(
+                        selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile",
+                        route_method="deterministic" if request.intent == "auto" else "explicit",
+                        disposition="abstain", answer_text="이 이름의 관계 정보를 현재 확인할 수 없어 관련 종을 임의로 선택하지 않았습니다.",
+                        warnings=["통칭·가축형 관계 조회 기능을 사용할 수 없습니다."],
+                        result=ChatSpeciesResult(profile=None),
+                    )
+                relationships = None
+            if relationships and relationships.get("is_search_term") and relationships.get("relations"):
+                return ChatResponse(
+                    selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                    disposition="clarify", answer_text=relationships["summary"], warnings=[],
+                    result=ChatNameRelationsResult(relationships=relationships),
+                )
+            if relation_name.strip().lower() in reviewed_search_terms():
+                return ChatResponse(
+                    selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                    disposition="abstain", answer_text="이 이름의 검토된 관계를 현재 조회할 수 없습니다. 관련 종을 임의로 선택하지 않았습니다.",
+                    warnings=["활성 통칭·가축형 관계 데이터가 없거나 조회에 실패했습니다."],
+                    result=ChatSpeciesResult(profile=None),
+                )
         if request.intent == "auto":
             if recognized:
                 selected = recognized[0]

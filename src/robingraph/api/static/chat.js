@@ -1,6 +1,7 @@
 /**
  * RobinGraph manual test UI. Talks only to same-origin `/health` and
- * `/v1/chat` and read-only species exploration endpoints. No innerHTML/insertAdjacentHTML/document.write is used
+ * `/v1/chat` and read-only species exploration endpoints (`/v1/taxa/profile`,
+ * `/v1/taxa/related`, `/v1/taxa/name-relations`). No innerHTML/insertAdjacentHTML/document.write is used
  * anywhere in this file -- all dynamic content is inserted via
  * `textContent`/`createElement`, which never interprets its input as
  * markup. The one place hostile *server* content could still reach an
@@ -616,6 +617,310 @@
     return section;
   }
 
+  /**
+   * GET a read-only `/v1/taxa/*` JSON endpoint with `?name=` URL-encoded.
+   * A non-2xx rejects with an Error carrying `status` so callers can pick a
+   * fixed, honest message; a missing transport rejects with status 0.
+   */
+  function fetchTaxaJson(doc, fetcher, path, name, timeoutMs) {
+    var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
+    if (!transport) {
+      var missing = new Error("unavailable"); missing.status = 0;
+      return Promise.reject(missing);
+    }
+    var signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined;
+    return Promise.resolve().then(function () {
+      return transport(path + "?name=" + encodeURIComponent(name), { method: "GET", credentials: "omit", signal: signal });
+    }).then(function (response) {
+      if (!response || !response.ok) {
+        var failure = new Error("unavailable"); failure.status = response ? response.status : 0;
+        throw failure;
+      }
+      return response.json();
+    });
+  }
+
+  function nameRelationsErrorText(error) {
+    var status = error && error.status;
+    if (status === 404) {
+      return "이 이름의 통칭·가축형 관계 자료를 찾지 못했거나, 서버가 아직 이 조회를 지원하지 않습니다.";
+    }
+    if (status === 429 || status === 503) {
+      return sanitizeErrorMessage({ kind: "http", status: status });
+    }
+    if (error && error.unsupported) {
+      return sanitizeErrorMessage({ kind: "unsupported-response" });
+    }
+    return "통칭·가축형 관계를 불러오지 못했습니다. 잠시 후 다시 시도하세요.";
+  }
+
+  /** Shape check for the `GET /v1/taxa/name-relations` payload (also `result.relationships`). */
+  function isNameRelationsPayload(data) {
+    return !!(data && typeof data === "object" && !Array.isArray(data) && Array.isArray(data.relations));
+  }
+
+  /** Domestic-form relations get an explicit "not the same animal as the wild species" warning. */
+  function isDomesticRelation(relation) {
+    var text = [relation && relation.entity_kind, relation && relation.relation_type].filter(function (value) {
+      return typeof value === "string";
+    }).join(" ");
+    return /domestic|가축|사육/i.test(text);
+  }
+
+  function nameRelationTaxonLabel(taxon) {
+    if (!taxon || typeof taxon !== "object") { return ""; }
+    return [taxon.korean_name, taxon.english_name, taxon.scientific_name].filter(function (value) {
+      return typeof value === "string" && value.trim();
+    }).join(" · ");
+  }
+
+  var DOMESTIC_WARNING =
+    "가축형과 야생 개체군의 정보를 구분합니다. 표시되는 측정값·사진·멸종위기 등급은 야생 개체군 기준 자료이며 가축형에 그대로 적용되지 않습니다.";
+
+  /**
+   * Render a source-backed name/domestic-form relationship payload in the
+   * explanation area (never inside a species card). Each related taxon gets
+   * an explicit button that fetches `/v1/taxa/profile` for its scientific
+   * name; the chosen profile is shown with a caveat stating it is the
+   * related wild species, not the queried name itself. Only the newest
+   * selection may render (older responses are dropped), and `isActive`
+   * lets the chat page drop responses that settle after 대화 지우기.
+   * Returns null for a malformed payload.
+   */
+  function buildNameRelations(doc, relationships, fetcher, isActive) {
+    if (!isNameRelationsPayload(relationships)) { return null; }
+    var data = relationships;
+    var active = typeof isActive === "function" ? isActive : function () { return true; };
+    var queryName = typeof data.query_name === "string" && data.query_name.trim() ? data.query_name.trim() : "검색어";
+    var section = doc.createElement("section");
+    section.className = "name-relations";
+    section.setAttribute("aria-label", queryName + " 이름 관계");
+
+    var heading = doc.createElement("h3");
+    heading.textContent = "‘" + queryName + "’ 이름 관계";
+    section.appendChild(heading);
+    if (typeof data.summary === "string" && data.summary.trim()) {
+      var summary = doc.createElement("p");
+      summary.className = "name-relations-summary";
+      summary.textContent = data.summary;
+      section.appendChild(summary);
+    }
+    if (data.is_search_term === true) {
+      var searchTerm = doc.createElement("p");
+      searchTerm.className = "species-note";
+      searchTerm.textContent = "‘" + queryName + "’은(는) 여러 종이나 가축형을 함께 가리키는 데에도 쓰이는 이름입니다. 통칭의 사용 범위·가축형 관계를 구분해 확인합니다. 아래 관련 종 중 하나를 골라 확인하세요.";
+      section.appendChild(searchTerm);
+    }
+    var versionParts = [data.taxonomy_source, data.taxonomy_release].filter(function (value) {
+      return typeof value === "string" && value.trim();
+    });
+    if (versionParts.length) {
+      var version = doc.createElement("p");
+      version.className = "answer-metadata";
+      version.textContent = "분류 기준: " + versionParts.join(" · ");
+      section.appendChild(version);
+    }
+
+    var relations = data.relations.filter(function (relation) {
+      return relation && typeof relation === "object" && typeof relation.name === "string" && relation.name.trim();
+    }).slice(0, 20);
+    var status = doc.createElement("p");
+    status.className = "name-relations-status";
+    status.setAttribute("role", "status");
+    var selection = doc.createElement("div");
+    selection.className = "name-relation-selection";
+    if (!relations.length) {
+      var empty = doc.createElement("p");
+      empty.className = "species-answer-empty";
+      empty.textContent = "출처가 확인된 통칭·가축형 관계가 없습니다.";
+      section.appendChild(empty);
+      return section;
+    }
+
+    var generation = 0;
+    var pendingKey = null;
+    function clearSelection() {
+      while (selection.firstChild) { selection.removeChild(selection.firstChild); }
+    }
+    function choose(relation) {
+      var taxon = relation.taxon;
+      var key = taxon.taxon_id || taxon.scientific_name;
+      if (pendingKey === key) { return; }
+      var current = ++generation;
+      pendingKey = key;
+      clearSelection();
+      section.setAttribute("aria-busy", "true");
+      status.textContent = taxon.scientific_name + " 자료를 불러오는 중입니다.";
+      function settle() {
+        if (current !== generation) { return false; }
+        pendingKey = null;
+        section.setAttribute("aria-busy", "false");
+        return active();
+      }
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (profile) {
+        if (!settle()) { return; }
+        var sameTaxon = profile && profile.taxon && (taxon.taxon_id ? profile.taxon.taxon_id === taxon.taxon_id : profile.taxon.scientific_name === taxon.scientific_name);
+        var sameRelease = !data.concept_set_id || (profile && profile.lineage && profile.lineage.concept_set_id === data.concept_set_id && profile.lineage.taxonomy_release === data.taxonomy_release);
+        if (!sameTaxon || !sameRelease) {
+          status.textContent = "선택한 종의 분류 자료가 바뀌었습니다. 질문을 다시 보내 최신 관계를 확인하세요.";
+          return;
+        }
+        var candidateName = nameRelationTaxonLabel(profile.taxon) || taxon.scientific_name;
+        var caveat = doc.createElement("p");
+        caveat.className = "name-relation-caveat";
+        caveat.setAttribute("role", "note");
+        caveat.textContent = "아래는 ‘" + queryName + "’(이)라는 이름이 가리키는 범위 전체의 자료가 아니라, 출처에서 ‘" + relation.name + "’과(와) " +
+          (typeof relation.relation_label === "string" && relation.relation_label.trim() ? "‘" + relation.relation_label.trim() + "’ 관계로 " : "") +
+          "연결된 관련 야생종 " + candidateName + "의 자료입니다." + (isDomesticRelation(relation) ? " " + DOMESTIC_WARNING : "");
+        selection.appendChild(caveat);
+        var explanation = buildSpeciesAnswer(doc, profile);
+        if (explanation) {
+          selection.appendChild(explanation);
+        } else if (typeof profile.summary === "string" && profile.summary.trim()) {
+          var text = doc.createElement("p");
+          text.textContent = profile.summary;
+          selection.appendChild(text);
+        }
+        var card = buildSpeciesCard(doc, profile);
+        if (card) {
+          if (profile.lineage) { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher)); }
+          selection.appendChild(buildSpeciesBrief(doc, profile));
+          selection.appendChild(buildSpeciesPopup(doc, card, profile));
+        }
+        status.textContent = candidateName + " 자료를 불러왔습니다.";
+      }).catch(function (error) {
+        if (!settle()) { return; }
+        status.textContent = error && error.status === 404
+          ? "선택한 종의 자료를 찾을 수 없습니다."
+          : "선택한 종의 자료를 불러오지 못했습니다. 다시 눌러 재시도하세요.";
+      });
+    }
+
+    var list = doc.createElement("ul");
+    list.className = "name-relation-list";
+    relations.forEach(function (relation) {
+      var domestic = isDomesticRelation(relation);
+      var li = doc.createElement("li");
+      li.className = "name-relation" + (domestic ? " name-relation-domestic" : "");
+      var title = doc.createElement("p");
+      title.className = "name-relation-title";
+      var name = doc.createElement("strong");
+      name.textContent = relation.name;
+      title.appendChild(name);
+      var label = doc.createElement("span");
+      label.className = "name-relation-label";
+      label.textContent = typeof relation.relation_label === "string" && relation.relation_label.trim() ? relation.relation_label : "관계";
+      title.appendChild(label);
+      li.appendChild(title);
+      var taxonLabel = nameRelationTaxonLabel(relation.taxon);
+      if (taxonLabel) {
+        var taxonLine = doc.createElement("p");
+        taxonLine.className = "name-relation-taxon";
+        taxonLine.textContent = "관련 야생종: " + taxonLabel;
+        li.appendChild(taxonLine);
+      }
+      if (typeof relation.note === "string" && relation.note.trim()) {
+        var note = doc.createElement("p");
+        note.className = "species-note";
+        note.textContent = relation.note;
+        li.appendChild(note);
+      }
+      if (domestic) {
+        var warning = doc.createElement("p");
+        warning.className = "name-relation-warning";
+        warning.textContent = "⚠ " + DOMESTIC_WARNING;
+        li.appendChild(warning);
+      }
+      var sources = (Array.isArray(relation.sources) ? relation.sources : []).filter(function (source) {
+        return source && typeof source === "object";
+      }).slice(0, 5);
+      var sourceLine = doc.createElement("p");
+      sourceLine.className = "name-relation-sources";
+      var sourcePrefix = doc.createElement("span");
+      sourcePrefix.textContent = sources.length ? "출처: " : "출처 정보 없음";
+      sourceLine.appendChild(sourcePrefix);
+      sources.forEach(function (source, index) {
+        if (index > 0) {
+          var separator = doc.createElement("span");
+          separator.textContent = " · ";
+          sourceLine.appendChild(separator);
+        }
+        var sourceTitle = typeof source.title === "string" && source.title.trim() ? source.title : "출처 " + (index + 1);
+        sourceLine.appendChild(safeLink(doc, sourceTitle, source.url));
+      });
+      li.appendChild(sourceLine);
+      var taxon = relation.taxon;
+      if (taxon && typeof taxon === "object" && typeof taxon.scientific_name === "string" && taxon.scientific_name.trim()) {
+        var button = doc.createElement("button");
+        button.type = "button";
+        button.className = "name-relation-choose";
+        button.textContent = (taxon.korean_name || taxon.english_name || taxon.scientific_name) + " · 관련 야생종 자료 보기";
+        button.addEventListener("click", function () { choose(relation); });
+        li.appendChild(button);
+      }
+      list.appendChild(li);
+    });
+    section.appendChild(list);
+    section.appendChild(status);
+    section.appendChild(selection);
+    return section;
+  }
+
+  /**
+   * Lazy "통칭·가축형 관계 알아보기" button for the species explanation area.
+   * Nothing is fetched until the first expand; a failed load can be retried
+   * by collapsing and expanding again, and repeated clicks while a request
+   * is in flight never start a second one.
+   */
+  function buildNameRelationsExplorer(doc, profile, fetcher, isActive) {
+    var active = typeof isActive === "function" ? isActive : function () { return true; };
+    var section = doc.createElement("section");
+    section.className = "species-name-relations";
+    var open = doc.createElement("button");
+    open.type = "button";
+    open.textContent = "통칭·가축형 관계 알아보기";
+    open.setAttribute("aria-expanded", "false");
+    section.appendChild(open);
+    var content = doc.createElement("div");
+    content.hidden = true;
+    section.appendChild(content);
+    var status = doc.createElement("p");
+    status.setAttribute("role", "status");
+    content.appendChild(status);
+    var results = doc.createElement("div");
+    content.appendChild(results);
+    var state = "idle";
+    var lineage = profile && profile.lineage;
+    open.addEventListener("click", function () {
+      content.hidden = !content.hidden;
+      open.setAttribute("aria-expanded", String(!content.hidden));
+      if (content.hidden || state !== "idle") { return; }
+      state = "loading";
+      status.textContent = "통칭·가축형 관계를 조회하는 중입니다.";
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/name-relations", profile.taxon.scientific_name, 30000).then(function (data) {
+        if (!isNameRelationsPayload(data)) {
+          var unsupported = new Error("unsupported"); unsupported.unsupported = true;
+          throw unsupported;
+        }
+        if (lineage && lineage.concept_set_id && (data.concept_set_id !== lineage.concept_set_id || data.taxonomy_release !== lineage.taxonomy_release)) {
+          throw new Error("changed");
+        }
+        if (!active()) { return; }
+        while (results.firstChild) { results.removeChild(results.firstChild); }
+        results.appendChild(buildNameRelations(doc, data, fetcher, active));
+        state = "loaded";
+        status.textContent = data.relations.length ? "통칭·가축형 관계를 불러왔습니다." : "출처가 확인된 통칭·가축형 관계가 없습니다.";
+      }).catch(function (error) {
+        state = "idle";
+        if (!active()) { return; }
+        status.textContent = error && error.message === "changed"
+          ? "분류 자료가 갱신되었습니다. 질문을 다시 보내주세요."
+          : nameRelationsErrorText(error) + " 접었다 다시 펼쳐 재시도할 수 있습니다.";
+      });
+    });
+    return section;
+  }
+
   function buildSpeciesCard(doc, profile) {
     if (!profile || typeof profile !== "object" || !profile.taxon) {
       return null;
@@ -1133,6 +1438,18 @@
     // key events.  A settled request may restore focus only once composition
     // has finished, so an IME confirmation is never interrupted.
     var isComposing = false;
+    // Bumped by 대화 지우기 so lazy lookups that settle after a clear never
+    // write into (or announce status for) the discarded conversation.
+    var conversationGeneration = 0;
+
+    function conversationGuard() {
+      var generation = conversationGeneration;
+      return function () { return generation === conversationGeneration; };
+    }
+
+    function taxaFetch(url, options) {
+      return win.fetch(url, options);
+    }
 
     function setStatus(text) {
       statusRegion.textContent = text;
@@ -1251,6 +1568,17 @@
         text.textContent = answer.answer_text;
         item.appendChild(text);
       }
+      if (answer.result && answer.result.kind === "name_relations") {
+        var nameRelations = buildNameRelations(doc, answer.result.relationships, taxaFetch, conversationGuard());
+        if (nameRelations) {
+          item.appendChild(nameRelations);
+        } else {
+          var malformed = doc.createElement("p");
+          malformed.className = "species-answer-empty";
+          malformed.textContent = "이름 관계 자료의 형식을 확인할 수 없어 표시하지 않았습니다.";
+          item.appendChild(malformed);
+        }
+      }
 
       var answerMetadata = [];
       var result = answer && answer.result;
@@ -1293,6 +1621,7 @@
         var speciesCard = buildSpeciesCard(doc, result.profile);
         if (speciesCard) {
           (structured || item).appendChild(buildRelatedExplorer(doc, result.profile));
+          (structured || item).appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
           item.appendChild(buildSpeciesBrief(doc, result.profile));
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
         }
@@ -1481,6 +1810,7 @@
     syncModeControls();
 
     clearButton.addEventListener("click", function () {
+      conversationGeneration += 1;
       messages.length = 0;
       while (history.firstChild) {
         history.removeChild(history.firstChild);
@@ -1542,6 +1872,9 @@
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
     buildRelatedExplorer: buildRelatedExplorer,
+    buildNameRelations: buildNameRelations,
+    buildNameRelationsExplorer: buildNameRelationsExplorer,
+    isNameRelationsPayload: isNameRelationsPayload,
     buildSpeciesComparison: buildSpeciesComparison,
     buildSpeciesPopup: buildSpeciesPopup,
     buildSpeciesBrief: buildSpeciesBrief,

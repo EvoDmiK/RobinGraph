@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "reviewed_at": "2026-10-03",
+  "policy_status": "allowed",
+  "scope": "사용자 제시 네 이름의 초기 검토 목록. 관계 후보는 전체 분류군의 완전한 목록이 아니다. 가축형은 자동으로 아종으로 판정하지 않는다.",
+  "reuse_policy": "RobinGraph original factual summaries with citations; no source prose or images copied. Source copyright is not relicensed.",
+  "records": [
+    {
+      "id": "pigeon-rock",
+      "entity_id": "pigeon-common",
+      "name": "비둘기",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Columba livia",
+      "search_terms": [
+        "비둘기",
+        "도시비둘기"
+      ],
+      "note": "도시에서 흔히 보는 비둘기의 후보로 바위비둘기를 안내합니다. 비둘기라는 말의 모든 범위를 이 한 종으로 제한하지 않습니다.",
+      "sources": [
+        {
+          "title": "Cornell Lab: Rock Pigeon",
+          "url": "https://www.allaboutbirds.org/guide/Rock_Pigeon/overview"
+        }
+      ]
+    },
+    {
+      "id": "domestic-pigeon-rock",
+      "entity_id": "domestic-pigeon",
+      "name": "집비둘기",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Columba livia",
+      "search_terms": [
+        "집비둘기",
+        "Columba livia domestica"
+      ],
+      "note": "사육 비둘기와 바위비둘기의 관계를 안내합니다. 사육 품종·야생 개체군·야생화 개체의 형질을 서로 그대로 대입하지 않습니다.",
+      "sources": [
+        {
+          "title": "Cornell Lab: Rock Pigeon",
+          "url": "https://www.allaboutbirds.org/guide/Rock_Pigeon/overview"
+        }
+      ]
+    },
+    {
+      "id": "crow-corone",
+      "entity_id": "crow-common",
+      "name": "까마귀",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Corvus corone",
+      "search_terms": [
+        "까마귀"
+      ],
+      "note": "국내 자료의 까마귀(Corvus corone)를 후보로 안내합니다. 활성 AviList에 연결된 한국어 이름은 별도로 표시하며, 지역·자료의 이름 사용 차이를 구분합니다.",
+      "sources": [
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "crow-large-billed",
+      "entity_id": "crow-common",
+      "name": "까마귀",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Corvus macrorhynchos",
+      "search_terms": [
+        "까마귀"
+      ],
+      "note": "검은 까마귀류를 통칭하는 질문에서는 큰부리까마귀도 구분할 후보입니다. 까마귀와 큰부리까마귀를 동의어 또는 같은 종으로 합치지 않습니다. 이 목록은 모든 까마귀류를 열거한 것이 아닙니다.",
+      "sources": [
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "chicken-red-junglefowl",
+      "entity_id": "chicken-domestic",
+      "name": "닭",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "닭",
+        "집닭",
+        "Gallus gallus domesticus"
+      ],
+      "note": "가축 닭의 기원 연구가 연결하는 적색야계를 안내합니다. 초기 가축화와 이후 유전적 혼합을 구분하며, 야생종의 사진·체중·멸종위기 등급을 가축 닭의 정보로 적용하지 않습니다.",
+      "sources": [
+        {
+          "title": "Wang et al. (2020): 863 genomes reveal the origin and domestication of chicken",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "domestic-duck-mallard",
+      "entity_id": "duck-domestic",
+      "name": "집오리",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Anas platyrhynchos",
+      "search_terms": [
+        "집오리",
+        "가축오리",
+        "사육오리"
+      ],
+      "note": "많은 가축 오리 품종과 청둥오리의 가축화 관계를 안내합니다. 집오리 전체가 청둥오리 계통이라는 뜻은 아닙니다.",
+      "sources": [
+        {
+          "title": "FAO: Domestic ducks",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en"
+        }
+      ]
+    },
+    {
+      "id": "domestic-duck-muscovy",
+      "entity_id": "duck-domestic",
+      "name": "집오리",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Cairina moschata",
+      "search_terms": [
+        "집오리",
+        "가축오리",
+        "사육오리"
+      ],
+      "note": "가축 오리에는 머스코비오리 계통도 있습니다. 집오리라는 넓은 이름에서는 이 후보도 구분하고, 청둥오리 계통과 동일한 분류군으로 합치지 않습니다.",
+      "sources": [
+        {
+          "title": "FAO: Domestic ducks",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en"
+        }
+      ]
+    },
+    {
+      "id": "domestic-mallard-specific",
+      "entity_id": "mallard-domestic-specific",
+      "name": "청둥오리 계통의 가축 오리",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Anas platyrhynchos",
+      "search_terms": [
+        "Anas platyrhynchos domesticus"
+      ],
+      "note": "이 이름을 사용한 가축 오리 질문에서는 관련 야생종 청둥오리를 안내합니다. 이름을 검색 키로 연결하며 활성 AviList에 새 아종을 생성하거나 아종 지위를 단정하지 않습니다.",
+      "sources": [
+        {
+          "title": "FAO: Domestic ducks",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en"
+        }
+      ]
+    }
+  ]
+}
