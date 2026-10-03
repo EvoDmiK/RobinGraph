@@ -2594,7 +2594,7 @@ test("subspecies explorer fetches lazily and rejects a selected profile from ano
 
 test("subspecies card shows only its sourced reviewed description and keeps raw range in source details", () => {
   const profile = profileFor({ rank: "subspecies", scientific_name: "Anas platyrhynchos test", taxon_id: "sub1" });
-  profile.subspecies_metadata = { section: { key: "subspecies_taxonomy", items: ["분류 문장", "검토된 아종 고유 분포 설명"] }, source_url: "https://www.avilist.org/", source_name: "AviList", range_raw: "Reviewed source range <script>inert</script>" };
+  profile.subspecies_metadata = { section: { key: "subspecies_taxonomy", items: [{ text: "분류 문장" }, { text: "검토된 아종 고유 분포 설명", source_name: "AviList", source_url: "https://www.avilist.org/" }] }, source_url: "https://www.avilist.org/", source_name: "AviList", range_raw: "Reviewed source range <script>inert</script>" };
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
   const front = collectAllNodes(card).find(n => n.className === "species-card-front");
   assert.match(collectedText(front), /검토된 아종 고유 분포 설명/);

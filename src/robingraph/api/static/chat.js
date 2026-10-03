@@ -1406,7 +1406,7 @@
       var metadataSource = metadata && sanitizeUrl(metadata.source_url);
       var description = doc.createElement("p");
       description.className = "species-subspecies-description";
-      var descriptions = metadataSection && metadataSection.key === "subspecies_taxonomy" && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1).filter(function (item) { return typeof item === "string" && item.trim(); }) : [];
+      var descriptions = metadataSection && metadataSection.key === "subspecies_taxonomy" && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1).filter(function (item) { return item && typeof item.text === "string" && item.text.trim() && sanitizeUrl(item.source_url) === metadataSource; }).map(function (item) { return item.text; }) : [];
       description.textContent = metadataSource && descriptions.length ? descriptions.join(" ") : "이 아종만의 외형·분포 차이는 검토된 자료에서 아직 확인하지 못했습니다.";
       front.appendChild(description);
       if (metadataSource) {
