@@ -1058,3 +1058,17 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-comparison details { font-size: .75rem; }
 .species-comparison caption { text-align: left; margin-bottom: .5rem; }
 .species-related h3, .species-comparison h3 { color: var(--color-text); }
+.species-name-relations { margin-top: .75rem; border-top: 1px solid var(--color-answer-border); padding-top: .65rem; }
+.species-name-relations > button, .name-relation-choose { width: 100%; margin: .25rem 0; padding: .55rem; border: 1px solid var(--color-answer-border); border-radius: .6rem; background: var(--color-surface); color: var(--color-text); text-align: left; cursor: pointer; }
+.name-relations { margin-top: .75rem; overflow-wrap: anywhere; }
+.name-relations h3 { margin: .4rem 0; font-size: 1rem; color: var(--color-text); }
+.name-relation-list { list-style: none; margin: .5rem 0; padding: 0; }
+.name-relation { margin: .5rem 0; padding: .6rem .7rem; border: 1px solid var(--color-answer-border); border-radius: .6rem; background: var(--color-surface); }
+.name-relation p { margin: .25rem 0; }
+.name-relation-title { display: flex; flex-wrap: wrap; gap: .4rem; align-items: baseline; }
+.name-relation-label { padding: .05rem .45rem; border-radius: 999px; border: 1px solid var(--color-answer-border); background: var(--color-answer-bg); font-size: .75rem; }
+.name-relation-taxon, .name-relation-sources { font-size: .85rem; color: var(--color-muted); }
+.name-relation-domestic { border-color: var(--color-abstain-border); }
+.name-relation-warning, .name-relation-caveat { padding: .45rem .6rem; border-radius: .5rem; border: 1px solid var(--color-abstain-border); background: var(--color-abstain-bg); color: var(--color-text); font-size: .85rem; }
+.name-relation-caveat { margin: .75rem 0 .25rem; font-weight: 600; }
+.name-relations-status:empty { display: none; }

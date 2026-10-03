@@ -1740,3 +1740,237 @@ test("species headings use Korean names first, then sourced English common names
   profile.taxon.korean_name = "한국어 이름";
   assert.equal(chat.buildSpeciesAnswer(doc, profile).children[0].textContent, "한국어 이름");
 });
+
+// ---------------------------------------------------------------------------
+// Name / domestic-form relationships (`result.kind === "name_relations"` and
+// the lazy GET /v1/taxa/name-relations explorer): rendered only in the
+// explanation area, never inside a species card.
+// ---------------------------------------------------------------------------
+
+function fakeNameRelations(overrides) {
+  return Object.assign({
+    query_name: "오리",
+    summary: "‘오리’는 여러 야생종과 가축형을 함께 가리키는 통칭입니다.",
+    is_search_term: true,
+    taxonomy_source: "AviList",
+    taxonomy_release: "v2025b",
+    concept_set_id: "cs1",
+    relations: [
+      { name: "집오리", entity_kind: "domestic_form", relation_type: "domestic_form_of", relation_label: "가축형의 기원종",
+        note: "집오리는 청둥오리에서 가축화된 품종군입니다.",
+        taxon: { scientific_name: "Anas platyrhynchos", korean_name: "청둥오리", english_name: "Mallard", taxon_id: "t1" },
+        sources: [{ title: "Wikipedia: Domestic duck", url: "https://en.wikipedia.org/wiki/Domestic_duck" }] },
+      { name: "흰뺨검둥오리", entity_kind: "species", relation_type: "common_name_member", relation_label: "통칭에 포함되는 야생종",
+        note: "<img src=x onerror=alert(1)>",
+        taxon: { scientific_name: "Anas zonorhyncha", korean_name: "흰뺨검둥오리", taxon_id: "t2" },
+        sources: [{ title: "<script>bad()</script>", url: "javascript:alert(1)" }, { title: "Protocol-relative", url: "//evil.example/x" }] },
+    ],
+  }, overrides || {});
+}
+
+function profileFor(taxon) {
+  return fakeProfilePayload({ taxon: Object.assign({ rank: "species" }, taxon) }).result.profile;
+}
+
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+
+test("name_relations chat result renders labelled, noted ambiguity choices in the explanation with explicit profile buttons", async () => {
+  const payload = { disposition: "clarify", answer_text: "‘오리’는 하나의 종이 아닙니다. 어떤 새를 말씀하시는지 골라주세요.", warnings: [],
+    result: { kind: "name_relations", relationships: fakeNameRelations() } };
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(
+    url === "/health" ? { mode: "fixture" } : url === "/v1/chat" ? payload : profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" })
+  )));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "오리 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById["history"])[1];
+  assert.match(collectedText(answer), /추가 확인 필요/);
+  assert.ok(answer.children.some((n) => n.textContent === payload.answer_text));
+  const nodes = collectAllNodes(answer);
+  const items = nodes.filter((n) => /^name-relation( |$)/.test(n.className || ""));
+  assert.equal(items.length, 2);
+  assert.ok(nodes.some((n) => n.className === "name-relation-label" && n.textContent === "가축형의 기원종"));
+  assert.ok(nodes.some((n) => n.textContent === "집오리는 청둥오리에서 가축화된 품종군입니다."));
+  assert.ok(nodes.some((n) => n.textContent === "관련 야생종: 청둥오리 · Mallard · Anas platyrhynchos"));
+  const buttons = nodes.filter((n) => n.className === "name-relation-choose");
+  assert.deepEqual(buttons.map((b) => b.textContent), ["청둥오리 · 관련 야생종 자료 보기", "흰뺨검둥오리 · 관련 야생종 자료 보기"]);
+  assert.equal(dom.fetchCalls.filter((c) => c.url.startsWith("/v1/taxa/")).length, 0, "choices must not prefetch profiles");
+
+  buttons[0].dispatch("click");
+  await tick();
+  const profileCall = dom.fetchCalls.find((c) => c.url.startsWith("/v1/taxa/profile"));
+  assert.equal(profileCall.url, "/v1/taxa/profile?name=Anas%20platyrhynchos");
+  assert.equal(profileCall.options.credentials, "omit");
+  const after = collectAllNodes(answer);
+  const caveat = after.find((n) => n.className === "name-relation-caveat");
+  assert.match(caveat.textContent, /‘오리’\(이\)라는 이름이 가리키는 범위 전체의 자료가 아니라/);
+  assert.match(caveat.textContent, /관련 야생종 청둥오리/);
+  const cards = after.filter((n) => (n.className || "").startsWith("species-card risk-"));
+  assert.equal(cards.length, 1);
+  const cardNodes = collectAllNodes(cards[0]);
+  assert.equal(cardNodes.find((n) => n.className === "species-title").textContent, "청둥오리", "card keeps the wild species name, never the domestic/query name");
+  assert.equal(cardNodes.some((n) => /name-relation|species-name-relations/.test(n.className || "")), false, "relations must stay outside the card");
+  assert.equal(cardNodes.some((n) => /집오리|‘오리’/.test(n.textContent || "")), false);
+});
+
+test("domestic-form relations carry an explicit domestic/wild warning; ordinary relations do not", () => {
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations(), async () => { throw new Error("unused"); });
+  const items = collectAllNodes(section).filter((n) => /^name-relation( |$)/.test(n.className || ""));
+  assert.equal(items[0].className, "name-relation name-relation-domestic");
+  assert.match(collectAllNodes(items[0]).find((n) => n.className === "name-relation-warning").textContent, /가축형과 야생 개체군의 정보를 구분합니다/);
+  assert.equal(items[1].className, "name-relation");
+  assert.equal(collectAllNodes(items[1]).some((n) => n.className === "name-relation-warning"), false);
+  assert.ok(collectAllNodes(section).some((n) => /통칭의 사용 범위·가축형 관계를 구분해 확인합니다/.test(n.textContent)), "is_search_term note");
+});
+
+test("selecting a domestic relation appends the domestic caveat to the wild-species explanation", async () => {
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations(),
+    async () => jsonResponse(profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" })));
+  collectAllNodes(section).find((n) => n.className === "name-relation-choose").dispatch("click");
+  await tick();
+  const caveat = collectAllNodes(section).find((n) => n.className === "name-relation-caveat");
+  assert.match(caveat.textContent, /‘가축형의 기원종’ 관계로/);
+  assert.match(caveat.textContent, /가축형에 그대로 적용되지 않습니다/);
+});
+
+test("relation sources are sanitized: only http(s) hrefs become links and hostile text stays inert", () => {
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations(), null);
+  const nodes = collectAllNodes(section);
+  const links = nodes.filter((n) => n.tagName === "a");
+  assert.deepEqual(links.map((n) => n.href), ["https://en.wikipedia.org/wiki/Domestic_duck"]);
+  assert.equal(links[0].rel, "noopener noreferrer");
+  const inert = nodes.find((n) => n.textContent === "<script>bad()</script>");
+  assert.equal(inert.tagName, "span");
+  assert.equal(inert.href, "");
+  assert.ok(nodes.some((n) => n.tagName === "span" && n.textContent === "Protocol-relative"));
+  assert.ok(nodes.some((n) => n.textContent === "<img src=x onerror=alert(1)>"));
+  assert.equal(nodes.some((n) => n.tagName === "script" || n.tagName === "img"), false);
+});
+
+test("malformed name_relations payloads render a fixed fallback; empty relations say so honestly", async () => {
+  assert.equal(chat.buildNameRelations({ createElement: createFakeElement }, { relations: "nope" }), null);
+  assert.equal(chat.isNameRelationsPayload([]), false);
+  const empty = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations({ relations: [] }));
+  assert.ok(collectAllNodes(empty).some((n) => n.textContent === "출처가 확인된 통칭·가축형 관계가 없습니다."));
+  const payload = { disposition: "clarify", answer_text: "확인 필요", warnings: [], result: { kind: "name_relations", relationships: { relations: null } } };
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "오리";
+  pressKey(dom, {});
+  await settleEventPath();
+  assert.match(collectedText(messageRows(dom.elementsById["history"])[1]), /이름 관계 자료의 형식을 확인할 수 없어/);
+});
+
+test("candidate selection drops stale responses, ignores repeat clicks in flight, and rejects a mismatched taxon", async () => {
+  const pending = {};
+  const calls = [];
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations(), (url) => {
+    calls.push(url);
+    const d = deferred(); pending[url] = d; return d.promise;
+  });
+  const [first, second] = collectAllNodes(section).filter((n) => n.className === "name-relation-choose");
+  first.dispatch("click"); first.dispatch("click");
+  await tick();
+  assert.equal(calls.length, 1, "repeat click on the in-flight candidate must not refetch");
+  second.dispatch("click");
+  await tick();
+  assert.equal(calls.length, 2);
+  pending["/v1/taxa/profile?name=Anas%20zonorhyncha"].resolve(jsonResponse(profileFor({ taxon_id: "t2", scientific_name: "Anas zonorhyncha", korean_name: "흰뺨검둥오리" })));
+  await tick();
+  pending["/v1/taxa/profile?name=Anas%20platyrhynchos"].resolve(jsonResponse(profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" })));
+  await tick();
+  const titles = collectAllNodes(section).filter((n) => n.className === "species-title").map((n) => n.textContent);
+  assert.deepEqual(titles, ["흰뺨검둥오리"], "the older selection must never overwrite the newer one");
+
+  const mismatch = chat.buildNameRelations({ createElement: createFakeElement }, fakeNameRelations(),
+    async () => jsonResponse(profileFor({ taxon_id: "other", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" })));
+  collectAllNodes(mismatch).find((n) => n.className === "name-relation-choose").dispatch("click");
+  await tick();
+  assert.equal(collectAllNodes(mismatch).some((n) => (n.className || "").startsWith("species-card")), false);
+  assert.match(collectAllNodes(mismatch).find((n) => n.className === "name-relations-status").textContent, /분류 자료가 바뀌었습니다/);
+});
+
+test("species explanation offers a lazy 통칭·가축형 button outside the card that fetches by scientific name", async () => {
+  const payload = fakeProfilePayload();
+  payload.result.profile.sections = [{ title: "기본 정보", items: [{ text: "청둥오리" }] }];
+  const relations = fakeNameRelations({ query_name: "Anas platyrhynchos", is_search_term: false });
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(
+    url === "/health" ? { mode: "fixture" } : url === "/v1/chat" ? payload : relations
+  )));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById["history"])[1];
+  const explanation = collectAllNodes(answer).find((n) => n.className === "species-answer");
+  assert.equal(explanation.children.filter((n) => n.className === "species-related").length, 1, "same genus/family explorer is preserved");
+  const explorer = explanation.children.find((n) => n.className === "species-name-relations");
+  assert.ok(explorer);
+  const card = collectAllNodes(answer).find((n) => (n.className || "").startsWith("species-card risk-"));
+  assert.equal(collectAllNodes(card).some((n) => n.className === "species-name-relations"), false);
+  assert.equal(explorer.children[0].textContent, "통칭·가축형 관계 알아보기");
+  assert.equal(dom.fetchCalls.filter((c) => c.url.startsWith("/v1/taxa/name-relations")).length, 0, "lazy until clicked");
+  explorer.children[0].dispatch("click");
+  explorer.children[0].dispatch("click"); explorer.children[0].dispatch("click");
+  await tick();
+  const calls = dom.fetchCalls.filter((c) => c.url.startsWith("/v1/taxa/name-relations"));
+  assert.deepEqual(calls.map((c) => c.url), ["/v1/taxa/name-relations?name=Anas%20platyrhynchos"]);
+  assert.equal(calls[0].options.credentials, "omit");
+  assert.equal(collectAllNodes(explorer).filter((n) => /^name-relation( |$)/.test(n.className || "")).length, 2);
+});
+
+test("name-relations explorer explains a missing endpoint, retries, and rejects unsupported or stale payloads", async () => {
+  const profile = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
+  const responses = [jsonResponse({ detail: "secret-internal" }, 404), jsonResponse({ relations: "bad" }),
+    jsonResponse(fakeNameRelations({ taxonomy_release: "old" })), jsonResponse(fakeNameRelations())];
+  let calls = 0;
+  const explorer = chat.buildNameRelationsExplorer({ createElement: createFakeElement }, profile, async () => responses[calls++]);
+  const button = explorer.children[0];
+  const status = () => explorer.children[1].children[0].textContent;
+  button.dispatch("click"); await tick();
+  assert.match(status(), /찾지 못했거나, 서버가 아직 이 조회를 지원하지 않습니다/);
+  assert.equal(status().includes("secret-internal"), false);
+  button.dispatch("click"); button.dispatch("click"); await tick();
+  assert.match(status(), /지원되지 않는 응답 형식/);
+  button.dispatch("click"); button.dispatch("click"); await tick();
+  assert.match(status(), /분류 자료가 갱신/);
+  assert.equal(collectAllNodes(explorer).some((n) => n.className === "name-relations"), false);
+  button.dispatch("click"); button.dispatch("click"); await tick();
+  assert.equal(calls, 4);
+  assert.ok(collectAllNodes(explorer).some((n) => n.className === "name-relations"));
+
+  const offline = chat.buildNameRelationsExplorer({ createElement: createFakeElement }, profile, async () => { throw new TypeError("Failed to fetch secret"); });
+  offline.children[0].dispatch("click"); await tick();
+  assert.match(offline.children[1].children[0].textContent, /불러오지 못했습니다/);
+  assert.equal(offline.children[1].children[0].textContent.includes("secret"), false);
+});
+
+test("lookups that settle after 대화 지우기 never render into the cleared conversation", async () => {
+  const payload = fakeProfilePayload();
+  payload.result.profile.sections = [{ title: "기본 정보", items: [{ text: "청둥오리" }] }];
+  const lookup = deferred();
+  const dom = createFakeDom((url) => (
+    url.startsWith("/v1/taxa/name-relations") ? lookup.promise : Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload))
+  ));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리";
+  pressKey(dom, {});
+  await settleEventPath();
+  const explorer = collectAllNodes(dom.elementsById["history"]).find((n) => n.className === "species-name-relations");
+  explorer.children[0].dispatch("click");
+  await tick();
+  dom.elementsById["clear-button"].dispatch("click");
+  lookup.resolve(jsonResponse(fakeNameRelations()));
+  await tick();
+  assert.equal(collectAllNodes(explorer).some((n) => n.className === "name-relations"), false);
+  assert.equal(explorer.children[1].children[0].textContent, "통칭·가축형 관계를 조회하는 중입니다.");
+  assert.equal(messageRows(dom.elementsById["history"]).length, 0);
+});
+
+test("styles.css styles the name-relation explanation, warnings and caveat", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  for (const selector of [".species-name-relations", ".name-relation-warning", ".name-relation-caveat", ".name-relation-label"]) {
+    assert.match(css, new RegExp(selector.replace(".", "\\.") + "[\\s,{]"));
+  }
+});
