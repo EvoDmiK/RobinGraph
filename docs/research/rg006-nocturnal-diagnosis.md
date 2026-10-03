@@ -166,7 +166,7 @@ NAS TEST 환경의 live Neo4j 인스턴스에서 AviList v2025b와 매핑된 `Tr
 
 ## 6. Root 구현 반영 결과 (Implemented Solution in Root Track)
 
-Root 트랙에서 소스 코드, UI, 테스트를 통합하여 다음 아키텍처로 구현했다. 배포 검증 결과는 상위 작업 기록에 별도로 남긴다:
+Root 트랙에서 소스 코드, UI, 테스트를 통합하여 다음 아키텍처로 구현했다. 배포 검증 결과는 RG-005~RG-009 검증 기록에 별도로 남긴다:
 
 ### 6.1 구현 모듈: `src/robingraph/retrieval/reviewed_activity.py`
 원천 데이터베이스의 원시 클레임 노드를 임의 삭제하거나 변경하지 않고, 종 프로필 조회 시 검증된 1차 출처의 설명을 결합하는 검토 레이어를 구축하였다.
