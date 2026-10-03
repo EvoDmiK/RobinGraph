@@ -22,3 +22,7 @@
 우선 청둥오리의 `Anas platyrhynchos conboschas`와 `Anas platyrhynchos platyrhynchos`에 대해 원자료 분포문을 한국어로 독자 요약했다. 요약은 고정 개념집합·릴리스·taxon ID·학명·원문 일치 조건에 한해 표시한다. 전자는 그린란드 남서부 해안, 후자는 북반구의 넓은 번식 범위와 남쪽 월동 지역을 설명한다. 이는 분포 차이이며 깃털·형태를 구별할 수 있다는 주장이 아니다. 다른 아종의 외관·한국어 분포 설명은 미검토임을 안내한다. 원자료 분포문은 출처 상세에서 확인한다.
 
 분류와 형질 수집은 기존 n8n 파이프라인, 통칭 관계는 검토 manifest 적재 스크립트, 사진은 요청 시 API 조회를 사용한다. 이번 한국어 분포 요약은 출처를 검토한 코드 기록이며 새 n8n 워크플로를 추가한 작업이 아니다.
+
+## 검증 및 배포
+
+Python 510건 실패 없음(외부 연동용 32건 제외), 프런트엔드 113건 통과. NAS TEST 실제 API와 Chromium 320·390·1280px에서 검증했다. TEST 이미지 `robingraph-api:test-subspecies-1408fd2` 배포·health 정상. 상세 결과는 [작업 기록](verification/2026-10-03-subspecies-common-name-cards.md)에 있다.
