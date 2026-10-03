@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 PIPELINE = "reviewed-name-relations"
+MAX_REVIEWED_RELATIONS = 5000
 KINDS = {"common_name", "domestic_form"}
 TYPES = {
     "common_usage": "통칭이 가리킬 수 있는 종",
@@ -30,7 +31,7 @@ RETURN usage.id AS usage_id, claim.source_record_id AS source_record_id,
        claim.relation_type AS relation_type, target.id AS taxon_id,
        target.scientific_name AS scientific_name
 ORDER BY usage.id, target.scientific_name, target.id
-LIMIT 25
+LIMIT $result_limit
 """
 
 
@@ -55,8 +56,8 @@ def validate_manifest(manifest):
     if manifest.get("policy_status") != "allowed" or not manifest.get("reviewed_at"):
         raise ValueError("A reviewed allowed manifest is required")
     records = manifest.get("records")
-    if not isinstance(records, list) or not 1 <= len(records) <= 24:
-        raise ValueError("One to 24 reviewed relations are required")
+    if not isinstance(records, list) or not 1 <= len(records) <= MAX_REVIEWED_RELATIONS:
+        raise ValueError(f"One to {MAX_REVIEWED_RELATIONS} reviewed relations are required")
     ids = set()
     entities = {}
     for record in records:
@@ -112,6 +113,7 @@ class NameRelationRepository:
             RELATIONS_QUERY, name=name, concept_set_id=concept_id,
             taxonomy_release=taxonomy_release, dataset_id=context.dataset.id,
             source_release=context.release.id,
+            result_limit=len(manifest["records"]) + 1,
         )
         records = {f"{context.release.id}:{r['id']}": r for r in manifest["records"]}
         relations = []

@@ -1,0 +1,285 @@
+[
+  {
+    "id": "silkie",
+    "entity_id": "silkie",
+    "name": "오골계",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Gallus gallus",
+    "search_terms": [
+      "오골계"
+    ],
+    "note": "오골계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 오골계",
+        "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+      },
+      {
+        "title": "Wang et al. (2020): Chicken domestication",
+        "url": "https://www.nature.com/articles/s41422-020-0349-y"
+      }
+    ]
+  },
+  {
+    "id": "white-silkie",
+    "entity_id": "white-silkie",
+    "name": "백봉오골계",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Gallus gallus",
+    "search_terms": [
+      "백봉오골계"
+    ],
+    "note": "백봉오골계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 오골계",
+        "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+      },
+      {
+        "title": "Wang et al. (2020): Chicken domestication",
+        "url": "https://www.nature.com/articles/s41422-020-0349-y"
+      }
+    ]
+  },
+  {
+    "id": "yeonsan-black-chicken",
+    "entity_id": "yeonsan-black-chicken",
+    "name": "연산오계",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Gallus gallus",
+    "search_terms": [
+      "연산오계"
+    ],
+    "note": "연산오계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 오골계",
+        "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+      },
+      {
+        "title": "Wang et al. (2020): Chicken domestication",
+        "url": "https://www.nature.com/articles/s41422-020-0349-y"
+      }
+    ]
+  },
+  {
+    "id": "korean-domestic-chicken",
+    "entity_id": "korean-domestic-chicken",
+    "name": "토종닭",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Gallus gallus",
+    "search_terms": [
+      "토종닭"
+    ],
+    "note": "토종닭은 사육 닭의 여러 품종·계통을 포함하는 이름으로, 하나의 품종이나 야생 아종으로 확정하지 않습니다. 가축 닭의 기원과 연결된 적색야계 자료를 안내하며 품종의 사진·체중을 대신하지 않습니다.",
+    "sources": [
+      {
+        "title": "국립축산과학원: 토종닭 복원·산업화",
+        "url": "https://nias.go.kr/front/soboarddown.do?boardSeqNum=311&cmCode=M090814151125016&fileSeqNum=326"
+      },
+      {
+        "title": "Wang et al. (2020): Chicken domestication",
+        "url": "https://www.nature.com/articles/s41422-020-0349-y"
+      }
+    ]
+  },
+  {
+    "id": "crane-hak",
+    "entity_id": "crane-hak",
+    "name": "학",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Grus japonensis",
+    "search_terms": [
+      "학",
+      "단정학",
+      "선학"
+    ],
+    "note": "한국민족문화대백과사전의 두루미 항목에서 확인한 이칭입니다. 이 항목의 학명인 두루미를 후보로 안내하며, 문화적 표현이나 두루미류 전체의 이름 사용을 한 종으로 모두 제한하지 않습니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 두루미",
+        "url": "https://encykorea.aks.ac.kr/Article/E0060759"
+      }
+    ]
+  },
+  {
+    "id": "peacock-common",
+    "entity_id": "peacock-common",
+    "name": "공작",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Pavo cristatus",
+    "search_terms": [
+      "공작",
+      "남객",
+      "월조",
+      "화리"
+    ],
+    "note": "공작 항목에 기록된 이름과 이칭을 인도공작에 연결합니다. 다른 공작류 전체를 포함하는 목록은 아니며, 관상용 사육 자체를 가축화의 증거로 사용하지 않습니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 공작",
+        "url": "https://encykorea.aks.ac.kr/Article/E0004423"
+      }
+    ]
+  },
+  {
+    "id": "swan-common-tundra",
+    "entity_id": "swan-common",
+    "name": "백조",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Cygnus columbianus",
+    "search_terms": [
+      "백조"
+    ],
+    "note": "국내 백조류 자료에서 구분하는 고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "swan-common-whooper",
+    "entity_id": "swan-common",
+    "name": "백조",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Cygnus cygnus",
+    "search_terms": [
+      "백조"
+    ],
+    "note": "국내 백조류 자료에서 구분하는 큰고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "swan-common-mute",
+    "entity_id": "swan-common",
+    "name": "백조",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Cygnus olor",
+    "search_terms": [
+      "백조"
+    ],
+    "note": "국내 백조류 자료에서 구분하는 혹고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "egret-common-great",
+    "entity_id": "egret-common",
+    "name": "백로",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Ardea alba",
+    "search_terms": [
+      "백로"
+    ],
+    "note": "흰 백로를 통칭하는 질문에서 중대백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백로",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+      },
+      {
+        "title": "국립생물자원관: 한국의 백로 번식지",
+        "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+      }
+    ]
+  },
+  {
+    "id": "egret-common-intermediate",
+    "entity_id": "egret-common",
+    "name": "백로",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Ardea intermedia",
+    "search_terms": [
+      "백로"
+    ],
+    "note": "흰 백로를 통칭하는 질문에서 중백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백로",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+      },
+      {
+        "title": "국립생물자원관: 한국의 백로 번식지",
+        "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+      }
+    ]
+  },
+  {
+    "id": "egret-common-little",
+    "entity_id": "egret-common",
+    "name": "백로",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Egretta garzetta",
+    "search_terms": [
+      "백로"
+    ],
+    "note": "흰 백로를 통칭하는 질문에서 쇠백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+    "sources": [
+      {
+        "title": "한국학중앙연구원: 백로",
+        "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+      },
+      {
+        "title": "국립생물자원관: 한국의 백로 번식지",
+        "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+      }
+    ]
+  },
+  {
+    "id": "korean-native-chicken",
+    "entity_id": "korean-native-chicken",
+    "name": "재래닭",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Gallus gallus",
+    "search_terms": [
+      "재래닭"
+    ],
+    "note": "국립축산과학원의 가축유전자원 자료에 기록된 사육 닭 이름입니다. 다른 토종닭·교배계와 동일한 품종으로 합치지 않고 가축 닭의 기원과 연결된 적색야계 자료를 안내합니다.",
+    "sources": [
+      {
+        "title": "국립축산과학원: 가축유전자원 보유 현황",
+        "url": "https://nias.go.kr/front/soboarddown.do?boardSeqNum=8003&cmCode=M091023193927309&fileSeqNum=3791"
+      },
+      {
+        "title": "Wang et al. (2020): Chicken domestication",
+        "url": "https://www.nature.com/articles/s41422-020-0349-y"
+      }
+    ]
+  }
+]

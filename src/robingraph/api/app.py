@@ -536,6 +536,14 @@ def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"
         match = pattern.fullmatch(question)
         if match:
             return intent, match.group("name")
+    # Reviewed usages may contain spaces or a domestic-form trinomial.
+    # Only allow listed names, rather than widening free-form species parsing.
+    match = re.fullmatch(
+        r"(?P<name>.+?)(?:에\s*대해|에\s*관해)\s*(?:알고\s*싶어(?:요)?|알려줘|알려주세요|설명해줘|설명해주세요)[.!?？]*",
+        question,
+    )
+    if match and match.group("name").strip().lower() in reviewed_search_terms():
+        return "profile", match.group("name").strip()
     return None
 
 
@@ -925,7 +933,8 @@ def create_app(
             relation_name = request.filters.name
         scientific_filter = isinstance(request.filters, TaxonomyChatFilters) and request.filters.scientific_name is not None
         relevant_filter = request.filters is None or isinstance(request.filters, (ProfileChatFilters, TaxonomyChatFilters))
-        scientific_query = re.fullmatch(r"[A-Za-z][a-z]+\s+[a-z]+", relation_name.strip()) is not None
+        scientific_query = (re.fullmatch(r"[A-Za-z][a-z]+\s+[a-z]+", relation_name.strip()) is not None
+                            and relation_name.strip().lower() not in reviewed_search_terms())
         if name_relations_handler is not None and request.intent in ("auto", "profile", "taxonomy") and relevant_filter and not scientific_filter and not scientific_query:
             try:
                 relationships = name_relations_handler(relation_name)

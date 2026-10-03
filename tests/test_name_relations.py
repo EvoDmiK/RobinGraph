@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 from robingraph.api.app import create_app
-from robingraph.retrieval.name_relations import NameRelationRepository, manifest_digest, validate_manifest, RELATIONS_QUERY
+from robingraph.retrieval.name_relations import NameRelationRepository, manifest_digest, validate_manifest, RELATIONS_QUERY, load_manifest
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
 
@@ -79,6 +79,26 @@ class NameRelationsTest(unittest.TestCase):
         self.repo.lineage_for_scientific_name.return_value = replace(self.lineage, concept_set_id="new")
         with self.assertRaises(ValueError): self.reader.for_name("닭")
 
+    def test_large_reviewed_inventory_and_reverse_lookup_do_not_truncate_at_25(self):
+        record = self.manifest["records"][0]
+        self.manifest["records"] = [{**record,"id":f"record-{i}","entity_id":f"usage-{i}",
+                                     "name":f"가축 이름 {i}","search_terms":[f"가축 이름 {i}"]} for i in range(40)]
+        self.context.release.content_sha256 = manifest_digest(self.manifest)
+        self.repo._run.return_value = [{**self.row,"source_record_id":f"release:record-{i}"} for i in range(40)]
+        result = self.reader.for_name("Gallus gallus")
+        self.assertEqual(40,len(result["relations"]))
+        self.assertEqual(41,self.repo._run.call_args.kwargs["result_limit"])
+        self.repo._run.return_value.pop()
+        with self.assertRaises(ValueError): self.reader.for_name("Gallus gallus")
+
+    def test_packaged_corpus_preserves_multi_origin_geese_and_pet_name_ambiguity(self):
+        records=load_manifest()["records"]
+        targets=lambda term:{r["scientific_name"] for r in records if term in r["search_terms"]}
+        self.assertEqual({"Anser anser","Anser cygnoides"},targets("거위"))
+        self.assertIn("Meleagris gallopavo",targets("칠면조"))
+        self.assertIn("Coturnix japonica",targets("집메추리"))
+        self.assertGreater(len(targets("앵무새")),1)
+
     def test_invalid_or_unlicensed_sources_rejected(self):
         for url in ("javascript:alert(1)", "http://example.org", "https://user:password@example.org"):
             data = manifest()
@@ -100,6 +120,16 @@ class NameRelationsTest(unittest.TestCase):
             self.assertEqual("clarify", result["disposition"])
             self.assertEqual("name_relations", result["result"]["kind"])
         profile.assert_not_called()
+
+    def test_reviewed_domestic_binomial_routes_but_canonical_binomial_bypasses(self):
+        reader = Mock(return_value={"is_search_term": True, "relations": [self.row], "summary": "choose"})
+        client = TestClient(create_app(name_relations_handler=reader))
+        result = client.post("/v1/chat", json={"question": "Streptopelia risoria"}).json()
+        self.assertEqual("name_relations", result["result"]["kind"])
+        reader.assert_called_once_with("Streptopelia risoria")
+        reader.reset_mock()
+        client.post("/v1/chat", json={"question": "Streptopelia roseogrisea"})
+        reader.assert_not_called()
 
     def test_explicit_evidence_and_scientific_filter_are_not_rerouted(self):
         reader = Mock(return_value={"is_search_term": True, "relations": [self.row], "summary": "choose"})

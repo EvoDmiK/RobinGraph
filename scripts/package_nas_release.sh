@@ -139,6 +139,11 @@ ALLOW_FILES = frozenset(
         "scripts/load_n8n_avonet.py",
         "scripts/load_name_relations.py",
         "docs/name-relations.md",
+        "docs/name-relations-research.md",
+        "docs/name-relations-coverage.md",
+        "docs/research/additional-name-research.md",
+        "docs/research/common-bird-research.md",
+        "docs/research/domestic-bird-research.md",
     ]
 )
 ALLOW_PREFIXES = ("src/", "data/eval/v1/", "config/")
