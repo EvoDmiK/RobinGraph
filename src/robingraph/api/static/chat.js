@@ -253,6 +253,7 @@
   var DIET_HABITAT_TRAIT_NAMES = [
     "habitat", "habitat_density_category", "primary_lifestyle", "trophic_niche",
     "trophic_level", "diet_category", "diet_distribution", "foraging_strata_distribution", "nocturnal",
+    "activity_pattern",
   ];
   var PROMINENT_MEASUREMENT_NAMES = ["body_mass"];
 
@@ -278,6 +279,41 @@
       index[key].sources.push(trait);
     });
     return groups;
+  }
+
+  /**
+   * A reviewed trait (e.g. `activity_pattern`) may carry the original
+   * dataset claims it supersedes in `source_claims`. They are shown only
+   * inside the collapsed source details, labelled as raw source codes with
+   * the raw value (never the translated 예/아니요), so they cannot read as
+   * the current conclusion.
+   */
+  function appendTraitProvenance(doc, sourceDetails, trait) {
+    if (typeof trait.review_note === "string" && trait.review_note.trim()) {
+      var note = doc.createElement("p");
+      note.className = "trait-review-note";
+      note.textContent = trait.review_note;
+      sourceDetails.appendChild(note);
+    }
+    var claims = Array.isArray(trait.source_claims) ? trait.source_claims : [];
+    claims.slice(0, 5).forEach(function (claim) {
+      if (!claim || typeof claim !== "object" || typeof claim.name !== "string") { return; }
+      var raw = claim.value;
+      if (raw !== null && typeof raw === "object") { return; }
+      var row = doc.createElement("p");
+      row.className = "trait-source-claim";
+      var label = doc.createElement("span");
+      label.textContent = "원자료 분류값 (현재 결론 아님): " + claim.name + " = " + String(raw) + " · ";
+      row.appendChild(label);
+      row.appendChild(safeLink(doc, claim.citation || claim.source_name || "원자료", claim.source_url));
+      var meta = [claim.release, claim.license_name].filter(function (part) { return typeof part === "string" && part.trim(); });
+      if (meta.length) {
+        var suffix = doc.createElement("span");
+        suffix.textContent = " · " + meta.join(" · ");
+        row.appendChild(suffix);
+      }
+      sourceDetails.appendChild(row);
+    });
   }
 
   /** Render one `.species-traits` grid of fact cards from grouped trait claims. */
@@ -318,6 +354,7 @@
         }
         sourceDetails.appendChild(source);
       });
+      appendTraitProvenance(doc, sourceDetails, trait);
       if (sourceDetails.children.length > 1) { traitCard.appendChild(sourceDetails); }
       traitGrid.appendChild(traitCard);
     });
@@ -400,6 +437,209 @@
     return emblem;
   }
 
+  // Feeding-ecology icons. Keys are food *components*; combined source
+  // categories (VertFishScav, PlantSeed, FruiNect) get their own single
+  // broad icon so a combined category never implies every member is eaten.
+  // Paths are 24x24 strokes that inherit `currentColor`.
+  var DIET_ICONS = {
+    invertebrate: { label: "무척추동물", glyph: "✱",
+      path: "M12 7a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0v-5a3 3 0 0 1 3-3z M10 5L8 3 M14 5l2-2 M9 11H5 M9 15l-4 2 M15 11h4 M15 15l4 2" },
+    vertebrate: { label: "척추동물", glyph: "⌇",
+      path: "M8.5 6.5l9 9 M6.5 4.5a2 2 0 1 0-2 2 2 2 0 1 0 2 2l2-2 M17.5 19.5a2 2 0 1 0 2-2 2 2 0 1 0-2-2l-2 2" },
+    fish: { label: "물고기", glyph: "≻",
+      path: "M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z M8 11.5h.01" },
+    carrion: { label: "사체", glyph: "☠",
+      path: "M12 3a7 7 0 0 0-7 7v3l2 2v4h10v-4l2-2v-3a7 7 0 0 0-7-7z M9 11h.01 M15 11h.01 M10 19v-3 M14 19v-3" },
+    fruit: { label: "열매", glyph: "●",
+      path: "M12 9c-4 0-6 3-6 6s2 6 6 6 6-3 6-6-2-6-6-6z M12 9c0-3 1-5 3-6" },
+    nectar: { label: "꽃꿀", glyph: "✿",
+      path: "M10 12a2 2 0 1 0 4 0 2 2 0 1 0-4 0 M12 4v4 M12 16v4 M4 12h4 M16 12h4" },
+    seed: { label: "씨앗", glyph: "◊",
+      path: "M12 3c4 3 5 9 0 18-5-9-4-15 0-18z M12 7v10" },
+    plant: { label: "기타 식물", glyph: "♣",
+      path: "M12 21v-9 M12 12c0-4 3-7 7-7 0 4-3 7-7 7z M12 15c0-3-2-5-5-5 0 3 2 5 5 5z" },
+    vert_fish_scav: { label: "척추동물·물고기·사체 (묶음 범주)", glyph: "▣", broad: true,
+      path: "M4 4h16v16H4z M8.5 9h.01 M15.5 9h.01 M12 15h.01" },
+    plant_seed: { label: "식물·씨앗 (묶음 범주)", glyph: "▤", broad: true,
+      path: "M4 4h16v16H4z M12 18v-6 M12 12c0-3 2-5 5-5 M12 14c0-2-2-4-4-4" },
+    fruit_nectar: { label: "열매·꽃꿀 (묶음 범주)", glyph: "▥", broad: true,
+      path: "M4 4h16v16H4z M10 14a2 2 0 1 0 4 0 2 2 0 1 0-4 0 M12 8v4" },
+    omnivore: { label: "잡식", glyph: "⊕",
+      path: "M6 3v8 M9 3v8 M6 7h3 M7.5 11v10 M17 3c-2 2-2 6 0 8v10" },
+    aquatic_predator: { label: "수생동물 포식", glyph: "≋",
+      path: "M2 17c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0 M12 3v9 M9 9l3 3 3-3" },
+    herbivore_aquatic: { label: "수생 초식", glyph: "≈",
+      path: "M12 15V8 M12 8c0-3 2-5 5-5 M2 18c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0" },
+    herbivore_terrestrial: { label: "육상 초식", glyph: "♠",
+      path: "M2 21h20 M12 21v-9 M12 12c0-4 3-7 7-7 0 4-3 7-7 7z" },
+  };
+  // AVONET Diet distribution members (percentages).
+  var DIET_DISTRIBUTION_KEYS = {
+    invertebrate: "invertebrate", endotherm_vertebrate: "vertebrate", ectotherm_vertebrate: "vertebrate",
+    unknown_vertebrate: "vertebrate", fish: "fish", carrion: "carrion", fruit: "fruit", nectar: "nectar",
+    seed: "seed", other_plant: "plant",
+  };
+  var DIET_CATEGORY_KEYS = {
+    Invertebrate: "invertebrate", VertFishScav: "vert_fish_scav", PlantSeed: "plant_seed",
+    FruiNect: "fruit_nectar", Omnivore: "omnivore",
+  };
+  var TROPHIC_NICHE_KEYS = {
+    Invertivore: "invertebrate", Vertivore: "vertebrate", "Aquatic predator": "aquatic_predator",
+    Frugivore: "fruit", Nectarivore: "nectar", Granivore: "seed", Omnivore: "omnivore",
+    Scavenger: "carrion", "Herbivore aquatic": "herbivore_aquatic", "Herbivore terrestrial": "herbivore_terrestrial",
+  };
+
+  function sourcedTraits(profile, name) {
+    var traits = profile && Array.isArray(profile.traits) ? profile.traits : [];
+    return traits.filter(function (trait) {
+      return trait && trait.name === name && typeof trait.source_name === "string" && trait.source_name.trim() &&
+        sanitizeUrl(trait.source_url);
+    });
+  }
+
+  /**
+   * Feeding icons from sourced diet traits only -- never from habitat or the
+   * species name. A sourced `diet_distribution` with positive finite
+   * percentages wins and yields one icon per member (vertebrate subgroups
+   * merge into one 척추동물 icon; fish keeps its own icon and, when no other
+   * vertebrate share is present, a labelled parent 척추동물 grouping icon).
+   * Otherwise the sourced `diet_category`, then `trophic_niche`, gives one
+   * icon each. Unknown values, null and 0% are dropped; duplicates merge.
+   */
+  function dietIconInfo(profile) {
+    var icons = [];
+    var byKey = {};
+    var sources = [];
+    function add(key, percent, source, detail) {
+      if (!Object.prototype.hasOwnProperty.call(DIET_ICONS, key)) { return; }
+      if (!byKey[key]) {
+        var meta = DIET_ICONS[key];
+        byKey[key] = { key: key, label: meta.label, path: meta.path, glyph: meta.glyph, broad: !!meta.broad,
+          percent: null, parentGroup: false, detail: detail || null };
+        icons.push(byKey[key]);
+      }
+      if (typeof percent === "number") { byKey[key].percent = (byKey[key].percent || 0) + percent; }
+      if (source && sources.indexOf(source) === -1) { sources.push(source); }
+    }
+    // Exactly one distribution record is the display basis: the first
+    // sourced record with at least one valid, recognized positive member.
+    // Percentages from different records (even identical duplicates) are
+    // never added together; other records stay in the card's trait panels.
+    function validMembers(trait) {
+      var value = trait.value;
+      if (!value || typeof value !== "object" || Array.isArray(value)) { return []; }
+      return Object.keys(value).filter(function (member) {
+        var amount = value[member];
+        return Object.prototype.hasOwnProperty.call(DIET_DISTRIBUTION_KEYS, member) &&
+          typeof amount === "number" && isFinite(amount) && amount > 0 && amount <= 100;
+      });
+    }
+    var distributions = sourcedTraits(profile, "diet_distribution").filter(function (trait) {
+      return validMembers(trait).length > 0;
+    });
+    var otherDistributionCount = Math.max(0, distributions.length - 1);
+    if (distributions.length) {
+      var chosen = distributions[0];
+      validMembers(chosen).forEach(function (member) {
+        add(DIET_DISTRIBUTION_KEYS[member], chosen.value[member], chosen);
+      });
+    }
+    var basis = icons.length ? "distribution" : null;
+    if (basis) {
+      icons.sort(function (a, b) { return b.percent - a.percent; });
+      if (byKey.fish && !byKey.vertebrate) {
+        add("vertebrate", null, null);
+        byKey.vertebrate.parentGroup = true;
+        byKey.vertebrate.detail = "상위 묶음 · 물고기 포함";
+      }
+    } else {
+      [["diet_category", DIET_CATEGORY_KEYS], ["trophic_niche", TROPHIC_NICHE_KEYS]].some(function (pair) {
+        sourcedTraits(profile, pair[0]).forEach(function (trait) {
+          var raw = typeof trait.value === "string" ? trait.value.trim() : "";
+          if (Object.prototype.hasOwnProperty.call(pair[1], raw)) { add(pair[1][raw], null, trait); }
+        });
+        if (icons.length) { basis = pair[0]; }
+        return icons.length > 0;
+      });
+    }
+    icons.forEach(function (icon) {
+      var text = icon.label;
+      if (icon.percent != null) { text += " " + Math.round(icon.percent * 10) / 10 + "%"; }
+      if (icon.detail) { text += " (" + icon.detail + ")"; }
+      icon.text = "먹이: " + text;
+    });
+    return { icons: icons, basis: basis, sources: sources, otherDistributionCount: otherDistributionCount };
+  }
+
+  var DIET_BASIS_LABELS = {
+    distribution: "먹이 구성 비율", diet_category: "먹이 유형 범주", trophic_niche: "먹이 생태 범주",
+  };
+
+  function buildDietIcons(doc, info) {
+    var list = doc.createElement("ul");
+    list.className = "species-diet-icons";
+    list.setAttribute("aria-label", "먹이 아이콘 · " + (DIET_BASIS_LABELS[info.basis] || "자료 없음"));
+    info.icons.forEach(function (icon) {
+      var item = doc.createElement("li");
+      item.className = "diet-icon diet-" + icon.key.replace(/_/g, "-") + (icon.broad ? " diet-broad" : "") + (icon.parentGroup ? " diet-parent" : "");
+      item.setAttribute("title", icon.text);
+      var symbol = doc.createElement("span");
+      symbol.className = "diet-icon-symbol";
+      symbol.setAttribute("aria-hidden", "true");
+      if (typeof doc.createElementNS === "function") {
+        var svg = doc.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("focusable", "false");
+        var path = doc.createElementNS(SVG_NS, "path");
+        path.setAttribute("d", icon.path);
+        svg.appendChild(path);
+        symbol.appendChild(svg);
+      } else {
+        symbol.textContent = icon.glyph;
+      }
+      item.appendChild(symbol);
+      var text = doc.createElement("span");
+      text.className = "diet-icon-label";
+      text.textContent = icon.text;
+      item.appendChild(text);
+      list.appendChild(item);
+    });
+    return list;
+  }
+
+  /** Legend + source links for the diet icons (card back). */
+  function buildDietLegend(doc, info) {
+    var details = doc.createElement("details");
+    details.className = "species-diet-legend";
+    var summary = doc.createElement("summary");
+    summary.textContent = "먹이 아이콘 기준 · 출처";
+    details.appendChild(summary);
+    var basis = doc.createElement("p");
+    basis.textContent = info.basis
+      ? "기준: " + DIET_BASIS_LABELS[info.basis] + ". 서식지나 이름으로 먹이를 추정하지 않습니다." +
+        (info.basis !== "distribution" ? " 묶음 범주는 구성 항목 각각을 먹는다는 뜻이 아닙니다." : "") +
+        (info.basis === "distribution" && info.otherDistributionCount > 0
+          ? " 먹이 구성 자료가 여럿이면 아래 한 자료의 비율만 표시하며, 서로 다른 자료의 비율을 더하지 않습니다. 나머지 자료는 형질 출처에서 확인할 수 있습니다."
+          : "")
+      : "출처가 확인된 먹이 자료가 없어 먹이 아이콘을 표시하지 않습니다.";
+    details.appendChild(basis);
+    if (info.icons.length) {
+      details.appendChild(buildDietIcons(doc, info));
+    }
+    info.sources.forEach(function (trait) {
+      var row = doc.createElement("p");
+      row.appendChild(safeLink(doc, trait.source_name, trait.source_url));
+      var meta = [trait.label || trait.name, trait.release, trait.license_name].filter(Boolean).join(" · ");
+      if (meta) {
+        var span = doc.createElement("span");
+        span.textContent = " · " + meta;
+        row.appendChild(span);
+      }
+      details.appendChild(row);
+    });
+    return details;
+  }
+
   // IUCN Red List categories with the Korean labels used by the national
   // red list. `tier` drives the card palette only; it is a visual cue for
   // assessed extinction risk and never a measure of how many birds are
@@ -480,12 +720,25 @@
    * above. Returns null for a missing/malformed profile so a caller can
    * skip appending anything rather than render a broken card.
    */
-  function buildSpeciesComparison(doc, left, right) {
+  /**
+   * Two-species comparison: target names, sourced traits (only claims with a
+   * safe source URL and named source), and a popup card for each species.
+   * `options` is threaded into the nested related explorer so a follow-up
+   * comparison opened from inside this panel also becomes its own bubble.
+   */
+  function buildSpeciesComparison(doc, left, right, options) {
+    options = options || {};
+    var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive };
     var panel = doc.createElement("section");
     panel.className = "species-comparison";
     var heading = doc.createElement("h3");
     heading.textContent = "두 새 비교";
     panel.appendChild(heading);
+    var tableWrap = doc.createElement("div");
+    tableWrap.className = "species-comparison-table";
+    tableWrap.setAttribute("tabindex", "0");
+    tableWrap.setAttribute("role", "region");
+    tableWrap.setAttribute("aria-label", "비교 표");
     var table = doc.createElement("table");
     var caption = doc.createElement("caption");
     caption.textContent = "먹이 · 서식 환경 · 생활 방식 · 체중";
@@ -527,17 +780,38 @@
       });
       body.appendChild(row);
     });
-    table.appendChild(body); panel.appendChild(table);
+    table.appendChild(body); tableWrap.appendChild(table); panel.appendChild(tableWrap);
     var note = doc.createElement("p"); note.className = "species-note";
     note.textContent = "자료별 범주와 측정 기준이 다를 수 있습니다. 자료가 없는 항목은 차이로 판단하지 않습니다.";
     panel.appendChild(note);
-    var card = buildSpeciesCard(doc, right);
+    if (options.bothCards) {
+      var leftCard = buildSpeciesCard(doc, left, cardOptions);
+      if (leftCard) { panel.appendChild(buildSpeciesPopup(doc, leftCard, left)); }
+    }
+    var card = buildSpeciesCard(doc, right, cardOptions);
     if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); }
-    panel.appendChild(buildRelatedExplorer(doc, right));
+    panel.appendChild(buildRelatedExplorer(doc, right, options.fetcher, options.explorer));
     return panel;
   }
 
-  function buildRelatedExplorer(doc, profile, fetcher) {
+  function speciesLabel(taxon) {
+    return taxon && (taxon.korean_name || taxon.english_name || taxon.scientific_name) || "새";
+  }
+
+  /**
+   * Lazy same-genus/family explorer. With `options.onComparison` (the chat
+   * page), each peer comparison is handed off as a brand-new assistant
+   * bubble and the original explanation is never replaced; without it
+   * (standalone use) the comparison renders in place below the peer list.
+   * Each peer has its own in-flight guard, so different peers can be
+   * compared one after another while a repeated click on a loading peer is
+   * ignored; a failed peer can simply be clicked again. `options.isActive`
+   * drops responses that settle after the conversation was cleared.
+   */
+  function buildRelatedExplorer(doc, profile, fetcher, options) {
+    options = options || {};
+    var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
+    var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
     var section = doc.createElement("section"); section.className = "species-related";
     section.setAttribute("aria-label", (profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name || "새") + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
@@ -548,7 +822,7 @@
     var results = doc.createElement("div"); content.appendChild(results);
     var comparison = doc.createElement("div"); content.appendChild(comparison);
     var loaded = false;
-    var selecting = false;
+    var pending = {};
     function fetchJson(path, name) {
       var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
       if (!transport) { return Promise.reject(new Error("unavailable")); }
@@ -559,24 +833,51 @@
     function matchesRelease(data) {
       return profile.lineage && data.concept_set_id === profile.lineage.concept_set_id && data.taxonomy_release === profile.lineage.taxonomy_release;
     }
-    function selectPeer(peer, group) {
-      if (selecting) { return; }
-      selecting = true; content.setAttribute("aria-busy", "true");
-      while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); }
-      status.textContent = "비교할 새의 자료를 불러오는 중입니다.";
+    function selectPeer(peer, group, button) {
+      var key = String(peer.taxon_id || peer.scientific_name);
+      if (pending[key]) { return; }
+      pending[key] = true;
+      if (button) { button.disabled = true; button.setAttribute("aria-busy", "true"); }
+      content.setAttribute("aria-busy", "true");
+      if (!onComparison) { while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); } }
+      var peerName = speciesLabel(peer);
+      status.textContent = peerName + " 비교 자료를 불러오는 중입니다.";
+      function settle() {
+        delete pending[key];
+        if (button) { button.disabled = false; button.setAttribute("aria-busy", "false"); }
+        if (!Object.keys(pending).length) { content.setAttribute("aria-busy", "false"); }
+        return active();
+      }
       return fetchJson("/v1/taxa/profile", peer.scientific_name).then(function (other) {
-        if (!other.taxon || other.taxon.taxon_id !== peer.taxon_id || !other.lineage || !matchesRelease(other.lineage)) { throw new Error("changed"); }
-        while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); }
-        var panel = buildSpeciesComparison(doc, profile, other);
+        if (!other || !other.taxon || other.taxon.taxon_id !== peer.taxon_id || !other.lineage || !matchesRelease(other.lineage)) { throw new Error("changed"); }
+        if (!settle()) { return; }
+        var panel = buildSpeciesComparison(doc, profile, other, {
+          fetcher: fetcher, bothCards: !!onComparison,
+          explorer: { onComparison: onComparison, isActive: active },
+        });
         var relation = doc.createElement("p");
-        relation.textContent = "공유 분류군: " + (group.ancestor.korean_name || group.ancestor.scientific_name) + " (" + (RANK_LABELS[group.rank] || group.rank) + ") · " + profile.lineage.taxonomy_release;
+        relation.className = "species-comparison-relation";
+        relation.textContent = "공유 분류군: " + (group.ancestor ? (group.ancestor.korean_name || group.ancestor.scientific_name) : "확인 불가") + " (" + (RANK_LABELS[group.rank] || group.rank) + ")";
         panel.appendChild(relation);
+        var version = doc.createElement("p");
+        version.className = "species-comparison-version";
+        version.textContent = "분류 기준: " + [profile.lineage.taxonomy_source, profile.lineage.taxonomy_release].filter(Boolean).join(" · ");
+        panel.appendChild(version);
+        if (onComparison) {
+          onComparison(panel, { left: profile, right: other, group: group });
+          status.textContent = speciesLabel(profile.taxon) + "와(과) " + peerName + " 비교를 새 답변으로 추가했습니다.";
+          return;
+        }
+        while (comparison.firstChild) { comparison.removeChild(comparison.firstChild); }
         comparison.appendChild(panel);
         if (typeof panel.scrollIntoView === "function") { panel.scrollIntoView({block:"start"}); }
         status.textContent = "비교 자료를 불러왔습니다.";
-      }).catch(function () {
-        status.textContent = "비교 자료를 불러오지 못했습니다. 분류 자료가 갱신된 경우 카드를 다시 열어주세요.";
-      }).finally(function () { selecting = false; content.setAttribute("aria-busy", "false"); });
+      }).catch(function (error) {
+        if (!settle()) { return; }
+        status.textContent = error && error.message === "changed"
+          ? peerName + " 비교 자료를 표시하지 않았습니다. 분류 자료가 갱신된 경우 질문을 다시 보내주세요."
+          : peerName + " 비교 자료를 불러오지 못했습니다. 다시 눌러 재시도하세요.";
+      });
     }
     open.addEventListener("click", function () {
       content.hidden = !content.hidden; open.setAttribute("aria-expanded", String(!content.hidden));
@@ -584,6 +885,7 @@
       loaded = true; status.textContent = "분류 관계를 조회하는 중입니다.";
       fetchJson("/v1/taxa/related", profile.taxon.scientific_name).then(function (data) {
         if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
+        if (!active()) { return; }
         while (results.firstChild) { results.removeChild(results.firstChild); }
         var note = doc.createElement("p"); note.className = "species-note"; note.textContent = data.note; results.appendChild(note);
         var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
@@ -600,7 +902,7 @@
           peers.slice(0, 12).forEach(function (peer) {
             var button = doc.createElement("button"); button.type = "button";
             button.textContent = peer.korean_name + " · 비교하기";
-            button.addEventListener("click", function () { selectPeer(peer, group); }); block.appendChild(button);
+            button.addEventListener("click", function () { selectPeer(peer, group, button); }); block.appendChild(button);
           });
           if (group.has_more) { var more = doc.createElement("p"); more.textContent = "한국어 이름순으로 최대 12종을 표시합니다."; block.appendChild(more); }
           var source = doc.createElement("details");
@@ -687,7 +989,7 @@
    * lets the chat page drop responses that settle after 대화 지우기.
    * Returns null for a malformed payload.
    */
-  function buildNameRelations(doc, relationships, fetcher, isActive) {
+  function buildNameRelations(doc, relationships, fetcher, isActive, onComparison) {
     if (!isNameRelationsPayload(relationships)) { return null; }
     var data = relationships;
     var active = typeof isActive === "function" ? isActive : function () { return true; };
@@ -781,9 +1083,9 @@
           text.textContent = profile.summary;
           selection.appendChild(text);
         }
-        var card = buildSpeciesCard(doc, profile);
+        var card = buildSpeciesCard(doc, profile, { fetcher: fetcher, isActive: active });
         if (card) {
-          if (profile.lineage) { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher)); }
+          if (profile.lineage) { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active })); }
           selection.appendChild(buildSpeciesBrief(doc, profile));
           selection.appendChild(buildSpeciesPopup(doc, card, profile));
         }
@@ -921,10 +1223,32 @@
     return section;
   }
 
-  function buildSpeciesCard(doc, profile) {
+  var PHOTO_PLACEHOLDER_PATH = "M4 15c2-4 6-6 10-5l4-3 1 2-2 2c1 3-1 7-6 8H6 M14 10l-2 3 M11 9.5a.5.5 0 1 0 1 0 .5.5 0 1 0-1 0 M6 18l-2 3";
+  // Fixed copy per backend photo status; the server's own `message` is not
+  // echoed so an unexpected status never surfaces as trusted text.
+  var PHOTO_STATUS_MESSAGES = {
+    available: "출처와 라이선스가 확인된 사진입니다.",
+    no_licensed_photo: "사용 조건이 확인된 대표 사진을 아직 찾지 못했습니다.",
+    unconfirmed_taxon: "사진 자료의 종 식별을 확인하지 못해 사진을 표시하지 않습니다.",
+    ambiguous_taxon: "사진 자료가 여러 종 식별자에 연결되어 대표 사진을 선택하지 않았습니다.",
+    provider_unavailable: "사진 제공처에 연결하지 못했습니다.",
+  };
+
+  function photoAvailabilityInfo(availability) {
+    var status = availability && typeof availability === "object" ? availability.status : null;
+    if (typeof status === "string" && Object.prototype.hasOwnProperty.call(PHOTO_STATUS_MESSAGES, status) && status !== "available") {
+      return { status: status, message: PHOTO_STATUS_MESSAGES[status] };
+    }
+    // No status, "available" with zero displayable photos (all filtered as
+    // unsafe), or an unknown status: one honest generic reason.
+    return { status: "none", message: "라이선스가 확인된 대표 사진이 없습니다." };
+  }
+
+  function buildSpeciesCard(doc, profile, options) {
     if (!profile || typeof profile !== "object" || !profile.taxon) {
       return null;
     }
+    var cardOptions = options || {};
     var taxon = profile.taxon;
     var conservation = conservationInfo(profile.conservation);
     var card = doc.createElement("div");
@@ -969,68 +1293,185 @@
     var backTitle = doc.createElement("h3");
     backTitle.textContent = "출처 · 상세 정보";
     back.appendChild(backTitle);
-    var photoSources = doc.createElement("details");
-    photoSources.className = "species-photo-sources";
-    var photoSummary = doc.createElement("summary");
-    photoSummary.textContent = "사진 출처 · 라이선스";
-    photoSources.appendChild(photoSummary);
-    var photoFigures = [];
+    // Photos live in their own slots so a provider retry can re-render them
+    // without touching the facts, flip state, or the explanation.
+    var photoArea = doc.createElement("div");
+    photoArea.className = "species-photo-area";
+    front.appendChild(photoArea);
+    var photoSourcesSlot = doc.createElement("div");
+    photoSourcesSlot.className = "species-photo-sources-slot";
+    back.appendChild(photoSourcesSlot);
+    var photoRetrying = false;
 
-    var images = Array.isArray(profile.images) ? profile.images : [];
-    var media = doc.createElement("div");
-    media.className = "species-media";
-    var renderedPhotoCount = 0;
-    images.slice(0, 6).forEach(function (photo) {
-      if (!photo || typeof photo !== "object") {
+    function clearNode(node) {
+      while (node.firstChild) { node.removeChild(node.firstChild); }
+    }
+
+    function buildPhotoPlaceholder(reasonText) {
+      var placeholder = doc.createElement("div");
+      placeholder.className = "species-photo-placeholder";
+      placeholder.setAttribute("role", "img");
+      placeholder.setAttribute("aria-label", "사진 없음: " + reasonText);
+      if (typeof doc.createElementNS === "function") {
+        var svg = doc.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("viewBox", "0 0 24 24");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("focusable", "false");
+        var path = doc.createElementNS(SVG_NS, "path");
+        // A deliberately generic bird outline, not any particular species.
+        path.setAttribute("d", PHOTO_PLACEHOLDER_PATH);
+        svg.appendChild(path);
+        placeholder.appendChild(svg);
+      } else {
+        var glyph = doc.createElement("span");
+        glyph.setAttribute("aria-hidden", "true");
+        glyph.textContent = "◌";
+        placeholder.appendChild(glyph);
+      }
+      var reason = doc.createElement("p");
+      reason.className = "species-photo-reason";
+      reason.textContent = reasonText;
+      placeholder.appendChild(reason);
+      return placeholder;
+    }
+
+    function retryProvider(button, retryStatus) {
+      if (photoRetrying) { return; }
+      photoRetrying = true;
+      button.disabled = true;
+      retryStatus.textContent = "사진 정보를 다시 조회하는 중입니다.";
+      var guard = typeof cardOptions.isActive === "function" ? cardOptions.isActive : function () { return true; };
+      fetchTaxaJson(doc, cardOptions.fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (fresh) {
+        photoRetrying = false;
+        button.disabled = false;
+        if (!guard()) { return; }
+        var sameTaxon = fresh && fresh.taxon && fresh.taxon.taxon_id === taxon.taxon_id;
+        var lineage = profile.lineage;
+        var sameRelease = !lineage || !lineage.concept_set_id || (fresh.lineage &&
+          fresh.lineage.concept_set_id === lineage.concept_set_id && fresh.lineage.taxonomy_release === lineage.taxonomy_release);
+        if (!sameTaxon || !sameRelease) {
+          retryStatus.textContent = "분류 자료가 바뀌어 사진을 갱신하지 않았습니다. 질문을 다시 보내주세요.";
+          return;
+        }
+        renderPhotos(fresh.images, fresh.photo_availability);
+      }).catch(function () {
+        photoRetrying = false;
+        button.disabled = false;
+        if (!guard()) { return; }
+        retryStatus.textContent = "사진 제공처에 아직 연결하지 못했습니다. 잠시 후 다시 시도하세요.";
+      });
+    }
+
+    function renderPhotos(images, availability) {
+      clearNode(photoArea);
+      clearNode(photoSourcesSlot);
+      var photoSources = doc.createElement("details");
+      photoSources.className = "species-photo-sources";
+      var photoSummary = doc.createElement("summary");
+      photoSummary.textContent = "사진 출처 · 라이선스";
+      photoSources.appendChild(photoSummary);
+      var photoFigures = [];
+      var media = doc.createElement("div");
+      media.className = "species-media";
+      var renderedPhotoCount = 0;
+      (Array.isArray(images) ? images : []).slice(0, 6).forEach(function (photo) {
+        if (!photo || typeof photo !== "object") {
+          return;
+        }
+        var imageSrc = sanitizeImageUrl(photo.image_url);
+        if (!imageSrc) {
+          return;
+        }
+        renderedPhotoCount += 1;
+        var figure = doc.createElement("figure");
+        var img = doc.createElement("img");
+        img.src = imageSrc;
+        img.loading = "lazy";
+        img.referrerPolicy = "no-referrer";
+        img.alt = (taxon.korean_name || taxon.english_name || taxon.scientific_name || "") + " 대표 사진: " + (photo.title || "");
+        figure.appendChild(img);
+        var broken = doc.createElement("div");
+        broken.className = "species-photo-broken";
+        broken.hidden = true;
+        var brokenText = doc.createElement("p");
+        brokenText.setAttribute("role", "status");
+        brokenText.textContent = "사진을 불러오지 못했습니다.";
+        broken.appendChild(brokenText);
+        var reload = doc.createElement("button");
+        reload.type = "button";
+        reload.className = "species-photo-reload";
+        reload.textContent = "사진 다시 불러오기";
+        broken.appendChild(reload);
+        figure.appendChild(broken);
+        img.addEventListener("error", function () {
+          img.hidden = true;
+          broken.hidden = false;
+          figure.setAttribute("data-photo-state", "error");
+        });
+        img.addEventListener("load", function () {
+          img.hidden = false;
+          broken.hidden = true;
+          figure.setAttribute("data-photo-state", "loaded");
+        });
+        reload.addEventListener("click", function () {
+          broken.hidden = true;
+          img.hidden = false;
+          figure.setAttribute("data-photo-state", "loading");
+          // Re-request exactly the same validated URL; never a substitute.
+          if (typeof img.removeAttribute === "function") { img.removeAttribute("src"); }
+          img.src = imageSrc;
+        });
+
+        var caption = doc.createElement("div");
+        caption.className = "species-photo-source";
+        var photoLabel = doc.createElement("strong");
+        photoLabel.textContent = "사진 " + renderedPhotoCount + " · " + (photo.title || "대표 사진");
+        caption.appendChild(photoLabel);
+        caption.appendChild(safeLink(doc, "원본 보기", photo.source_url));
+        if (photo.creator) {
+          var creditText = doc.createElement("span");
+          creditText.textContent = " · " + photo.creator;
+          caption.appendChild(creditText);
+        }
+        if (photo.license_name) {
+          var separator = doc.createElement("span");
+          separator.textContent = " · ";
+          caption.appendChild(separator);
+          caption.appendChild(safeLink(doc, photo.license_name, photo.license_url));
+        }
+        if (photo.credit) {
+          var creditLine = doc.createElement("div");
+          creditLine.textContent = photo.credit;
+          caption.appendChild(creditLine);
+        }
+        photoSources.appendChild(caption);
+        figure.hidden = photoFigures.length > 0;
+        photoFigures.push(figure);
+        media.appendChild(figure);
+      });
+      if (renderedPhotoCount === 0) {
+        var info = photoAvailabilityInfo(availability);
+        photoArea.appendChild(buildPhotoPlaceholder(info.message));
+        if (info.status === "provider_unavailable") {
+          var retryStatus = doc.createElement("p");
+          retryStatus.className = "species-note";
+          retryStatus.setAttribute("role", "status");
+          var retry = doc.createElement("button");
+          retry.type = "button";
+          retry.className = "species-photo-retry";
+          retry.textContent = "사진 다시 조회";
+          var canRetry = !!(cardOptions.fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function"));
+          if (canRetry && taxon.scientific_name) {
+            retry.addEventListener("click", function () { retryProvider(retry, retryStatus); });
+            photoArea.appendChild(retry);
+          } else {
+            retryStatus.textContent = "잠시 후 같은 질문을 다시 보내면 사진을 다시 조회합니다.";
+          }
+          photoArea.appendChild(retryStatus);
+        }
         return;
       }
-      var imageSrc = sanitizeImageUrl(photo.image_url);
-      if (!imageSrc) {
-        return;
-      }
-      renderedPhotoCount += 1;
-      var figure = doc.createElement("figure");
-      var img = doc.createElement("img");
-      img.src = imageSrc;
-      img.loading = "lazy";
-      img.referrerPolicy = "no-referrer";
-      img.alt = (taxon.korean_name || taxon.english_name || taxon.scientific_name || "") + " 대표 사진: " + (photo.title || "");
-      figure.appendChild(img);
-
-      var caption = doc.createElement("div");
-      caption.className = "species-photo-source";
-      var photoLabel = doc.createElement("strong");
-      photoLabel.textContent = "사진 " + renderedPhotoCount + " · " + (photo.title || "대표 사진");
-      caption.appendChild(photoLabel);
-      caption.appendChild(safeLink(doc, "원본 보기", photo.source_url));
-      if (photo.creator) {
-        var creditText = doc.createElement("span");
-        creditText.textContent = " · " + photo.creator;
-        caption.appendChild(creditText);
-      }
-      if (photo.license_name) {
-        var separator = doc.createElement("span");
-        separator.textContent = " · ";
-        caption.appendChild(separator);
-        caption.appendChild(safeLink(doc, photo.license_name, photo.license_url));
-      }
-      if (photo.credit) {
-        var creditLine = doc.createElement("div");
-        creditLine.textContent = photo.credit;
-        caption.appendChild(creditLine);
-      }
-      photoSources.appendChild(caption);
-      figure.hidden = photoFigures.length > 0;
-      photoFigures.push(figure);
-      media.appendChild(figure);
-    });
-    if (renderedPhotoCount === 0) {
-      var noPhoto = doc.createElement("p");
-      noPhoto.className = "species-note";
-      noPhoto.textContent = "라이선스가 확인된 대표 사진이 없습니다.";
-      front.appendChild(noPhoto);
-    } else {
-      front.appendChild(media);
+      photoArea.appendChild(media);
       if (photoFigures.length > 1) {
         var photoControls = doc.createElement("div");
         photoControls.className = "species-photo-controls";
@@ -1045,24 +1486,27 @@
         next.textContent = "→";
         next.setAttribute("aria-label", "다음 사진");
         var photoIndex = 0;
-        function showPhoto(index) {
+        var showPhoto = function (index) {
           photoIndex = index;
           photoFigures.forEach(function (item, i) { item.hidden = i !== index; });
           previous.disabled = index === 0;
           next.disabled = index === photoFigures.length - 1;
           count.textContent = "사진 " + (index + 1) + " / " + photoFigures.length;
-        }
+        };
         previous.addEventListener("click", function () { showPhoto(Math.max(0, photoIndex - 1)); });
         next.addEventListener("click", function () { showPhoto(Math.min(photoFigures.length - 1, photoIndex + 1)); });
         photoControls.appendChild(previous);
         photoControls.appendChild(count);
         photoControls.appendChild(next);
         showPhoto(0);
-        front.appendChild(photoControls);
+        photoArea.appendChild(photoControls);
       }
-      back.appendChild(photoSources);
+      photoSourcesSlot.appendChild(photoSources);
     }
+    renderPhotos(profile.images, profile.photo_availability);
 
+    var dietInfo = dietIconInfo(profile);
+    if (dietInfo.icons.length) { front.appendChild(buildDietIcons(doc, dietInfo)); }
     var traitGroups = groupTraits(Array.isArray(profile.traits) ? profile.traits : []);
     var facts = doc.createElement("dl");
     facts.className = "species-quick-facts";
@@ -1120,6 +1564,8 @@
         back.appendChild(measurementsDetails);
       }
     }
+
+    back.appendChild(buildDietLegend(doc, dietInfo));
 
     if (typeof profile.vegetation_note === "string" && profile.vegetation_note.trim()) {
       var vegetationNote = doc.createElement("p");
@@ -1360,6 +1806,8 @@
     var habitatText = doc.createElement("span");
     habitatText.textContent = habitat.known ? "서식 환경: " + habitat.label : habitat.label;
     brief.appendChild(habitatText);
+    var diet = dietIconInfo(profile);
+    if (diet.icons.length) { brief.appendChild(buildDietIcons(doc, diet)); }
     var badge = doc.createElement("span");
     badge.className = "species-conservation-badge";
     badge.textContent = conservation.badgeText;
@@ -1569,7 +2017,7 @@
         item.appendChild(text);
       }
       if (answer.result && answer.result.kind === "name_relations") {
-        var nameRelations = buildNameRelations(doc, answer.result.relationships, taxaFetch, conversationGuard());
+        var nameRelations = buildNameRelations(doc, answer.result.relationships, taxaFetch, conversationGuard(), appendComparisonMessage);
         if (nameRelations) {
           item.appendChild(nameRelations);
         } else {
@@ -1618,9 +2066,9 @@
       }
 
       if (result && result.kind === "profile") {
-        var speciesCard = buildSpeciesCard(doc, result.profile);
+        var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
         if (speciesCard) {
-          (structured || item).appendChild(buildRelatedExplorer(doc, result.profile));
+          (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, { onComparison: appendComparisonMessage, isActive: conversationGuard() }));
           (structured || item).appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
           item.appendChild(buildSpeciesBrief(doc, result.profile));
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
@@ -1691,6 +2139,42 @@
       } else {
         scrollToLatest();
       }
+    }
+
+    /**
+     * A same-genus/family comparison is its own assistant bubble appended to
+     * the end of the conversation; the explanation it came from is left
+     * untouched, so consecutive comparisons stack as separate turns.
+     */
+    function appendComparisonMessage(panel, info) {
+      hideEmptyState();
+      var item = doc.createElement("div");
+      item.className = "message message-answer message-comparison";
+      var names = speciesLabel(info.left.taxon) + " · " + speciesLabel(info.right.taxon);
+      item.setAttribute("role", "article");
+      item.setAttribute("aria-label", names + " 비교");
+      var label = doc.createElement("strong");
+      label.textContent = "RobinGraph";
+      item.appendChild(label);
+      var badge = doc.createElement("span");
+      badge.className = "badge disposition-answer";
+      badge.textContent = "비교";
+      item.appendChild(badge);
+      var intro = doc.createElement("p");
+      intro.className = "comparison-intro";
+      intro.textContent = names + " 비교입니다. 출처가 확인된 형질만 표시합니다.";
+      item.appendChild(intro);
+      item.appendChild(panel);
+      history.appendChild(item);
+      messages.push({ role: "assistant", comparison: {
+        left: info.left.taxon && info.left.taxon.taxon_id, right: info.right.taxon && info.right.taxon.taxon_id,
+      } });
+      if (typeof item.scrollIntoView === "function") {
+        item.scrollIntoView({ block: "start" });
+      } else {
+        scrollToLatest();
+      }
+      return item;
     }
 
     function appendErrorMessage(text) {
@@ -1872,6 +2356,7 @@
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
     buildRelatedExplorer: buildRelatedExplorer,
+    speciesLabel: speciesLabel,
     buildNameRelations: buildNameRelations,
     buildNameRelationsExplorer: buildNameRelationsExplorer,
     isNameRelationsPayload: isNameRelationsPayload,
@@ -1879,8 +2364,10 @@
     buildSpeciesPopup: buildSpeciesPopup,
     buildSpeciesBrief: buildSpeciesBrief,
     habitatEmblemInfo: habitatEmblemInfo,
+    dietIconInfo: dietIconInfo,
     buildSpeciesAnswer: buildSpeciesAnswer,
     conservationInfo: conservationInfo,
+    photoAvailabilityInfo: photoAvailabilityInfo,
     init: init,
   };
 });

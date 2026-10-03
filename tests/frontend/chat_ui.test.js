@@ -1974,3 +1974,545 @@ test("styles.css styles the name-relation explanation, warnings and caveat", () 
     assert.match(css, new RegExp(selector.replace(".", "\\.") + "[\\s,{]"));
   }
 });
+
+// ---------------------------------------------------------------------------
+// RG-005: a same-genus/family peer comparison becomes its own assistant chat
+// bubble; the original species explanation is never replaced.
+// ---------------------------------------------------------------------------
+
+const RG005_LINEAGE = { taxonomy_source: "AviList", taxonomy_release: "v2025b", concept_set_id: "cs1" };
+
+function rg005Peer(taxonId, scientificName, koreanName, traitOverrides) {
+  return {
+    taxon: { taxon_id: taxonId, scientific_name: scientificName, korean_name: koreanName },
+    lineage: Object.assign({ items: [] }, RG005_LINEAGE),
+    traits: [Object.assign({ name: "habitat", label: "서식 환경", display: "습지", source_name: "AVONET",
+      source_url: "https://example.org/avonet", release: "v1" }, traitOverrides || {})],
+    images: [],
+  };
+}
+
+function rg005Related() {
+  return Object.assign({}, RG005_LINEAGE, {
+    taxon: { taxon_id: "t1", scientific_name: "Anas platyrhynchos" },
+    note: "분류 관계 안내", groups: [{
+      rank: "genus", label: "같은 속의 새", ancestor: { scientific_name: "Anas", korean_name: "오리속" },
+      source_name: "AviList", source_url: "https://example.org/avilist",
+      items: [
+        { taxon_id: "p1", scientific_name: "Anas acuta", korean_name: "고방오리" },
+        { taxon_id: "p2", scientific_name: "Anas crecca", korean_name: "쇠오리" },
+      ],
+    }],
+  });
+}
+
+async function rg005Start(peerResponder) {
+  const payload = fakeProfilePayload();
+  payload.result.profile.sections = [{ title: "기본 정보", items: [{ text: "청둥오리 설명" }] }];
+  const dom = createFakeDom((url) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    if (url === "/v1/chat") return Promise.resolve(jsonResponse(payload));
+    if (url.startsWith("/v1/taxa/related")) return Promise.resolve(jsonResponse(rg005Related()));
+    if (url.startsWith("/v1/taxa/profile")) return peerResponder(decodeURIComponent(url.split("name=")[1]));
+    return Promise.resolve(jsonResponse({}, 404));
+  });
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+  const history = dom.elementsById["history"];
+  const answer = messageRows(history)[1];
+  const explorer = collectAllNodes(answer).find((n) => n.className === "species-related");
+  explorer.children[0].dispatch("click");
+  await tick();
+  const peerButton = (name) => collectAllNodes(explorer).find((n) => n.tagName === "button" && n.textContent === name + " · 비교하기");
+  const status = () => explorer.children[1].children[0].textContent;
+  const bubbles = () => messageRows(history).filter((n) => n.className === "message message-answer message-comparison");
+  return { dom, history, answer, explorer, peerButton, status, bubbles };
+}
+
+test("RG-005: a peer comparison is appended as a separate assistant bubble and the original explanation is preserved", async () => {
+  const ctx = await rg005Start((name) => Promise.resolve(jsonResponse(rg005Peer("p1", name, "고방오리"))));
+  const answerChildrenBefore = ctx.answer.children.slice();
+  ctx.peerButton("고방오리").dispatch("click");
+  await tick();
+  const rows = messageRows(ctx.history);
+  assert.equal(rows.length, 3, "user question, original answer, then a new comparison bubble");
+  const bubble = ctx.bubbles()[0];
+  assert.equal(rows[2], bubble);
+  assert.deepEqual(ctx.answer.children, answerChildrenBefore, "the original answer bubble is not rewritten");
+  assert.ok(collectAllNodes(ctx.answer).some((n) => n.className === "species-answer"));
+  assert.equal(collectAllNodes(ctx.answer).some((n) => n.className === "species-comparison"), false, "no comparison inside the original explanation");
+  const nodes = collectAllNodes(bubble);
+  assert.equal(bubble.getAttribute("aria-label"), "청둥오리 · 고방오리 비교");
+  assert.ok(nodes.some((n) => n.tagName === "th" && n.textContent === "청둥오리"));
+  assert.ok(nodes.some((n) => n.tagName === "th" && n.textContent === "고방오리"));
+  assert.ok(nodes.some((n) => n.tagName === "a" && n.href === "https://example.org/avonet"), "attributed trait source link");
+  assert.ok(nodes.some((n) => n.className === "species-comparison-version" && n.textContent === "분류 기준: AviList · v2025b"));
+  assert.ok(nodes.some((n) => n.className === "species-comparison-relation" && /오리속 \(속\)/.test(n.textContent)));
+  const cardButtons = nodes.filter((n) => (n.className || "").startsWith("species-popup-trigger")).map((n) => n.textContent);
+  assert.deepEqual(cardButtons, ["청둥오리 · 도감 카드 보기 ↗", "고방오리 · 도감 카드 보기 ↗"]);
+  assert.match(ctx.status(), /새 답변으로 추가/);
+});
+
+test("RG-005: consecutive peer selections each add their own bubble; a repeated click while loading fetches once", async () => {
+  const waits = {};
+  const calls = [];
+  const ctx = await rg005Start((name) => { calls.push(name); const d = deferred(); waits[name] = d; return d.promise; });
+  const acuta = ctx.peerButton("고방오리");
+  acuta.dispatch("click");
+  acuta.dispatch("click");
+  ctx.peerButton("쇠오리").dispatch("click");
+  await tick();
+  assert.deepEqual(calls, ["Anas acuta", "Anas crecca"]);
+  assert.equal(acuta.disabled, true, "the loading peer button is disabled");
+  waits["Anas acuta"].resolve(jsonResponse(rg005Peer("p1", "Anas acuta", "고방오리")));
+  await tick();
+  waits["Anas crecca"].resolve(jsonResponse(rg005Peer("p2", "Anas crecca", "쇠오리")));
+  await tick();
+  assert.deepEqual(ctx.bubbles().map((b) => b.getAttribute("aria-label")), ["청둥오리 · 고방오리 비교", "청둥오리 · 쇠오리 비교"]);
+  assert.equal(acuta.disabled, false);
+  acuta.dispatch("click");
+  await tick();
+  assert.equal(calls.length, 3, "a settled peer can be compared again");
+  waits["Anas acuta"].resolve(jsonResponse(rg005Peer("p1", "Anas acuta", "고방오리")));
+  await tick();
+  assert.equal(ctx.bubbles().length, 3);
+  assert.equal(messageRows(ctx.history).length, 5);
+});
+
+test("RG-005: a failed comparison shows a retry message without a bubble, and clicking again succeeds", async () => {
+  let attempts = 0;
+  const ctx = await rg005Start((name) => {
+    attempts += 1;
+    return Promise.resolve(attempts === 1 ? jsonResponse({ detail: "secret-internal" }, 503) : jsonResponse(rg005Peer("p1", name, "고방오리")));
+  });
+  ctx.peerButton("고방오리").dispatch("click");
+  await tick();
+  assert.equal(ctx.bubbles().length, 0);
+  assert.match(ctx.status(), /고방오리 비교 자료를 불러오지 못했습니다\. 다시 눌러 재시도하세요/);
+  assert.equal(ctx.status().includes("secret-internal"), false);
+  assert.equal(ctx.peerButton("고방오리").disabled, false);
+  ctx.peerButton("고방오리").dispatch("click");
+  await tick();
+  assert.equal(attempts, 2);
+  assert.equal(ctx.bubbles().length, 1);
+});
+
+test("RG-005: changed taxonomy or a different taxon never becomes a comparison bubble", async () => {
+  for (const peer of [
+    Object.assign(rg005Peer("p1", "Anas acuta", "고방오리"), { lineage: Object.assign({}, RG005_LINEAGE, { taxonomy_release: "v2026a" }) }),
+    rg005Peer("someone-else", "Anas acuta", "고방오리"),
+  ]) {
+    const ctx = await rg005Start(() => Promise.resolve(jsonResponse(peer)));
+    ctx.peerButton("고방오리").dispatch("click");
+    await tick();
+    assert.equal(ctx.bubbles().length, 0);
+    assert.match(ctx.status(), /분류 자료가 갱신된 경우/);
+  }
+});
+
+test("RG-005: clearing the conversation before a comparison resolves drops the late response", async () => {
+  const wait = deferred();
+  const ctx = await rg005Start(() => wait.promise);
+  const button = ctx.peerButton("고방오리");
+  button.dispatch("click");
+  await tick();
+  ctx.dom.elementsById["clear-button"].dispatch("click");
+  wait.resolve(jsonResponse(rg005Peer("p1", "Anas acuta", "고방오리")));
+  await tick();
+  assert.equal(messageRows(ctx.history).length, 0, "no bubble appears in the cleared conversation");
+  assert.deepEqual(ctx.history.children, [ctx.dom.elementsById["history-empty-state"]]);
+  assert.equal(button.disabled, false);
+});
+
+test("RG-005: comparison bubbles render hostile trait text inert and drop unsafe sources", async () => {
+  const hostile = "<img src=x onerror=alert(1)>";
+  const ctx = await rg005Start((name) => Promise.resolve(jsonResponse(Object.assign(rg005Peer("p1", name, "고방오리"), {
+    traits: [
+      { name: "habitat", display: hostile, source_name: "AVONET", source_url: "https://example.org/avonet" },
+      { name: "diet_category", display: "invented", source_name: "bad", source_url: "javascript:alert(1)" },
+    ],
+  }))));
+  ctx.peerButton("고방오리").dispatch("click");
+  await tick();
+  const nodes = collectAllNodes(ctx.bubbles()[0]);
+  assert.ok(nodes.some((n) => n.textContent === hostile));
+  const table = nodes.find((n) => n.className === "species-comparison-table");
+  const tableNodes = collectAllNodes(table);
+  assert.equal(tableNodes.some((n) => n.tagName === "img" || n.tagName === "script"), false);
+  assert.equal(tableNodes.some((n) => n.tagName === "td" && n.textContent.includes("invented")), false);
+  assert.ok(nodes.filter((n) => n.tagName === "a").every((n) => /^https:\/\//.test(n.href)));
+  assert.equal(table.getAttribute("role"), "region");
+  assert.equal(table.getAttribute("tabindex"), "0", "the wide table can be scrolled by keyboard on narrow screens");
+});
+
+test("RG-005: a comparison opened from inside a comparison bubble also becomes its own bubble", async () => {
+  const ctx = await rg005Start((name) => Promise.resolve(jsonResponse(rg005Peer(name === "Anas acuta" ? "p1" : "p2", name, name === "Anas acuta" ? "고방오리" : "쇠오리"))));
+  ctx.peerButton("고방오리").dispatch("click");
+  await tick();
+  const nested = collectAllNodes(ctx.bubbles()[0]).find((n) => n.className === "species-related");
+  assert.ok(nested);
+  const cards = collectAllNodes(ctx.bubbles()[0]).filter((n) => (n.className || "").startsWith("species-card risk-"));
+  for (const card of cards) {
+    assert.equal(collectAllNodes(card).some((n) => n.className === "species-related"), false, "explorers stay outside cards");
+  }
+});
+
+// ---------------------------------------------------------------------------
+// RG-008: feeding-ecology icons from sourced diet traits only.
+// ---------------------------------------------------------------------------
+
+const DIET_SOURCE = { source_name: "AVONET", source_url: "https://example.org/avonet", release: "v1", license_name: "CC BY 4.0" };
+function dietProfile(traits) {
+  return { taxon: { taxon_id: "h", scientific_name: "Ardea cinerea", korean_name: "왜가리" }, images: [],
+    traits: [{ name: "habitat", value: "Wetland", display: "습지", ...DIET_SOURCE }].concat(traits) };
+}
+const dietKeys = (profile) => chat.dietIconInfo(profile).icons.map((icon) => icon.key);
+
+test("RG-008: a sourced diet distribution yields one icon per positive member, sorted, with vertebrate subgroups merged", () => {
+  const info = chat.dietIconInfo(dietProfile([{ name: "diet_distribution", label: "먹이 구성", ...DIET_SOURCE,
+    value: { fish: 60, ectotherm_vertebrate: 20, endotherm_vertebrate: 10, invertebrate: 10, seed: 0, fruit: null, carrion: -5, nectar: Infinity, mystery_food: 40 } }]));
+  assert.equal(info.basis, "distribution");
+  assert.deepEqual(info.icons.map((i) => i.key), ["fish", "vertebrate", "invertebrate"], "왜가리 example: 물고기 + 척추동물 from sourced shares; 0/null/negative/unknown dropped");
+  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 척추동물 30%", "먹이: 무척추동물 10%"]);
+});
+
+test("RG-008: fish-only distribution adds a clearly labelled parent 척추동물 grouping; duplicate records are not summed", () => {
+  const second = { ...DIET_SOURCE, source_name: "Second", source_url: "https://example.org/second" };
+  const info = chat.dietIconInfo(dietProfile([
+    { name: "diet_distribution", ...DIET_SOURCE, value: { fish: 100 } },
+    { name: "diet_distribution", ...second, value: { fish: 100 } },
+  ]));
+  assert.deepEqual(info.icons.map((i) => i.key), ["fish", "vertebrate"]);
+  assert.equal(info.icons[1].parentGroup, true);
+  assert.equal(info.icons[1].text, "먹이: 척추동물 (상위 묶음 · 물고기 포함)");
+  assert.equal(info.icons[0].text, "먹이: 물고기 100%", "two identical {fish:100} records stay 100%, never 200%");
+  assert.deepEqual(info.sources.map((t) => t.source_name), ["AVONET"], "the first valid record is the single display basis");
+  assert.equal(info.otherDistributionCount, 1);
+});
+
+test("RG-008: VertFishScav and Aquatic predator stay single broad icons and never imply fish", () => {
+  assert.deepEqual(dietKeys(dietProfile([{ name: "diet_category", value: "VertFishScav", ...DIET_SOURCE }])), ["vert_fish_scav"]);
+  const broad = chat.dietIconInfo(dietProfile([{ name: "diet_category", value: "VertFishScav", ...DIET_SOURCE }])).icons[0];
+  assert.equal(broad.broad, true);
+  assert.match(broad.text, /묶음 범주/);
+  assert.deepEqual(dietKeys(dietProfile([{ name: "trophic_niche", value: "Aquatic predator", ...DIET_SOURCE }])), ["aquatic_predator"]);
+  assert.deepEqual(dietKeys(dietProfile([
+    { name: "diet_category", value: "VertFishScav", ...DIET_SOURCE },
+    { name: "diet_distribution", value: { fish: 70, carrion: 30 }, ...DIET_SOURCE },
+  ])), ["fish", "carrion", "vertebrate"], "a distribution supplies members and overrides the combined category");
+});
+
+test("RG-008: fallback order is diet_category then trophic_niche; unsourced, unknown and null values are excluded", () => {
+  assert.deepEqual(dietKeys(dietProfile([
+    { name: "trophic_niche", value: "Invertivore", ...DIET_SOURCE },
+    { name: "diet_category", value: "Invertebrate", ...DIET_SOURCE },
+    { name: "diet_category", value: "Invertebrate", ...DIET_SOURCE, source_name: "Other", source_url: "https://example.org/o" },
+  ])), ["invertebrate"]);
+  assert.deepEqual(dietKeys(dietProfile([{ name: "trophic_niche", value: "Frugivore", ...DIET_SOURCE }])), ["fruit"]);
+  assert.deepEqual(dietKeys(dietProfile([
+    { name: "diet_category", value: "NA", ...DIET_SOURCE },
+    { name: "diet_category", value: null, ...DIET_SOURCE },
+    { name: "trophic_niche", value: "Invertivore", source_name: "bad", source_url: "javascript:alert(1)" },
+    { name: "diet_distribution", value: { fish: 50 }, source_name: "" , source_url: "https://example.org/x" },
+  ])), []);
+  assert.deepEqual(dietKeys(dietProfile([])), [], "habitat (Wetland) and the species name never imply a diet");
+});
+
+test("RG-008: card front and chat brief show accessible diet icons next to the habitat emblem; legend with sources on the back", async () => {
+  const profile = dietProfile([{ name: "diet_distribution", label: "먹이 구성", ...DIET_SOURCE, value: { fish: 70, invertebrate: 30 } }]);
+  profile.conservation = null;
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const heading = card.children.find((n) => n.className === "species-card-heading");
+  assert.ok(heading.children.some((n) => n.className.startsWith("species-emblem habitat-wetland")), "habitat emblem retained");
+  const front = card.children.find((n) => n.className === "species-card-front");
+  const icons = collectAllNodes(front).find((n) => n.className === "species-diet-icons");
+  assert.equal(icons.getAttribute("aria-label"), "먹이 아이콘 · 먹이 구성 비율");
+  assert.deepEqual(icons.children.map((n) => n.className), ["diet-icon diet-fish", "diet-icon diet-invertebrate", "diet-icon diet-vertebrate diet-parent"]);
+  assert.deepEqual(icons.children.map((n) => n.getAttribute("title")), ["먹이: 물고기 70%", "먹이: 무척추동물 30%", "먹이: 척추동물 (상위 묶음 · 물고기 포함)"]);
+  assert.equal(icons.children[0].children[0].getAttribute("aria-hidden"), "true");
+  const back = card.children.find((n) => n.className === "species-card-back");
+  const legend = collectAllNodes(back).find((n) => n.className === "species-diet-legend");
+  assert.ok(collectAllNodes(legend).some((n) => n.tagName === "a" && n.href === "https://example.org/avonet"));
+  assert.ok(collectAllNodes(legend).some((n) => /서식지나 이름으로 먹이를 추정하지 않습니다/.test(n.textContent)));
+  const brief = chat.buildSpeciesBrief({ createElement: createFakeElement }, profile);
+  assert.equal(brief.children[0].className, "species-emblem habitat-wetland");
+  assert.equal(brief.children.find((n) => n.className === "species-diet-icons").children.length, 3);
+  const none = chat.buildSpeciesCard({ createElement: createFakeElement }, dietProfile([]));
+  assert.equal(collectAllNodes(none).some((n) => n.className === "species-diet-icons" && n.parentNode.className === "species-card-front"), false);
+  assert.match(collectAllNodes(none).find((n) => n.className === "species-diet-legend").children[1].textContent, /먹이 아이콘을 표시하지 않습니다/);
+});
+
+test("RG-008: diet icons use SVG when available and a glyph fallback otherwise", () => {
+  const profile = dietProfile([{ name: "diet_category", value: "PlantSeed", ...DIET_SOURCE }]);
+  const svgCard = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const svgIcon = collectAllNodes(svgCard).find((n) => n.className === "diet-icon diet-plant-seed diet-broad");
+  assert.equal(svgIcon.children[0].children[0].tagName, "svg");
+  const plain = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const plainIcon = collectAllNodes(plain).find((n) => n.className === "diet-icon diet-plant-seed diet-broad");
+  assert.equal(plainIcon.children[0].textContent, "▤");
+});
+
+test("RG-008: styles.css defines every diet icon class", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  for (const key of ["invertebrate", "vertebrate", "fish", "carrion", "fruit", "nectar", "seed", "plant", "vert-fish-scav", "plant-seed", "fruit-nectar", "omnivore", "aquatic-predator", "herbivore-aquatic", "herbivore-terrestrial"]) {
+    assert.match(css, new RegExp("\\.diet-" + key + " \\{"), key);
+  }
+  assert.match(css, /\.species-diet-icons \{/);
+});
+
+test("RG-008: actual 왜가리 EltonTraits distribution shows 물고기, 척추동물 and 무척추동물 with sourced shares", () => {
+  const info = chat.dietIconInfo(dietProfile([{ name: "diet_distribution", ...DIET_SOURCE, source_name: "EltonTraits",
+    value: { invertebrate: 20, endotherm_vertebrate: 10, ectotherm_vertebrate: 10, fish: 60 } }]));
+  assert.deepEqual(info.icons.map((i) => i.text).sort(), ["먹이: 무척추동물 20%", "먹이: 물고기 60%", "먹이: 척추동물 20%"]);
+  assert.equal(info.icons[0].key, "fish");
+  assert.equal(info.icons.some((i) => i.parentGroup), false, "real vertebrate shares exist, so no synthetic parent icon");
+});
+
+// ---------------------------------------------------------------------------
+// RG-009: photo availability, broken images, and provider retry.
+// ---------------------------------------------------------------------------
+
+function photoProfile(overrides) {
+  return Object.assign(fakeProfilePayload().result.profile, overrides || {});
+}
+const cardPart = (card, className) => card.children.find((n) => n.className === className);
+
+test("RG-009: each no-photo status shows a generic placeholder with a fixed reason; facts and flip still work", () => {
+  const expected = {
+    no_licensed_photo: "사용 조건이 확인된 대표 사진을 아직 찾지 못했습니다.",
+    unconfirmed_taxon: "사진 자료의 종 식별을 확인하지 못해 사진을 표시하지 않습니다.",
+    ambiguous_taxon: "사진 자료가 여러 종 식별자에 연결되어 대표 사진을 선택하지 않았습니다.",
+    provider_unavailable: "사진 제공처에 연결하지 못했습니다.",
+  };
+  for (const [status, message] of Object.entries(expected)) {
+    const card = chat.buildSpeciesCard(svgCapableDoc(), photoProfile({ images: [], photo_availability: { status, message: "server text <b>x</b>" } }));
+    const front = cardPart(card, "species-card-front");
+    const back = cardPart(card, "species-card-back");
+    const nodes = collectAllNodes(front);
+    const placeholder = nodes.find((n) => n.className === "species-photo-placeholder");
+    assert.equal(placeholder.getAttribute("role"), "img");
+    assert.equal(placeholder.getAttribute("aria-label"), "사진 없음: " + message);
+    assert.ok(nodes.some((n) => n.className === "species-photo-reason" && n.textContent === message));
+    assert.equal(nodes.some((n) => n.tagName === "img" || n.tagName === "figure"), false, "never another species' photo");
+    assert.equal(collectedText(card).includes("server text"), false, "server message is not echoed");
+    assert.ok(collectedText(front).includes("1083.3 g"), "facts preserved without photos");
+    assert.equal(nodes.some((n) => n.tagName === "a"), false);
+    const flip = collectAllNodes(card).find((n) => n.className === "species-card-flip");
+    flip.dispatch("click");
+    assert.equal(back.hidden, false);
+    assert.equal(front.hidden, true);
+    card.showFront();
+    assert.equal(front.hidden, false);
+  }
+});
+
+test("RG-009: unknown status, missing status and all-unsafe photo URLs fall back to one honest generic reason", () => {
+  for (const profile of [
+    photoProfile({ images: [], photo_availability: { status: "weird", message: "<script>x</script>" } }),
+    photoProfile({ images: [], photo_availability: undefined }),
+    photoProfile({ images: [{ image_url: "javascript:alert(1)" }, { image_url: "https://evil.example/a.jpg" }], photo_availability: { status: "available" } }),
+  ]) {
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+    const nodes = collectAllNodes(card);
+    assert.ok(nodes.some((n) => n.className === "species-photo-reason" && n.textContent === "라이선스가 확인된 대표 사진이 없습니다."));
+    assert.equal(nodes.some((n) => n.tagName === "img"), false);
+    assert.equal(nodes.some((n) => n.className === "species-photo-retry"), false);
+    assert.equal(collectedText(card).includes("<script>"), false);
+  }
+});
+
+test("RG-009: a broken image shows a reload control that re-requests the same validated URL; attribution stays", () => {
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile());
+  const nodes = collectAllNodes(card);
+  const img = nodes.find((n) => n.tagName === "img");
+  const broken = nodes.find((n) => n.className === "species-photo-broken");
+  const figure = nodes.find((n) => n.tagName === "figure");
+  assert.equal(broken.hidden, true);
+  img.dispatch("error");
+  assert.equal(img.hidden, true);
+  assert.equal(broken.hidden, false);
+  assert.equal(figure.getAttribute("data-photo-state"), "error");
+  assert.match(collectedText(broken), /사진을 불러오지 못했습니다/);
+  img.src = "";
+  broken.children.find((n) => n.className === "species-photo-reload").dispatch("click");
+  assert.equal(img.src, "https://upload.wikimedia.org/wikipedia/commons/mallard.jpg");
+  assert.equal(img.hidden, false);
+  assert.equal(broken.hidden, true);
+  img.dispatch("load");
+  assert.equal(figure.getAttribute("data-photo-state"), "loaded");
+  const back = cardPart(card, "species-card-back");
+  assert.ok(collectAllNodes(back).some((n) => n.tagName === "a" && n.href === "https://creativecommons.org/licenses/by-sa/4.0"));
+  assert.ok(collectedText(back).includes("Some Credit"));
+});
+
+test("RG-009: gallery navigation keeps working when every image is broken", () => {
+  const base = fakeProfilePayload().result.profile.images[0];
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({
+    images: [base, Object.assign({}, base, { image_url: "https://upload.wikimedia.org/two.jpg", title: "두 번째" }), base],
+  }));
+  const nodes = collectAllNodes(card);
+  const figures = nodes.filter((n) => n.tagName === "figure");
+  assert.equal(figures.length, 3, "duplicates are not removed by the UI; backend owns dedupe");
+  figures.forEach((figure) => figure.children[0].dispatch("error"));
+  const next = nodes.find((n) => n.getAttribute("aria-label") === "다음 사진");
+  const count = nodes.find((n) => n.getAttribute("aria-live") === "polite");
+  next.dispatch("click");
+  assert.deepEqual(figures.map((f) => f.hidden), [true, false, true]);
+  assert.equal(count.textContent, "사진 2 / 3");
+  assert.equal(figures[1].children[1].hidden, false, "the visible broken photo offers its own reload");
+  assert.equal(figures.every((f) => f.getAttribute("data-photo-state") === "error"), true);
+});
+
+test("RG-009: provider failure retry re-fetches the same species profile and only accepts a matching taxon and release", async () => {
+  const calls = [];
+  const fresh = photoProfile();
+  const wait = deferred();
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({ images: [], photo_availability: { status: "provider_unavailable" } }), {
+    fetcher: (url, options) => { calls.push({ url, options }); return wait.promise; },
+  });
+  const retry = collectAllNodes(card).find((n) => n.className === "species-photo-retry");
+  retry.dispatch("click");
+  retry.dispatch("click");
+  await tick();
+  assert.equal(calls.length, 1, "repeated clicks while loading do not refetch");
+  assert.equal(calls[0].url, "/v1/taxa/profile?name=Anas%20platyrhynchos");
+  assert.equal(calls[0].options.credentials, "omit");
+  assert.equal(retry.disabled, true);
+  wait.resolve(jsonResponse(fresh));
+  await tick();
+  const nodes = collectAllNodes(card);
+  assert.equal(nodes.filter((n) => n.tagName === "img").length, 1);
+  assert.equal(nodes.some((n) => n.className === "species-photo-placeholder"), false);
+  assert.ok(collectAllNodes(cardPart(card, "species-card-back")).some((n) => n.className === "species-photo-sources"));
+  const flip = nodes.find((n) => n.className === "species-card-flip");
+  flip.dispatch("click");
+  assert.equal(cardPart(card, "species-card-back").hidden, false);
+});
+
+test("RG-009: retry never substitutes a different taxon, survives errors, and falls back to guidance without a transport", async () => {
+  const other = photoProfile();
+  other.taxon = Object.assign({}, other.taxon, { taxon_id: "different" });
+  let mode = "mismatch";
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({ images: [], photo_availability: { status: "provider_unavailable" } }), {
+    fetcher: async () => (mode === "mismatch" ? jsonResponse(other) : jsonResponse({ detail: "secret" }, 503)),
+  });
+  const retry = collectAllNodes(card).find((n) => n.className === "species-photo-retry");
+  const status = () => collectAllNodes(card).find((n) => n.className === "species-note" && n.getAttribute("role") === "status").textContent;
+  retry.dispatch("click");
+  await tick();
+  assert.equal(collectAllNodes(card).some((n) => n.tagName === "img"), false);
+  assert.match(status(), /분류 자료가 바뀌어 사진을 갱신하지 않았습니다/);
+  mode = "error";
+  retry.dispatch("click");
+  await tick();
+  assert.match(status(), /잠시 후 다시 시도하세요/);
+  assert.equal(status().includes("secret"), false);
+  assert.equal(retry.disabled, false);
+  const offline = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({ images: [], photo_availability: { status: "provider_unavailable" } }));
+  assert.equal(collectAllNodes(offline).some((n) => n.className === "species-photo-retry"), false);
+  assert.ok(collectedText(offline).includes("같은 질문을 다시 보내면"));
+});
+
+test("RG-009: in chat, a provider-failure answer keeps its explanation, and a retry that settles after clearing is dropped", async () => {
+  const payload = fakeProfilePayload({ images: [], photo_availability: { status: "provider_unavailable" } });
+  payload.result.profile.sections = [{ title: "기본 정보", items: [{ text: "청둥오리 설명" }] }];
+  const wait = deferred();
+  const dom = createFakeDom((url) => url.startsWith("/v1/taxa/profile") ? wait.promise
+    : Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById["history"])[1];
+  assert.ok(collectAllNodes(answer).some((n) => n.className === "species-answer"));
+  const card = collectAllNodes(answer).find((n) => (n.className || "").startsWith("species-card risk-"));
+  const retry = collectAllNodes(card).find((n) => n.className === "species-photo-retry");
+  retry.dispatch("click");
+  await tick();
+  dom.elementsById["clear-button"].dispatch("click");
+  wait.resolve(jsonResponse(fakeProfilePayload().result.profile));
+  await tick();
+  assert.equal(collectAllNodes(card).some((n) => n.tagName === "img"), false, "late retry result is not rendered after clear");
+  assert.equal(retry.disabled, false);
+});
+
+test("RG-009: styles.css styles the placeholder, broken-image and retry states", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  for (const selector of [".species-photo-placeholder", ".species-photo-broken", ".species-photo-reload", ".species-photo-retry"]) {
+    assert.match(css, new RegExp(selector.replace(".", "\\.") + "[\\s,{]"));
+  }
+});
+
+test("RG-008 fix: conflicting distribution records are never fused; the first valid sourced record is the basis", () => {
+  const other = { ...DIET_SOURCE, source_name: "Other dataset", source_url: "https://example.org/other" };
+  const profile = dietProfile([
+    { name: "diet_distribution", ...DIET_SOURCE, source_url: "javascript:alert(1)", value: { seed: 100 } },
+    { name: "diet_distribution", ...DIET_SOURCE, value: { mystery: 50, fish: 0 } },
+    { name: "diet_distribution", label: "먹이 구성", ...DIET_SOURCE, value: { fish: 60, ectotherm_vertebrate: 10, endotherm_vertebrate: 10, invertebrate: 20 } },
+    { name: "diet_distribution", label: "먹이 구성", ...other, value: { invertebrate: 70, seed: 30 } },
+  ]);
+  const info = chat.dietIconInfo(profile);
+  assert.equal(info.basis, "distribution");
+  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 척추동물 20%", "먹이: 무척추동물 20%"],
+    "vertebrate subgroups aggregate inside the chosen record only; seed from the other source is not added");
+  assert.deepEqual(info.sources.map((t) => t.source_url), ["https://example.org/avonet"]);
+  assert.equal(info.otherDistributionCount, 1);
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const legend = collectAllNodes(card).find((n) => n.className === "species-diet-legend");
+  assert.match(legend.children[1].textContent, /서로 다른 자료의 비율을 더하지 않습니다/);
+  assert.deepEqual(collectAllNodes(legend).filter((n) => n.tagName === "a").map((n) => n.href), ["https://example.org/avonet"]);
+  const back = card.children.find((n) => n.className === "species-card-back");
+  assert.ok(collectAllNodes(back).some((n) => n.tagName === "a" && n.href === "https://example.org/other"), "the other record's source stays in the trait panel");
+});
+
+// ---------------------------------------------------------------------------
+// RG-006 follow-up: reviewed activity pattern with raw source claims kept as provenance.
+// ---------------------------------------------------------------------------
+
+function nightHeronProfile() {
+  const profile = fakeProfilePayload().result.profile;
+  profile.taxon = { taxon_id: "nn", scientific_name: "Nycticorax nycticorax", korean_name: "해오라기" };
+  profile.traits = [{
+    name: "activity_pattern", label: "활동 시간", value: "evening_to_early_morning_with_breeding_daytime",
+    display: "주로 저녁부터 이른 아침에 먹이를 찾으며, 번식기에는 낮에도 활동합니다.", unit: null, inferred: false,
+    source_name: "Cornell Lab of Ornithology · Black-crowned Night Heron Life History",
+    source_url: "https://www.allaboutbirds.org/guide/Black-crowned_Night_Heron/lifehistory",
+    citation: "Cornell Lab of Ornithology, Life History · Food", license_name: "출처 기반 독자 요약 · 원문 미재배포",
+    review_note: "활동 시간은 별도 출처를 검토해 설명했습니다. 원자료의 야행성 코드와 출처는 검토 기록에 보존합니다.",
+    source_claims: [{ name: "nocturnal", label: "야행성", value: false, display: "아니요", source_name: "AVONET",
+      source_url: "https://example.org/avonet-nocturnal", release: "v1", license_name: "CC BY 4.0", citation: "AVONET" },
+      { name: "hostile", value: { nested: true } }],
+  }];
+  return profile;
+}
+
+test("RG-006 follow-up: reviewed activity stays visible; the raw nocturnal=false claim is only collapsed provenance", () => {
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, nightHeronProfile());
+  const back = card.children.find((n) => n.className === "species-card-back");
+  const traitCards = collectAllNodes(back).filter((n) => n.className === "trait-card");
+  const activity = traitCards.find((n) => n.children[0].textContent === "활동 시간");
+  assert.ok(activity, "activity_pattern is a prominent trait, not hidden under 측정값 더 보기");
+  assert.equal(collectAllNodes(back).some((n) => n.className === "card-details" && collectAllNodes(n).includes(activity)), false);
+  assert.equal(activity.children[1].textContent, "주로 저녁부터 이른 아침에 먹이를 찾으며, 번식기에는 낮에도 활동합니다.");
+  const details = activity.children.find((n) => n.className === "trait-source-toggle");
+  assert.notEqual(details.open, true, "provenance starts collapsed");
+  assert.ok(collectAllNodes(details).some((n) => n.className === "trait-review-note" && /원자료의 야행성 코드/.test(n.textContent)));
+  const claims = collectAllNodes(details).filter((n) => n.className === "trait-source-claim");
+  assert.equal(claims.length, 1, "non-scalar claims are skipped");
+  assert.match(claims[0].children[0].textContent, /^원자료 분류값 \(현재 결론 아님\): nocturnal = false/);
+  assert.ok(collectAllNodes(claims[0]).some((n) => n.tagName === "a" && n.href === "https://example.org/avonet-nocturnal"));
+  assert.ok(collectAllNodes(details).some((n) => n.tagName === "a" && n.href === "https://www.allaboutbirds.org/guide/Black-crowned_Night_Heron/lifehistory"));
+  assert.equal(collectAllNodes(card).some((n) => n.textContent === "아니요" || /야행성.*아니요|아니요.*야행성/.test(n.textContent || "")), false,
+    "the raw 아니요 is never rendered as a current verdict");
+});
+
+test("RG-006 follow-up: unsafe claim source URLs render as inert text", () => {
+  const profile = nightHeronProfile();
+  profile.traits[0].source_claims[0].source_url = "javascript:alert(1)";
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const claim = collectAllNodes(card).find((n) => n.className === "trait-source-claim");
+  assert.equal(collectAllNodes(claim).some((n) => n.tagName === "a"), false);
+  assert.ok(collectAllNodes(claim).some((n) => n.tagName === "span" && n.textContent === "AVONET"));
+});

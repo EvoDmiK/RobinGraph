@@ -25,20 +25,31 @@
     element("p", profile.taxon.scientific_name, card);
     const layout = element("div", undefined, card); layout.className = "species-layout";
     const media = element("section", undefined, layout); media.setAttribute("aria-label", "대표 사진");
-    if (!profile.images.length) element("p", "라이선스가 확인된 대표 사진이 없습니다.", media);
-    profile.images.forEach((photo) => {
+    let renderedPhotos = 0;
+    (Array.isArray(profile.images) ? profile.images : []).forEach((photo) => {
       const url = safeUrl(photo.image_url);
       if (!url || !["upload.wikimedia.org", "thumb.wikimedia.org"].includes(new URL(url).hostname)) return;
+      renderedPhotos += 1;
       const figure = element("figure", undefined, media);
       const image = element("img", undefined, figure); image.src = url; image.loading = "lazy";
       image.alt = `${profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name} 대표 사진: ${photo.title}`;
       image.referrerPolicy = "no-referrer";
+      const failed = element("p", "사진 파일을 불러오지 못했습니다.", figure); failed.hidden = true;
+      const retry = element("button", "사진 다시 불러오기", figure); retry.type = "button"; retry.hidden = true;
+      image.addEventListener("error", () => { image.hidden = true; failed.hidden = false; retry.hidden = false; retry.disabled = false; });
+      image.addEventListener("load", () => { image.hidden = false; failed.hidden = true; retry.hidden = true; retry.disabled = false; });
+      retry.addEventListener("click", () => { retry.disabled = true; failed.textContent = "사진을 다시 불러오는 중입니다."; image.src = url; });
       const caption = element("figcaption", undefined, figure);
       link("Wikimedia Commons 원본", photo.source_url, caption);
       element("span", ` · ${photo.creator} · `, caption);
       link(photo.license_name, photo.license_url, caption);
       if (photo.credit) element("div", photo.credit, caption);
     });
+    if (!renderedPhotos) {
+      const availability = profile.photo_availability;
+      const message = availability && typeof availability.message === "string" ? availability.message : "사용 조건이 확인된 대표 사진이 없습니다.";
+      const placeholder = element("p", message, media); placeholder.className = "species-photo-placeholder";
+    }
     const facts = element("section", undefined, layout); element("h2", "특징 · 먹이 · 서식 환경", facts);
     element("p", "수치는 자료에 기록된 종 평균입니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭과 다릅니다.", facts);
     if (!profile.traits.length) element("p", "이 종의 활성 형질 자료가 아직 없습니다.", facts);

@@ -1,3 +1,4 @@
+from dataclasses import replace
 import unittest
 from types import SimpleNamespace as NS
 from unittest.mock import Mock, patch
@@ -7,7 +8,7 @@ from robingraph.api.app import create_app
 from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
 from robingraph.retrieval.species_profile import (
     CONSERVATION_LABELS, create_species_flow, read_conservation, read_traits,
-    species_summary, _photo, _licensed_images,
+    species_summary, trait_display, PhotoLookup, _photo, _licensed_images,
 )
 
 LINEAGE = TaxonomyLineage('Anas platyrhynchos', 'AviList', 'v2025b', 'concept', (
@@ -170,6 +171,29 @@ class SpeciesProfileTest(unittest.TestCase):
         self.assertEqual('무척추동물', next(t['display'] for t in traits if t['value'] == 'Invertebrate'))
         self.assertEqual('척추동물·물고기·사체', next(t['display'] for t in traits if t['value'] == 'VertFishScav'))
 
+    def test_all_active_ecology_categories_and_distributions_translate_without_changing_values(self):
+        categories = {
+            'trophic_niche': ['Vertivore', 'Scavenger', 'Omnivore', 'Invertivore', 'Aquatic predator',
+                             'Frugivore', 'Herbivore aquatic', 'Herbivore terrestrial', 'Nectarivore', 'Granivore'],
+            'trophic_level': ['Carnivore', 'Scavenger', 'Herbivore', 'Omnivore'],
+            'habitat_density_category': ['dense', 'semi_open', 'open'],
+        }
+        for name, values in categories.items():
+            for value in values:
+                with self.subTest(name=name, value=value):
+                    display = trait_display(name, value)
+                    self.assertRegex(display, r'[가-힣]')
+                    self.assertNotRegex(display, r'[A-Za-z]')
+                    self.assertNotEqual('번역 확인 필요', display)
+        self.assertEqual('수생동물 포식', trait_display('trophic_niche', 'Aquatic predator'))
+        original = {'mid_high': 80, 'unknown_layer': 20, 'aerial': 0, 'ground': None}
+        self.assertEqual('중상층 80% · 미분류 항목 20%', trait_display('foraging_strata_distribution', original))
+        self.assertEqual(20, original['unknown_layer'])
+        self.assertEqual('번역 확인 필요', trait_display('trophic_niche', 'new category'))
+        self.assertEqual('자료 없음', trait_display('habitat', 'NA'))
+        self.assertEqual('확인된 구성 정보 없음', trait_display('diet_distribution', {'fish':0, 'fruit':None}))
+        self.assertEqual('확인된 구성 정보 없음', trait_display('diet_distribution', {'fish':True, 'fruit':float('nan')}))
+
     def test_photos_require_per_file_license_creator_and_safe_image_host(self):
         def metadata(**values):
             return {k:{'value':v} for k,v in values.items()}
@@ -194,7 +218,47 @@ class SpeciesProfileTest(unittest.TestCase):
         _licensed_images.cache_clear()
         bindings = [{'item':{'value':'Q1'},'image':{'value':'x'}}, {'item':{'value':'Q2'},'image':{'value':'y'}}]
         with patch('robingraph.retrieval.species_profile._json_get', return_value={'results':{'bindings':bindings}}):
-            self.assertEqual([], _licensed_images('Ambiguous bird', 1))
+            result = _licensed_images('Ambiguous bird', 1)
+            self.assertEqual([], result)
+            self.assertEqual('ambiguous_taxon', result.status)
+
+    def test_reviewed_night_heron_activity_preserves_raw_claim_and_daytime_qualification(self):
+        from robingraph.retrieval.reviewed_activity import reviewed_activity
+        lineage = replace(LINEAGE, items=(replace(LINEAGE.items[-1], scientific_name='Nycticorax nycticorax'),))
+        raw = {'name':'nocturnal','value':False,'display':'아니요',
+               'source_name':'EltonTraits','source_url':'https://ndownloader.figshare.com/files/5631081#SpecID=5182'}
+        result = reviewed_activity(lineage,[raw])
+        self.assertEqual('activity_pattern',result[0]['name'])
+        self.assertIn('저녁부터 이른 아침',result[0]['display'])
+        self.assertIn('번식기에는 낮에도',result[0]['display'])
+        self.assertEqual([raw],result[0]['source_claims'])
+        self.assertFalse(raw['value'])
+        self.assertNotEqual('아니요', trait_display('nocturnal', False))
+        self.assertIn('단정할 수 없음', trait_display('nocturnal', False))
+        self.assertEqual('예', trait_display('nocturnal', True))
+        self.assertEqual([raw],reviewed_activity(LINEAGE,[raw]))
+        self.assertEqual([raw],reviewed_activity(replace(lineage,taxonomy_release='future'),[raw]))
+        flow=create_species_flow(lambda _:lineage,lambda _:result,photos=lambda _:[])
+        profile=flow.invoke('Nycticorax nycticorax')
+        ecology=next(s for s in profile['sections'] if s['key']=='ecology')
+        self.assertTrue(any('저녁부터 이른 아침' in i['text'] for i in ecology['items']))
+
+    def test_photo_absence_reasons_preserve_species_information_and_card_contract(self):
+        for status in ('no_licensed_photo', 'unconfirmed_taxon', 'ambiguous_taxon'):
+            flow = create_species_flow(lambda _: LINEAGE, lambda _: [],
+                                       photos=lambda _: PhotoLookup([], status))
+            profile = flow.invoke('청둥오리')
+            self.assertEqual(status, profile['photo_availability']['status'])
+            self.assertEqual([], profile['images'])
+            self.assertEqual('청둥오리', profile['taxon']['korean_name'])
+            self.assertTrue(profile['sections'])
+        flow = create_species_flow(lambda _: LINEAGE, lambda _: [], photos=Mock(side_effect=TimeoutError))
+        self.assertEqual('provider_unavailable', flow.invoke('청둥오리')['photo_availability']['status'])
+        _licensed_images.cache_clear()
+        with patch('robingraph.retrieval.species_profile._json_get', return_value={'results':{'bindings':[]}}):
+            result = _licensed_images('Unconfirmed bird', 1)
+            self.assertEqual('unconfirmed_taxon', result.status)
+            self.assertEqual([], result)
 
     def test_profile_outage_does_not_expose_database_details(self):
         client = TestClient(create_app(species_profile_handler=Mock(side_effect=RuntimeError('secret database path'))))

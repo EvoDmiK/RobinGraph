@@ -3,6 +3,7 @@ from dataclasses import asdict
 from functools import lru_cache
 from html.parser import HTMLParser
 import json
+import math
 import re
 import time
 from urllib.parse import urlencode, urlsplit, unquote
@@ -35,7 +36,7 @@ LABELS = {
     'primary_lifestyle':'주 생활 방식', 'trophic_niche':'먹이 생태 범주',
     'trophic_level':'영양 단계', 'diet_category':'먹이 유형',
     'diet_distribution':'먹이 구성', 'foraging_strata_distribution':'먹이 활동 위치',
-    'nocturnal':'야행성',
+    'nocturnal':'야행성', 'activity_pattern':'활동 시간',
 }
 
 CONSERVATION_QUERY = """
@@ -120,13 +121,43 @@ VALUES = {'PlantSeed':'식물·씨앗', 'FruiNect':'열매·꽃꿀',
           'Generalist':'다양한 생활 방식', 'Wetland':'습지', 'Aquatic':'수생', 'Herbivore aquatic':'수생 초식',
           'open':'개방형', 'dense':'밀집형', 'semi_open':'반개방형',
           'Omnivore':'잡식', 'Herbivore':'초식', 'Carnivore':'육식',
+          'Scavenger':'사체 섭식', 'Vertivore':'척추동물 섭식',
+          'Invertivore':'무척추동물 섭식', 'Aquatic predator':'수생동물 포식',
+          'Frugivore':'열매 섭식', 'Nectarivore':'꽃꿀 섭식', 'Granivore':'씨앗 섭식',
+          'Herbivore terrestrial':'육상 초식',
           'invertebrate':'무척추동물', 'endotherm_vertebrate':'온혈 척추동물',
           'ectotherm_vertebrate':'변온 척추동물', 'fish':'물고기',
           'unknown_vertebrate':'기타 척추동물', 'carrion':'사체', 'fruit':'열매',
           'nectar':'꽃꿀', 'seed':'씨앗', 'other_plant':'기타 식물',
-          'ground':'지면', 'understory':'하층', 'midhigh':'중상층',
+          'ground':'지면', 'understory':'하층', 'midhigh':'중상층', 'mid_high':'중상층',
           'canopy':'수관', 'aerial':'공중', 'water':'수면', 'pelagic':'외해',
           'below_water_surface':'수중', 'around_water_surface':'수면 주변'}
+
+
+CATEGORICAL_TRAITS = frozenset({
+    'habitat', 'habitat_density_category', 'primary_lifestyle',
+    'trophic_niche', 'trophic_level', 'diet_category',
+})
+
+
+def trait_display(name, value):
+    """Translate display only; preserve original values and unknown categories."""
+    if isinstance(value, dict):
+        parts = [f"{VALUES.get(key, '미분류 항목')} {amount}%"
+                 for key, amount in value.items()
+                 if isinstance(amount, (int, float)) and not isinstance(amount, bool)
+                 and math.isfinite(amount) and 0 < amount <= 100]
+        return ' · '.join(parts) or '확인된 구성 정보 없음'
+    if isinstance(value, bool):
+        if name == 'nocturnal' and not value:
+            return '원자료 분류값 0 · 야간 활동이 없다고 단정할 수 없음'
+        return '예' if value else '아니요'
+    raw = str(value).strip()
+    if name in CATEGORICAL_TRAITS:
+        if raw.upper() in ('NA', 'N/A', 'NULL', 'UNKNOWN', ''):
+            return '자료 없음'
+        return VALUES.get(raw, '번역 확인 필요')
+    return VALUES.get(raw, raw)
 
 
 def read_traits(repository, store, lineage):
@@ -161,17 +192,13 @@ def read_traits(repository, store, lineage):
             value = json.loads(claim['value_json'])
         if value is None:
             continue
-        if isinstance(value, dict):
-            display = ' · '.join(f'{VALUES.get(k,k)} {v}%' for k,v in value.items() if isinstance(v,(int,float)) and v > 0)
-        elif isinstance(value, bool):
-            display = '예' if value else '아니요'
-        else:
-            display = VALUES.get(str(value), str(value))
+        display = trait_display(name, value)
         traits.append({'name':name, 'label':LABELS[name], 'value':value, 'display':display,
                        'unit':claim.get('unit'), 'inferred':bool(claim.get('inferred')),
                        'summary_statistic':claim.get('summary_statistic'),
                        'source_url':row['source_url'], 'citation':row['citation'], **source})
-    return traits
+    from .reviewed_activity import reviewed_activity
+    return reviewed_activity(lineage, traits)
 
 
 class PlainText(HTMLParser):
@@ -224,13 +251,30 @@ def _photo(info):
             'title':field('ObjectName') or 'Wikimedia Commons 사진'}
 
 
+PHOTO_MESSAGES = {
+    'available': '출처와 라이선스가 확인된 사진입니다.',
+    'no_licensed_photo': '사용 조건이 확인된 대표 사진을 아직 찾지 못했습니다.',
+    'unconfirmed_taxon': '사진 자료의 종 식별을 확인하지 못했습니다.',
+    'ambiguous_taxon': '사진 자료가 여러 종 식별자에 연결되어 대표 사진을 선택하지 않았습니다.',
+    'provider_unavailable': '사진 제공처에 연결하지 못했습니다. 잠시 후 다시 조회하세요.',
+}
+
+
+class PhotoLookup(list):
+    """List-compatible photo result with an explicit reason for missing media."""
+    def __init__(self, images, status):
+        super().__init__(images)
+        self.status = status
+
+
 @lru_cache(maxsize=128)
 def _licensed_images(scientific_name, hour):
     # ponytail: hourly bounded metadata cache; shared cache only if traffic warrants it.
     query = 'SELECT ?item ?image WHERE { ?item wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:Q7432; wdt:P18 ?image. FILTER NOT EXISTS { ?other wdt:P225 ' + json.dumps(scientific_name) + '; wdt:P105 wd:Q7432. FILTER (?other != ?item) } } LIMIT 2'
     bindings = _json_get('https://query.wikidata.org/sparql', {'query':query, 'format':'json'})['results']['bindings']
-    if len({r['item']['value'] for r in bindings}) != 1:
-        return []
+    identities = {r['item']['value'] for r in bindings}
+    if len(identities) != 1:
+        return PhotoLookup([], 'ambiguous_taxon' if identities else 'unconfirmed_taxon')
     images = []
     for row in bindings[:2]:
         path = urlsplit(row['image']['value'])
@@ -245,7 +289,7 @@ def _licensed_images(scientific_name, hour):
                 photo = _photo(info)
                 if photo:
                     images.append(photo)
-    return images
+    return PhotoLookup(images, 'available' if images else 'no_licensed_photo')
 
 
 def licensed_images(scientific_name):
@@ -273,7 +317,7 @@ def species_sections(taxon, traits, notes):
     appearance = notes.get('appearance', [])
     if not appearance:
         appearance = [value for name in ('beak_length_culmen', 'wing_length', 'tail_length') if (value := fact(name))]
-    ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category') if (value := fact(name))]
+    ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern') if (value := fact(name))]
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)
     return [{'key':key, 'title':title, 'items':items, 'empty_text':empty}
@@ -294,9 +338,16 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         return lineage
     def image_stage(lineage):
         try:
-            return {'images':photos(lineage.items[-1].scientific_name), 'warnings':[]}
+            images = photos(lineage.items[-1].scientific_name)
+            if not isinstance(images, list):
+                raise ValueError('Invalid photo result')
+            status = getattr(images, 'status', 'available' if images else 'no_licensed_photo')
+            if status not in PHOTO_MESSAGES:
+                raise ValueError('Invalid photo status')
+            return {'images':images, 'photo_availability':{'status':status, 'message':PHOTO_MESSAGES[status]}, 'warnings':[]}
         except Exception:
-            return {'images':[], 'warnings':['사진 제공처를 현재 조회할 수 없습니다.']}
+            return {'images':[], 'photo_availability':{'status':'provider_unavailable', 'message':PHOTO_MESSAGES['provider_unavailable']},
+                    'warnings':['사진 제공처를 현재 조회할 수 없습니다.']}
     def trait_stage(lineage):
         try:
             return {'traits':traits(lineage), 'warnings':[]}
@@ -320,6 +371,7 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         taxon = asdict(lineage.items[-1])
         return {'taxon':taxon, 'lineage':asdict(lineage),
                 'traits':state['traits']['traits'], 'images':state['media']['images'],
+                'photo_availability':state['media']['photo_availability'],
                 'conservation':state['conservation']['conservation'],
                 'summary':species_summary(taxon, state['traits']['traits']),
                 'sections':species_sections(taxon, state['traits']['traits'], state['notes']['notes']),
