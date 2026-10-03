@@ -1,0 +1,439 @@
+[
+  {
+    "id": "parrot-budgerigar",
+    "entity_id": "parrot-common",
+    "name": "앵무새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Melopsittacus undulatus",
+    "search_terms": [
+      "앵무새",
+      "앵무"
+    ],
+    "note": "앵무새는 앵무과의 새를 통틀어 이르는 말입니다. 사랑앵무를 후보로 안내하며, 이 목록은 앵무류 전체가 아니라 출처로 확인한 일부입니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 앵무새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+      },
+      {
+        "title": "서울대공원 동물 보유현황: 사랑앵무",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1527"
+      }
+    ]
+  },
+  {
+    "id": "parrot-cockatiel",
+    "entity_id": "parrot-common",
+    "name": "앵무새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Nymphicus hollandicus",
+    "search_terms": [
+      "앵무새",
+      "앵무"
+    ],
+    "note": "앵무새라는 통칭에서 구분할 후보로 왕관앵무를 안내합니다. 이 목록은 출처로 확인한 일부이며 앵무류 전체가 아닙니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 앵무새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+      },
+      {
+        "title": "서울대공원 동물 보유현황: 왕관앵무(코커틸)",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=308"
+      }
+    ]
+  },
+  {
+    "id": "parrot-fischers-lovebird",
+    "entity_id": "parrot-common",
+    "name": "앵무새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Agapornis fischeri",
+    "search_terms": [
+      "앵무새",
+      "앵무"
+    ],
+    "note": "앵무새라는 통칭에서 구분할 후보로 붉은모란앵무를 안내합니다. ‘모란앵무’라는 이름은 여러 모란앵무속 새를 가리킬 수 있어 이 한 종으로 단정하지 않습니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 앵무새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+      },
+      {
+        "title": "서울대공원 동물 보유현황: 붉은모란앵무",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1466"
+      }
+    ]
+  },
+  {
+    "id": "inko-budgerigar",
+    "entity_id": "inko-common",
+    "name": "잉꼬",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Melopsittacus undulatus",
+    "search_terms": [
+      "잉꼬"
+    ],
+    "note": "표준국어대사전은 잉꼬를 사랑앵무와 같은 말로도, 여러 앵무류를 통틀어 이르는 말로도 풀이합니다. 서울대공원은 잉꼬를 사랑앵무의 일본식 이름으로 소개합니다. 넓은 뜻의 잉꼬를 이 한 종으로 제한하지 않습니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 사랑앵무",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%82%AC%EB%9E%91%EC%95%B5%EB%AC%B4"
+      },
+      {
+        "title": "국립국어원 표준국어대사전: 잉꼬",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9E%89%EA%BC%AC"
+      },
+      {
+        "title": "서울대공원 동물 보유현황: 사랑앵무",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1527"
+      }
+    ]
+  },
+  {
+    "id": "cockatiel-loanword",
+    "entity_id": "cockatiel-loanword",
+    "name": "코커틸",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Nymphicus hollandicus",
+    "search_terms": [
+      "코커틸"
+    ],
+    "note": "서울대공원은 왕관앵무를 ‘왕관앵무(코커틸)’로 표기합니다. 코커틸은 영어 이름을 옮긴 말이며, 왕관앵무와 같은 종을 가리키는 이름으로 안내합니다.",
+    "sources": [
+      {
+        "title": "서울대공원 동물 보유현황: 왕관앵무(코커틸)",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=308"
+      }
+    ]
+  },
+  {
+    "id": "society-finch-white-rumped-munia",
+    "entity_id": "society-finch-domestic",
+    "name": "십자매",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Lonchura striata",
+    "search_terms": [
+      "십자매",
+      "Lonchura striata domestica"
+    ],
+    "note": "십자매는 사람이 기르며 개량한 가축화 계통으로, 연구는 야생종 흰허리문조(white-rumped munia)를 그 조상으로 다룹니다. 가축 계통과 야생 개체군의 정보를 구분합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 십자매",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%8B%AD%EC%9E%90%EB%A7%A4"
+      },
+      {
+        "title": "서울대공원 동물 보유현황: 십자매",
+        "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1646"
+      },
+      {
+        "title": "Suzuki et al. (2021), bioRxiv: Effects of domestication on neophobia: the domesticated Bengalese finch (Lonchura striata var. domestica) and its wild ancestor, the white-rumped munia (Lonchura striata)",
+        "url": "https://www.biorxiv.org/content/10.1101/2021.03.23.436696.full.pdf"
+      }
+    ]
+  },
+  {
+    "id": "domestic-canary-old-names",
+    "entity_id": "canary-domestic-old-names",
+    "name": "금사조",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Serinus canaria",
+    "search_terms": [
+      "금사조",
+      "금사작",
+      "Serinus canaria domestica"
+    ],
+    "note": "표준국어대사전은 금사조·금사작을 관상용으로 기르는 카나리아의 다른 이름으로 올립니다. 사육 카나리아와 야생 카나리아 개체군의 정보를 구분합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 카나리아",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%B9%B4%EB%82%98%EB%A6%AC%EC%95%84"
+      },
+      {
+        "title": "Bovo et al. (2023), Animal Genetics: Whole genome sequencing identifies candidate genes and mutations that can explain diluted and other colour varieties of domestic canaries (Serinus canaria)",
+        "url": "https://doi.org/10.1111/age.13331"
+      }
+    ]
+  },
+  {
+    "id": "baepsae-vinous-throated-parrotbill",
+    "entity_id": "baepsae-alias",
+    "name": "뱁새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Suthora webbiana",
+    "search_terms": [
+      "뱁새"
+    ],
+    "note": "표준국어대사전은 뱁새를 붉은머리오목눈이와 같은 말로 풀이합니다. 국립생물자원관 조사 자료의 옛 학명(Paradoxornis webbianus)과 현재 분류 체계의 학명은 다를 수 있습니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 뱁새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B1%81%EC%83%88"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "sanbidulgi-oriental-turtle-dove",
+    "entity_id": "sanbidulgi-alias",
+    "name": "산비둘기",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Streptopelia orientalis",
+    "search_terms": [
+      "산비둘기"
+    ],
+    "note": "표준국어대사전은 산비둘기를 멧비둘기와 같은 말로 풀이합니다. 도시의 바위비둘기 계통 비둘기와는 다른 종입니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 산비둘기",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%82%B0%EB%B9%84%EB%91%98%EA%B8%B0"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "jongdalsae-eurasian-skylark",
+    "entity_id": "jongdalsae-alias",
+    "name": "종달새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Alauda arvensis",
+    "search_terms": [
+      "종달새"
+    ],
+    "note": "표준국어대사전은 종달새를 종다리와 같은 말로 풀이합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 종달새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%A2%85%EB%8B%AC%EC%83%88"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "pheasant-sex-terms",
+    "entity_id": "pheasant-sex-terms",
+    "name": "장끼·까투리",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Phasianus colchicus",
+    "search_terms": [
+      "장끼",
+      "까투리",
+      "수꿩",
+      "암꿩"
+    ],
+    "note": "장끼는 꿩의 수컷, 까투리는 꿩의 암컷을 이르는 말입니다. 종 이름이 아니라 암수를 가리키는 이름이므로 꿩의 수컷·암컷 차이를 구분해 확인합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 장끼",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9E%A5%EB%81%BC"
+      },
+      {
+        "title": "국립국어원 표준국어대사전: 까투리",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B9%8C%ED%88%AC%EB%A6%AC"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "owl-eared-eurasian-eagle-owl",
+    "entity_id": "eared-owl-common",
+    "name": "부엉이",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Bubo bubo",
+    "search_terms": [
+      "부엉이",
+      "부엉새"
+    ],
+    "note": "부엉이는 수리부엉이·칡부엉이·솔부엉이 등 올빼미과 여러 종을 통틀어 이르는 말입니다. 수리부엉이를 대표 후보로 안내하며, 이 목록은 부엉이류 전체가 아닙니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 부엉이",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B6%80%EC%97%89%EC%9D%B4"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "owl-eared-short-eared-owl",
+    "entity_id": "eared-owl-common",
+    "name": "부엉이",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Asio flammeus",
+    "search_terms": [
+      "부엉이",
+      "부엉새"
+    ],
+    "note": "부엉이라는 통칭에서 구분할 대표 후보로 쇠부엉이를 안내합니다. 올빼미·소쩍새는 각각 별도의 종 이름이므로 부엉이와 합치지 않습니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 부엉이",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B6%80%EC%97%89%EC%9D%B4"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "egret-chinese",
+    "entity_id": "egret-common",
+    "name": "백로",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Egretta eulophotes",
+    "search_terms": [
+      "백로"
+    ],
+    "note": "백로는 왜가리과 가운데 몸빛이 흰 새를 통틀어 이르는 말입니다. 이름에 백로가 들어간 국내 기록 종 가운데 노랑부리백로를 후보로 안내하며, 이 목록은 백로류 전체가 아닙니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 백로",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B0%B1%EB%A1%9C"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "wagtail-japanese",
+    "entity_id": "wagtail-common",
+    "name": "할미새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Motacilla grandis",
+    "search_terms": [
+      "할미새"
+    ],
+    "note": "할미새는 검은등할미새·노랑할미새·알락할미새 등을 통틀어 이르는 말입니다. 검은등할미새를 후보로 안내하며, 이 목록은 할미새류 전체가 아닙니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 할미새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "wagtail-grey",
+    "entity_id": "wagtail-common",
+    "name": "할미새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Motacilla cinerea",
+    "search_terms": [
+      "할미새"
+    ],
+    "note": "할미새라는 통칭에서 구분할 후보로 노랑할미새를 안내합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 할미새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "wagtail-white",
+    "entity_id": "wagtail-common",
+    "name": "할미새",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Motacilla alba",
+    "search_terms": [
+      "할미새"
+    ],
+    "note": "할미새라는 통칭에서 구분할 후보로 알락할미새·백할미새가 속한 종을 안내합니다. 국립생물자원관 조사 자료는 두 이름을 같은 종의 서로 다른 아종으로 기록합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 할미새",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "woodpecker-great-spotted",
+    "entity_id": "woodpecker-common",
+    "name": "딱따구리",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Dendrocopos major",
+    "search_terms": [
+      "딱따구리"
+    ],
+    "note": "딱따구리는 딱따구리과의 새를 통틀어 이르는 말입니다. 오색딱따구리를 후보로 안내하며, 이 목록은 딱따구리류 전체가 아닙니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 딱따구리",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%94%B1%EB%94%B0%EA%B5%AC%EB%A6%AC"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  },
+  {
+    "id": "woodpecker-grey-headed",
+    "entity_id": "woodpecker-common",
+    "name": "딱따구리",
+    "entity_kind": "common_name",
+    "relation_type": "common_usage",
+    "scientific_name": "Picus canus",
+    "search_terms": [
+      "딱따구리"
+    ],
+    "note": "딱따구리라는 통칭에서 구분할 후보로 청딱따구리를 안내합니다.",
+    "sources": [
+      {
+        "title": "국립국어원 표준국어대사전: 딱따구리",
+        "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%94%B1%EB%94%B0%EA%B5%AC%EB%A6%AC"
+      },
+      {
+        "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+        "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+      }
+    ]
+  }
+]

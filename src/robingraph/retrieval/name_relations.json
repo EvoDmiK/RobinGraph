@@ -1,8 +1,8 @@
 {
-  "version": 1,
+  "version": 2,
   "reviewed_at": "2026-10-03",
   "policy_status": "allowed",
-  "scope": "사용자 제시 네 이름의 초기 검토 목록. 관계 후보는 전체 분류군의 완전한 목록이 아니다. 가축형은 자동으로 아종으로 판정하지 않는다.",
+  "scope": "통칭·별칭·가축형·닭 품종의 확대 검토 목록. 사용자 예시는 조사 범위의 제한이 아니다. 넓은 통칭의 후보는 출처로 확인한 일부이며 모든 조류·품종을 망라하지 않는다. 가축형은 자동으로 아종으로 판정하지 않는다.",
   "reuse_policy": "RobinGraph original factual summaries with citations; no source prose or images copied. Source copyright is not relicensed.",
   "records": [
     {
@@ -154,6 +154,896 @@
         {
           "title": "FAO: Domestic ducks",
           "url": "https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en"
+        }
+      ]
+    },
+    {
+      "id": "silkie",
+      "entity_id": "silkie",
+      "name": "오골계",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "오골계"
+      ],
+      "note": "오골계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 오골계",
+          "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+        },
+        {
+          "title": "Wang et al. (2020): Chicken domestication",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "white-silkie",
+      "entity_id": "white-silkie",
+      "name": "백봉오골계",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "백봉오골계"
+      ],
+      "note": "백봉오골계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 오골계",
+          "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+        },
+        {
+          "title": "Wang et al. (2020): Chicken domestication",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "yeonsan-black-chicken",
+      "entity_id": "yeonsan-black-chicken",
+      "name": "연산오계",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "연산오계"
+      ],
+      "note": "연산오계는 가축 닭의 품종 이름입니다. 서로 다른 품종을 같은 품종으로 합치지 않고, 가축 닭의 기원 관계를 통해 관련 야생종 적색야계 자료를 안내합니다. 이 야생종 자료는 해당 품종의 특성 자료가 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 오골계",
+          "url": "https://encykorea.aks.ac.kr/Article/E0038105"
+        },
+        {
+          "title": "Wang et al. (2020): Chicken domestication",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "korean-domestic-chicken",
+      "entity_id": "korean-domestic-chicken",
+      "name": "토종닭",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "토종닭"
+      ],
+      "note": "토종닭은 사육 닭의 여러 품종·계통을 포함하는 이름으로, 하나의 품종이나 야생 아종으로 확정하지 않습니다. 가축 닭의 기원과 연결된 적색야계 자료를 안내하며 품종의 사진·체중을 대신하지 않습니다.",
+      "sources": [
+        {
+          "title": "국립축산과학원: 토종닭 복원·산업화",
+          "url": "https://nias.go.kr/front/soboarddown.do?boardSeqNum=311&cmCode=M090814151125016&fileSeqNum=326"
+        },
+        {
+          "title": "Wang et al. (2020): Chicken domestication",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "crane-hak",
+      "entity_id": "crane-hak",
+      "name": "학",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Grus japonensis",
+      "search_terms": [
+        "학",
+        "단정학",
+        "선학"
+      ],
+      "note": "한국민족문화대백과사전의 두루미 항목에서 확인한 이칭입니다. 이 항목의 학명인 두루미를 후보로 안내하며, 문화적 표현이나 두루미류 전체의 이름 사용을 한 종으로 모두 제한하지 않습니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 두루미",
+          "url": "https://encykorea.aks.ac.kr/Article/E0060759"
+        }
+      ]
+    },
+    {
+      "id": "peacock-common",
+      "entity_id": "peacock-common",
+      "name": "공작",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Pavo cristatus",
+      "search_terms": [
+        "공작",
+        "남객",
+        "월조",
+        "화리"
+      ],
+      "note": "공작 항목에 기록된 이름과 이칭을 인도공작에 연결합니다. 다른 공작류 전체를 포함하는 목록은 아니며, 관상용 사육 자체를 가축화의 증거로 사용하지 않습니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 공작",
+          "url": "https://encykorea.aks.ac.kr/Article/E0004423"
+        }
+      ]
+    },
+    {
+      "id": "swan-common-tundra",
+      "entity_id": "swan-common",
+      "name": "백조",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Cygnus columbianus",
+      "search_terms": [
+        "백조"
+      ],
+      "note": "국내 백조류 자료에서 구분하는 고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "swan-common-whooper",
+      "entity_id": "swan-common",
+      "name": "백조",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Cygnus cygnus",
+      "search_terms": [
+        "백조"
+      ],
+      "note": "국내 백조류 자료에서 구분하는 큰고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "swan-common-mute",
+      "entity_id": "swan-common",
+      "name": "백조",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Cygnus olor",
+      "search_terms": [
+        "백조"
+      ],
+      "note": "국내 백조류 자료에서 구분하는 혹고니 후보입니다. 백조라는 이름을 하나의 종으로 자동 치환하지 않고, 자료에서 확인한 세 후보를 안내합니다. 전 세계 고니류의 완전한 목록은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백조(고니·큰고니·혹고니)",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022384"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "egret-common-great",
+      "entity_id": "egret-common",
+      "name": "백로",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Ardea alba",
+      "search_terms": [
+        "백로"
+      ],
+      "note": "흰 백로를 통칭하는 질문에서 중대백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백로",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+        },
+        {
+          "title": "국립생물자원관: 한국의 백로 번식지",
+          "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+        }
+      ]
+    },
+    {
+      "id": "egret-common-intermediate",
+      "entity_id": "egret-common",
+      "name": "백로",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Ardea intermedia",
+      "search_terms": [
+        "백로"
+      ],
+      "note": "흰 백로를 통칭하는 질문에서 중백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백로",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+        },
+        {
+          "title": "국립생물자원관: 한국의 백로 번식지",
+          "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+        }
+      ]
+    },
+    {
+      "id": "egret-common-little",
+      "entity_id": "egret-common",
+      "name": "백로",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Egretta garzetta",
+      "search_terms": [
+        "백로"
+      ],
+      "note": "흰 백로를 통칭하는 질문에서 쇠백로를 구분할 후보로 안내합니다. 이름 사용 근거와 국립생물자원관의 학명을 연결한 목록이며, 모든 백로과 종을 한 종으로 합치거나 전부 열거한 것은 아닙니다.",
+      "sources": [
+        {
+          "title": "한국학중앙연구원: 백로",
+          "url": "https://encykorea.aks.ac.kr/Article/E0022091"
+        },
+        {
+          "title": "국립생물자원관: 한국의 백로 번식지",
+          "url": "https://www.nibr.go.kr/aiibook/access/ecatalogt.jsp?Dir=1055&callmode=admin&catimage=&eclang=ko&start=14&um=s"
+        }
+      ]
+    },
+    {
+      "id": "korean-native-chicken",
+      "entity_id": "korean-native-chicken",
+      "name": "재래닭",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Gallus gallus",
+      "search_terms": [
+        "재래닭"
+      ],
+      "note": "국립축산과학원의 가축유전자원 자료에 기록된 사육 닭 이름입니다. 다른 토종닭·교배계와 동일한 품종으로 합치지 않고 가축 닭의 기원과 연결된 적색야계 자료를 안내합니다.",
+      "sources": [
+        {
+          "title": "국립축산과학원: 가축유전자원 보유 현황",
+          "url": "https://nias.go.kr/front/soboarddown.do?boardSeqNum=8003&cmCode=M091023193927309&fileSeqNum=3791"
+        },
+        {
+          "title": "Wang et al. (2020): Chicken domestication",
+          "url": "https://www.nature.com/articles/s41422-020-0349-y"
+        }
+      ]
+    },
+    {
+      "id": "goose-greylag",
+      "entity_id": "goose-domestic",
+      "name": "거위",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Anser anser",
+      "search_terms": [
+        "거위",
+        "집거위",
+        "가축거위"
+      ],
+      "note": "회색기러기(Anser anser)에서 유래한 가축 거위 계통을 안내합니다. 거위는 단일 기원이 아니며 개리 유래 계통과 동일한 거위 명칭을 공유합니다. 중국의 일리(Yili) 거위처럼 동양에도 회색기러기 유래 품종이 있고 품종 간 교잡이 존재합니다.",
+      "sources": [
+        {
+          "title": "FAO: Other poultry - Geese",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+        },
+        {
+          "title": "Chromosome-level genome and population genomics reveal evolutionary characteristics and conservation status of Chinese indigenous geese",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9640629/"
+        }
+      ]
+    },
+    {
+      "id": "goose-swan",
+      "entity_id": "goose-domestic",
+      "name": "거위",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Anser cygnoides",
+      "search_terms": [
+        "거위",
+        "집거위",
+        "가축거위"
+      ],
+      "note": "개리(Anser cygnoides)에서 유래한 가축 거위 계통을 안내합니다. 회색기러기 유래 계통과 같은 거위라는 이름을 공유하며 품종 간 교잡도 있습니다. 두 원종을 같은 종으로 합치지 않습니다.",
+      "sources": [
+        {
+          "title": "FAO: Other poultry - Geese",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+        },
+        {
+          "title": "Chromosome-level genome and population genomics reveal evolutionary characteristics and conservation status of Chinese indigenous geese",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9640629/"
+        }
+      ]
+    },
+    {
+      "id": "turkey-wild",
+      "entity_id": "turkey-domestic",
+      "name": "칠면조",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Meleagris gallopavo",
+      "search_terms": [
+        "칠면조",
+        "집칠면조",
+        "가축칠면조",
+        "Meleagris gallopavo domesticus"
+      ],
+      "note": "가축 칠면조의 원종인 북미·중앙아메리카의 들칠면조(Meleagris gallopavo)를 안내합니다. 메소아메리카 원주민에 의해 가축화된 후 16세기 유럽으로 전래되었습니다.",
+      "sources": [
+        {
+          "title": "FAO: Other poultry - Turkeys",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+        },
+        {
+          "title": "Earliest Mexican Turkeys (Meleagris gallopavo) in the Maya Region: Implications for Pre-Hispanic Animal Trade and the Timing of Turkey Domestication",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3414452/"
+        }
+      ]
+    },
+    {
+      "id": "quail-japanese",
+      "entity_id": "quail-domestic",
+      "name": "메추리",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Coturnix japonica",
+      "search_terms": [
+        "집메추리",
+        "가축메추리",
+        "사육메추리",
+        "메추리",
+        "Coturnix japonica domesticus"
+      ],
+      "note": "사육 메추리의 기원과 연결된 메추라기(Coturnix japonica)를 안내합니다. 유럽메추라기(Coturnix coturnix)와는 다른 종입니다. 메추리라는 질문이 야생 개체인지 가축형인지 구분하고, 선택 후 표시되는 야생종 자료를 가축형 특성으로 적용하지 않습니다.",
+      "sources": [
+        {
+          "title": "Genetic Divergence in Domestic Japanese Quail Inferred from Mitochondrial DNA D-Loop and Microsatellite Markers",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5249226/"
+        }
+      ]
+    },
+    {
+      "id": "guineafowl-helmeted",
+      "entity_id": "guineafowl-domestic",
+      "name": "뿔닭",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Numida meleagris",
+      "search_terms": [
+        "집뿔닭",
+        "가축뿔닭",
+        "사육뿔닭",
+        "뿔닭",
+        "Numida meleagris domesticus"
+      ],
+      "note": "서아프리카 원산의 뿔닭(Numida meleagris)에서 유래한 가금류입니다. '뿔닭'이라는 이름은 야생종과 사육 가축형 모두에 사용되므로 사육 가금과 야생 원종의 맥락을 구분합니다.",
+      "sources": [
+        {
+          "title": "FAO: Other poultry - Guinea fowl",
+          "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+        },
+        {
+          "title": "FAO: World Watch List for Domestic Animal Diversity, 3rd edition",
+          "url": "https://www.fao.org/docrep/pdf/009/x8750e/x8750e.pdf"
+        }
+      ]
+    },
+    {
+      "id": "canary-atlantic",
+      "entity_id": "canary-domestic",
+      "name": "카나리아",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Serinus canaria",
+      "search_terms": [
+        "사육카나리아",
+        "가축카나리아",
+        "카나리아",
+        "Serinus canaria domesticus"
+      ],
+      "note": "사육 카나리아와 야생 카나리아(Serinus canaria)의 관계를 안내합니다. 카나리아라는 이름은 두 맥락 모두에 쓰입니다. 붉은색 일부 계통은 다른 종과의 교잡 영향이 있어 모든 품종의 유전적 기원을 단일종으로 단정하지 않습니다.",
+      "sources": [
+        {
+          "title": "Genetic Basis for Red Coloration in Birds",
+          "url": "https://corbolab.wustl.edu/publications/Lopes2016.pdf"
+        },
+        {
+          "title": "IOC World Bird List: Finches",
+          "url": "https://www.worldbirdnames.org/new/bow/finches/"
+        }
+      ]
+    },
+    {
+      "id": "ringneck-dove-roseogrisea",
+      "entity_id": "ringneck-dove-domestic",
+      "name": "사육염주비둘기",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Streptopelia roseogrisea",
+      "search_terms": [
+        "사육염주비둘기",
+        "바바리비둘기",
+        "Streptopelia risoria"
+      ],
+      "note": "사육 바바리비둘기와 관련 야생종의 명명에는 분류 자료별 차이가 있습니다. ICZN의 risoria 명명 판단을 유지해 기록하되 프로젝트의 AviList v2025b에 수록된 Streptopelia roseogrisea에 연결합니다. 야생 염주비둘기나 흰 집비둘기를 이 가축형으로 자동 치환하지 않습니다.",
+      "sources": [
+        {
+          "title": "ICZN (2008): Opinion 2215 (Case 3380), Streptopelia risoria: priority maintained",
+          "url": "https://www.biotaxa.org/bzn/issue/download/5181/303"
+        },
+        {
+          "title": "AviList v2025b: accepted taxonomy",
+          "url": "https://www.avilist.org/checklist/v2025b/"
+        }
+      ]
+    },
+    {
+      "id": "parrot-budgerigar",
+      "entity_id": "parrot-common",
+      "name": "앵무새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Melopsittacus undulatus",
+      "search_terms": [
+        "앵무새",
+        "앵무"
+      ],
+      "note": "앵무새는 앵무과의 새를 통틀어 이르는 말입니다. 사랑앵무를 후보로 안내하며, 이 목록은 앵무류 전체가 아니라 출처로 확인한 일부입니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 앵무새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+        },
+        {
+          "title": "서울대공원 동물 보유현황: 사랑앵무",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1527"
+        }
+      ]
+    },
+    {
+      "id": "parrot-cockatiel",
+      "entity_id": "parrot-common",
+      "name": "앵무새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Nymphicus hollandicus",
+      "search_terms": [
+        "앵무새",
+        "앵무"
+      ],
+      "note": "앵무새라는 통칭에서 구분할 후보로 왕관앵무를 안내합니다. 이 목록은 출처로 확인한 일부이며 앵무류 전체가 아닙니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 앵무새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+        },
+        {
+          "title": "서울대공원 동물 보유현황: 왕관앵무(코커틸)",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=308"
+        }
+      ]
+    },
+    {
+      "id": "parrot-fischers-lovebird",
+      "entity_id": "parrot-common",
+      "name": "앵무새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Agapornis fischeri",
+      "search_terms": [
+        "앵무새",
+        "앵무"
+      ],
+      "note": "앵무새라는 통칭에서 구분할 후보로 붉은모란앵무를 안내합니다. ‘모란앵무’라는 이름은 여러 모란앵무속 새를 가리킬 수 있어 이 한 종으로 단정하지 않습니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 앵무새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%95%B5%EB%AC%B4%EC%83%88"
+        },
+        {
+          "title": "서울대공원 동물 보유현황: 붉은모란앵무",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1466"
+        }
+      ]
+    },
+    {
+      "id": "inko-budgerigar",
+      "entity_id": "inko-common",
+      "name": "잉꼬",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Melopsittacus undulatus",
+      "search_terms": [
+        "잉꼬"
+      ],
+      "note": "표준국어대사전은 잉꼬를 사랑앵무와 같은 말로도, 여러 앵무류를 통틀어 이르는 말로도 풀이합니다. 서울대공원은 잉꼬를 사랑앵무의 일본식 이름으로 소개합니다. 넓은 뜻의 잉꼬를 이 한 종으로 제한하지 않습니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 사랑앵무",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%82%AC%EB%9E%91%EC%95%B5%EB%AC%B4"
+        },
+        {
+          "title": "국립국어원 표준국어대사전: 잉꼬",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9E%89%EA%BC%AC"
+        },
+        {
+          "title": "서울대공원 동물 보유현황: 사랑앵무",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1527"
+        }
+      ]
+    },
+    {
+      "id": "cockatiel-loanword",
+      "entity_id": "cockatiel-loanword",
+      "name": "코커틸",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Nymphicus hollandicus",
+      "search_terms": [
+        "코커틸"
+      ],
+      "note": "서울대공원은 왕관앵무를 ‘왕관앵무(코커틸)’로 표기합니다. 코커틸은 영어 이름을 옮긴 말이며, 왕관앵무와 같은 종을 가리키는 이름으로 안내합니다.",
+      "sources": [
+        {
+          "title": "서울대공원 동물 보유현황: 왕관앵무(코커틸)",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=308"
+        }
+      ]
+    },
+    {
+      "id": "society-finch-white-rumped-munia",
+      "entity_id": "society-finch-domestic",
+      "name": "십자매",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Lonchura striata",
+      "search_terms": [
+        "십자매",
+        "Lonchura striata domestica"
+      ],
+      "note": "십자매는 사람이 기르며 개량한 가축화 계통으로, 연구는 야생종 흰허리문조(white-rumped munia)를 그 조상으로 다룹니다. 가축 계통과 야생 개체군의 정보를 구분합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 십자매",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%8B%AD%EC%9E%90%EB%A7%A4"
+        },
+        {
+          "title": "서울대공원 동물 보유현황: 십자매",
+          "url": "https://grandpark.seoul.go.kr/animal/animalView.do?lang=ko&menu_id=S001002002003&pageIndex=1&idx=1646"
+        },
+        {
+          "title": "Suzuki et al. (2021), bioRxiv: Effects of domestication on neophobia: the domesticated Bengalese finch (Lonchura striata var. domestica) and its wild ancestor, the white-rumped munia (Lonchura striata)",
+          "url": "https://www.biorxiv.org/content/10.1101/2021.03.23.436696.full.pdf"
+        }
+      ]
+    },
+    {
+      "id": "domestic-canary-old-names",
+      "entity_id": "canary-domestic-old-names",
+      "name": "금사조",
+      "entity_kind": "domestic_form",
+      "relation_type": "domesticated_from",
+      "scientific_name": "Serinus canaria",
+      "search_terms": [
+        "금사조",
+        "금사작",
+        "Serinus canaria domestica"
+      ],
+      "note": "표준국어대사전은 금사조·금사작을 관상용으로 기르는 카나리아의 다른 이름으로 올립니다. 사육 카나리아와 야생 카나리아 개체군의 정보를 구분합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 카나리아",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%B9%B4%EB%82%98%EB%A6%AC%EC%95%84"
+        },
+        {
+          "title": "Bovo et al. (2023), Animal Genetics: Whole genome sequencing identifies candidate genes and mutations that can explain diluted and other colour varieties of domestic canaries (Serinus canaria)",
+          "url": "https://doi.org/10.1111/age.13331"
+        }
+      ]
+    },
+    {
+      "id": "baepsae-vinous-throated-parrotbill",
+      "entity_id": "baepsae-alias",
+      "name": "뱁새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Suthora webbiana",
+      "search_terms": [
+        "뱁새"
+      ],
+      "note": "표준국어대사전은 뱁새를 붉은머리오목눈이와 같은 말로 풀이합니다. 국립생물자원관 조사 자료의 옛 학명(Paradoxornis webbianus)과 현재 분류 체계의 학명은 다를 수 있습니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 뱁새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B1%81%EC%83%88"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "sanbidulgi-oriental-turtle-dove",
+      "entity_id": "sanbidulgi-alias",
+      "name": "산비둘기",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Streptopelia orientalis",
+      "search_terms": [
+        "산비둘기"
+      ],
+      "note": "표준국어대사전은 산비둘기를 멧비둘기와 같은 말로 풀이합니다. 도시의 바위비둘기 계통 비둘기와는 다른 종입니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 산비둘기",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%82%B0%EB%B9%84%EB%91%98%EA%B8%B0"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "jongdalsae-eurasian-skylark",
+      "entity_id": "jongdalsae-alias",
+      "name": "종달새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Alauda arvensis",
+      "search_terms": [
+        "종달새"
+      ],
+      "note": "표준국어대사전은 종달새를 종다리와 같은 말로 풀이합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 종달새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%A2%85%EB%8B%AC%EC%83%88"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "pheasant-sex-terms",
+      "entity_id": "pheasant-sex-terms",
+      "name": "장끼·까투리",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Phasianus colchicus",
+      "search_terms": [
+        "장끼",
+        "까투리",
+        "수꿩",
+        "암꿩"
+      ],
+      "note": "장끼는 꿩의 수컷, 까투리는 꿩의 암컷을 이르는 말입니다. 종 이름이 아니라 암수를 가리키는 이름이므로 꿩의 수컷·암컷 차이를 구분해 확인합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 장끼",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9E%A5%EB%81%BC"
+        },
+        {
+          "title": "국립국어원 표준국어대사전: 까투리",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B9%8C%ED%88%AC%EB%A6%AC"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "owl-eared-eurasian-eagle-owl",
+      "entity_id": "eared-owl-common",
+      "name": "부엉이",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Bubo bubo",
+      "search_terms": [
+        "부엉이",
+        "부엉새"
+      ],
+      "note": "부엉이는 수리부엉이·칡부엉이·솔부엉이 등 올빼미과 여러 종을 통틀어 이르는 말입니다. 수리부엉이를 대표 후보로 안내하며, 이 목록은 부엉이류 전체가 아닙니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 부엉이",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B6%80%EC%97%89%EC%9D%B4"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "owl-eared-short-eared-owl",
+      "entity_id": "eared-owl-common",
+      "name": "부엉이",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Asio flammeus",
+      "search_terms": [
+        "부엉이",
+        "부엉새"
+      ],
+      "note": "부엉이라는 통칭에서 구분할 대표 후보로 쇠부엉이를 안내합니다. 올빼미·소쩍새는 각각 별도의 종 이름이므로 부엉이와 합치지 않습니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 부엉이",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B6%80%EC%97%89%EC%9D%B4"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "egret-chinese",
+      "entity_id": "egret-common",
+      "name": "백로",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Egretta eulophotes",
+      "search_terms": [
+        "백로"
+      ],
+      "note": "백로는 왜가리과 가운데 몸빛이 흰 새를 통틀어 이르는 말입니다. 이름에 백로가 들어간 국내 기록 종 가운데 노랑부리백로를 후보로 안내하며, 이 목록은 백로류 전체가 아닙니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 백로",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%B0%B1%EB%A1%9C"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "wagtail-japanese",
+      "entity_id": "wagtail-common",
+      "name": "할미새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Motacilla grandis",
+      "search_terms": [
+        "할미새"
+      ],
+      "note": "할미새는 검은등할미새·노랑할미새·알락할미새 등을 통틀어 이르는 말입니다. 검은등할미새를 후보로 안내하며, 이 목록은 할미새류 전체가 아닙니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 할미새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "wagtail-grey",
+      "entity_id": "wagtail-common",
+      "name": "할미새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Motacilla cinerea",
+      "search_terms": [
+        "할미새"
+      ],
+      "note": "할미새라는 통칭에서 구분할 후보로 노랑할미새를 안내합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 할미새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "wagtail-white",
+      "entity_id": "wagtail-common",
+      "name": "할미새",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Motacilla alba",
+      "search_terms": [
+        "할미새"
+      ],
+      "note": "할미새라는 통칭에서 구분할 후보로 알락할미새·백할미새가 속한 종을 안내합니다. 국립생물자원관 조사 자료는 두 이름을 같은 종의 서로 다른 아종으로 기록합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 할미새",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%95%A0%EB%AF%B8%EC%83%88"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "woodpecker-great-spotted",
+      "entity_id": "woodpecker-common",
+      "name": "딱따구리",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Dendrocopos major",
+      "search_terms": [
+        "딱따구리"
+      ],
+      "note": "딱따구리는 딱따구리과의 새를 통틀어 이르는 말입니다. 오색딱따구리를 후보로 안내하며, 이 목록은 딱따구리류 전체가 아닙니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 딱따구리",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%94%B1%EB%94%B0%EA%B5%AC%EB%A6%AC"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
+        }
+      ]
+    },
+    {
+      "id": "woodpecker-grey-headed",
+      "entity_id": "woodpecker-common",
+      "name": "딱따구리",
+      "entity_kind": "common_name",
+      "relation_type": "common_usage",
+      "scientific_name": "Picus canus",
+      "search_terms": [
+        "딱따구리"
+      ],
+      "note": "딱따구리라는 통칭에서 구분할 후보로 청딱따구리를 안내합니다.",
+      "sources": [
+        {
+          "title": "국립국어원 표준국어대사전: 딱따구리",
+          "url": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%94%B1%EB%94%B0%EA%B5%AC%EB%A6%AC"
+        },
+        {
+          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
+          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
         }
       ]
     }

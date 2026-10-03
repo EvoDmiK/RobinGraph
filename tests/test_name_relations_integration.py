@@ -74,13 +74,20 @@ class NameRelationsIntegrationTest(unittest.TestCase):
         self.assertIn("Already active", repeated.stdout)
         self.assertEqual(version, self.store.pipeline_state_version(PIPELINE))
         client = TestClient(create_app(name_relations_handler=self.reader.for_name))
-        for term in ("비둘기", "까마귀", "닭", "집오리"):
+        # Verify every reviewed name usage, not just the original four examples.
+        terms = sorted({r["search_terms"][0] for r in self.manifest["records"]})
+        for term in terms:
             result = self.reader.for_name(term)
             self.assertTrue(result["is_search_term"])
-            self.assertGreater(len(result["relations"]), 0)
+            expected = {r["scientific_name"] for r in self.manifest["records"] if term in r["search_terms"]}
+            self.assertEqual(expected, {r["taxon"]["scientific_name"] for r in result["relations"]})
             answer = client.post("/v1/chat", json={"question": term+"에 대해 알려줘"}).json()
-            self.assertEqual("name_relations", answer["result"]["kind"])
+            self.assertEqual("name_relations", answer["result"]["kind"], term)
             self.assertEqual("clarify", answer["disposition"])
+        for record in self.manifest["records"]:
+            for term in record["search_terms"]:
+                result = self.reader.for_name(term)
+                self.assertIn(record["scientific_name"], {r["taxon"]["scientific_name"] for r in result["relations"]})
         self.assertFalse(self.reader.for_name("Gallus gallus")["is_search_term"])
         self.assertGreater(len(self.reader.for_name("Gallus gallus")["relations"]), 0)
         # Losing one candidate edge must fail the whole ambiguous lookup.

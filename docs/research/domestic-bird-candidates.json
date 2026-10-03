@@ -1,0 +1,172 @@
+[
+  {
+    "id": "goose-greylag",
+    "entity_id": "goose-domestic",
+    "name": "거위",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Anser anser",
+    "search_terms": [
+      "거위",
+      "집거위",
+      "가축거위"
+    ],
+    "note": "회색기러기(Anser anser)에서 유래한 가축 거위 계통을 안내합니다. 거위는 단일 기원이 아니며 개리 유래 계통과 동일한 거위 명칭을 공유합니다. 중국의 일리(Yili) 거위처럼 동양에도 회색기러기 유래 품종이 있고 품종 간 교잡이 존재합니다.",
+    "sources": [
+      {
+        "title": "FAO: Other poultry - Geese",
+        "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+      },
+      {
+        "title": "Chromosome-level genome and population genomics reveal evolutionary characteristics and conservation status of Chinese indigenous geese",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9640629/"
+      }
+    ]
+  },
+  {
+    "id": "goose-swan",
+    "entity_id": "goose-domestic",
+    "name": "거위",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Anser cygnoides",
+    "search_terms": [
+      "거위",
+      "집거위",
+      "가축거위"
+    ],
+    "note": "개리(Anser cygnoides)에서 유래한 가축 거위 계통을 안내합니다. 회색기러기 유래 계통과 같은 거위라는 이름을 공유하며 품종 간 교잡도 있습니다. 두 원종을 같은 종으로 합치지 않습니다.",
+    "sources": [
+      {
+        "title": "FAO: Other poultry - Geese",
+        "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+      },
+      {
+        "title": "Chromosome-level genome and population genomics reveal evolutionary characteristics and conservation status of Chinese indigenous geese",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9640629/"
+      }
+    ]
+  },
+  {
+    "id": "turkey-wild",
+    "entity_id": "turkey-domestic",
+    "name": "칠면조",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Meleagris gallopavo",
+    "search_terms": [
+      "칠면조",
+      "집칠면조",
+      "가축칠면조",
+      "Meleagris gallopavo domesticus"
+    ],
+    "note": "가축 칠면조의 원종인 북미·중앙아메리카의 들칠면조(Meleagris gallopavo)를 안내합니다. 메소아메리카 원주민에 의해 가축화된 후 16세기 유럽으로 전래되었습니다.",
+    "sources": [
+      {
+        "title": "FAO: Other poultry - Turkeys",
+        "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+      },
+      {
+        "title": "Earliest Mexican Turkeys (Meleagris gallopavo) in the Maya Region: Implications for Pre-Hispanic Animal Trade and the Timing of Turkey Domestication",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3414452/"
+      }
+    ]
+  },
+  {
+    "id": "quail-japanese",
+    "entity_id": "quail-domestic",
+    "name": "메추리",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Coturnix japonica",
+    "search_terms": [
+      "집메추리",
+      "가축메추리",
+      "사육메추리",
+      "메추리",
+      "Coturnix japonica domesticus"
+    ],
+    "note": "사육 메추리의 기원과 연결된 메추라기(Coturnix japonica)를 안내합니다. 유럽메추라기(Coturnix coturnix)와는 다른 종입니다. 메추리라는 질문이 야생 개체인지 가축형인지 구분하고, 선택 후 표시되는 야생종 자료를 가축형 특성으로 적용하지 않습니다.",
+    "sources": [
+      {
+        "title": "Genetic Divergence in Domestic Japanese Quail Inferred from Mitochondrial DNA D-Loop and Microsatellite Markers",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5249226/"
+      }
+    ]
+  },
+  {
+    "id": "guineafowl-helmeted",
+    "entity_id": "guineafowl-domestic",
+    "name": "뿔닭",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Numida meleagris",
+    "search_terms": [
+      "집뿔닭",
+      "가축뿔닭",
+      "사육뿔닭",
+      "뿔닭",
+      "Numida meleagris domesticus"
+    ],
+    "note": "서아프리카 원산의 뿔닭(Numida meleagris)에서 유래한 가금류입니다. '뿔닭'이라는 이름은 야생종과 사육 가축형 모두에 사용되므로 사육 가금과 야생 원종의 맥락을 구분합니다.",
+    "sources": [
+      {
+        "title": "FAO: Other poultry - Guinea fowl",
+        "url": "https://www.fao.org/poultry-production-products/production/poultry-species/other-species/en"
+      },
+      {
+        "title": "FAO: World Watch List for Domestic Animal Diversity, 3rd edition",
+        "url": "https://www.fao.org/docrep/pdf/009/x8750e/x8750e.pdf"
+      }
+    ]
+  },
+  {
+    "id": "canary-atlantic",
+    "entity_id": "canary-domestic",
+    "name": "카나리아",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Serinus canaria",
+    "search_terms": [
+      "사육카나리아",
+      "가축카나리아",
+      "카나리아",
+      "Serinus canaria domesticus"
+    ],
+    "note": "사육 카나리아와 야생 카나리아(Serinus canaria)의 관계를 안내합니다. 카나리아라는 이름은 두 맥락 모두에 쓰입니다. 붉은색 일부 계통은 다른 종과의 교잡 영향이 있어 모든 품종의 유전적 기원을 단일종으로 단정하지 않습니다.",
+    "sources": [
+      {
+        "title": "Genetic Basis for Red Coloration in Birds",
+        "url": "https://corbolab.wustl.edu/publications/Lopes2016.pdf"
+      },
+      {
+        "title": "IOC World Bird List: Finches",
+        "url": "https://www.worldbirdnames.org/new/bow/finches/"
+      }
+    ]
+  },
+  {
+    "id": "ringneck-dove-roseogrisea",
+    "entity_id": "ringneck-dove-domestic",
+    "name": "사육염주비둘기",
+    "entity_kind": "domestic_form",
+    "relation_type": "domesticated_from",
+    "scientific_name": "Streptopelia roseogrisea",
+    "search_terms": [
+      "사육염주비둘기",
+      "바바리비둘기",
+      "Streptopelia risoria"
+    ],
+    "note": "사육 바바리비둘기와 관련 야생종의 명명에는 분류 자료별 차이가 있습니다. ICZN의 risoria 명명 판단을 유지해 기록하되 프로젝트의 AviList v2025b에 수록된 Streptopelia roseogrisea에 연결합니다. 야생 염주비둘기나 흰 집비둘기를 이 가축형으로 자동 치환하지 않습니다.",
+    "sources": [
+      {
+        "title": "ICZN (2008): Opinion 2215 (Case 3380), Streptopelia risoria: priority maintained",
+        "url": "https://www.biotaxa.org/bzn/issue/download/5181/303"
+      },
+      {
+        "title": "AviList v2025b: accepted taxonomy",
+        "url": "https://www.avilist.org/checklist/v2025b/"
+      }
+    ]
+  }
+]
