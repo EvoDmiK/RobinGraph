@@ -140,6 +140,7 @@ ALLOW_FILES = frozenset(
         "scripts/load_name_relations.py",
         "docs/name-relations.md",
         "docs/subspecies-cards.md",
+        "docs/ecological-relations.md",
         "docs/graph-exploration-expansion.md",
         "docs/research/rg006-nocturnal-diagnosis.md",
         "docs/name-relations-research.md",
