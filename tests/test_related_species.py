@@ -45,8 +45,9 @@ class RelatedSpeciesTest(unittest.TestCase):
         self.assertIn('peer.id <> $target_id', RELATED_QUERY)
         self.assertIn("name.name =~ '.*[가-힣].*'", RELATED_QUERY)
         self.assertLess(RELATED_QUERY.index('name.dataset_id=$korean_dataset_id'), RELATED_QUERY.index('LIMIT 13'))
-        self.assertNotIn('OPTIONAL MATCH', RELATED_QUERY)
-        self.assertEqual('korean_names_only', result['name_filter'])
+        self.assertIn("english.dataset_id=peer.dataset_id AND english.source_release=peer.source_release", RELATED_QUERY)
+        self.assertIn("node.policy_status='allowed' AND node.source_release=$taxonomy_release", RELATED_QUERY)
+        self.assertEqual('licensed_names', result['name_filter'])
         self.assertTrue(all(item['korean_name'] for item in genus['items']))
 
     def test_missing_species_and_revoked_or_invalid_provenance_fail_closed(self):
@@ -59,6 +60,16 @@ class RelatedSpeciesTest(unittest.TestCase):
             repo._run.return_value = sources
             with self.assertRaises(ValueError):
                 related_species(repo, lambda _: LINEAGE, 'mallard')
+
+    def test_peer_without_korean_name_retains_licensed_english_name(self):
+        repo=Mock()
+        row=peer(1)
+        row['taxon'].update(korean_name=None,english_name='English bird')
+        repo._run.side_effect=[[SOURCE],[row],[]]
+        result=related_species(repo,lambda _:LINEAGE,'mallard')
+        item=result['groups'][0]['items'][0]
+        self.assertIsNone(item['korean_name'])
+        self.assertEqual('English bird',item['english_name'])
 
     def test_endpoint_validation_and_safe_outage(self):
         handler = Mock(return_value={'groups':[]})

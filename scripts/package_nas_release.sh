@@ -141,6 +141,7 @@ ALLOW_FILES = frozenset(
         "docs/name-relations.md",
         "docs/subspecies-cards.md",
         "docs/ecological-relations.md",
+        "docs/species-questions.md",
         "docs/graph-exploration-expansion.md",
         "docs/research/rg006-nocturnal-diagnosis.md",
         "docs/name-relations-research.md",
