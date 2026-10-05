@@ -880,11 +880,14 @@
           : peerName + " 비교 자료를 불러오지 못했습니다. 다시 눌러 재시도하세요.";
       });
     }
-    open.addEventListener("click", function () {
+    var initialData = options.initialData;
+    function toggle() {
       content.hidden = !content.hidden; open.setAttribute("aria-expanded", String(!content.hidden));
       if (content.hidden || loaded) { return; }
       loaded = true; status.textContent = "분류 관계를 조회하는 중입니다.";
-      fetchJson("/v1/taxa/related", profile.taxon.scientific_name).then(function (data) {
+      var request = initialData ? Promise.resolve(initialData) : fetchJson("/v1/taxa/related", profile.taxon.scientific_name);
+      initialData = null;
+      request.then(function (data) {
         if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
         if (!active()) { return; }
         while (results.firstChild) { results.removeChild(results.firstChild); }
@@ -895,17 +898,17 @@
           var title = doc.createElement("h3");
           title.textContent = group.label + (group.ancestor ? " · " + (group.ancestor.korean_name || group.ancestor.scientific_name) : ""); block.appendChild(title);
           var peers = (Array.isArray(group.items) ? group.items : []).filter(function (peer) {
-            return peer && typeof peer.korean_name === "string" && /[가-힣]/.test(peer.korean_name);
+            return peer && peer.taxon_id && typeof peer.scientific_name === "string" && peer.scientific_name.trim();
           });
           if (!peers.length) {
-            var empty = doc.createElement("p"); empty.textContent = "현재 분류 자료에서 한국어 이름이 확인된 다른 종이 없습니다."; block.appendChild(empty);
+            var empty = doc.createElement("p"); empty.textContent = "현재 분류 자료에서 이름이 확인된 다른 종이 없습니다."; block.appendChild(empty);
           }
           peers.slice(0, 12).forEach(function (peer) {
             var button = doc.createElement("button"); button.type = "button";
-            button.textContent = peer.korean_name + " · 비교하기";
+            button.textContent = speciesLabel(peer) + " · 비교하기";
             button.addEventListener("click", function () { selectPeer(peer, group, button); }); block.appendChild(button);
           });
-          if (group.has_more) { var more = doc.createElement("p"); more.textContent = "한국어 이름순으로 최대 12종을 표시합니다."; block.appendChild(more); }
+          if (group.has_more) { var more = doc.createElement("p"); more.textContent = "이름이 확인된 종 중 최대 12종을 표시합니다."; block.appendChild(more); }
           var source = doc.createElement("details");
           var summary = doc.createElement("summary"); summary.textContent = "분류 관계의 출처"; source.appendChild(summary);
           source.appendChild(safeLink(doc, group.source_name || data.taxonomy_source, group.source_url));
@@ -914,9 +917,12 @@
         });
         status.textContent = "비교할 새를 선택하세요.";
       }).catch(function () {
-        loaded = false; status.textContent = "분류 관계를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
+        loaded = false; if (!active()) { return; }
+        status.textContent = "분류 관계를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
       });
-    });
+    }
+    open.addEventListener("click", toggle);
+    if (options.initiallyOpen) { toggle(); }
     return section;
   }
 
@@ -1008,11 +1014,14 @@
           : peerName + " 비교 자료를 불러오지 못했습니다. 다시 눌러 재시도하세요.";
       });
     }
-    open.addEventListener("click", function () {
+    var initialData = options.initialData;
+    function toggle() {
       content.hidden = !content.hidden; open.setAttribute("aria-expanded", String(!content.hidden));
       if (content.hidden || loaded) { return; }
       loaded = true; status.textContent = "생태 범주를 조회하는 중입니다.";
-      fetchJson("/v1/taxa/ecological-related", profile.taxon.scientific_name).then(function (data) {
+      var request = initialData ? Promise.resolve(initialData) : fetchJson("/v1/taxa/ecological-related", profile.taxon.scientific_name);
+      initialData = null;
+      request.then(function (data) {
         if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
         if (!active()) { return; }
         while (results.firstChild) { results.removeChild(results.firstChild); }
@@ -1048,7 +1057,9 @@
         loaded = false; if (!active()) { return; }
         status.textContent = error && error.message === "changed" ? "분류 자료가 갱신되었습니다. 질문을 다시 보내 최신 생태 범주를 확인하세요." : "생태 범주를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
       });
-    });
+    }
+    open.addEventListener("click", toggle);
+    if (options.initiallyOpen) { toggle(); }
     return section;
   }
 
@@ -2019,6 +2030,42 @@
    * habitat name, and the validated red-list badge. The prose explanation
    * itself is the server's `answer_text` (built from `profile.summary`).
    */
+  function buildQuestionAnswer(doc, questionAnswer) {
+    if (!questionAnswer || ["diet", "habitat", "activity", "appearance", "related", "ecological_related"].indexOf(questionAnswer.topic) === -1) { return null; }
+    var section = doc.createElement("section"); section.className = "species-question-answer";
+    var title = doc.createElement("h3"); title.textContent = typeof questionAnswer.title === "string" ? questionAnswer.title : "질문에 대한 답변"; section.appendChild(title);
+    var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
+    var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
+    (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
+      if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
+      var item = doc.createElement("li");
+      var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
+      if (typeof fact.source_name === "string" && fact.source_name.trim()) { item.appendChild(safeLink(doc, " · " + fact.source_name, fact.source_url)); }
+      facts.appendChild(item);
+    });
+    if (facts.children.length) { section.appendChild(facts); }
+    var context = questionAnswer.name_context;
+    if (isNameRelationsPayload(context)) {
+      var aliases = doc.createElement("details"); aliases.className = "question-answer-name-context";
+      var aliasHeading = doc.createElement("summary"); aliasHeading.textContent = "통칭 연결과 출처"; aliases.appendChild(aliasHeading);
+      if (typeof context.summary === "string") { var aliasSummary = doc.createElement("p"); aliasSummary.textContent = context.summary; aliases.appendChild(aliasSummary); }
+      context.relations.forEach(function (relation) {
+        if (!relation || typeof relation.name !== "string") { return; }
+        var relationship = doc.createElement("p");
+        relationship.textContent = relation.name + " · " + (relation.relation_label || "이름 관계") + (relation.taxon ? " · " + speciesLabel(relation.taxon) : "");
+        aliases.appendChild(relationship);
+        if (typeof relation.note === "string") { var aliasNote = doc.createElement("p"); aliasNote.textContent = relation.note; aliases.appendChild(aliasNote); }
+        (Array.isArray(relation.sources) ? relation.sources : []).forEach(function (source) {
+          if (!source || typeof source.title !== "string") { return; }
+          aliases.appendChild(safeLink(doc, source.title, source.url));
+        });
+      });
+      section.appendChild(aliases);
+    }
+
+    return section;
+  }
+
   function buildSpeciesAnswer(doc, profile) {
     if (!profile || !Array.isArray(profile.sections) || !profile.sections.length) { return null; }
     var answer = doc.createElement("div");
@@ -2293,7 +2340,9 @@
       badge.textContent = dispositionInfo.label;
       item.appendChild(badge);
 
-      var structured = answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile) : null;
+      var questionAnswer = answer.result && answer.result.kind === "profile" && answer.result.question_answer;
+      var targeted = buildQuestionAnswer(doc, questionAnswer);
+      var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile) : null);
       if (structured) {
         item.appendChild(structured);
       } else {
@@ -2353,11 +2402,20 @@
       if (result && result.kind === "profile") {
         var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
         if (speciesCard) {
-          if (result.profile.taxon.rank !== "subspecies") { (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, { onComparison: appendComparisonMessage, isActive: conversationGuard() })); (structured || item).appendChild(buildEcologicalExplorer(doc, result.profile, taxaFetch, { onComparison: appendComparisonMessage, isActive: conversationGuard() })); }
+          if (result.profile.taxon.rank !== "subspecies") {
+            var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
+            var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
+            if (targeted && questionAnswer.relations) {
+              var directOptions = questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null;
+              if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
+            }
+            (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions));
+            (structured || item).appendChild(buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions));
+          }
           if (result.profile.taxon.rank !== "subspecies") { (structured || item).appendChild(buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
           else { (structured || item).appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
           (structured || item).appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
-          item.appendChild(buildSpeciesBrief(doc, result.profile));
+          if (!targeted) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
         }
       }
@@ -2655,6 +2713,7 @@
     habitatEmblemInfo: habitatEmblemInfo,
     dietIconInfo: dietIconInfo,
     buildSpeciesAnswer: buildSpeciesAnswer,
+    buildQuestionAnswer: buildQuestionAnswer,
     conservationInfo: conservationInfo,
     photoAvailabilityInfo: photoAvailabilityInfo,
     init: init,

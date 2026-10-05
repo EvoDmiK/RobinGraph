@@ -12,25 +12,30 @@ RETURN concept.snapshot_uri AS source_url, concept.title AS source_name
 
 RELATED_QUERY = """
 MATCH (concept:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
-MATCH (parent:Taxon:BirdTaxon {id:$parent_id, rank:$rank})-[:IN_CONCEPT_SET]->(concept)
-MATCH path=(parent)-[:PARENT_OF*1..2]->(peer:Taxon:BirdTaxon {rank:'species'})
+MATCH (parent:Taxon:BirdTaxon {id:$parent_id, rank:$rank, source_release:$taxonomy_release, policy_status:'allowed'})-[:IN_CONCEPT_SET]->(concept)
+MATCH path=(parent)-[:PARENT_OF*1..2]->(peer:Taxon:BirdTaxon {rank:'species', source_release:$taxonomy_release, policy_status:'allowed'})
 WHERE peer.id <> $target_id
   AND all(link IN relationships(path) WHERE link.concept_set_id=$concept_set_id)
-  AND all(node IN nodes(path) WHERE node:Taxon AND node:BirdTaxon
+  AND all(node IN nodes(path) WHERE node:Taxon AND node:BirdTaxon AND node.policy_status='allowed' AND node.source_release=$taxonomy_release
       AND EXISTS { MATCH (node)-[:IN_CONCEPT_SET]->(concept) })
   AND ($excluded_genus IS NULL OR NOT EXISTS {
       MATCH (genus:Taxon:BirdTaxon {id:$excluded_genus})-[r:PARENT_OF]->(peer)
       WHERE r.concept_set_id=$concept_set_id
   })
 WITH DISTINCT concept, peer
-MATCH (peer)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'ko', policy_status:'allowed'})
+OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'ko', policy_status:'allowed'})
 WHERE name.dataset_id=$korean_dataset_id AND name.name =~ '.*[가-힣].*'
-WITH concept, peer, name ORDER BY name.name, name.id
-WITH concept, peer, head(collect(name)) AS chosen
+WITH concept,peer,name ORDER BY name.name,name.id
+WITH concept,peer,head(collect(name)) AS chosen
+OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(english:VernacularName {language:'en',policy_status:'allowed',status:'source-preferred'})
+WHERE english.dataset_id=peer.dataset_id AND english.source_release=peer.source_release
+WITH concept,peer,chosen,min(english.name) AS english_name
 RETURN {taxon_id:peer.id, rank:peer.rank, scientific_name:peer.scientific_name,
-        authority:peer.authority, korean_name:chosen.name, korean_name_status:chosen.status} AS taxon,
+        authority:peer.authority, korean_name:chosen.name, korean_name_status:chosen.status,
+        english_name:english_name} AS taxon,
        concept.snapshot_uri AS source_url, concept.title AS source_name
-ORDER BY chosen.name, peer.scientific_name, peer.id
+ORDER BY CASE WHEN chosen.name IS NULL THEN 1 ELSE 0 END,
+         coalesce(chosen.name,english_name,peer.scientific_name),peer.id
 LIMIT 13
 """
 
@@ -65,5 +70,5 @@ def related_species(repository, resolve, name):
                        'source_url':source['source_url'], 'source_name':source['source_name']})
     return {'taxon':asdict(target), 'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release, 'concept_set_id':lineage.concept_set_id,
-            'groups':groups, 'name_filter':'korean_names_only',
-            'note':'한국어 이름이 확인된 종만 표시합니다. 같은 속·과에 속한다는 분류 관계입니다. 진화적 거리나 계통상 가장 가까운 종을 뜻하지 않습니다.'}
+            'groups':groups, 'name_filter':'licensed_names',
+            'note':'한국어 이름을 우선하며 없으면 영어 이름을 표시합니다. 같은 속·과에 속한다는 분류 관계입니다. 진화적 거리나 계통상 가장 가까운 종을 뜻하지 않습니다.'}

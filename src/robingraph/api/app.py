@@ -36,6 +36,7 @@ from ..retrieval.operational import (
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.species_profile import SpeciesNotFoundError, species_summary
+from ..retrieval.species_questions import parse_species_question, focused_answer
 from ..retrieval.name_relations import reviewed_search_terms
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
@@ -309,6 +310,7 @@ class ChatTaxonomyResult(_ChatModel):
 class ChatSpeciesResult(_ChatModel):
     kind: Literal["profile"] = "profile"
     profile: dict | None
+    question_answer: dict | None = None
 
 
 class ChatObservationsResult(_ChatModel):
@@ -952,7 +954,20 @@ def create_app(
         or provider outage cannot affect established operational workflows.
         """
 
-        recognized = _species_chat_question(request.question) if request.intent == "auto" else None
+        species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
+        recognized = ("profile", species_question.name) if species_question else _species_chat_question(request.question) if request.intent == "auto" else None
+        focused_name = None
+        name_context = None
+        if species_question and request.filters is not None and (
+                not isinstance(request.filters, ProfileChatFilters)
+                or request.filters.name is not None
+                and request.filters.name.strip().casefold() != species_question.name.casefold()):
+            return ChatResponse(
+                selected_intent="profile", route_method="deterministic" if request.intent=="auto" else "explicit",
+                disposition="clarify", answer_text="질문의 종 이름과 조회 필터가 다릅니다. 같은 종 이름으로 다시 질문해 주세요.",
+                warnings=["다른 종의 자료로 질문에 답하지 않았습니다."],
+                result=ChatClarifyResult(prompt="질문과 필터의 종 이름을 맞춰 주세요."),
+            )
         # A reviewed common-name graph takes precedence over semantic routing,
         # but never over explicit evidence/observation or scientific-name filters.
         relation_question = recognized or _species_chat_question(request.question)
@@ -984,12 +999,16 @@ def create_app(
                 relations=relationships["relations"]
                 targets={r.get("taxon",{}).get("taxon_id") for r in relations}
                 single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
-                return ChatResponse(
-                    selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile", route_method="deterministic" if request.intent == "auto" else "explicit",
-                    disposition="answer" if single_common else "clarify", answer_text=relationships["summary"], warnings=[],
-                    result=ChatNameRelationsResult(relationships=relationships),
-                )
-            if relation_name.strip().lower() in reviewed_search_terms():
+                if single_common and species_question:
+                    focused_name = relations[0]["taxon"]["scientific_name"]
+                    name_context = relationships
+                else:
+                    return ChatResponse(
+                        selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                        disposition="answer" if single_common else "clarify", answer_text=relationships["summary"], warnings=[],
+                        result=ChatNameRelationsResult(relationships=relationships),
+                    )
+            if not focused_name and relation_name.strip().lower() in reviewed_search_terms():
                 return ChatResponse(
                     selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
                     disposition="abstain", answer_text="이 이름의 검토된 관계를 현재 조회할 수 없습니다. 관련 종을 임의로 선택하지 않았습니다.",
@@ -1032,7 +1051,7 @@ def create_app(
 
         if selected == "profile":
             filters = request.filters if isinstance(request.filters, ProfileChatFilters) else None
-            name = (filters.name if filters and filters.name is not None else recognized[1] if recognized else request.question).strip()
+            name = (focused_name or (filters.name if filters and filters.name is not None else recognized[1] if recognized else request.question)).strip()
             if species_profile_handler is None:
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
@@ -1055,6 +1074,46 @@ def create_app(
                     answer_text="종 정보를 현재 조회할 수 없습니다.",
                     warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
                     result=ChatSpeciesResult(profile=None),
+                )
+            if species_question:
+                if name_context is not None:
+                    lineage = profile.get("lineage") or {}
+                    expected = name_context["relations"][0]["taxon"]
+                    if (profile.get("taxon",{}).get("taxon_id") != expected.get("taxon_id")
+                            or lineage.get("concept_set_id") != name_context.get("concept_set_id")
+                            or lineage.get("taxonomy_release") != name_context.get("taxonomy_release")):
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="abstain",
+                            answer_text="이름 관계와 종 자료의 분류판이 달라 현재 답변을 제공하지 않았습니다. 다시 질문해 주세요.",
+                            warnings=["종의 식별자·활성 분류판을 다시 확인해야 합니다."],
+                            result=ChatSpeciesResult(profile=None),
+                        )
+                relations = None
+                if species_question.topic in ("related", "ecological_related"):
+                    handler = related_species_handler if species_question.topic == "related" else ecological_relations_handler
+                    try:
+                        if handler is None:
+                            raise ValueError("Relation lookup unavailable")
+                        relations = handler(name)
+                        lineage = profile.get("lineage") or {}
+                        if (relations.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
+                                or relations.get("concept_set_id") != lineage.get("concept_set_id")
+                                or relations.get("taxonomy_release") != lineage.get("taxonomy_release")):
+                            raise ValueError("Relation context changed")
+                        if species_question.category:
+                            relations = {**relations, "groups":[g for g in relations.get("groups",[]) if g.get("relation" if species_question.topic=="ecological_related" else "rank")==species_question.category]}
+                    except Exception:
+                        relations = None
+                answer, supported = focused_answer(profile, species_question, relations)
+                if name_context is not None:
+                    answer["name_context"] = name_context
+                    answer["text"] = name_context["summary"] + " " + answer["text"]
+                return ChatResponse(
+                    selected_intent=selected, route_method=method,
+                    disposition="answer" if supported else "abstain",
+                    answer_text=answer["text"] + ("\n" + "\n".join(item["text"] for item in answer["items"]) if answer["items"] else ""),
+                    warnings=profile.get("warnings", []),
+                    result=ChatSpeciesResult(profile=profile, question_answer=answer),
                 )
             summary = profile.get("summary")
             if not isinstance(summary, str) or not summary.strip():

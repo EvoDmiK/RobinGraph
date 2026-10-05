@@ -1677,7 +1677,7 @@ test("related explorer loads lazily, toggles, compares attributed values and rej
   assert.equal(explorer.children[1].hidden, true);
   explorer.children[0].dispatch("click");
   assert.equal(calls.length, 1);
-  assert.equal(collectAllNodes(explorer).some(n => n.textContent === "Anas unknown · 비교하기"), false);
+  assert.equal(collectAllNodes(explorer).some(n => n.textContent === "Anas unknown · 비교하기"), true);
   const choose = collectAllNodes(explorer).find(n => n.textContent === "고방오리 · 비교하기");
   choose.dispatch("click");
   await new Promise(resolve => setImmediate(resolve));
@@ -2699,4 +2699,71 @@ test("ecological peer comparison rejects changed IDs/releases and ignores late r
   active = false;
   collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click"); await tick();
   assert.equal(callbacks, 0);
+});
+
+test("targeted diet answer appears first with sources and keeps the card without unrelated full sections", async () => {
+  const payload = fakeProfilePayload();
+  payload.result.question_answer = { topic: "diet", title: "무엇을 먹나요?", text: "검토된 자료에서 잡식으로 분류됩니다.", items: [{ text: "씨앗과 무척추동물", source_name: "Reviewed diet", source_url: "https://example.org/diet" }, { text: "<script>inert fact</script>", source_name: "Unsafe", source_url: "javascript:alert(1)" }] };
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리는 뭘 먹어?";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const targeted = answer.children.find(n => n.className === "species-question-answer");
+  assert.ok(targeted);
+  assert.equal(targeted.children[0].textContent, "무엇을 먹나요?");
+  assert.match(collectedText(targeted), /씨앗과 무척추동물/);
+  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 1);
+  assert.equal(collectAllNodes(targeted).some(n => n.tagName === "script"), false);
+  assert.equal(collectAllNodes(answer).some(n => n.className === "species-answer"), false);
+  assert.ok(collectAllNodes(answer).some(n => n.className === "species-popup-trigger risk-unconfirmed" || /^species-popup-trigger /.test(n.className || "")));
+});
+
+test("direct ecological answer displays peers without another lookup and comparison creates a separate answer", async () => {
+  const payload = fakeProfilePayload();
+  payload.result.question_answer = { topic: "ecological_related", title: "같은 생태 범주의 새", text: "같은 자료의 서식 환경을 기준으로 찾았습니다.", items: [], relations: ecologicalFixture() };
+  const peer = profileFor(ecologicalFixture().groups[0].items[0]);
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : url.startsWith("/v1/taxa/profile") ? peer : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리와 같은 서식 환경의 새는?";
+  pressKey(dom, {}); await settleEventPath(); await tick();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const explorer = collectAllNodes(answer).find(n => n.className === "species-ecological-related");
+  assert.equal(explorer.children[1].hidden, false);
+  assert.match(collectedText(explorer), /English peer · 비교하기/);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/ecological-related")), false);
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click"); await tick();
+  assert.equal(messageRows(dom.elementsById.history).length, 3);
+  assert.equal(collectAllNodes(messageRows(dom.elementsById.history)[2]).filter(n => n.tagName === "dialog").length, 2);
+  assert.match(collectedText(answer), /English peer · 비교하기/);
+});
+
+test("initial relation data is validated and taxonomy peers use scientific-name fallback without lookup", async () => {
+  const left = profileFor({ taxon_id: "t1" });
+  const data = { taxon: left.taxon, taxonomy_source: "AviList", concept_set_id: "cs1", taxonomy_release: "v2025b", note: "같은 속", groups: [{ rank: "genus", label: "같은 속의 새", ancestor: { scientific_name: "Anas" }, source_name: "AviList", source_url: "https://example.org/taxonomy", items: [{ taxon_id: "peer", scientific_name: "Anas peer" }] }] };
+  let calls = 0;
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, left, () => { calls++; }, { initialData: data, initiallyOpen: true });
+  await tick();
+  assert.equal(calls, 0);
+  assert.match(collectedText(explorer), /Anas peer · 비교하기/);
+  const stale = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, () => { calls++; }, { initialData: Object.assign(ecologicalFixture(), { concept_set_id: "old" }), initiallyOpen: true });
+  await tick();
+  assert.equal(calls, 0);
+  assert.doesNotMatch(collectedText(stale), /English peer/);
+  assert.match(collectedText(stale), /분류 자료가 갱신되었습니다/);
+});
+
+test("targeted answers retain reviewed common-name provenance with safe source links", () => {
+  const context = fakeNameRelations({ query_name: "검둥오리", summary: "검토된 통칭 관계", relations: [fakeNameRelations().relations[1]] });
+  const answer = chat.buildQuestionAnswer({ createElement: createFakeElement }, { topic: "diet", title: "먹이", text: "통칭으로 연결된 종의 먹이", items: [], name_context: context });
+  const details = collectAllNodes(answer).find(n => n.className === "question-answer-name-context");
+  assert.equal(details.tagName, "details");
+  assert.match(collectedText(details), /검토된 통칭 관계/);
+  assert.match(collectedText(details), /흰뺨검둥오리 · 통칭에 포함되는 야생종/);
+  assert.match(collectedText(details), /<script>bad\(\)<\/script>/);
+  assert.equal(collectAllNodes(details).some(n => n.tagName === "script"), false);
+  assert.equal(collectAllNodes(details).some(n => n.tagName === "a"), false);
+  context.relations[0].sources = [{ title: "Reviewed alias", url: "https://example.org/alias" }];
+  const sourced = chat.buildQuestionAnswer({ createElement: createFakeElement }, { topic: "diet", title: "먹이", text: "직접 답변", items: [], name_context: context });
+  assert.equal(collectAllNodes(sourced).find(n => n.tagName === "a").href, "https://example.org/alias");
 });
