@@ -1128,3 +1128,8 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-subspecies button { margin: .25rem .4rem .25rem 0; }
 .species-subspecies-description { font-size: .88rem; line-height: 1.55; margin: .4rem 0 .7rem; }
 .species-subspecies-sources blockquote { margin: .6rem 0; padding-left: .6rem; border-left: 2px solid #aab7ad; font-size: .78rem; overflow-wrap: anywhere; }
+.species-ecological-related { margin-top: .8rem; }
+.species-ecological-related > button { margin-bottom: .4rem; }
+.ecological-peer { margin: .45rem 0; }
+.ecological-source { font-size: .8rem; margin: .3rem 0 .5rem; }
+.ecological-source p { overflow-wrap: anywhere; }

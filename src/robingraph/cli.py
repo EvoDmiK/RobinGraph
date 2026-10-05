@@ -247,6 +247,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     from .retrieval.species_notes import create_species_notes
 
     from .retrieval.related_species import related_species
+    from .retrieval.ecological_relations import ecological_relations
     from .retrieval.subspecies import subspecies_for, subspecies_metadata
     from .retrieval.name_relations import NameRelationRepository, PIPELINE as NAME_RELATIONS_PIPELINE
 
@@ -275,6 +276,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             semantic_router=semantic_router,
             species_profile_handler=species_flow.invoke,
             related_species_handler=lambda name: related_species(lineage_repository, resolve_species, name),
+            ecological_relations_handler=lambda name: ecological_relations(lineage_repository, ingest_store, resolve_species, name),
             name_relations_handler=name_relations_repository.for_name,
             subspecies_handler=lambda name: subspecies_for(lineage_repository,resolve_species,name),
         )

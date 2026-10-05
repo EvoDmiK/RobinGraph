@@ -2608,3 +2608,95 @@ test("subspecies card shows only its sourced reviewed description and keeps raw 
   assert.doesNotMatch(collectedText(unsafe), /검토된 아종 고유 분포 설명|Reviewed source range/);
   assert.match(collectedText(unsafe), /아직 확인하지 못했습니다/);
 });
+
+function ecologicalFixture() {
+  const source = { source_name: "AVONET", source_url: "https://example.org/avonet", dataset_id: "avonet", release: "v1", license_name: "CC BY", citation: "Reviewed category" };
+  return { taxon: { taxon_id: "t1" }, concept_set_id: "cs1", taxonomy_release: "v2025b", groups: [
+    { relation: "habitat", value: "wetland", display: "습지", source, items: [{ taxon_id: "peer1", rank: "species", scientific_name: "Peer species", english_name: "English peer", evidence: source }], has_more: true },
+    { relation: "trophic_niche", value: "Omnivore", display: "잡식", source, items: [{ taxon_id: "peer2", rank: "species", scientific_name: "Second species", evidence: source }] }
+  ] };
+}
+
+test("ecological explorer is lazy, sourced and separate; comparisons create independent bubbles with name fallbacks", async () => {
+  const data = ecologicalFixture();
+  const left = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos" });
+  const bubbles = [];
+  const calls = [];
+  const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, async url => {
+    calls.push(url);
+    if (url.startsWith("/v1/taxa/ecological-related")) { return jsonResponse(data); }
+    return jsonResponse(profileFor(data.groups.flatMap(g => g.items).find(p => url.endsWith(encodeURIComponent(p.scientific_name)))));
+  }, { onComparison: (panel, info) => bubbles.push({ panel, info }) });
+  assert.equal(calls.length, 0);
+  explorer.children[0].dispatch("click");
+  await tick();
+  assert.match(collectedText(explorer), /같은 서식 환경의 새 · 습지/);
+  assert.match(collectedText(explorer), /같은 먹이 생태의 새 · 잡식/);
+  assert.match(collectedText(explorer), /가까운 계통이나 실제 공존·먹이 관계를 뜻하지 않습니다/);
+  assert.match(collectedText(explorer), /English peer · 비교하기/);
+  assert.match(collectedText(explorer), /Second species · 비교하기/);
+  assert.equal(collectAllNodes(explorer).filter(n => n.className === "ecological-source").length, 4);
+  const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
+  choices[0].dispatch("click"); choices[1].dispatch("click");
+  await tick();
+  assert.equal(bubbles.length, 2);
+  assert.deepEqual(bubbles.map(b => b.info.right.taxon.taxon_id), ["peer1", "peer2"]);
+  assert.equal(collectAllNodes(explorer).some(n => n.className === "species-comparison"), false);
+  assert.ok(bubbles.every(b => collectAllNodes(b.panel).some(n => n.className === "species-ecological-related")));
+  assert.match(collectedText(bubbles[0].panel), /공유 생태 범주: 습지/);
+  assert.equal(collectAllNodes(chat.buildSpeciesCard({ createElement: createFakeElement }, left)).some(n => n.className === "species-ecological-related"), false);
+});
+
+test("ecological explorer skips unsupported values and unsafe source groups; hostile text stays inert", async () => {
+  const data = ecologicalFixture();
+  data.groups.push(Object.assign({}, data.groups[0], { value: "unsupported", display: "MUST SKIP" }));
+  data.groups.push(Object.assign({}, data.groups[0], { source: { source_name: "bad", source_url: "javascript:alert(1)" }, display: "UNSAFE GROUP" }));
+  data.groups[0].display = "<script>inert label</script>";
+  data.groups[0].items.push({ taxon_id: "bad", rank: "species", scientific_name: "Unsafe peer", evidence: { source_name: "bad", source_url: "//evil.example" } });
+  const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), async () => jsonResponse(data));
+  explorer.children[0].dispatch("click"); await tick();
+  assert.match(collectedText(explorer), /<script>inert label<\/script>/);
+  assert.doesNotMatch(collectedText(explorer), /MUST SKIP|UNSAFE GROUP|Unsafe peer/);
+  assert.equal(collectAllNodes(explorer).some(n => n.tagName === "script"), false);
+  assert.ok(collectAllNodes(explorer).filter(n => n.tagName === "a").every(n => n.href === "https://example.org/avonet"));
+});
+
+test("ecological lookup failure retries and stale releases or late-clear responses never render peers", async () => {
+  let count = 0;
+  const left = profileFor({ taxon_id: "t1" });
+  const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, async () => {
+    count++;
+    if (count === 1) { throw new Error("offline"); }
+    return jsonResponse(ecologicalFixture());
+  });
+  explorer.children[0].dispatch("click"); await tick();
+  assert.match(collectedText(explorer), /재시도/);
+  explorer.children[0].dispatch("click"); explorer.children[0].dispatch("click"); await tick();
+  assert.equal(count, 2);
+  assert.match(collectedText(explorer), /English peer/);
+  const stale = ecologicalFixture(); stale.taxonomy_release = "old";
+  const outdated = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, async () => jsonResponse(stale));
+  outdated.children[0].dispatch("click"); await tick();
+  assert.match(collectedText(outdated), /분류 자료가 갱신되었습니다/);
+  assert.doesNotMatch(collectedText(outdated), /English peer/);
+  const pending = deferred(); let active = true;
+  const late = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, () => pending.promise, { isActive: () => active });
+  late.children[0].dispatch("click"); active = false; pending.resolve(jsonResponse(ecologicalFixture())); await tick();
+  assert.doesNotMatch(collectedText(late), /English peer/);
+});
+
+test("ecological peer comparison rejects changed IDs/releases and ignores late responses", async () => {
+  let active = true;
+  let callbacks = 0;
+  const pending = deferred();
+  const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), url => url.startsWith("/v1/taxa/ecological-related") ? Promise.resolve(jsonResponse(ecologicalFixture())) : pending.promise, { isActive: () => active, onComparison: () => callbacks++ });
+  explorer.children[0].dispatch("click"); await tick();
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click");
+  const wrong = profileFor({ taxon_id: "wrong", scientific_name: "Peer species" });
+  pending.resolve(jsonResponse(wrong)); await tick();
+  assert.equal(callbacks, 0);
+  assert.match(collectedText(explorer), /비교 자료를 표시하지 않았습니다/);
+  active = false;
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click"); await tick();
+  assert.equal(callbacks, 0);
+});
