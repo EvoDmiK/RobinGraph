@@ -22,6 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cache
 import json
+import re
 from pathlib import Path
 from typing import Literal, Protocol
 
@@ -51,6 +52,26 @@ class LineageTaxon:
 def reference_korean_names() -> dict:
     """Pinned CC0 Wikidata display labels; never replace active graph names."""
     return json.loads(Path(__file__).with_name("taxonomy_ko_labels.json").read_text(encoding="utf-8"))["labels"]
+
+
+@cache
+def translated_korean_names() -> dict:
+    """Pinned sourced names and Gemini translations, separate from graph search names."""
+    return json.loads(Path(__file__).with_name("species_ko_translations.json").read_text(encoding="utf-8"))["labels"]
+
+
+def with_korean_display_name(taxon: dict) -> dict:
+    """Preserve sourced names; fill exact, release-bound species display gaps."""
+    if (re.search(r"[가-힣]", str(taxon.get("korean_name") or ""))
+            or taxon.get("rank") != "species"):
+        return taxon
+    label = translated_korean_names().get(taxon.get("taxon_id"))
+    if (not label or label["scientific_name"] != taxon.get("scientific_name")
+            or label["english_name"] != taxon.get("english_name")):
+        return taxon
+    return {**taxon, "korean_name": label["name"],
+            "korean_name_status": label.get("status", "machine-translated"),
+            "korean_name_source_url": label.get("source_url")}
 
 
 @dataclass(frozen=True)

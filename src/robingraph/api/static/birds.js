@@ -19,9 +19,13 @@
     return node;
   }
   const ranks = {order:"목", family:"과", genus:"속", species:"종", subspecies:"아종"};
+  function speciesLabel(taxon) {
+    return (taxon.korean_name || taxon.english_name || taxon.scientific_name) +
+      (taxon.korean_name_status === "machine-translated" ? " (번역명)" : "");
+  }
   function render(profile) {
     const card = $("bird-card"); card.replaceChildren(); card.hidden = false;
-    element("h2", profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name, card);
+    element("h2", speciesLabel(profile.taxon), card);
     element("p", profile.taxon.scientific_name, card);
     const layout = element("div", undefined, card); layout.className = "species-layout";
     const media = element("section", undefined, layout); media.setAttribute("aria-label", "대표 사진");
@@ -32,7 +36,7 @@
       renderedPhotos += 1;
       const figure = element("figure", undefined, media);
       const image = element("img", undefined, figure); image.src = url; image.loading = "lazy";
-      image.alt = `${profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name} 대표 사진: ${photo.title}`;
+      image.alt = `${speciesLabel(profile.taxon)} 대표 사진: ${photo.title}`;
       image.referrerPolicy = "no-referrer";
       const failed = element("p", "사진 파일을 불러오지 못했습니다.", figure); failed.hidden = true;
       const retry = element("button", "사진 다시 불러오기", figure); retry.type = "button"; retry.hidden = true;
@@ -77,7 +81,7 @@
     element("p", `${profile.lineage.taxonomy_source} · ${profile.lineage.taxonomy_release}`, details);
     const list = element("ul", undefined, details);
     profile.lineage.items.forEach((taxon) => {
-      const item = element("li", `${ranks[taxon.rank] || taxon.rank}: ${(taxon.korean_name || taxon.english_name) ? (taxon.korean_name || taxon.english_name) + " · " : ""}${taxon.scientific_name}`, list);
+      const item = element("li", `${ranks[taxon.rank] || taxon.rank}: ${(taxon.korean_name || taxon.english_name) ? speciesLabel(taxon) + " · " : ""}${taxon.scientific_name}`, list);
       if (taxon.korean_name_source_url) link(" (국명 참고 출처)", taxon.korean_name_source_url, item);
     });
   }

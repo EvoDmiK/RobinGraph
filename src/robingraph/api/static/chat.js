@@ -745,8 +745,8 @@
     table.appendChild(caption);
     var head = doc.createElement("thead");
     var titles = doc.createElement("tr");
-    ["특징", left.taxon.korean_name || left.taxon.english_name || left.taxon.scientific_name,
-      right.taxon.korean_name || right.taxon.english_name || right.taxon.scientific_name].forEach(function (text) {
+    ["특징", speciesLabel(left.taxon),
+      speciesLabel(right.taxon)].forEach(function (text) {
       var th = doc.createElement("th"); th.scope = "col"; th.textContent = text; titles.appendChild(th);
     });
     head.appendChild(titles); table.appendChild(head);
@@ -796,7 +796,8 @@
   }
 
   function speciesLabel(taxon) {
-    return taxon && (taxon.korean_name || taxon.english_name || taxon.scientific_name) || "새";
+    var name = taxon && (taxon.korean_name || taxon.english_name || taxon.scientific_name) || "새";
+    return name + (taxon && taxon.korean_name_status === "machine-translated" ? " (번역명)" : "");
   }
 
   /**
@@ -830,7 +831,7 @@
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
     var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
     var section = doc.createElement("section"); section.className = "species-related";
-    section.setAttribute("aria-label", (profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name || "새") + " 관련 새 탐색");
+    section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
@@ -930,6 +931,7 @@
             var button = doc.createElement("button"); button.type = "button";
             button.textContent = (ranked ? similarityLabel(peer) : speciesLabel(peer)) + " · 비교하기";
             button.addEventListener("click", function () { selectPeer(peer, group, button); }); block.appendChild(button);
+            if (sanitizeUrl(peer.korean_name_source_url)) { block.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
             if (ranked) { block.appendChild(buildSimilarityEvidence(doc, peer)); }
           });
           if (group.has_more && !ranked) { var more = doc.createElement("p"); more.textContent = "이름이 확인된 종 중 최대 12종을 표시합니다."; block.appendChild(more); }
@@ -969,7 +971,7 @@
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
     var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
     var section = doc.createElement("section"); section.className = "species-ecological-related";
-    section.setAttribute("aria-label", (profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name || "새") + " 생태 범주 탐색");
+    section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 생태 범주 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 서식 환경·먹이 생태의 새 살펴보기";
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
@@ -1070,6 +1072,7 @@
             button.textContent = speciesLabel(peer) + " · 비교하기";
             button.addEventListener("click", function () { selectPeer(peer, group, button); });
             row.appendChild(button);
+            if (sanitizeUrl(peer.korean_name_source_url)) { row.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
             row.appendChild(buildEcologicalSource(doc, peer.evidence));
             block.appendChild(row);
           });
@@ -1335,7 +1338,7 @@
         var button = doc.createElement("button");
         button.type = "button";
         button.className = "name-relation-choose";
-        button.textContent = (taxon.korean_name || taxon.english_name || taxon.scientific_name) + (domestic ? " · 관련 야생종 자료 보기" : " · 연결된 종 자료 보기");
+        button.textContent = speciesLabel(taxon) + (domestic ? " · 관련 야생종 자료 보기" : " · 연결된 종 자료 보기");
         button.addEventListener("click", function () { choose(relation); });
         li.appendChild(button);
       }
@@ -1526,7 +1529,7 @@
 
     var title = doc.createElement("p");
     title.className = "species-title";
-    title.textContent = taxon.korean_name || taxon.english_name || taxon.scientific_name || "알 수 없는 종";
+    title.textContent = speciesLabel(taxon);
     var heading = doc.createElement("div");
     heading.className = "species-card-heading";
     var category = doc.createElement("span");
@@ -1688,7 +1691,7 @@
         img.src = imageSrc;
         img.loading = "lazy";
         img.referrerPolicy = "no-referrer";
-        img.alt = (taxon.korean_name || taxon.english_name || taxon.scientific_name || "") + " 대표 사진: " + (photo.title || "");
+        img.alt = speciesLabel(taxon) + " 대표 사진: " + (photo.title || "");
         figure.appendChild(img);
         var broken = doc.createElement("div");
         broken.className = "species-photo-broken";
@@ -1968,7 +1971,7 @@
         }
         var li = doc.createElement("li");
         var rankLabel = RANK_LABELS[lineageItem.rank] ? RANK_LABELS[lineageItem.rank] : lineageItem.rank;
-        var commonName = lineageItem.korean_name || lineageItem.english_name;
+        var commonName = lineageItem.korean_name || lineageItem.english_name ? speciesLabel(lineageItem) : null;
         var namePart = commonName ? commonName + " · " + lineageItem.scientific_name : lineageItem.scientific_name;
         li.textContent = rankLabel + ": " + namePart;
         var koreanNameSourceUrl = sanitizeUrl(lineageItem.korean_name_source_url);
@@ -2095,7 +2098,7 @@
     var answer = doc.createElement("div");
     answer.className = "species-answer";
     var heading = doc.createElement("h3");
-    heading.textContent = profile.taxon && (profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name) || "조류 정보";
+    heading.textContent = speciesLabel(profile.taxon);
     answer.appendChild(heading);
     var sources = [];
     var seen = {};
@@ -2181,7 +2184,7 @@
     var tier = typeof card.getAttribute === "function" ? card.getAttribute("data-conservation-tier") : null;
     tier = tier || "unconfirmed";
     opener.className = "species-popup-trigger risk-" + tier;
-    var name = profile.taxon.korean_name || profile.taxon.english_name || profile.taxon.scientific_name || "새";
+    var name = speciesLabel(profile.taxon);
     opener.textContent = name + " · 도감 카드 보기 ↗";
     opener.setAttribute("aria-haspopup", "dialog");
     wrapper.appendChild(opener);

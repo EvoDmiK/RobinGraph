@@ -50,7 +50,7 @@ from typing import Any
 from neo4j import GraphDatabase
 
 from ..graph.settings import Neo4jSettings
-from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, reference_korean_names
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, reference_korean_names, with_korean_display_name
 
 # Legacy fallback for direct library callers. The deployed ``serve-neo4j``
 # path always supplies PostgreSQL active context and never executes this query.
@@ -183,6 +183,7 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
         required = ("taxon_id", "rank", "scientific_name")
         if any(item.get(field) is None or not str(item[field]).strip() for field in required):
             raise ValueError("Invalid AviList lineage projection item")
+        item = with_korean_display_name(item)
         korean_name = item.get("korean_name")
         cleaned_korean_name = (
             None if korean_name is None or not str(korean_name).strip() else str(korean_name)
@@ -202,7 +203,7 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
                 authority=None if item.get("authority") is None else str(item["authority"]),
                 korean_name=cleaned_korean_name,
                 english_name=(item["english_name"].strip() if isinstance(item.get("english_name"), str) and item["english_name"].strip() else None),
-                korean_name_source_url=reference["source_url"] if reference else None,
+                korean_name_source_url=reference["source_url"] if reference else item.get("korean_name_source_url"),
                 # Only meaningful when a Korean name was actually found --
                 # never report a status for a name that isn't there.
                 korean_name_status=(
