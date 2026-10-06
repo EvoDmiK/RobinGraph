@@ -8,3 +8,13 @@
 - Python 단위/계약 검사 533개 실행: 성공, 환경 의존 검사 40개 생략.
 - 프런트엔드 검사 125개 성공. 과거 자동 번역명을 받은 경우에도 카드·설명·비교에서 영어를 표시하는 조건 포함.
 - `graphify update .` 실행 완료.
+
+## NAS TEST 검증
+
+배포 코드: `988d4fe69b9a769620fe95b55dd21053fe897c66`, 이미지 `robingraph-api:test-korean-988d4fe`, 디렉터리 `/home/kimdove/RobinGraph-korean-988d4fe`.
+
+아카이브 SHA-256: `8c27967bb1db31650eac0dbf8f9e9477dd0a25d993c9140039bca199ab3db129`. 전송 후 아카이브와 MANIFEST의 파일별 해시를 확인했다. TEST 서비스 health와 Docker 이미지 revision이 배포 코드에 일치했다.
+
+공개 도메인 `https://robingraph-test.dove-nest.com`에서 배포 검증기의 계약·스키마·청둥오리 의미 검사가 성공했다. `/v1/taxa/lineage?scientific_name=...` 실제 조회에서 뿔바다오리·우는뻐꾸기·꼬마물떼새는 학회 국명과 source-reference/출처 URL을 반환했고, Abeillia abeillei는 한국어 이름 없이 Emerald-chinned Hummingbird를 반환했다. 공개 chat.js와 birds.js의 SHA-256이 로컬 코드와 일치했다.
+
+프런트엔드 DOM 검사는 자동 검사이며 새 브라우저 스크린샷 검증을 수행한 것으로 주장하지 않는다. PROD 서비스는 기존 이미지를 유지했다. 오늘 Obsidian 기록에도 새 정책을 저장하고 이전 자동 번역명 정책을 대체한다고 연결했다.
