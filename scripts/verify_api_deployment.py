@@ -59,7 +59,7 @@ from urllib.request import Request, urlopen
 DEFAULT_BASE_URL = "https://aviary.dove-nest.com"
 DEFAULT_LINEAGE_NAME = "청둥오리"
 DEFAULT_EXPECTED_SCIENTIFIC_NAME = "Anas platyrhynchos"
-DEFAULT_EXPECTED_KOREAN_NAME_STATUS = "community-sourced"
+DEFAULT_EXPECTED_KOREAN_NAME_STATUS = "source-reference"
 DEFAULT_TIMEOUT = 10.0
 
 LINEAGE_SCHEMA_NAME = "LineageTaxonResponse"

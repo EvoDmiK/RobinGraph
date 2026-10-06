@@ -110,7 +110,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.assertEqual("Anas zonorhyncha", lineage.query_scientific_name)
         self.assertEqual("Anas zonorhyncha", lineage.resolved_query_scientific_name)
         self.assertEqual("scientific_name", lineage.matched_by)
-        self.assertEqual("흰뺨검둥오리", lineage.items[-1].korean_name)
+        self.assertIsNone(lineage.items[-1].korean_name)  # Unbound fixture identity is not guide verification.
         self.assertEqual("기러기목", lineage.items[0].korean_name)
         self.assertEqual("community-sourced-reference", lineage.items[0].korean_name_status)
         self.assertEqual("https://www.wikidata.org/wiki/Q21651", lineage.items[0].korean_name_source_url)
@@ -374,8 +374,8 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.assertEqual(
             ["order", "family", "genus", "species"], [item.rank for item in lineage.items]
         )
-        self.assertEqual("청둥오리", lineage.items[-1].korean_name)
-        self.assertEqual("community-sourced", lineage.items[-1].korean_name_status)
+        self.assertIsNone(lineage.items[-1].korean_name)  # Community lookup alone does not verify display names.
+        self.assertIsNone(lineage.items[-1].korean_name_status)
         self.assertEqual("기러기목", lineage.items[0].korean_name)
         self.assertEqual("community-sourced-reference", lineage.items[0].korean_name_status)
 

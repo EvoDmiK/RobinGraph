@@ -796,8 +796,7 @@
   }
 
   function speciesLabel(taxon) {
-    var name = taxon && (taxon.korean_name || taxon.english_name || taxon.scientific_name) || "새";
-    return name + (taxon && taxon.korean_name_status === "machine-translated" ? " (번역명)" : "");
+    return taxon && ((taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.scientific_name) || "새";
   }
 
   /**

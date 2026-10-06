@@ -189,7 +189,7 @@ def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
             None if korean_name is None or not str(korean_name).strip() else str(korean_name)
         )
         korean_name_status = item.get("korean_name_status")
-        reference = None if cleaned_korean_name else reference_korean_names().get(
+        reference = None if cleaned_korean_name or item["rank"] == "species" else reference_korean_names().get(
             f"{item['rank']}:{str(item['scientific_name']).casefold()}"
         )
         if reference:

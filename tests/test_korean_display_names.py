@@ -1,53 +1,60 @@
-"""Translations must not replace graph names or leak across taxonomy releases."""
+"""Korean species names require checked sources and exact taxonomy identity."""
 import json
 from pathlib import Path
-import re
 from unittest import TestCase
 import robingraph.retrieval.taxonomy_lineage as lineage_module
-
-from robingraph.retrieval.taxonomy_lineage import translated_korean_names, with_korean_display_name
+from robingraph.retrieval.taxonomy_lineage import sourced_korean_names, with_korean_display_name
 from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
 
 
 class KoreanDisplayNamesTest(TestCase):
-    def test_sourced_supplement_wins_over_machine_translation_and_keeps_provenance(self):
-        labels = translated_korean_names()
-        references = [(key, value) for key, value in labels.items() if value.get("status") == "source-reference"]
-        self.assertEqual(170, len(references))
-        taxon_id, label = next((key, value) for key, value in references if value["scientific_name"] == "Sibirionetta formosa")
-        item = _parse_lineage_items([{"taxon_id": taxon_id, "rank": "species", **label}])[0]
-        self.assertEqual("가창오리", item.korean_name)
-        self.assertEqual("source-reference", item.korean_name_status)
-        self.assertEqual(label["source_url"], item.korean_name_source_url)
+    def row_for(self, science):
+        key, label = next((k, v) for k, v in sourced_korean_names().items() if v['scientific_name'] == science)
+        return {'taxon_id': key, 'rank': 'species', 'scientific_name': science,
+                'english_name': label['english_name'], 'authority': 'Original authority'}
 
-    def test_lineage_translation_preserves_identity_and_verified_names(self):
-        taxon_id, label = next(iter(translated_korean_names().items()))
-        row = {"taxon_id": taxon_id, "rank": "species", "scientific_name": label["scientific_name"],
-               "english_name": label["english_name"], "authority": "Original authority"}
-        item = _parse_lineage_items([row])[0]
-        self.assertEqual(label["name"], item.korean_name)
-        self.assertEqual("machine-translated", item.korean_name_status)
-        self.assertEqual(row["english_name"], item.english_name)
-        self.assertEqual(row["scientific_name"], item.scientific_name)
-        self.assertEqual("Original authority", item.authority)
-        verified = _parse_lineage_items([{**row, "korean_name": "검증된 이름", "korean_name_status": "source-preferred"}])[0]
-        self.assertEqual("검증된 이름", verified.korean_name)
-        self.assertEqual("source-preferred", verified.korean_name_status)
-        mislabeled = _parse_lineage_items([{**row, "korean_name": "Foreign language label"}])[0]
-        self.assertEqual(label["name"], mislabeled.korean_name)
-        self.assertEqual(row["scientific_name"], mislabeled.scientific_name)
-        for change in ({"taxon_id": "new-release:1"}, {"scientific_name": "Different species"},
-                       {"english_name": "Changed English name"}, {"rank": "subspecies"}):
-            self.assertIsNone(with_korean_display_name({**row, **change}).get("korean_name"))
+    def test_guide_overrides_incorrect_graph_name_and_preserves_identity(self):
+        row = self.row_for('Aethia cristatella')
+        item = _parse_lineage_items([{**row, 'korean_name': '뿔바다새', 'korean_name_status': 'community-sourced'}])[0]
+        self.assertEqual('뿔바다오리', item.korean_name)
+        self.assertEqual('source-reference', item.korean_name_status)
+        self.assertTrue(item.korean_name_source_url.startswith('https://sites.google.com/khu.ac.kr/korornsoc/'))
+        self.assertEqual(row['english_name'], item.english_name)
+        self.assertEqual(row['scientific_name'], item.scientific_name)
+        self.assertEqual(row['authority'], item.authority)
 
-    def test_snapshot_has_complete_validated_translation_coverage(self):
-        labels = translated_korean_names()
-        self.assertEqual(10291, len(labels))
-        self.assertEqual(10291, len({entry["scientific_name"] for entry in labels.values()}))
-        for taxon_id, entry in labels.items():
-            self.assertTrue(taxon_id.startswith("avilist-taxon:v2025b:"))
-            self.assertTrue(re.fullmatch(r"[가-힣ㆍ· \-]+", entry["name"]), entry)
-            self.assertTrue(entry["english_name"])
-        snapshot = json.loads(Path(lineage_module.__file__).with_name("species_ko_translations.json").read_text())
-        self.assertEqual("machine-translated", snapshot["status"])
-        self.assertIn("gemini-3.5-flash-lite", snapshot["models"])
+    def test_unknown_names_and_mismatched_release_use_english(self):
+        row = self.row_for('Aethia cristatella')
+        for change in ({'taxon_id': 'avilist-taxon:new-release:1'}, {'scientific_name': 'Different species'},
+                       {'english_name': 'Changed English name'}):
+            result = with_korean_display_name({**row, 'korean_name': '기존미검증명', **change})
+            self.assertIsNone(result['korean_name'])
+            self.assertIsNone(result['korean_name_status'])
+            self.assertIsNone(result['korean_name_source_url'])
+        foreign = {'taxon_id': 'avilist-taxon:v2025b:999999', 'rank': 'species',
+                   'scientific_name': 'Abeillia abeillei', 'english_name': 'Emerald-chinned Hummingbird',
+                   'korean_name': '에메랄드턱벌새', 'korean_name_status': 'machine-translated'}
+        self.assertIsNone(_parse_lineage_items([foreign])[0].korean_name)
+        self.assertEqual('Emerald-chinned Hummingbird', with_korean_display_name(foreign)['english_name'])
+        self.assertEqual({**row, 'rank': 'subspecies'}, with_korean_display_name({**row, 'rank': 'subspecies'}))
+
+    def test_snapshot_sources_crosswalks_and_split_species(self):
+        labels = sourced_korean_names()
+        self.assertEqual(596, len(labels))
+        self.assertEqual(596, len({v['scientific_name'] for v in labels.values()}))
+        for key, label in labels.items():
+            self.assertTrue(key.startswith('avilist-taxon:v2025b:'))
+            self.assertEqual('source-reference', label['status'])
+            self.assertTrue(label['source_row'] > 0)
+            self.assertTrue(label['source_url'])
+            self.assertEqual(label['name'].strip(), label['name'])
+        for science, expected in [('Thinornis dubius', '꼬마물떼새'), ('Thinornis placidus', '흰목물떼새'),
+                                  ('Periparus venustulus', '노랑배진박새')]:
+            row = self.row_for(science)
+            self.assertEqual(expected, with_korean_display_name(row)['korean_name'])
+            self.assertTrue(labels[row['taxon_id']]['taxonomy_crosswalk_source_url'])
+        snapshot = json.loads(Path(lineage_module.__file__).with_name('species_ko_names.json').read_text())
+        self.assertEqual(598, snapshot['source_species_count'])
+        self.assertEqual({'Anas carolinensis', 'Saxicola stejnegeri'},
+                         {v['scientific_name'] for v in snapshot['unmatched_source_species']})
+        self.assertEqual('쇠오리', with_korean_display_name(self.row_for('Anas crecca'))['korean_name'])
