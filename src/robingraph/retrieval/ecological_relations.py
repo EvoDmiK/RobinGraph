@@ -3,6 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 
 from .species_profile import LABELS, VALUES, SpeciesNotFoundError, read_traits
+from .taxonomy_lineage import with_korean_display_name
 
 
 PEERS_QUERY = """
@@ -72,7 +73,7 @@ def ecological_relations(repository, store, resolve, name):
         )
         items = []
         for row in rows:
-            peer = row.get('taxon', {})
+            peer = with_korean_display_name(row.get('taxon', {}))
             if (peer.get('rank') != 'species' or not peer.get('taxon_id')
                     or peer['taxon_id'] == target.taxon_id
                     or not _web_url(row.get('source_url'))):

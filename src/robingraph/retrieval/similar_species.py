@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 from .ecological_relations import _web_url
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
+from .taxonomy_lineage import with_korean_display_name
 
 WEIGHTS = {'same_genus': 50, 'same_family': 30, 'same_habitat': 10, 'same_trophic_niche': 10}
 METHOD = 'taxonomy-ecology-v1'
@@ -146,10 +147,10 @@ def similar_species(repository, store, resolve, name):
     items = []
     for position,(score,candidate,reasons) in enumerate(top,1):
         name_row = labels.get(candidate['taxon_id'],{})
-        items.append({'taxon_id':candidate['taxon_id'],'rank':'species',
+        items.append(with_korean_display_name({'taxon_id':candidate['taxon_id'],'rank':'species',
                       'scientific_name':candidate['scientific_name'],
                       'korean_name':name_row.get('korean_name'),'english_name':name_row.get('english_name'),
-                      'similarity_score':score,'similarity_rank':position,'similarity_reasons':reasons})
+                      'similarity_score':score,'similarity_rank':position,'similarity_reasons':reasons}))
     return {'taxon':asdict(target),'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
             'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
