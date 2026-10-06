@@ -1,4 +1,4 @@
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
@@ -143,3 +143,24 @@ class SimilarSpeciesTest(TestCase):
         self.assertEqual('abstain',stale['disposition'])
         self.assertEqual(200,client.get('/v1/taxa/similar',params={'name':'청둥오리'}).status_code)
         self.assertEqual(422,client.get('/v1/taxa/similar',params={'name':' '}).status_code)
+
+    @patch('robingraph.retrieval.similar_species.read_traits', return_value=[])
+    def test_reviewed_mallard_relation_wins_only_equal_scores_in_reviewed_release(self, _traits):
+        target = replace(TARGET, scientific_name='Anas zonorhyncha')
+        lineage = replace(LINEAGE, items=(FAMILY, GENUS, target))
+        repo = FakeRepository([candidate('pintail', 'Anas acuta', True, True),
+                               candidate('andean', 'Anas andium', True, True),
+                               candidate('mallard', 'Anas platyrhynchos', True, True)], [])
+        result = similar_species(repo, Mock(), lambda _: lineage, target.scientific_name)
+        peers = result['groups'][0]['items']
+        self.assertEqual(['mallard', 'pintail', 'andean'], [x['taxon_id'] for x in peers])
+        self.assertEqual([80, 80, 80], [x['similarity_score'] for x in peers])
+        reason = peers[0]['similarity_reasons'][-1]
+        self.assertEqual('reviewed_close_relation', reason['key'])
+        self.assertEqual(0, reason['points'])
+        self.assertTrue(reason['source_url'].startswith('https://academic.oup.com/'))
+        unreviewed = similar_species(repo, Mock(), lambda _: replace(lineage, taxonomy_release='future'), 'test')
+        self.assertEqual('pintail', unreviewed['groups'][0]['items'][0]['taxon_id'])
+        repo.candidates[-1]['same_genus'] = False
+        lower = similar_species(repo, Mock(), lambda _: lineage, 'test')
+        self.assertEqual('pintail', lower['groups'][0]['items'][0]['taxon_id'])

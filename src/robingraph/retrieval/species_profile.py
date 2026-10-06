@@ -36,7 +36,7 @@ LABELS = {
     'primary_lifestyle':'주 생활 방식', 'trophic_niche':'먹이 생태 범주',
     'trophic_level':'영양 단계', 'diet_category':'먹이 유형',
     'diet_distribution':'먹이 구성', 'foraging_strata_distribution':'먹이 활동 위치',
-    'nocturnal':'야행성', 'activity_pattern':'활동 시간',
+    'nocturnal':'활동 시간', 'activity_pattern':'활동 시간',
 }
 
 CONSERVATION_QUERY = """
@@ -149,8 +149,8 @@ def trait_display(name, value):
                  and math.isfinite(amount) and 0 < amount <= 100]
         return ' · '.join(parts) or '확인된 구성 정보 없음'
     if isinstance(value, bool):
-        if name == 'nocturnal' and not value:
-            return '원자료 분류값 0 · 야간 활동이 없다고 단정할 수 없음'
+        if name == 'nocturnal':
+            return '야행성' if value else '야행성 아님'
         return '예' if value else '아니요'
     raw = str(value).strip()
     if name in CATEGORICAL_TRAITS:
@@ -320,7 +320,7 @@ def species_sections(taxon, traits, notes):
     appearance = notes.get('appearance', [])
     if not appearance:
         appearance = [value for name in ('beak_length_culmen', 'wing_length', 'tail_length') if (value := fact(name))]
-    ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern') if (value := fact(name))]
+    ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern', 'nocturnal') if (value := fact(name))]
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)
     return [{'key':key, 'title':title, 'items':items, 'empty_text':empty}

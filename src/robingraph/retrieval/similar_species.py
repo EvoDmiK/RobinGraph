@@ -8,6 +8,17 @@ from .taxonomy_lineage import with_korean_display_name
 WEIGHTS = {'same_genus': 50, 'same_family': 30, 'same_habitat': 10, 'same_trophic_niche': 10}
 METHOD = 'taxonomy-ecology-v1'
 
+# Reviewed relationships only resolve equal rule scores; they are not a
+# complete phylogeny and do not assign a genetic-distance percentage.
+CLOSE_RELATION_REVIEWS = {
+    ('v2025b', frozenset({'Anas zonorhyncha', 'Anas platyrhynchos'})): {
+        'source_url': 'https://academic.oup.com/cz/article/65/5/589/5144203',
+        'source_name': 'Current Zoology · Wang et al. (2019)',
+        'citation': 'Incomplete lineage sorting and introgression in the diversification of Chinese spot-billed ducks and mallards',
+    },
+}
+
+
 SOURCE_QUERY = """
 MATCH (concept:TaxonConceptSet {id:$concept_set_id,version:$taxonomy_release,policy_status:'allowed'})
 MATCH (target:Taxon:BirdTaxon {id:$target_id,rank:'species',source_release:$taxonomy_release,policy_status:'allowed'})-[:IN_CONCEPT_SET]->(concept)
@@ -131,10 +142,16 @@ def similar_species(repository, store, resolve, name):
         for key,label in (('same_habitat','같은 서식 환경 범주'),('same_trophic_niche','같은 먹이 생태 범주')):
             if key in candidate['ecology']:
                 reasons.append({'key':key,'label':label,'points':WEIGHTS[key],**candidate['ecology'][key]})
+        review = CLOSE_RELATION_REVIEWS.get((lineage.taxonomy_release,
+            frozenset({target.scientific_name, candidate['scientific_name']}))) if candidate['same_genus'] else None
+        if review:
+            reasons.append({'key':'reviewed_close_relation', 'label':'문헌으로 확인한 근연 관계 · 동점 우선',
+                            'points':0, **review})
+        candidate['reviewed_close_relation'] = review is not None
         score = sum(reason['points'] for reason in reasons)
         if score:
             ranked.append((score,candidate,reasons))
-    ranked.sort(key=lambda item:(-item[0],item[1]['scientific_name'],item[1]['taxon_id']))
+    ranked.sort(key=lambda item:(-item[0],not item[1]['reviewed_close_relation'],item[1]['scientific_name'],item[1]['taxon_id']))
     top = ranked[:3]
     names = repository._run(NAMES_QUERY, concept_set_id=lineage.concept_set_id,
                             taxonomy_release=lineage.taxonomy_release,
@@ -155,7 +172,7 @@ def similar_species(repository, store, resolve, name):
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
             'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
                        'eligible_count':len(ranked),'limit':3,'weights':WEIGHTS.copy(),
-                       'tie_break':'scientific_name,taxon_id'},
+                       'tie_break':'reviewed_close_relation,scientific_name,taxon_id'},
             'groups':[{'rank':'similarity','label':'그래프 유사도 상위 3종','items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'분류 관계와 출처가 확인된 생태 범주의 규칙 점수입니다. 외형·유전 유사도나 확률을 뜻하지 않습니다.'}
+            'note':'분류 관계와 출처가 확인된 생태 범주의 규칙 점수입니다. 동점은 문헌으로 확인한 근연 관계를 먼저 적용한 뒤 학명순으로 정렬합니다. 외형·유전 유사도나 확률을 뜻하지 않습니다.'}

@@ -814,7 +814,7 @@
     var title = doc.createElement("summary"); title.textContent = "유사도 근거와 출처"; details.appendChild(title);
     (Array.isArray(peer.similarity_reasons) ? peer.similarity_reasons : []).forEach(function (reason) {
       if (!reason || typeof reason.label !== "string") { return; }
-      var line = doc.createElement("p"); line.textContent = reason.label + (typeof reason.points === "number" ? " · " + reason.points + "점" : "") + (typeof reason.display === "string" ? " · " + reason.display : ""); details.appendChild(line);
+      var line = doc.createElement("p"); line.textContent = reason.label + (typeof reason.points === "number" && reason.points > 0 ? " · " + reason.points + "점" : "") + (typeof reason.display === "string" ? " · " + reason.display : ""); details.appendChild(line);
       if (typeof reason.source_name === "string") { details.appendChild(safeLink(doc, reason.source_name, reason.source_url)); }
       if (typeof reason.target_source_url === "string") { details.appendChild(safeLink(doc, "기준 종의 생태 출처", reason.target_source_url)); }
     });
