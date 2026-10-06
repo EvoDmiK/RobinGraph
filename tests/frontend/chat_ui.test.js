@@ -2652,11 +2652,14 @@ test("ecological explorer skips unsupported values and unsafe source groups; hos
   data.groups.push(Object.assign({}, data.groups[0], { value: "unsupported", display: "MUST SKIP" }));
   data.groups.push(Object.assign({}, data.groups[0], { source: { source_name: "bad", source_url: "javascript:alert(1)" }, display: "UNSAFE GROUP" }));
   data.groups[0].display = "<script>inert label</script>";
+  for (let i = 0; i < 4; i++) { data.groups[0].items.push({ ...data.groups[0].items[0], taxon_id: "extra" + i, scientific_name: "Extra species" + i, english_name: "Extra " + i }); }
   data.groups[0].items.push({ taxon_id: "bad", rank: "species", scientific_name: "Unsafe peer", evidence: { source_name: "bad", source_url: "//evil.example" } });
   const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), async () => jsonResponse(data));
   explorer.children[0].dispatch("click"); await tick();
   assert.match(collectedText(explorer), /<script>inert label<\/script>/);
-  assert.doesNotMatch(collectedText(explorer), /MUST SKIP|UNSAFE GROUP|Unsafe peer/);
+  assert.doesNotMatch(collectedText(explorer), /MUST SKIP|UNSAFE GROUP|Unsafe peer|Extra 2|Extra 3/);
+  assert.equal(collectAllNodes(explorer).filter(n => n.className === "ecological-peer").length, 4); // 3 habitat + 1 niche
+  assert.match(collectedText(explorer), /범주별 최대 3종/);
   assert.equal(collectAllNodes(explorer).some(n => n.tagName === "script"), false);
   assert.ok(collectAllNodes(explorer).filter(n => n.tagName === "a").every(n => n.href === "https://example.org/avonet"));
 });
