@@ -14,6 +14,19 @@ ROW={'taxon':asdict(CHILD),'range_text':'coastal southwestern Greenland',
      'source_name':'AviList v2025b','source_url':'https://www.avilist.org/checklist/v2025b/'}
 
 class SubspeciesTest(TestCase):
+ def test_global_names_reject_wrong_identity_and_machine_translated_korean(self):
+  from robingraph.retrieval.taxonomy_lineage import sourced_subspecies_names,with_korean_display_name
+  tid,reference=next((tid,r) for tid,r in sourced_subspecies_names().items() if tid not in ('avilist-taxon:v2025b:546','avilist-taxon:v2025b:545','avilist-taxon:v2025b:5421','avilist-taxon:v2025b:5422'))
+  taxon={'taxon_id':tid,'rank':'subspecies','scientific_name':reference['scientific_name'],
+         'korean_name':'추정 번역','korean_name_status':'machine-translated'}
+  shown=with_korean_display_name(taxon)
+  self.assertIsNone(shown['korean_name'])
+  self.assertEqual(reference['english_name'],shown['english_name'])
+  self.assertIn('#page=',shown['english_name_source_url'])
+  self.assertNotIn('english_name',with_korean_display_name({**taxon,'scientific_name':'Wrong species identity'}))
+  conflicting=with_korean_display_name({**taxon,'english_name':'Different verified name'})
+  self.assertEqual('Different verified name',conflicting['english_name'])
+
  def test_sourced_english_subspecies_names_are_identity_bound_and_shared_by_profiles(self):
   repo=Mock();repo._run.return_value=[ROW]
   data=subspecies_for(repo,lambda _:LINEAGE,'청둥오리')
@@ -51,7 +64,7 @@ class SubspeciesTest(TestCase):
   meta=subspecies_metadata(repo,TaxonomyLineage(child.scientific_name,'AviList','v2025b',lineage.concept_set_id,(parent,child)))
   self.assertIn('동아시아',meta['section']['items'][1]['text'])
   changed=TaxonomyLineage('Ardea cinerea','AviList','other',lineage.concept_set_id,(parent,))
-  self.assertNotIn('description',subspecies_for(repo,lambda _:changed,'왜가리')['subspecies'][0])
+  self.assertEqual('source-original',subspecies_for(repo,lambda _:changed,'왜가리')['subspecies'][0]['description_status'])
 
  def test_graph_navigation_pins_parent_child_release_and_provenance(self):
   repo=Mock();repo._run.return_value=[ROW]
@@ -63,10 +76,12 @@ class SubspeciesTest(TestCase):
   self.assertIn('그린란드 남서부',meta['section']['items'][1]['text'])
   self.assertEqual(CHILD.taxon_id,repo._run.call_args.kwargs['child_id'])
   repo._run.return_value=[{**ROW,'range_text':'changed'}]
-  self.assertIn('아직 검토되지',subspecies_metadata(repo,LINEAGE)['section']['items'][1]['text'])
+  self.assertEqual('분포(영어 원문): changed',subspecies_metadata(repo,LINEAGE)['section']['items'][1]['text'])
   repo._run.return_value=[{**ROW,'source_url':'javascript:evil'}]
   with self.assertRaises(ValueError):subspecies_for(repo,lambda _:LINEAGE,'청둥오리')
   repo._run.return_value=[]
+  with self.assertRaises(ValueError):subspecies_metadata(repo,LINEAGE)
+  repo._run.return_value=[{**ROW,'taxon':{**ROW['taxon'],'scientific_name':'Changed identity'}}]
   with self.assertRaises(ValueError):subspecies_metadata(repo,LINEAGE)
   repo._run.return_value=[ROW,ROW]
   with self.assertRaises(ValueError):subspecies_for(repo,lambda _:LINEAGE,'청둥오리')
@@ -87,6 +102,35 @@ class SubspeciesTest(TestCase):
   for missing in (None,Mock(side_effect=ValueError('changed parent'))):
    broken=create_species_flow(lambda _:LINEAGE,traits,photos=photo,subspecies_info=missing)
    with self.assertRaises((SpeciesNotFoundError,ValueError)):broken.invoke(CHILD.scientific_name)
+
+ def test_every_genus_gets_source_distribution_and_same_profile_caption(self):
+  for science,common,sub,raw in (
+      ('Parus major','Great Tit','Parus major major','Europe to western Siberia'),
+      ('Phasianus colchicus','꿩','Phasianus colchicus torquatus','eastern China'),
+      ('Corvus macrorhynchos','큰부리까마귀','Corvus macrorhynchos japonensis','Japan'),
+      ('Struthio camelus','타조','Struthio camelus syriacus','formerly Syrian and Arabian desert; extinct ca. 1966')):
+   parent=LineageTaxon('parent','species',science,None,common)
+   child=LineageTaxon('unreviewed:'+sub,'subspecies',sub,None)
+   lineage=TaxonomyLineage(science,'AviList','v2025b','rg:concept-set:avilist-v2025b',(parent,child))
+   repo=Mock();repo._run.return_value=[{**ROW,'taxon':asdict(child),'range_text':raw}]
+   listed=subspecies_for(repo,lambda _:lineage,common)['subspecies'][0]
+   meta=subspecies_metadata(repo,lineage)
+   self.assertEqual(raw,listed['description'])
+   self.assertEqual('en',listed['description_language'])
+   self.assertTrue(listed['display_label'].startswith(common+' 아종 · '))
+   self.assertIsNone(listed['korean_name']);self.assertIsNone(listed['english_name'])
+   self.assertEqual(listed,meta['display_taxon'])
+   self.assertEqual('분포(영어 원문): '+raw,meta['section']['items'][1]['text'])
+   flow=create_species_flow(lambda _:lineage,lambda _:[],photos=lambda _:[],subspecies_info=lambda lin:subspecies_metadata(repo,lin))
+   self.assertEqual(listed['display_label'],flow.invoke(sub)['taxon']['display_label'])
+  repo._run.return_value=[{**ROW,'taxon':asdict(child),'range_text':None}]
+  missing=subspecies_for(repo,lambda _:lineage,common)['subspecies'][0]
+  self.assertEqual(common+' 아종',missing['display_label'])
+  self.assertNotIn('description',missing)
+  repo._run.return_value=[{**ROW,'taxon':asdict(child),'range_text':'  '+('long region '*30)+'; other range'}]
+  clipped=subspecies_for(repo,lambda _:lineage,common)['subspecies'][0]
+  self.assertTrue(clipped['display_label'].endswith('…'))
+  self.assertIn('other range',clipped['description'])
 
  def test_photo_lookup_requires_subspecies_rank_and_exact_name(self):
   _licensed_images.cache_clear()

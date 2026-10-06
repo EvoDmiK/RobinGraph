@@ -796,7 +796,7 @@
   }
 
   function speciesLabel(taxon) {
-    return taxon && ((taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.scientific_name) || "새";
+    return taxon && ((taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.display_label || taxon.scientific_name) || "새";
   }
 
   /**
@@ -1457,10 +1457,12 @@
         if (data.source_url) { var source = doc.createElement("p"); source.className = "subspecies-source"; source.appendChild(safeLink(doc, "분류 기준 · AviList", data.source_url)); content.appendChild(source); }
         if (data.has_more) { var notice = doc.createElement("p"); notice.textContent = "일부 아종만 표시합니다. 전체 목록은 분류 출처에서 확인하세요."; content.appendChild(notice); }
         var selected = doc.createElement("div");
+        var labels = data.subspecies.map(function (taxon, index) { return (taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.display_label || speciesLabel(data.parent_species.taxon) + " 아종 " + (index + 1); });
         data.subspecies.forEach(function (taxon, index) {
           var entry = buildComparisonPeer(doc, taxon, false);
           entry.row.className += " subspecies-peer";
-          var label = taxon.korean_name || taxon.english_name || taxon.display_label || speciesLabel(data.parent_species.taxon) + " 아종 " + (index + 1);
+          var label = labels[index];
+          if (labels.filter(function (other) { return other === label; }).length > 1) { label += " · 아종 " + (index + 1); }
           entry.row.children[0].children[0].textContent = label;
           // Scientific identity and reference links stay available without dominating the list.
           var scientific = entry.row.children[0].children[1];
@@ -1470,11 +1472,16 @@
           info.appendChild(scientific);
           if (taxon.english_name_source_url) { info.appendChild(safeLink(doc, "영어 이름 출처", taxon.english_name_source_url)); }
           if (taxon.description_source_url) { info.appendChild(safeLink(doc, "분포 설명 출처", taxon.description_source_url)); }
-          if (!taxon.korean_name && !taxon.english_name) { var unnamed = doc.createElement("p"); unnamed.textContent = "별도 한국어·영어 통칭은 확인되지 않았습니다."; info.appendChild(unnamed); }
+          if (typeof taxon.range_text === "string" && taxon.range_text.trim()) { var range = doc.createElement("p"); range.className = "subspecies-range-original"; range.setAttribute("lang", "en"); range.textContent = taxon.range_text; info.appendChild(range); }
+          if (!taxon.korean_name && !taxon.english_name) { var unnamed = doc.createElement("p"); unnamed.textContent = "별도 한국어·영어 통칭은 확인되지 않았습니다." + (taxon.display_label && taxon.range_text ? " 제목은 분포를 이용한 설명이며 정식 아종명이 아닙니다." : ""); info.appendChild(unnamed); }
           entry.row.appendChild(info);
           if (typeof taxon.description === "string" && taxon.description.trim()) {
             var description = doc.createElement("p"); description.className = "subspecies-description";
-            description.textContent = taxon.description.replace(/^분포 차이:\s*/, ""); entry.row.children[0].appendChild(description);
+            if (taxon.description_language === "en") {
+              description.textContent = "분포(영어 원문): ";
+              var original = doc.createElement("span"); original.setAttribute("lang", "en"); original.textContent = taxon.description; description.appendChild(original);
+            } else { description.textContent = taxon.description.replace(/^분포 차이:\s*/, ""); }
+            entry.row.children[0].appendChild(description);
           }
           var choice = entry.button;
           choice.textContent = "아종 보기";
@@ -1633,7 +1640,7 @@
       var metadataSource = metadata && sanitizeUrl(metadata.source_url);
       var description = doc.createElement("p");
       description.className = "species-subspecies-description";
-      var descriptions = metadataSection && metadataSection.key === "subspecies_taxonomy" && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1).filter(function (item) { return item && typeof item.text === "string" && item.text.trim() && sanitizeUrl(item.source_url) === metadataSource; }).map(function (item) { return item.text; }) : [];
+      var descriptions = metadataSection && metadataSection.key === "subspecies_taxonomy" && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1).filter(function (item) { return item && typeof item.text === "string" && item.text.trim() && sanitizeUrl(item.source_url); }).map(function (item) { return item.text; }) : [];
       description.textContent = metadataSource && descriptions.length ? descriptions.join(" ") : "이 아종만의 외형·분포 차이는 검토된 자료에서 아직 확인하지 못했습니다.";
       front.appendChild(description);
       if (metadataSource) {
@@ -1644,6 +1651,11 @@
         metadataDetails.appendChild(metadataSummary);
         metadataDetails.appendChild(safeLink(doc, metadata.source_name || "분류 출처", metadataSource));
         if (taxon.english_name_source_url) { metadataDetails.appendChild(safeLink(doc, "영어 이름 출처", taxon.english_name_source_url)); }
+        var descriptionSources = {};
+        (metadataSection && Array.isArray(metadataSection.items) ? metadataSection.items.slice(1) : []).forEach(function (item) {
+          var url = item && sanitizeUrl(item.source_url);
+          if (url && url !== metadataSource && !descriptionSources[url]) { descriptionSources[url] = true; metadataDetails.appendChild(safeLink(doc, item.source_name || "분포 설명 출처", url)); }
+        });
         if (typeof metadata.range_raw === "string" && metadata.range_raw.trim()) {
           var rawRange = doc.createElement("blockquote");
           rawRange.textContent = metadata.range_raw;

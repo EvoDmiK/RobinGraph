@@ -410,6 +410,7 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             result['parent_species']={'taxon':asdict(parent.items[-1]),'lineage':asdict(parent),
                                       'source_url':metadata['source_url'],'source_name':metadata['source_name']}
             result['reference_traits']=state['reference']['traits']
+            result['taxon'] = {**taxon, **metadata.get('display_taxon', {})}
             result['subspecies_metadata']=metadata
             result['sections'].insert(0,metadata['section'])
             result['summary']=metadata['section']['items'][0]['text']
