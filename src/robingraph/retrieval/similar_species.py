@@ -185,4 +185,4 @@ def similar_species(repository, store, resolve, name):
                        'phylogeny':phylogeny_metadata(lineage.taxonomy_release, lineage.concept_set_id)},
             'groups':[{'rank':'similarity','label':'근연·분류·생태 가중 점수 상위 3종','items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'계통 관계 50%, 분류 관계 30%(같은 속 20%·같은 과 10%), 서식 환경 10%, 먹이 생태 10%의 가중합 점수순입니다. 계통 점수는 이 조회의 전체 후보에서 확인된 공통 조상들의 상대적 순서이며 진화 거리·유전 유사도·확률이 아닙니다. 계통 자료가 없으면 해당 항목을 제외하고 나머지 50%를 100점으로 환산한 분류·생태 대체 점수로 표시합니다. 서로 다른 자료 범위의 점수는 불확실성이 다릅니다.'}
+            'note':'계통 50% · 분류 30% · 서식 환경 10% · 먹이 생태 10%를 반영해 점수순으로 정렬합니다. 계통 자료가 없으면 분류·생태 점수로 표시합니다. 점수는 실제 진화 거리를 뜻하지 않습니다.'}
