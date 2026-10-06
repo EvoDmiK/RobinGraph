@@ -22,3 +22,11 @@
 - 활동 시간의 두 표기, 해오라기 두 종의 검토 우선 적용, 결측 유지와 원자료 보존을 확인했다.
 - 근연 관계 동점 우선, 다른 릴리스 차단, 낮은 점수 후보를 올리지 않는 조건을 확인했다.
 - graphify AST 갱신 완료.
+
+## NAS TEST 실제 검증
+
+배포 코드 `66d55d668082765013df1882db0293ebbe2df638`, 이미지 `robingraph-api:test-activity-66d55d6`, 경로 `/home/kimdove/RobinGraph-activity-66d55d6`. 아카이브 SHA-256 `57398675646b3d2d546f07a42b7cd5e461166ff52a9b571bd06d2399d4cc89d7`, 전송 및 MANIFEST의 파일별 해시 검증 성공. TEST 서비스 health 및 공개 계약 검증기 성공.
+
+공개 `/v1/taxa/profile`에서 해오라기와 Nankeen Night Heron은 activity_pattern=true/야행성, 타조와 구관조는 nocturnal=false/야행성 아님을 반환했다. 흰뺨검둥오리에는 현재 활동 자료가 없어 활동 항목을 임의 생성하지 않았다.
+
+공개 `/v1/taxa/similar?name=흰뺨검둥오리`에서 청둥오리 100점 → 고방오리 100점 → Andean Teal 100점 순서와 청둥오리의 문헌 근연 관계 근거를 확인했다. 공개 chat.js와 birds.js 해시가 로컬과 일치했다. 브라우저 스크린샷 검증을 새로 수행한 것으로 주장하지 않는다.
