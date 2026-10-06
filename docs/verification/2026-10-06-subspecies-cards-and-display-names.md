@@ -164,4 +164,47 @@ node --test tests/frontend/*.test.js
 
 ## 8. 배포 기록
 
-NAS TEST 배포와 공개 API·프런트엔드 확인 결과는 배포 후 아래에 기록한다. PROD 변경은 작업 범위에 포함하지 않는다.
+### 8.1 커밋과 산출물
+
+- Runtime commit: `5942bce546a485b868f255028bb85c5aa7d2afe9`.
+- `origin/dev` push 완료.
+- NAS 릴리스 디렉터리: `/home/kimdove/RobinGraph-subspecies-5942bce`.
+- TEST image: `robingraph-api:test-subspecies-5942bce`.
+- TEST 컨테이너: `robingraph-api-test`, 상태 healthy.
+- Archive SHA-256: `589b9661ee7779ce9c5567d894bcd28802a7eef512ce33f08b301b5053f187dc`.
+
+커밋된 파일에서 배포 archive를 생성하고 NAS에 전송했다. archive 해시와 내장 manifest를 검증한 뒤 기존 TEST 환경 설정을 복사하고 이미지 및 VCS revision을 새 릴리스로 설정했다. 인증 값은 문서와 git에 포함하지 않았다.
+
+### 8.2 배포 명령과 상태
+
+NAS 릴리스 디렉터리에서 다음 명령을 실행했다.
+
+```sh
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh update
+ROBINGRAPH_DEPLOY_TARGET=test sh scripts/deploy_nas.sh verify
+```
+
+배포 도구의 사전 확인을 거쳐 TEST 이미지를 빌드하고 컨테이너를 교체했다. 이미지 OCI revision이 runtime commit과 일치한다. PROD는 기존 `robingraph-api:prod-local` 이미지를 유지했고 healthy 상태를 확인했다. 서비스 DB 적재·삭제와 PROD 재배포는 하지 않았다.
+
+### 8.3 공개 서비스 확인
+
+대상: https://robingraph-test.dove-nest.com
+
+- `/v1/taxa/subspecies`에서 청둥오리의 두 아종이 Greenland Mallard와 Northern Mallard로 반환된다.
+- 각 목록 항목에 한국어 분포 설명과 영어 이름 출처 URL이 있다.
+- 두 아종 각각의 `/v1/taxa/profile`에서 목록과 같은 taxon ID·영어 이름·이름 출처 URL을 확인했다.
+- 공개 `/static/chat.js`와 `/static/styles.css`의 SHA-256이 커밋된 파일과 일치한다.
+
+배포 계약 검증:
+
+```sh
+uv run --locked --extra test --extra tracing \
+  python scripts/verify_api_deployment.py \
+  --base-url https://robingraph-test.dove-nest.com --json
+```
+
+결과: **passed=true**. 브라우저의 컴포넌트 레이아웃 검증과 공개 API·정적 파일 검증을 구분해 기록했다.
+
+## 9. 문서와 후속 관리
+
+이 문서는 Obsidian `Work/RobinGraph/2026-10-06-아종목록-카드디자인-영어표시명-NAS배포.md`에도 상세 내용으로 기록한다. Obsidian에서는 렌더링 이미지 링크를 저장소의 이미지 경로로 연결한다. 향후 다른 아종의 이름을 추가할 때도 정확한 식별 정보와 확인 자료를 보존하고, 국명과 임의 번역을 구분한다.
