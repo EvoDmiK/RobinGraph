@@ -1,21 +1,23 @@
 # 한국어 조류 표시명
 
-2026-10-06 활성 AviList v2025b 종 11,131개를 조사했다. 활성 한국어 이름 그래프에 이름 레코드가 있는 종은 847개, 없는 종은 10,284개였다. 기존 레코드 중 7개는 한국어가 아닌 영어·포르투갈어·학명 표기였으며 원본 그래프를 보존한 채 화면 표기만 보완했다. 최종적으로 기존 한국어 이름 840개, IOC 참고 이름 170개, Gemini 번역명 10,121개를 표시한다. 전체 활성 종의 카드·설명 제목·같은 속/과 목록·그래프 유사도 TOP3·서식 환경/먹이 생태 목록·비교 표에 한국어 표시명을 제공한다.
+2026-10-06 사용자 요청에 따라 자동 번역명을 제거했다. 한국조류학회의 **2025 한국조류목록 개정판 v2.1**에서 확인한 국명을 표시하며, 확인되지 않은 종은 원문 영어 이름으로 표시한다. 영어 이름도 없는 경우에만 학명을 사용한다. 기존 Wikidata 이름도 이 목록으로 확인되지 않으면 종의 한국어 표시명으로 사용하지 않는다. 이 기준은 카드·설명·같은 속/과 목록·그래프 유사도 TOP3·생태 비교 목록에 공통으로 적용한다.
 
-표시 우선순위는 기존 그래프 한국어 이름, 학명이 정확히 일치하는 IOC 한국어 참고 이름, Gemini 번역명이다. 기존 그래프 이름을 자동 번역으로 교체하지 않는다. IOC v15.2 다국어 목록의 한국어 열에서 누락 종 170개를 찾았으며, 출처를 함께 저장했다. 참고 목록의 쉼표·괄호 안 별칭은 원문 `source_label`에 보존하고 첫 이름을 표시한다. IOC 목록은 한국어 공식 명명 기관의 표준명 목록으로 주장하지 않는다.
+[한국조류학회 자료실](https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실)의 공개 XLSX `공식목록` 시트에서 Species 598행을 추출했다. 자료의 안내 시트에는 자유로운 가공과 형식 변경이 허용돼 있다. 원본 SHA-256은 `b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a`이다. 학회의 국명을 그대로 사용하며, 선행 공백만 제거했다. 목록의 표기법을 일반 사전 철자로 임의 변경하지 않는다.
 
-자료:
+활성 AviList v2025b 11,131종과 학명이 정확히 일치하는 593종, 속 이동을 확인한 3종을 합쳐 **596종**을 적용했다. 나머지 **10,535종**은 영어로 표시한다. 모든 기록에는 원본 학명·시트·행 번호·자료 URL을 보존한다. 한국조류학회 목록은 국내 기록종 목록이므로 해외 모든 종의 국명을 포함하지 않는다.
 
-- [AviList v2025b](https://www.avilist.org/checklist/v2025b/): 종 ID·학명·원문 영명. CC BY 4.0.
-- [IOC 다국어 목록](https://www.worldbirdnames.org/new/ioc-lists/master-list-2/): v15.2 한국어 참고 이름. 내려받은 XLSX의 List 시트에서 학명을 완전 일치시켰다.
-- Gemini `gemini-3.5-flash-lite`: 나머지 이름의 번역 및 별도 영문 의미 대조 검토. 출처로 확인된 국명을 의미하지 않는다.
+| 학회 학명 | 활성 AviList 학명 | 국명 | 연결 근거 |
+| --- | --- | --- | --- |
+| Charadrius dubius | Thinornis dubius | 꼬마물떼새 | AviList v2025b extended의 Protonym |
+| Charadrius placidus | Thinornis placidus | 흰목물떼새 | AviList v2025b extended의 Protonym |
+| Pardaliparus venustulus | Periparus venustulus | 노랑배진박새 | ITIS의 동물이명 |
 
-`src/robingraph/retrieval/species_ko_translations.json`은 요청 시 생성하지 않는 고정 표시 자료다. 종 ID에는 AviList 릴리스가 포함되며, ID·학명·원문 영명이 모두 같을 때만 적용한다. 다른 릴리스, 다른 학명/영명, 아종에는 종 번역명을 잘못 붙이지 않는다. 새로운 분류 릴리스는 별도 재수집·검토가 필요하다.
+분류 연결 자료는 [AviList v2025b](https://www.avilist.org/checklist/v2025b/)와 [ITIS Pardaliparus venustulus](https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=1279937)다. AviList는 CC BY 4.0이다. 학회에서 별도 종으로 다루는 Anas carolinensis(미국쇠오리)와 Saxicola stejnegeri(검은딱새)는 현재 활성 종에 바로 대응하지 않으므로 다른 종에 이름을 붙이지 않는다. 영어 이름만으로 종 분할·통합을 추정하지 않는다.
 
-참고 이름은 `korean_name_status=source-reference`와 `korean_name_source_url`을 반환한다. 나머지는 `machine-translated`로 반환하고 화면 이름에 **(번역명)**을 붙인다. 번역·음역이 부정확할 수 있으므로 원문 영명과 학명을 함께 보존한다. Gemini 재검토는 출처 검증과 구분한다.
+예를 들어 Aethia cristatella는 ‘뿔바다새’ 대신 **뿔바다오리**, Cacomantis merulinus는 ‘울음두견이’ 대신 **우는뻐꾸기**로 표시한다. 이름을 출처에서 확인하지 못한 Abeillia abeillei는 **Emerald-chinned Hummingbird**로 표시한다.
 
-이 변경은 표시 자료 보완이다. Neo4j의 한국어 `VernacularName`이나 검색 별칭을 만들지 않는다. 번역명을 입력해서 검색할 수 있다고 보장하지 않으며, 비교 버튼은 기존처럼 학명으로 원래 그래프 종을 조회한다. 학명과 분류군의 라틴어는 식별·출처 표시를 위해 유지한다.
+`src/robingraph/retrieval/species_ko_names.json`은 출처로 검증한 고정 표시 자료다. ID·학명·원문 영명이 모두 일치할 때만 적용하고 `korean_name_status=source-reference`와 출처 URL을 반환한다. 기존 자동 번역 자료 `species_ko_translations.json`은 삭제했다. 아종과 상위 분류군의 이름에 종 국명을 적용하지 않는다. 상위 분류군의 기존 이름 정책은 별도로 유지한다.
 
-Gemini CLI 작업자도 시작했으나 초기 로그인 화면에서 대기했다. 실제 번역과 검토는 이미 설정된 NAS 서비스의 Gemini API로 수행했다. API 키는 NAS 컨테이너 환경 안에서만 사용했으며 로컬 산출물에 저장하지 않았다.
+이 변경은 표시 자료 수정이며 Neo4j의 원본 이름 레코드나 검색 별칭을 변경하지 않는다. 새 국명으로 검색할 수 있다는 보장은 없으며, 비교 버튼은 보존된 학명으로 조회한다. 새 분류 릴리스에는 출처 대응을 다시 확인해야 한다.
 
-검증은 전체 표시 자료의 종 ID·학명 유일성·한글 표기·개수, 원문 이름 보존, 기존 한국어 이름 우선, 다른 릴리스와 아종에 적용하지 않는 조건, 카드/설명/비교의 번역명 표시를 포함한다. [최종 배포 검증 결과](verification/2026-10-06-korean-display-names.md)에 전체 종 검사와 실제 화면 결과를 기록했다.
+검증은 출처와 행 번호의 보존, 국명 교정, 미확인 이름의 영어 대체, 릴리스·학명·영명 불일치 차단, 종 분할의 잘못된 연결 방지, 카드·설명·비교에서 과거 자동 번역명 대신 영어 표시를 포함한다.

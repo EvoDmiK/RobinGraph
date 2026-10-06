@@ -26,7 +26,7 @@ CURRENT_LINEAGE_ITEM = {
     "scientific_name": "Anas platyrhynchos",
     "authority": "Linnaeus, C, 1758",
     "korean_name": "청둥오리",
-    "korean_name_status": "community-sourced",
+    "korean_name_status": "source-reference",
     "korean_name_source_url": None,
     "english_name": None,
 }
@@ -262,7 +262,7 @@ class VerifyDeploymentCanaryTest(unittest.TestCase):
             "scientific_name": "Struthio camelus",
             "authority": None,
             "korean_name": "타조",
-            "korean_name_status": "community-sourced",
+            "korean_name_status": "source-reference",
             "korean_name_source_url": None,
             "english_name": None,
         }
@@ -331,7 +331,7 @@ class VerifyDeploymentCliTest(unittest.TestCase):
         self.assertEqual(args.base_url, "https://aviary.dove-nest.com")
         self.assertEqual(args.lineage_name, "청둥오리")
         self.assertEqual(args.expected_scientific_name, "Anas platyrhynchos")
-        self.assertEqual(args.expected_korean_name_status, "community-sourced")
+        self.assertEqual(args.expected_korean_name_status, "source-reference")
 
     def test_parse_args_reads_env_override(self) -> None:
         with patch.dict("os.environ", {"ROBINGRAPH_PUBLIC_API_URL": "https://staging.example.com"}):

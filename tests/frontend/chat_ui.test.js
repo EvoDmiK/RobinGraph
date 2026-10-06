@@ -22,19 +22,20 @@ const chat = require(path.join(STATIC_DIR, "chat.js"));
 const jsSource = fs.readFileSync(path.join(STATIC_DIR, "chat.js"), "utf8");
 const htmlSource = fs.readFileSync(path.join(STATIC_DIR, "index.html"), "utf8");
 
-test("translated names appear consistently in cards, explanations and comparisons", () => {
+test("unverified translations fall back to English in cards, explanations and comparisons", () => {
   const profile = fakeProfilePayload().result.profile;
   profile.taxon.korean_name = "에메랄드턱벌새";
+  profile.taxon.english_name = "Emerald-chinned Hummingbird";
   profile.taxon.korean_name_status = "machine-translated";
   profile.sections = [{ title: "기본 정보", items: [] }];
   const doc = { createElement: createFakeElement };
   const card = chat.buildSpeciesCard(doc, profile);
   const answer = chat.buildSpeciesAnswer(doc, profile);
-  assert.equal(chat.speciesLabel(profile.taxon), "에메랄드턱벌새 (번역명)");
-  assert.equal(answer.children[0].textContent, "에메랄드턱벌새 (번역명)");
-  assert.equal(collectAllNodes(card).find(n => n.className === "species-title").textContent, "에메랄드턱벌새 (번역명)");
+  assert.equal(chat.speciesLabel(profile.taxon), "Emerald-chinned Hummingbird");
+  assert.equal(answer.children[0].textContent, "Emerald-chinned Hummingbird");
+  assert.equal(collectAllNodes(card).find(n => n.className === "species-title").textContent, "Emerald-chinned Hummingbird");
   const comparison = chat.buildSpeciesComparison(doc, profile, profile);
-  assert.ok(collectAllNodes(comparison).some(n => n.textContent === "에메랄드턱벌새 (번역명)"));
+  assert.ok(collectAllNodes(comparison).some(n => n.textContent === "Emerald-chinned Hummingbird"));
   profile.taxon.korean_name_status = "community-sourced";
   assert.equal(chat.speciesLabel(profile.taxon), "에메랄드턱벌새");
 });

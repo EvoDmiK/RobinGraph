@@ -20,8 +20,7 @@
   }
   const ranks = {order:"목", family:"과", genus:"속", species:"종", subspecies:"아종"};
   function speciesLabel(taxon) {
-    return (taxon.korean_name || taxon.english_name || taxon.scientific_name) +
-      (taxon.korean_name_status === "machine-translated" ? " (번역명)" : "");
+    return (taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.scientific_name;
   }
   function render(profile) {
     const card = $("bird-card"); card.replaceChildren(); card.hidden = false;

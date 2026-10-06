@@ -48,7 +48,7 @@ class RelatedSpeciesTest(unittest.TestCase):
         self.assertIn("english.dataset_id=peer.dataset_id AND english.source_release=peer.source_release", RELATED_QUERY)
         self.assertIn("node.policy_status='allowed' AND node.source_release=$taxonomy_release", RELATED_QUERY)
         self.assertEqual('licensed_names', result['name_filter'])
-        self.assertTrue(all(item['korean_name'] for item in genus['items']))
+        self.assertTrue(all(item['korean_name'] is None for item in genus['items']))
 
     def test_missing_species_and_revoked_or_invalid_provenance_fail_closed(self):
         repo = Mock()

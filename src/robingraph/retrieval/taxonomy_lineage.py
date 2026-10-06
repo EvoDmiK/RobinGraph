@@ -22,7 +22,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cache
 import json
-import re
 from pathlib import Path
 from typing import Literal, Protocol
 
@@ -55,23 +54,23 @@ def reference_korean_names() -> dict:
 
 
 @cache
-def translated_korean_names() -> dict:
-    """Pinned sourced names and Gemini translations, separate from graph search names."""
-    return json.loads(Path(__file__).with_name("species_ko_translations.json").read_text(encoding="utf-8"))["labels"]
+def sourced_korean_names() -> dict:
+    """Korean Ornithological Society names bound to the reviewed AviList release."""
+    return json.loads(Path(__file__).with_name("species_ko_names.json").read_text(encoding="utf-8"))["labels"]
 
 
 def with_korean_display_name(taxon: dict) -> dict:
-    """Preserve sourced names; fill exact, release-bound species display gaps."""
-    if (re.search(r"[가-힣]", str(taxon.get("korean_name") or ""))
-            or taxon.get("rank") != "species"):
+    """Use checked Korean species names, otherwise let callers display English."""
+    if taxon.get("rank") != "species":
         return taxon
-    label = translated_korean_names().get(taxon.get("taxon_id"))
-    if (not label or label["scientific_name"] != taxon.get("scientific_name")
-            or label["english_name"] != taxon.get("english_name")):
-        return taxon
-    return {**taxon, "korean_name": label["name"],
-            "korean_name_status": label.get("status", "machine-translated"),
-            "korean_name_source_url": label.get("source_url")}
+    label = sourced_korean_names().get(taxon.get("taxon_id"))
+    if (label and label["scientific_name"] == taxon.get("scientific_name")
+            and label["english_name"] == taxon.get("english_name")):
+        return {**taxon, "korean_name": label["name"],
+                "korean_name_status": label["status"],
+                "korean_name_source_url": label["source_url"]}
+    return {**taxon, "korean_name": None, "korean_name_status": None,
+            "korean_name_source_url": None}
 
 
 @dataclass(frozen=True)
