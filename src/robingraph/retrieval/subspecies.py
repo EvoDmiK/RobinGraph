@@ -64,26 +64,43 @@ def _rows(repository,lineage,child_id=None):
     return parent,rows
 
 
+def _display_subspecies(row, parent, lineage):
+    """One display path for every accepted subspecies, list and selected card."""
+    taxon = with_korean_display_name(asdict(_parse_lineage_items([row['taxon']])[0]))
+    raw = row.get('range_text')
+    raw = raw.strip() if isinstance(raw, str) else ''
+    if raw:
+        taxon.update(range_text=raw, description=raw, description_language='en',
+                     description_status='source-original', description_source_url=row['source_url'],
+                     description_source_title=row['source_name'])
+    if (lineage.concept_set_id == 'rg:concept-set:avilist-v2025b'
+            and taxon.get('english_name_source_url')
+            and raw == REVIEWED_RANGE_RAW.get(taxon['scientific_name'])):
+        summary = REVIEWED_RANGES.get((lineage.taxonomy_release, taxon['scientific_name']))
+        if summary:
+            taxon.update(description=summary, description_language='ko', description_status='reviewed-summary')
+    distribution = _heron_distribution(taxon, lineage)
+    if distribution:
+        taxon.update(description=f'{distribution}에 분포하는 아종입니다.', description_language='ko',
+                     description_status='reviewed-summary', description_source_url=HERON_DISTRIBUTION_URL,
+                     description_source_title='BirdLife South Africa · Grey Heron · Taxonomy')
+    if not (taxon.get('korean_name') or taxon.get('english_name')):
+        parent_name = parent.korean_name or parent.english_name or parent.scientific_name
+        # This is a distribution caption, never a new Korean/English common name.
+        caption = distribution + ' 분포' if distribution else raw.split(';')[0]
+        caption = ' '.join(caption.split())
+        if len(caption) > 72:
+            caption = caption[:71].rstrip() + '…'
+        taxon['display_label'] = parent_name + ' 아종' + (' · ' + caption if caption else '')
+    return taxon
+
+
 def subspecies_for(repository,resolve,name):
     lineage=resolve(name)
     if lineage is None or not lineage.items or lineage.items[-1].rank not in ('species','subspecies'):
         raise SpeciesNotFoundError('Species not found')
     parent,rows=_rows(repository,lineage)
-    taxa=[]
-    for row in rows[:200]:
-        taxon=with_korean_display_name(asdict(_parse_lineage_items([row['taxon']])[0]))
-        if (lineage.concept_set_id=='rg:concept-set:avilist-v2025b'
-                and taxon.get('english_name_source_url')
-                and row.get('range_text')==REVIEWED_RANGE_RAW.get(taxon['scientific_name'])):
-            taxon['description']=REVIEWED_RANGES.get((lineage.taxonomy_release,taxon['scientific_name']))
-        distribution = _heron_distribution(taxon, lineage)
-        if distribution:
-            taxon['description'] = f'{distribution}에 분포하는 아종입니다.'
-            taxon['description_source_url'] = HERON_DISTRIBUTION_URL
-            taxon['description_source_title'] = 'BirdLife South Africa · Grey Heron · Taxonomy'
-            if not (taxon.get('korean_name') or taxon.get('english_name')):
-                taxon['display_label'] = f'{parent.korean_name or parent.english_name or parent.scientific_name} 아종 · {distribution} 분포'
-        taxa.append(taxon)
+    taxa=[_display_subspecies(row, parent, lineage) for row in rows[:200]]
     if len({t['taxon_id'] for t in taxa})!=len(taxa):
         raise ValueError('Duplicate subspecies targets')
     return {'parent_species':{'taxon':asdict(parent)},'subspecies':taxa,
@@ -95,25 +112,24 @@ def subspecies_for(repository,resolve,name):
 def subspecies_metadata(repository,lineage):
     target=lineage.items[-1]
     parent,rows=_rows(repository,lineage,target.taxon_id)
-    if len(rows)!=1 or rows[0]['taxon']['taxon_id']!=target.taxon_id:
+    if (len(rows)!=1 or rows[0]['taxon']['taxon_id']!=target.taxon_id
+            or rows[0]['taxon'].get('scientific_name')!=target.scientific_name
+            or rows[0]['taxon'].get('rank')!='subspecies'):
         raise ValueError('Subspecies parent relation is not confirmed')
     row=rows[0]
-    expected_id={'Anas platyrhynchos conboschas':'avilist-taxon:v2025b:546',
-                 'Anas platyrhynchos platyrhynchos':'avilist-taxon:v2025b:545'}.get(target.scientific_name)
-    reviewed_identity=(lineage.concept_set_id=='rg:concept-set:avilist-v2025b' and target.taxon_id==expected_id)
-    summary=REVIEWED_RANGES.get((lineage.taxonomy_release,target.scientific_name)) if reviewed_identity else None
-    display=with_korean_display_name(asdict(target))
-    items=[{'text':f'{display.get("korean_name") or display.get("english_name") or target.scientific_name}은(는) {parent.korean_name or parent.english_name or parent.scientific_name}에 속하는 아종입니다.',
+    display = _display_subspecies(row, parent, lineage)
+    label = display.get('korean_name') or display.get('english_name') or display.get('display_label') or target.scientific_name
+    items=[{'text':f'{label}은(는) {parent.korean_name or parent.english_name or parent.scientific_name}에 속하는 아종입니다.',
             'source_name':row['source_name'],'source_url':row['source_url'],'license_name':'CC BY 4.0'}]
-    distribution = _heron_distribution(asdict(target), lineage)
-    if distribution:
-        items.append({'text': f'{distribution}에 분포하는 아종입니다.',
-                      'source_name': 'BirdLife South Africa · Grey Heron · Taxonomy',
-                      'source_url': HERON_DISTRIBUTION_URL, 'reviewed_at': '2026-10-06'})
-    elif summary and row.get('range_text')==REVIEWED_RANGE_RAW.get(target.scientific_name):
-        items.append({'text':summary,'source_name':row['source_name'],'source_url':row['source_url'],
-                      'license_name':'CC BY 4.0','reviewed_at':'2026-10-03','source_range':row['range_text']})
+    if display.get('description'):
+        original = display['description_status'] == 'source-original'
+        item = {'text': ('분포(영어 원문): ' if original else '') + display['description'],
+                'source_name': display['description_source_title'], 'source_url': display['description_source_url']}
+        if original or display['description_source_url'] == row['source_url']:
+            item['license_name'] = 'CC BY 4.0'
+        items.append(item)
     else:
-        items.append({'text':'이 아종만의 외관 차이와 한국어 분포 설명은 아직 검토되지 않았습니다.'})
+        items.append({'text':'이 아종의 분포 자료는 출처에서 확인되지 않았습니다.'})
     return {'section':{'key':'subspecies_taxonomy','title':'아종과 소속 종','items':items},
-            'source_url':row['source_url'],'source_name':row['source_name'],'range_raw':row.get('range_text')}
+            'display_taxon': display, 'source_url':row['source_url'],'source_name':row['source_name'],
+            'range_raw':row.get('range_text')}

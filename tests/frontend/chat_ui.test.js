@@ -2626,6 +2626,31 @@ test("unnamed subspecies use distribution captions without inventing common name
   assert.equal(row.children.find(n => n.tagName === "button").getAttribute("aria-label"), sub.display_label + " · 아종 자료 보기");
 });
 
+test("global subspecies distribution fallback is preserved in folded details and selected labels", async () => {
+  const species = profileFor({ taxon_id: "parus", scientific_name: "Parus major", english_name: "Great Tit" });
+  const sub = { taxon_id: "major", rank: "subspecies", scientific_name: "Parus major major", display_label: "Great Tit 아종 · Europe to western Siberia", description: "Europe to western Siberia; winter range <script>inert</script>", description_language: "en", range_text: "Europe to western Siberia; winter range <script>inert</script>", description_source_url: "https://explore.avilist.org/data/avilist-2025b.json" };
+  const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async () => jsonResponse({ parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b", subspecies: [sub] }));
+  explorer.children[0].dispatch("click"); await tick();
+  const row = collectAllNodes(explorer).find(n => /subspecies-peer/.test(n.className));
+  assert.equal(row.children[0].children[0].textContent, sub.display_label);
+  assert.match(collectedText(row.children[0]), /분포\(영어 원문\): .*Europe/);
+  const details = row.children.find(n => n.tagName === "details");
+  assert.ok(!details.open);
+  assert.match(collectedText(details), /winter range <script>inert<\/script>/);
+  assert.equal(collectAllNodes(details).some(n => n.tagName === "script"), false);
+  assert.equal(chat.buildSpeciesAnswer({ createElement: createFakeElement }, {taxon:sub,sections:[{title:"분류",items:[]}]}).children[0].textContent, sub.display_label);
+});
+
+test("identical subspecies distribution captions remain distinguishable by list number", async () => {
+  const species = profileFor({ taxon_id: "parent", scientific_name: "Species test", english_name: "Test Bird" });
+  const subs = ["first", "second"].map(id => ({taxon_id:id, rank:"subspecies", scientific_name:"Species test "+id, display_label:"Test Bird 아종 · same islands"}));
+  const explorer = chat.buildSubspeciesExplorer({ createElement:createFakeElement },species,async()=>jsonResponse({parent_species:{taxon:species.taxon},concept_set_id:"cs1",taxonomy_release:"v2025b",subspecies:subs}));
+  explorer.children[0].dispatch("click"); await tick();
+  const rows=collectAllNodes(explorer).filter(n=>/subspecies-peer/.test(n.className));
+  assert.equal(rows[0].children[0].children[0].textContent,"Test Bird 아종 · same islands · 아종 1");
+  assert.equal(rows[1].children[0].children[0].textContent,"Test Bird 아종 · same islands · 아종 2");
+});
+
 test("subspecies explorer fetches lazily and rejects a selected profile from another release", async () => {
   const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
   const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos test" };
@@ -2651,6 +2676,17 @@ test("subspecies explorer fetches lazily and rejects a selected profile from ano
   assert.equal(calls, 2);
   assert.match(collectedText(explorer), /아종 자료를 확인하지 못했습니다/);
   assert.equal(collectAllNodes(explorer).some(n => /^species-chat-brief /.test(n.className || "")), false);
+});
+
+test("subspecies card accepts independently sourced distribution while rejecting unsafe links", () => {
+  const profile = profileFor({rank:"subspecies",scientific_name:"Ardea cinerea jouyi",taxon_id:"jouyi",english_name:"Oriental Grey Heron"});
+  profile.subspecies_metadata={source_url:"https://explore.avilist.org/data/avilist-2025b.json",source_name:"AviList",section:{key:"subspecies_taxonomy",items:[{text:"분류"},{text:"동아시아에 분포하는 아종입니다.",source_name:"BirdLife South Africa",source_url:"https://www.birdlife.org.za/red-data-book/red-list/grey-heron/"},{text:"unsafe distribution",source_url:"javascript:alert(1)"}]}};
+  const card=chat.buildSpeciesCard({createElement:createFakeElement},profile);
+  const front=collectAllNodes(card).find(n=>n.className==="species-card-front");
+  assert.match(collectedText(front),/동아시아에 분포하는 아종/);
+  assert.doesNotMatch(collectedText(front),/unsafe distribution/);
+  const details=collectAllNodes(card).find(n=>n.className==="card-details species-subspecies-sources");
+  assert.ok(collectAllNodes(details).some(n=>n.tagName==="a"&&n.href==="https://www.birdlife.org.za/red-data-book/red-list/grey-heron/"));
 });
 
 test("subspecies card shows only its sourced reviewed description and keeps raw range in source details", () => {

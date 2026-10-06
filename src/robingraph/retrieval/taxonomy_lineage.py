@@ -87,15 +87,35 @@ def sourced_korean_names() -> dict:
     return json.loads(Path(__file__).with_name("species_ko_names.json").read_text(encoding="utf-8"))["labels"]
 
 
+@cache
+def sourced_subspecies_names() -> dict:
+    """Source-audited common-name facts, bound to exact AviList subspecies IDs."""
+    data = json.loads(Path(__file__).with_name('subspecies_name_references.json').read_text(encoding='utf-8'))
+    if (data['schema_version'] != 1 or data['taxonomy']['release'] != 'v2025b'
+            or data['taxonomy']['concept_set_id'] != 'rg:concept-set:avilist-v2025b'
+            or data['taxonomy']['rank'] != 'subspecies'):
+        raise ValueError('Subspecies name reference release mismatch')
+    names = {}
+    for taxon_id, reference in data['names'].items():
+        evidence = reference['evidence'][0]
+        source = data['sources'][evidence['source_id']]
+        page = evidence['locator']['page']
+        names[taxon_id] = {**reference, 'source_url': source['url'] + f'#page={page}',
+                          'source_title': source['title'] + f' · PDF {page}쪽'}
+    return names
+
+
 def with_korean_display_name(taxon: dict) -> dict:
     """Use checked Korean species names, otherwise let callers display English."""
     if taxon.get("rank") == "subspecies":
-        reference = SUBSPECIES_NAME_REFERENCES.get(taxon.get("taxon_id"))
+        if taxon.get('korean_name_status') == 'machine-translated':
+            taxon = {**taxon, 'korean_name': None, 'korean_name_status': None, 'korean_name_source_url': None}
+        reference = SUBSPECIES_NAME_REFERENCES.get(taxon.get("taxon_id")) or sourced_subspecies_names().get(taxon.get("taxon_id"))
         if (reference and reference['scientific_name'] == taxon.get('scientific_name')
                 and taxon.get('english_name') in (None, '', reference['english_name'])):
             return {**taxon, 'english_name': reference['english_name'],
                     'english_name_source_url': reference['source_url'],
-                    'english_name_source_title': reference['source_title']}
+                    'english_name_source_title': reference['source_title'], 'english_name_status': 'source-reference'}
         return taxon
     if taxon.get("rank") != "species":
         return taxon
