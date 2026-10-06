@@ -852,6 +852,7 @@
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
+    if (options.initialData && options.initialData.ranking) { open.textContent = "유사도 상위 3종 살펴보기"; }
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
     var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
     var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
@@ -930,7 +931,7 @@
         var note = doc.createElement("p"); note.className = "species-note"; note.textContent = data.note; results.appendChild(note);
         var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
         var rankedRemaining = data.ranking && data.ranking.limit === 3 ? 3 : null;
-        if (rankedRemaining !== null) { open.textContent = "그래프 유사도 상위 3종"; }
+        if (rankedRemaining !== null) { open.textContent = "유사도 상위 3종 살펴보기"; }
         (Array.isArray(data.groups) ? data.groups : []).forEach(function (group) {
           var block = doc.createElement("section");
           var title = doc.createElement("h3");
@@ -2114,7 +2115,7 @@
     return section;
   }
 
-  function buildSpeciesAnswer(doc, profile) {
+  function buildSpeciesAnswer(doc, profile, showBrief) {
     if (!profile || !Array.isArray(profile.sections) || !profile.sections.length) { return null; }
     var answer = doc.createElement("div");
     answer.className = "species-answer";
@@ -2154,7 +2155,18 @@
         block.appendChild(empty);
       }
       answer.appendChild(block);
+      if (showBrief && (section.key === "basic" || section.title === "기본 정보")) { answer.appendChild(buildSpeciesBrief(doc, profile)); }
     });
+    if (showBrief) {
+      var briefSources = dietIconInfo(profile).sources.concat((profile.traits || []).filter(function (trait) { return trait.name === "habitat"; }));
+      if (conservationInfo(profile.conservation).verified) { briefSources.push(profile.conservation); }
+      briefSources.forEach(function (source) {
+        var url = sanitizeUrl(source.source_url);
+        if (url && typeof source.source_name === "string" && !seen[url]) {
+          seen[url] = true; sources.push({ name: source.source_name, url: url, license: source.license_name, licenseUrl: sanitizeUrl(source.license_url) });
+        }
+      });
+    }
     if (sources.length) {
       var details = doc.createElement("details");
       details.className = "species-answer-sources";
@@ -2390,7 +2402,27 @@
 
       var questionAnswer = answer.result && answer.result.kind === "profile" && answer.result.question_answer;
       var targeted = buildQuestionAnswer(doc, questionAnswer);
-      var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile) : null);
+      var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile, true) : null);
+      var answerSources = null;
+      if (structured) {
+        answerSources = Array.from(structured.children).find(function (child) { return child.className === "species-answer-sources"; }) || null;
+        if (answerSources) { structured.removeChild(answerSources); }
+      }
+      if (targeted) {
+        var factSourceUrls = {};
+        (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
+          var url = fact && sanitizeUrl(fact.source_url);
+          if (!url || typeof fact.source_name !== "string" || factSourceUrls[url]) { return; }
+          factSourceUrls[url] = true;
+          if (!answerSources) {
+            answerSources = doc.createElement("details"); answerSources.className = "species-answer-sources";
+            answerSources.appendChild(doc.createElement("summary"));
+          }
+          var row = doc.createElement("p"); row.appendChild(safeLink(doc, fact.source_name, url));
+          if (fact.license_name) { row.appendChild(safeLink(doc, " · " + fact.license_name, fact.license_url)); }
+          answerSources.appendChild(row);
+        });
+      }
       if (structured) {
         item.appendChild(structured);
       } else {
@@ -2450,6 +2482,10 @@
       if (result && result.kind === "profile") {
         var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
         if (speciesCard) {
+          if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
+          item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
+          var extra = doc.createElement("details"); extra.className = "species-extra-info";
+          var extraTitle = doc.createElement("summary"); extraTitle.textContent = "추가 정보"; extra.appendChild(extraTitle);
           if (result.profile.taxon.rank !== "subspecies") {
             var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
             var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
@@ -2457,16 +2493,17 @@
               var directOptions = questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null;
               if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
             } else if (!targeted && result.similar_species) {
-              relatedOptions.initialData = result.similar_species; relatedOptions.initiallyOpen = true;
+              relatedOptions.initialData = result.similar_species;
             }
-            (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions));
-            (structured || item).appendChild(buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions));
+            item.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions));
+            var ecological = buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions);
+            if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
+            else { extra.appendChild(ecological); }
           }
-          if (result.profile.taxon.rank !== "subspecies") { (structured || item).appendChild(buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
-          else { (structured || item).appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
-          (structured || item).appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
-          if (!targeted) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
-          item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
+          if (result.profile.taxon.rank !== "subspecies") { extra.appendChild(buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
+          else { extra.appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
+          extra.appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
+          item.appendChild(extra);
         }
       }
 
@@ -2524,7 +2561,19 @@
 
           citeList.appendChild(li);
         });
-        item.appendChild(citeList);
+        if (result && result.kind === "profile") {
+          if (!answerSources) {
+            answerSources = doc.createElement("details"); answerSources.className = "species-answer-sources";
+            var sourceTitle = doc.createElement("summary"); answerSources.appendChild(sourceTitle);
+          }
+          answerSources.appendChild(citeList);
+        } else { item.appendChild(citeList); }
+      }
+
+      if (answerSources) {
+        var sourceCount = Array.from(answerSources.children).slice(1).reduce(function (count, row) { return count + (row.className === "citations" ? row.children.length : 1); }, 0);
+        answerSources.children[0].textContent = "답변 출처 보기 (" + sourceCount + ")";
+        item.appendChild(answerSources);
       }
 
       history.appendChild(item);
