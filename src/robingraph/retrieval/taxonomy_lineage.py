@@ -29,6 +29,18 @@ MatchedBy = Literal["scientific_name", "korean_name"]
 
 # Reference English names; no invented Korean subspecies names.
 SUBSPECIES_NAME_REFERENCES = {
+    'avilist-taxon:v2025b:5421': {
+        'scientific_name': 'Ardea cinerea jouyi',
+        'english_name': 'Oriental Grey Heron',
+        'source_title': 'Birds New Zealand · Checklist of the Birds of New Zealand (2022), p.175',
+        'source_url': 'https://www.birdsnz.org.nz/wp-content/uploads/2022/05/checklist-2022.pdf',
+    },
+    'avilist-taxon:v2025b:5422': {
+        'scientific_name': 'Ardea cinerea monicae',
+        'english_name': 'Mauritanian Heron',
+        'source_title': 'Dansk Ornitologisk Forening · Names of the birds of the World (2019)',
+        'source_url': 'https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf',
+    },
     'avilist-taxon:v2025b:546': {
         'scientific_name': 'Anas platyrhynchos conboschas',
         'english_name': 'Greenland Mallard',

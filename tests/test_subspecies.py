@@ -35,6 +35,24 @@ class SubspeciesTest(TestCase):
   self.assertEqual(child['english_name'],profile['taxon']['english_name'])
   self.assertEqual(child['english_name_source_url'],profile['taxon']['english_name_source_url'])
 
+ def test_heron_subspecies_use_verified_names_or_distribution_captions(self):
+  from robingraph.retrieval.subspecies import HERON_DISTRIBUTIONS
+  parent=LineageTaxon('avilist-taxon:v2025b:5419','species','Ardea cinerea',None,'왜가리',english_name='Grey Heron')
+  lineage=TaxonomyLineage('Ardea cinerea','AviList','v2025b','rg:concept-set:avilist-v2025b',(parent,))
+  repo=Mock();repo._run.return_value=[{**ROW,'taxon':asdict(LineageTaxon(key,'subspecies',value[0],None))} for key,value in HERON_DISTRIBUTIONS.items()]
+  taxa=subspecies_for(repo,lambda _:lineage,'왜가리')['subspecies']
+  self.assertEqual('Oriental Grey Heron',taxa[1]['english_name'])
+  self.assertEqual('Mauritanian Heron',taxa[2]['english_name'])
+  self.assertIsNone(taxa[3]['english_name'])
+  self.assertEqual('왜가리 아종 · 마다가스카르 분포',taxa[3]['display_label'])
+  self.assertTrue(all(t['description_source_url'].startswith('https://www.birdlife.org.za/') for t in taxa))
+  child=LineageTaxon(taxa[1]['taxon_id'],'subspecies',taxa[1]['scientific_name'],None)
+  repo._run.return_value=[{**ROW,'taxon':asdict(child)}]
+  meta=subspecies_metadata(repo,TaxonomyLineage(child.scientific_name,'AviList','v2025b',lineage.concept_set_id,(parent,child)))
+  self.assertIn('동아시아',meta['section']['items'][1]['text'])
+  changed=TaxonomyLineage('Ardea cinerea','AviList','other',lineage.concept_set_id,(parent,))
+  self.assertNotIn('description',subspecies_for(repo,lambda _:changed,'왜가리')['subspecies'][0])
+
  def test_graph_navigation_pins_parent_child_release_and_provenance(self):
   repo=Mock();repo._run.return_value=[ROW]
   data=subspecies_for(repo,lambda _:LINEAGE,'청둥오리')

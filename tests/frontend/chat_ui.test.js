@@ -2614,6 +2614,18 @@ test("subspecies list uses sourced names, folded scientific identity and accessi
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "false");
 });
 
+test("unnamed subspecies use distribution captions without inventing common names", async () => {
+  const species = profileFor({ taxon_id: "heron", scientific_name: "Ardea cinerea", korean_name: "왜가리" });
+  const sub = { taxon_id: "firasa", rank: "subspecies", scientific_name: "Ardea cinerea firasa", display_label: "왜가리 아종 · 마다가스카르 분포", description: "마다가스카르에 분포하는 아종입니다.", description_source_url: "https://www.birdlife.org.za/" };
+  const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async () => jsonResponse({ parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b", subspecies: [sub] }));
+  explorer.children[0].dispatch("click"); await tick();
+  const row = collectAllNodes(explorer).find(n => /subspecies-peer/.test(n.className));
+  assert.equal(row.children[0].children[0].textContent, sub.display_label);
+  assert.doesNotMatch(collectedText(row.children[0]), /firasa|이름 미등록/);
+  assert.match(collectedText(row.children.find(n => n.tagName === "details")), /별도 한국어·영어 통칭|분포 설명 출처/);
+  assert.equal(row.children.find(n => n.tagName === "button").getAttribute("aria-label"), sub.display_label + " · 아종 자료 보기");
+});
+
 test("subspecies explorer fetches lazily and rejects a selected profile from another release", async () => {
   const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
   const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos test" };
@@ -2632,7 +2644,7 @@ test("subspecies explorer fetches lazily and rejects a selected profile from ano
   await tick();
   assert.equal(calls, 1);
   assert.match(collectedText(explorer), /일부 아종만 표시/);
-  assert.match(collectedText(explorer), /아종 1 · 이름 미등록/);
+  assert.match(collectedText(explorer), /청둥오리 아종 1/);
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
   collectAllNodes(explorer).find(n => n.tagName === "button" && n.textContent === "아종 보기").dispatch("click");
   await tick();

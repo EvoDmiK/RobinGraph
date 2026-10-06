@@ -1460,7 +1460,8 @@
         data.subspecies.forEach(function (taxon, index) {
           var entry = buildComparisonPeer(doc, taxon, false);
           entry.row.className += " subspecies-peer";
-          if (!taxon.korean_name && !taxon.english_name) { entry.row.children[0].children[0].textContent = "아종 " + (index + 1) + " · 이름 미등록"; }
+          var label = taxon.korean_name || taxon.english_name || taxon.display_label || speciesLabel(data.parent_species.taxon) + " 아종 " + (index + 1);
+          entry.row.children[0].children[0].textContent = label;
           // Scientific identity and reference links stay available without dominating the list.
           var scientific = entry.row.children[0].children[1];
           entry.row.children[0].removeChild(scientific);
@@ -1468,6 +1469,8 @@
           var infoTitle = doc.createElement("summary"); infoTitle.textContent = "학명·출처"; info.appendChild(infoTitle);
           info.appendChild(scientific);
           if (taxon.english_name_source_url) { info.appendChild(safeLink(doc, "영어 이름 출처", taxon.english_name_source_url)); }
+          if (taxon.description_source_url) { info.appendChild(safeLink(doc, "분포 설명 출처", taxon.description_source_url)); }
+          if (!taxon.korean_name && !taxon.english_name) { var unnamed = doc.createElement("p"); unnamed.textContent = "별도 한국어·영어 통칭은 확인되지 않았습니다."; info.appendChild(unnamed); }
           entry.row.appendChild(info);
           if (typeof taxon.description === "string" && taxon.description.trim()) {
             var description = doc.createElement("p"); description.className = "subspecies-description";
@@ -1475,7 +1478,7 @@
           }
           var choice = entry.button;
           choice.textContent = "아종 보기";
-          choice.setAttribute("aria-label", speciesLabel(taxon) + " · 아종 자료 보기");
+          choice.setAttribute("aria-label", label + " · 아종 자료 보기");
           choice.addEventListener("click", function () {
             var current = ++generation;
             status.textContent = "아종 자료를 불러오는 중입니다.";
