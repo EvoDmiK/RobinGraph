@@ -1694,8 +1694,8 @@ test("related explorer loads lazily, toggles, compares attributed values and rej
   assert.equal(explorer.children[1].hidden, true);
   explorer.children[0].dispatch("click");
   assert.equal(calls.length, 1);
-  assert.equal(collectAllNodes(explorer).some(n => n.textContent === "Anas unknown · 비교하기"), true);
-  const choose = collectAllNodes(explorer).find(n => n.textContent === "고방오리 · 비교하기");
+  assert.equal(collectAllNodes(explorer).some(n => n.getAttribute("aria-label") === "Anas unknown · 비교하기"), true);
+  const choose = collectAllNodes(explorer).find(n => n.getAttribute("aria-label") === "고방오리 · 비교하기");
   choose.dispatch("click");
   await new Promise(resolve => setImmediate(resolve));
   let all = collectAllNodes(explorer);
@@ -2042,7 +2042,7 @@ async function rg005Start(peerResponder) {
   const explorer = collectAllNodes(answer).find((n) => n.className === "species-related");
   explorer.children[0].dispatch("click");
   await tick();
-  const peerButton = (name) => collectAllNodes(explorer).find((n) => n.tagName === "button" && n.textContent === name + " · 비교하기");
+  const peerButton = (name) => collectAllNodes(explorer).find((n) => n.tagName === "button" && n.getAttribute("aria-label") === name + " · 비교하기");
   const status = () => explorer.children[1].children[0].textContent;
   const bubbles = () => messageRows(history).filter((n) => n.className === "message message-answer message-comparison");
   return { dom, history, answer, explorer, peerButton, status, bubbles };
@@ -2650,8 +2650,8 @@ test("ecological explorer is lazy, sourced and separate; comparisons create inde
   assert.match(collectedText(explorer), /같은 서식 환경의 새 · 습지/);
   assert.match(collectedText(explorer), /같은 먹이 생태의 새 · 잡식/);
   assert.match(collectedText(explorer), /가까운 계통이나 실제 공존·먹이 관계를 뜻하지 않습니다/);
-  assert.match(collectedText(explorer), /English peer · 비교하기/);
-  assert.match(collectedText(explorer), /Second species · 비교하기/);
+  assert.match(collectedText(explorer), /English peer/);
+  assert.match(collectedText(explorer), /Second species/);
   assert.equal(collectAllNodes(explorer).filter(n => n.className === "ecological-source").length, 4);
   const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
   choices[0].dispatch("click"); choices[1].dispatch("click");
@@ -2675,7 +2675,7 @@ test("ecological explorer skips unsupported values and unsafe source groups; hos
   explorer.children[0].dispatch("click"); await tick();
   assert.match(collectedText(explorer), /<script>inert label<\/script>/);
   assert.doesNotMatch(collectedText(explorer), /MUST SKIP|UNSAFE GROUP|Unsafe peer|Extra 2|Extra 3/);
-  assert.equal(collectAllNodes(explorer).filter(n => n.className === "ecological-peer").length, 4); // 3 habitat + 1 niche
+  assert.equal(collectAllNodes(explorer).filter(n => (n.className || "").split(" ").includes("ecological-peer")).length, 4); // 3 habitat + 1 niche
   assert.match(collectedText(explorer), /범주별 최대 3종/);
   assert.equal(collectAllNodes(explorer).some(n => n.tagName === "script"), false);
   assert.ok(collectAllNodes(explorer).filter(n => n.tagName === "a").every(n => n.href === "https://example.org/avonet"));
@@ -2711,13 +2711,13 @@ test("ecological peer comparison rejects changed IDs/releases and ignores late r
   const pending = deferred();
   const explorer = chat.buildEcologicalExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), url => url.startsWith("/v1/taxa/ecological-related") ? Promise.resolve(jsonResponse(ecologicalFixture())) : pending.promise, { isActive: () => active, onComparison: () => callbacks++ });
   explorer.children[0].dispatch("click"); await tick();
-  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click");
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.getAttribute("aria-label") || "")).dispatch("click");
   const wrong = profileFor({ taxon_id: "wrong", scientific_name: "Peer species" });
   pending.resolve(jsonResponse(wrong)); await tick();
   assert.equal(callbacks, 0);
   assert.match(collectedText(explorer), /비교 자료를 표시하지 않았습니다/);
   active = false;
-  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click"); await tick();
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.getAttribute("aria-label") || "")).dispatch("click"); await tick();
   assert.equal(callbacks, 0);
 });
 
@@ -2750,12 +2750,12 @@ test("direct ecological answer displays peers without another lookup and compari
   const answer = messageRows(dom.elementsById.history)[1];
   const explorer = collectAllNodes(answer).find(n => n.className === "species-ecological-related");
   assert.equal(explorer.children[1].hidden, false);
-  assert.match(collectedText(explorer), /English peer · 비교하기/);
+  assert.match(collectedText(explorer), /English peer/);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/ecological-related")), false);
-  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.textContent)).dispatch("click"); await tick();
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.getAttribute("aria-label") || "")).dispatch("click"); await tick();
   assert.equal(messageRows(dom.elementsById.history).length, 3);
   assert.equal(collectAllNodes(messageRows(dom.elementsById.history)[2]).filter(n => n.tagName === "dialog").length, 2);
-  assert.match(collectedText(answer), /English peer · 비교하기/);
+  assert.match(collectedText(answer), /English peer/);
 });
 
 test("initial relation data is validated and taxonomy peers use scientific-name fallback without lookup", async () => {
@@ -2765,7 +2765,7 @@ test("initial relation data is validated and taxonomy peers use scientific-name 
   const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, left, () => { calls++; }, { initialData: data, initiallyOpen: true });
   await tick();
   assert.equal(calls, 0);
-  assert.match(collectedText(explorer), /Anas peer · 비교하기/);
+  assert.match(collectedText(explorer), /Anas peer/);
   const stale = chat.buildEcologicalExplorer({ createElement: createFakeElement }, left, () => { calls++; }, { initialData: Object.assign(ecologicalFixture(), { concept_set_id: "old" }), initiallyOpen: true });
   await tick();
   assert.equal(calls, 0);
@@ -2810,7 +2810,7 @@ test("ordinary full introduction opens preloaded TOP3 with sources and independe
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
   assert.equal(explorer.children[1].hidden, false);
   const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
-  assert.deepEqual(choices.map(n => n.textContent), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
+  assert.deepEqual(choices.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
   assert.ok(collectAllNodes(explorer).some(n => n.tagName === "a" && n.textContent === "Reviewed graph" && n.href === "https://example.org/graph"));
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/related")), false);
   choices[0].dispatch("click"); await tick();
@@ -2826,7 +2826,17 @@ test("ranked similar species render TOP3 in rank order with scores, explanation 
   const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => { throw new Error("no lookup"); }, { initialData: similarityFixture(), initiallyOpen: true });
   await tick();
   const buttons = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
-  assert.deepEqual(buttons.map(n => n.textContent), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
+  assert.deepEqual(buttons.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
+  const rows = collectAllNodes(explorer).filter(n => n.className === "comparison-peer");
+  assert.equal(rows.length, 3);
+  rows.forEach((row, index) => {
+    assert.ok(collectAllNodes(row).some(n => n.tagName === "strong" && n.textContent === "Peer " + (index + 1)));
+    assert.ok(collectAllNodes(row).some(n => n.tagName === "i" && n.textContent === "Similar species " + (index + 1)));
+    assert.equal(row.children.find(n => n.className === "comparison-peer-score").textContent, (index + 1) + "위 · " + (90 - index * 10) + "점");
+    assert.equal(row.children.find(n => n.tagName === "button").textContent, "비교하기");
+    assert.equal(row.children.filter(n => n.tagName === "details").length, 1);
+    assert.ok(!row.children.find(n => n.tagName === "details").open);
+  });
   assert.doesNotMatch(collectedText(explorer), /Peer 4|12종/);
   assert.match(collectedText(explorer), /외형이나 진화적 거리/);
   assert.match(collectedText(explorer), /<script>same genus<\/script>/);
@@ -2845,7 +2855,7 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
     return jsonResponse(peer);
   }, { initialData: data, initiallyOpen: true, onComparison: panel => bubbles.push(panel) });
   await tick();
-  const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.textContent));
+  const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.getAttribute("aria-label") || ""));
   button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
   assert.match(collectedText(bubbles[0]), /그래프 유사도 90점/);
