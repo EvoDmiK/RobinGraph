@@ -811,18 +811,24 @@
    */
   function buildSimilarityEvidence(doc, peer) {
     var details = doc.createElement("details"); details.className = "similarity-evidence";
-    var title = doc.createElement("summary"); title.textContent = "유사도 근거와 출처"; details.appendChild(title);
+    var title = doc.createElement("summary"); title.textContent = "비교 후보 근거와 출처"; details.appendChild(title);
     (Array.isArray(peer.similarity_reasons) ? peer.similarity_reasons : []).forEach(function (reason) {
       if (!reason || typeof reason.label !== "string") { return; }
       var line = doc.createElement("p"); line.textContent = reason.label + (typeof reason.points === "number" && reason.points > 0 ? " · " + reason.points + "점" : "") + (typeof reason.display === "string" ? " · " + reason.display : ""); details.appendChild(line);
       if (typeof reason.source_name === "string") { details.appendChild(safeLink(doc, reason.source_name, reason.source_url)); }
+      (Array.isArray(reason.supporting_studies) ? reason.supporting_studies : []).forEach(function (study) {
+        if (study && typeof study.citation === "string") { details.appendChild(safeLink(doc, study.citation, study.source_url)); }
+      });
+      if (Array.isArray(reason.conflicting_sources) && reason.conflicting_sources.length) {
+        var conflict = doc.createElement("p"); conflict.textContent = "일부 연구에서는 다른 계통 관계를 제시합니다."; details.appendChild(conflict);
+      }
       if (typeof reason.target_source_url === "string") { details.appendChild(safeLink(doc, "기준 종의 생태 출처", reason.target_source_url)); }
     });
     return details;
   }
   function similarityLabel(peer) {
     var score = typeof peer.similarity_score === "number" && Number.isFinite(peer.similarity_score) && peer.similarity_score >= 0 && peer.similarity_score <= 100 ? peer.similarity_score : null;
-    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? " · 그래프 유사도 " + score + "점" : "");
+    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? " · 분류·생태 일치 " + score + "점" : "");
   }
 
   function buildComparisonPeer(doc, peer, ranked) {
@@ -833,8 +839,8 @@
     row.appendChild(identity);
     if (ranked) {
       var score = doc.createElement("span"); score.className = "comparison-peer-score";
-      score.textContent = peer.similarity_rank + "위 · " + peer.similarity_score + "점";
-      score.setAttribute("aria-label", "그래프 유사도 " + score.textContent); row.appendChild(score);
+      score.textContent = peer.similarity_rank + "위 · 분류·생태 " + peer.similarity_score + "점";
+      score.setAttribute("aria-label", "비교 후보 " + score.textContent); row.appendChild(score);
     }
     var button = doc.createElement("button"); button.type = "button"; button.className = "comparison-peer-choose";
     button.textContent = "비교하기";
@@ -851,7 +857,7 @@
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
-    if (options.initialData && options.initialData.ranking) { open.textContent = "유사도 상위 3종 살펴보기"; }
+    if (options.initialData && options.initialData.ranking) { open.textContent = "근연 관계 우선 3종 살펴보기"; }
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
     var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
     var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
@@ -930,7 +936,7 @@
         var note = doc.createElement("p"); note.className = "species-note"; note.textContent = data.note; results.appendChild(note);
         var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
         var rankedRemaining = data.ranking && data.ranking.limit === 3 ? 3 : null;
-        if (rankedRemaining !== null) { open.textContent = "유사도 상위 3종 살펴보기"; }
+        if (rankedRemaining !== null) { open.textContent = "근연 관계 우선 3종 살펴보기"; }
         (Array.isArray(data.groups) ? data.groups : []).forEach(function (group) {
           var block = doc.createElement("section");
           var title = doc.createElement("h3");

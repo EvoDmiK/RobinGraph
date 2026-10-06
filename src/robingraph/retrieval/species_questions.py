@@ -96,7 +96,7 @@ def focused_answer(profile, question, relations=None):
             if any(names):
                 group_label = group.get('label') or '같은 생태 범주의 새'
                 category = f" · {group['display']}" if group.get('display') else ''
-                if group.get('rank')=='similarity' and (relations.get('ranking') or {}).get('method')=='taxonomy-ecology-v1':
+                if group.get('rank')=='similarity' and (relations.get('ranking') or {}).get('method')in ('taxonomy-ecology-v1', 'taxonomy-phylogeny-ecology-v2'):
                     for peer in peers:
                         score = peer.get('similarity_score')
                         rank = peer.get('similarity_rank')
@@ -123,8 +123,8 @@ def focused_answer(profile, question, relations=None):
         if question.topic=='diet':
             text=f'{label}의 자료에서 확인되는 먹이는 다음과 같습니다. 구성비는 해당 자료의 분류값이며 모든 지역·계절의 식단을 뜻하지 않습니다.'
         elif question.topic=='related':
-            if relations and (relations.get('ranking') or {}).get('method')=='taxonomy-ecology-v1':
-                text=f'{label}와 관련된 종을 활성 그래프 전체에서 규칙 점수로 골랐습니다. 점수는 분류·생태 자료의 순위이며 외형·유전 유사도나 확률이 아닙니다.'
+            if relations and (relations.get('ranking') or {}).get('method')in ('taxonomy-ecology-v1', 'taxonomy-phylogeny-ecology-v2'):
+                text=f'{label}의 비교 후보를 활성 종 전체에서 골랐습니다. ' + relations.get('note', '점수는 분류·생태 일치 점수이며 외형·유전 유사도나 확률이 아닙니다.')
             else:
                 text=f'{label}와 같은 속·과에 속하는 종을 그래프에서 찾았습니다. 분류상 관련 종이며 외형 유사도나 가장 가까운 계통의 순위는 아닙니다.'
         elif question.topic=='ecological_related':
