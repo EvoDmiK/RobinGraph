@@ -2,21 +2,13 @@
 from dataclasses import asdict
 
 from .ecological_relations import _web_url
+from .phylogenetic_relations import phylogenetic_relations, phylogeny_metadata
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
 from .taxonomy_lineage import with_korean_display_name
 
 WEIGHTS = {'same_genus': 50, 'same_family': 30, 'same_habitat': 10, 'same_trophic_niche': 10}
-METHOD = 'taxonomy-ecology-v1'
+METHOD = 'taxonomy-phylogeny-ecology-v2'
 
-# Reviewed relationships only resolve equal rule scores; they are not a
-# complete phylogeny and do not assign a genetic-distance percentage.
-CLOSE_RELATION_REVIEWS = {
-    ('v2025b', frozenset({'Anas zonorhyncha', 'Anas platyrhynchos'})): {
-        'source_url': 'https://academic.oup.com/cz/article/65/5/589/5144203',
-        'source_name': 'Current Zoology · Wang et al. (2019)',
-        'citation': 'Incomplete lineage sorting and introgression in the diversification of Chinese spot-billed ducks and mallards',
-    },
-}
 
 
 SOURCE_QUERY = """
@@ -130,6 +122,9 @@ def similar_species(repository, store, resolve, name):
                 'source_name':origin['source_name'], 'target_source_url':origin['source_url'],
                 'target_citation':origin.get('citation'),'dataset_id':row['dataset_id'],
                 'release':row['release'],'value':row['value'],'display':origin.get('display')})
+    phylogeny = phylogenetic_relations(lineage.taxonomy_release, target.taxon_id,
+                                        target.scientific_name, list(candidates.values()),
+                                        concept_set_id=lineage.concept_set_id)
     ranked = []
     for candidate in candidates.values():
         reasons = []
@@ -142,16 +137,18 @@ def similar_species(repository, store, resolve, name):
         for key,label in (('same_habitat','같은 서식 환경 범주'),('same_trophic_niche','같은 먹이 생태 범주')):
             if key in candidate['ecology']:
                 reasons.append({'key':key,'label':label,'points':WEIGHTS[key],**candidate['ecology'][key]})
-        review = CLOSE_RELATION_REVIEWS.get((lineage.taxonomy_release,
-            frozenset({target.scientific_name, candidate['scientific_name']}))) if candidate['same_genus'] else None
-        if review:
-            reasons.append({'key':'reviewed_close_relation', 'label':'문헌으로 확인한 근연 관계 · 동점 우선',
-                            'points':0, **review})
-        candidate['reviewed_close_relation'] = review is not None
+        relation = phylogeny.get(candidate['taxon_id'])
+        if relation:
+            reasons.append(relation)
+        candidate['phylogeny'] = relation
         score = sum(reason['points'] for reason in reasons)
         if score:
             ranked.append((score,candidate,reasons))
-    ranked.sort(key=lambda item:(-item[0],not item[1]['reviewed_close_relation'],item[1]['scientific_name'],item[1]['taxon_id']))
+    # Missing tree coverage is not a measured distance: preserve verified genus/family tiers.
+    # Within a tier, supported clade nesting precedes ecology; an unresolved clade stays tied.
+    ranked.sort(key=lambda item:(not item[1]['same_genus'], not item[1]['same_family'],
+        -(item[1]['phylogeny'] or {}).get('shared_ancestor_depth', -1),
+        -item[0], item[1]['scientific_name'], item[1]['taxon_id']))
     top = ranked[:3]
     names = repository._run(NAMES_QUERY, concept_set_id=lineage.concept_set_id,
                             taxonomy_release=lineage.taxonomy_release,
@@ -172,7 +169,9 @@ def similar_species(repository, store, resolve, name):
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
             'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
                        'eligible_count':len(ranked),'limit':3,'weights':WEIGHTS.copy(),
-                       'tie_break':'reviewed_close_relation,scientific_name,taxon_id'},
-            'groups':[{'rank':'similarity','label':'그래프 유사도 상위 3종','items':items,
+                       'priority':'same_genus,same_family,supported_shared_ancestor,ecology_score',
+                       'tie_break':'scientific_name,taxon_id',
+                       'phylogeny':phylogeny_metadata(lineage.taxonomy_release, lineage.concept_set_id)},
+            'groups':[{'rank':'similarity','label':'근연 관계 우선 비교 후보 3종','items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'분류 관계와 출처가 확인된 생태 범주의 규칙 점수입니다. 동점은 문헌으로 확인한 근연 관계를 먼저 적용한 뒤 학명순으로 정렬합니다. 외형·유전 유사도나 확률을 뜻하지 않습니다.'}
+            'note':'같은 속·과를 우선하고, 같은 분류 범위에서는 연구 자료가 있는 계통수의 공통 조상 관계를 생태 점수보다 먼저 반영합니다. 계통 자료가 없는 종은 분류·생태 자료로 표시하며 멀다고 판단하지 않습니다. 같은 공통 조상은 생태 점수·학명순으로 정렬합니다. 점수는 분류·생태 일치 점수이며 근연도·유전 유사도나 확률이 아닙니다.'}
