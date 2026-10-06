@@ -3,6 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 from .species_profile import SpeciesNotFoundError
 from .taxonomy_lineage_neo4j import _parse_lineage_items
+from .taxonomy_lineage import with_korean_display_name
 
 SUBSPECIES_QUERY = """
 MATCH (concept:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
@@ -49,7 +50,14 @@ def subspecies_for(repository,resolve,name):
     if lineage is None or not lineage.items or lineage.items[-1].rank not in ('species','subspecies'):
         raise SpeciesNotFoundError('Species not found')
     parent,rows=_rows(repository,lineage)
-    taxa=[asdict(_parse_lineage_items([r['taxon']])[0]) for r in rows[:200]]
+    taxa=[]
+    for row in rows[:200]:
+        taxon=with_korean_display_name(asdict(_parse_lineage_items([row['taxon']])[0]))
+        if (lineage.concept_set_id=='rg:concept-set:avilist-v2025b'
+                and taxon.get('english_name_source_url')
+                and row.get('range_text')==REVIEWED_RANGE_RAW.get(taxon['scientific_name'])):
+            taxon['description']=REVIEWED_RANGES.get((lineage.taxonomy_release,taxon['scientific_name']))
+        taxa.append(taxon)
     if len({t['taxon_id'] for t in taxa})!=len(taxa):
         raise ValueError('Duplicate subspecies targets')
     return {'parent_species':{'taxon':asdict(parent)},'subspecies':taxa,
@@ -68,7 +76,8 @@ def subspecies_metadata(repository,lineage):
                  'Anas platyrhynchos platyrhynchos':'avilist-taxon:v2025b:545'}.get(target.scientific_name)
     reviewed_identity=(lineage.concept_set_id=='rg:concept-set:avilist-v2025b' and target.taxon_id==expected_id)
     summary=REVIEWED_RANGES.get((lineage.taxonomy_release,target.scientific_name)) if reviewed_identity else None
-    items=[{'text':f'{target.scientific_name}은(는) {parent.korean_name or parent.english_name or parent.scientific_name}에 속하는 아종입니다.',
+    display=with_korean_display_name(asdict(target))
+    items=[{'text':f'{display.get("korean_name") or display.get("english_name") or target.scientific_name}은(는) {parent.korean_name or parent.english_name or parent.scientific_name}에 속하는 아종입니다.',
             'source_name':row['source_name'],'source_url':row['source_url'],'license_name':'CC BY 4.0'}]
     if summary and row.get('range_text')==REVIEWED_RANGE_RAW.get(target.scientific_name):
         items.append({'text':summary,'source_name':row['source_name'],'source_url':row['source_url'],

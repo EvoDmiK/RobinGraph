@@ -27,6 +27,22 @@ from typing import Literal, Protocol
 
 MatchedBy = Literal["scientific_name", "korean_name"]
 
+# Reference English names; no invented Korean subspecies names.
+SUBSPECIES_NAME_REFERENCES = {
+    'avilist-taxon:v2025b:546': {
+        'scientific_name': 'Anas platyrhynchos conboschas',
+        'english_name': 'Greenland Mallard',
+        'source_title': 'Dansk Ornitologisk Forening · Names of the birds of the World (2019)',
+        'source_url': 'https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf',
+    },
+    'avilist-taxon:v2025b:545': {
+        'scientific_name': 'Anas platyrhynchos platyrhynchos',
+        'english_name': 'Northern Mallard',
+        'source_title': 'NCBI Taxonomy · Anas platyrhynchos platyrhynchos (8840)',
+        'source_url': 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=8840',
+    },
+}
+
 
 @dataclass(frozen=True)
 class LineageTaxon:
@@ -61,6 +77,14 @@ def sourced_korean_names() -> dict:
 
 def with_korean_display_name(taxon: dict) -> dict:
     """Use checked Korean species names, otherwise let callers display English."""
+    if taxon.get("rank") == "subspecies":
+        reference = SUBSPECIES_NAME_REFERENCES.get(taxon.get("taxon_id"))
+        if (reference and reference['scientific_name'] == taxon.get('scientific_name')
+                and taxon.get('english_name') in (None, '', reference['english_name'])):
+            return {**taxon, 'english_name': reference['english_name'],
+                    'english_name_source_url': reference['source_url'],
+                    'english_name_source_title': reference['source_title']}
+        return taxon
     if taxon.get("rank") != "species":
         return taxon
     label = sourced_korean_names().get(taxon.get("taxon_id"))

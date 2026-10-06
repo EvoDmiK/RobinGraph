@@ -1132,8 +1132,16 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-parent { font-size: .82rem; color: var(--muted); margin: .3rem 0 .65rem; }
 .species-reference { border-left: 3px solid #aab7ad; padding-left: .7rem; }
 .species-reference-provenance { font-size: .78rem; color: var(--muted); }
-.species-subspecies { margin-top: .8rem; }
-.species-subspecies button { margin: .25rem .4rem .25rem 0; }
+.species-subspecies { margin-top: .8rem; border-top: 1px solid var(--color-answer-border); padding-top: .65rem; }
+.species-subspecies > button { width: 100%; padding: .65rem .75rem; border: 1px solid var(--color-answer-border); border-radius: .6rem; background: var(--color-surface); color: var(--color-text); font: inherit; text-align: left; cursor: pointer; }
+.species-subspecies > button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.subspecies-status, .subspecies-source { color: var(--color-muted); font-size: .82rem; line-height: 1.5; margin: .55rem 0; }
+.subspecies-peer .comparison-peer-identity strong { text-transform: none; font-size: .95rem; color: var(--color-text); }
+.subspecies-description { color: var(--color-muted); font-size: .85rem; line-height: 1.55; margin: .3rem 0 0; }
+.subspecies-peer .comparison-peer-choose { border: 1px solid var(--color-answer-border); border-radius: .55rem; background: var(--color-answer-bg); color: var(--color-text); }
+.subspecies-identity i { display: block; margin: .35rem 0; overflow-wrap: anywhere; }
+.subspecies-identity a { display: block; margin: .35rem 0; }
+@media (max-width: 420px) { .species-subspecies .subspecies-peer { grid-template-columns: minmax(0, 1fr); } .species-subspecies .subspecies-peer button.comparison-peer-choose { grid-column: 1; grid-row: auto; width: 100%; } }
 .species-subspecies-description { font-size: .88rem; line-height: 1.55; margin: .4rem 0 .7rem; }
 .species-subspecies-sources blockquote { margin: .6rem 0; padding-left: .6rem; border-left: 2px solid #aab7ad; font-size: .78rem; overflow-wrap: anywhere; }
 .species-ecological-related { margin-top: .75rem; border-top: 1px solid var(--color-answer-border); padding-top: .65rem; }

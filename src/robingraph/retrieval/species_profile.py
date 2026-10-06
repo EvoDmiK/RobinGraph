@@ -393,6 +393,9 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
     def assemble(state):
         lineage = state['lineage']
         taxon = asdict(lineage.items[-1])
+        if taxon['rank']=='subspecies':
+            from .taxonomy_lineage import with_korean_display_name
+            taxon = with_korean_display_name(taxon)
         result = {'taxon':taxon, 'lineage':asdict(lineage),
                 'traits':state['traits']['traits'], 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
