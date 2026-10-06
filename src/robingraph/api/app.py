@@ -311,6 +311,7 @@ class ChatSpeciesResult(_ChatModel):
     kind: Literal["profile"] = "profile"
     profile: dict | None
     question_answer: dict | None = None
+    similar_species: dict | None = None
 
 
 class ChatObservationsResult(_ChatModel):
@@ -1135,11 +1136,22 @@ def create_app(
             summary = profile.get("summary")
             if not isinstance(summary, str) or not summary.strip():
                 summary = species_summary(profile.get("taxon") or {}, profile.get("traits") or [])
+            similar = None
+            lineage = profile.get("lineage") or {}
+            if similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
+                try:
+                    similar = similar_species_handler(name)
+                    if (similar.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
+                            or similar.get("concept_set_id") != lineage.get("concept_set_id")
+                            or similar.get("taxonomy_release") != lineage.get("taxonomy_release")):
+                        similar = None
+                except Exception:
+                    similar = None  # optional extra; the profile answer stays intact
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer",
                 answer_text=summary,
                 warnings=profile.get("warnings", []),
-                result=ChatSpeciesResult(profile=profile),
+                result=ChatSpeciesResult(profile=profile, similar_species=similar),
             )
 
         if selected == "taxonomy":

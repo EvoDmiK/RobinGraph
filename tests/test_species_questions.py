@@ -144,3 +144,28 @@ class SpeciesQuestionTest(unittest.TestCase):
                                                           {'entity_kind':entity,'taxon':{**PROFILE['taxon'],'taxon_id':'other'}}]}
             result=client.post('/v1/chat',json={'question':'집오리는 무엇을 먹어?'}).json()
             self.assertEqual('clarify',result['disposition']);profile.assert_not_called()
+
+
+class ProfileIntroSimilarTest(unittest.TestCase):
+    def test_ordinary_intro_adds_validated_similar_top3_and_degrades_safely(self):
+        ranked={**RELATIONS,'ranking':{'limit':3},'groups':[{'rank':'similarity','items':[]}]}
+        similar=Mock(return_value=ranked)
+        profile={**PROFILE,'summary':'왜가리 요약'}
+        client=TestClient(create_app(species_profile_handler=lambda _:profile,similar_species_handler=similar))
+        for question in ('왜가리에 대해 알고싶어.','왜가리에 대해 알고 싶어'):
+            similar.return_value=ranked
+            body=client.post('/v1/chat',json={'question':question}).json()
+            self.assertEqual('왜가리 요약',body['answer_text']);self.assertEqual(profile,body['result']['profile'])
+            self.assertEqual(ranked,body['result']['similar_species']);self.assertIsNone(body['result']['question_answer'])
+        similar.assert_called_with('왜가리')
+        for bad in (Exception('down'),{**ranked,'taxonomy_release':'old'},{**ranked,'taxon':{'taxon_id':'x'}}):
+            similar.side_effect=bad if isinstance(bad,Exception) else None
+            similar.return_value=bad
+            body=client.post('/v1/chat',json={'question':'왜가리에 대해 알고싶어.'}).json()
+            self.assertEqual('answer',body['disposition']);self.assertEqual(profile,body['result']['profile'])
+            self.assertIsNone(body['result']['similar_species'])
+        sub=Mock(return_value=ranked)
+        sub_profile={**profile,'taxon':{**PROFILE['taxon'],'rank':'subspecies'}}
+        body=TestClient(create_app(species_profile_handler=lambda _:sub_profile,similar_species_handler=sub)
+                        ).post('/v1/chat',json={'question':'왜가리에 대해 알고싶어.'}).json()
+        sub.assert_not_called();self.assertIsNone(body['result']['similar_species'])

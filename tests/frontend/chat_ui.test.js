@@ -2773,6 +2773,35 @@ function similarityFixture() {
   return { taxon: { taxon_id: "t1" }, taxonomy_source: "AviList", taxonomy_release: "v2025b", concept_set_id: "cs1", ranking: { method: "taxonomy-ecology-v1", limit: 3, candidate_scope: "same_family" }, note: "분류·생태 자료 점수이며 외형이나 진화적 거리 측정값이 아닙니다.", groups: [{ rank: "similarity", label: "그래프 유사도 상위 3종", source_name: "Reviewed graph", source_url: "https://example.org/graph", items: peers, has_more: true }] };
 }
 
+test("ordinary full introduction opens preloaded TOP3 with sources and independent comparison", async () => {
+  const payload = fakeProfilePayload({ sections: [{ title: "기본 정보", items: [{ text: "전체 종 소개", source_name: "Reviewed profile", source_url: "https://example.org/profile" }] }] });
+  payload.result.similar_species = similarityFixture();
+  const peer = profileFor(payload.result.similar_species.groups[0].items.find(p => p.similarity_rank === 1));
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : url.startsWith("/v1/taxa/profile") ? peer : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리에 대해 알고싶어";
+  pressKey(dom, {}); await settleEventPath(); await tick();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const explanation = answer.children.find(n => n.className === "species-answer");
+  assert.match(collectedText(explanation), /기본 정보\s+전체 종 소개/);
+  assert.ok(answer.children.some(n => /^species-chat-brief /.test(n.className || "")));
+  assert.ok(collectAllNodes(answer).some(n => /^species-popup-trigger /.test(n.className || "")));
+  const explorer = explanation.children.find(n => n.className === "species-related");
+  assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
+  assert.equal(explorer.children[1].hidden, false);
+  const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
+  assert.deepEqual(choices.map(n => n.textContent), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
+  assert.ok(collectAllNodes(explorer).some(n => n.tagName === "a" && n.textContent === "Reviewed graph" && n.href === "https://example.org/graph"));
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/related")), false);
+  choices[0].dispatch("click"); await tick();
+  const rows = messageRows(dom.elementsById.history);
+  assert.equal(rows.length, 3);
+  assert.equal(rows[1], answer);
+  assert.equal(collectAllNodes(answer).some(n => n.className === "species-comparison"), false);
+  assert.match(collectedText(rows[2]), /그래프 유사도 90점/);
+  assert.equal(collectAllNodes(rows[2]).filter(n => n.tagName === "dialog").length, 2);
+});
+
 test("ranked similar species render TOP3 in rank order with scores, explanation and safe provenance", async () => {
   const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => { throw new Error("no lookup"); }, { initialData: similarityFixture(), initiallyOpen: true });
   await tick();
