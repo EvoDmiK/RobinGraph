@@ -1735,7 +1735,7 @@ test("related exploration stays in the explanation and comparison, outside every
   await settleEventPath();
   const answer = messageRows(dom.elementsById["history"])[1];
   const explanation = collectAllNodes(answer).find(n => n.className === "species-answer");
-  assert.equal(explanation.children.filter(n => n.className === "species-related").length, 1);
+  assert.equal(answer.children.filter(n => n.className === "species-related").length, 1);
   const cards = collectAllNodes(answer).filter(n => n.className.startsWith("species-card risk-"));
   assert.equal(cards.length, 1);
   assert.equal(collectAllNodes(cards[0]).some(n => n.className === "species-related"), false);
@@ -1921,8 +1921,10 @@ test("species explanation offers a lazy 통칭·가축형 button outside the car
   await settleEventPath();
   const answer = messageRows(dom.elementsById["history"])[1];
   const explanation = collectAllNodes(answer).find((n) => n.className === "species-answer");
-  assert.equal(explanation.children.filter((n) => n.className === "species-related").length, 1, "same genus/family explorer is preserved");
-  const explorer = explanation.children.find((n) => n.className === "species-name-relations");
+  assert.equal(answer.children.filter((n) => n.className === "species-related").length, 1, "same genus/family explorer is preserved");
+  const extra = answer.children.find(n => n.className === "species-extra-info");
+  assert.equal(extra.tagName, "details"); assert.ok(!extra.open);
+  const explorer = extra.children.find((n) => n.className === "species-name-relations");
   assert.ok(explorer);
   const card = collectAllNodes(answer).find((n) => (n.className || "").startsWith("species-card risk-"));
   assert.equal(collectAllNodes(card).some((n) => n.className === "species-name-relations"), false);
@@ -2793,8 +2795,17 @@ function similarityFixture() {
   return { taxon: { taxon_id: "t1" }, taxonomy_source: "AviList", taxonomy_release: "v2025b", concept_set_id: "cs1", ranking: { method: "taxonomy-ecology-v1", limit: 3, candidate_scope: "same_family" }, note: "분류·생태 자료 점수이며 외형이나 진화적 거리 측정값이 아닙니다.", groups: [{ rank: "similarity", label: "그래프 유사도 상위 3종", source_name: "Reviewed graph", source_url: "https://example.org/graph", items: peers, has_more: true }] };
 }
 
-test("ordinary full introduction opens preloaded TOP3 with sources and independent comparison", async () => {
-  const payload = fakeProfilePayload({ sections: [{ title: "기본 정보", items: [{ text: "전체 종 소개", source_name: "Reviewed profile", source_url: "https://example.org/profile" }] }] });
+test("ordinary introduction follows the reference layout with folded TOP3, extra information and all answer sources", async () => {
+  const payload = fakeProfilePayload({
+    conservation: Object.assign({ category: "LC" }, VERIFIED_SOURCE),
+    sections: [
+      { key: "basic", title: "기본 정보", items: [{ text: "전체 종 소개", source_name: "Reviewed profile", source_url: "https://example.org/profile" }] },
+      { key: "appearance", title: "외관 특징", items: [{ text: "외관 설명", source_name: "Appearance source", source_url: "https://example.org/appearance" }] },
+      { key: "ecology", title: "생활과 먹이", items: [{ text: "생활 설명", source_name: "Ecology source", source_url: "https://example.org/ecology" }] },
+      { key: "fun_facts", title: "재미있는 사실", items: [{ text: "재미있는 사실 설명", source_name: "Fun facts source", source_url: "https://example.org/facts" }] },
+    ],
+  });
+  payload.citations = [{ source_id: "API evidence", source_url: "https://example.org/evidence", evidence_id: "e1", locator: "page 1", license_name: "CC BY" }];
   payload.result.similar_species = similarityFixture();
   const peer = profileFor(payload.result.similar_species.groups[0].items.find(p => p.similarity_rank === 1));
   const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : url.startsWith("/v1/taxa/profile") ? peer : payload)));
@@ -2804,10 +2815,33 @@ test("ordinary full introduction opens preloaded TOP3 with sources and independe
   const answer = messageRows(dom.elementsById.history)[1];
   const explanation = answer.children.find(n => n.className === "species-answer");
   assert.match(collectedText(explanation), /기본 정보\s+전체 종 소개/);
-  assert.ok(answer.children.some(n => /^species-chat-brief /.test(n.className || "")));
+  assert.ok(explanation.children.some(n => /^species-chat-brief /.test(n.className || "")));
   assert.ok(collectAllNodes(answer).some(n => /^species-popup-trigger /.test(n.className || "")));
-  const explorer = explanation.children.find(n => n.className === "species-related");
+  const explorer = answer.children.find(n => n.className === "species-related");
+  assert.equal(explorer.children[0].getAttribute("aria-expanded"), "false");
+  assert.equal(explorer.children[1].hidden, true);
+  assert.equal(explorer.children[0].textContent, "유사도 상위 3종 살펴보기");
+  const extra = answer.children.find(n => n.className === "species-extra-info");
+  assert.equal(extra.tagName, "details"); assert.ok(!extra.open);
+  assert.deepEqual(extra.children.slice(1).map(n => n.className), ["species-ecological-related", "species-subspecies", "species-name-relations"]);
+  const sources = answer.children.find(n => n.className === "species-answer-sources");
+  assert.equal(answer.children.at(-1), sources); assert.ok(!sources.open);
+  for (const name of ["Reviewed profile", "Appearance source", "Ecology source", "Fun facts source", "IUCN Red List", "API evidence"]) {
+    assert.ok(collectedText(sources).includes(name), "footer retains " + name);
+  }
+  assert.deepEqual(explanation.children.map(n => n.className), ["", "species-answer-section", "species-chat-brief risk-lc", "species-answer-section", "species-answer-section", "species-answer-section"]);
+  assert.equal(explanation.children.at(-1).children[0].textContent, "재미있는 사실");
+  assert.equal(explanation.children.some(n => n.className === "species-answer-sources"), false);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false, "folded exploration never fetches");
+  assert.ok(answer.children.indexOf(explanation) < answer.children.findIndex(n => n.className === "species-popup-entry"));
+  assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(explorer));
+  assert.ok(answer.children.indexOf(explorer) < answer.children.indexOf(extra));
+  explorer.children[0].dispatch("click"); await tick();
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
+  assert.equal(explorer.children[1].hidden, false);
+  explorer.children[0].dispatch("click");
+  assert.equal(explorer.children[1].hidden, true);
+  explorer.children[0].dispatch("click");
   assert.equal(explorer.children[1].hidden, false);
   const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
   assert.deepEqual(choices.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
