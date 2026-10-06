@@ -32,6 +32,25 @@ REVIEWED_RANGES = {
 
 REVIEWED_RANGE_RAW = {'Anas platyrhynchos platyrhynchos': 'breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners', 'Anas platyrhynchos conboschas': 'coastal southwestern Greenland'}
 
+# Distribution captions are UI descriptions, never fabricated vernacular names.
+HERON_DISTRIBUTIONS = {
+    'avilist-taxon:v2025b:5420': ('Ardea cinerea cinerea', '유럽·아프리카·서아시아'),
+    'avilist-taxon:v2025b:5421': ('Ardea cinerea jouyi', '동아시아'),
+    'avilist-taxon:v2025b:5422': ('Ardea cinerea monicae', '모리타니 방다르갱 앞바다 섬'),
+    'avilist-taxon:v2025b:5423': ('Ardea cinerea firasa', '마다가스카르'),
+}
+HERON_DISTRIBUTION_URL = 'https://www.birdlife.org.za/red-data-book/red-list/grey-heron/'
+
+
+def _heron_distribution(taxon, lineage):
+    reference = HERON_DISTRIBUTIONS.get(taxon['taxon_id'])
+    if (lineage.concept_set_id == 'rg:concept-set:avilist-v2025b'
+            and lineage.taxonomy_release == 'v2025b' and reference
+            and reference[0] == taxon['scientific_name']):
+        return reference[1]
+    return None
+
+
 def _rows(repository,lineage,child_id=None):
     parent=next((t for t in reversed(lineage.items) if t.rank=='species'),None)
     if parent is None:
@@ -57,6 +76,13 @@ def subspecies_for(repository,resolve,name):
                 and taxon.get('english_name_source_url')
                 and row.get('range_text')==REVIEWED_RANGE_RAW.get(taxon['scientific_name'])):
             taxon['description']=REVIEWED_RANGES.get((lineage.taxonomy_release,taxon['scientific_name']))
+        distribution = _heron_distribution(taxon, lineage)
+        if distribution:
+            taxon['description'] = f'{distribution}에 분포하는 아종입니다.'
+            taxon['description_source_url'] = HERON_DISTRIBUTION_URL
+            taxon['description_source_title'] = 'BirdLife South Africa · Grey Heron · Taxonomy'
+            if not (taxon.get('korean_name') or taxon.get('english_name')):
+                taxon['display_label'] = f'{parent.korean_name or parent.english_name or parent.scientific_name} 아종 · {distribution} 분포'
         taxa.append(taxon)
     if len({t['taxon_id'] for t in taxa})!=len(taxa):
         raise ValueError('Duplicate subspecies targets')
@@ -79,7 +105,12 @@ def subspecies_metadata(repository,lineage):
     display=with_korean_display_name(asdict(target))
     items=[{'text':f'{display.get("korean_name") or display.get("english_name") or target.scientific_name}은(는) {parent.korean_name or parent.english_name or parent.scientific_name}에 속하는 아종입니다.',
             'source_name':row['source_name'],'source_url':row['source_url'],'license_name':'CC BY 4.0'}]
-    if summary and row.get('range_text')==REVIEWED_RANGE_RAW.get(target.scientific_name):
+    distribution = _heron_distribution(asdict(target), lineage)
+    if distribution:
+        items.append({'text': f'{distribution}에 분포하는 아종입니다.',
+                      'source_name': 'BirdLife South Africa · Grey Heron · Taxonomy',
+                      'source_url': HERON_DISTRIBUTION_URL, 'reviewed_at': '2026-10-06'})
+    elif summary and row.get('range_text')==REVIEWED_RANGE_RAW.get(target.scientific_name):
         items.append({'text':summary,'source_name':row['source_name'],'source_url':row['source_url'],
                       'license_name':'CC BY 4.0','reviewed_at':'2026-10-03','source_range':row['range_text']})
     else:
