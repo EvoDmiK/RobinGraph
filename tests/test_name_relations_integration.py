@@ -39,8 +39,9 @@ class NameRelationsIntegrationTest(unittest.TestCase):
                   id=cls.concept, release=cls.release, ns=cls.namespace).consume()
             s.run("""UNWIND $names AS name
                 MATCH (c:TaxonConceptSet {id:$concept})
-                CREATE (t:Taxon:BirdTaxon {id:$ns+':'+name,scientific_name:name,rank:'species',test_namespace:$ns})-[:IN_CONCEPT_SET]->(c)
-                """, names=names, concept=cls.concept, ns=cls.namespace).consume()
+                CREATE (t:Taxon:BirdTaxon {id:$ns+':'+name,scientific_name:name,rank:'species',
+                    source_release:$release,policy_status:'allowed',test_namespace:$ns})-[:IN_CONCEPT_SET]->(c)
+                """, names=names, concept=cls.concept, ns=cls.namespace, release=cls.release).consume()
         now = datetime.now(timezone.utc)
         ds = SourceDatasetInput(cls.namespace, "rg004-test", "Test taxonomy", "test", "https://example.org/test", "versioned", "allowed", {})
         rel = SourceReleaseInput(cls.namespace+":release", ds.id, cls.release, now)
@@ -79,11 +80,15 @@ class NameRelationsIntegrationTest(unittest.TestCase):
         for term in terms:
             result = self.reader.for_name(term)
             self.assertTrue(result["is_search_term"])
-            expected = {r["scientific_name"] for r in self.manifest["records"] if term in r["search_terms"]}
+            reviewed = [r for r in self.manifest["records"] if term in r["search_terms"]]
+            expected = {r["scientific_name"] for r in reviewed}
             self.assertEqual(expected, {r["taxon"]["scientific_name"] for r in result["relations"]})
             answer = client.post("/v1/chat", json={"question": term+"에 대해 알려줘"}).json()
             self.assertEqual("name_relations", answer["result"]["kind"], term)
-            self.assertEqual("clarify", answer["disposition"])
+            # A common name for one species can be answered directly;
+            # ambiguous names and domestic forms still require clarification.
+            disposition = "answer" if len(expected) == 1 and all(r["entity_kind"] == "common_name" for r in reviewed) else "clarify"
+            self.assertEqual(disposition, answer["disposition"], term)
         for record in self.manifest["records"]:
             for term in record["search_terms"]:
                 result = self.reader.for_name(term)
@@ -100,6 +105,9 @@ class NameRelationsIntegrationTest(unittest.TestCase):
         with self.driver.session(database=self.settings.database) as s:
             s.run("MATCH (c:TaxonConceptSet {id:$id}) SET c.version=$version",
                   id=self.concept, version=new_version).consume()
+            s.run("MATCH (t:Taxon:BirdTaxon {test_namespace:$ns}) SET t.source_release=$version",
+                  ns=self.namespace, version=new_version).consume()
+        type(self).release = new_version
         now = datetime.now(timezone.utc)
         dataset = SourceDatasetInput(self.namespace, "rg004-test", "Test taxonomy", "test", "https://example.org/test", "versioned", "allowed", {})
         release = SourceReleaseInput(self.namespace+":release-v2", dataset.id, new_version, now)
@@ -110,6 +118,7 @@ class NameRelationsIntegrationTest(unittest.TestCase):
         next_release = subprocess.run(self.loader+["--apply"], text=True, capture_output=True, check=True)
         self.assertIn("activated", next_release.stdout)
         self.assertEqual(new_version, self.store.active_release_context(PIPELINE).cursor["taxonomy_release"])
+        self.assertGreater(len(self.reader.for_name("Gallus gallus")["relations"]), 0)
 
 
 if __name__ == "__main__":
