@@ -52,18 +52,28 @@ class SpeciesQuestionTest(unittest.TestCase):
         profile.assert_called_once_with('왜가리');router.classify.assert_not_called()
 
     def test_related_question_immediately_queries_graph_and_returns_provenance(self):
-        related=Mock(return_value=RELATIONS)
-        client=TestClient(create_app(species_profile_handler=lambda _:PROFILE,related_species_handler=related))
+        ranked={**RELATIONS,'ranking':{'method':'taxonomy-ecology-v1','limit':3},
+                'groups':[{'rank':'similarity','label':'그래프 유사도 상위 3종',
+                           'source_name':'AviList','source_url':'https://example.org/taxonomy',
+                           'items':[{'taxon_id':'peer','rank':'species','scientific_name':'Ardea alba',
+                                     'korean_name':'대백로','similarity_score':80,'similarity_rank':1,
+                                     'similarity_reasons':[{'key':'same_family','label':'같은 과','points':30,
+                                                            'source_name':'AviList','source_url':'https://example.org/taxonomy'},
+                                                           {'key':'same_genus','label':'같은 속','points':50,
+                                                            'source_name':'AviList','source_url':'https://example.org/taxonomy'}]}]}]}
+        similar=Mock(return_value=ranked)
+        client=TestClient(create_app(species_profile_handler=lambda _:PROFILE,similar_species_handler=similar))
         response=client.post('/v1/chat',json={'question':'왜가리와 비슷한 종은 어떤게 있니?'}).json()
         self.assertEqual('answer',response['disposition'])
         self.assertIn('대백로',response['answer_text'])
         self.assertIn('같은 속',response['answer_text'])
-        self.assertIn('외형 유사도',response['answer_text'])
-        self.assertEqual(RELATIONS,response['result']['question_answer']['relations'])
-        related.assert_called_once_with('왜가리')
-        for replacement in ({**RELATIONS,'taxonomy_release':'old'},
-                            {**RELATIONS,'taxon':{'taxon_id':'wrong'}}):
-            related.return_value=replacement
+        self.assertIn('외형·유전 유사도',response['answer_text'])
+        self.assertIn('80점',response['answer_text'])
+        self.assertEqual(ranked,response['result']['question_answer']['relations'])
+        similar.assert_called_once_with('왜가리')
+        for replacement in ({**ranked,'taxonomy_release':'old'},
+                            {**ranked,'taxon':{'taxon_id':'wrong'}}):
+            similar.return_value=replacement
             result=client.post('/v1/chat',json={'question':'왜가리와 비슷한 종은 어떤게 있니?'}).json()
             self.assertEqual('abstain',result['disposition'])
             self.assertNotIn('대백로',result['answer_text'])

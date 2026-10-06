@@ -2767,3 +2767,43 @@ test("targeted answers retain reviewed common-name provenance with safe source l
   const sourced = chat.buildQuestionAnswer({ createElement: createFakeElement }, { topic: "diet", title: "먹이", text: "직접 답변", items: [], name_context: context });
   assert.equal(collectAllNodes(sourced).find(n => n.tagName === "a").href, "https://example.org/alias");
 });
+
+function similarityFixture() {
+  const peers = [3, 1, 2, 4].map(rank => ({ taxon_id: "sim" + rank, rank: "species", scientific_name: "Similar species " + rank, english_name: "Peer " + rank, similarity_rank: rank, similarity_score: 100 - rank * 10, similarity_reasons: [{ label: rank === 1 ? "<script>same genus</script>" : "같은 서식 환경", source_name: "Reviewed graph", source_url: rank === 1 ? "javascript:alert(1)" : "https://example.org/graph" }] }));
+  return { taxon: { taxon_id: "t1" }, taxonomy_source: "AviList", taxonomy_release: "v2025b", concept_set_id: "cs1", ranking: { method: "taxonomy-ecology-v1", limit: 3, candidate_scope: "same_family" }, note: "분류·생태 자료 점수이며 외형이나 진화적 거리 측정값이 아닙니다.", groups: [{ rank: "similarity", label: "그래프 유사도 상위 3종", source_name: "Reviewed graph", source_url: "https://example.org/graph", items: peers, has_more: true }] };
+}
+
+test("ranked similar species render TOP3 in rank order with scores, explanation and safe provenance", async () => {
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => { throw new Error("no lookup"); }, { initialData: similarityFixture(), initiallyOpen: true });
+  await tick();
+  const buttons = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
+  assert.deepEqual(buttons.map(n => n.textContent), ["1위 · Peer 1 · 그래프 유사도 90점 · 비교하기", "2위 · Peer 2 · 그래프 유사도 80점 · 비교하기", "3위 · Peer 3 · 그래프 유사도 70점 · 비교하기"]);
+  assert.doesNotMatch(collectedText(explorer), /Peer 4|12종/);
+  assert.match(collectedText(explorer), /외형이나 진화적 거리/);
+  assert.match(collectedText(explorer), /<script>same genus<\/script>/);
+  assert.equal(collectAllNodes(explorer).some(n => n.tagName === "script"), false);
+  assert.ok(collectAllNodes(explorer).filter(n => n.tagName === "a").every(n => n.href === "https://example.org/graph"));
+});
+
+test("ranked comparison preserves similarity reasons in a new bubble and rejects stale peer release", async () => {
+  const data = similarityFixture();
+  const left = profileFor({ taxon_id: "t1" });
+  const bubbles = [];
+  let stale = false;
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, left, async () => {
+    const peer = profileFor(data.groups[0].items.find(p => p.similarity_rank === 1));
+    if (stale) { peer.lineage.taxonomy_release = "old"; }
+    return jsonResponse(peer);
+  }, { initialData: data, initiallyOpen: true, onComparison: panel => bubbles.push(panel) });
+  await tick();
+  const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.textContent));
+  button.dispatch("click"); await tick();
+  assert.equal(bubbles.length, 1);
+  assert.match(collectedText(bubbles[0]), /그래프 유사도 90점/);
+  assert.match(collectedText(bubbles[0]), /유사도 근거와 출처/);
+  assert.match(collectedText(bubbles[0]), /외형 유사도나 진화적 거리/);
+  assert.equal(collectAllNodes(bubbles[0]).filter(n => n.tagName === "dialog").length, 2);
+  stale = true; button.dispatch("click"); await tick();
+  assert.equal(bubbles.length, 1);
+  assert.match(collectedText(explorer), /비교 자료를 표시하지 않았습니다/);
+});
