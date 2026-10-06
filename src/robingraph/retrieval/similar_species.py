@@ -6,8 +6,8 @@ from .phylogenetic_relations import phylogenetic_relations, phylogeny_metadata
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
 from .taxonomy_lineage import with_korean_display_name
 
-WEIGHTS = {'same_genus': 50, 'same_family': 30, 'same_habitat': 10, 'same_trophic_niche': 10}
-METHOD = 'taxonomy-phylogeny-ecology-v2'
+WEIGHTS = {'phylogenetic_clade': 50, 'same_genus': 20, 'same_family': 10, 'same_habitat': 10, 'same_trophic_niche': 10}
+METHOD = 'taxonomy-phylogeny-ecology-v3'
 
 
 
@@ -125,6 +125,9 @@ def similar_species(repository, store, resolve, name):
     phylogeny = phylogenetic_relations(lineage.taxonomy_release, target.taxon_id,
                                         target.scientific_name, list(candidates.values()),
                                         concept_set_id=lineage.concept_set_id)
+    # Ordinal supported ancestor levels, not branch counts or measured distances.
+    levels = sorted({r['shared_ancestor_depth'] for r in phylogeny.values()})
+    relative = {depth: (position + 1) / len(levels) for position, depth in enumerate(levels)}
     ranked = []
     for candidate in candidates.values():
         reasons = []
@@ -139,16 +142,20 @@ def similar_species(repository, store, resolve, name):
                 reasons.append({'key':key,'label':label,'points':WEIGHTS[key],**candidate['ecology'][key]})
         relation = phylogeny.get(candidate['taxon_id'])
         if relation:
+            relation = {**relation, 'relative_closeness': relative[relation['shared_ancestor_depth']],
+                        'points': WEIGHTS['phylogenetic_clade'] * relative[relation['shared_ancestor_depth']]}
             reasons.append(relation)
         candidate['phylogeny'] = relation
-        score = sum(reason['points'] for reason in reasons)
+        candidate['score_basis'] = 'phylogeny_taxonomy_ecology' if relation else 'taxonomy_ecology_fallback'
+        candidate['available_weight'] = 100 if relation else 50
+        # Missing phylogeny is excluded, never treated as observed zero closeness.
+        for reason in reasons:
+            reason['weighted_points'] = reason['points']
+            reason['points'] = round(reason['points'] * 100 / candidate['available_weight'], 2)
+        score = round(sum(reason['points'] for reason in reasons), 2)
         if score:
             ranked.append((score,candidate,reasons))
-    # Missing tree coverage is not a measured distance: preserve verified genus/family tiers.
-    # Within a tier, supported clade nesting precedes ecology; an unresolved clade stays tied.
-    ranked.sort(key=lambda item:(not item[1]['same_genus'], not item[1]['same_family'],
-        -(item[1]['phylogeny'] or {}).get('shared_ancestor_depth', -1),
-        -item[0], item[1]['scientific_name'], item[1]['taxon_id']))
+    ranked.sort(key=lambda item:(-item[0], item[1]['scientific_name'], item[1]['taxon_id']))
     top = ranked[:3]
     names = repository._run(NAMES_QUERY, concept_set_id=lineage.concept_set_id,
                             taxonomy_release=lineage.taxonomy_release,
@@ -164,14 +171,18 @@ def similar_species(repository, store, resolve, name):
         items.append(with_korean_display_name({'taxon_id':candidate['taxon_id'],'rank':'species',
                       'scientific_name':candidate['scientific_name'],
                       'korean_name':name_row.get('korean_name'),'english_name':name_row.get('english_name'),
-                      'similarity_score':score,'similarity_rank':position,'similarity_reasons':reasons}))
+                      'similarity_score':score,'similarity_rank':position,'similarity_reasons':reasons,
+                      'score_basis':candidate['score_basis'],'available_weight':candidate['available_weight'],
+                      'phylogeny_available':candidate['phylogeny'] is not None}))
     return {'taxon':asdict(target),'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
             'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
                        'eligible_count':len(ranked),'limit':3,'weights':WEIGHTS.copy(),
-                       'priority':'same_genus,same_family,supported_shared_ancestor,ecology_score',
+                       'priority':'weighted_score',
+                       'phylogeny_normalization':'ordinal_supported_ancestor_levels',
+                       'missing_phylogeny':'exclude_and_renormalize_available_weights',
                        'tie_break':'scientific_name,taxon_id',
                        'phylogeny':phylogeny_metadata(lineage.taxonomy_release, lineage.concept_set_id)},
-            'groups':[{'rank':'similarity','label':'근연 관계 우선 비교 후보 3종','items':items,
+            'groups':[{'rank':'similarity','label':'근연·분류·생태 가중 점수 상위 3종','items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'같은 속·과를 우선하고, 같은 분류 범위에서는 연구 자료가 있는 계통수의 공통 조상 관계를 생태 점수보다 먼저 반영합니다. 계통 자료가 없는 종은 분류·생태 자료로 표시하며 멀다고 판단하지 않습니다. 같은 공통 조상은 생태 점수·학명순으로 정렬합니다. 점수는 분류·생태 일치 점수이며 근연도·유전 유사도나 확률이 아닙니다.'}
+            'note':'계통 관계 50%, 분류 관계 30%(같은 속 20%·같은 과 10%), 서식 환경 10%, 먹이 생태 10%의 가중합 점수순입니다. 계통 점수는 이 조회의 전체 후보에서 확인된 공통 조상들의 상대적 순서이며 진화 거리·유전 유사도·확률이 아닙니다. 계통 자료가 없으면 해당 항목을 제외하고 나머지 50%를 100점으로 환산한 분류·생태 대체 점수로 표시합니다. 서로 다른 자료 범위의 점수는 불확실성이 다릅니다.'}
