@@ -826,6 +826,24 @@
     return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? " · 그래프 유사도 " + score + "점" : "");
   }
 
+  function buildComparisonPeer(doc, peer, ranked) {
+    var row = doc.createElement("div"); row.className = "comparison-peer";
+    var identity = doc.createElement("div"); identity.className = "comparison-peer-identity";
+    var name = doc.createElement("strong"); name.textContent = speciesLabel(peer); identity.appendChild(name);
+    var scientific = doc.createElement("i"); scientific.textContent = peer.scientific_name; identity.appendChild(scientific);
+    row.appendChild(identity);
+    if (ranked) {
+      var score = doc.createElement("span"); score.className = "comparison-peer-score";
+      score.textContent = peer.similarity_rank + "위 · " + peer.similarity_score + "점";
+      score.setAttribute("aria-label", "그래프 유사도 " + score.textContent); row.appendChild(score);
+    }
+    var button = doc.createElement("button"); button.type = "button"; button.className = "comparison-peer-choose";
+    button.textContent = "비교하기";
+    button.setAttribute("aria-label", (ranked ? similarityLabel(peer) : speciesLabel(peer)) + " · 비교하기");
+    row.appendChild(button);
+    return { row: row, button: button };
+  }
+
   function buildRelatedExplorer(doc, profile, fetcher, options) {
     options = options || {};
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
@@ -928,11 +946,15 @@
           var visiblePeers = peers.slice(0, ranked ? (rankedRemaining === null ? 3 : rankedRemaining) : 12);
           if (rankedRemaining !== null) { rankedRemaining -= visiblePeers.length; }
           visiblePeers.forEach(function (peer) {
-            var button = doc.createElement("button"); button.type = "button";
-            button.textContent = (ranked ? similarityLabel(peer) : speciesLabel(peer)) + " · 비교하기";
-            button.addEventListener("click", function () { selectPeer(peer, group, button); }); block.appendChild(button);
-            if (sanitizeUrl(peer.korean_name_source_url)) { block.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
-            if (ranked) { block.appendChild(buildSimilarityEvidence(doc, peer)); }
+            var choice = buildComparisonPeer(doc, peer, ranked);
+            choice.button.addEventListener("click", function () { selectPeer(peer, group, choice.button); });
+            if (ranked || sanitizeUrl(peer.korean_name_source_url)) {
+              var evidence = ranked ? buildSimilarityEvidence(doc, peer) : doc.createElement("details");
+              if (!ranked) { var summary = doc.createElement("summary"); summary.textContent = "이름 출처"; evidence.appendChild(summary); }
+              if (sanitizeUrl(peer.korean_name_source_url)) { evidence.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
+              choice.row.appendChild(evidence);
+            }
+            block.appendChild(choice.row);
           });
           if (group.has_more && !ranked) { var more = doc.createElement("p"); more.textContent = "이름이 확인된 종 중 최대 12종을 표시합니다."; block.appendChild(more); }
           var source = doc.createElement("details");
@@ -1067,14 +1089,13 @@
           });
           if (!peers.length) { var empty = doc.createElement("p"); empty.textContent = "같은 자료에서 출처가 확인된 다른 종이 없습니다."; block.appendChild(empty); }
           peers.slice(0, 3).forEach(function (peer) {
-            var row = doc.createElement("div"); row.className = "ecological-peer";
-            var button = doc.createElement("button"); button.type = "button";
-            button.textContent = speciesLabel(peer) + " · 비교하기";
-            button.addEventListener("click", function () { selectPeer(peer, group, button); });
-            row.appendChild(button);
-            if (sanitizeUrl(peer.korean_name_source_url)) { row.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
-            row.appendChild(buildEcologicalSource(doc, peer.evidence));
-            block.appendChild(row);
+            var choice = buildComparisonPeer(doc, peer, false);
+            choice.row.className += " ecological-peer";
+            choice.button.addEventListener("click", function () { selectPeer(peer, group, choice.button); });
+            var evidence = buildEcologicalSource(doc, peer.evidence);
+            if (sanitizeUrl(peer.korean_name_source_url)) { evidence.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
+            choice.row.appendChild(evidence);
+            block.appendChild(choice.row);
           });
           if (group.has_more || peers.length > 3) { var more = doc.createElement("p"); more.textContent = "일부 종만 표시합니다 (범주별 최대 3종)."; block.appendChild(more); }
           results.appendChild(block);
