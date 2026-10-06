@@ -8,7 +8,7 @@ Aves 1.6 / Clements2025 phylogeny-only 원본과 연구별 지원 주석을 고�
 
 ## 검증
 
-- Python 전체: 548 tests, OK; 외부 통합 환경 조건에 따른 40 skipped.
+- Python 최초 실행: 548개 중 508 통과, 외부 통합 환경 조건에 따른 40 skipped. 아래 NAS 재접속 검증에서 548개 전체 통과·0 skipped를 확인했다.
 - 프런트엔드 전체: 125 tests, pass 125, fail 0.
 - 분류판·개념집합·taxon ID·학명 변경 시 기존 계통 근거 미적용.
 - 파서 중복·미완성·다중 root·미지원 branch length 거부, polytomy 유지.
@@ -46,3 +46,12 @@ Orca run `run_ed90d2e734cb`: Claude 원본/지원 주석/분류 제약 연구 �
 Antigravity 검토 보고 수신 및 작업 정상 종료. 같은 속·과의 분류 범위를 먼저 지키고 범위 안에서 계통 근거를 생태 점수보다 앞세우는 정책, 계통 자료가 없는 같은 속 종을 먼 분류군보다 아래로 보내지 않는 처리 방향을 독립 검토에서도 확인했다. 보고의 추가 제안인 연구 수에 따른 동점 우열과 미지원 합성 분기에 의한 순위는 적용하지 않았다. 연구 수는 통계적 신뢰도/진화 거리와 같지 않으며 지원 근거 없는 분기는 순위를 높이지 않아야 한다. 검증된 투영 계통 근거의 정확한 적용 수는 위의 9,518종/9,428 내부 조상이다.
 
 Claude·GPT·Antigravity 모든 dispatch가 succeeded로 종료됐고 회수 가능한 작업 세션을 정리했다. 사용자가 인계받거나 기존 세션을 재사용한 작업 창은 Orca의 보존 상태를 따른다.
+
+## NAS 재접속 후 전체 통합 테스트
+
+- NAS 접속 복구 후 기존 TEST PostgreSQL과 Neo4j 설정을 확인했다. 테스트 의존성과 tracing 추가 의존성을 모두 설치했다.
+- 모든 실행 스위치(`ROBINGRAPH_NEO4J_INTEGRATION_TESTS`, `ROBINGRAPH_POSTGRES_INTEGRATION_TESTS`, `ROBINGRAPH_NAME_RELATIONS_INTEGRATION_TESTS`)를 `1`로 설정하고 `uv run --locked --extra test --extra tracing python -m unittest discover -s tests -v`와 같은 전체 테스트 검색을 실행했다.
+- 최종 결과: **548 실행, 548 통과, 실패 0, 오류 0, 건너뛰기 0**. 실행 시간 28.249초. 기존에 건너뛴 Neo4j 20개, n8n Cypher 2개, PostgreSQL 9개, 이름 관계 1개, MLflow/Google GenAI 8개를 모두 포함한다. tracing 테스트는 SDK를 설치한 로컬 모의 실행이며 외부 LLM 호출 검증은 아니다.
+- 기존 TEST Neo4j에는 삭제·재적재 대상인 Fixture 영역에 논문 자료도 있어 일회용 Neo4j 컨테이너를 별도로 사용했다. PostgreSQL은 기존 TEST DB의 별도 스키마 `ingest_test_20261006_check40`를 사용했다.
+- 실제 실행에서 이름 관계 통합 테스트의 누락된 `source_release`·`policy_status`를 보완했다. 단일 종 통칭의 직접 답변과 다종 통칭·가축형의 선택 요청을 구분해 검증하고, 다음 분류판 활성화 후 실제 관계 조회도 확인했다. 서비스의 조회 보호 조건은 유지했다.
+- 검증 후 기존 Fixture 노드 555개·그중 논문 노드 168개가 유지됨을 확인했다. 일회용 컨테이너·볼륨과 별도 PostgreSQL 스키마를 삭제했다. 수정 범위는 테스트와 검증 문서이며 서비스 재배포는 필요하지 않다.
