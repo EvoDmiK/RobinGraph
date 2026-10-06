@@ -809,6 +809,22 @@
    * ignored; a failed peer can simply be clicked again. `options.isActive`
    * drops responses that settle after the conversation was cleared.
    */
+  function buildSimilarityEvidence(doc, peer) {
+    var details = doc.createElement("details"); details.className = "similarity-evidence";
+    var title = doc.createElement("summary"); title.textContent = "유사도 근거와 출처"; details.appendChild(title);
+    (Array.isArray(peer.similarity_reasons) ? peer.similarity_reasons : []).forEach(function (reason) {
+      if (!reason || typeof reason.label !== "string") { return; }
+      var line = doc.createElement("p"); line.textContent = reason.label + (typeof reason.points === "number" ? " · " + reason.points + "점" : "") + (typeof reason.display === "string" ? " · " + reason.display : ""); details.appendChild(line);
+      if (typeof reason.source_name === "string") { details.appendChild(safeLink(doc, reason.source_name, reason.source_url)); }
+      if (typeof reason.target_source_url === "string") { details.appendChild(safeLink(doc, "기준 종의 생태 출처", reason.target_source_url)); }
+    });
+    return details;
+  }
+  function similarityLabel(peer) {
+    var score = typeof peer.similarity_score === "number" && Number.isFinite(peer.similarity_score) && peer.similarity_score >= 0 && peer.similarity_score <= 100 ? peer.similarity_score : null;
+    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? " · 그래프 유사도 " + score + "점" : "");
+  }
+
   function buildRelatedExplorer(doc, profile, fetcher, options) {
     options = options || {};
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
@@ -859,6 +875,7 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 분류군: " + (group.ancestor ? (group.ancestor.korean_name || group.ancestor.scientific_name) : "확인 불가") + " (" + (RANK_LABELS[group.rank] || group.rank) + ")";
+        if (group.rank === "similarity") { relation.textContent = similarityLabel(peer); panel.appendChild(buildSimilarityEvidence(doc, peer)); var scoreNote = doc.createElement("p"); scoreNote.textContent = "분류·생태 자료를 비교한 점수이며 외형 유사도나 진화적 거리의 측정값이 아닙니다."; panel.appendChild(scoreNote); }
         panel.appendChild(relation);
         var version = doc.createElement("p");
         version.className = "species-comparison-version";
@@ -893,6 +910,8 @@
         while (results.firstChild) { results.removeChild(results.firstChild); }
         var note = doc.createElement("p"); note.className = "species-note"; note.textContent = data.note; results.appendChild(note);
         var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
+        var rankedRemaining = data.ranking && data.ranking.limit === 3 ? 3 : null;
+        if (rankedRemaining !== null) { open.textContent = "그래프 유사도 상위 3종"; }
         (Array.isArray(data.groups) ? data.groups : []).forEach(function (group) {
           var block = doc.createElement("section");
           var title = doc.createElement("h3");
@@ -900,15 +919,20 @@
           var peers = (Array.isArray(group.items) ? group.items : []).filter(function (peer) {
             return peer && peer.taxon_id && typeof peer.scientific_name === "string" && peer.scientific_name.trim();
           });
+          var ranked = group.rank === "similarity" || rankedRemaining !== null;
+          if (ranked) { peers = peers.filter(function (peer) { return Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 && typeof peer.similarity_score === "number" && Number.isFinite(peer.similarity_score) && peer.similarity_score >= 0 && peer.similarity_score <= 100; }).sort(function (left, right) { return left.similarity_rank - right.similarity_rank; }); }
           if (!peers.length) {
             var empty = doc.createElement("p"); empty.textContent = "현재 분류 자료에서 이름이 확인된 다른 종이 없습니다."; block.appendChild(empty);
           }
-          peers.slice(0, 12).forEach(function (peer) {
+          var visiblePeers = peers.slice(0, ranked ? (rankedRemaining === null ? 3 : rankedRemaining) : 12);
+          if (rankedRemaining !== null) { rankedRemaining -= visiblePeers.length; }
+          visiblePeers.forEach(function (peer) {
             var button = doc.createElement("button"); button.type = "button";
-            button.textContent = speciesLabel(peer) + " · 비교하기";
+            button.textContent = (ranked ? similarityLabel(peer) : speciesLabel(peer)) + " · 비교하기";
             button.addEventListener("click", function () { selectPeer(peer, group, button); }); block.appendChild(button);
+            if (ranked) { block.appendChild(buildSimilarityEvidence(doc, peer)); }
           });
-          if (group.has_more) { var more = doc.createElement("p"); more.textContent = "이름이 확인된 종 중 최대 12종을 표시합니다."; block.appendChild(more); }
+          if (group.has_more && !ranked) { var more = doc.createElement("p"); more.textContent = "이름이 확인된 종 중 최대 12종을 표시합니다."; block.appendChild(more); }
           var source = doc.createElement("details");
           var summary = doc.createElement("summary"); summary.textContent = "분류 관계의 출처"; source.appendChild(summary);
           source.appendChild(safeLink(doc, group.source_name || data.taxonomy_source, group.source_url));

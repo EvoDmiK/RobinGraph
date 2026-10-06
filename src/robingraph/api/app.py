@@ -775,6 +775,7 @@ def create_app(
     semantic_router: SemanticRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
+    similar_species_handler: Callable[[str], dict] | None = None,
     ecological_relations_handler: Callable[[str], dict] | None = None,
     subspecies_handler: Callable[[str], dict] | None = None,
     name_relations_handler: Callable[[str], dict | None] | None = None,
@@ -847,6 +848,20 @@ def create_app(
             raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
         except Exception as error:
             raise HTTPException(status_code=503, detail="Species relations are temporarily unavailable") from error
+
+    @app.get("/v1/taxa/similar")
+    @_traced_route("GET /v1/taxa/similar")
+    def similar_species_results(name: Annotated[str, Query(min_length=1,max_length=200)]):
+        if not name.strip():
+            raise HTTPException(status_code=422,detail="A species name is required")
+        if similar_species_handler is None:
+            raise HTTPException(status_code=503,detail="Species similarity is unavailable")
+        try:
+            return similar_species_handler(name.strip())
+        except SpeciesNotFoundError:
+            raise HTTPException(status_code=404,detail="Species not found in active taxonomy") from None
+        except Exception:
+            raise HTTPException(status_code=503,detail="Species similarity is temporarily unavailable") from None
 
     @app.get("/v1/taxa/ecological-related")
     @_traced_route("GET /v1/taxa/ecological-related")
@@ -1090,7 +1105,9 @@ def create_app(
                         )
                 relations = None
                 if species_question.topic in ("related", "ecological_related"):
-                    handler = related_species_handler if species_question.topic == "related" else ecological_relations_handler
+                    handler = (similar_species_handler if species_question.topic == "related" and species_question.category is None
+                               else related_species_handler if species_question.topic == "related"
+                               else ecological_relations_handler)
                     try:
                         if handler is None:
                             raise ValueError("Relation lookup unavailable")
