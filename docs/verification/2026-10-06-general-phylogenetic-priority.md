@@ -23,3 +23,20 @@ Aves 1.6 / Clements2025 phylogeny-only 원본과 연구별 지원 주석을 고�
 ## 협업
 
 Orca run `run_ed90d2e734cb`: Claude 원본/지원 주석/분류 제약 연구 감사, GPT 고정 데이터 파서·종 개념 연결·runtime·검증 구현, Antigravity 독립 순위 정책 검토. 원본·적용 범위·재생성 명령은 `docs/phylogenetic-relations.md`에 기록했다. n8n 새 스케줄은 등록하지 않고 고정 공개 파일의 재현 가능한 수집 경로를 사용했다.
+
+## NAS TEST 배포 및 공개 응답
+
+- Code commit `595954e246e7ddd75550da3832d725b7b11d288a`, origin/dev push 완료.
+- NAS release `/home/kimdove/RobinGraph-phylogeny-595954e`, image `robingraph-api:test-phylogeny-595954e`; OCI revision과 실제 TEST 컨테이너 이미지 일치 확인.
+- Archive SHA-256 `980ecd5d87b2b6bb10068b513293ac870f026b2db29a37587b05113ed903ea81`; NAS archive/manifest 검증 완료.
+- TEST preflight/update/verify 완료, health status ok/neo4j/test. PROD 변경 없음.
+- 공개 https://robingraph-test.dove-nest.com : 배포 검증기 passed=true, OpenAPI/응답 계약 일치.
+- `/v1/taxa/similar` 실제 5종 요청 모두 method v2, 전체 후보 11,130, coverage 9,518 확인.
+- 흰뺨검둥오리: 청둥오리 → Indian Spot-billed Duck → Philippine Duck. 첫 두 종은 같은 계통 공통 조상 단계이며 서로의 표시 우열은 생태/학명 규칙으로 결정.
+- 해오라기: Nankeen Night Heron 먼저 표시, 공통 조상 연구 2개. 같은 속의 계통 자료 없는 멸종 종은 분류 근거만 표시.
+- Parus major: Parus cinereus(박새,80점) → Parus monticolus(작은노랑배박새,90점) → Pseudopodoces humilis. 생태 가점보다 계통 근거가 앞섬을 실제 응답에서 확인.
+- Accipiter nisus: Accipiter rufiventris → A. striatus → A. madagascariensis.
+- Columba livia: Columba rupestris(낭비둘기) → C. leuconota → C. oenas(분홍가슴비둘기).
+- `/v1/chat` 흰뺨검둥오리 관련 종 질문: v2와 청둥오리 첫 후보, 규칙 설명·일치점수·근거 반환 확인.
+- 공개 `/static/chat.js` SHA-256 `5c5a2bf4a6ac5f36dc7b951acbfc1b52697eeb8474e3a737149a3ba5d65ce6c1`가 현재 커밋 파일과 일치.
+- Obsidian MCP 문서: `Work/RobinGraph/2026-10-06-전체종-근연관계우선-계통근거-NAS배포.md` 생성 및 Work/index 링크 추가.
