@@ -10,3 +10,10 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## 작업 문서 작성 기준
+
+- 사용자의 요청에 따라 작업 문서는 항상 상세하게 작성한다. 짧은 완료 요약만으로 대체하지 않는다.
+- 요청 배경과 목표, 확인한 원인과 근거, 변경 전후 동작, 변경 파일과 구현 내용, 검증 방법과 실제 결과, 배포·커밋 정보, 남은 한계와 후속 사항을 기록한다. 해당하지 않는 항목은 그 이유를 명시한다.
+- 테스트는 실제 실행한 범위·통과·실패·건너뛰기를 구분하고, 모의 검증과 실제 DB/API 검증을 구분한다. 확인하지 않은 결과나 배포 완료를 추정해 기록하지 않는다. 인증 정보는 문서에 포함하지 않는다.
+- 저장소와 Obsidian에 같은 작업을 기록하는 경우 핵심 내용과 검증 결과를 일치시킨다. 채팅 완료 안내는 간결하게 하되 작업 문서의 상세함은 유지한다.
