@@ -1,0 +1,2725 @@
+{
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "lists": [
+    {
+      "query": "청둥오리",
+      "count": 2,
+      "named": 2,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:546",
+          "rank": "subspecies",
+          "scientific_name": "Anas platyrhynchos conboschas",
+          "authority": "Brehm, CL, 1831",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": "Greenland Mallard",
+          "english_name_source_url": "https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf",
+          "english_name_source_title": "Dansk Ornitologisk Forening · Names of the birds of the World (2019)",
+          "english_name_status": "source-reference",
+          "range_text": "coastal southwestern Greenland",
+          "description": "분포 차이: 그린란드 남서부 해안에 분포하는 아종입니다.",
+          "description_language": "ko",
+          "description_status": "reviewed-summary",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:545",
+          "rank": "subspecies",
+          "scientific_name": "Anas platyrhynchos platyrhynchos",
+          "authority": "Linnaeus, C, 1758",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": "Northern Mallard",
+          "english_name_source_url": "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=8840",
+          "english_name_source_title": "NCBI Taxonomy · Anas platyrhynchos platyrhynchos (8840)",
+          "english_name_status": "source-reference",
+          "range_text": "breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners",
+          "description": "분포 차이: 북반구의 넓은 지역에서 번식하고, 겨울에는 더 남쪽 지역으로 이동하는 아종입니다.",
+          "description_language": "ko",
+          "description_status": "reviewed-summary",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist"
+        }
+      ]
+    },
+    {
+      "query": "왜가리",
+      "count": 4,
+      "named": 2,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:5420",
+          "rank": "subspecies",
+          "scientific_name": "Ardea cinerea cinerea",
+          "authority": "Linnaeus, C, 1758",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "Eurasia to Manchuria, India, Africa, and Comoros",
+          "description": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+          "description_language": "ko",
+          "description_status": "reviewed-summary",
+          "description_source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/",
+          "description_source_title": "BirdLife South Africa · Grey Heron · Taxonomy",
+          "display_label": "왜가리 아종 · 유럽·아프리카·서아시아 분포"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:5423",
+          "rank": "subspecies",
+          "scientific_name": "Ardea cinerea firasa",
+          "authority": "Hartert, EJO, 1917",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "Madagascar",
+          "description": "마다가스카르에 분포하는 아종입니다.",
+          "description_language": "ko",
+          "description_status": "reviewed-summary",
+          "description_source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/",
+          "description_source_title": "BirdLife South Africa · Grey Heron · Taxonomy",
+          "display_label": "왜가리 아종 · 마다가스카르 분포"
+        }
+      ]
+    },
+    {
+      "query": "Struthio camelus",
+      "count": 4,
+      "named": 3,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:9",
+          "rank": "subspecies",
+          "scientific_name": "Struthio camelus australis",
+          "authority": "Gurney, JH Sr, 1868",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": "South African Ostrich",
+          "english_name_source_url": "https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf#page=7",
+          "english_name_source_title": "Dansk Ornitologisk Forening, Navnegruppen: Navne paa alverdens fugle (file stamp 231119) · PDF 7쪽",
+          "english_name_status": "source-reference",
+          "range_text": "southern Africa",
+          "description": "southern Africa",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:7",
+          "rank": "subspecies",
+          "scientific_name": "Struthio camelus camelus",
+          "authority": "Linnaeus, C, 1758",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "Sahel of North Africa and the Sudan",
+          "description": "Sahel of North Africa and the Sudan",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "타조 아종 · Sahel of North Africa and the Sudan"
+        }
+      ]
+    },
+    {
+      "query": "Phasianus colchicus",
+      "count": 30,
+      "named": 3,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:1262",
+          "rank": "subspecies",
+          "scientific_name": "Phasianus colchicus alaschanicus",
+          "authority": "Alferaki, SN; Bianchi, VL, 1908",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "north-central China, in the foothills of the Helan (Alashan) Mountains",
+          "description": "north-central China, in the foothills of the Helan (Alashan) Mountains",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "꿩 아종 · north-central China, in the foothills of the Helan (Alashan) Mountains"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:1250",
+          "rank": "subspecies",
+          "scientific_name": "Phasianus colchicus bianchii",
+          "authority": "Buturlin, SA, 1904",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "upper valley of the Amu Darya River in southern Uzbekistan, southwestern Tajikistan, and extreme northern Afghanistan",
+          "description": "upper valley of the Amu Darya River in southern Uzbekistan, southwestern Tajikistan, and extreme northern Afghanistan",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "꿩 아종 · upper valley of the Amu Darya River in southern Uzbekistan, southwester…"
+        }
+      ]
+    },
+    {
+      "query": "Falco peregrinus",
+      "count": 18,
+      "named": 0,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:11248",
+          "rank": "subspecies",
+          "scientific_name": "Falco peregrinus anatum",
+          "authority": "Bonaparte, CLJL, 1838",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "North America (south of tundra) to northern Mexico",
+          "description": "North America (south of tundra) to northern Mexico",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "매 아종 · North America (south of tundra) to northern Mexico"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:11262",
+          "rank": "subspecies",
+          "scientific_name": "Falco peregrinus babylonicus",
+          "authority": "Sclater, PL, 1861",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "eastern Iran to Mongolia",
+          "description": "eastern Iran to Mongolia",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "매 아종 · eastern Iran to Mongolia"
+        }
+      ]
+    },
+    {
+      "query": "Parus cinereus",
+      "count": 20,
+      "named": 1,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:20766",
+          "rank": "subspecies",
+          "scientific_name": "Parus cinereus amamiensis",
+          "authority": "Kleinschmidt, O, 1922",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "northern Ryukyu Islands (Amami Ōshima and Tokuno-Shima, southern Japan)",
+          "description": "northern Ryukyu Islands (Amami Ōshima and Tokuno-Shima, southern Japan)",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "박새 아종 · northern Ryukyu Islands (Amami Ōshima and Tokuno-Shima, southern Japan)"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:20761",
+          "rank": "subspecies",
+          "scientific_name": "Parus cinereus ambiguus",
+          "authority": "(Raffles, TS, 1822)",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "southeastern Myanmar, peninsular Thailand, Malaya, and Sumatra",
+          "description": "southeastern Myanmar, peninsular Thailand, Malaya, and Sumatra",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "박새 아종 · southeastern Myanmar, peninsular Thailand, Malaya, and Sumatra"
+        }
+      ]
+    },
+    {
+      "query": "Parus major",
+      "count": 16,
+      "named": 0,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:20742",
+          "rank": "subspecies",
+          "scientific_name": "Parus major aphrodite",
+          "authority": "Madarász, G, 1901",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "southern Italy, Sicily, southern Greece, and Mediterranean islands including Cyprus",
+          "description": "southern Italy, Sicily, southern Greece, and Mediterranean islands including Cyprus",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "노랑배박새 아종 · southern Italy, Sicily, southern Greece, and Mediterranean islands incl…"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:20746",
+          "rank": "subspecies",
+          "scientific_name": "Parus major blanfordi",
+          "authority": "Pražák, JP, 1894",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "northern Iraq to north-central and southwestern Iran",
+          "description": "northern Iraq to north-central and southwestern Iran",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "노랑배박새 아종 · northern Iraq to north-central and southwestern Iran"
+        }
+      ]
+    },
+    {
+      "query": "Corvus macrorhynchos",
+      "count": 10,
+      "named": 0,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:20301",
+          "rank": "subspecies",
+          "scientific_name": "Corvus macrorhynchos colonorum",
+          "authority": "Swinhoe, R, 1864",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "central and southern China including Hainan, Taiwan, and northern Indochina",
+          "description": "central and southern China including Hainan, Taiwan, and northern Indochina",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "큰부리까마귀 아종 · central and southern China including Hainan, Taiwan, and northern Indoc…"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:20298",
+          "rank": "subspecies",
+          "scientific_name": "Corvus macrorhynchos connectens",
+          "authority": "Stresemann, EFT, 1916",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "southern Ryukyu Islands (Amami Ōshima, Okinawa, and Miyako-Jima, southern Japan)",
+          "description": "southern Ryukyu Islands (Amami Ōshima, Okinawa, and Miyako-Jima, southern Japan)",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "큰부리까마귀 아종 · southern Ryukyu Islands (Amami Ōshima, Okinawa, and Miyako-Jima, southe…"
+        }
+      ]
+    },
+    {
+      "query": "Psittacula krameri",
+      "count": 4,
+      "named": 0,
+      "examples": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:11953",
+          "rank": "subspecies",
+          "scientific_name": "Psittacula krameri borealis",
+          "authority": "(Neumann, OR, 1915)",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "northwestern Pakistan to northern India, Nepal, southeastern China, and central Myanmar",
+          "description": "northwestern Pakistan to northern India, Nepal, southeastern China, and central Myanmar",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "Rose-ringed Parakeet 아종 · northwestern Pakistan to northern India, Nepal, southeastern China, and…"
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:11951",
+          "rank": "subspecies",
+          "scientific_name": "Psittacula krameri krameri",
+          "authority": "(Scopoli, GA, 1769)",
+          "korean_name": null,
+          "korean_name_status": null,
+          "korean_name_source_url": null,
+          "english_name": null,
+          "range_text": "southern Mauritania southward to Guinea, eastward to southern Sudan, South Sudan, and far northern Uganda; widely introduced around the world, although the subspecific identify of these populations is poorly known; now feral across Europe and the Middle East and locally in north and south Africa, Mauritius, the Seychelles, locally in southeast Asia, Japan, Australia, New Zealand, the Hawaiian Islands, locally in North America (California, Florida and northern Baja California), locally in the Greater and Lesser Antilles, and in Venezuela",
+          "description": "southern Mauritania southward to Guinea, eastward to southern Sudan, South Sudan, and far northern Uganda; widely introduced around the world, although the subspecific identify of these populations is poorly known; now feral across Europe and the Middle East and locally in north and south Africa, Mauritius, the Seychelles, locally in southeast Asia, Japan, Australia, New Zealand, the Hawaiian Islands, locally in North America (California, Florida and northern Baja California), locally in the Greater and Lesser Antilles, and in Venezuela",
+          "description_language": "en",
+          "description_status": "source-original",
+          "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "description_source_title": "AviList global avian checklist",
+          "display_label": "Rose-ringed Parakeet 아종 · southern Mauritania southward to Guinea, eastward to southern Sudan, So…"
+        }
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "query": "Ardea cinerea cinerea",
+      "expected": {
+        "taxon_id": "avilist-taxon:v2025b:5420",
+        "rank": "subspecies",
+        "scientific_name": "Ardea cinerea cinerea",
+        "authority": "Linnaeus, C, 1758",
+        "korean_name": null,
+        "korean_name_status": null,
+        "korean_name_source_url": null,
+        "english_name": null,
+        "range_text": "Eurasia to Manchuria, India, Africa, and Comoros",
+        "description": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+        "description_language": "ko",
+        "description_status": "reviewed-summary",
+        "description_source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/",
+        "description_source_title": "BirdLife South Africa · Grey Heron · Taxonomy",
+        "display_label": "왜가리 아종 · 유럽·아프리카·서아시아 분포"
+      },
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "disposition": "answer",
+        "answer_text": "왜가리 아종 · 유럽·아프리카·서아시아 분포은(는) 왜가리에 속하는 아종입니다.",
+        "warnings": [],
+        "result": {
+          "kind": "profile",
+          "profile": {
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:5420",
+              "rank": "subspecies",
+              "scientific_name": "Ardea cinerea cinerea",
+              "authority": "Linnaeus, C, 1758",
+              "korean_name": null,
+              "korean_name_status": null,
+              "korean_name_source_url": null,
+              "english_name": null,
+              "range_text": "Eurasia to Manchuria, India, Africa, and Comoros",
+              "description": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+              "description_language": "ko",
+              "description_status": "reviewed-summary",
+              "description_source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/",
+              "description_source_title": "BirdLife South Africa · Grey Heron · Taxonomy",
+              "display_label": "왜가리 아종 · 유럽·아프리카·서아시아 분포"
+            },
+            "lineage": {
+              "query_scientific_name": "Ardea cinerea cinerea",
+              "taxonomy_source": "AviList",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "items": [
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5142",
+                  "rank": "order",
+                  "scientific_name": "Pelecaniformes",
+                  "authority": null,
+                  "korean_name": "사다새목",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q19338",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5239",
+                  "rank": "family",
+                  "scientific_name": "Ardeidae",
+                  "authority": null,
+                  "korean_name": "왜가리과",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q18789",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5397",
+                  "rank": "genus",
+                  "scientific_name": "Ardea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": null,
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5420",
+                  "rank": "subspecies",
+                  "scientific_name": "Ardea cinerea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": null,
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "english_name": null
+                }
+              ],
+              "query_name": "Ardea cinerea cinerea",
+              "resolved_query_scientific_name": "Ardea cinerea cinerea",
+              "matched_by": "scientific_name"
+            },
+            "traits": [],
+            "images": [],
+            "photo_availability": {
+              "status": "unconfirmed_taxon",
+              "message": "사진 자료의 종 식별을 확인하지 못했습니다."
+            },
+            "conservation": {
+              "category": null,
+              "category_raw": null,
+              "label": "확인되지 않음",
+              "source_name": null,
+              "source_url": null,
+              "source_release": null
+            },
+            "summary": "왜가리 아종 · 유럽·아프리카·서아시아 분포은(는) 왜가리에 속하는 아종입니다.",
+            "sections": [
+              {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "왜가리 아종 · 유럽·아프리카·서아시아 분포은(는) 왜가리에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+                    "source_name": "BirdLife South Africa · Grey Heron · Taxonomy",
+                    "source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/"
+                  }
+                ]
+              },
+              {
+                "key": "basic",
+                "title": "기본 정보",
+                "items": [
+                  {
+                    "text": "학명: Ardea cinerea cinerea"
+                  }
+                ],
+                "empty_text": "확인된 기본 정보가 없습니다."
+              },
+              {
+                "key": "appearance",
+                "title": "외관 특징",
+                "items": [],
+                "empty_text": "깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "ecology",
+                "title": "생활과 먹이",
+                "items": [],
+                "empty_text": "서식 환경과 먹이 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "fun_facts",
+                "title": "재미있는 사실",
+                "items": [],
+                "empty_text": "출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다."
+              }
+            ],
+            "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+            "parent_species": {
+              "taxon": {
+                "taxon_id": "avilist-taxon:v2025b:5419",
+                "rank": "species",
+                "scientific_name": "Ardea cinerea",
+                "authority": "Linnaeus, C, 1758",
+                "korean_name": "왜가리",
+                "korean_name_status": "source-reference",
+                "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                "english_name": "Grey Heron"
+              },
+              "lineage": {
+                "query_scientific_name": "Ardea cinerea",
+                "taxonomy_source": "AviList",
+                "taxonomy_release": "v2025b",
+                "concept_set_id": "rg:concept-set:avilist-v2025b",
+                "items": [
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:5142",
+                    "rank": "order",
+                    "scientific_name": "Pelecaniformes",
+                    "authority": null,
+                    "korean_name": "사다새목",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q19338",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:5239",
+                    "rank": "family",
+                    "scientific_name": "Ardeidae",
+                    "authority": null,
+                    "korean_name": "왜가리과",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q18789",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:5397",
+                    "rank": "genus",
+                    "scientific_name": "Ardea",
+                    "authority": "Linnaeus, C, 1758",
+                    "korean_name": null,
+                    "korean_name_status": null,
+                    "korean_name_source_url": null,
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:5419",
+                    "rank": "species",
+                    "scientific_name": "Ardea cinerea",
+                    "authority": "Linnaeus, C, 1758",
+                    "korean_name": "왜가리",
+                    "korean_name_status": "source-reference",
+                    "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                    "english_name": "Grey Heron"
+                  }
+                ],
+                "query_name": "Ardea cinerea",
+                "resolved_query_scientific_name": "Ardea cinerea",
+                "matched_by": "scientific_name"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist"
+            },
+            "reference_traits": [
+              {
+                "name": "beak_depth",
+                "label": "부리 높이",
+                "value": 25.4,
+                "display": "25.4",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Depth",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "beak_length_culmen",
+                "label": "부리 길이 (전체)",
+                "value": 138.9,
+                "display": "138.9",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Length_Culmen",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "beak_length_nares",
+                "label": "부리 길이 (콧구멍 기준)",
+                "value": 95.5,
+                "display": "95.5",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Length_Nares",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "beak_width",
+                "label": "부리 너비",
+                "value": 18.7,
+                "display": "18.7",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Width",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 1443,
+                "display": "1443",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Mass",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 1443,
+                "display": "1443",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "diet_category",
+                "label": "먹이 유형",
+                "value": "VertFishScav",
+                "display": "척추동물·물고기·사체",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "diet_distribution",
+                "label": "먹이 구성",
+                "value": {
+                  "invertebrate": 20,
+                  "endotherm_vertebrate": 10,
+                  "ectotherm_vertebrate": 10,
+                  "fish": 60,
+                  "unknown_vertebrate": 0,
+                  "carrion": 0,
+                  "fruit": 0,
+                  "nectar": 0,
+                  "seed": 0,
+                  "other_plant": 0
+                },
+                "display": "무척추동물 20% · 온혈 척추동물 10% · 변온 척추동물 10% · 물고기 60%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "foraging_strata_distribution",
+                "label": "먹이 활동 위치",
+                "value": {
+                  "below_water_surface": 0,
+                  "around_water_surface": 70,
+                  "ground": 30,
+                  "understory": 0,
+                  "mid_high": 0,
+                  "canopy": 0,
+                  "aerial": 0
+                },
+                "display": "수면 주변 70% · 지면 30%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "habitat",
+                "label": "서식 환경",
+                "value": "Wetland",
+                "display": "습지",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Habitat",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "habitat_density_category",
+                "label": "서식지 밀도 범주",
+                "value": "open",
+                "display": "개방형",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Habitat.Density",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "nocturnal",
+                "label": "활동 시간",
+                "value": false,
+                "display": "야행성 아님",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "primary_lifestyle",
+                "label": "주 생활 방식",
+                "value": "Terrestrial",
+                "display": "지상 생활",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Primary.Lifestyle",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "tail_length",
+                "label": "꼬리 길이",
+                "value": 169.1,
+                "display": "169.1",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Tail.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "tarsus_length",
+                "label": "다리 길이 (부척)",
+                "value": 137.9,
+                "display": "137.9",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Tarsus.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "trophic_level",
+                "label": "영양 단계",
+                "value": "Carnivore",
+                "display": "육식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Trophic.Level",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "trophic_niche",
+                "label": "먹이 생태 범주",
+                "value": "Aquatic predator",
+                "display": "수생동물 포식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Trophic.Niche",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              },
+              {
+                "name": "wing_length",
+                "label": "접은 날개 길이",
+                "value": 441,
+                "display": "441",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Wing.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              }
+            ],
+            "subspecies_metadata": {
+              "section": {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "왜가리 아종 · 유럽·아프리카·서아시아 분포은(는) 왜가리에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+                    "source_name": "BirdLife South Africa · Grey Heron · Taxonomy",
+                    "source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/"
+                  }
+                ]
+              },
+              "display_taxon": {
+                "taxon_id": "avilist-taxon:v2025b:5420",
+                "rank": "subspecies",
+                "scientific_name": "Ardea cinerea cinerea",
+                "authority": "Linnaeus, C, 1758",
+                "korean_name": null,
+                "korean_name_status": null,
+                "korean_name_source_url": null,
+                "english_name": null,
+                "range_text": "Eurasia to Manchuria, India, Africa, and Comoros",
+                "description": "유럽·아프리카·서아시아에 분포하는 아종입니다.",
+                "description_language": "ko",
+                "description_status": "reviewed-summary",
+                "description_source_url": "https://www.birdlife.org.za/red-data-book/red-list/grey-heron/",
+                "description_source_title": "BirdLife South Africa · Grey Heron · Taxonomy",
+                "display_label": "왜가리 아종 · 유럽·아프리카·서아시아 분포"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist",
+              "range_raw": "Eurasia to Manchuria, India, Africa, and Comoros"
+            }
+          },
+          "question_answer": null,
+          "similar_species": null
+        }
+      },
+      "identity_label_description_match": true
+    },
+    {
+      "query": "Struthio camelus australis",
+      "expected": {
+        "taxon_id": "avilist-taxon:v2025b:9",
+        "rank": "subspecies",
+        "scientific_name": "Struthio camelus australis",
+        "authority": "Gurney, JH Sr, 1868",
+        "korean_name": null,
+        "korean_name_status": null,
+        "korean_name_source_url": null,
+        "english_name": "South African Ostrich",
+        "english_name_source_url": "https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf#page=7",
+        "english_name_source_title": "Dansk Ornitologisk Forening, Navnegruppen: Navne paa alverdens fugle (file stamp 231119) · PDF 7쪽",
+        "english_name_status": "source-reference",
+        "range_text": "southern Africa",
+        "description": "southern Africa",
+        "description_language": "en",
+        "description_status": "source-original",
+        "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+        "description_source_title": "AviList global avian checklist"
+      },
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "disposition": "answer",
+        "answer_text": "South African Ostrich은(는) 타조에 속하는 아종입니다.",
+        "warnings": [],
+        "result": {
+          "kind": "profile",
+          "profile": {
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:9",
+              "rank": "subspecies",
+              "scientific_name": "Struthio camelus australis",
+              "authority": "Gurney, JH Sr, 1868",
+              "korean_name": null,
+              "korean_name_status": null,
+              "korean_name_source_url": null,
+              "english_name": "South African Ostrich",
+              "english_name_source_url": "https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf#page=7",
+              "english_name_source_title": "Dansk Ornitologisk Forening, Navnegruppen: Navne paa alverdens fugle (file stamp 231119) · PDF 7쪽",
+              "english_name_status": "source-reference",
+              "range_text": "southern Africa",
+              "description": "southern Africa",
+              "description_language": "en",
+              "description_status": "source-original",
+              "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "description_source_title": "AviList global avian checklist"
+            },
+            "lineage": {
+              "query_scientific_name": "Struthio camelus australis",
+              "taxonomy_source": "AviList",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "items": [
+                {
+                  "taxon_id": "avilist-taxon:v2025b:1",
+                  "rank": "order",
+                  "scientific_name": "Struthioniformes",
+                  "authority": null,
+                  "korean_name": "타조목",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q840849",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:2",
+                  "rank": "family",
+                  "scientific_name": "Struthionidae",
+                  "authority": null,
+                  "korean_name": "타조과",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q1569770",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:3",
+                  "rank": "genus",
+                  "scientific_name": "Struthio",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조속",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q2576337",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:9",
+                  "rank": "subspecies",
+                  "scientific_name": "Struthio camelus australis",
+                  "authority": "Gurney, JH Sr, 1868",
+                  "korean_name": null,
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "english_name": "South African Ostrich"
+                }
+              ],
+              "query_name": "Struthio camelus australis",
+              "resolved_query_scientific_name": "Struthio camelus australis",
+              "matched_by": "scientific_name"
+            },
+            "traits": [],
+            "images": [
+              {
+                "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/Avestruz_de_cuello_azul_%28Struthio_camelus_australis%29%2C_cabo_de_Buena_Esparanza%2C_Sud%C3%A1frica%2C_2018-07-23%2C_DD_87.jpg/960px-Avestruz_de_cuello_azul_%28Struthio_camelus_australis%29%2C_cabo_de_Buena_Esparanza%2C_Sud%C3%A1frica%2C_2018-07-23%2C_DD_87.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+                "source_url": "https://commons.wikimedia.org/wiki/File:Avestruz_de_cuello_azul_(Struthio_camelus_australis),_cabo_de_Buena_Esparanza,_Sud%C3%A1frica,_2018-07-23,_DD_87.jpg",
+                "creator": "Diego Delso",
+                "credit": "Own work",
+                "license_name": "CC BY-SA 4.0",
+                "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+                "title": "Avestruz de cuello azul (Struthio camelus australis), cabo de Buena Esparanza, Sudáfrica, 2018-07-23, DD 87"
+              }
+            ],
+            "photo_availability": {
+              "status": "available",
+              "message": "출처와 라이선스가 확인된 사진입니다."
+            },
+            "conservation": {
+              "category": null,
+              "category_raw": null,
+              "label": "확인되지 않음",
+              "source_name": null,
+              "source_url": null,
+              "source_release": null
+            },
+            "summary": "South African Ostrich은(는) 타조에 속하는 아종입니다.",
+            "sections": [
+              {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "South African Ostrich은(는) 타조에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "분포(영어 원문): southern Africa",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  }
+                ]
+              },
+              {
+                "key": "basic",
+                "title": "기본 정보",
+                "items": [
+                  {
+                    "text": "학명: Struthio camelus australis"
+                  }
+                ],
+                "empty_text": "확인된 기본 정보가 없습니다."
+              },
+              {
+                "key": "appearance",
+                "title": "외관 특징",
+                "items": [],
+                "empty_text": "깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "ecology",
+                "title": "생활과 먹이",
+                "items": [],
+                "empty_text": "서식 환경과 먹이 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "fun_facts",
+                "title": "재미있는 사실",
+                "items": [],
+                "empty_text": "출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다."
+              }
+            ],
+            "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+            "parent_species": {
+              "taxon": {
+                "taxon_id": "avilist-taxon:v2025b:5",
+                "rank": "species",
+                "scientific_name": "Struthio camelus",
+                "authority": "Linnaeus, C, 1758",
+                "korean_name": "타조",
+                "korean_name_status": "source-reference",
+                "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                "english_name": "Common Ostrich"
+              },
+              "lineage": {
+                "query_scientific_name": "Struthio camelus",
+                "taxonomy_source": "AviList",
+                "taxonomy_release": "v2025b",
+                "concept_set_id": "rg:concept-set:avilist-v2025b",
+                "items": [
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:1",
+                    "rank": "order",
+                    "scientific_name": "Struthioniformes",
+                    "authority": null,
+                    "korean_name": "타조목",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q840849",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:2",
+                    "rank": "family",
+                    "scientific_name": "Struthionidae",
+                    "authority": null,
+                    "korean_name": "타조과",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q1569770",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:3",
+                    "rank": "genus",
+                    "scientific_name": "Struthio",
+                    "authority": "Linnaeus, C, 1758",
+                    "korean_name": "타조속",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q2576337",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:5",
+                    "rank": "species",
+                    "scientific_name": "Struthio camelus",
+                    "authority": "Linnaeus, C, 1758",
+                    "korean_name": "타조",
+                    "korean_name_status": "source-reference",
+                    "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                    "english_name": "Common Ostrich"
+                  }
+                ],
+                "query_name": "Struthio camelus",
+                "resolved_query_scientific_name": "Struthio camelus",
+                "matched_by": "scientific_name"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist"
+            },
+            "reference_traits": [
+              {
+                "name": "beak_depth",
+                "label": "부리 높이",
+                "value": 23.4,
+                "display": "23.4",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Beak.Depth",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "beak_length_culmen",
+                "label": "부리 길이 (전체)",
+                "value": 90.5,
+                "display": "90.5",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Beak.Length_Culmen",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "beak_length_nares",
+                "label": "부리 길이 (콧구멍 기준)",
+                "value": 51.2,
+                "display": "51.2",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Beak.Length_Nares",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "beak_width",
+                "label": "부리 너비",
+                "value": 47.3,
+                "display": "47.3",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Beak.Width",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 111000,
+                "display": "111000",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Mass",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 111000,
+                "display": "111000",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=28",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "diet_category",
+                "label": "먹이 유형",
+                "value": "PlantSeed",
+                "display": "식물·씨앗",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=28",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "diet_distribution",
+                "label": "먹이 구성",
+                "value": {
+                  "invertebrate": 10,
+                  "endotherm_vertebrate": 0,
+                  "ectotherm_vertebrate": 0,
+                  "fish": 0,
+                  "unknown_vertebrate": 10,
+                  "carrion": 0,
+                  "fruit": 0,
+                  "nectar": 0,
+                  "seed": 30,
+                  "other_plant": 50
+                },
+                "display": "무척추동물 10% · 기타 척추동물 10% · 씨앗 30% · 기타 식물 50%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=28",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "foraging_strata_distribution",
+                "label": "먹이 활동 위치",
+                "value": {
+                  "below_water_surface": 0,
+                  "around_water_surface": 0,
+                  "ground": 100,
+                  "understory": 0,
+                  "mid_high": 0,
+                  "canopy": 0,
+                  "aerial": 0
+                },
+                "display": "지면 100%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=28",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "habitat",
+                "label": "서식 환경",
+                "value": "Shrubland",
+                "display": "관목 지대",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Habitat",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "habitat_density_category",
+                "label": "서식지 밀도 범주",
+                "value": "open",
+                "display": "개방형",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Habitat.Density",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "nocturnal",
+                "label": "활동 시간",
+                "value": false,
+                "display": "야행성 아님",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=28",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "primary_lifestyle",
+                "label": "주 생활 방식",
+                "value": "Terrestrial",
+                "display": "지상 생활",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Primary.Lifestyle",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "tail_length",
+                "label": "꼬리 길이",
+                "value": 309.2,
+                "display": "309.2",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Tail.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "tarsus_length",
+                "label": "다리 길이 (부척)",
+                "value": 481.2,
+                "display": "481.2",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Tarsus.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "trophic_level",
+                "label": "영양 단계",
+                "value": "Herbivore",
+                "display": "초식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Trophic.Level",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "trophic_niche",
+                "label": "먹이 생태 범주",
+                "value": "Omnivore",
+                "display": "잡식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Trophic.Niche",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              },
+              {
+                "name": "wing_length",
+                "label": "접은 날개 길이",
+                "value": 579,
+                "display": "579",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10866&field=Wing.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:5",
+                  "rank": "species",
+                  "scientific_name": "Struthio camelus",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "타조",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=236&lang=ko&menu_id=S001002002003",
+                  "english_name": "Common Ostrich"
+                }
+              }
+            ],
+            "subspecies_metadata": {
+              "section": {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "South African Ostrich은(는) 타조에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "분포(영어 원문): southern Africa",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  }
+                ]
+              },
+              "display_taxon": {
+                "taxon_id": "avilist-taxon:v2025b:9",
+                "rank": "subspecies",
+                "scientific_name": "Struthio camelus australis",
+                "authority": "Gurney, JH Sr, 1868",
+                "korean_name": null,
+                "korean_name_status": null,
+                "korean_name_source_url": null,
+                "english_name": "South African Ostrich",
+                "english_name_source_url": "https://www.dof.dk/images/organisationen/publikationer/Navne_pa_alverdens_fugle-til_DOF2019.pdf#page=7",
+                "english_name_source_title": "Dansk Ornitologisk Forening, Navnegruppen: Navne paa alverdens fugle (file stamp 231119) · PDF 7쪽",
+                "english_name_status": "source-reference",
+                "range_text": "southern Africa",
+                "description": "southern Africa",
+                "description_language": "en",
+                "description_status": "source-original",
+                "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                "description_source_title": "AviList global avian checklist"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist",
+              "range_raw": "southern Africa"
+            }
+          },
+          "question_answer": null,
+          "similar_species": null
+        }
+      },
+      "identity_label_description_match": true
+    },
+    {
+      "query": "Falco peregrinus anatum",
+      "expected": {
+        "taxon_id": "avilist-taxon:v2025b:11248",
+        "rank": "subspecies",
+        "scientific_name": "Falco peregrinus anatum",
+        "authority": "Bonaparte, CLJL, 1838",
+        "korean_name": null,
+        "korean_name_status": null,
+        "korean_name_source_url": null,
+        "english_name": null,
+        "range_text": "North America (south of tundra) to northern Mexico",
+        "description": "North America (south of tundra) to northern Mexico",
+        "description_language": "en",
+        "description_status": "source-original",
+        "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+        "description_source_title": "AviList global avian checklist",
+        "display_label": "매 아종 · North America (south of tundra) to northern Mexico"
+      },
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "disposition": "answer",
+        "answer_text": "매 아종 · North America (south of tundra) to northern Mexico은(는) 매에 속하는 아종입니다.",
+        "warnings": [],
+        "result": {
+          "kind": "profile",
+          "profile": {
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:11248",
+              "rank": "subspecies",
+              "scientific_name": "Falco peregrinus anatum",
+              "authority": "Bonaparte, CLJL, 1838",
+              "korean_name": null,
+              "korean_name_status": null,
+              "korean_name_source_url": null,
+              "english_name": null,
+              "range_text": "North America (south of tundra) to northern Mexico",
+              "description": "North America (south of tundra) to northern Mexico",
+              "description_language": "en",
+              "description_status": "source-original",
+              "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "description_source_title": "AviList global avian checklist",
+              "display_label": "매 아종 · North America (south of tundra) to northern Mexico"
+            },
+            "lineage": {
+              "query_scientific_name": "Falco peregrinus anatum",
+              "taxonomy_source": "AviList",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "items": [
+                {
+                  "taxon_id": "avilist-taxon:v2025b:11087",
+                  "rank": "order",
+                  "scientific_name": "Falconiformes",
+                  "authority": null,
+                  "korean_name": "매목",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q25370",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:11088",
+                  "rank": "family",
+                  "scientific_name": "Falconidae",
+                  "authority": null,
+                  "korean_name": "매과",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q21744",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:11149",
+                  "rank": "genus",
+                  "scientific_name": "Falco",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "매속",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q43489",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:11248",
+                  "rank": "subspecies",
+                  "scientific_name": "Falco peregrinus anatum",
+                  "authority": "Bonaparte, CLJL, 1838",
+                  "korean_name": null,
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "english_name": null
+                }
+              ],
+              "query_name": "Falco peregrinus anatum",
+              "resolved_query_scientific_name": "Falco peregrinus anatum",
+              "matched_by": "scientific_name"
+            },
+            "traits": [],
+            "images": [],
+            "photo_availability": {
+              "status": "unconfirmed_taxon",
+              "message": "사진 자료의 종 식별을 확인하지 못했습니다."
+            },
+            "conservation": {
+              "category": null,
+              "category_raw": null,
+              "label": "확인되지 않음",
+              "source_name": null,
+              "source_url": null,
+              "source_release": null
+            },
+            "summary": "매 아종 · North America (south of tundra) to northern Mexico은(는) 매에 속하는 아종입니다.",
+            "sections": [
+              {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "매 아종 · North America (south of tundra) to northern Mexico은(는) 매에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "분포(영어 원문): North America (south of tundra) to northern Mexico",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  }
+                ]
+              },
+              {
+                "key": "basic",
+                "title": "기본 정보",
+                "items": [
+                  {
+                    "text": "학명: Falco peregrinus anatum"
+                  }
+                ],
+                "empty_text": "확인된 기본 정보가 없습니다."
+              },
+              {
+                "key": "appearance",
+                "title": "외관 특징",
+                "items": [],
+                "empty_text": "깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "ecology",
+                "title": "생활과 먹이",
+                "items": [],
+                "empty_text": "서식 환경과 먹이 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "fun_facts",
+                "title": "재미있는 사실",
+                "items": [],
+                "empty_text": "출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다."
+              }
+            ],
+            "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+            "parent_species": {
+              "taxon": {
+                "taxon_id": "avilist-taxon:v2025b:11245",
+                "rank": "species",
+                "scientific_name": "Falco peregrinus",
+                "authority": "Tunstall, M, 1771",
+                "korean_name": "매",
+                "korean_name_status": "source-reference",
+                "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                "english_name": "Peregrine Falcon"
+              },
+              "lineage": {
+                "query_scientific_name": "Falco peregrinus",
+                "taxonomy_source": "AviList",
+                "taxonomy_release": "v2025b",
+                "concept_set_id": "rg:concept-set:avilist-v2025b",
+                "items": [
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:11087",
+                    "rank": "order",
+                    "scientific_name": "Falconiformes",
+                    "authority": null,
+                    "korean_name": "매목",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q25370",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:11088",
+                    "rank": "family",
+                    "scientific_name": "Falconidae",
+                    "authority": null,
+                    "korean_name": "매과",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q21744",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:11149",
+                    "rank": "genus",
+                    "scientific_name": "Falco",
+                    "authority": "Linnaeus, C, 1758",
+                    "korean_name": "매속",
+                    "korean_name_status": "community-sourced-reference",
+                    "korean_name_source_url": "https://www.wikidata.org/wiki/Q43489",
+                    "english_name": null
+                  },
+                  {
+                    "taxon_id": "avilist-taxon:v2025b:11245",
+                    "rank": "species",
+                    "scientific_name": "Falco peregrinus",
+                    "authority": "Tunstall, M, 1771",
+                    "korean_name": "매",
+                    "korean_name_status": "source-reference",
+                    "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                    "english_name": "Peregrine Falcon"
+                  }
+                ],
+                "query_name": "Falco peregrinus",
+                "resolved_query_scientific_name": "Falco peregrinus",
+                "matched_by": "scientific_name"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist"
+            },
+            "reference_traits": [
+              {
+                "name": "beak_depth",
+                "label": "부리 높이",
+                "value": 15.4,
+                "display": "15.4",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Beak.Depth",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "beak_length_culmen",
+                "label": "부리 길이 (전체)",
+                "value": 31.1,
+                "display": "31.1",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Beak.Length_Culmen",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "beak_length_nares",
+                "label": "부리 길이 (콧구멍 기준)",
+                "value": 18.4,
+                "display": "18.4",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Beak.Length_Nares",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "beak_width",
+                "label": "부리 너비",
+                "value": 13.7,
+                "display": "13.7",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Beak.Width",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 759.95,
+                "display": "759.95",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Mass",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 759.95,
+                "display": "759.95",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4980",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "diet_category",
+                "label": "먹이 유형",
+                "value": "VertFishScav",
+                "display": "척추동물·물고기·사체",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4980",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "diet_distribution",
+                "label": "먹이 구성",
+                "value": {
+                  "invertebrate": 10,
+                  "endotherm_vertebrate": 80,
+                  "ectotherm_vertebrate": 10,
+                  "fish": 0,
+                  "unknown_vertebrate": 0,
+                  "carrion": 0,
+                  "fruit": 0,
+                  "nectar": 0,
+                  "seed": 0,
+                  "other_plant": 0
+                },
+                "display": "무척추동물 10% · 온혈 척추동물 80% · 변온 척추동물 10%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4980",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "foraging_strata_distribution",
+                "label": "먹이 활동 위치",
+                "value": {
+                  "below_water_surface": 0,
+                  "around_water_surface": 0,
+                  "ground": 20,
+                  "understory": 20,
+                  "mid_high": 20,
+                  "canopy": 20,
+                  "aerial": 20
+                },
+                "display": "지면 20% · 하층 20% · 중상층 20% · 수관 20% · 공중 20%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4980",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "habitat",
+                "label": "서식 환경",
+                "value": "Grassland",
+                "display": "초지",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Habitat",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "habitat_density_category",
+                "label": "서식지 밀도 범주",
+                "value": "open",
+                "display": "개방형",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Habitat.Density",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "nocturnal",
+                "label": "활동 시간",
+                "value": false,
+                "display": "야행성 아님",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4980",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "primary_lifestyle",
+                "label": "주 생활 방식",
+                "value": "Aerial",
+                "display": "공중 생활",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Primary.Lifestyle",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "tail_length",
+                "label": "꼬리 길이",
+                "value": 143,
+                "display": "143",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Tail.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "tarsus_length",
+                "label": "다리 길이 (부척)",
+                "value": 45.1,
+                "display": "45.1",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Tarsus.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "trophic_level",
+                "label": "영양 단계",
+                "value": "Carnivore",
+                "display": "육식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Trophic.Level",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "trophic_niche",
+                "label": "먹이 생태 범주",
+                "value": "Vertivore",
+                "display": "척추동물 섭식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Trophic.Niche",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              },
+              {
+                "name": "wing_length",
+                "label": "접은 날개 길이",
+                "value": 314.7,
+                "display": "314.7",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2225&field=Wing.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "reference_scope": "species",
+                "reference_taxon": {
+                  "taxon_id": "avilist-taxon:v2025b:11245",
+                  "rank": "species",
+                  "scientific_name": "Falco peregrinus",
+                  "authority": "Tunstall, M, 1771",
+                  "korean_name": "매",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Peregrine Falcon"
+                }
+              }
+            ],
+            "subspecies_metadata": {
+              "section": {
+                "key": "subspecies_taxonomy",
+                "title": "아종과 소속 종",
+                "items": [
+                  {
+                    "text": "매 아종 · North America (south of tundra) to northern Mexico은(는) 매에 속하는 아종입니다.",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  },
+                  {
+                    "text": "분포(영어 원문): North America (south of tundra) to northern Mexico",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                    "license_name": "CC BY 4.0"
+                  }
+                ]
+              },
+              "display_taxon": {
+                "taxon_id": "avilist-taxon:v2025b:11248",
+                "rank": "subspecies",
+                "scientific_name": "Falco peregrinus anatum",
+                "authority": "Bonaparte, CLJL, 1838",
+                "korean_name": null,
+                "korean_name_status": null,
+                "korean_name_source_url": null,
+                "english_name": null,
+                "range_text": "North America (south of tundra) to northern Mexico",
+                "description": "North America (south of tundra) to northern Mexico",
+                "description_language": "en",
+                "description_status": "source-original",
+                "description_source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                "description_source_title": "AviList global avian checklist",
+                "display_label": "매 아종 · North America (south of tundra) to northern Mexico"
+              },
+              "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+              "source_name": "AviList global avian checklist",
+              "range_raw": "North America (south of tundra) to northern Mexico"
+            }
+          },
+          "question_answer": null,
+          "similar_species": null
+        }
+      },
+      "identity_label_description_match": true
+    }
+  ],
+  "assets": [
+    {
+      "name": "chat.js",
+      "sha256": "23c58d7be3e5146c8f90f2411bd298187fafb80dc94b3a6ce0125875592cbeac",
+      "matches_local": true
+    },
+    {
+      "name": "styles.css",
+      "sha256": "b3370bb0a0a3c524d981df67833466bb330e90fb82df09788014138ad4971b71",
+      "matches_local": true
+    }
+  ],
+  "passed": true
+}
