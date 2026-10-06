@@ -14,6 +14,27 @@ ROW={'taxon':asdict(CHILD),'range_text':'coastal southwestern Greenland',
      'source_name':'AviList v2025b','source_url':'https://www.avilist.org/checklist/v2025b/'}
 
 class SubspeciesTest(TestCase):
+ def test_sourced_english_subspecies_names_are_identity_bound_and_shared_by_profiles(self):
+  repo=Mock();repo._run.return_value=[ROW]
+  data=subspecies_for(repo,lambda _:LINEAGE,'청둥오리')
+  child=data['subspecies'][0]
+  self.assertEqual('Greenland Mallard',child['english_name'])
+  self.assertIn('dof.dk',child['english_name_source_url'])
+  self.assertIn('그린란드',child['description'])
+  from robingraph.retrieval.taxonomy_lineage import with_korean_display_name
+  nominate=with_korean_display_name({'rank':'subspecies','taxon_id':'avilist-taxon:v2025b:545',
+                                   'scientific_name':'Anas platyrhynchos platyrhynchos'})
+  self.assertEqual('Northern Mallard',nominate['english_name'])
+  for changed in ({**asdict(CHILD),'taxon_id':'unknown'},{**asdict(CHILD),'scientific_name':'Other species test'}):
+   self.assertIsNone(with_korean_display_name(changed)['english_name'])
+  existing=with_korean_display_name({**asdict(CHILD),'english_name':'Existing source name'})
+  self.assertEqual('Existing source name',existing['english_name'])
+  flow=create_species_flow(lambda _:LINEAGE,lambda _:[],photos=lambda _:[],
+                           subspecies_info=lambda lin:subspecies_metadata(repo,lin))
+  profile=flow.invoke(CHILD.scientific_name)
+  self.assertEqual(child['english_name'],profile['taxon']['english_name'])
+  self.assertEqual(child['english_name_source_url'],profile['taxon']['english_name_source_url'])
+
  def test_graph_navigation_pins_parent_child_release_and_provenance(self):
   repo=Mock();repo._run.return_value=[ROW]
   data=subspecies_for(repo,lambda _:LINEAGE,'청둥오리')

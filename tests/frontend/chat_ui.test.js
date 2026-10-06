@@ -2595,6 +2595,25 @@ test("automatic common-name profile settling after clear is discarded", async ()
   assert.equal(collectAllNodes(section).some(n => /^species-chat-brief /.test(n.className || "")), false);
 });
 
+test("subspecies list uses sourced names, folded scientific identity and accessible cards", async () => {
+  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
+  const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos conboschas", english_name: "Greenland Mallard", english_name_source_url: "https://www.dof.dk/", description: "분포 차이: 그린란드 남서부 해안에 분포합니다." };
+  const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async () => jsonResponse({ parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b", subspecies: [sub], source_url: "https://www.avilist.org/" }));
+  assert.equal(explorer.children[2].hidden, true);
+  explorer.children[0].dispatch("click"); await tick();
+  const row = collectAllNodes(explorer).find(n => /subspecies-peer/.test(n.className));
+  assert.equal(row.children[0].children[0].textContent, "Greenland Mallard");
+  assert.match(collectedText(row.children[0]), /그린란드 남서부/);
+  assert.doesNotMatch(collectedText(row.children[0]), /Anas platyrhynchos/);
+  const details = row.children.find(n => n.tagName === "details");
+  assert.ok(!details.open);
+  assert.match(collectedText(details), /Anas platyrhynchos conboschas/);
+  assert.equal(row.children.find(n => n.tagName === "button").getAttribute("aria-label"), "Greenland Mallard · 아종 자료 보기");
+  explorer.children[0].dispatch("click");
+  assert.equal(explorer.children[2].hidden, true);
+  assert.equal(explorer.children[0].getAttribute("aria-expanded"), "false");
+});
+
 test("subspecies explorer fetches lazily and rejects a selected profile from another release", async () => {
   const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
   const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos test" };
@@ -2613,8 +2632,9 @@ test("subspecies explorer fetches lazily and rejects a selected profile from ano
   await tick();
   assert.equal(calls, 1);
   assert.match(collectedText(explorer), /일부 아종만 표시/);
-  assert.match(collectedText(explorer), /청둥오리의 아종 · Anas platyrhynchos test/);
-  collectAllNodes(explorer).find(n => n.tagName === "button" && /아종 자료 보기/.test(n.textContent)).dispatch("click");
+  assert.match(collectedText(explorer), /아종 1 · 이름 미등록/);
+  assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
+  collectAllNodes(explorer).find(n => n.tagName === "button" && n.textContent === "아종 보기").dispatch("click");
   await tick();
   assert.equal(calls, 2);
   assert.match(collectedText(explorer), /아종 자료를 확인하지 못했습니다/);
