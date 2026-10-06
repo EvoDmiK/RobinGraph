@@ -1064,7 +1064,7 @@
             return peer && peer.rank === "species" && peer.taxon_id && typeof peer.scientific_name === "string" && peer.scientific_name.trim() && peer.taxon_id !== profile.taxon.taxon_id && peer.evidence && peer.evidence.source_name && sanitizeUrl(peer.evidence.source_url);
           });
           if (!peers.length) { var empty = doc.createElement("p"); empty.textContent = "같은 자료에서 출처가 확인된 다른 종이 없습니다."; block.appendChild(empty); }
-          peers.slice(0, 12).forEach(function (peer) {
+          peers.slice(0, 3).forEach(function (peer) {
             var row = doc.createElement("div"); row.className = "ecological-peer";
             var button = doc.createElement("button"); button.type = "button";
             button.textContent = speciesLabel(peer) + " · 비교하기";
@@ -1073,7 +1073,7 @@
             row.appendChild(buildEcologicalSource(doc, peer.evidence));
             block.appendChild(row);
           });
-          if (group.has_more || peers.length > 12) { var more = doc.createElement("p"); more.textContent = "일부 종만 표시합니다 (최대 12종)."; block.appendChild(more); }
+          if (group.has_more || peers.length > 3) { var more = doc.createElement("p"); more.textContent = "일부 종만 표시합니다 (범주별 최대 3종)."; block.appendChild(more); }
           results.appendChild(block);
         });
         status.textContent = count ? "비교할 새를 선택하세요." : "출처가 확인된 서식 환경·먹이 생태 관련 종이 없습니다.";

@@ -30,12 +30,12 @@ class EcologicalRelationsTest(unittest.TestCase):
     def test_bounded_categories_keep_both_provenances_and_exact_source_release(self, traits):
         traits.return_value = [trait(),trait(),trait('trophic_niche','Aquatic predator')]
         repo = Mock(); repo._korean_dataset_id.return_value='ko-active'
-        repo._run.side_effect = [[peer(i) for i in range(13)],[]]
+        repo._run.side_effect = [[peer(i) for i in range(4)],[]]
         result=ecological_relations(repo,Mock(),lambda _:LINEAGE,'청둥오리')
         self.assertEqual(2,len(result['groups']))
         habitat,niche=result['groups']
         self.assertEqual('습지',habitat['display'])
-        self.assertEqual(12,len(habitat['items']))
+        self.assertEqual(3,len(habitat['items']))
         self.assertTrue(habitat['has_more'])
         self.assertEqual('https://example.org/avonet',habitat['source']['source_url'])
         self.assertEqual('https://example.org/peer',habitat['items'][0]['evidence']['source_url'])

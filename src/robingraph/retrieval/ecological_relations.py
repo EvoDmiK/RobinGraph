@@ -33,7 +33,7 @@ RETURN {taxon_id:peer.id,rank:peer.rank,scientific_name:peer.scientific_name,
        evidence.locator AS source_url,evidence.citation AS citation
 ORDER BY CASE WHEN korean_name IS NULL THEN 1 ELSE 0 END,
          coalesce(korean_name,english_name,peer.scientific_name),peer.id
-LIMIT 13
+LIMIT 4
 """
 
 
@@ -80,7 +80,7 @@ def ecological_relations(repository, store, resolve, name):
             items.append({**peer, 'evidence': {**source, 'source_url':row['source_url'], 'citation':row.get('citation')}})
         groups.append({'relation':kind, 'label':f'같은 {LABELS[kind]}의 새',
                        'value':value, 'display':VALUES[value], 'source':source,
-                       'items':items[:12], 'has_more':len(items)>12})
+                       'items':items[:3], 'has_more':len(items)>3})
     return {'taxon':asdict(target), 'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release,
             'concept_set_id':lineage.concept_set_id, 'groups':groups,
