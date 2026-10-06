@@ -3,7 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 
 from .species_profile import LABELS, VALUES, SpeciesNotFoundError, read_traits
-from .taxonomy_lineage import with_korean_display_name
+from .taxonomy_lineage import sourced_korean_names, with_korean_display_name
 
 
 PEERS_QUERY = """
@@ -23,12 +23,13 @@ WHERE peer.id <> $target_id AND claim.inferred=false
   AND (evidence.locator STARTS WITH 'https://' OR evidence.locator STARTS WITH 'http://')
 WITH peer, evidence ORDER BY evidence.id
 WITH peer, head(collect(evidence)) AS evidence
-OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(ko:VernacularName {language:'ko',policy_status:'allowed'})
-WHERE ko.dataset_id=$korean_dataset_id AND ko.name =~ '.*[가-힣].*'
-WITH peer,evidence,min(ko.name) AS korean_name
 OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(en:VernacularName {language:'en',policy_status:'allowed',status:'source-preferred'})
 WHERE en.dataset_id=peer.dataset_id AND en.source_release=peer.source_release
-WITH peer,evidence,korean_name,min(en.name) AS english_name
+WITH peer,evidence,min(en.name) AS english_name
+WITH peer,evidence,english_name,$korean_reference_names[peer.id] AS reference
+WITH peer,evidence,english_name,
+     CASE WHEN reference.scientific_name=peer.scientific_name AND reference.english_name=english_name
+          THEN reference.name ELSE null END AS korean_name
 RETURN {taxon_id:peer.id,rank:peer.rank,scientific_name:peer.scientific_name,
         korean_name:korean_name,english_name:english_name} AS taxon,
        evidence.locator AS source_url,evidence.citation AS citation
@@ -54,6 +55,8 @@ def ecological_relations(repository, store, resolve, name):
         raise SpeciesNotFoundError(name)
     target = lineage.items[-1]
     groups, seen = [], set()
+    korean_reference_names = {taxon_id: {key: label[key] for key in ('name', 'scientific_name', 'english_name')}
+                              for taxon_id, label in sourced_korean_names().items()}
     for trait in read_traits(repository, store, lineage):
         kind, value = trait['name'], trait['value']
         if (kind not in ('habitat', 'trophic_niche') or not isinstance(value, str)
@@ -69,7 +72,7 @@ def ecological_relations(repository, store, resolve, name):
             PEERS_QUERY, concept_set_id=lineage.concept_set_id,
             taxonomy_release=lineage.taxonomy_release, target_id=target.taxon_id,
             dataset_id=trait['dataset_id'], release=trait['release'],
-            trait_name=kind, value=value, korean_dataset_id=repository._korean_dataset_id(),
+            trait_name=kind, value=value, korean_reference_names=korean_reference_names,
         )
         items = []
         for row in rows:
@@ -79,6 +82,8 @@ def ecological_relations(repository, store, resolve, name):
                     or not _web_url(row.get('source_url'))):
                 raise ValueError('Invalid ecological relationship provenance')
             items.append({**peer, 'evidence': {**source, 'source_url':row['source_url'], 'citation':row.get('citation')}})
+        items.sort(key=lambda peer: (not bool(peer.get('korean_name')),
+                   peer.get('korean_name') or peer.get('english_name') or peer['scientific_name'], peer['taxon_id']))
         groups.append({'relation':kind, 'label':f'같은 {LABELS[kind]}의 새',
                        'value':value, 'display':VALUES[value], 'source':source,
                        'items':items[:3], 'has_more':len(items)>3})

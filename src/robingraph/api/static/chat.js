@@ -1169,9 +1169,8 @@
 
   function nameRelationTaxonLabel(taxon) {
     if (!taxon || typeof taxon !== "object") { return ""; }
-    return [taxon.korean_name, taxon.english_name, taxon.scientific_name].filter(function (value) {
-      return typeof value === "string" && value.trim();
-    }).join(" · ");
+    var label = speciesLabel(taxon);
+    return label + (taxon.scientific_name && taxon.scientific_name !== label ? " · " + taxon.scientific_name : "");
   }
 
   var DOMESTIC_WARNING =
@@ -1199,6 +1198,10 @@
       var key = taxon.taxon_id || taxon.scientific_name;
       if (!targets.some(function (item) { return (item.taxon.taxon_id || item.taxon.scientific_name) === key; })) { targets.push(relation); }
     });
+    if (!data.is_search_term) {
+      var queried = targets.find(function (relation) { return relation.taxon.scientific_name === queryName; });
+      if (queried) { queryName = speciesLabel(queried.taxon); }
+    }
     var automatic = targets.length === 1 && data.relations.every(function (relation) { return !isDomesticRelation(relation); }) && /common_name/.test([targets[0].relation_type, targets[0].entity_kind].join(" "));
     var section = doc.createElement("section");
     section.className = "name-relations";
@@ -1449,7 +1452,7 @@
         data.subspecies.forEach(function (taxon) {
           var choice = doc.createElement("button");
           choice.type = "button";
-          choice.textContent = nameRelationTaxonLabel(taxon) + " · 아종 자료 보기";
+          choice.textContent = (profile.taxon.korean_name ? speciesLabel(profile.taxon) + "의 아종 · " : "") + nameRelationTaxonLabel(taxon) + " · 아종 자료 보기";
           choice.addEventListener("click", function () {
             var current = ++generation;
             status.textContent = "아종 자료를 불러오는 중입니다.";

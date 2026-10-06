@@ -26,6 +26,25 @@ def peer(i):
 
 
 class EcologicalRelationsTest(unittest.TestCase):
+    @patch('robingraph.retrieval.ecological_relations.read_traits', return_value=[trait()])
+    def test_verified_korean_names_precede_english_and_keep_identity_guards(self, _traits):
+        repo = Mock()
+        known = {**peer(4), 'taxon': {'taxon_id': 'avilist-taxon:v2025b:22298',
+                 'rank': 'species', 'scientific_name': 'Acrocephalus orientalis',
+                 'english_name': 'Oriental Reed Warbler'}}
+        repo._run.return_value = [peer(i) for i in range(3)] + [known]
+        result = ecological_relations(repo, Mock(), lambda _:LINEAGE, '청둥오리')
+        self.assertEqual('개개비', result['groups'][0]['items'][0]['korean_name'])
+        self.assertTrue(result['groups'][0]['has_more'])
+        self.assertIn('reference.scientific_name=peer.scientific_name', PEERS_QUERY)
+        self.assertIn('reference.english_name=english_name', PEERS_QUERY)
+        self.assertLess(PEERS_QUERY.index('CASE WHEN korean_name IS NULL'), PEERS_QUERY.index('LIMIT 4'))
+        refs = repo._run.call_args.kwargs['korean_reference_names']
+        self.assertEqual('개개비', refs[known['taxon']['taxon_id']]['name'])
+        repo._run.return_value = [{**known, 'taxon': {**known['taxon'], 'english_name': 'Different species'}}]
+        stale = ecological_relations(repo, Mock(), lambda _:LINEAGE, '청둥오리')
+        self.assertIsNone(stale['groups'][0]['items'][0]['korean_name'])
+
     @patch('robingraph.retrieval.ecological_relations.read_traits')
     def test_bounded_categories_keep_both_provenances_and_exact_source_release(self, traits):
         traits.return_value = [trait(),trait(),trait('trophic_niche','Aquatic predator')]

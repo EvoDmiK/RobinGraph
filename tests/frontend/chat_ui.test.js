@@ -1786,6 +1786,14 @@ function fakeNameRelations(overrides) {
   }, overrides || {});
 }
 
+test("scientific-name relationship lookup displays Korean heading and omits duplicate English name", () => {
+  const data = fakeNameRelations({ query_name: "Anas platyrhynchos", is_search_term: false });
+  const section = chat.buildNameRelations({ createElement: createFakeElement }, data, async () => {});
+  assert.equal(section.children[0].textContent, "‘청둥오리’ 이름 관계");
+  assert.match(collectedText(section), /청둥오리 · Anas platyrhynchos/);
+  assert.doesNotMatch(collectedText(section), /Mallard/);
+});
+
 function profileFor(taxon) {
   return fakeProfilePayload({ taxon: Object.assign({ rank: "species" }, taxon) }).result.profile;
 }
@@ -1810,7 +1818,7 @@ test("name_relations chat result renders labelled, noted ambiguity choices in th
   assert.equal(items.length, 2);
   assert.ok(nodes.some((n) => n.className === "name-relation-label" && n.textContent === "가축형의 기원종"));
   assert.ok(nodes.some((n) => n.textContent === "집오리는 청둥오리에서 가축화된 품종군입니다."));
-  assert.ok(nodes.some((n) => n.textContent === "관련 야생종: 청둥오리 · Mallard · Anas platyrhynchos"));
+  assert.ok(nodes.some((n) => n.textContent === "관련 야생종: 청둥오리 · Anas platyrhynchos"));
   const buttons = nodes.filter((n) => n.className === "name-relation-choose");
   assert.deepEqual(buttons.map((b) => b.textContent), ["청둥오리 · 관련 야생종 자료 보기", "흰뺨검둥오리 · 연결된 종 자료 보기"]);
   assert.equal(dom.fetchCalls.filter((c) => c.url.startsWith("/v1/taxa/")).length, 0, "choices must not prefetch profiles");
@@ -2588,7 +2596,7 @@ test("automatic common-name profile settling after clear is discarded", async ()
 });
 
 test("subspecies explorer fetches lazily and rejects a selected profile from another release", async () => {
-  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos" });
+  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
   const sub = { taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos test" };
   let calls = 0;
   const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async url => {
@@ -2605,6 +2613,7 @@ test("subspecies explorer fetches lazily and rejects a selected profile from ano
   await tick();
   assert.equal(calls, 1);
   assert.match(collectedText(explorer), /일부 아종만 표시/);
+  assert.match(collectedText(explorer), /청둥오리의 아종 · Anas platyrhynchos test/);
   collectAllNodes(explorer).find(n => n.tagName === "button" && /아종 자료 보기/.test(n.textContent)).dispatch("click");
   await tick();
   assert.equal(calls, 2);
