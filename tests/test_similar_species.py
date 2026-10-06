@@ -66,7 +66,7 @@ class SimilarSpeciesTest(TestCase):
         self.assertEqual(5,result['ranking']['scanned_count'])
         self.assertEqual(4,result['ranking']['eligible_count'])
         self.assertEqual(['genus','family-a','family-b'],[p['taxon_id'] for p in result['groups'][0]['items']])
-        self.assertEqual([80,40,40],[p['similarity_score'] for p in result['groups'][0]['items']])
+        self.assertEqual([60,40,40],[p['similarity_score'] for p in result['groups'][0]['items']])
         self.assertTrue(result['groups'][0]['has_more'])
         self.assertEqual(['same_family','same_genus'],[r['key'] for r in result['groups'][0]['items'][0]['similarity_reasons']])
         self.assertEqual('https://example.org/family-a',result['groups'][0]['items'][1]['similarity_reasons'][-1]['source_url'])
@@ -87,7 +87,7 @@ class SimilarSpeciesTest(TestCase):
                                    candidate('family','Family bird',True)],[])
         result=similar_species(repository,Mock(),lambda _:LINEAGE,'청둥오리')
         self.assertEqual(['good','family'],[p['taxon_id'] for p in result['groups'][0]['items']])
-        self.assertEqual([80,30],[p['similarity_score'] for p in result['groups'][0]['items']])
+        self.assertEqual([60,20],[p['similarity_score'] for p in result['groups'][0]['items']])
         self.assertEqual(2,result['ranking']['eligible_count'])
         self.assertFalse(any('UNWIND $categories' in query for query,_ in repository.calls))
 
@@ -105,7 +105,7 @@ class SimilarSpeciesTest(TestCase):
     def test_duplicate_evidence_scores_once_and_bad_provenance_fails_closed(self, _traits):
         repository=FakeRepository([candidate('peer','Peer bird')],[ecology('peer'),ecology('peer')])
         result=similar_species(repository,Mock(),lambda _:LINEAGE,'청둥오리')
-        self.assertEqual(10,result['groups'][0]['items'][0]['similarity_score'])
+        self.assertEqual(20,result['groups'][0]['items'][0]['similarity_score'])
         self.assertEqual(1,len(result['groups'][0]['items'][0]['similarity_reasons']))
         for changed in ({**ecology('peer'),'dataset_id':'stale'},
                         {**ecology('peer'),'release':'old'},
@@ -121,7 +121,7 @@ class SimilarSpeciesTest(TestCase):
                  'ranking':{'method':METHOD,'limit':3},'groups':[{'rank':'similarity','label':'그래프 유사도 상위 3종',
                    'source_url':SOURCE['source_url'],'source_name':SOURCE['source_name'],
                    'items':[{'rank':'species','scientific_name':'Anas acuta','korean_name':'고방오리',
-                             'similarity_score':80,'similarity_rank':1,'similarity_reasons':[
+                             'similarity_score':80.5,'similarity_rank':1,'similarity_reasons':[
                                  {'key':'same_family','label':'같은 과','points':30,**SOURCE},
                                  {'key':'same_genus','label':'같은 속','points':50,**SOURCE}]}]}]}
         taxonomy={'taxon':asdict(TARGET),'concept_set_id':'active','taxonomy_release':'v2025b',
@@ -132,7 +132,7 @@ class SimilarSpeciesTest(TestCase):
                                      similar_species_handler=similar,related_species_handler=related))
         generic=client.post('/v1/chat',json={'question':'청둥오리와 비슷한 종은 어떤게 있니?'}).json()
         self.assertEqual('answer',generic['disposition'])
-        self.assertIn('80점',generic['answer_text'])
+        self.assertIn('80.5점',generic['answer_text'])
         self.assertEqual(METHOD,generic['result']['question_answer']['relations']['ranking']['method'])
         similar.assert_called_once_with('청둥오리')
         explicit=client.post('/v1/chat',json={'question':'청둥오리와 같은 속의 새는?'}).json()
@@ -146,7 +146,7 @@ class SimilarSpeciesTest(TestCase):
 
     @patch('robingraph.retrieval.similar_species.phylogenetic_relations')
     @patch('robingraph.retrieval.similar_species.read_traits', return_value=[HABITAT])
-    def test_supported_clade_precedes_ecology_for_any_species_and_release_is_passed(self, _traits, phylogeny):
+    def test_weighted_closeness_for_any_species_and_release_is_passed(self, _traits, phylogeny):
         for name in ('Anas zonorhyncha', 'Nycticorax nycticorax', 'Parus major'):
             target = replace(TARGET, scientific_name=name)
             lineage = replace(LINEAGE, items=(FAMILY, GENUS, target))
@@ -160,7 +160,10 @@ class SimilarSpeciesTest(TestCase):
             result = similar_species(repo, Mock(), lambda _:lineage, name)
             peers = result['groups'][0]['items']
             self.assertEqual(['close', 'eco', 'unknown'], [p['taxon_id'] for p in peers])
-            self.assertEqual([80, 90, 80], [p['similarity_score'] for p in peers])
+            self.assertEqual([80, 65, 60], [p['similarity_score'] for p in peers])
+            self.assertEqual('taxonomy_ecology_fallback', peers[2]['score_basis'])
+            self.assertFalse(peers[2]['phylogeny_available'])
+            self.assertEqual(50, peers[2]['available_weight'])
             self.assertEqual('phylogenetic_clade', peers[0]['similarity_reasons'][-1]['key'])
             self.assertEqual('v2025b', phylogeny.call_args.args[0])
             self.assertEqual(target.taxon_id, phylogeny.call_args.args[1])
@@ -175,3 +178,20 @@ class SimilarSpeciesTest(TestCase):
         peers = result['groups'][0]['items']
         self.assertEqual(['genus', 'family'], [p['taxon_id'] for p in peers])
         self.assertFalse(any(r['key']=='phylogenetic_clade' for p in peers for r in p['similarity_reasons']))
+
+    @patch('robingraph.retrieval.similar_species.phylogenetic_relations')
+    @patch('robingraph.retrieval.similar_species.read_traits', return_value=[HABITAT])
+    def test_ordinal_closeness_ignores_branch_counts_and_ecology_breaks_clade_ties(self, _traits, phylogeny):
+        repo = FakeRepository([candidate('a', 'Alpha bird', True, True),
+                               candidate('b', 'Beta bird', True, True),
+                               candidate('c', 'Charlie bird', True, True)], [ecology('b')])
+        results = []
+        for far, close in ((1, 2), (10, 900)):
+            phylogeny.return_value = {key: {'key': 'phylogenetic_clade', 'points': 0,
+                'shared_ancestor_depth': depth, **SOURCE} for key, depth in (('a', far), ('b', close), ('c', close))}
+            peers = similar_species(repo, Mock(), lambda _:LINEAGE, 'test')['groups'][0]['items']
+            results.append([(p['taxon_id'], p['similarity_score']) for p in peers])
+            for peer in peers:
+                self.assertEqual(peer['similarity_score'], sum(r['points'] for r in peer['similarity_reasons']))
+        self.assertEqual([('b', 90), ('c', 80), ('a', 55)], results[0])
+        self.assertEqual(results[0], results[1])

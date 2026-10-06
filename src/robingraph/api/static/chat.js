@@ -828,7 +828,7 @@
   }
   function similarityLabel(peer) {
     var score = typeof peer.similarity_score === "number" && Number.isFinite(peer.similarity_score) && peer.similarity_score >= 0 && peer.similarity_score <= 100 ? peer.similarity_score : null;
-    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? " · 분류·생태 일치 " + score + "점" : "");
+    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? peer.similarity_rank + "위 · " : "") + speciesLabel(peer) + (score !== null ? (peer.score_basis === "taxonomy_ecology_fallback" ? " · 분류·생태 대체 점수(계통 자료 부족) " : " · 가중 점수 ") + score + "점" : "");
   }
 
   function buildComparisonPeer(doc, peer, ranked) {
@@ -839,7 +839,7 @@
     row.appendChild(identity);
     if (ranked) {
       var score = doc.createElement("span"); score.className = "comparison-peer-score";
-      score.textContent = peer.similarity_rank + "위 · 분류·생태 " + peer.similarity_score + "점";
+      score.textContent = peer.similarity_rank + "위 · " + (peer.score_basis === "taxonomy_ecology_fallback" ? "분류·생태 대체 점수(계통 자료 부족) " : "가중 점수 ") + peer.similarity_score + "점";
       score.setAttribute("aria-label", "비교 후보 " + score.textContent); row.appendChild(score);
     }
     var button = doc.createElement("button"); button.type = "button"; button.className = "comparison-peer-choose";
@@ -900,7 +900,7 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 분류군: " + (group.ancestor ? (group.ancestor.korean_name || group.ancestor.scientific_name) : "확인 불가") + " (" + (RANK_LABELS[group.rank] || group.rank) + ")";
-        if (group.rank === "similarity") { relation.textContent = similarityLabel(peer); panel.appendChild(buildSimilarityEvidence(doc, peer)); var scoreNote = doc.createElement("p"); scoreNote.textContent = "분류·생태 자료를 비교한 점수이며 외형 유사도나 진화적 거리의 측정값이 아닙니다."; panel.appendChild(scoreNote); }
+        if (group.rank === "similarity") { relation.textContent = similarityLabel(peer); panel.appendChild(buildSimilarityEvidence(doc, peer)); var scoreNote = doc.createElement("p"); scoreNote.textContent = "계통·분류·생태의 가중 점수입니다. 계통 자료가 없으면 분류·생태만 100점으로 환산합니다. 진화 거리나 유전 유사도의 측정값은 아닙니다."; panel.appendChild(scoreNote); }
         panel.appendChild(relation);
         var version = doc.createElement("p");
         version.className = "species-comparison-version";

@@ -2845,7 +2845,7 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   explorer.children[0].dispatch("click");
   assert.equal(explorer.children[1].hidden, false);
   const choices = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
-  assert.deepEqual(choices.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 분류·생태 일치 90점 · 비교하기", "2위 · Peer 2 · 분류·생태 일치 80점 · 비교하기", "3위 · Peer 3 · 분류·생태 일치 70점 · 비교하기"]);
+  assert.deepEqual(choices.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 가중 점수 90점 · 비교하기", "2위 · Peer 2 · 가중 점수 80점 · 비교하기", "3위 · Peer 3 · 가중 점수 70점 · 비교하기"]);
   assert.ok(collectAllNodes(explorer).some(n => n.tagName === "a" && n.textContent === "Reviewed graph" && n.href === "https://example.org/graph"));
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/related")), false);
   choices[0].dispatch("click"); await tick();
@@ -2853,21 +2853,32 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(rows.length, 3);
   assert.equal(rows[1], answer);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-comparison"), false);
-  assert.match(collectedText(rows[2]), /분류·생태 일치 90점/);
+  assert.match(collectedText(rows[2]), /가중 점수 90점/);
   assert.equal(collectAllNodes(rows[2]).filter(n => n.tagName === "dialog").length, 2);
+});
+
+test("ranked fallback scores disclose missing phylogeny and retain fractional scores", async () => {
+  const data = similarityFixture();
+  data.ranking.method = "taxonomy-phylogeny-ecology-v3";
+  const peer = data.groups[0].items.find(p => p.similarity_rank === 1);
+  peer.score_basis = "taxonomy_ecology_fallback";
+  peer.similarity_score = 66.67;
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, initiallyOpen: true });
+  await tick();
+  assert.match(collectedText(explorer), /분류·생태 대체 점수\(계통 자료 부족\) 66.67점/);
 });
 
 test("ranked similar species render TOP3 in rank order with scores, explanation and safe provenance", async () => {
   const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => { throw new Error("no lookup"); }, { initialData: similarityFixture(), initiallyOpen: true });
   await tick();
   const buttons = collectAllNodes(explorer).filter(n => n.tagName === "button" && /비교하기/.test(n.textContent));
-  assert.deepEqual(buttons.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 분류·생태 일치 90점 · 비교하기", "2위 · Peer 2 · 분류·생태 일치 80점 · 비교하기", "3위 · Peer 3 · 분류·생태 일치 70점 · 비교하기"]);
+  assert.deepEqual(buttons.map(n => n.getAttribute("aria-label")), ["1위 · Peer 1 · 가중 점수 90점 · 비교하기", "2위 · Peer 2 · 가중 점수 80점 · 비교하기", "3위 · Peer 3 · 가중 점수 70점 · 비교하기"]);
   const rows = collectAllNodes(explorer).filter(n => n.className === "comparison-peer");
   assert.equal(rows.length, 3);
   rows.forEach((row, index) => {
     assert.ok(collectAllNodes(row).some(n => n.tagName === "strong" && n.textContent === "Peer " + (index + 1)));
     assert.ok(collectAllNodes(row).some(n => n.tagName === "i" && n.textContent === "Similar species " + (index + 1)));
-    assert.equal(row.children.find(n => n.className === "comparison-peer-score").textContent, (index + 1) + "위 · 분류·생태 " + (90 - index * 10) + "점");
+    assert.equal(row.children.find(n => n.className === "comparison-peer-score").textContent, (index + 1) + "위 · 가중 점수 " + (90 - index * 10) + "점");
     assert.equal(row.children.find(n => n.tagName === "button").textContent, "비교하기");
     assert.equal(row.children.filter(n => n.tagName === "details").length, 1);
     assert.ok(!row.children.find(n => n.tagName === "details").open);
@@ -2893,9 +2904,9 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
   const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.getAttribute("aria-label") || ""));
   button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
-  assert.match(collectedText(bubbles[0]), /분류·생태 일치 90점/);
+  assert.match(collectedText(bubbles[0]), /가중 점수 90점/);
   assert.match(collectedText(bubbles[0]), /비교 후보 근거와 출처/);
-  assert.match(collectedText(bubbles[0]), /외형 유사도나 진화적 거리/);
+  assert.match(collectedText(bubbles[0]), /진화 거리나 유전 유사도/);
   assert.equal(collectAllNodes(bubbles[0]).filter(n => n.tagName === "dialog").length, 2);
   stale = true; button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
