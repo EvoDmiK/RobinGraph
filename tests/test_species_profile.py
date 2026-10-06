@@ -222,26 +222,29 @@ class SpeciesProfileTest(unittest.TestCase):
             self.assertEqual([], result)
             self.assertEqual('ambiguous_taxon', result.status)
 
-    def test_reviewed_night_heron_activity_preserves_raw_claim_and_daytime_qualification(self):
+    def test_reviewed_night_heron_classifies_usual_activity_and_preserves_raw_claim(self):
         from robingraph.retrieval.reviewed_activity import reviewed_activity
         lineage = replace(LINEAGE, items=(replace(LINEAGE.items[-1], scientific_name='Nycticorax nycticorax'),))
         raw = {'name':'nocturnal','value':False,'display':'아니요',
                'source_name':'EltonTraits','source_url':'https://ndownloader.figshare.com/files/5631081#SpecID=5182'}
         result = reviewed_activity(lineage,[raw])
         self.assertEqual('activity_pattern',result[0]['name'])
-        self.assertIn('저녁부터 이른 아침',result[0]['display'])
-        self.assertIn('번식기에는 낮에도',result[0]['display'])
+        self.assertEqual('야행성', result[0]['display'])
+        self.assertIs(True, result[0]['value'])
+        self.assertIn('특별한 시기의 활동은 제외', result[0]['review_note'])
         self.assertEqual([raw],result[0]['source_claims'])
         self.assertFalse(raw['value'])
-        self.assertNotEqual('아니요', trait_display('nocturnal', False))
-        self.assertIn('단정할 수 없음', trait_display('nocturnal', False))
-        self.assertEqual('예', trait_display('nocturnal', True))
+        self.assertEqual('야행성 아님', trait_display('nocturnal', False))
+        self.assertEqual('야행성', trait_display('nocturnal', True))
         self.assertEqual([raw],reviewed_activity(LINEAGE,[raw]))
         self.assertEqual([raw],reviewed_activity(replace(lineage,taxonomy_release='future'),[raw]))
         flow=create_species_flow(lambda _:lineage,lambda _:result,photos=lambda _:[])
         profile=flow.invoke('Nycticorax nycticorax')
         ecology=next(s for s in profile['sections'] if s['key']=='ecology')
-        self.assertTrue(any('저녁부터 이른 아침' in i['text'] for i in ecology['items']))
+        self.assertTrue(any(i['text'] == '활동 시간: 야행성' for i in ecology['items']))
+        nankeen = replace(lineage, items=(replace(lineage.items[-1], scientific_name='Nycticorax caledonicus'),))
+        self.assertEqual('야행성', reviewed_activity(nankeen, [raw])[0]['display'])
+        self.assertIsNone(next((t for t in reviewed_activity(LINEAGE, []) if t['name'] == 'nocturnal'), None))
 
     def test_photo_absence_reasons_preserve_species_information_and_card_contract(self):
         for status in ('no_licensed_photo', 'unconfirmed_taxon', 'ambiguous_taxon'):

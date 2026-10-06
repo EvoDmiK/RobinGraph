@@ -2495,8 +2495,8 @@ function nightHeronProfile() {
   const profile = fakeProfilePayload().result.profile;
   profile.taxon = { taxon_id: "nn", scientific_name: "Nycticorax nycticorax", korean_name: "해오라기" };
   profile.traits = [{
-    name: "activity_pattern", label: "활동 시간", value: "evening_to_early_morning_with_breeding_daytime",
-    display: "주로 저녁부터 이른 아침에 먹이를 찾으며, 번식기에는 낮에도 활동합니다.", unit: null, inferred: false,
+    name: "activity_pattern", label: "활동 시간", value: true,
+    display: "야행성", unit: null, inferred: false,
     source_name: "Cornell Lab of Ornithology · Black-crowned Night Heron Life History",
     source_url: "https://www.allaboutbirds.org/guide/Black-crowned_Night_Heron/lifehistory",
     citation: "Cornell Lab of Ornithology, Life History · Food", license_name: "출처 기반 독자 요약 · 원문 미재배포",
@@ -2515,7 +2515,7 @@ test("RG-006 follow-up: reviewed activity stays visible; the raw nocturnal=false
   const activity = traitCards.find((n) => n.children[0].textContent === "활동 시간");
   assert.ok(activity, "activity_pattern is a prominent trait, not hidden under 측정값 더 보기");
   assert.equal(collectAllNodes(back).some((n) => n.className === "card-details" && collectAllNodes(n).includes(activity)), false);
-  assert.equal(activity.children[1].textContent, "주로 저녁부터 이른 아침에 먹이를 찾으며, 번식기에는 낮에도 활동합니다.");
+  assert.equal(activity.children[1].textContent, "야행성");
   const details = activity.children.find((n) => n.className === "trait-source-toggle");
   assert.notEqual(details.open, true, "provenance starts collapsed");
   assert.ok(collectAllNodes(details).some((n) => n.className === "trait-review-note" && /원자료의 야행성 코드/.test(n.textContent)));

@@ -55,7 +55,7 @@ def reference_korean_names() -> dict:
 
 @cache
 def sourced_korean_names() -> dict:
-    """Korean Ornithological Society names bound to the reviewed AviList release."""
+    """Source-checked Korean names bound to the reviewed AviList release."""
     return json.loads(Path(__file__).with_name("species_ko_names.json").read_text(encoding="utf-8"))["labels"]
 
 

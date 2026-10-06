@@ -107,11 +107,11 @@ class SpeciesQuestionTest(unittest.TestCase):
         result=client.post('/v1/chat',json={'question':'왜가리는 무엇을 먹고 사니?'}).json()
         self.assertIn('수생동물 포식',result['answer_text']);self.assertNotIn('물고기',result['answer_text'])
 
-    def test_activity_false_stays_qualified_and_review_is_sourced(self):
-        profile={**PROFILE,'traits':[{**SOURCE,'name':'nocturnal','value':False,'display':'원자료 분류값 0 · 야간 활동이 없다고 단정할 수 없음','label':'야행성'}]}
+    def test_activity_false_uses_requested_usual_activity_label(self):
+        profile={**PROFILE,'traits':[{**SOURCE,'name':'nocturnal','value':False,'display':'야행성 아님','label':'활동 시간'}]}
         client=TestClient(create_app(species_profile_handler=lambda _:profile))
         result=client.post('/v1/chat',json={'question':'해오라기는 야행성이니?'}).json()
-        self.assertIn('단정할 수 없음',result['answer_text'])
+        self.assertIn('활동 시간: 야행성 아님',result['answer_text'])
 
     def test_explicit_other_routes_bypass_and_wrong_profile_filter_clarifies(self):
         handler=Mock(return_value=PROFILE)

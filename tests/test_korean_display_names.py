@@ -40,12 +40,12 @@ class KoreanDisplayNamesTest(TestCase):
 
     def test_snapshot_sources_crosswalks_and_split_species(self):
         labels = sourced_korean_names()
-        self.assertEqual(596, len(labels))
-        self.assertEqual(596, len({v['scientific_name'] for v in labels.values()}))
+        self.assertEqual(646, len(labels))
+        self.assertEqual(646, len({v['scientific_name'] for v in labels.values()}))
         for key, label in labels.items():
             self.assertTrue(key.startswith('avilist-taxon:v2025b:'))
             self.assertEqual('source-reference', label['status'])
-            self.assertTrue(label['source_row'] > 0)
+            self.assertTrue(label.get('source_row', 0) > 0 or '/animal/animalView.do?' in label['source_url'])
             self.assertTrue(label['source_url'])
             self.assertEqual(label['name'].strip(), label['name'])
         for science, expected in [('Thinornis dubius', '꼬마물떼새'), ('Thinornis placidus', '흰목물떼새'),
@@ -58,3 +58,14 @@ class KoreanDisplayNamesTest(TestCase):
         self.assertEqual({'Anas carolinensis', 'Saxicola stejnegeri'},
                          {v['scientific_name'] for v in snapshot['unmatched_source_species']})
         self.assertEqual('쇠오리', with_korean_display_name(self.row_for('Anas crecca'))['korean_name'])
+
+    def test_foreign_names_require_sources_and_reject_conflicting_names(self):
+        for science, name in [('Struthio camelus', '타조'), ('Gracula religiosa', '구관조'),
+                              ('Centropus sinensis', '큰쿠칼')]:
+            row = self.row_for(science)
+            result = with_korean_display_name(row)
+            self.assertEqual(name, result['korean_name'])
+            self.assertTrue(result['korean_name_source_url'])
+        labels = sourced_korean_names()
+        self.assertNotIn('Anthus rubescens', {v['scientific_name'] for v in labels.values()})
+        self.assertNotIn('Nycticorax caledonicus', {v['scientific_name'] for v in labels.values()})
