@@ -2432,6 +2432,8 @@
             if (targeted && questionAnswer.relations) {
               var directOptions = questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null;
               if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
+            } else if (!targeted && result.similar_species) {
+              relatedOptions.initialData = result.similar_species; relatedOptions.initiallyOpen = true;
             }
             (structured || item).appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions));
             (structured || item).appendChild(buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions));
