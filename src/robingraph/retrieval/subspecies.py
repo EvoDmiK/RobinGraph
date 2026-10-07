@@ -4,6 +4,7 @@ from urllib.parse import urlsplit
 from .species_profile import SpeciesNotFoundError
 from .taxonomy_lineage_neo4j import _parse_lineage_items
 from .taxonomy_lineage import with_korean_display_name
+from .subspecies_ranges import reviewed_range
 
 SUBSPECIES_QUERY = """
 MATCH (concept:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
@@ -21,35 +22,6 @@ RETURN {taxon_id:child.id,rank:child.rank,scientific_name:child.scientific_name,
 ORDER BY child.scientific_name,child.id
 LIMIT 201
 """
-
-# Independent Korean summaries of the pinned AviList range statements.
-# These describe distribution, not an inferred diagnostic plumage feature.
-REVIEWED_RANGES = {
-    ('v2025b','Anas platyrhynchos conboschas'): '분포 차이: 그린란드 남서부 해안에 분포하는 아종입니다.',
-    ('v2025b','Anas platyrhynchos platyrhynchos'): '분포 차이: 북반구의 넓은 지역에서 번식하고, 겨울에는 더 남쪽 지역으로 이동하는 아종입니다.',
-}
-
-
-REVIEWED_RANGE_RAW = {'Anas platyrhynchos platyrhynchos': 'breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners', 'Anas platyrhynchos conboschas': 'coastal southwestern Greenland'}
-
-# Distribution captions are UI descriptions, never fabricated vernacular names.
-HERON_DISTRIBUTIONS = {
-    'avilist-taxon:v2025b:5420': ('Ardea cinerea cinerea', '유럽·아프리카·서아시아'),
-    'avilist-taxon:v2025b:5421': ('Ardea cinerea jouyi', '동아시아'),
-    'avilist-taxon:v2025b:5422': ('Ardea cinerea monicae', '모리타니 방다르갱 앞바다 섬'),
-    'avilist-taxon:v2025b:5423': ('Ardea cinerea firasa', '마다가스카르'),
-}
-HERON_DISTRIBUTION_URL = 'https://www.birdlife.org.za/red-data-book/red-list/grey-heron/'
-
-
-def _heron_distribution(taxon, lineage):
-    reference = HERON_DISTRIBUTIONS.get(taxon['taxon_id'])
-    if (lineage.concept_set_id == 'rg:concept-set:avilist-v2025b'
-            and lineage.taxonomy_release == 'v2025b' and reference
-            and reference[0] == taxon['scientific_name']):
-        return reference[1]
-    return None
-
 
 def _rows(repository,lineage,child_id=None):
     parent=next((t for t in reversed(lineage.items) if t.rank=='species'),None)
@@ -73,23 +45,18 @@ def _display_subspecies(row, parent, lineage):
         taxon.update(range_text=raw, description=raw, description_language='en',
                      description_status='source-original', description_source_url=row['source_url'],
                      description_source_title=row['source_name'])
-    if (lineage.concept_set_id == 'rg:concept-set:avilist-v2025b'
-            and taxon.get('english_name_source_url')
-            and raw == REVIEWED_RANGE_RAW.get(taxon['scientific_name'])):
-        summary = REVIEWED_RANGES.get((lineage.taxonomy_release, taxon['scientific_name']))
-        if summary:
-            taxon.update(description=summary, description_language='ko', description_status='reviewed-summary')
-    distribution = _heron_distribution(taxon, lineage)
-    if distribution:
-        taxon.update(description=f'{distribution}에 분포하는 아종입니다.', description_language='ko',
-                     description_status='reviewed-summary', description_source_url=HERON_DISTRIBUTION_URL,
-                     description_source_title='BirdLife South Africa · Grey Heron · Taxonomy')
+    review, review_status = reviewed_range(taxon, lineage, raw)
+    taxon['range_review_status'] = review_status
+    if review:
+        taxon.update(description=review['description'], description_language='ko',
+                     description_status='reviewed-summary',
+                     description_source_sha256=review['source_sha256'])
     if not (taxon.get('korean_name') or taxon.get('english_name')):
         parent_name = parent.korean_name or parent.english_name or parent.scientific_name
         # This is a distribution caption, never a new Korean/English common name.
-        caption = distribution + ' 분포' if distribution else raw.split(';')[0]
+        caption = review['caption'] if review else raw.split(';')[0]
         caption = ' '.join(caption.split())
-        if len(caption) > 72:
+        if not review and len(caption) > 72:
             caption = caption[:71].rstrip() + '…'
         taxon['display_label'] = parent_name + ' 아종' + (' · ' + caption if caption else '')
     return taxon
