@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "reviewer": "Codex source comparison, 2026-10-07",
-  "review_method": "Exact complete source phrase comparison; geographic descriptions, not vernacular names. No independent human review claimed.",
+  "reviewer": "Codex source comparison and Antigravity independent source review, 2026-10-07",
+  "review_method": "Complete exact source phrase comparison; Antigravity baseline review and Codex correction adjudication. Geographic descriptions, not vernacular names. No independent human review claimed.",
   "phrases": {
     "Sri Lanka": {
       "description": "스리랑카에 분포합니다.",
@@ -434,13 +434,13 @@
       "status": "reviewed"
     },
     "formerly Syrian and Arabian desert; extinct ca. 1966": {
-      "description": "과거 시리아 사막과 아라비아 사막에 분포했으며, 약 1966년에 멸종했습니다.",
+      "description": "과거 시리아 사막과 아라비아 사막에 분포했으며, 1966년경에 멸종했습니다.",
       "caption": "과거 시리아·아라비아 사막 분포 · 약 1966년 멸종",
       "status": "reviewed"
     },
     "Sahel of North Africa and the Sudan": {
-      "description": "북아프리카와 수단의 사헬 지역에 분포합니다.",
-      "caption": "북아프리카와 수단의 사헬 지역 분포",
+      "description": "북아프리카와 수단 지역의 사헬 지대에 분포합니다.",
+      "caption": "북아프리카·수단 지역의 사헬 지대 분포",
       "status": "reviewed"
     },
     "southern Kenya and eastern Tanzania; introduced Australia (south-central South Australia and Riverina, New South Wales)": {
@@ -455,7 +455,7 @@
     },
     "breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners": {
       "description": "전북구에서 번식합니다. 번식 범위는 아이슬란드와 스페인에서 동쪽으로 러시아 동부까지, 알래스카에서 그린란드까지이며, 남쪽으로 바하칼리포르니아 북부와 미국 중부 대서양 연안 주들까지 이어집니다. 월동 범위는 북아프리카·인도·중국 남부와 멕시코 중부·쿠바까지입니다. 그 밖의 여러 지역에도 널리 도입되었으며, 현지의 같은 속 조류와 흔히 교잡합니다.",
-      "caption": "전북구 번식 · 남쪽 지역 월동 · 다른 지역 도입",
+      "caption": "전북구 번식 · 북아프리카·인도·중국 남부·멕시코 중부·쿠바 월동 · 다른 지역 도입",
       "status": "reviewed"
     },
     "Eurasia to Manchuria, India, Africa, and Comoros": {
@@ -499,7 +499,7 @@
       "status": "reviewed"
     },
     "tundra of Eurasia (Lapland eastward to northeastern Siberia); winters southward to south-eastern Asia and Australia": {
-      "description": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동합니다.",
+      "description": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동해 월동합니다.",
       "caption": "유라시아 툰드라 분포 · 동남아시아·오스트레일리아 월동",
       "status": "reviewed"
     },
@@ -589,8 +589,8 @@
       "status": "reviewed"
     },
     "far eastern Iran to northwestern India and western Himalayas": {
-      "description": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포합니다.",
-      "caption": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포",
+      "description": "이란 극동부에서 인도 북서부와 히말라야 서부까지 분포합니다.",
+      "caption": "이란 극동부에서 인도 북서부와 히말라야 서부까지 분포",
       "status": "reviewed"
     },
     "southern Indochina, the Thai-Malay Peninsula, Sumatra, Java, and the Lesser Sundas": {
