@@ -1,0 +1,19 @@
+{
+  "ledger_sha256": "67eabc7a3aa38f75f87e7308f59d7272461b88da27f9dac092d7bbe71ebd9bc2",
+  "schema_version": 1,
+  "taxonomy_release": "v2025b",
+  "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+  "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "scope": "All pinned snapshot subspecies; offline source comparison, not live DB/API",
+  "counts": {
+    "total": 19879,
+    "reviewed": 1109,
+    "pending-review": 18770,
+    "conflict": 0,
+    "translation-failed": 0,
+    "missing-source": 0
+  },
+  "reviewed_phrases": 137,
+  "automatic_translations": 0,
+  "independent_human_review": false
+}
