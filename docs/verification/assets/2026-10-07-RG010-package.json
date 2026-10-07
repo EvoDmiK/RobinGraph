@@ -1,0 +1,12 @@
+{
+  "source_commit": "cd46b33148e3bb94237c8631dd3df4eaa2efbf2d",
+  "archive": "robingraph-nas-release-cd46b33148e3bb94237c8631dd3df4eaa2efbf2d.tar.gz",
+  "sha256": "78ab9b56917d561c69c23483eb4cd18f68f31e7bf0c644b5b5e6737002d85a05",
+  "manifest_files": 110,
+  "nas_transferred": true,
+  "nas_deployed": true,
+  "nas_release": "/home/kimdove/RobinGraph-rg010-cd46b33",
+  "image": "robingraph-api:test-rg010-cd46b33",
+  "health": "healthy",
+  "prod_container_unchanged": true
+}

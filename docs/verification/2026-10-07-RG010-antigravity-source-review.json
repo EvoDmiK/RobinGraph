@@ -1,0 +1,3266 @@
+{
+  "schema_version": 1,
+  "task_id": "task_ba14f90bfef1",
+  "dispatch_id": "ctx_60dc93bad1ad",
+  "verification_date": "2026-10-07",
+  "agent": {
+    "name": "Antigravity",
+    "model": "Gemini 3.8 Flash",
+    "role": "Dispatched Independent Source Review Worker"
+  },
+  "baseline": {
+    "git_commit": "be229a9",
+    "seed_file": "data/review/subspecies-range-ko.json",
+    "source_file": "/tmp/rg010-avilist.json",
+    "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+    "taxonomy_release": "v2025b",
+    "concept_set_id": "rg:concept-set:avilist-v2025b"
+  },
+  "coverage_statistics": {
+    "total_subspecies_in_source": 19879,
+    "reviewed_matches": 1109,
+    "pending_review": 18770,
+    "missing_source": 0,
+    "unique_range_texts_in_source": 17399,
+    "seed_phrases_count": 137,
+    "unmatched_seed_phrases_count": 0,
+    "coverage_percentage": 5.5788
+  },
+  "verification_environment_and_scope": {
+    "unit_tests_ran": 586,
+    "unit_tests_passed": 544,
+    "unit_tests_skipped": 42,
+    "unit_tests_failed": 0,
+    "local_db_api_validation": {
+      "target": "http://127.0.0.1:18010",
+      "type": "Local disposable Neo4j & FastAPI preview server",
+      "scope": "Component preview only; verified /chat (200), /v1/taxa/subspecies, /v1/taxa/profile, /v1/chat",
+      "is_nas_or_prod": false
+    },
+    "nas_deployment_status": {
+      "target": "192.168.219.99:99",
+      "status": "authentication_denied",
+      "reason": "Permission denied (publickey,password); no deployment performed"
+    }
+  },
+  "concrete_corrections_for_claude": [
+    {
+      "phrase_index": 100,
+      "raw_en": "tundra of Eurasia (Lapland eastward to northeastern Siberia); winters southward to south-eastern Asia and Australia",
+      "issue_type": "term_precision",
+      "field": "description",
+      "current": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동합니다.",
+      "proposed": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동해 월동합니다.",
+      "rationale": "원문 'winters southward to...'의 생물학적 의미인 '월동(wintering)'이 캡션('동남아시아·오스트레일리아 월동')에는 반영되었으나 본문 설명에서는 '이동합니다'로 완화되어 있음. 캡션과 본문 용어를 '월동'으로 일치시키는 것이 더 정확함."
+    },
+    {
+      "phrase_index": 91,
+      "raw_en": "breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners",
+      "issue_type": "caption_precision",
+      "field": "caption",
+      "current": "전북구 번식 · 남쪽 지역 월동 · 다른 지역 도입",
+      "proposed": "전북구 번식 · 북아프리카~인도·중미 월동 · 각지 도입",
+      "rationale": "원문의 'winters to North Africa, India, and southern China, and central Mexico and Cuba'에 비해 캡션의 '남쪽 지역 월동'은 지나치게 추상화됨. 72자 제한 내에서 주요 대륙/지역(북아프리카·인도·중미 등)을 명시하면 정보 전달력이 대폭 향상됨."
+    },
+    {
+      "phrase_index": 114,
+      "raw_en": "Yaeyama Islands of southern Ryukyu Islands (Ishigaki, Iriomote, Kohama, Kuru, and Aragusuku, southern Japan)",
+      "issue_type": "source_ambiguity",
+      "field": "proper_noun",
+      "current": "류큐열도 남부의 야에야마제도(일본 남부의 이시가키·이리오모테·고하마·쿠루·아라구스쿠)에 분포합니다.",
+      "proposed": "유지 권장(원문 충실성 유지)하되 주석 명시: 원문의 Kuru는 야에야마제도의 구로시마(黒島, Kuro-shima)의 오기/변이형으로 추정됨. 공식 국명이나 한국어 표준 지명으로 단정하지 않고 원문 고유명사 음차 표기로 취급.",
+      "rationale": "원문 자체의 'Kuru'를 그대로 음차한 '쿠루'는 원문 충실성을 보존하지만 실제 지리는 구로시마(黒島)임. 임의 왜곡 방지 및 출처 모호성 플래그 필요."
+    },
+    {
+      "phrase_index": 88,
+      "raw_en": "Sahel of North Africa and the Sudan",
+      "issue_type": "geographic_scope",
+      "field": "description",
+      "current": "북아프리카와 수단의 사헬 지역에 분포합니다.",
+      "proposed": "북아프리카와 수단 지역의 사헬 지대에 분포합니다. (또는 현행 유지 시 지리적 수단 지역임을 감안)",
+      "rationale": "원문 'the Sudan'은 수단 공화국뿐만 아니라 사하라 이남 사헬-수단 사바나 지리적 영역(The Sudan region)을 포괄하는 표현임. 공식 국가명으로만 한정되지 않도록 맥락 공유 필요."
+    },
+    {
+      "phrase_index": 38,
+      "raw_en": "mountains of Bird's Head Peninsula (western New Guinea)",
+      "issue_type": "source_toponym_transliteration",
+      "field": "proper_noun",
+      "current": "버즈헤드반도 산지(뉴기니 서부)에 분포합니다.",
+      "proposed": "현행 유지하되 영어 명칭 음차임을 기록 (인도네시아 공식 지명 도베라이반도/도베라이 산맥 또는 새머리반도 병기/주석 가능)",
+      "rationale": "Bird's Head Peninsula는 영문 관용 지명이며 공식 표준 국명이 아니므로 한국어 공식 지명 주장 대신 원문 고유명사 음차로 분류."
+    },
+    {
+      "phrase_index": 48,
+      "raw_en": "southern Vietnam (Langbian Plateau)",
+      "issue_type": "source_toponym_transliteration",
+      "field": "proper_noun",
+      "current": "베트남 남부(랑비안고원)에 분포합니다.",
+      "proposed": "현행 유지하되 영문 명칭 음차임을 기록 (베트남 현지명 Cao nguyên Lâm Viên / 람비엔 고원)",
+      "rationale": "Langbian Plateau는 식민지/영문 지도 표기 반영이므로 공식 베트남 한국어 지명으로 단정하지 않음."
+    },
+    {
+      "phrase_index": 118,
+      "raw_en": "far eastern Iran to northwestern India and western Himalayas",
+      "issue_type": "stylistic_precision",
+      "field": "description",
+      "current": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포합니다.",
+      "proposed": "이란 극동부에서 인도 북서부와 히말라야 서부까지 분포합니다.",
+      "rationale": "'far eastern Iran'을 '이란의 동쪽 끝에서'로 번역한 것은 뜻은 통하나 지리 표현으로는 '이란 극동부에서'가 더 자연스럽고 간결함."
+    },
+    {
+      "phrase_index": 87,
+      "raw_en": "formerly Syrian and Arabian desert; extinct ca. 1966",
+      "issue_type": "stylistic_precision",
+      "field": "description",
+      "current": "과거 시리아 사막과 아라비아 사막에 분포했으며, 약 1966년에 멸종했습니다.",
+      "proposed": "과거 시리아 사막과 아라비아 사막에 분포했으며, 1966년경에 멸종했습니다.",
+      "rationale": "'약 1966년에'보다 '1966년경에'가 한국어 문맥에서 역사적/생물학적 연도 표기로 더 자연스러움."
+    }
+  ],
+  "phrases": [
+    {
+      "index": 1,
+      "raw_en": "Sri Lanka",
+      "description_ko": "스리랑카에 분포합니다.",
+      "caption_ko": "스리랑카 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 55,
+      "sample_taxa": [
+        "Perdicula asiatica ceylonensis",
+        "Cacomantis sonneratii waiti",
+        "Surniculus dicruroides stewarti",
+        "Hierococcyx varius ciceliae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 2,
+      "raw_en": "Hainan (southern China)",
+      "description_ko": "하이난섬(중국 남부)에 분포합니다.",
+      "caption_ko": "하이난섬(중국 남부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 39,
+      "sample_taxa": [
+        "Lophura nycthemera whiteheadi",
+        "Eudynamys scolopaceus harterti",
+        "Treron bicinctus domvilii",
+        "Glaucidium cuculoides persimile"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 3,
+      "raw_en": "Santa Marta Mountains (northeastern Colombia)",
+      "description_ko": "산타마르타산맥(콜롬비아 북동부)에 분포합니다.",
+      "caption_ko": "산타마르타산맥(콜롬비아 북동부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 36,
+      "sample_taxa": [
+        "Chamaepetes goudotii sanctaemarthae",
+        "Penelope argyrotis colombiana",
+        "Odontophorus atrifrons atrifrons",
+        "Phaethornis longirostris susurrus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 4,
+      "raw_en": "Taiwan",
+      "description_ko": "타이완에 분포합니다.",
+      "caption_ko": "타이완 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 34,
+      "sample_taxa": [
+        "Phasianus colchicus formosanus",
+        "Treron sieboldii sororius",
+        "Lewinia striata taiwana",
+        "Turnix suscitator rostratus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 5,
+      "raw_en": "Java",
+      "description_ko": "자바섬에 분포합니다.",
+      "caption_ko": "자바섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 33,
+      "sample_taxa": [
+        "Tachybaptus novaehollandiae javanicus",
+        "Zanclostomus javanicus javanicus",
+        "Cacomantis sonneratii musicus",
+        "Treron capellei capellei"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 6,
+      "raw_en": "Borneo",
+      "description_ko": "보르네오섬에 분포합니다.",
+      "caption_ko": "보르네오섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 32,
+      "sample_taxa": [
+        "Caloperdix oculeus borneensis",
+        "Argusianus argus grayi",
+        "Phaenicophaeus diardi borneensis",
+        "Taenioptynx sylvaticus borneensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 7,
+      "raw_en": "Sierra de Perijá (Colombia/Venezuela border)",
+      "description_ko": "페리하산맥(콜롬비아·베네수엘라 국경)에 분포합니다.",
+      "caption_ko": "페리하산맥(콜롬비아·베네수엘라 국경) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 30,
+      "sample_taxa": [
+        "Penelope argyrotis albicauda",
+        "Pauxi pauxi gilliardi",
+        "Odontophorus atrifrons navai",
+        "Coeligena coeligena zuliana"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 8,
+      "raw_en": "Andaman Islands",
+      "description_ko": "안다만제도에 분포합니다.",
+      "caption_ko": "안다만제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 28,
+      "sample_taxa": [
+        "Macropygia rufipennis andamanica",
+        "Chalcophaps indica maxima",
+        "Ducula aenea andamanica",
+        "Otus sunia modestus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 9,
+      "raw_en": "Java and Bali",
+      "description_ko": "자바섬과 발리섬에 분포합니다.",
+      "caption_ko": "자바섬과 발리섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 24,
+      "sample_taxa": [
+        "Surniculus lugubris lugubris",
+        "Macropygia ruficeps ruficeps",
+        "Treron bicinctus javanus",
+        "Treron griseicauda griseicauda"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 10,
+      "raw_en": "Bioko (Gulf of Guinea)",
+      "description_ko": "비오코섬(기니만)에 분포합니다.",
+      "caption_ko": "비오코섬(기니만) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 23,
+      "sample_taxa": [
+        "Aerospiza tachiro lopezi",
+        "Smithornis sharpei sharpei",
+        "Terpsiphone rufiventer tricolor",
+        "Poliolais lopezi lopezi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 11,
+      "raw_en": "Madagascar",
+      "description_ko": "마다가스카르에 분포합니다.",
+      "caption_ko": "마다가스카르 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 21,
+      "sample_taxa": [
+        "Centropus toulou toulou",
+        "Nesoenas picturatus picturatus",
+        "Oena capensis aliena",
+        "Anastomus lamelligerus madagascariensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 12,
+      "raw_en": "Tres Marías Islands (off western Mexico)",
+      "description_ko": "트레스마리아스제도(멕시코 서부 앞바다)에 분포합니다.",
+      "caption_ko": "트레스마리아스제도(멕시코 서부 앞바다) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 17,
+      "sample_taxa": [
+        "Leptotila verreauxi capitalis",
+        "Patagioenas flavirostris madrensis",
+        "Nyctidromus albicollis insularis",
+        "Amazilia rutila graysoni"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 13,
+      "raw_en": "Nicobar Islands",
+      "description_ko": "니코바르제도에 분포합니다.",
+      "caption_ko": "니코바르제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 16,
+      "sample_taxa": [
+        "Synoicus chinensis trinkutensis",
+        "Macropygia rufipennis rufipennis",
+        "Chalcophaps indica augusta",
+        "Otus sunia nicobaricus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 14,
+      "raw_en": "Tobago",
+      "description_ko": "토바고섬에 분포합니다.",
+      "caption_ko": "토바고섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 16,
+      "sample_taxa": [
+        "Leptotila verreauxi tobagensis",
+        "Florisuga mellivora flabellifera",
+        "Saucerottia tobaci tobaci",
+        "Colaptes rubiginosus tobagensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 15,
+      "raw_en": "northeastern Australia (Cape York Peninsula, northern Queensland)",
+      "description_ko": "오스트레일리아 북동부(퀸즐랜드 북부의 케이프요크반도)에 분포합니다.",
+      "caption_ko": "오스트레일리아 북동부(퀸즐랜드 북부의 케이프요크반도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 16,
+      "sample_taxa": [
+        "Ninox rufa meesi",
+        "Dacelo novaeguineae minor",
+        "Cacatua sanguinea normantoni",
+        "Climacteris picumnus melanotus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 16,
+      "raw_en": "Trinidad",
+      "description_ko": "트리니다드섬에 분포합니다.",
+      "caption_ko": "트리니다드섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 15,
+      "sample_taxa": [
+        "Piaya cayana insulana",
+        "Rallus longirostris pelodramus",
+        "Saucerottia tobaci erythronotos",
+        "Chrysuronia brevirostris chionopectus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 17,
+      "raw_en": "Guadalcanal (southeastern Solomon Islands)",
+      "description_ko": "과달카날섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption_ko": "과달카날섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 15,
+      "sample_taxa": [
+        "Ptilinopus solomonensis ocularis",
+        "Gallirallus woodfordi woodfordi",
+        "Turnix maculosus salomonis",
+        "Aerodramus orientalis orientalis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 18,
+      "raw_en": "Aru Islands (off southwestern New Guinea)",
+      "description_ko": "아루제도(뉴기니 남서부 앞바다)에 분포합니다.",
+      "caption_ko": "아루제도(뉴기니 남서부 앞바다) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 14,
+      "sample_taxa": [
+        "Centropus menbeki aruensis",
+        "Henicophaps albifrons schlegeli",
+        "Otidiphaps nobilis aruensis",
+        "Ptilinopus iozonus iozonus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 19,
+      "raw_en": "northeastern Australia (Wet Tropics region, northern Queensland)",
+      "description_ko": "오스트레일리아 북동부(퀸즐랜드 북부의 웨트트로픽스 지역)에 분포합니다.",
+      "caption_ko": "오스트레일리아 북동부(퀸즐랜드 북부의 웨트트로픽스 지역) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 14,
+      "sample_taxa": [
+        "Tyto tenebricosa multipunctata",
+        "Platycercus elegans nigrescens",
+        "Cyclopsitta diophthalma macleayana",
+        "Ptilonorhynchus violaceus minor"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 20,
+      "raw_en": "Falkland Islands",
+      "description_ko": "포클랜드제도에 분포합니다.",
+      "caption_ko": "포클랜드제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 13,
+      "sample_taxa": [
+        "Chloephaga picta leucoptera",
+        "Chloephaga hybrida malvinarum",
+        "Rollandia rolland rolland",
+        "Leucocarbo atriceps albiventer"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 21,
+      "raw_en": "Sumatra",
+      "description_ko": "수마트라섬에 분포합니다.",
+      "caption_ko": "수마트라섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 13,
+      "sample_taxa": [
+        "Caloperdix oculeus ocellatus",
+        "Macropygia ruficeps sumatrana",
+        "Caprimulgus pulchellus pulchellus",
+        "Taenioptynx sylvaticus sylvaticus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 22,
+      "raw_en": "southern Vietnam",
+      "description_ko": "베트남 남부에 분포합니다.",
+      "caption_ko": "베트남 남부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Tropicoperdix chloropus cognacqi",
+        "Oriolus tenuirostris invisus",
+        "Lanius collurioides nigricapillus",
+        "Prinia rufescens dalatensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 23,
+      "raw_en": "southern India and Sri Lanka",
+      "description_ko": "인도 남부와 스리랑카에 분포합니다.",
+      "caption_ko": "인도 남부와 스리랑카 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Ortygornis pondicerianus pondicerianus",
+        "Taccocua leschenaultii leschenaultii",
+        "Ducula aenea pusilla",
+        "Apus affinis singalensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 24,
+      "raw_en": "Tasmania",
+      "description_ko": "태즈메이니아섬에 분포합니다.",
+      "caption_ko": "태즈메이니아섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Synoicus ypsilophorus ypsilophorus",
+        "Aegotheles cristatus tasmanicus",
+        "Aquila audax fleayi",
+        "Ceyx azureus diemenensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 25,
+      "raw_en": "Jamaica",
+      "description_ko": "자메이카에 분포합니다.",
+      "caption_ko": "자메이카 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Columbina passerina jamaicensis",
+        "Leptotila jamaicensis jamaicensis",
+        "Nyctibius jamaicensis jamaicensis",
+        "Mellisuga minima minima"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 26,
+      "raw_en": "Waigeo (Raja Ampat Islands, off western New Guinea)",
+      "description_ko": "와이게오섬(뉴기니 서부 앞바다의 라자암팟제도)에 분포합니다.",
+      "caption_ko": "와이게오섬(뉴기니 서부 앞바다의 라자암팟제도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Collocalia esculenta amethystina",
+        "Aviceda subcristata waigeuensis",
+        "Melidora macrorrhina waigiuensis",
+        "Gerygone chrysogaster neglecta"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 27,
+      "raw_en": "mountains of southeastern New Guinea",
+      "description_ko": "뉴기니 남동부 산지에 분포합니다.",
+      "caption_ko": "뉴기니 남동부 산지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 12,
+      "sample_taxa": [
+        "Cormobates placens meridionalis",
+        "Ailuroedus melanotis melanocephalus",
+        "Aethomyias papuensis papuensis",
+        "Timeliopsis griseigula fulviventris"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 28,
+      "raw_en": "Biak (Cenderawasih Bay, off northwestern New Guinea)",
+      "description_ko": "비아크섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption_ko": "비아크섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 11,
+      "sample_taxa": [
+        "Reinwardtoena reinwardti brevis",
+        "Aviceda subcristata obscura",
+        "Tachyspiza hiogaster misoriensis",
+        "Micropsitta geelvinkiana misoriensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 29,
+      "raw_en": "Sumba (Lesser Sundas)",
+      "description_ko": "숨바섬(소순다열도)에 분포합니다.",
+      "caption_ko": "숨바섬(소순다열도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 11,
+      "sample_taxa": [
+        "Turnix maculosus sumbanus",
+        "Tyto javanica sumbaensis",
+        "Tachyspiza fasciata tjendanae",
+        "Trichoglossus capistratus fortis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 30,
+      "raw_en": "Cuba",
+      "description_ko": "쿠바에 분포합니다.",
+      "caption_ko": "쿠바 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Coccyzus merlini merlini",
+        "Antrostomus cubanensis cubanensis",
+        "Glaucidium siju siju",
+        "Asio flammeus cubensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 31,
+      "raw_en": "Bismarck Archipelago",
+      "description_ko": "비스마르크제도에 분포합니다.",
+      "caption_ko": "비스마르크제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Eudynamys orientalis salvadorii",
+        "Scythrops novaehollandiae schoddei",
+        "Ducula rubricera rubricera",
+        "Ptilinopus rivoli rivoli"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 32,
+      "raw_en": "Numfor (Cenderawasih Bay, off northwestern New Guinea)",
+      "description_ko": "눔포르섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption_ko": "눔포르섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Cacomantis variolosus obscuratus",
+        "Collocalia esculenta numforensis",
+        "Micropsitta geelvinkiana geelvinkiana",
+        "Pitta novaeguineae mefoorana"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 33,
+      "raw_en": "northeastern Australia (northeastern Cape York Peninsula, northern Queensland)",
+      "description_ko": "오스트레일리아 북동부(퀸즐랜드 북부 케이프요크반도의 북동부)에 분포합니다.",
+      "caption_ko": "오스트레일리아 북동부(퀸즐랜드 북부 케이프요크반도의 북동부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Macropygia phasianella quinkan",
+        "Eclectus polychloros macgillivrayi",
+        "Geoffroyus geoffroyi maclennani",
+        "Cyclopsitta diophthalma marshalli"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 34,
+      "raw_en": "peninsular India",
+      "description_ko": "인도 반도부에 분포합니다.",
+      "caption_ko": "인도 반도부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Streptopelia orientalis erythrocephala",
+        "Strix ocellata ocellata",
+        "Strix leptogrammica indranee",
+        "Nisaetus cirrhatus cirrhatus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 35,
+      "raw_en": "northern Luzon (northern Philippines)",
+      "description_ko": "루손섬 북부(필리핀 북부)에 분포합니다.",
+      "caption_ko": "루손섬 북부(필리핀 북부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Treron axillaris amadoni",
+        "Gallicolumba luzonica griseolateralis",
+        "Ducula aenea nuchalis",
+        "Ramphiculus merrilli faustinoi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 36,
+      "raw_en": "Malaita (central Solomon Islands)",
+      "description_ko": "말라이타섬(솔로몬제도 중부)에 분포합니다.",
+      "caption_ko": "말라이타섬(솔로몬제도 중부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Ptilinopus solomonensis ambiguus",
+        "Tachyspiza hiogaster malaitae",
+        "Todiramphus sacer mala",
+        "Coracina lineata malaitae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 37,
+      "raw_en": "Buru (southern Moluccas)",
+      "description_ko": "부루섬(몰루카제도 남부)에 분포합니다.",
+      "caption_ko": "부루섬(몰루카제도 남부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Otus magicus bouruensis",
+        "Tanysiptera galatea acis",
+        "Alisterus amboinensis buruensis",
+        "Trichoglossus borneus cyanonothus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 38,
+      "raw_en": "mountains of Bird's Head Peninsula (western New Guinea)",
+      "description_ko": "버즈헤드반도 산지(뉴기니 서부)에 분포합니다.",
+      "caption_ko": "버즈헤드반도 산지(뉴기니 서부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 10,
+      "sample_taxa": [
+        "Oreopsittacus arfaki arfaki",
+        "Machaerirhynchus nigripectus nigripectus",
+        "Aleadryas rufinucha rufinucha",
+        "Pachycephala hyperythra hyperythra"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "ambiguity_flagged",
+      "audit_note": "Bird's Head Peninsula는 영문 관용 지명이며 공식 표준 국명이 아니므로 한국어 공식 지명 주장 대신 원문 고유명사 음차로 분류."
+    },
+    {
+      "index": 39,
+      "raw_en": "Costa Rica and western Panama",
+      "description_ko": "코스타리카와 파나마 서부에 분포합니다.",
+      "caption_ko": "코스타리카와 파나마 서부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Crypturellus soui modestus",
+        "Zenaida macroura turturilla",
+        "Patagioenas fasciata crissalis",
+        "Campylopterus hemileucurus mellitus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 40,
+      "raw_en": "Isla Margarita (off Venezuela)",
+      "description_ko": "마르가리타섬(베네수엘라 앞바다)에 분포합니다.",
+      "caption_ko": "마르가리타섬(베네수엘라 앞바다) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Crypturellus erythropus margaritae",
+        "Rallus longirostris margaritae",
+        "Glaucidium brasilianum margaritae",
+        "Megascops choliba margaritae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 41,
+      "raw_en": "Galapagos",
+      "description_ko": "갈라파고스제도에 분포합니다.",
+      "caption_ko": "갈라파고스제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Anas bahamensis galapagensis",
+        "Phoenicopterus ruber glyphorhynchus",
+        "Anous stolidus galapagensis",
+        "Sula nebouxii excisa"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 42,
+      "raw_en": "Philippines",
+      "description_ko": "필리핀에 분포합니다.",
+      "caption_ko": "필리핀 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Cacomantis merulinus merulinus",
+        "Macropygia tenuirostris tenuirostris",
+        "Gallirallus torquatus torquatus",
+        "Rallina eurizonoides eurizonoides"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 43,
+      "raw_en": "Bioko Island (Gulf of Guinea)",
+      "description_ko": "비오코섬(기니만)에 분포합니다.",
+      "caption_ko": "비오코섬(기니만) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Treron calvus poensis",
+        "Pogoniulus scolopaceus stellatus",
+        "Pogoniulus subsulphureus subsulphureus",
+        "Pardipicus nivosus poensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 44,
+      "raw_en": "Palawan (southwestern Philippines)",
+      "description_ko": "팔라완섬(필리핀 남서부)에 분포합니다.",
+      "caption_ko": "팔라완섬(필리핀 남서부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Ramphiculus leclancheri gironieri",
+        "Aerodramus amelis palawanensis",
+        "Ninox scutulata palawanensis",
+        "Spilornis cheela palawanensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 45,
+      "raw_en": "western and central Andes of Colombia",
+      "description_ko": "콜롬비아 서부·중부 안데스산맥에 분포합니다.",
+      "caption_ko": "콜롬비아 서부·중부 안데스산맥 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Coeligena coeligena ferruginea",
+        "Ocreatus underwoodii incommodus",
+        "Adelomyia melanogenys cervina",
+        "Vireo leucophrys dissors"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 46,
+      "raw_en": "Nias Island (off northwestern Sumatra)",
+      "description_ko": "니아스섬(수마트라 북서부 앞바다)에 분포합니다.",
+      "caption_ko": "니아스섬(수마트라 북서부 앞바다) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Ketupa ketupu minor",
+        "Strix leptogrammica niasensis",
+        "Harpactes oreskios nias",
+        "Ceyx rufidorsa captus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 47,
+      "raw_en": "Rossel (Louisiade Archipelago, off southeastern New Guinea)",
+      "description_ko": "로셀섬(뉴기니 남동부 앞바다의 루이지아드제도)에 분포합니다.",
+      "caption_ko": "로셀섬(뉴기니 남동부 앞바다의 루이지아드제도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Tachyspiza fasciata rosseliana",
+        "Tanysiptera galatea rosseliana",
+        "Geoffroyus geoffroyi cyanicarpus",
+        "Lorius hypoinochrous rosselianus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 48,
+      "raw_en": "southern Vietnam (Langbian Plateau)",
+      "description_ko": "베트남 남부(랑비안고원)에 분포합니다.",
+      "caption_ko": "베트남 남부(랑비안고원) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 9,
+      "sample_taxa": [
+        "Pericrocotus solaris deignani",
+        "Pericrocotus ethologus annamensis",
+        "Pteruthius aeralatus annamensis",
+        "Phylloscopus reguloides ticehursti"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "ambiguity_flagged",
+      "audit_note": "Langbian Plateau는 식민지/영문 지도 표기 반영이므로 공식 베트남 한국어 지명으로 단정하지 않음."
+    },
+    {
+      "index": 49,
+      "raw_en": "eastern Andes of Colombia",
+      "description_ko": "콜롬비아 동부 안데스산맥에 분포합니다.",
+      "caption_ko": "콜롬비아 동부 안데스산맥 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Spatula cyanoptera borreroi",
+        "Ocreatus underwoodii underwoodii",
+        "Aglaiocercus kingii kingii",
+        "Hapalopsittaca amazonina amazonina"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 50,
+      "raw_en": "Cuba including Isla de la Juventud",
+      "description_ko": "후벤투드섬을 포함한 쿠바에 분포합니다.",
+      "caption_ko": "후벤투드섬을 포함한 쿠바 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Colinus virginianus cubanensis",
+        "Rallus elegans ramsdeni",
+        "Tachornis phoenicobia iradii",
+        "Asio stygius siguapa"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 51,
+      "raw_en": "Rwenzori Mountains (northeastern Democratic Republic of the Congo and southwestern Uganda)",
+      "description_ko": "르웬조리산맥(콩고민주공화국 북동부와 우간다 남서부)에 분포합니다.",
+      "caption_ko": "르웬조리산맥(콩고민주공화국 북동부와 우간다 남서부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Gallirex johnstoni johnstoni",
+        "Tachymarptis melba maximus",
+        "Bradypterus cinnamomeus mildbreadi",
+        "Psalidoprocne pristoptera ruwenzori"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 52,
+      "raw_en": "Sulawesi",
+      "description_ko": "술라웨시섬에 분포합니다.",
+      "caption_ko": "술라웨시섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Eudynamys melanorhynchus melanorhynchus",
+        "Turnix suscitator rufilatus",
+        "Tachyspiza rhodogaster rhodogaster",
+        "Pelargopsis melanorhyncha melanorhyncha"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 53,
+      "raw_en": "St. Lucia (Lesser Antilles)",
+      "description_ko": "세인트루시아(소앤틸리스제도)에 분포합니다.",
+      "caption_ko": "세인트루시아(소앤틸리스제도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Antrostomus rufus otiosus",
+        "Myiarchus oberi sanctaeluciae",
+        "Allenia fusca schwartzi",
+        "Margarops fuscatus klinikowskii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 54,
+      "raw_en": "eastern Mexico",
+      "description_ko": "멕시코 동부에 분포합니다.",
+      "caption_ko": "멕시코 동부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Antrostomus arizonae setosus",
+        "Leuconotopicus villosus intermedius",
+        "Cyclarhis gujanensis septentrionalis",
+        "Pachysylvia decurtata brevipennis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 55,
+      "raw_en": "Makira (southeastern Solomon Islands)",
+      "description_ko": "마키라섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption_ko": "마키라섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Hemiprocne mystacea carbonaria",
+        "Collocalia esculenta makirensis",
+        "Coracina lineata makirae",
+        "Rhipidura rufofronta russata"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 56,
+      "raw_en": "Hispaniola",
+      "description_ko": "히스파니올라섬에 분포합니다.",
+      "caption_ko": "히스파니올라섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Asio flammeus domingensis",
+        "Accipiter striatus striatus",
+        "Nesoctites micromegas micromegas",
+        "Tyrannus caudifasciatus gabbii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 57,
+      "raw_en": "Puerto Rico",
+      "description_ko": "푸에르토리코에 분포합니다.",
+      "caption_ko": "푸에르토리코 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Asio flammeus portoricensis",
+        "Gymnasio nudipes nudipes",
+        "Accipiter striatus venator",
+        "Buteo platypterus brunnescens"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 58,
+      "raw_en": "Ethiopia",
+      "description_ko": "에티오피아에 분포합니다.",
+      "caption_ko": "에티오피아 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Rhinopomastus aterrimus notatus",
+        "Prinia erythroptera major",
+        "Bradypterus baboecala abyssinicus",
+        "Curruca lugens lugens"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 59,
+      "raw_en": "highlands of Ethiopia",
+      "description_ko": "에티오피아 고지대에 분포합니다.",
+      "caption_ko": "에티오피아 고지대 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Jynx ruficollis aequatorialis",
+        "Pyrrhocorax pyrrhocorax baileyi",
+        "Calandrella blanfordi erlangeri",
+        "Cisticola natalensis inexpectatus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 60,
+      "raw_en": "coastal cordillera of northern Venezuela",
+      "description_ko": "베네수엘라 북부 해안 산맥에 분포합니다.",
+      "caption_ko": "베네수엘라 북부 해안 산맥 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Pipreola formosa formosa",
+        "Lepidocolaptes lacrymiger lafresnayi",
+        "Anabacerthia striaticollis venezuelana",
+        "Dendroma rufa columbiana"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 61,
+      "raw_en": "mountains of southern Baja California (Sierra de la Laguna)",
+      "description_ko": "바하칼리포르니아 남부 산지(시에라데라라구나산맥)에 분포합니다.",
+      "caption_ko": "바하칼리포르니아 남부 산지(시에라데라라구나산맥) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Vireo gilvus victoriae",
+        "Vireo huttoni cognatus",
+        "Vireo cassinii lucasanus",
+        "Psaltriparus minimus grindae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 62,
+      "raw_en": "highlands of western Sumatra",
+      "description_ko": "수마트라 서부 고지대에 분포합니다.",
+      "caption_ko": "수마트라 서부 고지대 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 8,
+      "sample_taxa": [
+        "Pnoepyga pusilla lepida",
+        "Alophoixus ochraceus sumatranus",
+        "Cyanoderma chrysaeum frigidum",
+        "Stachyris strialata strialata"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 63,
+      "raw_en": "highlands of Costa Rica and western Panama",
+      "description_ko": "코스타리카와 파나마 서부의 고지대에 분포합니다.",
+      "caption_ko": "코스타리카와 파나마 서부의 고지대 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Nothocercus bonapartei frantzii",
+        "Colibri cyanotus cabanidis",
+        "Eupherusa eximia egregia",
+        "Eubucco bourcierii salvini"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 64,
+      "raw_en": "northern Venezuela",
+      "description_ko": "베네수엘라 북부에 분포합니다.",
+      "caption_ko": "베네수엘라 북부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Crypturellus obsoletus cerviniventris",
+        "Crypturellus erythropus spencei",
+        "Lurocalis semitorquatus schaeferi",
+        "Phaethornis striigularis ignobilis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 65,
+      "raw_en": "northeastern Brazil",
+      "description_ko": "브라질 북동부에 분포합니다.",
+      "caption_ko": "브라질 북동부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Crax fasciolata pinima",
+        "Systellura longirostris pedrolimai",
+        "Campylopterus largipennis obscurus",
+        "Piculus chrysochloros paraensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 66,
+      "raw_en": "Zagros Mountains (southwestern Iran)",
+      "description_ko": "자그로스산맥(이란 남서부)에 분포합니다.",
+      "caption_ko": "자그로스산맥(이란 남서부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Tetraogallus caspius semenowtianschanskii",
+        "Picus viridis innominatus",
+        "Dendrocoptes medius sanctijohannis",
+        "Aegithalos caudatus passekii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 67,
+      "raw_en": "northern Borneo",
+      "description_ko": "보르네오 북부에 분포합니다.",
+      "caption_ko": "보르네오 북부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Macropygia tenuirostris borneensis",
+        "Strix leptogrammica vaga",
+        "Tachyspiza virgata rufotibialis",
+        "Caloramphus fuliginosus tertius"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 68,
+      "raw_en": "Lesser Sundas",
+      "description_ko": "소순다열도에 분포합니다.",
+      "caption_ko": "소순다열도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Columba vitiensis metallica",
+        "Turnix suscitator powelli",
+        "Butorides atricapilla steini",
+        "Aquila fasciata renschi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 69,
+      "raw_en": "mountains of Sumatra",
+      "description_ko": "수마트라 산지에 분포합니다.",
+      "caption_ko": "수마트라 산지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Treron sphenurus etorques",
+        "Otus spilocephalus vandewateri",
+        "Harpactes erythrocephalus flagrans",
+        "Coracina larvata melanocephala"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 70,
+      "raw_en": "southern Philippines (Mindanao)",
+      "description_ko": "필리핀 남부(민다나오섬)에 분포합니다.",
+      "caption_ko": "필리핀 남부(민다나오섬) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Ducula carola mindanensis",
+        "Pitta steerii steerii",
+        "Lanius validirostris hachisuka",
+        "Sittiparus semilarvatus nehrkorni"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 71,
+      "raw_en": "Bougainville (northwestern Solomon Islands)",
+      "description_ko": "부건빌섬(솔로몬제도 북서부)에 분포합니다.",
+      "caption_ko": "부건빌섬(솔로몬제도 북서부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Gallirallus woodfordi tertius",
+        "Tachyspiza hiogaster bougainvillei",
+        "Actenoides bougainvillei bougainvillei",
+        "Pitta anerythra pallida"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 72,
+      "raw_en": "Peleng, in Banggai Islands (off eastern Sulawesi)",
+      "description_ko": "방가이제도의 펠렝섬(술라웨시 동부 앞바다)에 분포합니다.",
+      "caption_ko": "방가이제도의 펠렝섬(술라웨시 동부 앞바다) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Turnix maculosus kinneari",
+        "Tyto rosenbergii pelengensis",
+        "Pelargopsis melanorhyncha dichrorhyncha",
+        "Halcyon coromanda pelingensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 73,
+      "raw_en": "Sulu Archipelago",
+      "description_ko": "술루제도에 분포합니다.",
+      "caption_ko": "술루제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Turnix sylvaticus suluensis",
+        "Dryocopus javensis suluensis",
+        "Tanygnathus everetti burbidgii",
+        "Oriolus steerii cinereogenys"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 74,
+      "raw_en": "Cape Verde Islands",
+      "description_ko": "카보베르데제도에 분포합니다.",
+      "caption_ko": "카보베르데제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Cursorius cursor exsul",
+        "Tyto alba detorta",
+        "Buteo buteo bannermani",
+        "Falco peregrinus madens"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 75,
+      "raw_en": "Rennell (southeastern Solomon Islands)",
+      "description_ko": "렌넬섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption_ko": "렌넬섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Microcarbo melanoleucos brevicauda",
+        "Collocalia esculenta desiderata",
+        "Geoffroyus heteroclitus hyacinthinus",
+        "Myzomela cardinalis sanfordi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 76,
+      "raw_en": "southwestern Mexico",
+      "description_ko": "멕시코 남서부에 분포합니다.",
+      "caption_ko": "멕시코 남서부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Antrostomus arizonae oaxacae",
+        "Ramosomyia violiceps violiceps",
+        "Anabacerthia variegaticeps schaldachi",
+        "Vireolanius melitophrys crossini"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 77,
+      "raw_en": "Yapen (Cenderawasih Bay, off northwestern New Guinea)",
+      "description_ko": "야펜섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption_ko": "야펜섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Aerodramus hirundinaceus baru",
+        "Sericornis nouhuysi jobiensis",
+        "Meliphaga montana steini",
+        "Edolisoma melas tommasonis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 78,
+      "raw_en": "Mussau, in St. Matthias Group (north-central Bismarck Archipelago)",
+      "description_ko": "세인트마티아스군도의 무사우섬(비스마르크제도 중북부)에 분포합니다.",
+      "caption_ko": "세인트마티아스군도의 무사우섬(비스마르크제도 중북부) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Aerodramus spodiopygius eichhorni",
+        "Tachyspiza hiogaster matthiae",
+        "Pachycephala citreogaster sexuvaria",
+        "Rhipidura rufiventris mussai"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 79,
+      "raw_en": "Anambas Islands (South China Sea)",
+      "description_ko": "아남바스제도(남중국해)에 분포합니다.",
+      "caption_ko": "아남바스제도(남중국해) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 7,
+      "sample_taxa": [
+        "Aerodramus fuciphagus amechanus",
+        "Aegithina viridissima thapsina",
+        "Hypothymis azurea opisthocyanea",
+        "Pycnonotus brunneus zapolius"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 80,
+      "raw_en": "Martinique (Lesser Antilles)",
+      "description_ko": "마르티니크섬(소앤틸리스제도)에 분포합니다.",
+      "caption_ko": "마르티니크섬(소앤틸리스제도) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Columbina passerina trochila",
+        "Hydropsalis cayennensis manati",
+        "Myiarchus oberi sclateri",
+        "Cinclocerthia gutturalis gutturalis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 81,
+      "raw_en": "Malay Peninsula",
+      "description_ko": "말레이반도에 분포합니다.",
+      "caption_ko": "말레이반도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Macropygia ruficeps malayana",
+        "Harpactes erythrocephalus chaseni",
+        "Oriolus consanguineus malayanus",
+        "Phyllergates cucullatus malayanus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 82,
+      "raw_en": "Andaman and Nicobar islands",
+      "description_ko": "안다만제도와 니코바르제도에 분포합니다.",
+      "caption_ko": "안다만제도와 니코바르제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Lewinia striata obscurior",
+        "Collocalia affinis affinis",
+        "Aerodramus fuciphagus inexpectatus",
+        "Tachyspiza virgata abdulalii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 83,
+      "raw_en": "Admiralty Islands",
+      "description_ko": "애드미럴티제도에 분포합니다.",
+      "caption_ko": "애드미럴티제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Gallirallus philippensis admiralitatis",
+        "Hemiprocne mystacea macrura",
+        "Aviceda subcristata coultasi",
+        "Tachyspiza hiogaster manusi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 84,
+      "raw_en": "southern New Guinea",
+      "description_ko": "뉴기니 남부에 분포합니다.",
+      "caption_ko": "뉴기니 남부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Turnix maculosus horsbrughi",
+        "Ninox boobook pusilla",
+        "Nannopsittacus melanogenia fuscifrons",
+        "Coracina boyeri subalaris"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 85,
+      "raw_en": "New Caledonia",
+      "description_ko": "누벨칼레도니에 분포합니다.",
+      "caption_ko": "누벨칼레도니 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 6,
+      "sample_taxa": [
+        "Nycticorax caledonicus caledonicus",
+        "Lichmera incana incana",
+        "Coracina caledonica caledonica",
+        "Pachycephala rufiventris xanthetraea"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 86,
+      "raw_en": "coastal southwestern Greenland",
+      "description_ko": "그린란드 남서부 해안에 분포합니다.",
+      "caption_ko": "그린란드 남서부 해안 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Anas platyrhynchos conboschas"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 87,
+      "raw_en": "formerly Syrian and Arabian desert; extinct ca. 1966",
+      "description_ko": "과거 시리아 사막과 아라비아 사막에 분포했으며, 약 1966년에 멸종했습니다.",
+      "caption_ko": "과거 시리아·아라비아 사막 분포 · 약 1966년 멸종",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Struthio camelus syriacus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": true,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": true
+      },
+      "audit_verdict": "correction_recommended",
+      "audit_note": "'약 1966년에'보다 '1966년경에'가 한국어 문맥에서 역사적/생물학적 연도 표기로 더 자연스러움."
+    },
+    {
+      "index": 88,
+      "raw_en": "Sahel of North Africa and the Sudan",
+      "description_ko": "북아프리카와 수단의 사헬 지역에 분포합니다.",
+      "caption_ko": "북아프리카와 수단의 사헬 지역 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Struthio camelus camelus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "ambiguity_flagged",
+      "audit_note": "원문 'the Sudan'은 수단 공화국뿐만 아니라 사하라 이남 사헬-수단 사바나 지리적 영역(The Sudan region)을 포괄하는 표현임. 공식 국가명으로만 한정되지 않도록 맥락 공유 필요."
+    },
+    {
+      "index": 89,
+      "raw_en": "southern Kenya and eastern Tanzania; introduced Australia (south-central South Australia and Riverina, New South Wales)",
+      "description_ko": "케냐 남부와 탄자니아 동부에 분포하며, 오스트레일리아(사우스오스트레일리아주 중남부와 뉴사우스웨일스주 리버리나)에 도입되었습니다.",
+      "caption_ko": "케냐 남부·탄자니아 동부 분포 · 오스트레일리아 도입",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Struthio camelus massaicus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": true,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 90,
+      "raw_en": "southern Africa",
+      "description_ko": "아프리카 남부에 분포합니다.",
+      "caption_ko": "아프리카 남부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Struthio camelus australis",
+        "Botaurus stellaris capensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 91,
+      "raw_en": "breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners",
+      "description_ko": "전북구에서 번식합니다. 번식 범위는 아이슬란드와 스페인에서 동쪽으로 러시아 동부까지, 알래스카에서 그린란드까지이며, 남쪽으로 바하칼리포르니아 북부와 미국 중부 대서양 연안 주들까지 이어집니다. 월동 범위는 북아프리카·인도·중국 남부와 멕시코 중부·쿠바까지입니다. 그 밖의 여러 지역에도 널리 도입되었으며, 현지의 같은 속 조류와 흔히 교잡합니다.",
+      "caption_ko": "전북구 번식 · 남쪽 지역 월동 · 다른 지역 도입",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Anas platyrhynchos platyrhynchos"
+      ],
+      "features": {
+        "breeding": true,
+        "wintering": true,
+        "extinct": false,
+        "introduced": true,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "correction_recommended",
+      "audit_note": "원문의 'winters to North Africa, India, and southern China, and central Mexico and Cuba'에 비해 캡션의 '남쪽 지역 월동'은 지나치게 추상화됨. 72자 제한 내에서 주요 대륙/지역(북아프리카·인도·중미 등)을 명시하면 정보 전달력이 대폭 향상됨."
+    },
+    {
+      "index": 92,
+      "raw_en": "Eurasia to Manchuria, India, Africa, and Comoros",
+      "description_ko": "유라시아에서 만주·인도·아프리카·코모로까지 분포합니다.",
+      "caption_ko": "유라시아에서 만주·인도·아프리카·코모로까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Ardea cinerea cinerea"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 93,
+      "raw_en": "Japan, China, Indochina, Malaya, Sumatra, and Java",
+      "description_ko": "일본·중국·인도차이나·말라야·수마트라섬·자바섬에 분포합니다.",
+      "caption_ko": "일본·중국·인도차이나·말라야·수마트라섬·자바섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Ardea cinerea jouyi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 94,
+      "raw_en": "islands off Banc d'Arguin (Mauritania)",
+      "description_ko": "모리타니 방다르갱 앞바다의 섬들에 분포합니다.",
+      "caption_ko": "모리타니 방다르갱 앞바다의 섬들 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Ardea cinerea monicae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 95,
+      "raw_en": "Arctic tundra of North America (Alaska to Greenland)",
+      "description_ko": "북아메리카의 북극 툰드라(알래스카에서 그린란드까지)에 분포합니다.",
+      "caption_ko": "북아메리카의 북극 툰드라(알래스카에서 그린란드까지) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus tundrius"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 96,
+      "raw_en": "coastal western North America (Aleutian Islands to Washington)",
+      "description_ko": "북아메리카 서부 해안(알류샨열도에서 워싱턴주까지)에 분포합니다.",
+      "caption_ko": "북아메리카 서부 해안(알류샨열도에서 워싱턴주까지) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus pealei"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 97,
+      "raw_en": "North America (south of tundra) to northern Mexico",
+      "description_ko": "북아메리카의 툰드라 이남에서 멕시코 북부까지 분포합니다.",
+      "caption_ko": "북아메리카의 툰드라 이남에서 멕시코 북부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus anatum"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 98,
+      "raw_en": "western South America (Ecuador to Tierra del Fuego and Falkland Islands)",
+      "description_ko": "남아메리카 서부(에콰도르에서 티에라델푸에고와 포클랜드제도까지)에 분포합니다.",
+      "caption_ko": "남아메리카 서부(에콰도르에서 티에라델푸에고와 포클랜드제도까지) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus cassini"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 99,
+      "raw_en": "northern Eurasia (south of the tundra)",
+      "description_ko": "유라시아 북부의 툰드라 이남에 분포합니다.",
+      "caption_ko": "유라시아 북부의 툰드라 이남 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus peregrinus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 100,
+      "raw_en": "tundra of Eurasia (Lapland eastward to northeastern Siberia); winters southward to south-eastern Asia and Australia",
+      "description_ko": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동합니다.",
+      "caption_ko": "유라시아 툰드라 분포 · 동남아시아·오스트레일리아 월동",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus calidus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": true,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "correction_recommended",
+      "audit_note": "원문 'winters southward to...'의 생물학적 의미인 '월동(wintering)'이 캡션('동남아시아·오스트레일리아 월동')에는 반영되었으나 본문 설명에서는 '이동합니다'로 완화되어 있음. 캡션과 본문 용어를 '월동'으로 일치시키는 것이 더 정확함."
+    },
+    {
+      "index": 101,
+      "raw_en": "northeastern Siberia to Kamchatka Peninsula and Japan",
+      "description_ko": "시베리아 북동부에서 캄차카반도와 일본까지 분포합니다.",
+      "caption_ko": "시베리아 북동부에서 캄차카반도와 일본까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus japonensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 102,
+      "raw_en": "Mediterranean basin eastward to the Caucasus Mountains",
+      "description_ko": "지중해 유역에서 동쪽으로 캅카스산맥까지 분포합니다.",
+      "caption_ko": "지중해 유역에서 동쪽으로 캅카스산맥까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus brookei"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 103,
+      "raw_en": "Pakistan, India, and Sri Lanka to southeastern China",
+      "description_ko": "파키스탄·인도·스리랑카에서 중국 남동부까지 분포합니다.",
+      "caption_ko": "파키스탄·인도·스리랑카에서 중국 남동부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus peregrinator"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 104,
+      "raw_en": "Volcano Islands and Bonin Islands",
+      "description_ko": "가잔열도와 오가사와라제도에 분포합니다.",
+      "caption_ko": "가잔열도와 오가사와라제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus furuitii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 105,
+      "raw_en": "Morocco, Mauritania, and sub-Saharan Africa",
+      "description_ko": "모로코·모리타니와 사하라 이남 아프리카에 분포합니다.",
+      "caption_ko": "모로코·모리타니와 사하라 이남 아프리카 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus minor"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 106,
+      "raw_en": "Madagascar and Comoros",
+      "description_ko": "마다가스카르와 코모로에 분포합니다.",
+      "caption_ko": "마다가스카르와 코모로 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus radama"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 107,
+      "raw_en": "Thai-Malay Peninsula, Philippines, Greater Sundas, New Guinea, and Bismarck Archipelago; birds of Solomon Islands probably also this subspecies",
+      "description_ko": "타이·말레이반도, 필리핀, 대순다열도, 뉴기니, 비스마르크제도에 분포합니다. 솔로몬제도의 개체들도 이 아종에 속할 가능성이 있습니다.",
+      "caption_ko": "동남아시아·뉴기니·비스마르크제도 · 솔로몬제도는 잠정",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus ernesti"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": true,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 108,
+      "raw_en": "Australia including Tasmania",
+      "description_ko": "태즈메이니아를 포함한 오스트레일리아에 분포합니다.",
+      "caption_ko": "태즈메이니아를 포함한 오스트레일리아 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Tachyspiza cirrocephala cirrocephala",
+        "Falco peregrinus macropus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 109,
+      "raw_en": "Vanuatu and New Caledonia",
+      "description_ko": "바누아투와 누벨칼레도니에 분포합니다.",
+      "caption_ko": "바누아투와 누벨칼레도니 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Tachybaptus novaehollandiae leucosternos",
+        "Falco peregrinus nesiotes"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 110,
+      "raw_en": "eastern Iran to Mongolia",
+      "description_ko": "이란 동부에서 몽골까지 분포합니다.",
+      "caption_ko": "이란 동부에서 몽골까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus babylonicus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 111,
+      "raw_en": "Canary Islands; locally from northern Africa (Morocco) to western Iran",
+      "description_ko": "카나리아제도 및 북아프리카(모로코)에서 이란 서부에 이르는 일부 지역에 분포합니다.",
+      "caption_ko": "카나리아제도 및 북아프리카(모로코)에서 이란 서부에 이르는 일부 지역 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Falco peregrinus pelegrinoides"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": true
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 112,
+      "raw_en": "Sakhalin, Kuril Islands, and northern Japan",
+      "description_ko": "사할린·쿠릴열도·일본 북부에 분포합니다.",
+      "caption_ko": "사할린·쿠릴열도·일본 북부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos japonensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 113,
+      "raw_en": "southern Ryukyu Islands (Amami Ōshima, Okinawa, and Miyako-Jima, southern Japan)",
+      "description_ko": "류큐열도 남부(일본 남부의 아마미오시마·오키나와·미야코지마)에 분포합니다.",
+      "caption_ko": "류큐열도 남부(일본 남부의 아마미오시마·오키나와·미야코지마) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos connectens"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 114,
+      "raw_en": "Yaeyama Islands of southern Ryukyu Islands (Ishigaki, Iriomote, Kohama, Kuru, and Aragusuku, southern Japan)",
+      "description_ko": "류큐열도 남부의 야에야마제도(일본 남부의 이시가키·이리오모테·고하마·쿠루·아라구스쿠)에 분포합니다.",
+      "caption_ko": "류큐열도 남부의 야에야마제도(일본 남부의 이시가키·이리오모테·고하마·쿠루·아라구스쿠) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos osai"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "ambiguity_flagged",
+      "audit_note": "원문 자체의 'Kuru'를 그대로 음차한 '쿠루'는 원문 충실성을 보존하지만 실제 지리는 구로시마(黒島)임. 임의 왜곡 방지 및 출처 모호성 플래그 필요."
+    },
+    {
+      "index": 115,
+      "raw_en": "northeastern Asia",
+      "description_ko": "아시아 북동부에 분포합니다.",
+      "caption_ko": "아시아 북동부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos mandshuricus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 116,
+      "raw_en": "central and southern China including Hainan, Taiwan, and northern Indochina",
+      "description_ko": "하이난섬을 포함한 중국 중부·남부, 타이완, 인도차이나 북부에 분포합니다.",
+      "caption_ko": "하이난섬을 포함한 중국 중부·남부, 타이완, 인도차이나 북부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos colonorum"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 117,
+      "raw_en": "eastern Himalayas to southeastern Tibet, northern Myanmar, and western China",
+      "description_ko": "히말라야 동부에서 티베트 남동부·미얀마 북부·중국 서부까지 분포합니다.",
+      "caption_ko": "히말라야 동부에서 티베트 남동부·미얀마 북부·중국 서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos tibetosinensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 118,
+      "raw_en": "far eastern Iran to northwestern India and western Himalayas",
+      "description_ko": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포합니다.",
+      "caption_ko": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos intermedius"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "correction_recommended",
+      "audit_note": "'far eastern Iran'을 '이란의 동쪽 끝에서'로 번역한 것은 뜻은 통하나 지리 표현으로는 '이란 극동부에서'가 더 자연스럽고 간결함."
+    },
+    {
+      "index": 119,
+      "raw_en": "southern Indochina, the Thai-Malay Peninsula, Sumatra, Java, and the Lesser Sundas",
+      "description_ko": "인도차이나 남부·타이·말레이반도·수마트라섬·자바섬·소순다열도에 분포합니다.",
+      "caption_ko": "인도차이나 남부·타이·말레이반도·수마트라섬·자바섬·소순다열도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos macrorhynchos"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 120,
+      "raw_en": "northeastern India (west to West Bengal) and eastern Nepal eastward to western Thailand, and Andaman Islands",
+      "description_ko": "인도 북동부(서쪽으로 서벵골까지)와 네팔 동부에서 동쪽으로 타이 서부까지 및 안다만제도에 분포합니다.",
+      "caption_ko": "인도 북동부(서쪽으로 서벵골까지)와 네팔 동부에서 동쪽으로 타이 서부까지 및 안다만제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Corvus macrorhynchos levaillantii"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 121,
+      "raw_en": "peninsular India and Sri Lanka",
+      "description_ko": "인도 반도부와 스리랑카에 분포합니다.",
+      "caption_ko": "인도 반도부와 스리랑카 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Columba livia intermedia",
+        "Corvus macrorhynchos culminatus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 122,
+      "raw_en": "British Isles",
+      "description_ko": "브리튼제도에 분포합니다.",
+      "caption_ko": "브리튼제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 3,
+      "sample_taxa": [
+        "Parus major newtoni",
+        "Aegithalos caudatus rosaceus",
+        "Pyrrhula pyrrhula pileata"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 123,
+      "raw_en": "Europe to northwestern Iran, Siberia, Lake Baikal, and Altai and Sayan mountains",
+      "description_ko": "유럽에서 이란 북서부·시베리아·바이칼호·알타이산맥·사얀산맥까지 분포합니다.",
+      "caption_ko": "유럽에서 이란 북서부·시베리아·바이칼호·알타이산맥·사얀산맥까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major major"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 124,
+      "raw_en": "northwestern China (northwestern Xinjiang) to Mongolia and eastern Siberia",
+      "description_ko": "중국 북서부(신장 북서부)에서 몽골과 시베리아 동부까지 분포합니다.",
+      "caption_ko": "중국 북서부(신장 북서부)에서 몽골과 시베리아 동부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major kapustini"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 125,
+      "raw_en": "Iberian Peninsula and Corsica",
+      "description_ko": "이베리아반도와 코르시카섬에 분포합니다.",
+      "caption_ko": "이베리아반도와 코르시카섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major corsus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 126,
+      "raw_en": "Balearic Islands",
+      "description_ko": "발레아레스제도에 분포합니다.",
+      "caption_ko": "발레아레스제도 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Parus major mallorcae",
+        "Loxia curvirostra balearica"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 127,
+      "raw_en": "northwestern Africa (Morocco to Tunisia)",
+      "description_ko": "아프리카 북서부(모로코에서 튀니지까지)에 분포합니다.",
+      "caption_ko": "아프리카 북서부(모로코에서 튀니지까지) 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Accipiter nisus punicus",
+        "Parus major excelsus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 128,
+      "raw_en": "Sardinia",
+      "description_ko": "사르데냐섬에 분포합니다.",
+      "caption_ko": "사르데냐섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 4,
+      "sample_taxa": [
+        "Dendrocopos major harterti",
+        "Garrulus glandarius ichnusae",
+        "Parus major ecki",
+        "Fringilla coelebs sarda"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 129,
+      "raw_en": "southern Italy, Sicily, southern Greece, and Mediterranean islands including Cyprus",
+      "description_ko": "이탈리아 남부·시칠리아섬·그리스 남부 및 키프로스를 포함한 지중해의 섬들에 분포합니다.",
+      "caption_ko": "이탈리아 남부·시칠리아섬·그리스 남부 및 키프로스를 포함한 지중해의 섬들 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major aphrodite"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 130,
+      "raw_en": "Crete",
+      "description_ko": "크레타섬에 분포합니다.",
+      "caption_ko": "크레타섬 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 2,
+      "sample_taxa": [
+        "Garrulus glandarius cretorum",
+        "Parus major niethammeri"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 131,
+      "raw_en": "northwestern Syria, Lebanon, Israel, and Jordan",
+      "description_ko": "시리아 북서부·레바논·이스라엘·요르단에 분포합니다.",
+      "caption_ko": "시리아 북서부·레바논·이스라엘·요르단 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major terraesanctae"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 132,
+      "raw_en": "southeastern Azerbaijan and northwestern Iran",
+      "description_ko": "아제르바이잔 남동부와 이란 북서부에 분포합니다.",
+      "caption_ko": "아제르바이잔 남동부와 이란 북서부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major karelini"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 133,
+      "raw_en": "northern Iraq to north-central and southwestern Iran",
+      "description_ko": "이라크 북부에서 이란 중북부·남서부까지 분포합니다.",
+      "caption_ko": "이라크 북부에서 이란 중북부·남서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major blanfordi"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 134,
+      "raw_en": "Russia to Tien Shan and Karatau mountains and northwestern Afghanistan",
+      "description_ko": "러시아에서 톈산산맥·카라타우산맥 및 아프가니스탄 북서부까지 분포합니다.",
+      "caption_ko": "러시아에서 톈산산맥·카라타우산맥 및 아프가니스탄 북서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major bokharensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 135,
+      "raw_en": "Lake Balkhash to western China (Xinjiang) and southwestern Mongolia",
+      "description_ko": "발하슈호에서 중국 서부(신장)와 몽골 남서부까지 분포합니다.",
+      "caption_ko": "발하슈호에서 중국 서부(신장)와 몽골 남서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major turkestanicus"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 136,
+      "raw_en": "mountains in Tajikistan (Pamir and Alai) and Kyrgyzstan eastward to western Tien Shan",
+      "description_ko": "타지키스탄(파미르·알라이)과 키르기스스탄의 산지에서 동쪽으로 톈산산맥 서부까지 분포합니다.",
+      "caption_ko": "타지키스탄(파미르·알라이)과 키르기스스탄의 산지에서 동쪽으로 톈산산맥 서부까지 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major ferghanensis"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    },
+    {
+      "index": 137,
+      "raw_en": "northeastern Iran and adjacent southwestern Turkmenistan",
+      "description_ko": "이란 북동부와 이에 인접한 투르크메니스탄 남서부에 분포합니다.",
+      "caption_ko": "이란 북동부와 이에 인접한 투르크메니스탄 남서부 분포",
+      "status": "reviewed",
+      "matched_taxa_count": 1,
+      "sample_taxa": [
+        "Parus major intermedius"
+      ],
+      "features": {
+        "breeding": false,
+        "wintering": false,
+        "extinct": false,
+        "introduced": false,
+        "uncertain": false,
+        "qualifiers": false
+      },
+      "audit_verdict": "verified_sound",
+      "audit_note": "Source phrase semantics, direction, and geographic scope faithfully preserved."
+    }
+  ]
+}

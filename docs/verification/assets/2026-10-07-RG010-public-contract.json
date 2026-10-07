@@ -1,0 +1,37 @@
+{
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "lineage_name": "청둥오리",
+  "expected_scientific_name": "Anas platyrhynchos",
+  "expected_korean_name_status": "source-reference",
+  "health": {
+    "path": "/health",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "openapi": {
+    "path": "/openapi.json",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "lineage": {
+    "path": "/v1/taxa/lineage?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "process_taxonomy_release": "fixture-avlist-2025",
+  "lineage_taxonomy_release": "v2025b",
+  "structural_errors": [],
+  "schema_drift": [],
+  "response_drift": [],
+  "canary_issues": [],
+  "notes": [
+    "health.taxonomy_release is the fixture-corpus process release used by /v1/answers and /v1/search, not the AviList reference-taxonomy release served by /v1/taxa/lineage -- the two are unrelated data areas.",
+    "health reports process release 'fixture-avlist-2025'; lineage reports AviList release 'v2025b'. A difference between these two values is expected and is not a defect by itself."
+  ],
+  "backend_reachable": true,
+  "contract_parity_ok": true,
+  "passed": true
+}

@@ -1,0 +1,40 @@
+{
+  "scope": "Local disposable Neo4j official snapshot; local FastAPI TestClient, not NAS or external API",
+  "total": 19879,
+  "counts": {
+    "reviewed": 1109,
+    "pending-review": 18770
+  },
+  "http_checks": [
+    {
+      "parent": "청둥오리",
+      "profiles": 2,
+      "reviewed": 2
+    },
+    {
+      "parent": "왜가리",
+      "profiles": 4,
+      "reviewed": 4
+    },
+    {
+      "parent": "Struthio camelus",
+      "profiles": 4,
+      "reviewed": 4
+    },
+    {
+      "parent": "Falco peregrinus",
+      "profiles": 18,
+      "reviewed": 18
+    },
+    {
+      "parent": "Parus major",
+      "profiles": 16,
+      "reviewed": 16
+    },
+    {
+      "parent": "Corvus macrorhynchos",
+      "profiles": 10,
+      "reviewed": 10
+    }
+  ]
+}
