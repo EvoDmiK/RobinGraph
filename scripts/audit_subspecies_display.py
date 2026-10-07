@@ -20,6 +20,7 @@ def audit(content):
         raise ValueError('AviList snapshot changed; review the new source before auditing')
     rows = json.loads(content)
     counts = dict(subspecies=0, source_ranges=0, named=0, korean_descriptions=0, english_originals=0, distribution_captions=0)
+    review_counts = {}
     ids = set()
     parent = None
     examples = []
@@ -40,6 +41,8 @@ def audit(content):
             assert display['range_text'] == raw[13].strip()
             assert display.get('korean_name') or display.get('english_name') or display.get('display_label')
             assert display.get('description') and display.get('description_source_url')
+            status = display['range_review_status']
+            review_counts[status] = review_counts.get(status, 0) + 1
             counts['subspecies'] += 1
             counts['source_ranges'] += bool(raw[13])
             counts['named'] += bool(display.get('korean_name') or display.get('english_name'))
@@ -51,7 +54,7 @@ def audit(content):
         elif raw[1] in ('order', 'family', 'genus'):
             parent = None
     assert counts['subspecies'] == 19879
-    return dict(source_url=SOURCE, source_sha256=digest, taxonomy_release='v2025b', scope='full primary snapshot, shared display function; not live DB/API', counts=counts, examples=examples)
+    return dict(source_url=SOURCE, source_sha256=digest, taxonomy_release='v2025b', scope='full primary snapshot, shared display function; not live DB/API', counts=counts, range_review_counts=review_counts, examples=examples)
 
 
 def main():

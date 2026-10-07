@@ -1,0 +1,692 @@
+{
+  "schema_version": 1,
+  "reviewer": "Codex source comparison, 2026-10-07",
+  "review_method": "Exact complete source phrase comparison; geographic descriptions, not vernacular names. No independent human review claimed.",
+  "phrases": {
+    "Sri Lanka": {
+      "description": "스리랑카에 분포합니다.",
+      "caption": "스리랑카 분포",
+      "status": "reviewed"
+    },
+    "Hainan (southern China)": {
+      "description": "하이난섬(중국 남부)에 분포합니다.",
+      "caption": "하이난섬(중국 남부) 분포",
+      "status": "reviewed"
+    },
+    "Santa Marta Mountains (northeastern Colombia)": {
+      "description": "산타마르타산맥(콜롬비아 북동부)에 분포합니다.",
+      "caption": "산타마르타산맥(콜롬비아 북동부) 분포",
+      "status": "reviewed"
+    },
+    "Taiwan": {
+      "description": "타이완에 분포합니다.",
+      "caption": "타이완 분포",
+      "status": "reviewed"
+    },
+    "Java": {
+      "description": "자바섬에 분포합니다.",
+      "caption": "자바섬 분포",
+      "status": "reviewed"
+    },
+    "Borneo": {
+      "description": "보르네오섬에 분포합니다.",
+      "caption": "보르네오섬 분포",
+      "status": "reviewed"
+    },
+    "Sierra de Perijá (Colombia/Venezuela border)": {
+      "description": "페리하산맥(콜롬비아·베네수엘라 국경)에 분포합니다.",
+      "caption": "페리하산맥(콜롬비아·베네수엘라 국경) 분포",
+      "status": "reviewed"
+    },
+    "Andaman Islands": {
+      "description": "안다만제도에 분포합니다.",
+      "caption": "안다만제도 분포",
+      "status": "reviewed"
+    },
+    "Java and Bali": {
+      "description": "자바섬과 발리섬에 분포합니다.",
+      "caption": "자바섬과 발리섬 분포",
+      "status": "reviewed"
+    },
+    "Bioko (Gulf of Guinea)": {
+      "description": "비오코섬(기니만)에 분포합니다.",
+      "caption": "비오코섬(기니만) 분포",
+      "status": "reviewed"
+    },
+    "Madagascar": {
+      "description": "마다가스카르에 분포합니다.",
+      "caption": "마다가스카르 분포",
+      "status": "reviewed"
+    },
+    "Tres Marías Islands (off western Mexico)": {
+      "description": "트레스마리아스제도(멕시코 서부 앞바다)에 분포합니다.",
+      "caption": "트레스마리아스제도(멕시코 서부 앞바다) 분포",
+      "status": "reviewed"
+    },
+    "Nicobar Islands": {
+      "description": "니코바르제도에 분포합니다.",
+      "caption": "니코바르제도 분포",
+      "status": "reviewed"
+    },
+    "Tobago": {
+      "description": "토바고섬에 분포합니다.",
+      "caption": "토바고섬 분포",
+      "status": "reviewed"
+    },
+    "northeastern Australia (Cape York Peninsula, northern Queensland)": {
+      "description": "오스트레일리아 북동부(퀸즐랜드 북부의 케이프요크반도)에 분포합니다.",
+      "caption": "오스트레일리아 북동부(퀸즐랜드 북부의 케이프요크반도) 분포",
+      "status": "reviewed"
+    },
+    "Trinidad": {
+      "description": "트리니다드섬에 분포합니다.",
+      "caption": "트리니다드섬 분포",
+      "status": "reviewed"
+    },
+    "Guadalcanal (southeastern Solomon Islands)": {
+      "description": "과달카날섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption": "과달카날섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed"
+    },
+    "Aru Islands (off southwestern New Guinea)": {
+      "description": "아루제도(뉴기니 남서부 앞바다)에 분포합니다.",
+      "caption": "아루제도(뉴기니 남서부 앞바다) 분포",
+      "status": "reviewed"
+    },
+    "northeastern Australia (Wet Tropics region, northern Queensland)": {
+      "description": "오스트레일리아 북동부(퀸즐랜드 북부의 웨트트로픽스 지역)에 분포합니다.",
+      "caption": "오스트레일리아 북동부(퀸즐랜드 북부의 웨트트로픽스 지역) 분포",
+      "status": "reviewed"
+    },
+    "Falkland Islands": {
+      "description": "포클랜드제도에 분포합니다.",
+      "caption": "포클랜드제도 분포",
+      "status": "reviewed"
+    },
+    "Sumatra": {
+      "description": "수마트라섬에 분포합니다.",
+      "caption": "수마트라섬 분포",
+      "status": "reviewed"
+    },
+    "southern Vietnam": {
+      "description": "베트남 남부에 분포합니다.",
+      "caption": "베트남 남부 분포",
+      "status": "reviewed"
+    },
+    "southern India and Sri Lanka": {
+      "description": "인도 남부와 스리랑카에 분포합니다.",
+      "caption": "인도 남부와 스리랑카 분포",
+      "status": "reviewed"
+    },
+    "Tasmania": {
+      "description": "태즈메이니아섬에 분포합니다.",
+      "caption": "태즈메이니아섬 분포",
+      "status": "reviewed"
+    },
+    "Jamaica": {
+      "description": "자메이카에 분포합니다.",
+      "caption": "자메이카 분포",
+      "status": "reviewed"
+    },
+    "Waigeo (Raja Ampat Islands, off western New Guinea)": {
+      "description": "와이게오섬(뉴기니 서부 앞바다의 라자암팟제도)에 분포합니다.",
+      "caption": "와이게오섬(뉴기니 서부 앞바다의 라자암팟제도) 분포",
+      "status": "reviewed"
+    },
+    "mountains of southeastern New Guinea": {
+      "description": "뉴기니 남동부 산지에 분포합니다.",
+      "caption": "뉴기니 남동부 산지 분포",
+      "status": "reviewed"
+    },
+    "Biak (Cenderawasih Bay, off northwestern New Guinea)": {
+      "description": "비아크섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption": "비아크섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed"
+    },
+    "Sumba (Lesser Sundas)": {
+      "description": "숨바섬(소순다열도)에 분포합니다.",
+      "caption": "숨바섬(소순다열도) 분포",
+      "status": "reviewed"
+    },
+    "Cuba": {
+      "description": "쿠바에 분포합니다.",
+      "caption": "쿠바 분포",
+      "status": "reviewed"
+    },
+    "Bismarck Archipelago": {
+      "description": "비스마르크제도에 분포합니다.",
+      "caption": "비스마르크제도 분포",
+      "status": "reviewed"
+    },
+    "Numfor (Cenderawasih Bay, off northwestern New Guinea)": {
+      "description": "눔포르섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption": "눔포르섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed"
+    },
+    "northeastern Australia (northeastern Cape York Peninsula, northern Queensland)": {
+      "description": "오스트레일리아 북동부(퀸즐랜드 북부 케이프요크반도의 북동부)에 분포합니다.",
+      "caption": "오스트레일리아 북동부(퀸즐랜드 북부 케이프요크반도의 북동부) 분포",
+      "status": "reviewed"
+    },
+    "peninsular India": {
+      "description": "인도 반도부에 분포합니다.",
+      "caption": "인도 반도부 분포",
+      "status": "reviewed"
+    },
+    "northern Luzon (northern Philippines)": {
+      "description": "루손섬 북부(필리핀 북부)에 분포합니다.",
+      "caption": "루손섬 북부(필리핀 북부) 분포",
+      "status": "reviewed"
+    },
+    "Malaita (central Solomon Islands)": {
+      "description": "말라이타섬(솔로몬제도 중부)에 분포합니다.",
+      "caption": "말라이타섬(솔로몬제도 중부) 분포",
+      "status": "reviewed"
+    },
+    "Buru (southern Moluccas)": {
+      "description": "부루섬(몰루카제도 남부)에 분포합니다.",
+      "caption": "부루섬(몰루카제도 남부) 분포",
+      "status": "reviewed"
+    },
+    "mountains of Bird's Head Peninsula (western New Guinea)": {
+      "description": "버즈헤드반도 산지(뉴기니 서부)에 분포합니다.",
+      "caption": "버즈헤드반도 산지(뉴기니 서부) 분포",
+      "status": "reviewed"
+    },
+    "Costa Rica and western Panama": {
+      "description": "코스타리카와 파나마 서부에 분포합니다.",
+      "caption": "코스타리카와 파나마 서부 분포",
+      "status": "reviewed"
+    },
+    "Isla Margarita (off Venezuela)": {
+      "description": "마르가리타섬(베네수엘라 앞바다)에 분포합니다.",
+      "caption": "마르가리타섬(베네수엘라 앞바다) 분포",
+      "status": "reviewed"
+    },
+    "Galapagos": {
+      "description": "갈라파고스제도에 분포합니다.",
+      "caption": "갈라파고스제도 분포",
+      "status": "reviewed"
+    },
+    "Philippines": {
+      "description": "필리핀에 분포합니다.",
+      "caption": "필리핀 분포",
+      "status": "reviewed"
+    },
+    "Bioko Island (Gulf of Guinea)": {
+      "description": "비오코섬(기니만)에 분포합니다.",
+      "caption": "비오코섬(기니만) 분포",
+      "status": "reviewed"
+    },
+    "Palawan (southwestern Philippines)": {
+      "description": "팔라완섬(필리핀 남서부)에 분포합니다.",
+      "caption": "팔라완섬(필리핀 남서부) 분포",
+      "status": "reviewed"
+    },
+    "western and central Andes of Colombia": {
+      "description": "콜롬비아 서부·중부 안데스산맥에 분포합니다.",
+      "caption": "콜롬비아 서부·중부 안데스산맥 분포",
+      "status": "reviewed"
+    },
+    "Nias Island (off northwestern Sumatra)": {
+      "description": "니아스섬(수마트라 북서부 앞바다)에 분포합니다.",
+      "caption": "니아스섬(수마트라 북서부 앞바다) 분포",
+      "status": "reviewed"
+    },
+    "Rossel (Louisiade Archipelago, off southeastern New Guinea)": {
+      "description": "로셀섬(뉴기니 남동부 앞바다의 루이지아드제도)에 분포합니다.",
+      "caption": "로셀섬(뉴기니 남동부 앞바다의 루이지아드제도) 분포",
+      "status": "reviewed"
+    },
+    "southern Vietnam (Langbian Plateau)": {
+      "description": "베트남 남부(랑비안고원)에 분포합니다.",
+      "caption": "베트남 남부(랑비안고원) 분포",
+      "status": "reviewed"
+    },
+    "eastern Andes of Colombia": {
+      "description": "콜롬비아 동부 안데스산맥에 분포합니다.",
+      "caption": "콜롬비아 동부 안데스산맥 분포",
+      "status": "reviewed"
+    },
+    "Cuba including Isla de la Juventud": {
+      "description": "후벤투드섬을 포함한 쿠바에 분포합니다.",
+      "caption": "후벤투드섬을 포함한 쿠바 분포",
+      "status": "reviewed"
+    },
+    "Rwenzori Mountains (northeastern Democratic Republic of the Congo and southwestern Uganda)": {
+      "description": "르웬조리산맥(콩고민주공화국 북동부와 우간다 남서부)에 분포합니다.",
+      "caption": "르웬조리산맥(콩고민주공화국 북동부와 우간다 남서부) 분포",
+      "status": "reviewed"
+    },
+    "Sulawesi": {
+      "description": "술라웨시섬에 분포합니다.",
+      "caption": "술라웨시섬 분포",
+      "status": "reviewed"
+    },
+    "St. Lucia (Lesser Antilles)": {
+      "description": "세인트루시아(소앤틸리스제도)에 분포합니다.",
+      "caption": "세인트루시아(소앤틸리스제도) 분포",
+      "status": "reviewed"
+    },
+    "eastern Mexico": {
+      "description": "멕시코 동부에 분포합니다.",
+      "caption": "멕시코 동부 분포",
+      "status": "reviewed"
+    },
+    "Makira (southeastern Solomon Islands)": {
+      "description": "마키라섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption": "마키라섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed"
+    },
+    "Hispaniola": {
+      "description": "히스파니올라섬에 분포합니다.",
+      "caption": "히스파니올라섬 분포",
+      "status": "reviewed"
+    },
+    "Puerto Rico": {
+      "description": "푸에르토리코에 분포합니다.",
+      "caption": "푸에르토리코 분포",
+      "status": "reviewed"
+    },
+    "Ethiopia": {
+      "description": "에티오피아에 분포합니다.",
+      "caption": "에티오피아 분포",
+      "status": "reviewed"
+    },
+    "highlands of Ethiopia": {
+      "description": "에티오피아 고지대에 분포합니다.",
+      "caption": "에티오피아 고지대 분포",
+      "status": "reviewed"
+    },
+    "coastal cordillera of northern Venezuela": {
+      "description": "베네수엘라 북부 해안 산맥에 분포합니다.",
+      "caption": "베네수엘라 북부 해안 산맥 분포",
+      "status": "reviewed"
+    },
+    "mountains of southern Baja California (Sierra de la Laguna)": {
+      "description": "바하칼리포르니아 남부 산지(시에라데라라구나산맥)에 분포합니다.",
+      "caption": "바하칼리포르니아 남부 산지(시에라데라라구나산맥) 분포",
+      "status": "reviewed"
+    },
+    "highlands of western Sumatra": {
+      "description": "수마트라 서부 고지대에 분포합니다.",
+      "caption": "수마트라 서부 고지대 분포",
+      "status": "reviewed"
+    },
+    "highlands of Costa Rica and western Panama": {
+      "description": "코스타리카와 파나마 서부의 고지대에 분포합니다.",
+      "caption": "코스타리카와 파나마 서부의 고지대 분포",
+      "status": "reviewed"
+    },
+    "northern Venezuela": {
+      "description": "베네수엘라 북부에 분포합니다.",
+      "caption": "베네수엘라 북부 분포",
+      "status": "reviewed"
+    },
+    "northeastern Brazil": {
+      "description": "브라질 북동부에 분포합니다.",
+      "caption": "브라질 북동부 분포",
+      "status": "reviewed"
+    },
+    "Zagros Mountains (southwestern Iran)": {
+      "description": "자그로스산맥(이란 남서부)에 분포합니다.",
+      "caption": "자그로스산맥(이란 남서부) 분포",
+      "status": "reviewed"
+    },
+    "northern Borneo": {
+      "description": "보르네오 북부에 분포합니다.",
+      "caption": "보르네오 북부 분포",
+      "status": "reviewed"
+    },
+    "Lesser Sundas": {
+      "description": "소순다열도에 분포합니다.",
+      "caption": "소순다열도 분포",
+      "status": "reviewed"
+    },
+    "mountains of Sumatra": {
+      "description": "수마트라 산지에 분포합니다.",
+      "caption": "수마트라 산지 분포",
+      "status": "reviewed"
+    },
+    "southern Philippines (Mindanao)": {
+      "description": "필리핀 남부(민다나오섬)에 분포합니다.",
+      "caption": "필리핀 남부(민다나오섬) 분포",
+      "status": "reviewed"
+    },
+    "Bougainville (northwestern Solomon Islands)": {
+      "description": "부건빌섬(솔로몬제도 북서부)에 분포합니다.",
+      "caption": "부건빌섬(솔로몬제도 북서부) 분포",
+      "status": "reviewed"
+    },
+    "Peleng, in Banggai Islands (off eastern Sulawesi)": {
+      "description": "방가이제도의 펠렝섬(술라웨시 동부 앞바다)에 분포합니다.",
+      "caption": "방가이제도의 펠렝섬(술라웨시 동부 앞바다) 분포",
+      "status": "reviewed"
+    },
+    "Sulu Archipelago": {
+      "description": "술루제도에 분포합니다.",
+      "caption": "술루제도 분포",
+      "status": "reviewed"
+    },
+    "Cape Verde Islands": {
+      "description": "카보베르데제도에 분포합니다.",
+      "caption": "카보베르데제도 분포",
+      "status": "reviewed"
+    },
+    "Rennell (southeastern Solomon Islands)": {
+      "description": "렌넬섬(솔로몬제도 남동부)에 분포합니다.",
+      "caption": "렌넬섬(솔로몬제도 남동부) 분포",
+      "status": "reviewed"
+    },
+    "southwestern Mexico": {
+      "description": "멕시코 남서부에 분포합니다.",
+      "caption": "멕시코 남서부 분포",
+      "status": "reviewed"
+    },
+    "Yapen (Cenderawasih Bay, off northwestern New Guinea)": {
+      "description": "야펜섬(뉴기니 북서부 앞바다의 첸드라와시만)에 분포합니다.",
+      "caption": "야펜섬(뉴기니 북서부 앞바다의 첸드라와시만) 분포",
+      "status": "reviewed"
+    },
+    "Mussau, in St. Matthias Group (north-central Bismarck Archipelago)": {
+      "description": "세인트마티아스군도의 무사우섬(비스마르크제도 중북부)에 분포합니다.",
+      "caption": "세인트마티아스군도의 무사우섬(비스마르크제도 중북부) 분포",
+      "status": "reviewed"
+    },
+    "Anambas Islands (South China Sea)": {
+      "description": "아남바스제도(남중국해)에 분포합니다.",
+      "caption": "아남바스제도(남중국해) 분포",
+      "status": "reviewed"
+    },
+    "Martinique (Lesser Antilles)": {
+      "description": "마르티니크섬(소앤틸리스제도)에 분포합니다.",
+      "caption": "마르티니크섬(소앤틸리스제도) 분포",
+      "status": "reviewed"
+    },
+    "Malay Peninsula": {
+      "description": "말레이반도에 분포합니다.",
+      "caption": "말레이반도 분포",
+      "status": "reviewed"
+    },
+    "Andaman and Nicobar islands": {
+      "description": "안다만제도와 니코바르제도에 분포합니다.",
+      "caption": "안다만제도와 니코바르제도 분포",
+      "status": "reviewed"
+    },
+    "Admiralty Islands": {
+      "description": "애드미럴티제도에 분포합니다.",
+      "caption": "애드미럴티제도 분포",
+      "status": "reviewed"
+    },
+    "southern New Guinea": {
+      "description": "뉴기니 남부에 분포합니다.",
+      "caption": "뉴기니 남부 분포",
+      "status": "reviewed"
+    },
+    "New Caledonia": {
+      "description": "누벨칼레도니에 분포합니다.",
+      "caption": "누벨칼레도니 분포",
+      "status": "reviewed"
+    },
+    "coastal southwestern Greenland": {
+      "description": "그린란드 남서부 해안에 분포합니다.",
+      "caption": "그린란드 남서부 해안 분포",
+      "status": "reviewed"
+    },
+    "formerly Syrian and Arabian desert; extinct ca. 1966": {
+      "description": "과거 시리아 사막과 아라비아 사막에 분포했으며, 약 1966년에 멸종했습니다.",
+      "caption": "과거 시리아·아라비아 사막 분포 · 약 1966년 멸종",
+      "status": "reviewed"
+    },
+    "Sahel of North Africa and the Sudan": {
+      "description": "북아프리카와 수단의 사헬 지역에 분포합니다.",
+      "caption": "북아프리카와 수단의 사헬 지역 분포",
+      "status": "reviewed"
+    },
+    "southern Kenya and eastern Tanzania; introduced Australia (south-central South Australia and Riverina, New South Wales)": {
+      "description": "케냐 남부와 탄자니아 동부에 분포하며, 오스트레일리아(사우스오스트레일리아주 중남부와 뉴사우스웨일스주 리버리나)에 도입되었습니다.",
+      "caption": "케냐 남부·탄자니아 동부 분포 · 오스트레일리아 도입",
+      "status": "reviewed"
+    },
+    "southern Africa": {
+      "description": "아프리카 남부에 분포합니다.",
+      "caption": "아프리카 남부 분포",
+      "status": "reviewed"
+    },
+    "breeds Holarctic, from Iceland and Spain eastward through eastern Russia, and Alaska through Greenland and southward to northern Baja California and mid-Atlantic US states; winters to North Africa, India, and southern China, and central Mexico and Cuba; widely introduced elsewhere, often hybridizing with local congeners": {
+      "description": "전북구에서 번식합니다. 번식 범위는 아이슬란드와 스페인에서 동쪽으로 러시아 동부까지, 알래스카에서 그린란드까지이며, 남쪽으로 바하칼리포르니아 북부와 미국 중부 대서양 연안 주들까지 이어집니다. 월동 범위는 북아프리카·인도·중국 남부와 멕시코 중부·쿠바까지입니다. 그 밖의 여러 지역에도 널리 도입되었으며, 현지의 같은 속 조류와 흔히 교잡합니다.",
+      "caption": "전북구 번식 · 남쪽 지역 월동 · 다른 지역 도입",
+      "status": "reviewed"
+    },
+    "Eurasia to Manchuria, India, Africa, and Comoros": {
+      "description": "유라시아에서 만주·인도·아프리카·코모로까지 분포합니다.",
+      "caption": "유라시아에서 만주·인도·아프리카·코모로까지 분포",
+      "status": "reviewed"
+    },
+    "Japan, China, Indochina, Malaya, Sumatra, and Java": {
+      "description": "일본·중국·인도차이나·말라야·수마트라섬·자바섬에 분포합니다.",
+      "caption": "일본·중국·인도차이나·말라야·수마트라섬·자바섬 분포",
+      "status": "reviewed"
+    },
+    "islands off Banc d'Arguin (Mauritania)": {
+      "description": "모리타니 방다르갱 앞바다의 섬들에 분포합니다.",
+      "caption": "모리타니 방다르갱 앞바다의 섬들 분포",
+      "status": "reviewed"
+    },
+    "Arctic tundra of North America (Alaska to Greenland)": {
+      "description": "북아메리카의 북극 툰드라(알래스카에서 그린란드까지)에 분포합니다.",
+      "caption": "북아메리카의 북극 툰드라(알래스카에서 그린란드까지) 분포",
+      "status": "reviewed"
+    },
+    "coastal western North America (Aleutian Islands to Washington)": {
+      "description": "북아메리카 서부 해안(알류샨열도에서 워싱턴주까지)에 분포합니다.",
+      "caption": "북아메리카 서부 해안(알류샨열도에서 워싱턴주까지) 분포",
+      "status": "reviewed"
+    },
+    "North America (south of tundra) to northern Mexico": {
+      "description": "북아메리카의 툰드라 이남에서 멕시코 북부까지 분포합니다.",
+      "caption": "북아메리카의 툰드라 이남에서 멕시코 북부까지 분포",
+      "status": "reviewed"
+    },
+    "western South America (Ecuador to Tierra del Fuego and Falkland Islands)": {
+      "description": "남아메리카 서부(에콰도르에서 티에라델푸에고와 포클랜드제도까지)에 분포합니다.",
+      "caption": "남아메리카 서부(에콰도르에서 티에라델푸에고와 포클랜드제도까지) 분포",
+      "status": "reviewed"
+    },
+    "northern Eurasia (south of the tundra)": {
+      "description": "유라시아 북부의 툰드라 이남에 분포합니다.",
+      "caption": "유라시아 북부의 툰드라 이남 분포",
+      "status": "reviewed"
+    },
+    "tundra of Eurasia (Lapland eastward to northeastern Siberia); winters southward to south-eastern Asia and Australia": {
+      "description": "유라시아 툰드라(라플란드에서 동쪽으로 시베리아 북동부까지)에 분포하며, 겨울에는 남쪽의 동남아시아와 오스트레일리아까지 이동합니다.",
+      "caption": "유라시아 툰드라 분포 · 동남아시아·오스트레일리아 월동",
+      "status": "reviewed"
+    },
+    "northeastern Siberia to Kamchatka Peninsula and Japan": {
+      "description": "시베리아 북동부에서 캄차카반도와 일본까지 분포합니다.",
+      "caption": "시베리아 북동부에서 캄차카반도와 일본까지 분포",
+      "status": "reviewed"
+    },
+    "Mediterranean basin eastward to the Caucasus Mountains": {
+      "description": "지중해 유역에서 동쪽으로 캅카스산맥까지 분포합니다.",
+      "caption": "지중해 유역에서 동쪽으로 캅카스산맥까지 분포",
+      "status": "reviewed"
+    },
+    "Pakistan, India, and Sri Lanka to southeastern China": {
+      "description": "파키스탄·인도·스리랑카에서 중국 남동부까지 분포합니다.",
+      "caption": "파키스탄·인도·스리랑카에서 중국 남동부까지 분포",
+      "status": "reviewed"
+    },
+    "Volcano Islands and Bonin Islands": {
+      "description": "가잔열도와 오가사와라제도에 분포합니다.",
+      "caption": "가잔열도와 오가사와라제도 분포",
+      "status": "reviewed"
+    },
+    "Morocco, Mauritania, and sub-Saharan Africa": {
+      "description": "모로코·모리타니와 사하라 이남 아프리카에 분포합니다.",
+      "caption": "모로코·모리타니와 사하라 이남 아프리카 분포",
+      "status": "reviewed"
+    },
+    "Madagascar and Comoros": {
+      "description": "마다가스카르와 코모로에 분포합니다.",
+      "caption": "마다가스카르와 코모로 분포",
+      "status": "reviewed"
+    },
+    "Thai-Malay Peninsula, Philippines, Greater Sundas, New Guinea, and Bismarck Archipelago; birds of Solomon Islands probably also this subspecies": {
+      "description": "타이·말레이반도, 필리핀, 대순다열도, 뉴기니, 비스마르크제도에 분포합니다. 솔로몬제도의 개체들도 이 아종에 속할 가능성이 있습니다.",
+      "caption": "동남아시아·뉴기니·비스마르크제도 · 솔로몬제도는 잠정",
+      "status": "reviewed"
+    },
+    "Australia including Tasmania": {
+      "description": "태즈메이니아를 포함한 오스트레일리아에 분포합니다.",
+      "caption": "태즈메이니아를 포함한 오스트레일리아 분포",
+      "status": "reviewed"
+    },
+    "Vanuatu and New Caledonia": {
+      "description": "바누아투와 누벨칼레도니에 분포합니다.",
+      "caption": "바누아투와 누벨칼레도니 분포",
+      "status": "reviewed"
+    },
+    "eastern Iran to Mongolia": {
+      "description": "이란 동부에서 몽골까지 분포합니다.",
+      "caption": "이란 동부에서 몽골까지 분포",
+      "status": "reviewed"
+    },
+    "Canary Islands; locally from northern Africa (Morocco) to western Iran": {
+      "description": "카나리아제도 및 북아프리카(모로코)에서 이란 서부에 이르는 일부 지역에 분포합니다.",
+      "caption": "카나리아제도 및 북아프리카(모로코)에서 이란 서부에 이르는 일부 지역 분포",
+      "status": "reviewed"
+    },
+    "Sakhalin, Kuril Islands, and northern Japan": {
+      "description": "사할린·쿠릴열도·일본 북부에 분포합니다.",
+      "caption": "사할린·쿠릴열도·일본 북부 분포",
+      "status": "reviewed"
+    },
+    "southern Ryukyu Islands (Amami Ōshima, Okinawa, and Miyako-Jima, southern Japan)": {
+      "description": "류큐열도 남부(일본 남부의 아마미오시마·오키나와·미야코지마)에 분포합니다.",
+      "caption": "류큐열도 남부(일본 남부의 아마미오시마·오키나와·미야코지마) 분포",
+      "status": "reviewed"
+    },
+    "Yaeyama Islands of southern Ryukyu Islands (Ishigaki, Iriomote, Kohama, Kuru, and Aragusuku, southern Japan)": {
+      "description": "류큐열도 남부의 야에야마제도(일본 남부의 이시가키·이리오모테·고하마·쿠루·아라구스쿠)에 분포합니다.",
+      "caption": "류큐열도 남부의 야에야마제도(일본 남부의 이시가키·이리오모테·고하마·쿠루·아라구스쿠) 분포",
+      "status": "reviewed"
+    },
+    "northeastern Asia": {
+      "description": "아시아 북동부에 분포합니다.",
+      "caption": "아시아 북동부 분포",
+      "status": "reviewed"
+    },
+    "central and southern China including Hainan, Taiwan, and northern Indochina": {
+      "description": "하이난섬을 포함한 중국 중부·남부, 타이완, 인도차이나 북부에 분포합니다.",
+      "caption": "하이난섬을 포함한 중국 중부·남부, 타이완, 인도차이나 북부 분포",
+      "status": "reviewed"
+    },
+    "eastern Himalayas to southeastern Tibet, northern Myanmar, and western China": {
+      "description": "히말라야 동부에서 티베트 남동부·미얀마 북부·중국 서부까지 분포합니다.",
+      "caption": "히말라야 동부에서 티베트 남동부·미얀마 북부·중국 서부까지 분포",
+      "status": "reviewed"
+    },
+    "far eastern Iran to northwestern India and western Himalayas": {
+      "description": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포합니다.",
+      "caption": "이란의 동쪽 끝에서 인도 북서부와 히말라야 서부까지 분포",
+      "status": "reviewed"
+    },
+    "southern Indochina, the Thai-Malay Peninsula, Sumatra, Java, and the Lesser Sundas": {
+      "description": "인도차이나 남부·타이·말레이반도·수마트라섬·자바섬·소순다열도에 분포합니다.",
+      "caption": "인도차이나 남부·타이·말레이반도·수마트라섬·자바섬·소순다열도 분포",
+      "status": "reviewed"
+    },
+    "northeastern India (west to West Bengal) and eastern Nepal eastward to western Thailand, and Andaman Islands": {
+      "description": "인도 북동부(서쪽으로 서벵골까지)와 네팔 동부에서 동쪽으로 타이 서부까지 및 안다만제도에 분포합니다.",
+      "caption": "인도 북동부(서쪽으로 서벵골까지)와 네팔 동부에서 동쪽으로 타이 서부까지 및 안다만제도 분포",
+      "status": "reviewed"
+    },
+    "peninsular India and Sri Lanka": {
+      "description": "인도 반도부와 스리랑카에 분포합니다.",
+      "caption": "인도 반도부와 스리랑카 분포",
+      "status": "reviewed"
+    },
+    "British Isles": {
+      "description": "브리튼제도에 분포합니다.",
+      "caption": "브리튼제도 분포",
+      "status": "reviewed"
+    },
+    "Europe to northwestern Iran, Siberia, Lake Baikal, and Altai and Sayan mountains": {
+      "description": "유럽에서 이란 북서부·시베리아·바이칼호·알타이산맥·사얀산맥까지 분포합니다.",
+      "caption": "유럽에서 이란 북서부·시베리아·바이칼호·알타이산맥·사얀산맥까지 분포",
+      "status": "reviewed"
+    },
+    "northwestern China (northwestern Xinjiang) to Mongolia and eastern Siberia": {
+      "description": "중국 북서부(신장 북서부)에서 몽골과 시베리아 동부까지 분포합니다.",
+      "caption": "중국 북서부(신장 북서부)에서 몽골과 시베리아 동부까지 분포",
+      "status": "reviewed"
+    },
+    "Iberian Peninsula and Corsica": {
+      "description": "이베리아반도와 코르시카섬에 분포합니다.",
+      "caption": "이베리아반도와 코르시카섬 분포",
+      "status": "reviewed"
+    },
+    "Balearic Islands": {
+      "description": "발레아레스제도에 분포합니다.",
+      "caption": "발레아레스제도 분포",
+      "status": "reviewed"
+    },
+    "northwestern Africa (Morocco to Tunisia)": {
+      "description": "아프리카 북서부(모로코에서 튀니지까지)에 분포합니다.",
+      "caption": "아프리카 북서부(모로코에서 튀니지까지) 분포",
+      "status": "reviewed"
+    },
+    "Sardinia": {
+      "description": "사르데냐섬에 분포합니다.",
+      "caption": "사르데냐섬 분포",
+      "status": "reviewed"
+    },
+    "southern Italy, Sicily, southern Greece, and Mediterranean islands including Cyprus": {
+      "description": "이탈리아 남부·시칠리아섬·그리스 남부 및 키프로스를 포함한 지중해의 섬들에 분포합니다.",
+      "caption": "이탈리아 남부·시칠리아섬·그리스 남부 및 키프로스를 포함한 지중해의 섬들 분포",
+      "status": "reviewed"
+    },
+    "Crete": {
+      "description": "크레타섬에 분포합니다.",
+      "caption": "크레타섬 분포",
+      "status": "reviewed"
+    },
+    "northwestern Syria, Lebanon, Israel, and Jordan": {
+      "description": "시리아 북서부·레바논·이스라엘·요르단에 분포합니다.",
+      "caption": "시리아 북서부·레바논·이스라엘·요르단 분포",
+      "status": "reviewed"
+    },
+    "southeastern Azerbaijan and northwestern Iran": {
+      "description": "아제르바이잔 남동부와 이란 북서부에 분포합니다.",
+      "caption": "아제르바이잔 남동부와 이란 북서부 분포",
+      "status": "reviewed"
+    },
+    "northern Iraq to north-central and southwestern Iran": {
+      "description": "이라크 북부에서 이란 중북부·남서부까지 분포합니다.",
+      "caption": "이라크 북부에서 이란 중북부·남서부까지 분포",
+      "status": "reviewed"
+    },
+    "Russia to Tien Shan and Karatau mountains and northwestern Afghanistan": {
+      "description": "러시아에서 톈산산맥·카라타우산맥 및 아프가니스탄 북서부까지 분포합니다.",
+      "caption": "러시아에서 톈산산맥·카라타우산맥 및 아프가니스탄 북서부까지 분포",
+      "status": "reviewed"
+    },
+    "Lake Balkhash to western China (Xinjiang) and southwestern Mongolia": {
+      "description": "발하슈호에서 중국 서부(신장)와 몽골 남서부까지 분포합니다.",
+      "caption": "발하슈호에서 중국 서부(신장)와 몽골 남서부까지 분포",
+      "status": "reviewed"
+    },
+    "mountains in Tajikistan (Pamir and Alai) and Kyrgyzstan eastward to western Tien Shan": {
+      "description": "타지키스탄(파미르·알라이)과 키르기스스탄의 산지에서 동쪽으로 톈산산맥 서부까지 분포합니다.",
+      "caption": "타지키스탄(파미르·알라이)과 키르기스스탄의 산지에서 동쪽으로 톈산산맥 서부까지 분포",
+      "status": "reviewed"
+    },
+    "northeastern Iran and adjacent southwestern Turkmenistan": {
+      "description": "이란 북동부와 이에 인접한 투르크메니스탄 남서부에 분포합니다.",
+      "caption": "이란 북동부와 이에 인접한 투르크메니스탄 남서부 분포",
+      "status": "reviewed"
+    }
+  }
+}
