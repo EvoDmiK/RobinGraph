@@ -1,0 +1,26 @@
+{
+  "checked_at": "2026-10-08T10:57:53.592Z",
+  "source_commit": "570fd3fb386f412eacbd4c150ffe5b7541dd25c4",
+  "image": "robingraph-api:test-rg015noselect-570fd3f",
+  "container_health": "healthy",
+  "image_oci_revision": "570fd3fb386f412eacbd4c150ffe5b7541dd25c4",
+  "package_sha256": "aa208c6d9d8fb496fd882c12578a05f230e613296a14fda5e04c4f841f725bbe",
+  "assets": [
+    {
+      "path": "/static/chat.js",
+      "sha256": "b195c6579c896e03bfadab0add68b822aebe1dbe6678f66fe486f1989cc33992",
+      "matches_local_source": true
+    },
+    {
+      "path": "/static/styles.css",
+      "sha256": "8b84e28dfdd23e7fba0df4b0d68fc1065a3f06603806bbbefb506b43cf8c97a4",
+      "matches_local_source": true
+    }
+  ],
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  }
+}
