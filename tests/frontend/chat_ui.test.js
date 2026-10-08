@@ -2989,3 +2989,29 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
   assert.equal(bubbles.length, 1);
   assert.match(collectedText(explorer), /비교 자료를 표시하지 않았습니다/);
 });
+
+test("Jev subspecies answers show the supplied list immediately without another list request", async () => {
+  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리" });
+  const data = { parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b",
+    source_url: "https://www.avilist.org/", subspecies: [{ taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos conboschas", english_name: "Greenland Mallard" }] };
+  let fetches = 0;
+  const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, async () => { fetches++; throw Error("unexpected duplicate"); }, null, data);
+  await tick();
+  assert.equal(fetches, 0);
+  assert.equal(explorer.children[2].hidden, false);
+  assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
+  assert.match(collectedText(explorer), /Greenland Mallard/);
+  const answer = chat.buildQuestionAnswer({ createElement: createFakeElement }, { topic: "subspecies", title: "청둥오리 · 아종 목록", text: "아종 1개", items: [] });
+  assert.match(collectedText(answer), /아종 1개/);
+});
+
+test("Jev supplied subspecies lists from another parent or release are rejected", async () => {
+  const species = profileFor({ taxon_id: "t1", scientific_name: "Anas platyrhynchos" });
+  for (const changes of [{ concept_set_id: "wrong" }, { parent_species: { taxon: { taxon_id: "wrong" } } }]) {
+    const data = Object.assign({ parent_species: { taxon: species.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b", subspecies: [{ taxon_id: "bad", english_name: "Wrong bird" }] }, changes);
+    const explorer = chat.buildSubspeciesExplorer({ createElement: createFakeElement }, species, null, null, data);
+    await tick();
+    assert.doesNotMatch(collectedText(explorer), /Wrong bird/);
+    assert.match(collectedText(explorer), /확인하지 못했습니다/);
+  }
+});

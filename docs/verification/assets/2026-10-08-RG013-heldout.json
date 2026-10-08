@@ -1,0 +1,1781 @@
+{
+  "scope": "Real API intent-only evaluation; deterministic routes preserved, no DB/entity resolution score. Single model annotator, not human gold standard.",
+  "split": "heldout",
+  "model_requested": "typesafe/jev-1.13",
+  "model_echoed": false,
+  "thresholds": {
+    "confidence": 0.85,
+    "probability": 0.8,
+    "margin": 0.2
+  },
+  "baseline": {
+    "n": 56,
+    "accuracy": 0.4107142857142857,
+    "macro_f1": 0.4740759240759241,
+    "automatic_rate": 0.32142857142857145,
+    "misclassification_rate": 0.017857142857142856,
+    "clarification_rate": 0.6785714285714286,
+    "per_label": {
+      "profile": {
+        "n": 6,
+        "accuracy": 0.16666666666666666,
+        "f1": 0.2857142857142857
+      },
+      "subspecies": {
+        "n": 8,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "taxonomy": {
+        "n": 6,
+        "accuracy": 0.6666666666666666,
+        "f1": 0.7272727272727273
+      },
+      "observations": {
+        "n": 4,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "evidence": {
+        "n": 3,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "diet": {
+        "n": 4,
+        "accuracy": 0.5,
+        "f1": 0.6666666666666666
+      },
+      "habitat": {
+        "n": 5,
+        "accuracy": 0.6,
+        "f1": 0.75
+      },
+      "activity": {
+        "n": 3,
+        "accuracy": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "appearance": {
+        "n": 3,
+        "accuracy": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "related": {
+        "n": 3,
+        "accuracy": 0.6666666666666666,
+        "f1": 0.8
+      },
+      "ecological_habitat": {
+        "n": 2,
+        "accuracy": 0.5,
+        "f1": 0.6666666666666666
+      },
+      "ecological_diet": {
+        "n": 2,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "uncertain": {
+        "n": 7,
+        "accuracy": 0.8571428571428571,
+        "f1": 0.26666666666666666
+      }
+    }
+  },
+  "jev": {
+    "n": 56,
+    "accuracy": 0.9285714285714286,
+    "macro_f1": 0.9471048182586644,
+    "automatic_rate": 0.875,
+    "misclassification_rate": 0.03571428571428571,
+    "clarification_rate": 0.125,
+    "per_label": {
+      "profile": {
+        "n": 6,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "subspecies": {
+        "n": 8,
+        "accuracy": 0.875,
+        "f1": 0.875
+      },
+      "taxonomy": {
+        "n": 6,
+        "accuracy": 1.0,
+        "f1": 0.9230769230769231
+      },
+      "observations": {
+        "n": 4,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "evidence": {
+        "n": 3,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "diet": {
+        "n": 4,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "habitat": {
+        "n": 5,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "activity": {
+        "n": 3,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "appearance": {
+        "n": 3,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "related": {
+        "n": 3,
+        "accuracy": 0.6666666666666666,
+        "f1": 0.8
+      },
+      "ecological_habitat": {
+        "n": 2,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "ecological_diet": {
+        "n": 2,
+        "accuracy": 1.0,
+        "f1": 1.0
+      },
+      "uncertain": {
+        "n": 7,
+        "accuracy": 0.7142857142857143,
+        "f1": 0.7142857142857143
+      }
+    }
+  },
+  "api": {
+    "calls": 38,
+    "attempts": 38,
+    "p50_ms": 1803,
+    "p95_ms": 1982,
+    "input_tokens": 31447,
+    "output_tokens": 4835,
+    "credits_used": 38.0,
+    "failures": {
+      "uncertain": 4,
+      "low_confidence": 3
+    }
+  },
+  "rows": [
+    {
+      "id": "jev-002",
+      "question": "흰뺨검둥오리 아종 알려줘",
+      "expected": "subspecies",
+      "category": "reported",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "흰뺨검둥오리",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 1.0,
+        "probabilities": {
+          "subspecies": 1.0,
+          "diet": 0.0,
+          "activity": 0.0,
+          "observations": 0.0,
+          "habitat": 0.0,
+          "appearance": 0.0,
+          "uncertain": 0.0,
+          "related": 0.0,
+          "ecological_diet": 0.0,
+          "ecological_habitat": 0.0,
+          "evidence": 0.0,
+          "profile": 0.0,
+          "taxonomy": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 832,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1770,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-004",
+      "question": "흰뺨검둥오리에는 어떤 아종이 있나요?",
+      "expected": "subspecies",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "subspecies",
+        "confidence": 1.0,
+        "probabilities": {
+          "habitat": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "observations": 0.0,
+          "related": 0.0,
+          "profile": 0.0,
+          "activity": 0.0,
+          "taxonomy": 0.0,
+          "appearance": 0.0,
+          "diet": 0.0,
+          "evidence": 0.0,
+          "subspecies": 1.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 837,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1739,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-006",
+      "question": "List the subspecies of the mallard",
+      "expected": "subspecies",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "subspecies",
+        "confidence": 1.0,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "appearance": 0.0,
+          "subspecies": 1.0,
+          "observations": 0.0,
+          "related": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "diet": 0.0,
+          "activity": 0.0,
+          "profile": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 826,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1897,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-008",
+      "question": "까치 아종 알려줘",
+      "expected": "subspecies",
+      "category": "common_name",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "까치",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 0.99,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "related": 0.0,
+          "habitat": 0.0,
+          "ecological_habitat": 0.0,
+          "diet": 0.0,
+          "subspecies": 0.99,
+          "evidence": 0.0,
+          "ecological_diet": 0.0,
+          "observations": 0.0,
+          "appearance": 0.0,
+          "uncertain": 0.01,
+          "activity": 0.0,
+          "profile": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 824,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1864,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-010",
+      "question": "참새 아종별 분포 알려줘",
+      "expected": "subspecies",
+      "category": "common_name",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "참새",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 0.99,
+        "probabilities": {
+          "profile": 0.0,
+          "subspecies": 0.99,
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "evidence": 0.0,
+          "diet": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "uncertain": 0.01
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 827,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1213,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-012",
+      "question": "청둥오리 아존 알려줘",
+      "expected": "subspecies",
+      "category": "typo",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.52,
+        "probabilities": {
+          "profile": 0.56,
+          "diet": 0.0,
+          "taxonomy": 0.08,
+          "habitat": 0.0,
+          "ecological_habitat": 0.0,
+          "appearance": 0.0,
+          "uncertain": 0.07,
+          "evidence": 0.01,
+          "related": 0.0,
+          "observations": 0.0,
+          "activity": 0.0,
+          "subspecies": 0.27,
+          "ecological_diet": 0.0
+        },
+        "failure": "low_confidence",
+        "usage": {
+          "input_tokens": 827,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1400,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-014",
+      "question": "Does the Eurasian magpie have subspecies?",
+      "expected": "subspecies",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "Eurasian magpie have",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 0.99,
+        "probabilities": {
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "observations": 0.0,
+          "appearance": 0.0,
+          "ecological_diet": 0.0,
+          "taxonomy": 0.01,
+          "diet": 0.0,
+          "subspecies": 0.99,
+          "profile": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 0.0,
+          "uncertain": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1803,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-016",
+      "question": "딱따구리 아종 알려줘",
+      "expected": "subspecies",
+      "category": "ambiguous_name",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "딱따구리",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 0.99,
+        "probabilities": {
+          "ecological_habitat": 0.0,
+          "taxonomy": 0.0,
+          "profile": 0.0,
+          "habitat": 0.0,
+          "uncertain": 0.01,
+          "related": 0.0,
+          "ecological_diet": 0.0,
+          "appearance": 0.0,
+          "subspecies": 0.99,
+          "evidence": 0.0,
+          "observations": 0.0,
+          "activity": 0.0,
+          "diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 827,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1844,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-018",
+      "question": "청둥오리에 대해 알고 싶어요",
+      "expected": "profile",
+      "category": "common_name",
+      "baseline": "profile",
+      "jev": "profile",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-020",
+      "question": "Tell me about Anas platyrhynchos",
+      "expected": "profile",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "profile",
+      "deterministic": false,
+      "entity_span": "Anas platyrhynchos",
+      "decision": {
+        "label": "profile",
+        "confidence": 1.0,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "profile": 1.0,
+          "evidence": 0.0,
+          "subspecies": 0.0,
+          "related": 0.0,
+          "uncertain": 0.0,
+          "activity": 0.0,
+          "ecological_habitat": 0.0,
+          "appearance": 0.0,
+          "ecological_diet": 0.0,
+          "diet": 0.0,
+          "habitat": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 827,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1838,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-022",
+      "question": "까치 소개해줘",
+      "expected": "profile",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "profile",
+      "deterministic": false,
+      "entity_span": "까치",
+      "decision": {
+        "label": "profile",
+        "confidence": 1.0,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "uncertain": 0.0,
+          "habitat": 0.0,
+          "appearance": 0.0,
+          "diet": 0.0,
+          "evidence": 0.0,
+          "activity": 0.0,
+          "related": 0.0,
+          "subspecies": 0.0,
+          "observations": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "profile": 1.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 823,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1767,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-024",
+      "question": "직박구리가 어떤 새야?",
+      "expected": "profile",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "profile",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "profile",
+        "confidence": 1.0,
+        "probabilities": {
+          "appearance": 0.0,
+          "diet": 0.0,
+          "evidence": 0.0,
+          "subspecies": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "activity": 0.0,
+          "uncertain": 0.0,
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "profile": 1.0,
+          "related": 0.0,
+          "habitat": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 826,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1996,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-026",
+      "question": "청둥오리에 대해 알려주세여",
+      "expected": "profile",
+      "category": "typo",
+      "baseline": "uncertain",
+      "jev": "profile",
+      "deterministic": false,
+      "entity_span": "청둥오리",
+      "decision": {
+        "label": "profile",
+        "confidence": 1.0,
+        "probabilities": {
+          "profile": 1.0,
+          "subspecies": 0.0,
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "evidence": 0.0,
+          "diet": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "uncertain": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1832,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-028",
+      "question": "두루미 정보 좀",
+      "expected": "profile",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "profile",
+      "deterministic": false,
+      "entity_span": "두루미",
+      "decision": {
+        "label": "profile",
+        "confidence": 0.97,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "subspecies": 0.0,
+          "evidence": 0.0,
+          "uncertain": 0.03,
+          "related": 0.0,
+          "ecological_diet": 0.0,
+          "diet": 0.0,
+          "ecological_habitat": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "profile": 0.97,
+          "appearance": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 822,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1767,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-030",
+      "question": "흰뺨검둥오리 분류 알려줘",
+      "expected": "taxonomy",
+      "category": "common_name",
+      "baseline": "taxonomy",
+      "jev": "taxonomy",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-032",
+      "question": "Anas platyrhynchos 계통 설명해줘",
+      "expected": "taxonomy",
+      "category": "scientific",
+      "baseline": "taxonomy",
+      "jev": "taxonomy",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-034",
+      "question": "What is the taxonomic classification of Pica pica?",
+      "expected": "taxonomy",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "taxonomy",
+      "deterministic": false,
+      "entity_span": "Pica pica",
+      "decision": {
+        "label": "taxonomy",
+        "confidence": 1.0,
+        "probabilities": {
+          "appearance": 0.0,
+          "diet": 0.0,
+          "evidence": 0.0,
+          "subspecies": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "activity": 0.0,
+          "uncertain": 0.0,
+          "profile": 0.0,
+          "observations": 0.0,
+          "taxonomy": 1.0,
+          "related": 0.0,
+          "habitat": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 830,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1390,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-036",
+      "question": "참새 분류체계 알려줘",
+      "expected": "taxonomy",
+      "category": "common_name",
+      "baseline": "taxonomy",
+      "jev": "taxonomy",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-038",
+      "question": "Which order is the white-cheeked starling in?",
+      "expected": "taxonomy",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "taxonomy",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "taxonomy",
+        "confidence": 1.0,
+        "probabilities": {
+          "diet": 0.0,
+          "ecological_diet": 0.0,
+          "related": 0.0,
+          "observations": 0.0,
+          "taxonomy": 1.0,
+          "ecological_habitat": 0.0,
+          "habitat": 0.0,
+          "uncertain": 0.0,
+          "appearance": 0.0,
+          "evidence": 0.0,
+          "activity": 0.0,
+          "profile": 0.0,
+          "subspecies": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1804,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-041",
+      "question": "서울에서 박새 관측 정보",
+      "expected": "observations",
+      "category": "common_name",
+      "baseline": "uncertain",
+      "jev": "observations",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "observations",
+        "confidence": 1.0,
+        "probabilities": {
+          "evidence": 0.0,
+          "appearance": 0.0,
+          "profile": 0.0,
+          "ecological_habitat": 0.0,
+          "observations": 1.0,
+          "uncertain": 0.0,
+          "taxonomy": 0.0,
+          "related": 0.0,
+          "habitat": 0.0,
+          "diet": 0.0,
+          "subspecies": 0.0,
+          "ecological_diet": 0.0,
+          "activity": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 826,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1882,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-043",
+      "question": "Show me eBird observations of the mallard in Korea",
+      "expected": "observations",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "observations",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "observations",
+        "confidence": 1.0,
+        "probabilities": {
+          "evidence": 0.0,
+          "taxonomy": 0.0,
+          "related": 0.0,
+          "uncertain": 0.0,
+          "ecological_diet": 0.0,
+          "profile": 0.0,
+          "habitat": 0.0,
+          "subspecies": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "observations": 1.0,
+          "diet": 0.0,
+          "ecological_habitat": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 828,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1871,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-045",
+      "question": "오늘 관찰된 까치 목록",
+      "expected": "observations",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "observations",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "observations",
+        "confidence": 0.98,
+        "probabilities": {
+          "uncertain": 0.02,
+          "related": 0.0,
+          "subspecies": 0.0,
+          "ecological_diet": 0.0,
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "ecological_habitat": 0.0,
+          "observations": 0.98,
+          "diet": 0.0,
+          "taxonomy": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "profile": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 824,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1982,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-047",
+      "question": "지난주 두루미 발견 위치 알려줘",
+      "expected": "observations",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "observations",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "observations",
+        "confidence": 0.99,
+        "probabilities": {
+          "diet": 0.0,
+          "taxonomy": 0.0,
+          "profile": 0.0,
+          "observations": 0.99,
+          "activity": 0.0,
+          "evidence": 0.0,
+          "ecological_diet": 0.0,
+          "subspecies": 0.0,
+          "habitat": 0.0,
+          "ecological_habitat": 0.0,
+          "appearance": 0.0,
+          "uncertain": 0.01,
+          "related": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 828,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1790,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-049",
+      "question": "까치 설명의 출처가 뭐야?",
+      "expected": "evidence",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "evidence",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "evidence",
+        "confidence": 0.98,
+        "probabilities": {
+          "ecological_habitat": 0.0,
+          "taxonomy": 0.0,
+          "profile": 0.01,
+          "habitat": 0.0,
+          "uncertain": 0.01,
+          "related": 0.0,
+          "ecological_diet": 0.0,
+          "appearance": 0.0,
+          "subspecies": 0.0,
+          "evidence": 0.98,
+          "observations": 0.0,
+          "activity": 0.0,
+          "diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1741,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-051",
+      "question": "Show the evidence for the mallard profile",
+      "expected": "evidence",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "evidence",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "evidence",
+        "confidence": 0.89,
+        "probabilities": {
+          "subspecies": 0.0,
+          "related": 0.0,
+          "profile": 0.05,
+          "ecological_diet": 0.0,
+          "ecological_habitat": 0.0,
+          "uncertain": 0.01,
+          "evidence": 0.9,
+          "activity": 0.0,
+          "observations": 0.0,
+          "appearance": 0.04,
+          "habitat": 0.0,
+          "diet": 0.0,
+          "taxonomy": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 825,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1370,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-053",
+      "question": "참새 관련 논문이나 인용 자료 있어?",
+      "expected": "evidence",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "evidence",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "evidence",
+        "confidence": 1.0,
+        "probabilities": {
+          "evidence": 1.0,
+          "appearance": 0.0,
+          "profile": 0.0,
+          "observations": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "habitat": 0.0,
+          "related": 0.0,
+          "diet": 0.0,
+          "taxonomy": 0.0,
+          "subspecies": 0.0,
+          "activity": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1717,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-056",
+      "question": "직박구리 식성 알려줘",
+      "expected": "diet",
+      "category": "common_name",
+      "baseline": "diet",
+      "jev": "diet",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-058",
+      "question": "Pica pica diet",
+      "expected": "diet",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "diet",
+      "deterministic": false,
+      "entity_span": "Pica pica diet",
+      "decision": {
+        "label": "diet",
+        "confidence": 1.0,
+        "probabilities": {
+          "profile": 0.0,
+          "taxonomy": 0.0,
+          "subspecies": 0.0,
+          "observations": 0.0,
+          "related": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "diet": 1.0,
+          "appearance": 0.0,
+          "activity": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 822,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1915,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-060",
+      "question": "흰뺨검둥오리는 뭘 먹고 살아요",
+      "expected": "diet",
+      "category": "paraphrase",
+      "baseline": "diet",
+      "jev": "diet",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-062",
+      "question": "참새는 뭘 머거?",
+      "expected": "diet",
+      "category": "typo",
+      "baseline": "uncertain",
+      "jev": "diet",
+      "deterministic": false,
+      "entity_span": "참새",
+      "decision": {
+        "label": "diet",
+        "confidence": 0.95,
+        "probabilities": {
+          "evidence": 0.0,
+          "appearance": 0.0,
+          "profile": 0.0,
+          "uncertain": 0.05,
+          "ecological_habitat": 0.0,
+          "observations": 0.0,
+          "diet": 0.95,
+          "taxonomy": 0.0,
+          "habitat": 0.0,
+          "related": 0.0,
+          "subspecies": 0.0,
+          "ecological_diet": 0.0,
+          "activity": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 826,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1861,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-064",
+      "question": "청둥오리 서식지 알려줘",
+      "expected": "habitat",
+      "category": "common_name",
+      "baseline": "habitat",
+      "jev": "habitat",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-066",
+      "question": "Anas zonorhyncha habitat",
+      "expected": "habitat",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "habitat",
+      "deterministic": false,
+      "entity_span": "Anas zonorhyncha habitat",
+      "decision": {
+        "label": "habitat",
+        "confidence": 1.0,
+        "probabilities": {
+          "habitat": 1.0,
+          "observations": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 0.0,
+          "activity": 0.0,
+          "evidence": 0.0,
+          "appearance": 0.0,
+          "uncertain": 0.0,
+          "diet": 0.0,
+          "subspecies": 0.0,
+          "profile": 0.0,
+          "taxonomy": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 825,
+          "output_tokens": 127
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1754,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-068",
+      "question": "원앙의 서식 환경은 뭐야?",
+      "expected": "habitat",
+      "category": "common_name",
+      "baseline": "habitat",
+      "jev": "habitat",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-070",
+      "question": "박새 서식지 알려조",
+      "expected": "habitat",
+      "category": "typo",
+      "baseline": "uncertain",
+      "jev": "habitat",
+      "deterministic": false,
+      "entity_span": "박새",
+      "decision": {
+        "label": "habitat",
+        "confidence": 1.0,
+        "probabilities": {
+          "diet": 0.0,
+          "activity": 0.0,
+          "ecological_diet": 0.0,
+          "uncertain": 0.0,
+          "observations": 0.0,
+          "profile": 0.0,
+          "related": 0.0,
+          "subspecies": 0.0,
+          "appearance": 0.0,
+          "evidence": 0.0,
+          "ecological_habitat": 0.0,
+          "taxonomy": 0.0,
+          "habitat": 1.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 825,
+          "output_tokens": 127
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1734,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-072",
+      "question": "Is the mallard nocturnal?",
+      "expected": "activity",
+      "category": "english",
+      "baseline": "uncertain",
+      "jev": "activity",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "activity",
+        "confidence": 1.0,
+        "probabilities": {
+          "evidence": 0.0,
+          "uncertain": 0.0,
+          "subspecies": 0.0,
+          "related": 0.0,
+          "observations": 0.0,
+          "activity": 1.0,
+          "habitat": 0.0,
+          "taxonomy": 0.0,
+          "appearance": 0.0,
+          "diet": 0.0,
+          "ecological_habitat": 0.0,
+          "profile": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 824,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1761,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-074",
+      "question": "청둥오리 활동 시간 알려줘",
+      "expected": "activity",
+      "category": "common_name",
+      "baseline": "activity",
+      "jev": "activity",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-076",
+      "question": "Strix aluco activity pattern",
+      "expected": "activity",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "activity",
+      "deterministic": false,
+      "entity_span": "Strix aluco activity",
+      "decision": {
+        "label": "activity",
+        "confidence": 1.0,
+        "probabilities": {
+          "uncertain": 0.0,
+          "related": 0.0,
+          "subspecies": 0.0,
+          "habitat": 0.0,
+          "evidence": 0.0,
+          "ecological_diet": 0.0,
+          "ecological_habitat": 0.0,
+          "diet": 0.0,
+          "observations": 0.0,
+          "taxonomy": 0.0,
+          "activity": 1.0,
+          "appearance": 0.0,
+          "profile": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 823,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1285,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-079",
+      "question": "까치 생김새 알려줘",
+      "expected": "appearance",
+      "category": "common_name",
+      "baseline": "appearance",
+      "jev": "appearance",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-081",
+      "question": "Pica pica plumage description",
+      "expected": "appearance",
+      "category": "scientific",
+      "baseline": "uncertain",
+      "jev": "appearance",
+      "deterministic": false,
+      "entity_span": "Pica pica plumage",
+      "decision": {
+        "label": "appearance",
+        "confidence": 1.0,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "habitat": 0.0,
+          "subspecies": 0.0,
+          "observations": 0.0,
+          "related": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "evidence": 0.0,
+          "profile": 0.0,
+          "diet": 0.0,
+          "activity": 0.0,
+          "appearance": 1.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 825,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1856,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-083",
+      "question": "흰뺨검둥오리 부리 색이 어때?",
+      "expected": "appearance",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "appearance",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "appearance",
+        "confidence": 1.0,
+        "probabilities": {
+          "appearance": 1.0,
+          "activity": 0.0,
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "ecological_diet": 0.0,
+          "subspecies": 0.0,
+          "related": 0.0,
+          "profile": 0.0,
+          "uncertain": 0.0,
+          "ecological_habitat": 0.0,
+          "observations": 0.0,
+          "taxonomy": 0.0,
+          "diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 835,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1935,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-086",
+      "question": "까치와 같은 속의 종은 뭐가 있어?",
+      "expected": "related",
+      "category": "common_name",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.72,
+        "probabilities": {
+          "activity": 0.0,
+          "subspecies": 0.02,
+          "uncertain": 0.0,
+          "diet": 0.0,
+          "appearance": 0.0,
+          "ecological_diet": 0.0,
+          "observations": 0.0,
+          "taxonomy": 0.24,
+          "ecological_habitat": 0.0,
+          "profile": 0.0,
+          "evidence": 0.0,
+          "related": 0.74,
+          "habitat": 0.0
+        },
+        "failure": "low_confidence",
+        "usage": {
+          "input_tokens": 830,
+          "output_tokens": 126
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 3040,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-088",
+      "question": "박새와 같은 과에 속하는 새 알려줘",
+      "expected": "related",
+      "category": "common_name",
+      "baseline": "related",
+      "jev": "related",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-090",
+      "question": "직박구리랑 비슷한 종 있어?",
+      "expected": "related",
+      "category": "paraphrase",
+      "baseline": "related",
+      "jev": "related",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-093",
+      "question": "까치랑 식성이 같은 종 알려줘",
+      "expected": "ecological_diet",
+      "category": "common_name",
+      "baseline": "ecological_diet",
+      "jev": "ecological_diet",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-095",
+      "question": "직박구리와 먹이 생태가 비슷한 새",
+      "expected": "ecological_diet",
+      "category": "paraphrase",
+      "baseline": "ecological_diet",
+      "jev": "ecological_diet",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-098",
+      "question": "까치와 서식 환경이 같은 새 알려줘",
+      "expected": "ecological_habitat",
+      "category": "common_name",
+      "baseline": "ecological_habitat",
+      "jev": "ecological_habitat",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-100",
+      "question": "두루미랑 사는 곳이 비슷한 종",
+      "expected": "ecological_habitat",
+      "category": "paraphrase",
+      "baseline": "uncertain",
+      "jev": "ecological_habitat",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": "ecological_habitat",
+        "confidence": 0.99,
+        "probabilities": {
+          "profile": 0.0,
+          "subspecies": 0.0,
+          "taxonomy": 0.0,
+          "observations": 0.0,
+          "evidence": 0.0,
+          "diet": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 1.0,
+          "ecological_diet": 0.0,
+          "uncertain": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 131
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1968,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-103",
+      "question": "기러기는 어디에 살아?",
+      "expected": "habitat",
+      "category": "ambiguous_name",
+      "baseline": "habitat",
+      "jev": "habitat",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-105",
+      "question": "부엉이 분류 알려줘",
+      "expected": "taxonomy",
+      "category": "ambiguous_name",
+      "baseline": "taxonomy",
+      "jev": "taxonomy",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-107",
+      "question": "청둥오리 요리법 알려줘",
+      "expected": "uncertain",
+      "category": "unsupported",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.9,
+        "probabilities": {
+          "related": 0.0,
+          "uncertain": 0.91,
+          "ecological_habitat": 0.0,
+          "activity": 0.0,
+          "evidence": 0.0,
+          "habitat": 0.0,
+          "observations": 0.0,
+          "ecological_diet": 0.0,
+          "taxonomy": 0.0,
+          "appearance": 0.0,
+          "profile": 0.04,
+          "subspecies": 0.0,
+          "diet": 0.05
+        },
+        "failure": "uncertain",
+        "usage": {
+          "input_tokens": 828,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1863,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-109",
+      "question": "청둥오리 가격이 얼마야?",
+      "expected": "uncertain",
+      "category": "unsupported",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.92,
+        "probabilities": {
+          "ecological_habitat": 0.0,
+          "evidence": 0.0,
+          "activity": 0.0,
+          "profile": 0.07,
+          "subspecies": 0.0,
+          "uncertain": 0.93,
+          "taxonomy": 0.0,
+          "related": 0.0,
+          "diet": 0.0,
+          "observations": 0.0,
+          "habitat": 0.0,
+          "ecological_diet": 0.0,
+          "appearance": 0.0
+        },
+        "failure": "uncertain",
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1926,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-111",
+      "question": "Tyrannosaurus rex 아종 알려줘",
+      "expected": "uncertain",
+      "category": "absent_taxon",
+      "baseline": "uncertain",
+      "jev": "subspecies",
+      "deterministic": false,
+      "entity_span": "Tyrannosaurus rex",
+      "decision": {
+        "label": "subspecies",
+        "confidence": 0.96,
+        "probabilities": {
+          "evidence": 0.0,
+          "appearance": 0.0,
+          "profile": 0.0,
+          "uncertain": 0.04,
+          "observations": 0.0,
+          "ecological_habitat": 0.0,
+          "habitat": 0.0,
+          "taxonomy": 0.0,
+          "related": 0.0,
+          "diet": 0.0,
+          "subspecies": 0.96,
+          "activity": 0.0,
+          "ecological_diet": 0.0
+        },
+        "failure": null,
+        "usage": {
+          "input_tokens": 829,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1799,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-113",
+      "question": "Canis lupus 분류 알려줘",
+      "expected": "uncertain",
+      "category": "absent_taxon",
+      "baseline": "taxonomy",
+      "jev": "taxonomy",
+      "deterministic": true,
+      "entity_span": null,
+      "decision": null
+    },
+    {
+      "id": "jev-115",
+      "question": "그 새 아종 알려줘",
+      "expected": "uncertain",
+      "category": "ambiguous_reference",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.77,
+        "probabilities": {
+          "profile": 0.0,
+          "subspecies": 0.8,
+          "taxonomy": 0.05,
+          "observations": 0.0,
+          "evidence": 0.0,
+          "diet": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "appearance": 0.0,
+          "related": 0.0,
+          "ecological_habitat": 0.0,
+          "ecological_diet": 0.0,
+          "uncertain": 0.15
+        },
+        "failure": "low_confidence",
+        "usage": {
+          "input_tokens": 824,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1553,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-117",
+      "question": "청둥오리 아종이랑 먹이도 알려줘",
+      "expected": "uncertain",
+      "category": "multi_intent",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.58,
+        "probabilities": {
+          "profile": 0.0,
+          "subspecies": 0.17,
+          "observations": 0.0,
+          "related": 0.0,
+          "ecological_diet": 0.0,
+          "evidence": 0.0,
+          "uncertain": 0.61,
+          "diet": 0.22,
+          "ecological_habitat": 0.0,
+          "habitat": 0.0,
+          "activity": 0.0,
+          "taxonomy": 0.0,
+          "appearance": 0.0
+        },
+        "failure": "uncertain",
+        "usage": {
+          "input_tokens": 832,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1882,
+        "attempts": 1
+      }
+    },
+    {
+      "id": "jev-119",
+      "question": "흰뺨검둥오리 서식지랑 생김새 알려줘",
+      "expected": "uncertain",
+      "category": "multi_intent",
+      "baseline": "uncertain",
+      "jev": "uncertain",
+      "deterministic": false,
+      "entity_span": null,
+      "decision": {
+        "label": null,
+        "confidence": 0.67,
+        "probabilities": {
+          "taxonomy": 0.0,
+          "profile": 0.26,
+          "habitat": 0.03,
+          "ecological_habitat": 0.0,
+          "diet": 0.0,
+          "evidence": 0.0,
+          "subspecies": 0.0,
+          "ecological_diet": 0.0,
+          "observations": 0.0,
+          "appearance": 0.01,
+          "uncertain": 0.7,
+          "related": 0.0,
+          "activity": 0.0
+        },
+        "failure": "uncertain",
+        "usage": {
+          "input_tokens": 837,
+          "output_tokens": 128
+        },
+        "credits_used": 1.0,
+        "elapsed_ms": 1775,
+        "attempts": 1
+      }
+    }
+  ],
+  "baseline_embedding_probe": "Separate real probe failed with EmbeddingTransportError locally; NAS container also failed with ConnectionRefusedError. Comparison is a degraded-service baseline, not a healthy embedding quality benchmark."
+}

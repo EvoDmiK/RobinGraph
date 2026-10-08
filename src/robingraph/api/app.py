@@ -36,12 +36,14 @@ from ..retrieval.operational import (
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.species_profile import SpeciesNotFoundError, species_summary
-from ..retrieval.species_questions import parse_species_question, focused_answer
+from ..retrieval.species_questions import SpeciesQuestion, parse_species_question, focused_answer
 from ..retrieval.name_relations import reviewed_search_terms
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
 from .semantic_router import ChatIntent, SemanticRouter
+from .jev_router import JevRouter
+from .question_entities import extract_name
 
 if TYPE_CHECKING:
     # The evidence-route answer generator is an optional integration seam.
@@ -312,6 +314,7 @@ class ChatSpeciesResult(_ChatModel):
     profile: dict | None
     question_answer: dict | None = None
     similar_species: dict | None = None
+    subspecies: dict | None = None
 
 
 class ChatObservationsResult(_ChatModel):
@@ -343,7 +346,7 @@ ChatResult = Annotated[
 
 class ChatResponse(_ChatModel):
     selected_intent: ChatIntent | None
-    route_method: Literal["semantic", "explicit", "deterministic"]
+    route_method: Literal["semantic", "explicit", "deterministic", "jev"]
     disposition: Literal["answer", "abstain", "clarify"]
     answer_text: str
     warnings: list[str]
@@ -774,6 +777,7 @@ def create_app(
     lineage_handler: LineageHandler | None = None,
     korean_lineage_handler: LineageHandler | None = None,
     semantic_router: SemanticRouter | None = None,
+    jev_router: JevRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
     similar_species_handler: Callable[[str], dict] | None = None,
@@ -972,6 +976,45 @@ def create_app(
 
         species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
         recognized = ("profile", species_question.name) if species_question else _species_chat_question(request.question) if request.intent == "auto" else None
+        jev_label = None
+        jev_attempted = False
+        jev_failed = False
+        if request.intent == "auto" and not recognized and jev_router is not None:
+            jev_attempted = True
+            decision = jev_router.classify(request.question)
+            jev_label = decision.label
+            # Uncertainty is a decision, not an outage. Never let embeddings
+            # override a low-confidence or unsupported Jev classification.
+            jev_failed = decision.failure in {"authentication", "rate_limit", "http_error", "transport", "timeout", "invalid_response"}
+            if jev_label:
+                selected_kind = jev_label if jev_label in ("taxonomy", "observations", "evidence") else "profile"
+                entity = extract_name(request.question, jev_label)
+                if selected_kind in ("profile", "taxonomy"):
+                    explicit_name = None
+                    if isinstance(request.filters, ProfileChatFilters):
+                        explicit_name = request.filters.name
+                    elif isinstance(request.filters, TaxonomyChatFilters):
+                        explicit_name = request.filters.name or request.filters.scientific_name
+                    if (not entity and not explicit_name) or (entity and explicit_name and entity.casefold() != explicit_name.strip().casefold()):
+                        return ChatResponse(
+                            selected_intent=selected_kind, route_method="jev", disposition="clarify",
+                            answer_text="조회할 새 이름을 하나 명확히 입력하고, 질문과 필터의 이름을 맞춰 주세요.",
+                            warnings=["종 이름을 임의로 추정하지 않았습니다."],
+                            result=ChatClarifyResult(prompt="예: 청둥오리 아종 알려줘"),
+                        )
+                    entity = entity or explicit_name
+                    recognized = (selected_kind, entity)
+                    topics = {"diet": ("diet", None), "habitat": ("habitat", None), "activity": ("activity", None),
+                              "appearance": ("appearance", None), "related": ("related", None),
+                              "ecological_habitat": ("ecological_related", "habitat"),
+                              "ecological_diet": ("ecological_related", "trophic_niche")}
+                    if jev_label in topics:
+                        topic, category = topics[jev_label]
+                        if jev_label == "related":
+                            same_rank = re.search(r"같은\s*(속|과)", request.question)
+                            if same_rank:
+                                category = {"속": "genus", "과": "family"}[same_rank.group(1)]
+                        species_question = SpeciesQuestion(entity, topic, category)
         focused_name = None
         name_context = None
         if species_question and request.filters is not None and (
@@ -1015,7 +1058,7 @@ def create_app(
                 relations=relationships["relations"]
                 targets={r.get("taxon",{}).get("taxon_id") for r in relations}
                 single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
-                if single_common and species_question:
+                if single_common and (species_question or jev_label in ("profile", "subspecies", "taxonomy")):
                     focused_name = relations[0]["taxon"]["scientific_name"]
                     name_context = relationships
                 else:
@@ -1034,14 +1077,16 @@ def create_app(
         if request.intent == "auto":
             if recognized:
                 selected = recognized[0]
-            elif semantic_router is not None:
+            elif jev_label in ("observations", "evidence"):
+                selected = jev_label
+            elif semantic_router is not None and (not jev_attempted or jev_failed):
                 with tracing.span("semantic_router.classify", tracing.CHAIN) as route_span:
                     route_span.set_inputs({"question": request.question})
                     selected = semantic_router.classify(request.question)
                     route_span.set_outputs({"selected_intent": selected})
             else:
                 selected = None
-            method: Literal["semantic", "explicit", "deterministic"] = "deterministic" if recognized else "semantic"
+            method = "jev" if jev_attempted and not jev_failed else "deterministic" if recognized else "semantic"
             if selected is None:
                 return ChatResponse(
                     selected_intent=None,
@@ -1091,6 +1136,41 @@ def create_app(
                     warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
                     result=ChatSpeciesResult(profile=None),
                 )
+            if jev_label == "subspecies":
+                try:
+                    if subspecies_handler is None:
+                        raise ValueError("Subspecies lookup unavailable")
+                    data = subspecies_handler(name)
+                    lineage = profile.get("lineage") or {}
+                    if name_context is not None:
+                        expected = name_context["relations"][0]["taxon"]
+                        if (profile["taxon"]["taxon_id"] != expected.get("taxon_id")
+                                or lineage.get("concept_set_id") != name_context.get("concept_set_id")
+                                or lineage.get("taxonomy_release") != name_context.get("taxonomy_release")):
+                            raise ValueError("Name relation context changed")
+                    if (data["parent_species"]["taxon"]["taxon_id"] != profile["taxon"]["taxon_id"]
+                            or data.get("concept_set_id") != lineage.get("concept_set_id")
+                            or data.get("taxonomy_release") != lineage.get("taxonomy_release")
+                            or not isinstance(data.get("subspecies"), list)):
+                        raise ValueError("Subspecies context changed")
+                    count = len(data["subspecies"])
+                    label = profile["taxon"].get("korean_name") or profile["taxon"]["scientific_name"]
+                    text = (f"{label}에 속하는 아종 {count}개를 활성 분류판에서 확인했습니다."
+                            if count else f"활성 분류판에서 {label}에 연결된 아종이 없습니다.")
+                    if data.get("has_more"):
+                        text += " 일부 목록이며 전체 목록은 분류 출처를 확인해 주세요."
+                    return ChatResponse(
+                        selected_intent=selected, route_method=method, disposition="answer", answer_text=text,
+                        warnings=profile.get("warnings", []),
+                        result=ChatSpeciesResult(profile=profile, subspecies=data,
+                            question_answer={"topic": "subspecies", "title": f"{label} · 아종 목록", "text": text, "items": []}),
+                    )
+                except Exception:
+                    return ChatResponse(
+                        selected_intent=selected, route_method=method, disposition="abstain",
+                        answer_text="아종 목록을 현재 확인하지 못했습니다.", warnings=["아종 조회 기능 또는 활성 분류판을 확인해야 합니다."],
+                        result=ChatSpeciesResult(profile=None),
+                    )
             if species_question:
                 if name_context is not None:
                     lineage = profile.get("lineage") or {}
@@ -1161,6 +1241,8 @@ def create_app(
                 if filters
                 else (recognized[1] if recognized else request.question)
             )
+            if focused_name:
+                query = focused_name
             if recognized and (not filters or not (filters.scientific_name or filters.name)):
                 handler = korean_lineage_handler if any("\uac00" <= char <= "\ud7a3" for char in query) else lineage_handler
             elif not filters or not (filters.scientific_name or filters.name):
@@ -1276,7 +1358,7 @@ def create_app(
         # established hybrid handler and its truthful vector/fulltext fallback
         # warnings; similarity is presented as retrieval support, never fact.
         filters = request.filters if isinstance(request.filters, EvidenceChatFilters) else EvidenceChatFilters()
-        requested_mode: SearchMode = "hybrid" if method == "semantic" else "fulltext"
+        requested_mode: SearchMode = "hybrid" if method in ("semantic", "jev") else "fulltext"
         if search_handler is None:
             return ChatResponse(
                 selected_intent="evidence", route_method=method, disposition="abstain",
