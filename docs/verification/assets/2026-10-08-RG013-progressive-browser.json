@@ -1,0 +1,117 @@
+{
+  "scope": "Actual local updated server with supplied real PostgreSQL/Neo4j and real Jev/Gemini/media HTTP; genuine Chrome input/send, no mocked responses; NOT NAS deployment verification",
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "question": "청둥오리에 대해 알려줘",
+      "initial_ms": 299,
+      "total_ms": 4140,
+      "initialStatuses": "사진·추가 설명을 불러오는 중입니다.\n\n비슷한 새 추천을 불러오는 중입니다.",
+      "finalStatuses": "사진·추가 설명 조회를 마쳤습니다.\n\n비슷한 새 추천을 불러왔습니다.\n\n청둥오리\n외관 특징\n수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지니고 있습니다.\n이 새의 몸길이는 50~65cm이며, 날개 길이는 81~98cm이고 부리는 4.4~6.1cm입니다.\n재미있는 사실\n암컷은 보통 2개에서 10개의 꽥꽥거리는 소리를 연속으로 내며, 처음에는 크다가 점차 소리가 작아집니다.\n새끼는 부화하자마자 수영을 할 수 있을 정도로 발육이 빠른 상태로 태어납니다.\n답변 출처 보기 (1)",
+      "subspecies_count": 0,
+      "form_enabled_before_enrichment": true,
+      "responses": [
+        {
+          "path": "/v1/chat",
+          "status": 200,
+          "at_ms": 263
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "status": 200,
+          "at_ms": 965
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "status": 200,
+          "at_ms": 4075
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 390,
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-progressive-390-0.png"
+    },
+    {
+      "width": 390,
+      "question": "청둥오리 아종 알려줘",
+      "initial_ms": 3175,
+      "total_ms": 3339,
+      "initialStatuses": "사진·추가 설명을 불러오는 중입니다.",
+      "finalStatuses": "사진·추가 설명 조회를 마쳤습니다.\n\n청둥오리\n외관 특징\n수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지니고 있습니다.\n이 새의 몸길이는 50~65cm이며, 날개 길이는 81~98cm이고 부리는 4.4~6.1cm입니다.\n재미있는 사실\n암컷은 보통 2개에서 10개의 꽥꽥거리는 소리를 연속으로 내며, 처음에는 크다가 점차 소리가 작아집니다.\n새끼는 부화하자마자 수영을 할 수 있을 정도로 발육이 빠른 상태로 태어납니다.\n답변 출처 보기 (1)",
+      "subspecies_count": 2,
+      "form_enabled_before_enrichment": true,
+      "responses": [
+        {
+          "path": "/v1/chat",
+          "status": 200,
+          "at_ms": 3130
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "status": 200,
+          "at_ms": 3282
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 390,
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-progressive-390-1.png"
+    },
+    {
+      "width": 900,
+      "question": "청둥오리에 대해 알려줘",
+      "initial_ms": 247,
+      "total_ms": 1071,
+      "initialStatuses": "사진·추가 설명을 불러오는 중입니다.\n\n비슷한 새 추천을 불러오는 중입니다.",
+      "finalStatuses": "사진·추가 설명 조회를 마쳤습니다.\n\n비슷한 새 추천을 불러왔습니다.\n\n청둥오리\n외관 특징\n수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지니고 있습니다.\n이 새의 몸길이는 50~65cm이며, 날개 길이는 81~98cm이고 부리는 4.4~6.1cm입니다.\n재미있는 사실\n암컷은 보통 2개에서 10개의 꽥꽥거리는 소리를 연속으로 내며, 처음에는 크다가 점차 소리가 작아집니다.\n새끼는 부화하자마자 수영을 할 수 있을 정도로 발육이 빠른 상태로 태어납니다.\n답변 출처 보기 (1)",
+      "subspecies_count": 0,
+      "form_enabled_before_enrichment": true,
+      "responses": [
+        {
+          "path": "/v1/chat",
+          "status": 200,
+          "at_ms": 218
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "status": 200,
+          "at_ms": 380
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "status": 200,
+          "at_ms": 1018
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 900,
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-progressive-900-0.png"
+    },
+    {
+      "width": 900,
+      "question": "청둥오리 아종 알려줘",
+      "initial_ms": 2952,
+      "total_ms": 3108,
+      "initialStatuses": "사진·추가 설명을 불러오는 중입니다.",
+      "finalStatuses": "사진·추가 설명 조회를 마쳤습니다.\n\n청둥오리\n외관 특징\n수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지니고 있습니다.\n이 새의 몸길이는 50~65cm이며, 날개 길이는 81~98cm이고 부리는 4.4~6.1cm입니다.\n재미있는 사실\n암컷은 보통 2개에서 10개의 꽥꽥거리는 소리를 연속으로 내며, 처음에는 크다가 점차 소리가 작아집니다.\n새끼는 부화하자마자 수영을 할 수 있을 정도로 발육이 빠른 상태로 태어납니다.\n답변 출처 보기 (1)",
+      "subspecies_count": 2,
+      "form_enabled_before_enrichment": true,
+      "responses": [
+        {
+          "path": "/v1/chat",
+          "status": 200,
+          "at_ms": 2901
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "status": 200,
+          "at_ms": 3051
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 900,
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-progressive-900-1.png"
+    }
+  ],
+  "tested_revision": "722e903cbd584d775a3aee41d0b9e153073a0343"
+}
