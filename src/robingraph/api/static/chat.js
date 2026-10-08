@@ -364,26 +364,89 @@
   /** Card-only layout: keep the shared facts renderer and collect its citations. */
   function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel) {
     var grid = buildTraitGrid(doc, groups);
-    Array.prototype.slice.call(grid.children).forEach(function (traitCard) {
+    var distributionNumber = 0;
+    Array.prototype.slice.call(grid.children).forEach(function (traitCard, index) {
+      var trait = groups[index].trait;
+      var originalValue = traitCard.children[1].textContent;
+      var compositionLabel = "";
+      if (trait.name === "diet_distribution") {
+        compositionLabel = "자료 " + (++distributionNumber);
+        traitCard.className += " trait-card-diet-composition";
+        var composition = buildDietComposition(doc, trait, compositionLabel);
+        if (composition) {
+          traitCard.children[1].textContent = "";
+          traitCard.children[1].appendChild(composition);
+        }
+      }
       var sourceDetails = Array.prototype.slice.call(traitCard.children).find(function (child) {
         return child.className === "trait-source-toggle";
       });
-      if (!sourceDetails) { return; }
+      if (!sourceDetails && trait.name !== "diet_distribution") { return; }
       var entry = doc.createElement("section");
       entry.className = "species-trait-source-entry";
       var heading = doc.createElement("h5");
       var label = traitCard.children[0].textContent;
-      var value = traitCard.children[1].textContent;
-      heading.textContent = (scopeLabel ? scopeLabel + " · " : "") + label + ": " + value;
+      var value = originalValue;
+      heading.textContent = (scopeLabel ? scopeLabel + " · " : "") + label + (compositionLabel ? " · " + compositionLabel : "") + ": " + value;
       entry.appendChild(heading);
       // Reuse the actual safe links and provenance nodes, including reviewed
       // raw-source conflicts, rather than re-creating a narrower source list.
-      sourceDetails.removeChild(sourceDetails.firstChild);
-      while (sourceDetails.firstChild) { entry.appendChild(sourceDetails.firstChild); }
-      traitCard.removeChild(sourceDetails);
+      if (sourceDetails) {
+        sourceDetails.removeChild(sourceDetails.firstChild);
+        while (sourceDetails.firstChild) { entry.appendChild(sourceDetails.firstChild); }
+        traitCard.removeChild(sourceDetails);
+      } else {
+        var unconfirmed = doc.createElement("p"); unconfirmed.textContent = "출처 정보 없음"; entry.appendChild(unconfirmed);
+      }
       sourceTarget.appendChild(entry);
     });
     return grid;
+  }
+
+  /** Percentages are displayed as recorded, per dataset, without normalization. */
+  function buildDietComposition(doc, trait, datasetLabel) {
+    var values = trait.value;
+    if (!values || typeof values !== "object" || Array.isArray(values)) { return null; }
+    var labels = { invertebrate: "무척추동물", endotherm_vertebrate: "온혈 척추동물", ectotherm_vertebrate: "변온 척추동물",
+      unknown_vertebrate: "기타 척추동물", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" };
+    var section = doc.createElement("div"); section.className = "species-diet-composition";
+    section.setAttribute("data-source-label", datasetLabel || "자료");
+    section.setAttribute("aria-label", (trait.label || "먹이 구성") + (trait.inferred ? " · 추정값" : ""));
+    var rows = doc.createElement("div"); rows.className = "species-diet-components";
+    var zeros = doc.createElement("div"); zeros.className = "species-diet-zero-items";
+    var total = 0; var invalid = false; var unknown = false;
+    Object.keys(values).forEach(function (key) {
+      var amount = values[key];
+      var valid = typeof amount === "number" && Number.isFinite(amount) && amount >= 0 && amount <= 100;
+      var known = Object.prototype.hasOwnProperty.call(labels, key);
+      if (!known) { unknown = true; }
+      if (!valid) { invalid = true; }
+      if (valid) { total += amount; }
+      var row = doc.createElement("div"); row.className = "species-diet-component" + (valid && amount === 0 ? " diet-component-zero" : "");
+      row.setAttribute("data-component", key);
+      if (valid) { row.setAttribute("data-percent", String(amount)); }
+      var name = doc.createElement("span"); name.className = "diet-component-name";
+      name.textContent = known ? labels[key] : "미분류 항목 (" + key + ")";
+      row.appendChild(name);
+      var percent = doc.createElement("strong"); percent.className = "diet-component-percent";
+      percent.textContent = valid ? amount + "%" : (typeof amount === "number" && Number.isFinite(amount) ? amount + "% · 범위 확인 필요" : "비율 미확인");
+      row.appendChild(percent);
+      if (valid && amount > 0) {
+        var track = doc.createElement("span"); track.className = "diet-component-track"; track.setAttribute("aria-hidden", "true");
+        var fill = doc.createElement("span"); fill.className = "diet-component-fill"; fill.setAttribute("style", "width: " + amount + "%");
+        track.appendChild(fill); row.appendChild(track);
+      }
+      (valid && amount === 0 ? zeros : rows).appendChild(row);
+    });
+    section.appendChild(rows);
+    if (zeros.children.length) { section.appendChild(zeros); }
+    var note = doc.createElement("p"); note.className = "species-diet-composition-note";
+    note.textContent = (datasetLabel ? datasetLabel + " · " : "") + (invalid ? "비율을 확인할 수 없는 항목이 있어 전체 구성을 확정할 수 없습니다."
+      : "자료 비율 합계 " + Math.round(total * 1000000) / 1000000 + "%");
+    if (unknown) { note.textContent += " · 미분류 항목 포함"; }
+    if (trait.inferred) { note.textContent += " · 추정값"; }
+    section.appendChild(note);
+    return section;
   }
 
   // Habitat emblems keyed by the raw AVONET `habitat` trait value (not the
@@ -731,6 +794,100 @@
     return node;
   }
 
+  /** Keep source materials intact so async refreshes can re-elect unique links. */
+  function buildCombinedAnswerSources(doc, initialMaterial) {
+    var panel = doc.createElement("details");
+    panel.className = "species-answer-sources";
+    var summary = doc.createElement("summary");
+    panel.appendChild(summary);
+    var materials = [];
+    function sourceText(node) {
+      if (node.childNodes) { return node.textContent || ""; }
+      return (node.textContent || "") + Array.prototype.slice.call(node.children || []).map(sourceText).join(" ");
+    }
+    function sourceUrls(node) {
+      var urls = [];
+      function visit(item) {
+        if (String(item.tagName || "").toLowerCase() === "a" && sanitizeUrl(item.href)) { urls.push(item.href); }
+        Array.prototype.slice.call(item.children || []).forEach(visit);
+      }
+      visit(node);
+      return urls;
+    }
+    function copy(node, seenUrls, seenRows) {
+      if (node.nodeType === 3) { return doc.createTextNode(node.nodeValue); }
+      var tag = String(node.tagName || "").toLowerCase();
+      if (!tag) { return null; }
+      var contextRow = tag === "p" || tag === "li" || node.className === "species-trait-source-entry" || node.className === "species-photo-source";
+      if (contextRow) {
+        var fingerprint = JSON.stringify([tag, node.className || "", sourceText(node), sourceUrls(node)]);
+        if (seenRows[fingerprint]) { return null; }
+        seenRows[fingerprint] = true;
+      }
+      var url = tag === "a" ? sanitizeUrl(node.href) : null;
+      var duplicate = url && seenUrls[url];
+      if (url && !duplicate) { seenUrls[url] = true; }
+      var targetTag = duplicate ? "span" : tag;
+      var clone = node.namespaceURI === SVG_NS && doc.createElementNS
+        ? doc.createElementNS(SVG_NS, targetTag) : doc.createElement(targetTag);
+      var attributes = node.attributes || {};
+      if (typeof attributes.length === "number") {
+        Array.prototype.slice.call(attributes).forEach(function (attribute) {
+          if (!duplicate || ["href", "target", "rel"].indexOf(attribute.name) === -1) { clone.setAttribute(attribute.name, attribute.value); }
+        });
+      } else {
+        Object.keys(attributes).forEach(function (name) {
+          if (!duplicate || ["href", "target", "rel"].indexOf(name) === -1) { clone.setAttribute(name, attributes[name]); }
+        });
+      }
+      if (typeof node.className === "string") { clone.className = node.className; }
+      if (url && !duplicate) { clone.href = url; clone.target = "_blank"; clone.rel = "noopener noreferrer"; }
+      if (!node.childNodes) { clone.textContent = node.textContent || ""; }
+      Array.prototype.slice.call(node.childNodes || node.children || []).forEach(function (child) {
+        var copied = copy(child, seenUrls, seenRows);
+        if (copied) { clone.appendChild(copied); }
+      });
+      return clone;
+    }
+    panel.refreshSources = function () {
+      while (panel.children.length > 1) { panel.removeChild(panel.children[1]); }
+      var urls = Object.create(null);
+      var rows = Object.create(null);
+      materials.forEach(function (material) {
+        Array.prototype.slice.call(material.children || []).forEach(function (child) {
+          if (String(child.tagName).toLowerCase() === "summary") { return; }
+          var clone = copy(child, urls, rows);
+          if (clone) { panel.appendChild(clone); }
+        });
+      });
+      summary.textContent = "답변 출처 보기 (" + Object.keys(urls).length + ")";
+    };
+    panel.addSourceMaterial = function (material) {
+      if (material && materials.indexOf(material) === -1) { materials.push(material); }
+      panel.refreshSources();
+    };
+    if (initialMaterial) { panel.addSourceMaterial(initialMaterial); }
+    return panel;
+  }
+
+  function combineCardSources(doc, card, sources) {
+    var panel = sources && sources.addSourceMaterial ? sources : buildCombinedAnswerSources(doc, sources);
+    if (card && card.sourceMaterial) {
+      panel.addSourceMaterial(card.sourceMaterial);
+      card.onSourcesChanged = panel.refreshSources;
+    }
+    return panel;
+  }
+
+  function appendProfilePopup(doc, container, card, profile, explanation) {
+    var sources = explanation && Array.prototype.slice.call(explanation.children).find(function (child) { return child.className === "species-answer-sources"; });
+    if (sources) { explanation.removeChild(sources); }
+    sources = combineCardSources(doc, card, sources);
+    container.appendChild(buildSpeciesPopup(doc, card, profile));
+    container.appendChild(sources);
+    return sources;
+  }
+
   /**
    * Build the sourced species profile card for a `ChatSpeciesResult`
    * (`result.kind === "profile"`), rendering the exact same sourced
@@ -755,6 +912,7 @@
     options = options || {};
     var comparisonCallback = options.explorer && options.explorer.onComparison;
     if (comparisonCallback && typeof comparisonCallback.beforeComparison === "function") { comparisonCallback.beforeComparison(); }
+    var comparisonSources = buildCombinedAnswerSources(doc);
     var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive };
     var panel = doc.createElement("section");
     panel.className = "species-comparison";
@@ -813,12 +971,13 @@
     panel.appendChild(note);
     if (options.bothCards) {
       var leftCard = buildSpeciesCard(doc, left, cardOptions);
-      if (leftCard) { panel.appendChild(buildSpeciesPopup(doc, leftCard, left)); }
+      if (leftCard) { panel.appendChild(buildSpeciesPopup(doc, leftCard, left)); combineCardSources(doc, leftCard, comparisonSources); }
     }
     var card = buildSpeciesCard(doc, right, cardOptions);
-    if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); }
+    if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); combineCardSources(doc, card, comparisonSources); }
     panel.appendChild(buildRelatedExplorer(doc, right, options.fetcher, options.explorer));
     panel.appendChild(buildEcologicalExplorer(doc, right, options.fetcher, options.explorer));
+    panel.appendChild(comparisonSources);
     return panel;
   }
 
@@ -1386,7 +1545,7 @@
           if (profile.taxon.rank !== "subspecies") { selection.appendChild(buildSubspeciesExplorer(doc, profile, fetcher, active)); }
           else { selection.appendChild(buildParentSpeciesExplorer(doc, profile, fetcher, active)); }
           selection.appendChild(buildSpeciesBrief(doc, profile));
-          selection.appendChild(buildSpeciesPopup(doc, card, profile));
+          appendProfilePopup(doc, selection, card, profile, explanation);
         }
         status.textContent = candidateName + " 자료를 불러왔습니다.";
       }).catch(function (error) {
@@ -1497,7 +1656,7 @@
         var answer = buildSpeciesAnswer(doc, other);
         if (answer) { content.appendChild(answer); }
         content.appendChild(buildSpeciesBrief(doc, other));
-        content.appendChild(buildSpeciesPopup(doc, buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: isActive }), other));
+        appendProfilePopup(doc, content, buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: isActive }), other, answer);
       }).catch(function () { pending = false; if (typeof isActive !== "function" || isActive()) { content.textContent = "상위 종 자료를 확인하지 못했습니다. 다시 눌러 재시도하세요."; } });
     });
     return section;
@@ -1586,7 +1745,7 @@
               if (answer) { selected.appendChild(answer); }
               var card = buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: active });
               selected.appendChild(buildSpeciesBrief(doc, other));
-              selected.appendChild(buildSpeciesPopup(doc, card, other));
+              appendProfilePopup(doc, selected, card, other, answer);
               status.textContent = "선택한 아종의 자료를 불러왔습니다.";
             }).catch(function () { if (active() && current === generation) { status.textContent = "아종 자료를 확인하지 못했습니다. 다시 선택하세요."; } });
           });
@@ -1684,14 +1843,25 @@
 
     var title = doc.createElement("p");
     title.className = "species-title";
-    title.textContent = speciesLabel(taxon);
+    var koreanTitle = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" ? taxon.korean_name.trim() : "";
+    var englishTitle = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
+    title.textContent = koreanTitle || englishTitle || speciesLabel(taxon);
     var heading = doc.createElement("div");
     heading.className = "species-card-heading";
     var category = doc.createElement("span");
     category.className = "species-category";
     category.textContent = taxon.rank === "subspecies" ? "아종" : "조류 도감";
     heading.appendChild(category);
-    heading.appendChild(title);
+    var names = doc.createElement("div");
+    names.className = "species-card-names";
+    names.appendChild(title);
+    if (koreanTitle && englishTitle && koreanTitle !== englishTitle) {
+      var englishName = doc.createElement("small");
+      englishName.className = "species-english-name";
+      englishName.textContent = englishTitle;
+      names.appendChild(englishName);
+    }
+    heading.appendChild(names);
     heading.appendChild(buildHabitatEmblem(doc, habitatEmblemInfo(profile)));
     card.appendChild(heading);
 
@@ -1724,13 +1894,12 @@
     card.appendChild(front);
     card.appendChild(back);
     var backTitle = doc.createElement("h3");
-    backTitle.textContent = "출처 · 상세 정보";
+    backTitle.textContent = "상세 정보";
     back.appendChild(backTitle);
-    var cardSources = doc.createElement("details");
-    cardSources.className = "species-card-sources";
-    var sourcesSummary = doc.createElement("summary");
-    sourcesSummary.textContent = "출처 · 자료 기준";
-    cardSources.appendChild(sourcesSummary);
+    var cardSources = doc.createElement("div");
+    cardSources.className = "species-profile-source-material";
+    card.sourceMaterial = cardSources;
+    card.refreshSources = function () { if (card.onSourcesChanged) { card.onSourcesChanged(); } };
     function sourceSection(className, headingText) {
       var section = doc.createElement("section");
       section.className = className;
@@ -1939,6 +2108,7 @@
           }
           photoArea.appendChild(retryStatus);
         }
+        card.refreshSources();
         return;
       }
       photoArea.appendChild(media);
@@ -1972,6 +2142,7 @@
         photoArea.appendChild(photoControls);
       }
       photoSourcesSlot.appendChild(photoSources);
+      card.refreshSources();
     }
     if (profile.enrichment_pending) {
       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
@@ -2004,8 +2175,8 @@
     front.appendChild(facts);
     var frontNote = doc.createElement("p");
     frontNote.className = "species-front-note";
-    frontNote.textContent = "수치는 종 평균 · 사진과 자료 출처는 뒷면";
-    if (taxon.rank === "subspecies") { frontNote.textContent = "아종에 직접 연결된 자료 · 출처는 뒷면"; }
+    frontNote.textContent = "수치는 종 평균 · 자료 출처는 답변 출처 보기";
+    if (taxon.rank === "subspecies") { frontNote.textContent = "아종에 직접 연결된 자료 · 출처는 답변 출처 보기"; }
     front.appendChild(frontNote);
 
     var traitNote = doc.createElement("p");
@@ -2166,20 +2337,19 @@
       cardSources.appendChild(lineageSources);
     }
     if (dataNotes.children.length > 1) { cardSources.appendChild(dataNotes); }
-    back.appendChild(cardSources);
 
     var footer = doc.createElement("div");
     footer.className = "species-card-footer";
-    var flip = doc.createElement("button");
-    flip.type = "button";
-    flip.className = "species-card-flip";
-    flip.textContent = "출처 보기 ↻";
-    flip.setAttribute("aria-pressed", "false");
+    var flipping = false;
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("role", "group");
+    card.setAttribute("aria-roledescription", "양면 조류 카드");
+    card.setAttribute("aria-keyshortcuts", "Enter Space");
     function showFace(showBack) {
       back.hidden = !showBack;
       front.hidden = showBack;
-      flip.textContent = showBack ? "앞면 보기 ↻" : "출처 보기 ↻";
-      flip.setAttribute("aria-pressed", String(showBack));
+      card.setAttribute("data-face", showBack ? "back" : "front");
+      card.setAttribute("aria-label", speciesLabel(taxon) + " 도감 카드 · " + (showBack ? "뒷면 상세 정보" : "앞면 주요 특징") + " · 좌우 드래그 또는 Enter·Space로 뒤집기");
       if (card.parentNode) { card.parentNode.scrollTop = 0; }
     }
     var flipAnimation = null;
@@ -2307,19 +2477,20 @@
       if (flipAnimation) { flipAnimation.cancel(); flipAnimation = null; }
       clearGloss();
       if (flipTarget) { flipTarget.setAttribute("data-flipping", "false"); }
-      flip.disabled = false;
+      flipping = false; card.setAttribute("aria-busy", "false");
       cancelDrag();
     }
     card.showFront = function () { suppressClick = false; suppressGeneration += 1; resetFlip(); showFace(false); };
-    flip.addEventListener("click", function () {
-      if (flip.disabled) { return; }
+    function flipCard() {
+      if (flipping) { return; }
+      cancelDrag();
       var showBack = back.hidden;
       var view = doc.defaultView;
       var reducedMotion = view && view.matchMedia && view.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var target = card.parentNode && card.parentNode.tagName.toLowerCase() === "dialog" ? card.parentNode : card;
       if (reducedMotion || typeof target.animate !== "function") { showFace(showBack); return; }
       flipTarget = target;
-      flip.disabled = true;
+      flipping = true; card.setAttribute("aria-busy", "true");
       target.setAttribute("data-flipping", "true");
       var generation = ++flipGeneration;
       var direction = showBack ? 1 : -1;
@@ -2346,6 +2517,14 @@
           if (generation === flipGeneration) { resetFlip(); }
         };
       };
+    }
+    showFace(false);
+    card.setAttribute("aria-busy", "false");
+    card.addEventListener("keydown", function (event) {
+      if (event.target !== card || event.repeat || event.altKey || event.ctrlKey || event.metaKey ||
+          (event.key !== "Enter" && event.key !== " ")) { return; }
+      event.preventDefault();
+      flipCard();
     });
 
     // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
@@ -2398,7 +2577,7 @@
       if (commit && (reducedMotion_or_no_animate(target))) { showFace(showBack); return; }
       if (typeof target.animate !== "function") { if (commit) { showFace(showBack); } return; }
       flipTarget = target;
-      flip.disabled = true;
+      flipping = true; card.setAttribute("aria-busy", "true");
       var generation = ++flipGeneration;
       if (!commit) {
         flipAnimation = target.animate([
@@ -2440,7 +2619,7 @@
         if (event.pointerId !== drag.pointerId && (drag.kind === "touch" || event.pointerType === "touch")) { cancelDrag(); }
         return;
       }
-      if (flip.disabled) { return; }
+      if (flipping) { return; }
       var touch = event.pointerType === "touch";
       if ((!touch && event.pointerType !== "mouse") || event.button !== 0 || event.isPrimary === false) { return; }
       if (!touch && (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey)) { return; }
@@ -2539,7 +2718,6 @@
     swipeHint.setAttribute("aria-hidden", "true");
     swipeHint.textContent = "← 카드를 좌우로 밀어 뒤집어 보세요 →";
     footer.appendChild(swipeHint);
-    footer.appendChild(flip);
     var dragHint = doc.createElement("span");
     dragHint.className = "species-card-drag-hint";
     dragHint.setAttribute("aria-hidden", "true");
@@ -2672,8 +2850,9 @@
           li.textContent = item.text;
           list.appendChild(li);
           var url = sanitizeUrl(item.source_url);
-          if (url && typeof item.source_name === "string" && !seen[url]) {
-            seen[url] = true;
+          var sourceKey = JSON.stringify([url, item.source_name, item.license_name, item.license_url]);
+          if (url && typeof item.source_name === "string" && !seen[sourceKey]) {
+            seen[sourceKey] = true;
             sources.push({ name:item.source_name, url:url, license:item.license_name,
               licenseUrl:sanitizeUrl(item.license_url) });
           }
@@ -2693,8 +2872,9 @@
       if (conservationInfo(profile.conservation).verified) { briefSources.push(profile.conservation); }
       briefSources.forEach(function (source) {
         var url = sanitizeUrl(source.source_url);
-        if (url && typeof source.source_name === "string" && !seen[url]) {
-          seen[url] = true; sources.push({ name: source.source_name, url: url, license: source.license_name, licenseUrl: sanitizeUrl(source.license_url) });
+        var sourceKey = JSON.stringify([url, source.source_name, source.license_name, source.license_url]);
+        if (url && typeof source.source_name === "string" && !seen[sourceKey]) {
+          seen[sourceKey] = true; sources.push({ name: source.source_name, url: url, license: source.license_name, licenseUrl: sanitizeUrl(source.license_url) });
         }
       });
     }
@@ -2859,7 +3039,11 @@
           });
         });
         var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections });
-        if (explanation) { section.appendChild(explanation); }
+        if (explanation) {
+          var extraSources = Array.prototype.slice.call(explanation.children).find(function (child) { return child.className === "species-answer-sources"; });
+          if (extraSources && options.onSources) { explanation.removeChild(extraSources); options.onSources(extraSources); }
+          section.appendChild(explanation);
+        }
         var initialWarnings = Array.isArray(profile.warnings) ? profile.warnings : [];
         var newWarnings = (Array.isArray(fresh.warnings) ? fresh.warnings : []).filter(function (warning) {
           return typeof warning === "string" && initialWarnings.indexOf(warning) === -1;
@@ -3087,17 +3271,21 @@
         var factSourceUrls = {};
         (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
           var url = fact && sanitizeUrl(fact.source_url);
-          if (!url || typeof fact.source_name !== "string" || factSourceUrls[url]) { return; }
-          factSourceUrls[url] = true;
+          var sourceKey = fact && JSON.stringify([url, fact.source_name, fact.license_name, fact.license_url, fact.text, fact.locator]);
+          if (!url || typeof fact.source_name !== "string" || factSourceUrls[sourceKey]) { return; }
+          factSourceUrls[sourceKey] = true;
           if (!answerSources) {
             answerSources = doc.createElement("details"); answerSources.className = "species-answer-sources";
             answerSources.appendChild(doc.createElement("summary"));
           }
           var row = doc.createElement("p"); row.appendChild(safeLink(doc, fact.source_name, url));
           if (fact.license_name) { row.appendChild(safeLink(doc, " · " + fact.license_name, fact.license_url)); }
+          var context = [fact.text, fact.locator].filter(function (value) { return typeof value === "string" && value.trim(); });
+          if (context.length) { var factContext = doc.createElement("span"); factContext.textContent = " · " + context.join(" · "); row.appendChild(factContext); }
           answerSources.appendChild(row);
         });
       }
+      if (answer.result && answer.result.kind === "profile") { answerSources = buildCombinedAnswerSources(doc, answerSources); }
       if (structured) {
         item.appendChild(structured);
       } else {
@@ -3146,6 +3334,7 @@
         var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
         if (speciesCard) {
           if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
+          answerSources = combineCardSources(doc, speciesCard, answerSources);
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
           var extra = doc.createElement("details"); extra.className = "species-extra-info";
           var extraTitle = doc.createElement("summary"); extraTitle.textContent = "더 알아보기"; extra.appendChild(extraTitle);
@@ -3181,6 +3370,7 @@
           if (result.profile.enrichment_pending) {
             var deferred = buildDeferredEnrichment(doc, result.profile, {
               fetcher: taxaFetch, isActive: conversationGuard(), card: speciesCard,
+              onSources: function (material) { answerSources.addSourceMaterial(material); },
               onSimilar: relatedSlot ? function (data) {
                 relatedSlot.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, {
                   initialData: data, onComparison: appendComparisonMessage, isActive: conversationGuard(),
@@ -3251,13 +3441,13 @@
             answerSources = doc.createElement("details"); answerSources.className = "species-answer-sources";
             var sourceTitle = doc.createElement("summary"); answerSources.appendChild(sourceTitle);
           }
-          answerSources.appendChild(citeList);
+          var citationMaterial = doc.createElement("div"); citationMaterial.appendChild(citeList);
+          answerSources.addSourceMaterial(citationMaterial);
         } else { item.appendChild(citeList); }
       }
 
       if (answerSources) {
-        var sourceCount = Array.from(answerSources.children).slice(1).reduce(function (count, row) { return count + (row.className === "citations" ? row.children.length : 1); }, 0);
-        answerSources.children[0].textContent = "답변 출처 보기 (" + sourceCount + ")";
+        if (answerSources.refreshSources) { answerSources.refreshSources(); }
         item.appendChild(answerSources);
       }
 

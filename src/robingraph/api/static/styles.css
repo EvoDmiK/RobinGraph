@@ -691,6 +691,25 @@ body:has(.species-popup[open]) { overflow: hidden; }
   gap: 10px;
   padding-top: 28px;
 }
+.species-card-names {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+}
+.species-card-names .species-title { min-width: 0; max-width: 100%; margin: 0; }
+.species-english-name {
+  min-width: 0;
+  max-width: 100%;
+  font-size: .76rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: normal;
+  color: #405635;
+  overflow-wrap: anywhere;
+}
 .species-category {
   position: absolute;
   left: -20px;
@@ -831,7 +850,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
   border-top: 1px solid #69844766;
   font-size: .78rem;
 }
-.species-card-sources {
+.species-answer-sources {
   margin-top: 12px;
   padding: 0 10px;
   border: 1px solid #67844966;
@@ -840,7 +859,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
   font-size: .75rem;
   overflow-wrap: anywhere;
 }
-.species-card-sources > summary {
+.species-answer-sources > summary {
   min-height: 24px;
   padding: 10px 0;
   color: #405635;
@@ -848,14 +867,14 @@ body:has(.species-popup[open]) { overflow: hidden; }
   font-weight: 750;
   cursor: pointer;
 }
-.species-card-sources section { min-width: 0; margin: 8px 0; }
-.species-card-sources h4 { margin: 8px 0 5px; font-size: .79rem; }
-.species-card-sources h5 { margin: 7px 0 3px; font-size: .74rem; font-weight: 750; }
-.species-card-sources p { margin: 4px 0; }
-.species-card-sources .trait-source { display: block; margin: 3px 0; font-size: .72rem; }
-.species-card-sources .species-photo-source { padding: 6px 0; }
-.species-card-sources > section + section,
-.species-card-sources .species-photo-sources { padding-top: 5px; border-top: 1px solid #67844944; }
+.species-answer-sources section { min-width: 0; margin: 8px 0; }
+.species-answer-sources h4 { margin: 8px 0 5px; font-size: .79rem; }
+.species-answer-sources h5 { margin: 7px 0 3px; font-size: .74rem; font-weight: 750; }
+.species-answer-sources p { margin: 4px 0; }
+.species-answer-sources .trait-source { display: block; margin: 3px 0; font-size: .72rem; }
+.species-answer-sources .species-photo-source { padding: 6px 0; }
+.species-answer-sources > section + section,
+.species-answer-sources .species-photo-sources { padding-top: 5px; border-top: 1px solid #67844944; }
 .species-photo-source { padding: 10px 0; border-bottom: 1px solid #67844966; font-size: .75rem; }
 .species-photo-source strong { display: block; margin-bottom: 4px; }
 .species-card-footer {
@@ -866,21 +885,8 @@ body:has(.species-popup[open]) { overflow: hidden; }
   background: #ddefa0;
   border-top: 3px double #698447;
 }
-.species-card-flip {
-  width: 100%;
-  min-height: 40px;
-  padding: 8px 14px;
-  border: 1px solid #72934c;
-  border-radius: 9px;
-  color: #203f23;
-  background: linear-gradient(#f3f9d6, #d9eab4);
-  font: inherit;
-  font-size: .85rem;
-  font-weight: 700;
-  cursor: pointer;
-}
+
 .species-popup[data-flipping="true"] { will-change: transform, filter; }
-.species-card-flip:disabled { cursor: progress; }
 /* Glossy coat (RG-015): sheen position/opacity are driven by chat.js from the
    card's rotation angle (inline while dragging, WAAPI during flips). Idle = invisible. */
 .species-card { position: relative; }
@@ -1309,13 +1315,28 @@ body:has(.species-popup[open]) { overflow: hidden; }
 @media (hover: hover) and (pointer: fine) {
   .species-popup .species-card { cursor: grab; }
   .species-popup .species-card[data-dragging="true"] { cursor: grabbing; }
-  .species-popup .species-card-flip { cursor: pointer; }
   .species-card-drag-hint { display: block; flex-basis: 100%; margin-top: 4px; font-size: .72rem; color: #4a5f31; }
 }
 /* The whole back remains draggable; repeat the gesture guidance only on front. */
 .species-card:has(.species-card-back:not([hidden])) .species-card-swipe-hint,
 .species-card:has(.species-card-back:not([hidden])) .species-card-drag-hint { display: none; }
-.species-popup .species-card:has(.species-card-back:not([hidden])) .species-card-footer {
-  margin-top: 8px;
-  padding-top: 8px;
+.species-card:has(.species-card-back:not([hidden])) .species-card-footer { display: none; }
+
+/* The card surface supplies the keyboard equivalent of a horizontal swipe. */
+.species-card[tabindex]:focus-visible { outline: 3px solid #264f32; outline-offset: -3px; }
+.species-popup .trait-card-diet-composition > .trait-value {
+  grid-column: 1 / -1;
+  text-align: left;
+  font-weight: 400;
 }
+.species-diet-composition { min-width: 0; margin: 3px 0; }
+.species-diet-components { display: grid; gap: 7px; }
+.species-diet-component { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 8px; min-width: 0; }
+.diet-component-name { overflow-wrap: anywhere; font-size: .76rem; }
+.diet-component-percent { font-size: .76rem; white-space: normal; text-align: right; }
+.diet-component-track { grid-column: 1 / -1; height: 5px; overflow: hidden; border-radius: 99px; background: #47622e25; }
+.diet-component-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #67954d, #365f40); }
+.species-diet-zero-items { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.species-diet-zero-items .diet-component-zero { display: inline-flex; align-items: baseline; gap: 3px; padding: 2px 5px; border-radius: 5px; background: #ffffed66; }
+.species-diet-zero-items .diet-component-name, .species-diet-zero-items .diet-component-percent { font-size: .65rem; font-weight: 400; }
+.species-diet-composition-note { margin: 6px 0 0; color: #405635; font-size: .68rem; font-weight: 400; text-align: left; }
