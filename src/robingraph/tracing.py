@@ -22,6 +22,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator, Mapping, MutableMapping
 from contextlib import contextmanager
+from contextvars import ContextVar, Token
 from dataclasses import dataclass
 import importlib.util
 import logging
@@ -277,3 +278,105 @@ def redact(value: Any, _depth: int = 0) -> Any:
             bounded.append("[truncated]")
         return bounded
     return redact(str(value), _depth + 1)
+
+
+# --- Trace-level response tags ------------------------------------------------
+#
+# Span attributes are not searchable in the MLflow UI/``search_traces``; trace
+# tags are (``tags.<key> = '<value>'``).  The values below are a closed
+# allowlist so a tag can never carry user text, names, or credentials.  A
+# value outside its allowlist is stored as ``unknown`` (or ``none`` for
+# selected_intent), never as the raw string.
+RESPONSE_DISPOSITIONS = frozenset({"answer", "clarify", "abstain", "error"})
+RESPONSE_REASONS = frozenset({
+    "none", "taxon_not_found", "intent_uncertain", "ambiguous_name", "filter_mismatch",
+    "evidence_not_found", "observations_empty", "handler_unavailable", "upstream_error",
+    "unsupported_question", "unknown",
+})
+FAILURE_STAGES = frozenset({
+    "none", "routing", "name_resolution", "retrieval", "generation", "validation", "unknown",
+})
+SELECTED_INTENTS = frozenset({"profile", "taxonomy", "observations", "evidence", "none"})
+ROUTE_METHODS = frozenset({"semantic", "explicit", "deterministic", "jev", "none"})
+# Reasons that mean a dependency failed rather than the user's question being
+# unanswerable; they map to disposition ``error`` even when HTTP is 200.
+TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error"})
+
+_outcome: ContextVar[dict[str, str] | None] = ContextVar("robingraph_trace_outcome", default=None)
+
+
+def begin_outcome() -> Token | None:
+    """Start collecting the response reason for the current request context."""
+
+    if _mlflow is None:
+        return None
+    return _outcome.set({})
+
+
+def end_outcome(token: Token | None) -> None:
+    if token is not None:
+        try:
+            _outcome.reset(token)
+        except ValueError:
+            pass
+
+
+def note_outcome(reason: str | None, stage: str = "unknown") -> None:
+    """Record why the response is not a plain answer (no-op when disabled)."""
+
+    holder = _outcome.get()
+    if holder is None or reason is None:
+        return
+    holder["reason"] = reason if reason in RESPONSE_REASONS else "unknown"
+    holder["stage"] = stage if stage in FAILURE_STAGES else "unknown"
+
+
+def collected_outcome() -> dict[str, str]:
+    return dict(_outcome.get() or {})
+
+
+def resolve_response_tags(
+    api_disposition: str | None,
+    *,
+    reason: str | None = None,
+    stage: str | None = None,
+    selected_intent: str | None = None,
+    route_method: str | None = None,
+) -> dict[str, str]:
+    """Build the allowlisted tag dict from structured values only."""
+
+    if api_disposition not in RESPONSE_DISPOSITIONS - {"error"}:
+        api_disposition = None
+    reason = reason if reason in RESPONSE_REASONS else None
+    stage = stage if stage in FAILURE_STAGES else None
+    if api_disposition == "answer" and reason in (None, "none"):
+        disposition, reason, stage = "answer", "none", "none"
+    elif reason in TECHNICAL_REASONS:
+        disposition = "error"
+    elif api_disposition is None:
+        disposition = "error" if reason else "answer"
+    else:
+        disposition = api_disposition
+    if reason is None:
+        reason = "none" if disposition == "answer" else "unknown"
+    if stage is None:
+        stage = "none" if disposition == "answer" else "unknown"
+    return {
+        "response_disposition": disposition,
+        "response_reason": reason,
+        "failure_stage": stage,
+        "selected_intent": selected_intent if selected_intent in SELECTED_INTENTS else "none",
+        "route_method": route_method if route_method in ROUTE_METHODS else "none",
+    }
+
+
+def set_trace_tags(tags: Mapping[str, str]) -> None:
+    """Attach searchable tags to the active trace; never raises."""
+
+    mlflow = _mlflow
+    if mlflow is None:
+        return
+    try:
+        mlflow.update_current_trace(tags=dict(tags))
+    except Exception as error:
+        _LOGGER.debug("MLflow trace tag write failed (%s)", type(error).__name__)

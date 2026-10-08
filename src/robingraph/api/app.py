@@ -575,6 +575,24 @@ def _trace_payload(value: object) -> object:
     return value
 
 
+def _why(reason: str | None, stage: str) -> None:
+    """Record a structured non-answer cause at the point the response is built."""
+
+    tracing.note_outcome(reason, stage)
+
+
+def _http_error_tags(status_code: int) -> dict[str, str]:
+    """Tags for routes that signal outcomes by HTTP status (non-chat endpoints)."""
+
+    if status_code == 404:
+        return tracing.resolve_response_tags("abstain", reason="taxon_not_found", stage="name_resolution")
+    if status_code in (400, 422):
+        return tracing.resolve_response_tags("clarify", reason="filter_mismatch", stage="validation")
+    if status_code == 503:
+        return tracing.resolve_response_tags(None, reason="handler_unavailable", stage="retrieval")
+    return tracing.resolve_response_tags(None, reason="unknown", stage="unknown")
+
+
 def _traced_route(name: str) -> Callable[[Callable], Callable]:
     """Make each API request one MLflow trace whose children are its retrieval/model calls.
 
@@ -588,21 +606,39 @@ def _traced_route(name: str) -> Callable[[Callable], Callable]:
         def traced(*args, **kwargs):
             if not tracing.is_enabled():
                 return endpoint(*args, **kwargs)
-            with tracing.span(name, tracing.CHAIN, {"http.route": name}) as span:
-                span.set_inputs({key: _trace_payload(value) for key, value in kwargs.items()})
-                try:
-                    result = endpoint(*args, **kwargs)
-                except HTTPException as error:
-                    span.set_attribute("http.status_code", error.status_code)
-                    raise
-                if isinstance(result, ChatResponse):
-                    span.set_attributes({
-                        "robingraph.selected_intent": result.selected_intent or "none",
-                        "robingraph.route_method": result.route_method,
-                        "robingraph.disposition": result.disposition,
-                    })
-                span.set_outputs(_trace_payload(result))
-                return result
+            token = tracing.begin_outcome()
+            try:
+                with tracing.span(name, tracing.CHAIN, {"http.route": name}) as span:
+                    span.set_inputs({key: _trace_payload(value) for key, value in kwargs.items()})
+                    try:
+                        result = endpoint(*args, **kwargs)
+                    except HTTPException as error:
+                        span.set_attribute("http.status_code", error.status_code)
+                        tracing.set_trace_tags(_http_error_tags(error.status_code))
+                        raise
+                    except BaseException:
+                        tracing.set_trace_tags(tracing.resolve_response_tags(None, reason="unknown", stage="unknown"))
+                        raise
+                    if isinstance(result, ChatResponse):
+                        span.set_attributes({
+                            "robingraph.selected_intent": result.selected_intent or "none",
+                            "robingraph.route_method": result.route_method,
+                            "robingraph.disposition": result.disposition,
+                        })
+                        found = tracing.collected_outcome()
+                        tracing.set_trace_tags({
+                            **tracing.resolve_response_tags(
+                                result.disposition, reason=found.get("reason"), stage=found.get("stage"),
+                                selected_intent=result.selected_intent, route_method=result.route_method,
+                            ),
+                            "response_api_disposition": result.disposition,
+                        })
+                    else:
+                        tracing.set_trace_tags(tracing.resolve_response_tags("answer"))
+                    span.set_outputs(_trace_payload(result))
+                    return result
+            finally:
+                tracing.end_outcome(token)
 
         return traced
 
@@ -999,6 +1035,7 @@ def create_app(
                     elif isinstance(request.filters, TaxonomyChatFilters):
                         explicit_name = request.filters.name or request.filters.scientific_name
                     if (not entity and not explicit_name) or (entity and explicit_name and entity.casefold() != explicit_name.strip().casefold()):
+                        _why("ambiguous_name", "name_resolution")
                         return ChatResponse(
                             selected_intent=selected_kind, route_method="jev", disposition="clarify",
                             answer_text="조회할 새 이름을 하나 명확히 입력하고, 질문과 필터의 이름을 맞춰 주세요.",
@@ -1024,6 +1061,7 @@ def create_app(
                 not isinstance(request.filters, ProfileChatFilters)
                 or request.filters.name is not None
                 and request.filters.name.strip().casefold() != species_question.name.casefold()):
+            _why("filter_mismatch", "validation")
             return ChatResponse(
                 selected_intent="profile", route_method="deterministic" if request.intent=="auto" else "explicit",
                 disposition="clarify", answer_text="질문의 종 이름과 조회 필터가 다릅니다. 같은 종 이름으로 다시 질문해 주세요.",
@@ -1050,6 +1088,7 @@ def create_app(
                 logging.getLogger(__name__).warning("Name relationship lookup failed (%s)", type(error).__name__)
                 is_name_request = request.intent in ("profile", "taxonomy") or relation_question is not None or request.filters is not None or re.fullmatch(r"[가-힣]+|[A-Za-z][A-Za-z .-]+", relation_name) is not None
                 if is_name_request:
+                    _why("upstream_error", "name_resolution")
                     return ChatResponse(
                         selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile",
                         route_method="deterministic" if request.intent == "auto" else "explicit",
@@ -1066,12 +1105,14 @@ def create_app(
                     focused_name = relations[0]["taxon"]["scientific_name"]
                     name_context = relationships
                 else:
+                    _why(None if single_common else "ambiguous_name", "name_resolution")
                     return ChatResponse(
                         selected_intent="taxonomy" if request.intent == "taxonomy" or relation_question and relation_question[0] == "taxonomy" else "profile", route_method="deterministic" if request.intent == "auto" else "explicit",
                         disposition="answer" if single_common else "clarify", answer_text=relationships["summary"], warnings=[],
                         result=ChatNameRelationsResult(relationships=relationships),
                     )
             if not focused_name and relation_name.strip().lower() in reviewed_search_terms():
+                _why("handler_unavailable", "name_resolution")
                 return ChatResponse(
                     selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
                     disposition="abstain", answer_text="이 이름의 검토된 관계를 현재 조회할 수 없습니다. 관련 종을 임의로 선택하지 않았습니다.",
@@ -1092,6 +1133,7 @@ def create_app(
                 selected = None
             method = "jev" if jev_attempted and not jev_failed else "deterministic" if recognized else "semantic"
             if selected is None:
+                _why("intent_uncertain", "routing")
                 return ChatResponse(
                     selected_intent=None,
                     route_method=method,
@@ -1105,6 +1147,7 @@ def create_app(
             method = "explicit"
 
         if request.filters is not None and request.filters.kind != selected:
+            _why("filter_mismatch", "validation")
             return ChatResponse(
                 selected_intent=selected,
                 route_method=method,
@@ -1118,6 +1161,7 @@ def create_app(
             filters = request.filters if isinstance(request.filters, ProfileChatFilters) else None
             name = (focused_name or (filters.name if filters and filters.name is not None else recognized[1] if recognized else request.question)).strip()
             if species_profile_handler is None:
+                _why("handler_unavailable", "retrieval")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="종 정보를 현재 조회할 수 없습니다.",
@@ -1133,6 +1177,7 @@ def create_app(
                 profile_handler = species_basic_profile_handler if deferred else species_profile_handler
                 profile = profile_handler(name)
             except SpeciesNotFoundError:
+                _why("taxon_not_found", "name_resolution")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="입력한 이름의 종 정보를 확인하지 못했습니다.",
@@ -1140,6 +1185,7 @@ def create_app(
                     result=ChatSpeciesResult(profile=None),
                 )
             except Exception:
+                _why("upstream_error", "retrieval")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="종 정보를 현재 조회할 수 없습니다.",
@@ -1177,6 +1223,7 @@ def create_app(
                             question_answer={"topic": "subspecies", "title": f"{label} · 아종 목록", "text": text, "items": []}),
                     )
                 except Exception:
+                    _why("upstream_error", "retrieval")
                     return ChatResponse(
                         selected_intent=selected, route_method=method, disposition="abstain",
                         answer_text="아종 목록을 현재 확인하지 못했습니다.", warnings=["아종 조회 기능 또는 활성 분류판을 확인해야 합니다."],
@@ -1189,6 +1236,7 @@ def create_app(
                     if (profile.get("taxon",{}).get("taxon_id") != expected.get("taxon_id")
                             or lineage.get("concept_set_id") != name_context.get("concept_set_id")
                             or lineage.get("taxonomy_release") != name_context.get("taxonomy_release")):
+                        _why("upstream_error", "validation")
                         return ChatResponse(
                             selected_intent=selected, route_method=method, disposition="abstain",
                             answer_text="이름 관계와 종 자료의 분류판이 달라 현재 답변을 제공하지 않았습니다. 다시 질문해 주세요.",
@@ -1217,6 +1265,7 @@ def create_app(
                 if name_context is not None:
                     answer["name_context"] = name_context
                     answer["text"] = name_context["summary"] + " " + answer["text"]
+                _why(None if supported else "unsupported_question", "generation")
                 return ChatResponse(
                     selected_intent=selected, route_method=method,
                     disposition="answer" if supported else "abstain",
@@ -1266,6 +1315,7 @@ def create_app(
             else:
                 handler = korean_lineage_handler if filters.name is not None else lineage_handler
             if handler is None:
+                _why("handler_unavailable", "retrieval")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="분류 계통 정보를 현재 조회할 수 없습니다.",
@@ -1277,6 +1327,7 @@ def create_app(
             except Exception:
                 # A chat response must not disclose provider/configuration
                 # details.  The public lineage endpoint keeps its legacy 503.
+                _why("upstream_error", "retrieval")
                 return ChatResponse(
                     selected_intent=selected,
                     route_method=method,
@@ -1286,6 +1337,7 @@ def create_app(
                     result=ChatTaxonomyResult(lineage=None),
                 )
             if lineage is None:
+                _why("taxon_not_found", "name_resolution")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="입력한 이름의 분류 계통을 확인하지 못했습니다.",
@@ -1293,6 +1345,7 @@ def create_app(
                     result=ChatTaxonomyResult(lineage=None),
                 )
             answer_text, supported = _taxonomy_answer(request.question, lineage)
+            _why(None if supported else "unsupported_question", "generation")
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer" if supported else "abstain",
                 answer_text=answer_text, warnings=[],
@@ -1312,6 +1365,7 @@ def create_app(
                 )
             )
             if not has_bounded_filter:
+                _why("filter_mismatch", "validation")
                 return ChatResponse(
                     selected_intent=selected,
                     route_method=method,
@@ -1321,6 +1375,7 @@ def create_app(
                     result=ChatObservationsResult(results=[], limit=filters.limit),
                 )
             if observation_handler is None:
+                _why("handler_unavailable", "retrieval")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
                     answer_text="관찰 기록을 현재 조회할 수 없습니다.",
@@ -1336,6 +1391,7 @@ def create_app(
             try:
                 observations = observation_handler(query)
             except Exception:
+                _why("upstream_error", "retrieval")
                 return ChatResponse(
                     selected_intent=selected,
                     route_method=method,
@@ -1356,6 +1412,7 @@ def create_app(
                 )
             else:
                 answer_text = "일치하는 관찰 기록을 확인하지 못했습니다."
+            _why(None if observations else "observations_empty", "retrieval")
             return ChatResponse(
                 selected_intent=selected, route_method=method,
                 disposition="answer" if observations else "abstain",
@@ -1372,6 +1429,7 @@ def create_app(
         filters = request.filters if isinstance(request.filters, EvidenceChatFilters) else EvidenceChatFilters()
         requested_mode: SearchMode = "hybrid" if method in ("semantic", "jev") else "fulltext"
         if search_handler is None:
+            _why("handler_unavailable", "retrieval")
             return ChatResponse(
                 selected_intent="evidence", route_method=method, disposition="abstain",
                 answer_text="근거 문서를 현재 조회할 수 없습니다.",
@@ -1388,6 +1446,7 @@ def create_app(
             flow_result = evidence_flow.invoke({"question":request.question, "limit":filters.limit, "hybrid":requested_mode == "hybrid"})
             outcome = flow_result["outcome"]
         except Exception:
+            _why("upstream_error", "retrieval")
             return ChatResponse(
                 selected_intent="evidence", route_method=method, disposition="abstain",
                 answer_text="근거 문서를 현재 조회할 수 없습니다.",
@@ -1402,6 +1461,7 @@ def create_app(
             )
         evidence = _search_response(outcome, requested_mode=requested_mode)
         answer_text = flow_result["answer_text"]
+        _why(None if evidence.results else "evidence_not_found", "retrieval")
         return ChatResponse(
             selected_intent="evidence", route_method=method,
             disposition="answer" if evidence.results else "abstain",

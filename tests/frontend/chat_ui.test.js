@@ -3594,3 +3594,155 @@ test("direct TOP3 answers show the structured scoring criteria once with the lon
   assert.match(collectedText(details), /원래 상세 계산 설명/);
   assert.deepEqual(collectAllNodes(answer).filter(n => n.className === "comparison-peer-rank").map(n => n.textContent), ["추천 1", "추천 2", "추천 3"]);
 });
+
+function dragFixture(reduced) {
+  const win = { listeners: {}, matchMedia: () => ({ matches: !!reduced }),
+    addEventListener(t, h) { (this.listeners[t] = this.listeners[t] || []).push(h); },
+    removeEventListener(t, h) { this.listeners[t] = (this.listeners[t] || []).filter(x => x !== h); },
+    getSelection: () => ({ removeAllRanges() {} }), setTimeout: () => 0 };
+  const doc = { createElement: createFakeElement, defaultView: win };
+  const card = chat.buildSpeciesCard(doc, fakeProfilePayload().result.profile);
+  const front = card.children.find(n => n.className === "species-card-front");
+  const back = card.children.find(n => n.className === "species-card-back");
+  const flip = collectAllNodes(card).find(n => n.className === "species-card-flip");
+  card.style = {};
+  card.getBoundingClientRect = () => ({ width: 300 });
+  card.captured = [];
+  card.setPointerCapture = (id) => card.captured.push(id);
+  card.releasePointerCapture = (id) => card.captured.splice(card.captured.indexOf(id), 1);
+  const animations = [];
+  card.animate = (frames, options) => { const a = { frames, options, cancelled: false, cancel() { this.cancelled = true; } }; animations.push(a); return a; };
+  const ev = (x, y, extra) => Object.assign({ pointerId: 1, pointerType: "mouse", button: 0, buttons: 1, clientX: x, clientY: y, target: card }, extra);
+  return { card, front, back, flip, win, animations, ev };
+}
+
+test("mouse drag past the width-proportional threshold flips in both directions and suppresses the trailing click", () => {
+  for (const dx of [120, -120]) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.ev(100, 50));
+    f.card.dispatch("pointermove", f.ev(100 + dx / 2, 52));
+    assert.match(f.card.style.transform, /rotateY\(/);
+    assert.equal(f.card.getAttribute("data-dragging"), "true");
+    assert.equal(f.card.captured.length, 1);
+    f.card.dispatch("pointermove", f.ev(100 + dx, 52));
+    assert.equal(f.card.getAttribute("data-drag-commit"), "true");
+    f.card.dispatch("pointerup", f.ev(100 + dx, 52));
+    assert.equal(f.card.captured.length, 0);
+    f.animations[0].onfinish();
+    assert.equal(f.back.hidden, false);
+    assert.equal(f.front.hidden, true);
+    assert.equal(f.flip.getAttribute("aria-pressed"), "true");
+    const click = f.card.dispatch("click", { target: f.flip });
+    assert.equal(click.defaultPrevented, true, "the click that follows a drag is swallowed");
+    f.animations[f.animations.length - 1].onfinish();
+    assert.equal(f.flip.disabled, false);
+  }
+});
+
+test("short drags, cancels, blur, resize, vertical moves, and non-mouse pointers leave the card unflipped and clean", () => {
+  const releases = {
+    short: (f) => f.card.dispatch("pointerup", f.ev(130, 50)),
+    pointercancel: (f) => f.card.dispatch("pointercancel", f.ev(220, 50)),
+    lostcapture: (f) => f.card.dispatch("lostpointercapture", f.ev(220, 50)),
+    blur: (f) => f.win.listeners.blur.forEach(h => h()),
+    resize: (f) => f.win.listeners.resize.forEach(h => h()),
+    outside: (f) => f.card.dispatch("pointermove", f.ev(240, 50, { buttons: 0 })),
+    reset: (f) => f.card.showFront(),
+  };
+  for (const [name, release] of Object.entries(releases)) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.ev(100, 50));
+    f.card.dispatch("pointermove", f.ev(name === "short" ? 130 : 220, 50));
+    release(f);
+    if (f.animations.length) { f.animations[0].onfinish && f.animations[0].onfinish(); }
+    assert.equal(f.back.hidden, true, name);
+    assert.equal(f.card.style.transform, "", name);
+    assert.equal(f.card.getAttribute("data-dragging"), "false", name);
+    assert.equal(f.card.captured.length, 0, name);
+    assert.deepEqual(f.win.listeners.blur, [], name);
+    assert.equal(f.flip.disabled, false, name);
+    if (name === "short") { assert.equal(f.card.dispatch("click", {}).defaultPrevented, true, "released drag swallows one click"); }
+    assert.equal(f.card.dispatch("click", {}).defaultPrevented, false, name + ": normal clicks are untouched");
+  }
+  const v = dragFixture(false);
+  v.card.dispatch("pointerdown", v.ev(100, 50));
+  v.card.dispatch("pointermove", v.ev(103, 200));
+  v.card.dispatch("pointermove", v.ev(300, 200));
+  assert.equal(v.card.style.transform, "", "vertical scroll gestures never start a drag");
+  for (const extra of [{ pointerType: "touch" }, { pointerType: "pen" }, { button: 2 }, { shiftKey: true }, { target: v.flip }]) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.ev(100, 50, extra));
+    f.card.dispatch("pointermove", f.ev(260, 50, extra));
+    f.card.dispatch("pointerup", f.ev(260, 50, extra));
+    assert.equal(f.back.hidden, true);
+    assert.equal(f.card.captured.length, 0);
+  }
+});
+
+test("reduced motion drag skips continuous rotation but flips immediately past the threshold", () => {
+  const f = dragFixture(true);
+  f.card.dispatch("pointerdown", f.ev(100, 50));
+  f.card.dispatch("pointermove", f.ev(150, 50));
+  assert.equal(f.card.style.transform, undefined);
+  assert.equal(f.card.getAttribute("data-drag-commit"), "false");
+  f.card.dispatch("pointermove", f.ev(260, 50));
+  assert.equal(f.card.getAttribute("data-drag-commit"), "true");
+  f.card.dispatch("pointerup", f.ev(260, 50));
+  assert.equal(f.animations.length, 0);
+  assert.equal(f.back.hidden, false);
+  assert.equal(f.card.getAttribute("data-dragging"), "false");
+});
+
+test("dragging does not break the existing flip button and styles define reduced-motion drag feedback", () => {
+  const f = dragFixture(false);
+  f.card.dispatch("pointerdown", f.ev(100, 50));
+  f.card.dispatch("pointerup", f.ev(100, 50));
+  f.flip.dispatch("click");
+  assert.equal(f.animations.length, 1, "plain click still runs the button flip");
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /data-drag-commit="true"/);
+  assert.match(css, /prefers-reduced-motion[\s\S]*data-dragging/);
+});
+
+test("drag may start only on blank card surface; text, controls, editable, draggable and photo nodes stay native", () => {
+  const isText = n => ["p", "li", "dt", "dd", "h3", "span"].includes(n.tagName) && n.className !== "species-card-drag-hint";
+  const textCount = collectAllNodes(dragFixture(false).card).filter(isText).length;
+  assert.ok(textCount > 3, "fixture has text nodes");
+  // `pick(g)` resolves the pointerdown target inside a fresh card per attempt.
+  const attempt = (pick) => {
+    const g = dragFixture(false);
+    g.card.dispatch("pointerdown", g.ev(100, 50, { target: pick(g) }));
+    g.card.dispatch("pointermove", g.ev(260, 50));
+    g.card.dispatch("pointerup", g.ev(260, 50));
+    return g.back.hidden === false || g.animations.length > 0;
+  };
+  for (let i = 0; i < textCount; i += 1) {
+    assert.equal(attempt(g => collectAllNodes(g.card).filter(isText)[i]), false, "text node #" + i + " must not start a drag");
+  }
+  const make = (tag, setup) => g => { const el = createFakeElement(tag); if (setup) { setup(el); } el.parentNode = g.card; return el; };
+  const exclusions = [
+    make("div", el => el.setAttribute("contenteditable", "true")),
+    make("div", el => { el.isContentEditable = true; }),
+    make("div", el => el.setAttribute("draggable", "true")),
+    make("img"), make("svg"), make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
+    make("div", el => el.setAttribute("role", "button")), make("div", el => el.setAttribute("role", "textbox")),
+  ];
+  exclusions.forEach((pick, i) => assert.equal(attempt(pick), false, "exclusion #" + i));
+  const surfaceNames = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area"];
+  assert.equal(attempt(g => g.card), true, "card padding/background starts a drag");
+  for (const name of surfaceNames) {
+    assert.equal(attempt(g => collectAllNodes(g.card).find(n => n.className === name)), true, name + " blank surface starts a drag");
+  }
+  assert.equal(attempt(g => { const img = createFakeElement("img"); img.parentNode = collectAllNodes(g.card).find(n => n.className === "species-photo-area"); return img; }), false, "photo inside a permitted surface stays native");
+});
+
+test("drag hint is a decorative, fine-pointer-only line without backend jargon", () => {
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, fakeProfilePayload().result.profile);
+  const hint = collectAllNodes(card).find(n => n.className === "species-card-drag-hint");
+  assert.ok(hint);
+  assert.equal(hint.getAttribute("aria-hidden"), "true");
+  assert.match(hint.textContent, /빈 곳.*끌어/);
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-card-drag-hint \{ display: none; \}/);
+  assert.match(css, /hover: hover\) and \(pointer: fine\)[\s\S]*species-card-drag-hint \{ display: block/);
+});

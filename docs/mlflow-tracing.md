@@ -214,3 +214,26 @@ Claude가 구현하고 agy(Antigravity)가 독립 검토했다. TEST는 기존 N
 모델 버전·finish reason은 SDK 응답 본문에서 제공될 수 있지만, 네이티브 스팬에 수동 경로의 `llm.model_version`·`llm.finish_reason` 속성이 자동 추가된다고 보장하지 않는다. Jina 서비스의 토큰 사용량, 모델 비용, 벡터 검색 시간은 이번 실제 결과에서 확인되지 않았다. Jina 입력은 원문 대신 작업 종류·건수·문자 수를, 출력은 벡터 개수·차원을 기록한다. 자동 로깅의 원문 길이 정책은 수동 스팬의 절삭 정책과 다르다.
 
 [MLflow TEST Traces](https://mlflow.dove-nest.com/#/experiments/33/traces)의 저장 데이터는 실제 MLflow API로 검증했다. 로컬 GUI 접근이 `cgWindowNotFound`로 실패해 **Traces 화면의 시각 확인은 미완료**다. 해당 화면 확인 후 백로그 RG-001의 최종 완료 체크를 할 수 있다.
+
+---
+
+## 응답 결과·미응답 사유 트레이스 태그 (RG-016)
+
+Span attribute는 MLflow UI/`search_traces`에서 검색되지 않으므로, 응답이 만들어지는 지점에서 구조화한 값을 **trace-level tag**로 기록합니다. 한국어 답변 문장에서 사유를 역추정하지 않고, `app.py`의 각 `ChatResponse` 생성 직전에 `_why(reason, stage)`로 기록한 값만 사용합니다.
+
+| 태그 | 허용값 |
+|---|---|
+| `response_disposition` | `answer` / `clarify` / `abstain` / `error` |
+| `response_reason` | `none`, `taxon_not_found`, `intent_uncertain`, `ambiguous_name`, `filter_mismatch`, `evidence_not_found`, `observations_empty`, `handler_unavailable`, `upstream_error`, `unsupported_question`, `unknown` |
+| `failure_stage` | `none`, `routing`, `name_resolution`, `retrieval`, `generation`, `validation`, `unknown` |
+| `selected_intent` | `profile`, `taxonomy`, `observations`, `evidence`, `none` |
+| `route_method` | `semantic`, `explicit`, `deterministic`, `jev`, `none` |
+| `response_api_disposition` | API 응답 본문의 `disposition` 원본(`answer`/`clarify`/`abstain`) |
+
+- 허용 목록 밖의 값은 `unknown`(`selected_intent`/`route_method`는 `none`)으로 치환되어 사용자 입력·이름·비밀값이 태그에 들어갈 수 없습니다.
+- **기술 오류와 사용자 결과의 구분**: `handler_unavailable`/`upstream_error`는 HTTP 200 abstain 응답이어도 `response_disposition=error`로 태깅합니다(원본은 `response_api_disposition`). 이 경우 Trace.status는 `OK`이며 강제로 ERROR로 만들지 않습니다. Trace.status `ERROR`는 예외가 route 밖으로 전파된 경우(예: non-chat route의 `HTTPException`)에만 발생합니다.
+- **적용 범위**: `POST /v1/chat`의 모든 분기(profile·taxonomy·observations·evidence·name-relations·intent 라우팅)는 분기별 사유를 기록합니다. `_traced_route`를 쓰는 다른 route(`/v1/taxa/*`, `/v1/search`, `/v1/observations`, `/v1/answers`)는 성공이면 `answer/none/none`, `HTTPException`이면 상태코드로 매핑(404→`abstain/taxon_not_found/name_resolution`, 400·422→`clarify/filter_mismatch/validation`, 503→`error/handler_unavailable/retrieval`, 그 외 `error/unknown/unknown`)합니다.
+- **Fail-open·격리·비활성**: 태그 기록은 `mlflow.update_current_trace(tags=...)`를 예외 무시로 호출하고, 사유 수집기는 요청별 `ContextVar`이므로 동시 요청 간 섞이지 않습니다. 비활성 시 수집기 자체가 만들어지지 않아 MLflow 호출이 없습니다. 이미 기록된 trace는 소급 수정하지 않습니다.
+- **검색**(공식 문서 `attach-tags`): `mlflow.search_traces(filter_string="tags.response_disposition = 'abstain'")`, 복합 조건은 `AND`로 연결합니다(`tag.`와 `tags.` 모두 SDK 3.14 파서가 허용).
+
+검증 스크립트: `scripts/verify_mlflow_response_tags.py` (실행: `/tmp/rg010-venv/bin/python`, `MLFLOW_TRACKING_URI`·`MLFLOW_EXPERIMENT_NAME` 필요). 요청 후 태그 필터 검색으로 같은 trace를 찾아 trace id·태그만 출력합니다.
