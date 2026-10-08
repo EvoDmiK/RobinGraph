@@ -233,6 +233,8 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         semantic_router = SemanticRouter(embedding_client)
     except EmbeddingConfigurationError:
         pass
+    from .api.jev_router import configured_jev_router
+    jev_router = configured_jev_router()
     # Gemini answer generation is opt-in: only a configured API key wires it
     # in, and construction alone makes no request, consistent with the lazy
     # embedding client above. Unconfigured deployments keep the legacy
@@ -275,6 +277,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             lineage_handler=create_neo4j_lineage_handler(lineage_repository),
             korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
             semantic_router=semantic_router,
+            jev_router=jev_router,
             species_profile_handler=species_flow.invoke,
             related_species_handler=lambda name: related_species(lineage_repository, resolve_species, name),
             similar_species_handler=lambda name: similar_species(lineage_repository, ingest_store, resolve_species, name),

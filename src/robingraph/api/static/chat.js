@@ -1416,7 +1416,7 @@
     return section;
   }
 
-  function buildSubspeciesExplorer(doc, profile, fetcher, isActive) {
+  function buildSubspeciesExplorer(doc, profile, fetcher, isActive, initialData) {
     var active = typeof isActive === "function" ? isActive : function () { return true; };
     var section = doc.createElement("section");
     section.className = "species-subspecies";
@@ -1440,7 +1440,7 @@
     function matches(data) {
       return profile.lineage && data.concept_set_id === profile.lineage.concept_set_id && data.taxonomy_release === profile.lineage.taxonomy_release;
     }
-    button.addEventListener("click", function () {
+    function load() {
       if (loaded) { content.hidden = !content.hidden; status.hidden = content.hidden; button.setAttribute("aria-expanded", String(!content.hidden)); return; }
       if (pending) { return; }
       pending = true;
@@ -1448,7 +1448,9 @@
       status.hidden = false;
       button.setAttribute("aria-expanded", "true");
       status.textContent = "아종 목록을 불러오는 중입니다.";
-      fetchTaxaJson(doc, fetcher, "/v1/taxa/subspecies", profile.taxon.scientific_name, 30000).then(function (data) {
+      var dataRequest = initialData ? Promise.resolve(initialData) : fetchTaxaJson(doc, fetcher, "/v1/taxa/subspecies", profile.taxon.scientific_name, 30000);
+      initialData = null;
+      dataRequest.then(function (data) {
         pending = false;
         if (!active()) { return; }
         if (!matches(data) || !data.parent_species || !data.parent_species.taxon || data.parent_species.taxon.taxon_id !== profile.taxon.taxon_id || !Array.isArray(data.subspecies)) { throw new Error("changed"); }
@@ -1505,7 +1507,9 @@
         });
         content.appendChild(selected);
       }).catch(function () { pending = false; if (active()) { status.textContent = "아종 목록을 확인하지 못했습니다. 다시 눌러 재시도하세요."; } });
-    });
+    }
+    button.addEventListener("click", load);
+    if (initialData) { load(); }
     return section;
   }
 
@@ -2127,7 +2131,7 @@
    * itself is the server's `answer_text` (built from `profile.summary`).
    */
   function buildQuestionAnswer(doc, questionAnswer) {
-    if (!questionAnswer || ["diet", "habitat", "activity", "appearance", "related", "ecological_related"].indexOf(questionAnswer.topic) === -1) { return null; }
+    if (!questionAnswer || ["diet", "habitat", "activity", "appearance", "related", "ecological_related", "subspecies"].indexOf(questionAnswer.topic) === -1) { return null; }
     var section = doc.createElement("section"); section.className = "species-question-answer";
     var title = doc.createElement("h3"); title.textContent = typeof questionAnswer.title === "string" ? questionAnswer.title : "질문에 대한 답변"; section.appendChild(title);
     var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
@@ -2547,7 +2551,11 @@
             if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
             else { extra.appendChild(ecological); }
           }
-          if (result.profile.taxon.rank !== "subspecies") { extra.appendChild(buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
+          if (result.profile.taxon.rank !== "subspecies") {
+            var subspeciesExplorer = buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard(), result.subspecies);
+            if (targeted && questionAnswer.topic === "subspecies") { item.appendChild(subspeciesExplorer); }
+            else { extra.appendChild(subspeciesExplorer); }
+          }
           else { extra.appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
           extra.appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
           item.appendChild(extra);

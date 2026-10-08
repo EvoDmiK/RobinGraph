@@ -1,0 +1,988 @@
+{
+  "version": 1,
+  "labels": [
+    "activity",
+    "appearance",
+    "diet",
+    "ecological_diet",
+    "ecological_habitat",
+    "evidence",
+    "habitat",
+    "observations",
+    "profile",
+    "related",
+    "subspecies",
+    "taxonomy",
+    "uncertain"
+  ],
+  "cases": [
+    {
+      "id": "jev-001",
+      "split": "calibration",
+      "question": "청둥오리 아종 알려줘",
+      "label": "subspecies",
+      "name": "청둥오리",
+      "category": "reported"
+    },
+    {
+      "id": "jev-002",
+      "split": "heldout",
+      "question": "흰뺨검둥오리 아종 알려줘",
+      "label": "subspecies",
+      "name": "흰뺨검둥오리",
+      "category": "reported"
+    },
+    {
+      "id": "jev-003",
+      "split": "calibration",
+      "question": "청둥오리 아종은 뭐가 있어?",
+      "label": "subspecies",
+      "name": "청둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-004",
+      "split": "heldout",
+      "question": "흰뺨검둥오리에는 어떤 아종이 있나요?",
+      "label": "subspecies",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-005",
+      "split": "calibration",
+      "question": "Anas platyrhynchos 아종 목록",
+      "label": "subspecies",
+      "name": "Anas platyrhynchos",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-006",
+      "split": "heldout",
+      "question": "List the subspecies of the mallard",
+      "label": "subspecies",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-007",
+      "split": "calibration",
+      "question": "Which subspecies of Anas zonorhyncha are recognized?",
+      "label": "subspecies",
+      "name": "Anas zonorhyncha",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-008",
+      "split": "heldout",
+      "question": "까치 아종 알려줘",
+      "label": "subspecies",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-009",
+      "split": "calibration",
+      "question": "직박구리 아종이 몇 개야?",
+      "label": "subspecies",
+      "name": "직박구리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-010",
+      "split": "heldout",
+      "question": "참새 아종별 분포 알려줘",
+      "label": "subspecies",
+      "name": "참새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-011",
+      "split": "calibration",
+      "question": "쇠기러기 아종 알려줘",
+      "label": "subspecies",
+      "name": "쇠기러기",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-012",
+      "split": "heldout",
+      "question": "청둥오리 아존 알려줘",
+      "label": "subspecies",
+      "name": "청둥오리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-013",
+      "split": "calibration",
+      "question": "흰뺨검둥오리 아종 알려줘요",
+      "label": "subspecies",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-014",
+      "split": "heldout",
+      "question": "Does the Eurasian magpie have subspecies?",
+      "label": "subspecies",
+      "name": "Eurasian magpie",
+      "category": "english"
+    },
+    {
+      "id": "jev-015",
+      "split": "calibration",
+      "question": "Pica serica 아종 있어?",
+      "label": "subspecies",
+      "name": "Pica serica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-016",
+      "split": "heldout",
+      "question": "딱따구리 아종 알려줘",
+      "label": "subspecies",
+      "name": "딱따구리",
+      "category": "ambiguous_name"
+    },
+    {
+      "id": "jev-017",
+      "split": "calibration",
+      "question": "원앙에 대해 알려줘",
+      "label": "profile",
+      "name": "원앙",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-018",
+      "split": "heldout",
+      "question": "청둥오리에 대해 알고 싶어요",
+      "label": "profile",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-019",
+      "split": "calibration",
+      "question": "Tell me about the mallard",
+      "label": "profile",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-020",
+      "split": "heldout",
+      "question": "Tell me about Anas platyrhynchos",
+      "label": "profile",
+      "name": "Anas platyrhynchos",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-021",
+      "split": "calibration",
+      "question": "흰뺨검둥오리에 관해 설명해줘",
+      "label": "profile",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-022",
+      "split": "heldout",
+      "question": "까치 소개해줘",
+      "label": "profile",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-023",
+      "split": "calibration",
+      "question": "Who is the Eurasian jay?",
+      "label": "profile",
+      "name": "Eurasian jay",
+      "category": "english"
+    },
+    {
+      "id": "jev-024",
+      "split": "heldout",
+      "question": "직박구리가 어떤 새야?",
+      "label": "profile",
+      "name": "직박구리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-025",
+      "split": "calibration",
+      "question": "박새에 대해 알려줘",
+      "label": "profile",
+      "name": "박새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-026",
+      "split": "heldout",
+      "question": "청둥오리에 대해 알려주세여",
+      "label": "profile",
+      "name": "청둥오리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-027",
+      "split": "calibration",
+      "question": "Corvus macrorhynchos 설명해줘",
+      "label": "profile",
+      "name": "Corvus macrorhynchos",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-028",
+      "split": "heldout",
+      "question": "두루미 정보 좀",
+      "label": "profile",
+      "name": "두루미",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-029",
+      "split": "calibration",
+      "question": "청둥오리는 무슨 목이야?",
+      "label": "taxonomy",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-030",
+      "split": "heldout",
+      "question": "흰뺨검둥오리 분류 알려줘",
+      "label": "taxonomy",
+      "name": "흰뺨검둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-031",
+      "split": "calibration",
+      "question": "까치는 어느 과에 속해?",
+      "label": "taxonomy",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-032",
+      "split": "heldout",
+      "question": "Anas platyrhynchos 계통 설명해줘",
+      "label": "taxonomy",
+      "name": "Anas platyrhynchos",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-033",
+      "split": "calibration",
+      "question": "What family does the great tit belong to?",
+      "label": "taxonomy",
+      "name": "great tit",
+      "category": "english"
+    },
+    {
+      "id": "jev-034",
+      "split": "heldout",
+      "question": "What is the taxonomic classification of Pica pica?",
+      "label": "taxonomy",
+      "name": "Pica pica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-035",
+      "split": "calibration",
+      "question": "직박구리의 속은 뭐야?",
+      "label": "taxonomy",
+      "name": "직박구리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-036",
+      "split": "heldout",
+      "question": "참새 분류체계 알려줘",
+      "label": "taxonomy",
+      "name": "참새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-037",
+      "split": "calibration",
+      "question": "청둥오리 분뷰 알려줘",
+      "label": "taxonomy",
+      "name": "청둥오리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-038",
+      "split": "heldout",
+      "question": "Which order is the white-cheeked starling in?",
+      "label": "taxonomy",
+      "name": "white-cheeked starling",
+      "category": "english"
+    },
+    {
+      "id": "jev-039",
+      "split": "calibration",
+      "question": "원앙은 무슨 과 새야?",
+      "label": "taxonomy",
+      "name": "원앙",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-040",
+      "split": "calibration",
+      "question": "최근 청둥오리 관찰 기록 보여줘",
+      "label": "observations",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-041",
+      "split": "heldout",
+      "question": "서울에서 박새 관측 정보",
+      "label": "observations",
+      "name": "박새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-042",
+      "split": "calibration",
+      "question": "Recent sightings of Pica pica",
+      "label": "observations",
+      "name": "Pica pica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-043",
+      "split": "heldout",
+      "question": "Show me eBird observations of the mallard in Korea",
+      "label": "observations",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-044",
+      "split": "calibration",
+      "question": "흰뺨검둥오리 어디서 관찰됐어?",
+      "label": "observations",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-045",
+      "split": "heldout",
+      "question": "오늘 관찰된 까치 목록",
+      "label": "observations",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-046",
+      "split": "calibration",
+      "question": "직박구리 관찰 기록 보여조",
+      "label": "observations",
+      "name": "직박구리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-047",
+      "split": "heldout",
+      "question": "지난주 두루미 발견 위치 알려줘",
+      "label": "observations",
+      "name": "두루미",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-048",
+      "split": "calibration",
+      "question": "청둥오리 근거 자료 출처 알려줘",
+      "label": "evidence",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-049",
+      "split": "heldout",
+      "question": "까치 설명의 출처가 뭐야?",
+      "label": "evidence",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-050",
+      "split": "calibration",
+      "question": "What sources support the claim about Pica pica?",
+      "label": "evidence",
+      "name": "Pica pica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-051",
+      "split": "heldout",
+      "question": "Show the evidence for the mallard profile",
+      "label": "evidence",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-052",
+      "split": "calibration",
+      "question": "원앙 정보 근거 문서 보여줘",
+      "label": "evidence",
+      "name": "원앙",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-053",
+      "split": "heldout",
+      "question": "참새 관련 논문이나 인용 자료 있어?",
+      "label": "evidence",
+      "name": "참새",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-054",
+      "split": "calibration",
+      "question": "흰뺨검둥오리 데이타 출처 알려줘",
+      "label": "evidence",
+      "name": "흰뺨검둥오리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-055",
+      "split": "calibration",
+      "question": "청둥오리는 무엇을 먹어?",
+      "label": "diet",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-056",
+      "split": "heldout",
+      "question": "직박구리 식성 알려줘",
+      "label": "diet",
+      "name": "직박구리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-057",
+      "split": "calibration",
+      "question": "What does the great tit eat?",
+      "label": "diet",
+      "name": "great tit",
+      "category": "english"
+    },
+    {
+      "id": "jev-058",
+      "split": "heldout",
+      "question": "Pica pica diet",
+      "label": "diet",
+      "name": "Pica pica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-059",
+      "split": "calibration",
+      "question": "까치의 먹이는 뭔가요?",
+      "label": "diet",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-060",
+      "split": "heldout",
+      "question": "흰뺨검둥오리는 뭘 먹고 살아요",
+      "label": "diet",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-061",
+      "split": "calibration",
+      "question": "원앙 먹이 알려줘",
+      "label": "diet",
+      "name": "원앙",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-062",
+      "split": "heldout",
+      "question": "참새는 뭘 머거?",
+      "label": "diet",
+      "name": "참새",
+      "category": "typo"
+    },
+    {
+      "id": "jev-063",
+      "split": "calibration",
+      "question": "두루미는 어디에서 살아?",
+      "label": "habitat",
+      "name": "두루미",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-064",
+      "split": "heldout",
+      "question": "청둥오리 서식지 알려줘",
+      "label": "habitat",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-065",
+      "split": "calibration",
+      "question": "Where does the Eurasian magpie live?",
+      "label": "habitat",
+      "name": "Eurasian magpie",
+      "category": "english"
+    },
+    {
+      "id": "jev-066",
+      "split": "heldout",
+      "question": "Anas zonorhyncha habitat",
+      "label": "habitat",
+      "name": "Anas zonorhyncha",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-067",
+      "split": "calibration",
+      "question": "까치는 어디서 사니",
+      "label": "habitat",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-068",
+      "split": "heldout",
+      "question": "원앙의 서식 환경은 뭐야?",
+      "label": "habitat",
+      "name": "원앙",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-069",
+      "split": "calibration",
+      "question": "흰뺨검둥오리 서식지 어디야",
+      "label": "habitat",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-070",
+      "split": "heldout",
+      "question": "박새 서식지 알려조",
+      "label": "habitat",
+      "name": "박새",
+      "category": "typo"
+    },
+    {
+      "id": "jev-071",
+      "split": "calibration",
+      "question": "올빼미는 야행성이야?",
+      "label": "activity",
+      "name": "올빼미",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-072",
+      "split": "heldout",
+      "question": "Is the mallard nocturnal?",
+      "label": "activity",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-073",
+      "split": "calibration",
+      "question": "직박구리는 언제 활동해요?",
+      "label": "activity",
+      "name": "직박구리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-074",
+      "split": "heldout",
+      "question": "청둥오리 활동 시간 알려줘",
+      "label": "activity",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-075",
+      "split": "calibration",
+      "question": "부엉이는 밤에 활동하니",
+      "label": "activity",
+      "name": "부엉이",
+      "category": "ambiguous_name"
+    },
+    {
+      "id": "jev-076",
+      "split": "heldout",
+      "question": "Strix aluco activity pattern",
+      "label": "activity",
+      "name": "Strix aluco",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-077",
+      "split": "calibration",
+      "question": "까치는 낮에 활동하나요",
+      "label": "activity",
+      "name": "까치",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-078",
+      "split": "calibration",
+      "question": "청둥오리는 어떻게 생겼어?",
+      "label": "appearance",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-079",
+      "split": "heldout",
+      "question": "까치 생김새 알려줘",
+      "label": "appearance",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-080",
+      "split": "calibration",
+      "question": "What does a great tit look like?",
+      "label": "appearance",
+      "name": "great tit",
+      "category": "english"
+    },
+    {
+      "id": "jev-081",
+      "split": "heldout",
+      "question": "Pica pica plumage description",
+      "label": "appearance",
+      "name": "Pica pica",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-082",
+      "split": "calibration",
+      "question": "원앙 외모 설명해줘",
+      "label": "appearance",
+      "name": "원앙",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-083",
+      "split": "heldout",
+      "question": "흰뺨검둥오리 부리 색이 어때?",
+      "label": "appearance",
+      "name": "흰뺨검둥오리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-084",
+      "split": "calibration",
+      "question": "직박구리 생김새 알려져",
+      "label": "appearance",
+      "name": "직박구리",
+      "category": "typo"
+    },
+    {
+      "id": "jev-085",
+      "split": "calibration",
+      "question": "청둥오리와 비슷한 새 알려줘",
+      "label": "related",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-086",
+      "split": "heldout",
+      "question": "까치와 같은 속의 종은 뭐가 있어?",
+      "label": "related",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-087",
+      "split": "calibration",
+      "question": "Species similar to the mallard",
+      "label": "related",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-088",
+      "split": "heldout",
+      "question": "박새와 같은 과에 속하는 새 알려줘",
+      "label": "related",
+      "name": "박새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-089",
+      "split": "calibration",
+      "question": "Anas platyrhynchos 친척 종",
+      "label": "related",
+      "name": "Anas platyrhynchos",
+      "category": "scientific"
+    },
+    {
+      "id": "jev-090",
+      "split": "heldout",
+      "question": "직박구리랑 비슷한 종 있어?",
+      "label": "related",
+      "name": "직박구리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-091",
+      "split": "calibration",
+      "question": "원앙과 비슷항 새 알려줘",
+      "label": "related",
+      "name": "원앙",
+      "category": "typo"
+    },
+    {
+      "id": "jev-092",
+      "split": "calibration",
+      "question": "청둥오리와 먹이가 비슷한 새는 뭐가 있어?",
+      "label": "ecological_diet",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-093",
+      "split": "heldout",
+      "question": "까치랑 식성이 같은 종 알려줘",
+      "label": "ecological_diet",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-094",
+      "split": "calibration",
+      "question": "Which birds share a similar diet with the great tit?",
+      "label": "ecological_diet",
+      "name": "great tit",
+      "category": "english"
+    },
+    {
+      "id": "jev-095",
+      "split": "heldout",
+      "question": "직박구리와 먹이 생태가 비슷한 새",
+      "label": "ecological_diet",
+      "name": "직박구리",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-096",
+      "split": "calibration",
+      "question": "원앙과 먹이가 비슷한 새 알려조",
+      "label": "ecological_diet",
+      "name": "원앙",
+      "category": "typo"
+    },
+    {
+      "id": "jev-097",
+      "split": "calibration",
+      "question": "청둥오리와 서식지가 비슷한 새는 뭐가 있어?",
+      "label": "ecological_habitat",
+      "name": "청둥오리",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-098",
+      "split": "heldout",
+      "question": "까치와 서식 환경이 같은 새 알려줘",
+      "label": "ecological_habitat",
+      "name": "까치",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-099",
+      "split": "calibration",
+      "question": "Birds that live in similar habitat to the mallard",
+      "label": "ecological_habitat",
+      "name": "mallard",
+      "category": "english"
+    },
+    {
+      "id": "jev-100",
+      "split": "heldout",
+      "question": "두루미랑 사는 곳이 비슷한 종",
+      "label": "ecological_habitat",
+      "name": "두루미",
+      "category": "paraphrase"
+    },
+    {
+      "id": "jev-101",
+      "split": "calibration",
+      "question": "박새와 서식지가 비슷한 종은 어떤 게 있나요",
+      "label": "ecological_habitat",
+      "name": "박새",
+      "category": "common_name"
+    },
+    {
+      "id": "jev-102",
+      "split": "calibration",
+      "question": "오리 아종 알려줘",
+      "label": "subspecies",
+      "name": "오리",
+      "category": "ambiguous_name",
+      "original_label": "uncertain",
+      "annotation_note": "Intent and entity existence/ambiguity are separate; corrected before API evaluation."
+    },
+    {
+      "id": "jev-103",
+      "split": "heldout",
+      "question": "기러기는 어디에 살아?",
+      "label": "habitat",
+      "name": "기러기",
+      "category": "ambiguous_name",
+      "original_label": "uncertain",
+      "annotation_note": "Intent and entity existence/ambiguity are separate; corrected before API evaluation."
+    },
+    {
+      "id": "jev-104",
+      "split": "calibration",
+      "question": "갈매기 먹이 알려줘",
+      "label": "diet",
+      "name": "갈매기",
+      "category": "ambiguous_name",
+      "original_label": "uncertain",
+      "annotation_note": "Intent and entity existence/ambiguity are separate; corrected before API evaluation."
+    },
+    {
+      "id": "jev-105",
+      "split": "heldout",
+      "question": "부엉이 분류 알려줘",
+      "label": "taxonomy",
+      "name": "부엉이",
+      "category": "ambiguous_name",
+      "original_label": "uncertain",
+      "annotation_note": "Intent and entity existence/ambiguity are separate; corrected before API evaluation."
+    },
+    {
+      "id": "jev-106",
+      "split": "calibration",
+      "question": "오늘 서울 날씨 어때?",
+      "label": "uncertain",
+      "category": "unsupported"
+    },
+    {
+      "id": "jev-107",
+      "split": "heldout",
+      "question": "청둥오리 요리법 알려줘",
+      "label": "uncertain",
+      "name": "청둥오리",
+      "category": "unsupported"
+    },
+    {
+      "id": "jev-108",
+      "split": "calibration",
+      "question": "Write a poem about a mallard",
+      "label": "uncertain",
+      "name": "mallard",
+      "category": "unsupported"
+    },
+    {
+      "id": "jev-109",
+      "split": "heldout",
+      "question": "청둥오리 가격이 얼마야?",
+      "label": "uncertain",
+      "name": "청둥오리",
+      "category": "unsupported"
+    },
+    {
+      "id": "jev-110",
+      "split": "calibration",
+      "question": "고양이는 무엇을 먹어?",
+      "label": "uncertain",
+      "name": "고양이",
+      "category": "absent_taxon"
+    },
+    {
+      "id": "jev-111",
+      "split": "heldout",
+      "question": "Tyrannosaurus rex 아종 알려줘",
+      "label": "uncertain",
+      "name": "Tyrannosaurus rex",
+      "category": "absent_taxon"
+    },
+    {
+      "id": "jev-112",
+      "split": "calibration",
+      "question": "도도새 서식지 알려줘",
+      "label": "habitat",
+      "name": "도도새",
+      "category": "absent_taxon",
+      "original_label": "uncertain",
+      "annotation_note": "Intent and entity existence/ambiguity are separate; corrected before API evaluation."
+    },
+    {
+      "id": "jev-113",
+      "split": "heldout",
+      "question": "Canis lupus 분류 알려줘",
+      "label": "uncertain",
+      "name": "Canis lupus",
+      "category": "absent_taxon"
+    },
+    {
+      "id": "jev-114",
+      "split": "calibration",
+      "question": "용은 어디에 살아?",
+      "label": "uncertain",
+      "name": "용",
+      "category": "absent_taxon"
+    },
+    {
+      "id": "jev-115",
+      "split": "heldout",
+      "question": "그 새 아종 알려줘",
+      "label": "uncertain",
+      "category": "ambiguous_reference"
+    },
+    {
+      "id": "jev-116",
+      "split": "calibration",
+      "question": "hello",
+      "label": "uncertain",
+      "category": "unsupported"
+    },
+    {
+      "id": "jev-117",
+      "split": "heldout",
+      "question": "청둥오리 아종이랑 먹이도 알려줘",
+      "label": "uncertain",
+      "name": "청둥오리",
+      "category": "multi_intent"
+    },
+    {
+      "id": "jev-118",
+      "split": "calibration",
+      "question": "까치 분류하고 관찰 기록 같이 보여줘",
+      "label": "uncertain",
+      "name": "까치",
+      "category": "multi_intent"
+    },
+    {
+      "id": "jev-119",
+      "split": "heldout",
+      "question": "흰뺨검둥오리 서식지랑 생김새 알려줘",
+      "label": "uncertain",
+      "name": "흰뺨검둥오리",
+      "category": "multi_intent"
+    },
+    {
+      "id": "jev-120",
+      "split": "calibration",
+      "question": "Tell me the diet and habitat of the great tit",
+      "label": "uncertain",
+      "name": "great tit",
+      "category": "multi_intent"
+    }
+  ],
+  "annotation_policy": "Single Claude annotation, coordinator reviewed before API evaluation. Intent labels do not assert species existence or unique resolution; ambiguous names and extinct birds retain their expressed intent. Undefined referents, non-birds, unsupported and independent multiple intents are uncertain."
+}
