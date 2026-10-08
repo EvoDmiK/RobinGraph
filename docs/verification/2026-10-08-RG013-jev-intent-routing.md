@@ -53,7 +53,7 @@ Jev 호출 지연은 calibration p50 1,806/p95 2,309ms, heldout p50 1,803/p95 1,
 
 ## 배포·커밋과 후속 실제 검증
 
-1차 구현 커밋 `162e5408ef403ba06a8f7577d48622191bc0087d`를 NAS TEST에 배포했다. 1차 릴리스 `/home/kimdove/RobinGraph-rg013-162e540`, 이미지 `robingraph-api:test-rg013-162e540`, 공개 주소 `https://robingraph-test.dove-nest.com`이다. 비밀을 제외한 커밋 아카이브의 SHA-256·MANIFEST를 확인하고 기존 TEST 환경 파일을 NAS 내부에서 복사한 뒤 Jev 키만 암호화 SSH로 주입했다. 환경 파일은 0600이다. 기존 TEST 이미지 `robingraph-api:test-rg010-cd46b33`는 되돌리기 기준으로 보존한다. 일반 통칭 응답의 기존 동작을 유지하는 추가 보완·복구 후 평가 러너를 다음 커밋으로 반영하고 최종 릴리스 정보는 후속 기록에 적는다.
+1차 구현 커밋 `162e5408ef403ba06a8f7577d48622191bc0087d`를 NAS TEST에 배포했다. 1차 릴리스 `/home/kimdove/RobinGraph-rg013-162e540`, 이미지 `robingraph-api:test-rg013-162e540`, 공개 주소 `https://robingraph-test.dove-nest.com`이다. 비밀을 제외한 커밋 아카이브의 SHA-256·MANIFEST를 확인하고 기존 TEST 환경 파일을 NAS 내부에서 복사한 뒤 Jev 키만 암호화 SSH로 주입했다. 환경 파일은 0600이다. 기존 TEST 이미지 `robingraph-api:test-rg010-cd46b33`는 되돌리기 기준으로 보존한다. 일반 통칭 응답의 기존 동작을 유지하는 보완과 복구 후 평가 재사용 러너를 `42f49275e783dd3eda1dde92d01fc0e109de077e`에 반영했다. 최종 릴리스는 `/home/kimdove/RobinGraph-rg013-42f4927`, 이미지 `robingraph-api:test-rg013-42f4927`이다. 실제 컨테이너의 이미지·OCI revision·healthy 상태가 해당 커밋과 일치함을 확인했다. PROD의 컨테이너·환경 파일·DB는 변경하지 않았다.
 
 실제 공개 HTTP 9개 요청이 통과했다: 신고 질문 2개, 기존 규칙/명시 profile 2개, 필터 충돌, 지시대명사, 복합 의도, 필터 없는 관찰, 자료 없는 이름. 청둥오리는 정확한 부모 Anas platyrhynchos의 아종 2개, 흰뺨검둥오리는 정확한 부모 Anas zonorhyncha와 연결된 아종 0개로 확인됐다. 이는 활성 AviList v2025b 결과이며 다른 분류판에도 같다고 단정하지 않는다. 부모 식별자·분류판·개념집합을 실제 프로필과 대조했다. 실제 DB를 읽는 배포 API 검증이며 DB 적재나 분류판 변경은 하지 않았다.
 
@@ -63,7 +63,11 @@ Jev 호출 지연은 calibration p50 1,806/p95 2,309ms, heldout p50 1,803/p95 1,
 - [브라우저 검증](assets/2026-10-08-RG013-browser.json)
 - [복구된 임베딩 진단](assets/2026-10-08-RG013-embedding-recovery.json)
 
-MLflow 실제 추적 확인과 최종 배포·push 상태는 이어서 갱신한다.
+실제 MLflow `robingraph-test`에서 연결된 root/child 관계의 Jev LLM span 3개를 확인했다. 요청 모델, 1회 시도, 성공 판정, 1크레딧, 토큰 usage가 저장됐고 Jev 인증 값은 span inputs/outputs/attributes에 없었다. 제공자가 실행 모델을 에코하지 않아 reported_model은 null이다. [MLflow 확인](assets/2026-10-08-RG013-mlflow.json). 최초 검증기의 `get_experiment_by_name`은 설치된 mlflow-tracing 전용 패키지에 없어 실패했고, 지원되는 `set_experiment`를 사용해 재확인했다. 검증 도구의 오류를 API 장애로 기록하지 않았다.
+
+최종 이미지 `42f4927`에서 공개 채팅 HTTP 9개와 브라우저 실제 입력·전송 4개를 다시 실행해 모두 통과했다. 최종 이미지에서도 MLflow Jev span 3개를 다시 확인했다. 해당 JSON에 tested_revision을 명시했다. 구현 커밋 `162e540`, 호환성 보완·평가 재확인 커밋 `42f4927`은 origin/dev에 push 완료(`04389fc..42f4927`). 이번 후속 기록·최종 증거 갱신은 별도 문서 커밋으로 보존한다.
+
+**RG-013 구현·NAS TEST 적용 완료**로 기록한다. 평가 정답표의 한계와 일반 영어 통칭·자동 관찰 필터·임베딩 임계값 최적화 미포함은 아래에 남긴다. Obsidian 상세 기록과 백로그·프로젝트 index에도 같은 핵심 결과를 기록한다. PROD 배포는 수행하지 않았다.
 
 ## 남은 한계·후속 사항
 

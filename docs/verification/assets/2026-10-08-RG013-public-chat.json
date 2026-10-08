@@ -14,7 +14,7 @@
       "subspecies_count": 2,
       "concept_set_id": "rg:concept-set:avilist-v2025b",
       "taxonomy_release": "v2025b",
-      "elapsed_ms": 9117,
+      "elapsed_ms": 8554,
       "answer_text": "청둥오리에 속하는 아종 2개를 활성 분류판에서 확인했습니다."
     },
     {
@@ -28,7 +28,7 @@
       "subspecies_count": 0,
       "concept_set_id": "rg:concept-set:avilist-v2025b",
       "taxonomy_release": "v2025b",
-      "elapsed_ms": 6000,
+      "elapsed_ms": 7287,
       "answer_text": "활성 분류판에서 흰뺨검둥오리에 연결된 아종이 없습니다."
     },
     {
@@ -42,7 +42,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 3806,
+      "elapsed_ms": 3647,
       "answer_text": "청둥오리의 서식 환경은 습지이며, 주 생활 방식은 수생입니다. 먹이 정보는 ‘잡식’입니다. 체중은 843.42 g입니다."
     },
     {
@@ -56,7 +56,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 3425,
+      "elapsed_ms": 3355,
       "answer_text": "청둥오리의 서식 환경은 습지이며, 주 생활 방식은 수생입니다. 먹이 정보는 ‘잡식’입니다. 체중은 843.42 g입니다."
     },
     {
@@ -70,7 +70,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 1925,
+      "elapsed_ms": 2135,
       "answer_text": "조회할 새 이름을 하나 명확히 입력하고, 질문과 필터의 이름을 맞춰 주세요."
     },
     {
@@ -84,7 +84,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 2003,
+      "elapsed_ms": 2208,
       "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
     },
     {
@@ -98,7 +98,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 1669,
+      "elapsed_ms": 2309,
       "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
     },
     {
@@ -112,7 +112,7 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 2533,
+      "elapsed_ms": 2173,
       "answer_text": "관찰 기록을 조회하려면 분류 키, 학명, 장소 또는 날짜 필터를 입력해 주세요."
     },
     {
@@ -126,8 +126,9 @@
       "subspecies_count": null,
       "concept_set_id": null,
       "taxonomy_release": null,
-      "elapsed_ms": 2245,
+      "elapsed_ms": 2310,
       "answer_text": "입력한 이름의 종 정보를 확인하지 못했습니다."
     }
-  ]
+  ],
+  "tested_revision": "42f49275e783dd3eda1dde92d01fc0e109de077e"
 }
