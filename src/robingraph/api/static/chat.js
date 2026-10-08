@@ -2314,10 +2314,10 @@
 
     // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
     // A mouse gesture may only start on blank card surface (the card itself and
-    // its layout containers), so mouse text selection never needs a modifier
-    // key. A touch swipe may also start on non-interactive body text because
-    // vertical scrolling stays native (touch-action: pan-y pinch-zoom) and a
-    // long-press selection cancels the gesture. Any control, link, photo or
+    // its layout containers). Card text selection is disabled by CSS. A touch
+    // swipe may also start on non-interactive body text because vertical
+    // scrolling stays native (touch-action: pan-y pinch-zoom). Any active
+    // selection still cancels the gesture. Any control, link, photo or
     // editable/draggable node keeps its native behavior for both.
     var DRAG_SURFACE_CLASSES = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area", "species-card-swipe-hint"];
     function hasClass(node, name) {
