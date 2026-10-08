@@ -1,0 +1,151 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST API/DB, local JS/CSS interception",
+  "physical_device": false,
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "reduced_motion": false,
+      "collapsed": {
+        "clientHeight": 833,
+        "scrollHeight": 833,
+        "scrollWidth": 460,
+        "clientWidth": 460,
+        "scrollbarWidth": "none",
+        "overflowY": "auto",
+        "traitRows": 17,
+        "sourceToggles": [
+          "측정값 더 보기 (7)",
+          "분류 계통 보기",
+          "출처 · 자료 기준"
+        ]
+      },
+      "single_source_disclosure": true,
+      "no_nested_source_toggles": true,
+      "trait_values_preserved": true,
+      "safe_source_links": true,
+      "native_scroll": {
+        "before": 0,
+        "after": 250,
+        "bottom": {
+          "top": 1626,
+          "max": 1626
+        }
+      },
+      "vertical_scroll_preserves_face": true,
+      "keyboard_toggle": true,
+      "back_drag_flips": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": false,
+      "collapsed": {
+        "clientHeight": 808,
+        "scrollHeight": 808,
+        "scrollWidth": 366,
+        "clientWidth": 366,
+        "scrollbarWidth": "none",
+        "overflowY": "auto",
+        "traitRows": 17,
+        "sourceToggles": [
+          "측정값 더 보기 (7)",
+          "분류 계통 보기",
+          "출처 · 자료 기준"
+        ]
+      },
+      "single_source_disclosure": true,
+      "no_nested_source_toggles": true,
+      "trait_values_preserved": true,
+      "safe_source_links": true,
+      "native_scroll": {
+        "before": 0,
+        "after": 170,
+        "bottom": {
+          "top": 1994,
+          "max": 1994
+        }
+      },
+      "vertical_scroll_preserves_face": true,
+      "keyboard_toggle": true,
+      "back_drag_flips": false,
+      "page_errors": []
+    },
+    {
+      "width": 320,
+      "height": 640,
+      "touch": true,
+      "reduced_motion": false,
+      "collapsed": {
+        "clientHeight": 608,
+        "scrollHeight": 828,
+        "scrollWidth": 296,
+        "clientWidth": 296,
+        "scrollbarWidth": "none",
+        "overflowY": "auto",
+        "traitRows": 17,
+        "sourceToggles": [
+          "측정값 더 보기 (7)",
+          "분류 계통 보기",
+          "출처 · 자료 기준"
+        ]
+      },
+      "single_source_disclosure": true,
+      "no_nested_source_toggles": true,
+      "trait_values_preserved": true,
+      "safe_source_links": true,
+      "native_scroll": {
+        "before": 0,
+        "after": 173,
+        "bottom": {
+          "top": 2412,
+          "max": 2412
+        }
+      },
+      "vertical_scroll_preserves_face": true,
+      "keyboard_toggle": true,
+      "back_drag_flips": false,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": true,
+      "collapsed": {
+        "clientHeight": 808,
+        "scrollHeight": 808,
+        "scrollWidth": 366,
+        "clientWidth": 366,
+        "scrollbarWidth": "none",
+        "overflowY": "auto",
+        "traitRows": 17,
+        "sourceToggles": [
+          "측정값 더 보기 (7)",
+          "분류 계통 보기",
+          "출처 · 자료 기준"
+        ]
+      },
+      "single_source_disclosure": true,
+      "no_nested_source_toggles": true,
+      "trait_values_preserved": true,
+      "safe_source_links": true,
+      "native_scroll": {
+        "before": 0,
+        "after": 167,
+        "bottom": {
+          "top": 1994,
+          "max": 1994
+        }
+      },
+      "vertical_scroll_preserves_face": true,
+      "keyboard_toggle": true,
+      "back_drag_flips": false,
+      "page_errors": []
+    }
+  ]
+}
