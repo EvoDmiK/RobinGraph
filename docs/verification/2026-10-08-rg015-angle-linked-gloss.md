@@ -2,7 +2,7 @@
 
 작업일: 2026-10-08 KST. 구현 커밋: `f8a3771e3fab1ff98dd0b22cf51629d534ba4ed6`.
 
-현재 상태: **구현·프런트엔드 및 로컬 자산 브라우저 검증 완료, NAS TEST 배포 대기**. 새 코드는 `origin/dev`에 push했다. NAS SSH 연결이 거부되어 새 릴리스의 업로드·이미지 빌드·컨테이너 교체·배포 후 검증은 수행하지 못했다.
+현재 상태: **구현·검증·NAS TEST 배포 및 실제 서버 자산 검증 완료**. 구현 `f8a3771`은 `origin/dev`에 push했다. 최초 배포 시도는 SSH 연결 거부로 중단됐으나, 사용자가 SSH를 다시 연 뒤 준비한 동일 소스를 배포하고 healthy·이미지 revision·서버 JS/CSS 일치와 실제 브라우저 검증을 확인했다.
 
 ## 요청 배경과 목표
 
@@ -23,7 +23,7 @@
 | `src/robingraph/api/static/chat.js` | 반사광 overlay 생성, 각도에 따른 위치·강도, 드래그·복귀·전환·버튼 애니메이션과 동기화, 취소/초기화 정리 |
 | `src/robingraph/api/static/styles.css` | 기존 popup glint 제거, 카드에 붙는 밝은 중심·부드러운 가장자리와 넓은 반사층, 비조작 영역·reduced-motion 처리 |
 | `tests/frontend/chat_ui.test.js` | 각도·대칭·복귀 시작점·동일 timing·정리·터치·강도·0도 교차의 모의 회귀 검사 10개 추가 |
-| 이 문서와 `docs/verification/assets/2026-10-08-RG015-gloss-*` | 실제 실행 범위, 화면·검증 결과·배포 대기 근거 |
+| 이 문서와 `docs/verification/assets/2026-10-08-RG015-gloss-*` | 실제 실행 범위, 화면·검증 결과·NAS TEST 배포 증거 |
 
 위치는 `50 + angle / 90 × 30` 퍼센트로 계산해 각도에 비례한다. 양수·음수 회전과 되돌아오는 이동에 따라 위치가 반대로 변한다. 강도는 `(abs(angle) / 90)^0.6 × 0.95`로 정면에서 0이며 20~35도에서도 반사광이 보이도록 했다. 21.6도에서 약 0.404, 9.6도에서 약 0.248이다. 이 값은 물리 기반 재질 렌더링의 측정치가 아니라 현재 카드 표현을 위한 UI 파라미터다. 배경이 카드보다 큰 CSS gradient이므로 background-position 값 증가를 실제 화면상의 ‘오른쪽 이동’과 동일시하지 않는다.
 
@@ -90,16 +90,39 @@ Orca run `run_0c10f54dd3b5`에서 Claude가 UI/CSS/테스트를 구현하고 Ant
 
 - 구현: `f8a3771e3fab1ff98dd0b22cf51629d534ba4ed6`, `origin/dev` push 완료.
 - 소스 패키지 SHA256: `7a19864a029cfc632658282ae68cc681bfcc496063ccc103265a777dbab7b384`.
-- 예정 이미지: `robingraph-api:test-rg015gloss-f8a3771`.
-- 예정 릴리스: `/home/kimdove/RobinGraph-rg015gloss-f8a3771`.
+- 배포 이미지: `robingraph-api:test-rg015gloss-f8a3771`.
+- 배포 릴리스: `/home/kimdove/RobinGraph-rg015gloss-f8a3771`.
 - 이전 TEST 이미지: `robingraph-api:test-rg015mobile-a2a9bad`. 작업 초기에 이 이미지와 healthy 상태를 확인했다.
-- 배포 시도는 SSH에서 `Connection refused`로 실패했다. 아카이브 업로드 이전 연결 단계이며 새 이미지 build·deploy·verify·OCI revision 검사·배포 후 브라우저 검증은 **미실행**이다. 원격의 새 환경변수 파일도 생성하지 않았다. 사용자에게 SSH 재개를 요청했다. PROD는 배포하지 않았다.
+- 최초 배포 시도는 SSH `Connection refused`로 업로드 이전 실패했으며 당시에는 build/deploy/verify가 미실행이었다. 사용자의 SSH 재개 안내 후 같은 패키지의 원격 SHA256와 MANIFEST를 확인하고 TEST 이미지를 빌드·교체했다. `deploy_nas.sh deploy`·`verify` 모두 통과했다. 기존 TEST 환경변수 파일을 비공개로 복사해 이미지·revision만 갱신했고 새 파일 권한은 0600이다. 인증 정보는 기록하지 않는다. 이전 이미지·릴리스는 롤백용으로 보존했으며 PROD는 배포하지 않았다.
+- 실제 컨테이너 `robingraph-api-test`: 이미지 `robingraph-api:test-rg015gloss-f8a3771`, health `healthy`. Docker 이미지 OCI revision은 구현 전체 커밋과 일치한다. 공개 `/health`는 `status=ok`, `mode=neo4j`, `deployment_target=test`다. 실제 API/DB 응답을 사용했으나 전체 DB 회귀를 재실행한 것은 아니다.
+- 실제 Chrome에서 공개 `/static/chat.js`·`/static/styles.css`를 `cache:no-store`로 받아 로컬 구현 파일과 바이트 단위 일치를 확인했다. 최초 Python urllib 접근은 HTTP 403으로 거부됐으므로 성공한 자산 검증으로 계산하지 않았다. 이후 실제 브라우저 fetch로 두 자산과 health를 확인했다. [배포·자산 일치 증거](assets/2026-10-08-RG015-gloss-deployment.json).
 - `graphify update .` AST 갱신 완료: 3,680 nodes·7,962 edges·200 communities. SQL 파서 미설치 등의 기존 경고는 남았으며 의미 추출 API는 호출하지 않았다. 그래프 생성물은 기존 추적 정책을 따른다.
+
+## NAS 배포 후 실제 서버 자산 브라우저 검증
+
+SSH 재개 후 2026-10-08 KST에 실행했다. 아래 검사는 로컬 JS/CSS 대체나 API 모의 응답 없이 NAS TEST에서 내려오는 실제 파일과 `/v1/chat`·DB 응답을 사용한다. 기존 로컬 자산 검증 증거는 배포 전 이력으로 보존한다.
+
+| 검사 | 실제 실행 범위 | 결과 |
+| --- | --- | --- |
+| 반사광 | 1280px 마우스, 390px CDP touch, 390px reduced-motion | 3설정 통과 |
+| 터치 회귀 | 320·390·768px 일반, 390px reduced-motion | 4설정 통과 |
+| 마우스·키보드 회귀 | 1280px 일반/reduced-motion | 2설정 통과 |
+| 사진·긴 누름 미뒤집힘·대화 초기화 | 390px CDP touch | 통과 |
+
+반사광 위치는 양수/음수 회전에서 57.2%/42.8%, opacity 0.404였으며 역방향 이동에서는 53.2%/0.248로 복귀했다. 200ms 복귀와 버튼 270/390ms 두 단계의 카드·반사광 timing이 일치했다. 정면 교차에서는 위치 50%·opacity 약 1.63176e-10을 확인했다. 취소 후 정리·idle animation 없음·reduced-motion 숨김·가로 넘침 없음·pageerror 0도 확인했다. WAAPI timeline 표본 검사이며 실시간 FPS 측정은 아니다. [반사광 결과](assets/2026-10-08-RG015-gloss-reflection.json).
+
+실제 touch 스크롤은 scrollTop 0→20/50/89/50, 390px pinch는 scale 1→1.499999761581421이었다. 양방향 본문 스와이프, 짧은 이동·역방향 복귀·탭, 멀티터치 취소, 닫기/재열기, touch 버튼을 유지했다. [터치 회귀 결과](assets/2026-10-08-RG015-gloss-browser.json). 마우스 드래그·텍스트 선택·Enter/Space·Escape·blur/resize/pointercancel 정리도 통과했다. blur/resize/pointercancel은 DOM 이벤트를 사용했다. [마우스 회귀 결과](assets/2026-10-08-RG015-gloss-mouse-browser.json).
+
+사진 위 드래그 미뒤집힘, 다음 사진 figure 0→1, 긴 누름 미뒤집힘, 대화 초기화의 카드 제거를 확인했다. 외부 사진은 검사 시 complete=false·naturalWidth=0으로 완전 로딩되지 않았으며 사진 전송 성공으로 기록하지 않는다. 긴 누름 selection/contextmenu도 관찰되지 않아 운영체제 선택 메뉴 검증은 제외한다. [조작 결과](assets/2026-10-08-RG015-gloss-controls.json).
+
+검사 결과 JSON의 모든 assertion은 통과했다. 반사광·조작 검사 프로세스는 exit 0으로 종료했다. 터치·마우스 회귀 검사기는 결과 저장과 Chrome 종료 후 Node 프로세스만 남아 해당 두 프로세스를 TERM으로 정리했다. 이를 두 검사기의 정상 exit 0으로 기록하지 않으며 제품 동작 검사 결과와 도구 종료 상태를 구분한다.
+
+배포된 화면의 [390px 앞면 반사광](assets/2026-10-08-RG015-gloss-390-right.png)과 [390px 뒷면 반사광](assets/2026-10-08-RG015-gloss-390-back.png)을 직접 확인했다. 밝은 빛 띠가 카드 표면에 나타나고 본문·버튼은 읽을 수 있었다. 물리 휴대전화·Safari 검증을 대신하지 않는다. 프런트엔드 모의 검사 203개는 배포 전 최종 구현 결과이며, 이번 배포 재개에서는 코드 변경이 없어 재실행하지 않았다.
 
 ## 남은 한계와 후속
 
-NAS SSH가 다시 열리면 준비한 소스 패키지를 TEST에 배포하고 실제 서버 JS/CSS로 반사광·터치·기존 조작을 다시 검사한다. 그 전까지 테스트 웹사이트는 새 효과가 배포된 것으로 안내하지 않는다.
+[NAS TEST 채팅](https://robingraph-test.dove-nest.com/chat)에 새 효과가 적용됐다. 기존 페이지를 새로고침하고 조류 카드를 열어 좌우로 드래그하거나 스와이프하면 확인할 수 있다. 추가 소스 수정 없이 준비한 구현 커밋을 배포했다.
 
 현재 물리 Android·iPhone/iPad·Safari/WebKit·Firefox·스크린 리더·펜은 미검증이다. 이미지 외부 제공자 로딩과 실제 긴 누름 선택 UI도 이번 합격 범위에 포함하지 않았다. 반사광은 시각 효과이며 물리 재질의 정확한 반사/광원 계산은 아니다. 성능은 idle animation/RAF가 없음을 확인했으나 FPS·배터리·저사양 기기 장시간 수치는 측정하지 않았다.
 
-Obsidian 기록은 `Work/RobinGraph/2026-10-08-RG015-회전연동-유광반사광.md`로 저장하고 RG-015 후속 상세·현황·변경 이력과 프로젝트 index에 연결했다. 핵심 구현·실제 검증·배포 대기 상태를 이 문서와 일치시켰다. 저장한 세 문서를 다시 읽어 내용 일치, RG 상세 ID 17개의 유일성, 모든 제목 링크 대상, 대기·보류 RG-002·RG-010·RG-011·RG-012·RG-014·RG-017 상세 보존을 확인했다. 큰 백로그의 전체 요청은 MCP HTTP 413으로 거부되어 정확히 일치하는 부분 치환으로 나눠 저장하고 전체 결과를 재조회했다. 이전 모바일 배포 완료 기록은 당시 결과로 보존했다.
+Obsidian 기록은 `Work/RobinGraph/2026-10-08-RG015-회전연동-유광반사광.md`로 저장하고 RG-015 후속 상세·현황·변경 이력과 프로젝트 index에 연결했다. 핵심 구현·실제 검증·NAS TEST 배포 완료 상태를 이 문서와 일치시켰다. 저장한 세 문서를 다시 읽어 내용 일치, RG 상세 ID 17개의 유일성, 모든 제목 링크 대상, 대기·보류 RG-002·RG-010·RG-011·RG-012·RG-014·RG-017 상세 보존을 확인했다. 큰 백로그의 전체 요청은 MCP HTTP 413으로 거부되어 정확히 일치하는 부분 치환으로 나눠 저장하고 전체 결과를 재조회했다. 이전 모바일 배포 완료 기록은 당시 결과로 보존했다.

@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST /v1/chat and DB, Chrome via Playwright mouse; blur/resize/pointercancel dispatched DOM events; no API mocks; not a physical touchscreen test",
+  "results": [
+    {
+      "width": 1280,
+      "reduced_motion": false,
+      "http_status": 200,
+      "api_disposition": "answer",
+      "short_drag_reverted": true,
+      "right_and_left_drag": true,
+      "text_selection_preserved": true,
+      "blur_resize_pointercancel_clean": true,
+      "escape_reopen_clean": true,
+      "keyboard_enter_space": true,
+      "continuous_transform": true,
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "reduced_motion": true,
+      "http_status": 200,
+      "api_disposition": "answer",
+      "short_drag_reverted": true,
+      "right_and_left_drag": true,
+      "text_selection_preserved": true,
+      "blur_resize_pointercancel_clean": true,
+      "escape_reopen_clean": true,
+      "keyboard_enter_space": true,
+      "continuous_transform": false,
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "checked_at": "2026-10-08T10:39:41.223Z",
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "source_commit": "f8a3771e3fab1ff98dd0b22cf51629d534ba4ed6",
+  "image": "robingraph-api:test-rg015gloss-f8a3771",
+  "container_health": "healthy",
+  "image_oci_revision": "f8a3771e3fab1ff98dd0b22cf51629d534ba4ed6",
+  "package_sha256": "7a19864a029cfc632658282ae68cc681bfcc496063ccc103265a777dbab7b384",
+  "assets": [
+    {
+      "path": "/static/chat.js",
+      "sha256": "45fc74c85720237dbad24ce73a60483a86b2eb7d5823217aa2f06f969bd50ed5",
+      "matches_local_source": true
+    },
+    {
+      "path": "/static/styles.css",
+      "sha256": "e84db7fb8de0f8025e1cb902d44d668174e64052fb166973f332b1496733b941",
+      "matches_local_source": true
+    }
+  ],
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "browser_runners": {
+    "reflection": {
+      "assertions_passed": true,
+      "exit_code": 0
+    },
+    "controls": {
+      "assertions_passed": true,
+      "exit_code": 0
+    },
+    "touch_regression": {
+      "assertions_passed": true,
+      "exit_code": 143,
+      "note": "All results written and Chrome closed; lingering Node process terminated with TERM."
+    },
+    "mouse_regression": {
+      "assertions_passed": true,
+      "exit_code": 143,
+      "note": "All results written and Chrome closed; lingering Node process terminated with TERM."
+    }
+  }
+}
