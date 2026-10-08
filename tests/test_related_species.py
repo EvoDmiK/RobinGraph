@@ -21,7 +21,6 @@ def peer(index):
 class RelatedSpeciesTest(unittest.TestCase):
     def test_scoped_read_returns_bounded_groups_with_snapshot_and_no_evolution_claim(self):
         repo = Mock()
-        repo._korean_dataset_id.return_value = 'ko-active'
         repo._run.side_effect = [[SOURCE], [peer(i) for i in range(13)], []]
         result = related_species(repo, lambda _: LINEAGE, '청둥오리')
         self.assertEqual('v2025b', result['taxonomy_release'])
@@ -38,17 +37,36 @@ class RelatedSpeciesTest(unittest.TestCase):
         for call in calls[1:]:
             self.assertEqual('active', call.kwargs['concept_set_id'])
             self.assertEqual('v2025b', call.kwargs['taxonomy_release'])
-            self.assertEqual('ko-active', call.kwargs['korean_dataset_id'])
+            self.assertEqual('개개비', call.kwargs['korean_reference_names']['avilist-taxon:v2025b:22298']['name'])
         self.assertIn('all(link IN relationships(path)', RELATED_QUERY)
         self.assertIn('all(node IN nodes(path)', RELATED_QUERY)
         self.assertIn('node:Taxon AND node:BirdTaxon', RELATED_QUERY)
         self.assertIn('peer.id <> $target_id', RELATED_QUERY)
-        self.assertIn("name.name =~ '.*[가-힣].*'", RELATED_QUERY)
-        self.assertLess(RELATED_QUERY.index('name.dataset_id=$korean_dataset_id'), RELATED_QUERY.index('LIMIT 13'))
+        self.assertIn('reference.scientific_name=peer.scientific_name', RELATED_QUERY)
+        self.assertIn('reference.english_name=english_name', RELATED_QUERY)
+        self.assertLess(RELATED_QUERY.index('CASE WHEN korean_name IS NULL'), RELATED_QUERY.index('LIMIT 13'))
         self.assertIn("english.dataset_id=peer.dataset_id AND english.source_release=peer.source_release", RELATED_QUERY)
         self.assertIn("node.policy_status='allowed' AND node.source_release=$taxonomy_release", RELATED_QUERY)
         self.assertEqual('licensed_names', result['name_filter'])
         self.assertTrue(all(item['korean_name'] is None for item in genus['items']))
+
+    def test_checked_korean_label_without_graph_name_and_identity_mismatch_fallback(self):
+        known = {'taxon_id':'avilist-taxon:v2025b:22298', 'rank':'species',
+                 'scientific_name':'Acrocephalus orientalis', 'english_name':'Oriental Reed Warbler'}
+        for changed in ({}, {'scientific_name':'Different species'}, {'english_name':'Different bird'}):
+            with self.subTest(changed=changed):
+                repo = Mock()
+                repo._run.side_effect = [[SOURCE], [{'taxon':{**known, **changed}, **SOURCE}], []]
+                result = related_species(repo, lambda _:LINEAGE, '청둥오리')
+                item = result['groups'][0]['items'][0]
+                if changed:
+                    self.assertIsNone(item['korean_name'])
+                    self.assertIsNone(item['korean_name_status'])
+                    self.assertEqual(changed.get('english_name', known['english_name']), item['english_name'])
+                else:
+                    self.assertEqual('개개비', item['korean_name'])
+                    self.assertEqual('source-reference', item['korean_name_status'])
+                    self.assertTrue(item['korean_name_source_url'].startswith('https://'))
 
     def test_missing_species_and_revoked_or_invalid_provenance_fail_closed(self):
         repo = Mock()
