@@ -2728,18 +2728,49 @@
     dialog.appendChild(close);
     dialog.appendChild(card);
     wrapper.appendChild(dialog);
+    var backdropPress = null;
+    function isBackdrop(event) {
+      // The dialog's padded interior is still part of the card, not backdrop.
+      if (event.target !== dialog) { return false; }
+      var bounds = dialog.getBoundingClientRect();
+      return event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom;
+    }
+    // A gesture starting inside the dialog can end with a dialog click outside
+    // its bounds (including padding drags). Only a press AND release that
+    // began on the backdrop can dismiss the popup; release coordinates alone
+    // cannot distinguish that drag from an intentional outside click.
+    dialog.addEventListener("pointerdown", function (event) {
+      backdropPress = null;
+      if (event.button === 0 && event.isPrimary !== false && isBackdrop(event)) {
+        backdropPress = { pointerId: event.pointerId, released: false };
+      }
+    }, true);
+    dialog.addEventListener("pointerup", function (event) {
+      if (!backdropPress || event.pointerId !== backdropPress.pointerId ||
+          event.button !== 0 || !isBackdrop(event)) {
+        backdropPress = null;
+        return;
+      }
+      backdropPress.released = true;
+    }, true);
+    dialog.addEventListener("pointercancel", function () { backdropPress = null; }, true);
     opener.addEventListener("click", function () {
+      backdropPress = null;
       if (card.showFront) { card.showFront(); }
       dialog.showModal();
     });
     close.addEventListener("click", function () { dialog.close(); });
-    dialog.addEventListener("close", function () { if (card.showFront) { card.showFront(); } });
+    dialog.addEventListener("close", function () {
+      backdropPress = null;
+      if (card.showFront) { card.showFront(); }
+    });
     dialog.addEventListener("click", function (event) {
-      // The dialog's padded interior is still part of the card, not backdrop.
-      if (event.target !== dialog) { return; }
-      var bounds = dialog.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right ||
-          event.clientY < bounds.top || event.clientY > bounds.bottom) {
+      var press = backdropPress;
+      backdropPress = null;
+      if (press && press.released &&
+          (typeof event.pointerId !== "number" || event.pointerId === press.pointerId) &&
+          isBackdrop(event)) {
         dialog.close();
       }
     });
