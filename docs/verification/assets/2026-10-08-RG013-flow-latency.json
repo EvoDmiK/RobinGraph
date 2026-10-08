@@ -1,0 +1,936 @@
+{
+  "date": "2026-10-08",
+  "scope": "Read-only NAS TEST public HTTP probes and actual MLflow traces; no application changes or redeploy",
+  "requests": [
+    {
+      "round": 1,
+      "case": "jev_subspecies",
+      "elapsed_ms": 3310,
+      "route_method": "jev",
+      "disposition": "answer"
+    },
+    {
+      "round": 1,
+      "case": "explicit_profile",
+      "elapsed_ms": 3106,
+      "route_method": "explicit",
+      "disposition": "answer"
+    },
+    {
+      "round": 1,
+      "case": "direct_subspecies",
+      "elapsed_ms": 340,
+      "route_method": null,
+      "disposition": null
+    },
+    {
+      "round": 2,
+      "case": "jev_subspecies",
+      "elapsed_ms": 3060,
+      "route_method": "jev",
+      "disposition": "answer"
+    },
+    {
+      "round": 2,
+      "case": "explicit_profile",
+      "elapsed_ms": 2781,
+      "route_method": "explicit",
+      "disposition": "answer"
+    },
+    {
+      "round": 2,
+      "case": "direct_subspecies",
+      "elapsed_ms": 597,
+      "route_method": null,
+      "disposition": null
+    },
+    {
+      "round": 1,
+      "case": "direct_profile",
+      "elapsed_ms": 806
+    },
+    {
+      "round": 1,
+      "case": "direct_similar",
+      "elapsed_ms": 2580
+    },
+    {
+      "round": 2,
+      "case": "direct_profile",
+      "elapsed_ms": 575
+    },
+    {
+      "round": 2,
+      "case": "direct_similar",
+      "elapsed_ms": 2556
+    }
+  ],
+  "current_traces": [
+    {
+      "trace_id": "tr-4d89568567c6e21832970631fe471303",
+      "spans": [
+        {
+          "name": "GET /v1/taxa/subspecies",
+          "id": "809f746a6d0c0ce9",
+          "parent": null,
+          "start_ns": 1791431465312961627,
+          "end_ns": 1791431465446517154,
+          "ms": 133.56,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 133.56,
+      "root_outside_direct_child_spans_ms": 133.56
+    },
+    {
+      "trace_id": "tr-0964a35eccae87ca5dae62e342696b65",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "fee79099d8ff6206",
+          "parent": null,
+          "start_ns": 1791431462288181646,
+          "end_ns": 1791431464776726347,
+          "ms": 2488.54,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리",
+              "intent": "profile",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "998eadbc03488e33",
+          "parent": "fee79099d8ff6206",
+          "start_ns": 1791431462400557937,
+          "end_ns": 1791431462621631064,
+          "ms": 221.07,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "346298a55c494c95",
+          "parent": "998eadbc03488e33",
+          "start_ns": 1791431462402704025,
+          "end_ns": 1791431462498789422,
+          "ms": 96.09,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "2f259e84fc6dd559",
+          "parent": "998eadbc03488e33",
+          "start_ns": 1791431462500787746,
+          "end_ns": 1791431462609174145,
+          "ms": 108.39,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "43c0bc674f07114c",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462503422673,
+          "end_ns": 1791431462504870679,
+          "ms": 1.45,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "5cdbbfe1bc6e9a54",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462508178929,
+          "end_ns": 1791431462605532494,
+          "ms": 97.35,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "b16536b639b3cfe3",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462515884563,
+          "end_ns": 1791431462518115060,
+          "ms": 2.23,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "c7e267529998866a",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462520702052,
+          "end_ns": 1791431462540845585,
+          "ms": 20.14,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "b042bac8d465d85b",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462526213956,
+          "end_ns": 1791431462530030862,
+          "ms": 3.82,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "acc8eced5dba437f",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462533652543,
+          "end_ns": 1791431462535772545,
+          "ms": 2.12,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "c9d8924cda08935e",
+          "parent": "2f259e84fc6dd559",
+          "start_ns": 1791431462537933755,
+          "end_ns": 1791431462540208559,
+          "ms": 2.27,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "46fce2c875348ff1",
+          "parent": "998eadbc03488e33",
+          "start_ns": 1791431462612520172,
+          "end_ns": 1791431462619085399,
+          "ms": 6.57,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 2488.54,
+      "root_outside_direct_child_spans_ms": 2267.47
+    },
+    {
+      "trace_id": "tr-08ffc801e1917955b429c82ce508abb8",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "b4c7cf13a194eef7",
+          "parent": null,
+          "start_ns": 1791431459472687417,
+          "end_ns": 1791431461996897006,
+          "ms": 2524.21,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리 아종 알려줘",
+              "intent": "auto",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "jev_router.classify",
+          "id": "2669986afbc5b898",
+          "parent": "b4c7cf13a194eef7",
+          "start_ns": 1791431459473476484,
+          "end_ns": 1791431461449633092,
+          "ms": 1976.16,
+          "jev_ms": 1976,
+          "inputs": {
+            "question": "청둥오리 아종 알려줘"
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "5720e06fad49159c",
+          "parent": "b4c7cf13a194eef7",
+          "start_ns": 1791431461563038000,
+          "end_ns": 1791431461822594673,
+          "ms": 259.56,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "2227f92371d4d285",
+          "parent": "5720e06fad49159c",
+          "start_ns": 1791431461564488716,
+          "end_ns": 1791431461656566682,
+          "ms": 92.08,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "f1a8c5d25cb6be39",
+          "parent": "5720e06fad49159c",
+          "start_ns": 1791431461658117969,
+          "end_ns": 1791431461804486311,
+          "ms": 146.37,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "69dffec31328f4d7",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461660928538,
+          "end_ns": 1791431461662376332,
+          "ms": 1.45,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "f41c289e52d85eea",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461665555173,
+          "end_ns": 1791431461796489916,
+          "ms": 130.93,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "d2c712ed6b6ea413",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461670639286,
+          "end_ns": 1791431461672911531,
+          "ms": 2.27,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "615448c657fb0d7f",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461675532832,
+          "end_ns": 1791431461710472886,
+          "ms": 34.94,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "2385977e332f88b0",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461681194671,
+          "end_ns": 1791431461713134853,
+          "ms": 31.94,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "8ee0aa144fdd1632",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461720907923,
+          "end_ns": 1791431461740485712,
+          "ms": 19.58,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "acc070020ba5d7c1",
+          "parent": "f1a8c5d25cb6be39",
+          "start_ns": 1791431461726443576,
+          "end_ns": 1791431461741475314,
+          "ms": 15.03,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "4311a043e2ae76e1",
+          "parent": "5720e06fad49159c",
+          "start_ns": 1791431461812763914,
+          "end_ns": 1791431461819757320,
+          "ms": 6.99,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 2524.21,
+      "root_outside_direct_child_spans_ms": 288.5
+    },
+    {
+      "trace_id": "tr-ee090c7b2c9e6dc4e4098b501a32c482",
+      "spans": [
+        {
+          "name": "GET /v1/taxa/subspecies",
+          "id": "6ff6336e82770cb3",
+          "parent": null,
+          "start_ns": 1791431458886114611,
+          "end_ns": 1791431459020599611,
+          "ms": 134.49,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 134.49,
+      "root_outside_direct_child_spans_ms": 134.49
+    },
+    {
+      "trace_id": "tr-95119a5302bfd5833abd448e4208dcc8",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "b9aefe42072ac03f",
+          "parent": null,
+          "start_ns": 1791431455919279830,
+          "end_ns": 1791431458620978634,
+          "ms": 2701.7,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리",
+              "intent": "profile",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "0280eb5a418e9f82",
+          "parent": "b9aefe42072ac03f",
+          "start_ns": 1791431456036111797,
+          "end_ns": 1791431456259008992,
+          "ms": 222.9,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "8d978ddbe1afde2f",
+          "parent": "0280eb5a418e9f82",
+          "start_ns": 1791431456038023419,
+          "end_ns": 1791431456137121369,
+          "ms": 99.1,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "1b671e7eec1d465b",
+          "parent": "0280eb5a418e9f82",
+          "start_ns": 1791431456138792092,
+          "end_ns": 1791431456245855247,
+          "ms": 107.06,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "af9cb17d687002de",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456141816093,
+          "end_ns": 1791431456243118926,
+          "ms": 101.3,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "61232070d3ced0a9",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456147479001,
+          "end_ns": 1791431456149805612,
+          "ms": 2.33,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "50a70ac4d83bbed4",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456152440183,
+          "end_ns": 1791431456176019529,
+          "ms": 23.58,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "819bf3586082611b",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456157464979,
+          "end_ns": 1791431456159737956,
+          "ms": 2.27,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "b0b40725c799588c",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456164870922,
+          "end_ns": 1791431456168242001,
+          "ms": 3.37,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "553b4e52d2a42b24",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456170390752,
+          "end_ns": 1791431456171977348,
+          "ms": 1.59,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "68fb026b58c4cea1",
+          "parent": "1b671e7eec1d465b",
+          "start_ns": 1791431456174307644,
+          "end_ns": 1791431456185526299,
+          "ms": 11.22,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "971bab2de5727764",
+          "parent": "0280eb5a418e9f82",
+          "start_ns": 1791431456249022227,
+          "end_ns": 1791431456255648888,
+          "ms": 6.63,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 2701.7,
+      "root_outside_direct_child_spans_ms": 2478.8
+    },
+    {
+      "trace_id": "tr-f933851896745db77bc9e88c03ac04c4",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "d06bb5e68dd3c25d",
+          "parent": null,
+          "start_ns": 1791431452722421774,
+          "end_ns": 1791431455485467313,
+          "ms": 2763.05,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리 아종 알려줘",
+              "intent": "auto",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "jev_router.classify",
+          "id": "56fe55fc1341dedc",
+          "parent": "d06bb5e68dd3c25d",
+          "start_ns": 1791431452723741578,
+          "end_ns": 1791431455001913707,
+          "ms": 2278.17,
+          "jev_ms": 2278,
+          "inputs": {
+            "question": "청둥오리 아종 알려줘"
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "8a84b1720b1d5cfb",
+          "parent": "d06bb5e68dd3c25d",
+          "start_ns": 1791431455113053664,
+          "end_ns": 1791431455309724453,
+          "ms": 196.67,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "40c9cdfb307cf13a",
+          "parent": "8a84b1720b1d5cfb",
+          "start_ns": 1791431455114479274,
+          "end_ns": 1791431455207351000,
+          "ms": 92.87,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "a4e7728320bbc71e",
+          "parent": "8a84b1720b1d5cfb",
+          "start_ns": 1791431455208944687,
+          "end_ns": 1791431455299276810,
+          "ms": 90.33,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "f6ec2c59a2d2bfdb",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455211156052,
+          "end_ns": 1791431455212428484,
+          "ms": 1.27,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "ec0744bcf16fe36b",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455216089296,
+          "end_ns": 1791431455296917405,
+          "ms": 80.83,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "9542db2284360cea",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455221532863,
+          "end_ns": 1791431455224006201,
+          "ms": 2.47,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "9facfadf966cb0ee",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455227183986,
+          "end_ns": 1791431455245922809,
+          "ms": 18.74,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "df5414fb9fb5565a",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455232025378,
+          "end_ns": 1791431455234150613,
+          "ms": 2.13,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "20a1df46c05614f6",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455236946965,
+          "end_ns": 1791431455238843506,
+          "ms": 1.9,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "1ab3798273e25344",
+          "parent": "a4e7728320bbc71e",
+          "start_ns": 1791431455241523173,
+          "end_ns": 1791431455243903699,
+          "ms": 2.38,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "959a40ce0b76ddf8",
+          "parent": "8a84b1720b1d5cfb",
+          "start_ns": 1791431455302241416,
+          "end_ns": 1791431455307413543,
+          "ms": 5.17,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ],
+      "root_ms": 2763.05,
+      "root_outside_direct_child_spans_ms": 288.21
+    }
+  ],
+  "historical_slow_subspecies_traces": [
+    {
+      "trace_id": "tr-2ad6941aba7713f857330090053bac5d",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "03add3298f103074",
+          "parent": null,
+          "ms": 7821.8,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리 아종 알려줘",
+              "intent": "auto",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "jev_router.classify",
+          "id": "da6108115acc3665",
+          "parent": "03add3298f103074",
+          "ms": 1974.84,
+          "jev_ms": 1975,
+          "inputs": {
+            "question": "청둥오리 아종 알려줘"
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "7af87e68f3650773",
+          "parent": "03add3298f103074",
+          "ms": 5605.2,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "9faa214c6099054a",
+          "parent": "7af87e68f3650773",
+          "ms": 112.01,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "ac24224a01636494",
+          "parent": "7af87e68f3650773",
+          "ms": 5475.56,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "c21e02ac216a4dbc",
+          "parent": "ac24224a01636494",
+          "ms": 1.51,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "b8edec3100ea6559",
+          "parent": "ac24224a01636494",
+          "ms": 103.22,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "619e6dbd7e4b0995",
+          "parent": "ac24224a01636494",
+          "ms": 16.05,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "ca9e7def65fa7463",
+          "parent": "ac24224a01636494",
+          "ms": 1858.23,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "526754adb8aaf3a1",
+          "parent": "ac24224a01636494",
+          "ms": 5418.93,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "2285e0e2fd1d6d70",
+          "parent": "ac24224a01636494",
+          "ms": 2.23,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "911f4046fba51f97",
+          "parent": "ac24224a01636494",
+          "ms": 2.52,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "Models.generate_content",
+          "id": "0f4b612b727a901d",
+          "parent": "526754adb8aaf3a1",
+          "ms": 2891.76,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "Models._generate_content",
+          "id": "7ecdd521e5bcd239",
+          "parent": "0f4b612b727a901d",
+          "ms": 2888.63,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "df9f08b3bcd8255f",
+          "parent": "7af87e68f3650773",
+          "ms": 5.47,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-45494841a163e757627288b65cd3ab0c",
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "id": "5a10e3799ad0c4ef",
+          "parent": null,
+          "ms": 7971.22,
+          "jev_ms": null,
+          "inputs": {
+            "request": {
+              "question": "청둥오리 아종 알려줘",
+              "intent": "auto",
+              "filters": null
+            }
+          }
+        },
+        {
+          "name": "jev_router.classify",
+          "id": "108db2f77a6cdb34",
+          "parent": "5a10e3799ad0c4ef",
+          "ms": 2292.83,
+          "jev_ms": 2293,
+          "inputs": {
+            "question": "청둥오리 아종 알려줘"
+          }
+        },
+        {
+          "name": "RunnableSequence",
+          "id": "2e5ee1856cdd7ac9",
+          "parent": "5a10e3799ad0c4ef",
+          "ms": 5302.32,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "resolve_species",
+          "id": "a1056f82e78a0f96",
+          "parent": "2e5ee1856cdd7ac9",
+          "ms": 148.39,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "id": "dfdf65b876428633",
+          "parent": "2e5ee1856cdd7ac9",
+          "ms": 5133.86,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "image_stage",
+          "id": "717b979d52f552be",
+          "parent": "dfdf65b876428633",
+          "ms": 2257.08,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "RunnablePassthrough",
+          "id": "dec3890785e4becc",
+          "parent": "dfdf65b876428633",
+          "ms": 1.61,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "trait_stage",
+          "id": "509d355ec1c30c41",
+          "parent": "dfdf65b876428633",
+          "ms": 128.07,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "conservation_stage",
+          "id": "577b8dcd4c7d35da",
+          "parent": "dfdf65b876428633",
+          "ms": 25.75,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "notes_stage",
+          "id": "ad2c8dcab18789ba",
+          "parent": "dfdf65b876428633",
+          "ms": 5101.28,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "reference_stage",
+          "id": "3c2b329acd004e49",
+          "parent": "dfdf65b876428633",
+          "ms": 6.88,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "metadata_stage",
+          "id": "f0552fb2c3b83d27",
+          "parent": "dfdf65b876428633",
+          "ms": 9.81,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "Models.generate_content",
+          "id": "f63174d146ae4623",
+          "parent": "ad2c8dcab18789ba",
+          "ms": 3000.83,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "Models._generate_content",
+          "id": "7b902f05d730faad",
+          "parent": "f63174d146ae4623",
+          "ms": 2997.99,
+          "jev_ms": null,
+          "inputs": null
+        },
+        {
+          "name": "assemble",
+          "id": "06ae0e1c9fe72b05",
+          "parent": "2e5ee1856cdd7ac9",
+          "ms": 5.42,
+          "jev_ms": null,
+          "inputs": null
+        }
+      ]
+    }
+  ],
+  "live_jev_calls_in_probe": 2,
+  "limitations": [
+    "Two repetitions per case; not a load test or p95 estimate",
+    "Existing in-memory hourly caches were not cleared; cache hits inferred from stage timings and code",
+    "Nested and parallel spans must not be summed",
+    "HTTP minus root span includes uninstrumented transport/framework/export work; individual causes not isolated",
+    "Similar-species endpoint measured end-to-end; its query/ranking substeps are not individually traced"
+  ]
+}
