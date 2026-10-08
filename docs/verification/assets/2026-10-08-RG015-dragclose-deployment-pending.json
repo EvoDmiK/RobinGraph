@@ -1,0 +1,15 @@
+{
+  "checked_at": "2026-10-08T13:49:02.214Z",
+  "source_commit": "b58be10f3905eea1a13fbe1f2653469b18066d38",
+  "package_sha256": "cfef3a840f1c829ae32feec498833468adcb8c0a52cfe4b0f7b6244a2b047f0e",
+  "deployment_state": "pending_ssh_connection_refused_before_upload",
+  "planned_image": "robingraph-api:test-rg015dragclose-b58be10",
+  "planned_release": "/home/kimdove/RobinGraph-rg015dragclose-b58be10",
+  "last_verified_image": "robingraph-api:test-rg015pcdrag-719e5bc",
+  "served_chat_js_sha256": "046418377ee2dc1ad3c28f0b3ffbb945c9b4e5f3522dbe2bdf36731811a16921",
+  "local_chat_js_sha256": "3cd6852e96062a9da8ae635752d1525b35fe6a6d8a0f424eee217138c30e25d6",
+  "served_js_matches_new_source": false,
+  "served_js_matches_previous_719e5bc": true,
+  "local_browser_profiles_passed": 5,
+  "local_browser_exit_code": 0
+}

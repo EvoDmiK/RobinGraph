@@ -1,0 +1,346 @@
+{
+  "passed": true,
+  "environment": "Actual deployed NAS TEST API/DB/JS/CSS; Chrome desktop and Pixel7 CDP touch emulation; no physical phone test",
+  "results": [
+    {
+      "width": 1280,
+      "touch": false,
+      "reduced_motion": false,
+      "inside_to_outside_cases": [
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": false,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": false,
+          "finished_back": true,
+          "open_after_release": true
+        }
+      ],
+      "standard_body_drag_flips": true,
+      "outside_to_inside_preserves_popup": true,
+      "fresh_backdrop_click_closes": true,
+      "close_button": true,
+      "escape": true,
+      "reopen_resets_front": true,
+      "page_errors": []
+    },
+    {
+      "width": 1440,
+      "touch": false,
+      "reduced_motion": false,
+      "inside_to_outside_cases": [
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1437,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": 1,
+          "release_x": 1437,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1437,
+          "drag_started": false,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": false,
+          "finished_back": true,
+          "open_after_release": true
+        }
+      ],
+      "standard_body_drag_flips": true,
+      "outside_to_inside_preserves_popup": true,
+      "fresh_backdrop_click_closes": true,
+      "close_button": true,
+      "escape": true,
+      "reopen_resets_front": true,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "touch": false,
+      "reduced_motion": true,
+      "inside_to_outside_cases": [
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 1277,
+          "drag_started": false,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": false,
+          "finished_back": true,
+          "open_after_release": true
+        }
+      ],
+      "standard_body_drag_flips": true,
+      "outside_to_inside_preserves_popup": true,
+      "fresh_backdrop_click_closes": true,
+      "close_button": true,
+      "escape": true,
+      "reopen_resets_front": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": false,
+      "inside_to_outside_cases": [
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        }
+      ],
+      "standard_body_drag_flips": true,
+      "outside_to_inside_preserves_popup": true,
+      "fresh_backdrop_click_closes": true,
+      "close_button": true,
+      "escape": true,
+      "reopen_resets_front": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": true,
+      "inside_to_outside_cases": [
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        },
+        {
+          "kind": "title",
+          "start_back": false,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "body",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": false,
+          "direction": 1,
+          "release_x": 387,
+          "drag_started": true,
+          "finished_back": false,
+          "open_after_release": true
+        },
+        {
+          "kind": "padding",
+          "start_back": true,
+          "direction": -1,
+          "release_x": 3,
+          "drag_started": true,
+          "finished_back": true,
+          "open_after_release": true
+        }
+      ],
+      "standard_body_drag_flips": true,
+      "outside_to_inside_preserves_popup": true,
+      "fresh_backdrop_click_closes": true,
+      "close_button": true,
+      "escape": true,
+      "reopen_resets_front": true,
+      "page_errors": []
+    }
+  ]
+}

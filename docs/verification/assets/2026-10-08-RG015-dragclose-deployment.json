@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-08T13:50:59.422Z",
+  "source_commit": "b58be10f3905eea1a13fbe1f2653469b18066d38",
+  "image": "robingraph-api:test-rg015dragclose-b58be10",
+  "container_health": "healthy",
+  "image_oci_revision": "b58be10f3905eea1a13fbe1f2653469b18066d38",
+  "package_sha256": "cfef3a840f1c829ae32feec498833468adcb8c0a52cfe4b0f7b6244a2b047f0e",
+  "assets": [
+    {
+      "path": "/static/chat.js",
+      "sha256": "3cd6852e96062a9da8ae635752d1525b35fe6a6d8a0f424eee217138c30e25d6",
+      "matches_local_source": true
+    },
+    {
+      "path": "/static/styles.css",
+      "sha256": "9aeb73f79ccd1fada496d4c32742489a5fb06abc85c1305265235aebb4d811be",
+      "matches_local_source": true
+    }
+  ],
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "verification": {
+    "frontend_mock_passed": 210,
+    "frontend_failed": 0,
+    "frontend_skipped": 0,
+    "local_browser_profiles_passed": 5,
+    "deployed_browser_profiles_passed": 5,
+    "deployed_inside_to_outside_cases": 30,
+    "local_browser_exit_code": 0,
+    "deployed_browser_exit_code": 0,
+    "browser_close_timeout_logged": false
+  }
+}
