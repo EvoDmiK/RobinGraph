@@ -1,0 +1,320 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST API/DB/JS/CSS; Chrome mouse and Pixel7 CDP touch emulation, with programmatic WAAPI timeline sampling; not a physical mobile test",
+  "results": [
+    {
+      "width": 1280,
+      "touch": false,
+      "reduced_motion": false,
+      "noninteractive": true,
+      "old_popup_glint_removed": true,
+      "right": {
+        "position": 57.2,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 395.8269348144531,
+          "height": 813.133544921875
+        }
+      },
+      "left": {
+        "position": 42.8,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 395.8269958496094,
+          "height": 813.133544921875
+        }
+      },
+      "reversed": {
+        "position": 53.2,
+        "opacity": 0.248,
+        "display": "block",
+        "rect": {
+          "width": 423.8067626953125,
+          "height": 791.5858154296875
+        }
+      },
+      "rollback": {
+        "start": {
+          "position": 53.2,
+          "opacity": 0.248,
+          "display": "block",
+          "rect": {
+            "width": 423.8067626953125,
+            "height": 791.5858154296875
+          }
+        },
+        "mid": {
+          "position": 50.4892,
+          "opacity": 0.0660466,
+          "display": "block",
+          "rect": {
+            "width": 433.1611022949219,
+            "height": 776.734130859375
+          }
+        },
+        "timings": [
+          {
+            "target": "card",
+            "duration": 200,
+            "easing": "cubic-bezier(0.2, 0.7, 0.3, 1)"
+          },
+          {
+            "target": "gloss",
+            "duration": 200,
+            "easing": "cubic-bezier(0.2, 0.7, 0.3, 1)"
+          }
+        ]
+      },
+      "back": {
+        "position": 57.2,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 395.8269348144531,
+          "height": 1521.0247802734375
+        }
+      },
+      "cancel_cleans": true,
+      "button": {
+        "outgoingA": {
+          "position": 49.552,
+          "opacity": 0.0247269,
+          "display": "block",
+          "rect": {
+            "width": 434.6270751953125,
+            "height": 1453.3731689453125
+          }
+        },
+        "outgoingB": {
+          "position": 41.786,
+          "opacity": 0.434279,
+          "display": "block",
+          "rect": {
+            "width": 408.01220703125,
+            "height": 1543.4744873046875
+          }
+        },
+        "incomingA": {
+          "position": 64.7247,
+          "opacity": 0.61897,
+          "display": "block",
+          "rect": {
+            "width": 321.1704406738281,
+            "height": 869.9889526367188
+          }
+        },
+        "incomingB": {
+          "position": 49.1623,
+          "opacity": 0.111314,
+          "display": "block",
+          "rect": {
+            "width": 439.8804931640625,
+            "height": 784.7801513671875
+          }
+        },
+        "outgoingTimings": [
+          {
+            "target": "card",
+            "duration": 270,
+            "easing": "cubic-bezier(0.45, 0, 0.8, 0.4)"
+          },
+          {
+            "target": "gloss",
+            "duration": 270,
+            "easing": "cubic-bezier(0.45, 0, 0.8, 0.4)"
+          }
+        ],
+        "incomingTimings": [
+          {
+            "target": "card",
+            "duration": 390,
+            "easing": "cubic-bezier(0.15, 0.65, 0.25, 1)"
+          },
+          {
+            "target": "gloss",
+            "duration": 390,
+            "easing": "cubic-bezier(0.15, 0.65, 0.25, 1)"
+          }
+        ],
+        "zero_crossing": {
+          "offset": 0.7768421052631578,
+          "computed": {
+            "position": 50,
+            "opacity": 1.63176e-10,
+            "display": "block",
+            "rect": {
+              "width": 442.3111572265625,
+              "height": 782.0762939453125
+            }
+          }
+        }
+      },
+      "no_idle_gloss_animation": true,
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": false,
+      "noninteractive": true,
+      "old_popup_glint_removed": true,
+      "right": {
+        "position": 57.2,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 316.820068359375,
+          "height": 789.852294921875
+        }
+      },
+      "left": {
+        "position": 42.8,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 316.820068359375,
+          "height": 789.852294921875
+        }
+      },
+      "reversed": {
+        "position": 53.2,
+        "opacity": 0.248,
+        "display": "block",
+        "rect": {
+          "width": 339.6979675292969,
+          "height": 775.3756103515625
+        }
+      },
+      "rollback": {
+        "start": {
+          "position": 53.2,
+          "opacity": 0.248,
+          "display": "block",
+          "rect": {
+            "width": 339.6979675292969,
+            "height": 775.3756103515625
+          }
+        },
+        "mid": {
+          "position": 50.4892,
+          "opacity": 0.0660466,
+          "display": "block",
+          "rect": {
+            "width": 347.3241882324219,
+            "height": 765.1314697265625
+          }
+        },
+        "timings": [
+          {
+            "target": "card",
+            "duration": 200,
+            "easing": "cubic-bezier(0.2, 0.7, 0.3, 1)"
+          },
+          {
+            "target": "gloss",
+            "duration": 200,
+            "easing": "cubic-bezier(0.2, 0.7, 0.3, 1)"
+          }
+        ]
+      },
+      "back": {
+        "position": 57.2,
+        "opacity": 0.404,
+        "display": "block",
+        "rect": {
+          "width": 316.820068359375,
+          "height": 1559.1375732421875
+        }
+      },
+      "cancel_cleans": true,
+      "button": {
+        "outgoingA": {
+          "position": 49.552,
+          "opacity": 0.0247269,
+          "display": "block",
+          "rect": {
+            "width": 348.7698974609375,
+            "height": 1510.919921875
+          }
+        },
+        "outgoingB": {
+          "position": 41.786,
+          "opacity": 0.434279,
+          "display": "block",
+          "rect": {
+            "width": 330.7366943359375,
+            "height": 1578.333740234375
+          }
+        },
+        "incomingA": {
+          "position": 64.7247,
+          "opacity": 0.61897,
+          "display": "block",
+          "rect": {
+            "width": 258.00726318359375,
+            "height": 832.38134765625
+          }
+        },
+        "incomingB": {
+          "position": 49.1623,
+          "opacity": 0.111314,
+          "display": "block",
+          "rect": {
+            "width": 353.4591979980469,
+            "height": 772.4916381835938
+          }
+        },
+        "outgoingTimings": [
+          {
+            "target": "card",
+            "duration": 270,
+            "easing": "cubic-bezier(0.45, 0, 0.8, 0.4)"
+          },
+          {
+            "target": "gloss",
+            "duration": 270,
+            "easing": "cubic-bezier(0.45, 0, 0.8, 0.4)"
+          }
+        ],
+        "incomingTimings": [
+          {
+            "target": "card",
+            "duration": 390,
+            "easing": "cubic-bezier(0.15, 0.65, 0.25, 1)"
+          },
+          {
+            "target": "gloss",
+            "duration": 390,
+            "easing": "cubic-bezier(0.15, 0.65, 0.25, 1)"
+          }
+        ],
+        "zero_crossing": {
+          "offset": 0.7768421052631578,
+          "computed": {
+            "position": 50,
+            "opacity": 1.63176e-10,
+            "display": "block",
+            "rect": {
+              "width": 355.69232177734375,
+              "height": 770.5914306640625
+            }
+          }
+        }
+      },
+      "no_idle_gloss_animation": true,
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": true,
+      "moving_sheen_hidden": true,
+      "instant_touch_button_flip": true,
+      "page_errors": []
+    }
+  ]
+}
