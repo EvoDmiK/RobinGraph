@@ -317,9 +317,8 @@ def species_sections(taxon, traits, notes):
     weight = fact('body_mass')
     if weight:
         basic.append(weight)
-    appearance = notes.get('appearance', [])
-    if not appearance:
-        appearance = [value for name in ('beak_length_culmen', 'wing_length', 'tail_length') if (value := fact(name))]
+    appearance = [value for name in ('beak_length_culmen', 'wing_length', 'tail_length') if (value := fact(name))]
+    appearance.extend(notes.get('appearance', []))
     ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern', 'nocturnal') if (value := fact(name))]
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)

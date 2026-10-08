@@ -859,7 +859,7 @@
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
-    if (options.initialData && options.initialData.ranking) { open.textContent = "근연 관계 우선 3종 살펴보기"; }
+    if ((options.initialData && options.initialData.ranking) || options.endpoint === "/v1/taxa/similar") { open.textContent = "근연 관계 우선 3종 살펴보기"; }
     open.setAttribute("aria-expanded", "false"); section.appendChild(open);
     var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
     var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
@@ -929,7 +929,7 @@
       content.hidden = !content.hidden; open.setAttribute("aria-expanded", String(!content.hidden));
       if (content.hidden || loaded) { return; }
       loaded = true; status.textContent = "분류 관계를 조회하는 중입니다.";
-      var request = initialData ? Promise.resolve(initialData) : fetchJson("/v1/taxa/related", profile.taxon.scientific_name);
+      var request = initialData ? Promise.resolve(initialData) : fetchJson(options.endpoint || "/v1/taxa/related", profile.taxon.scientific_name);
       initialData = null;
       request.then(function (data) {
         if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
@@ -2197,7 +2197,7 @@
       block.appendChild(title);
       var items = Array.isArray(section.items) ? section.items.filter(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
-      }).slice(0, 4) : [];
+      }).slice(0, section.key === "appearance" ? 5 : 4) : [];
       if (items.length) {
         var list = doc.createElement("ul");
         items.forEach(function (item) {
@@ -2656,7 +2656,7 @@
           if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
           item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
           var extra = doc.createElement("details"); extra.className = "species-extra-info";
-          var extraTitle = doc.createElement("summary"); extraTitle.textContent = "추가 정보"; extra.appendChild(extraTitle);
+          var extraTitle = doc.createElement("summary"); extraTitle.textContent = "더 알아보기"; extra.appendChild(extraTitle);
           if (result.profile.taxon.rank !== "subspecies") {
             var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
             var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
@@ -2666,9 +2666,14 @@
             } else if (!targeted && result.similar_species) {
               relatedOptions.initialData = result.similar_species;
             }
+            if (!targeted) { relatedOptions.endpoint = "/v1/taxa/similar"; }
             var relatedSlot = result.profile.enrichment_pending && !targeted ? doc.createElement("div") : null;
-            if (relatedSlot) { relatedSlot.className = "species-related-slot"; item.appendChild(relatedSlot); }
-            else { item.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions)); }
+            if (relatedSlot) { relatedSlot.className = "species-related-slot"; extra.appendChild(relatedSlot); }
+            else {
+              var related = buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions);
+              if (targeted && questionAnswer.topic === "related") { item.appendChild(related); }
+              else { extra.appendChild(related); }
+            }
             var ecological = buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions);
             if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
             else { extra.appendChild(ecological); }
@@ -2846,7 +2851,7 @@
           method: "POST",
           credentials: "omit",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(Object.assign(buildChatPayload(question, intent.value, selectedFilterValues()), { defer_enrichment: true })),
+          body: JSON.stringify(Object.assign(buildChatPayload(question, intent.value, selectedFilterValues()), { defer_discovery: true })),
         })
         .then(function (response) {
           return response

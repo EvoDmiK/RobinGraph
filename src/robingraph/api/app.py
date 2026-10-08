@@ -289,6 +289,7 @@ class ChatRequest(_ChatModel):
     intent: Literal["auto", "taxonomy", "profile", "observations", "evidence"] = "auto"
     filters: ChatFilters | None = None
     defer_enrichment: bool = False
+    defer_discovery: bool = False
 
     @field_validator("question")
     @classmethod
@@ -1228,7 +1229,7 @@ def create_app(
                 summary = species_summary(profile.get("taxon") or {}, profile.get("traits") or [])
             similar = None
             lineage = profile.get("lineage") or {}
-            if not deferred and similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
+            if not deferred and not request.defer_discovery and similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
                 try:
                     with tracing.span("similar_species.lookup", tracing.RETRIEVER):
                         similar = similar_species_handler(name)
