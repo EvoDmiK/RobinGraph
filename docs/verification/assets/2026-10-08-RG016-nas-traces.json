@@ -1,0 +1,152 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST concurrent HTTP requests and MLflow 3.14.0 server; actual Neo4j/PostgreSQL; no mocked handlers",
+  "experiment_id": "33",
+  "sdk_version": "3.14.0",
+  "cases": [
+    {
+      "case": "reported_bird",
+      "expected_disposition": "abstain",
+      "expected_reason": "taxon_not_found",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "result_kind": "profile",
+      "profile_present": false,
+      "trace_id": "tr-e7fe5bb586dcca15401b94fbe4d1c24e",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "taxon_not_found",
+        "failure_stage": "name_resolution",
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "response_api_disposition": "abstain"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    },
+    {
+      "case": "normal_bird",
+      "expected_disposition": "answer",
+      "expected_reason": "none",
+      "http_status": 200,
+      "api_disposition": "answer",
+      "selected_intent": "profile",
+      "route_method": "explicit",
+      "result_kind": "profile",
+      "profile_present": true,
+      "trace_id": "tr-a654d47d9988fc5c5c4807f475772875",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "response_api_disposition": "answer"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    },
+    {
+      "case": "unknown_bird",
+      "expected_disposition": "abstain",
+      "expected_reason": "taxon_not_found",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "selected_intent": "profile",
+      "route_method": "explicit",
+      "result_kind": "profile",
+      "profile_present": false,
+      "trace_id": "tr-3976224f8d47a3aae4ab20ccf54d4da7",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "taxon_not_found",
+        "failure_stage": "name_resolution",
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "response_api_disposition": "abstain"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    },
+    {
+      "case": "ambiguous_name",
+      "expected_disposition": "clarify",
+      "expected_reason": "ambiguous_name",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "selected_intent": "profile",
+      "route_method": "explicit",
+      "result_kind": "name_relations",
+      "profile_present": false,
+      "trace_id": "tr-d3cd9b92f1f3bf8e0b712cdf107ac9bd",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "ambiguous_name",
+        "failure_stage": "name_resolution",
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "response_api_disposition": "clarify"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    },
+    {
+      "case": "filter_mismatch",
+      "expected_disposition": "clarify",
+      "expected_reason": "filter_mismatch",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "result_kind": "clarify",
+      "profile_present": false,
+      "trace_id": "tr-dd5b0f523f354e8ea5c263b87a26c14a",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "filter_mismatch",
+        "failure_stage": "validation",
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "response_api_disposition": "clarify"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    },
+    {
+      "case": "observations_empty",
+      "expected_disposition": "abstain",
+      "expected_reason": "observations_empty",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "selected_intent": "observations",
+      "route_method": "explicit",
+      "result_kind": "observations",
+      "profile_present": false,
+      "trace_id": "tr-af4781ebac276e38efc09c57baa81c95",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "observations_empty",
+        "failure_stage": "retrieval",
+        "selected_intent": "observations",
+        "route_method": "explicit",
+        "response_api_disposition": "abstain"
+      },
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "normal_excluded_from_other_reasons": true,
+      "passed": true
+    }
+  ]
+}
