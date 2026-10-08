@@ -1,0 +1,287 @@
+{
+  "scope": "Actual NAS TEST APIs and Chrome UI, real database; no mocked HTTP",
+  "passed": true,
+  "checks": [
+    {
+      "name": "청둥오리",
+      "groups": [
+        {
+          "rank": "genus",
+          "has_more": true,
+          "items": [
+            {
+              "label": "고방오리",
+              "scientific_name": "Anas acuta",
+              "korean": true
+            },
+            {
+              "label": "미국오리",
+              "scientific_name": "Anas rubripes",
+              "korean": true
+            },
+            {
+              "label": "쇠오리",
+              "scientific_name": "Anas crecca",
+              "korean": true
+            },
+            {
+              "label": "흰뺨검둥오리",
+              "scientific_name": "Anas zonorhyncha",
+              "korean": true
+            },
+            {
+              "label": "African Black Duck",
+              "scientific_name": "Anas sparsa",
+              "korean": false
+            },
+            {
+              "label": "Andaman Teal",
+              "scientific_name": "Anas albogularis",
+              "korean": false
+            },
+            {
+              "label": "Andean Teal",
+              "scientific_name": "Anas andium",
+              "korean": false
+            },
+            {
+              "label": "Auckland Teal",
+              "scientific_name": "Anas aucklandica",
+              "korean": false
+            },
+            {
+              "label": "Bernier's Teal",
+              "scientific_name": "Anas bernieri",
+              "korean": false
+            },
+            {
+              "label": "Brown Teal",
+              "scientific_name": "Anas chlorotis",
+              "korean": false
+            },
+            {
+              "label": "Campbell Teal",
+              "scientific_name": "Anas nesiotis",
+              "korean": false
+            },
+            {
+              "label": "Cape Teal",
+              "scientific_name": "Anas capensis",
+              "korean": false
+            }
+          ]
+        },
+        {
+          "rank": "family",
+          "has_more": true,
+          "items": [
+            {
+              "label": "가창오리",
+              "scientific_name": "Sibirionetta formosa",
+              "korean": true
+            },
+            {
+              "label": "개리",
+              "scientific_name": "Anser cygnoides",
+              "korean": true
+            },
+            {
+              "label": "검둥오리",
+              "scientific_name": "Melanitta americana",
+              "korean": true
+            },
+            {
+              "label": "검둥오리사촌",
+              "scientific_name": "Melanitta stejnegeri",
+              "korean": true
+            },
+            {
+              "label": "검은머리흰죽지",
+              "scientific_name": "Aythya marila",
+              "korean": true
+            },
+            {
+              "label": "고니",
+              "scientific_name": "Cygnus columbianus",
+              "korean": true
+            },
+            {
+              "label": "꼬마오리",
+              "scientific_name": "Bucephala albeola",
+              "korean": true
+            },
+            {
+              "label": "넓적부리",
+              "scientific_name": "Spatula clypeata",
+              "korean": true
+            },
+            {
+              "label": "노랑부리검둥오리사촌",
+              "scientific_name": "Melanitta fusca",
+              "korean": true
+            },
+            {
+              "label": "댕기흰죽지",
+              "scientific_name": "Aythya fuligula",
+              "korean": true
+            },
+            {
+              "label": "미국흰죽지",
+              "scientific_name": "Aythya americana",
+              "korean": true
+            },
+            {
+              "label": "바다꿩",
+              "scientific_name": "Clangula hyemalis",
+              "korean": true
+            }
+          ]
+        }
+      ],
+      "ranking_unchanged": true,
+      "ranking": [
+        {
+          "id": "avilist-taxon:v2025b:541",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "score": 98.28,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:534",
+          "score": 96.55,
+          "rank": 3
+        }
+      ]
+    },
+    {
+      "name": "곤줄박이",
+      "groups": [
+        {
+          "rank": "genus",
+          "has_more": false,
+          "items": [
+            {
+              "label": "Chestnut-bellied Tit",
+              "scientific_name": "Sittiparus castaneoventris",
+              "korean": false
+            },
+            {
+              "label": "Iriomote Tit",
+              "scientific_name": "Sittiparus olivaceus",
+              "korean": false
+            },
+            {
+              "label": "Owston's Tit",
+              "scientific_name": "Sittiparus owstoni",
+              "korean": false
+            },
+            {
+              "label": "White-fronted Tit",
+              "scientific_name": "Sittiparus semilarvatus",
+              "korean": false
+            }
+          ]
+        },
+        {
+          "rank": "family",
+          "has_more": true,
+          "items": [
+            {
+              "label": "노랑배박새",
+              "scientific_name": "Parus major",
+              "korean": true
+            },
+            {
+              "label": "노랑배진박새",
+              "scientific_name": "Periparus venustulus",
+              "korean": true
+            },
+            {
+              "label": "박새",
+              "scientific_name": "Parus cinereus",
+              "korean": true
+            },
+            {
+              "label": "북방쇠박새",
+              "scientific_name": "Poecile montanus",
+              "korean": true
+            },
+            {
+              "label": "쇠박새",
+              "scientific_name": "Poecile palustris",
+              "korean": true
+            },
+            {
+              "label": "작은노랑배박새",
+              "scientific_name": "Parus monticolus",
+              "korean": true
+            },
+            {
+              "label": "진박새",
+              "scientific_name": "Periparus ater",
+              "korean": true
+            },
+            {
+              "label": "흰머리유리박새",
+              "scientific_name": "Cyanistes cyanus",
+              "korean": true
+            },
+            {
+              "label": "Acacia Tit",
+              "scientific_name": "Melaniparus thruppi",
+              "korean": false
+            },
+            {
+              "label": "African Blue Tit",
+              "scientific_name": "Cyanistes teneriffae",
+              "korean": false
+            },
+            {
+              "label": "Ashy Tit",
+              "scientific_name": "Melaniparus cinerascens",
+              "korean": false
+            },
+            {
+              "label": "Black-bibbed Tit",
+              "scientific_name": "Poecile hypermelaenus",
+              "korean": false
+            }
+          ]
+        }
+      ],
+      "ranking_unchanged": true,
+      "ranking": [
+        {
+          "id": "avilist-taxon:v2025b:20903",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:20896",
+          "score": 98.57,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:20904",
+          "score": 97.14,
+          "rank": 3
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "question": "청둥오리와 같은 속의 새는?",
+    "topic": "related",
+    "viewports": [
+      390,
+      900
+    ],
+    "korean_and_english_fallback_visible": true,
+    "scientific_name_visible": true,
+    "errors": []
+  }
+}
