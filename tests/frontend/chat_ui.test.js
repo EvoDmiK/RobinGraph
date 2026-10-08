@@ -3707,10 +3707,45 @@ test("dragging does not break the existing flip button and styles define reduced
   assert.match(css, /prefers-reduced-motion[\s\S]*data-dragging/);
 });
 
-test("drag may start only on blank card surface; text, controls, editable, draggable and photo nodes stay native", () => {
-  const isText = n => ["p", "li", "dt", "dd", "h3", "span"].includes(n.tagName) && n.className !== "species-card-drag-hint";
-  const textCount = collectAllNodes(dragFixture(false).card).filter(isText).length;
-  assert.ok(textCount > 3, "fixture has text nodes");
+test("mouse drags from front and back text, including nested spans, flip in either direction with or without motion", () => {
+  for (const reduced of [false, true]) {
+    for (const startBack of [false, true]) {
+      for (const nested of [false, true]) {
+        for (const dx of [120, -120]) {
+          const f = dragFixture(reduced);
+          const finishAnimation = () => {
+            if (reduced) { return; }
+            f.animations.at(-1).onfinish();
+            f.animations.at(-1).onfinish();
+          };
+          if (startBack) { f.flip.dispatch("click"); finishAnimation(); }
+          assert.equal(f.back.hidden, !startBack);
+          const face = startBack ? f.back : f.front;
+          const text = collectAllNodes(face).find(n => ["p", "li", "dt", "dd", "h3"].includes(n.tagName));
+          assert.ok(text, "both faces include actual card text");
+          let target = text;
+          if (nested) { target = createFakeElement("span"); text.appendChild(target); }
+          f.card.dispatch("pointerdown", f.ev(200, 50, { target }));
+          const move = f.card.dispatch("pointermove", f.ev(200 + dx, 52));
+          assert.equal(f.card.getAttribute("data-dragging"), "true");
+          assert.equal(f.card.getAttribute("data-drag-commit"), "true");
+          assert.equal(move.defaultPrevented, true);
+          f.card.dispatch("pointerup", f.ev(200 + dx, 52));
+          finishAnimation();
+          assert.equal(f.back.hidden, startBack, "drag flips away from the starting face");
+          assert.equal(f.front.hidden, !startBack);
+          assert.equal(f.card.captured.length, 0);
+          assert.equal(f.card.getAttribute("data-dragging"), "false");
+          assert.equal(f.flip.disabled, false);
+          assert.deepEqual(f.win.listeners.blur, []);
+          assert.deepEqual(f.win.listeners.resize, []);
+        }
+      }
+    }
+  }
+});
+
+test("mouse drags preserve controls, editable and draggable nodes, including nested control text", () => {
   // `pick(g)` resolves the pointerdown target inside a fresh card per attempt.
   const attempt = (pick) => {
     const g = dragFixture(false);
@@ -3719,24 +3754,60 @@ test("drag may start only on blank card surface; text, controls, editable, dragg
     g.card.dispatch("pointerup", g.ev(260, 50));
     return g.back.hidden === false || g.animations.length > 0;
   };
-  for (let i = 0; i < textCount; i += 1) {
-    assert.equal(attempt(g => collectAllNodes(g.card).filter(isText)[i]), false, "text node #" + i + " must not start a drag");
-  }
   const make = (tag, setup) => g => { const el = createFakeElement(tag); if (setup) { setup(el); } el.parentNode = g.card; return el; };
   const exclusions = [
     make("div", el => el.setAttribute("contenteditable", "true")),
+    make("div", el => el.setAttribute("contenteditable", "")),
+    make("div", el => el.setAttribute("contenteditable", "plaintext-only")),
     make("div", el => { el.isContentEditable = true; }),
     make("div", el => el.setAttribute("draggable", "true")),
-    make("img"), make("svg"), make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
+    make("img", el => el.setAttribute("draggable", "true")), make("video"), make("audio"),
+    make("input"), make("textarea"), make("select"), make("label"), make("button"), make("a"), make("summary"),
     make("div", el => el.setAttribute("role", "button")), make("div", el => el.setAttribute("role", "textbox")),
+    make("div", el => el.setAttribute("role", "link")),
   ];
-  exclusions.forEach((pick, i) => assert.equal(attempt(pick), false, "exclusion #" + i));
+  exclusions.forEach((pick, i) => {
+    assert.equal(attempt(pick), false, "exclusion #" + i);
+    assert.equal(attempt(g => {
+      const control = pick(g);
+      const wrapper = createFakeElement("span");
+      const inner = createFakeElement("span");
+      control.appendChild(wrapper); wrapper.appendChild(inner);
+      return inner;
+    }), false, "nested text within exclusion #" + i);
+  });
   const surfaceNames = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area"];
   assert.equal(attempt(g => g.card), true, "card padding/background starts a drag");
   for (const name of surfaceNames) {
     assert.equal(attempt(g => collectAllNodes(g.card).find(n => n.className === name)), true, name + " blank surface starts a drag");
   }
-  assert.equal(attempt(g => { const img = createFakeElement("img"); img.parentNode = collectAllNodes(g.card).find(n => n.className === "species-photo-area"); return img; }), false, "photo inside a permitted surface stays native");
+  assert.equal(attempt(g => { const img = createFakeElement("img"); img.parentNode = collectAllNodes(g.card).find(n => n.className === "species-photo-area"); return img; }), true, "non-interactive photo starts a mouse drag");
+});
+
+test("mouse drags include images and nested decorative graphics but touch keeps their native behavior", () => {
+  const media = [
+    { tag: "img" }, { tag: "picture", child: "img" }, { tag: "canvas" },
+    { tag: "svg", child: "path" }, { tag: "div", role: "img", child: "span" },
+  ];
+  for (const touch of [false, true]) {
+    for (const spec of media) {
+      const f = dragFixture(true);
+      const element = createFakeElement(spec.tag);
+      if (spec.role) { element.setAttribute("role", spec.role); }
+      f.front.appendChild(element);
+      let target = element;
+      if (spec.child) { target = createFakeElement(spec.child); element.appendChild(target); }
+      const event = touch ? f.tev : f.ev;
+      f.card.dispatch("pointerdown", event(100, 50, { target }));
+      assert.equal(f.card.dispatch("dragstart", { target }).defaultPrevented, !touch,
+        "only a tracked mouse blocks native image dragging before the slop");
+      f.card.dispatch("pointermove", event(260, 50));
+      f.card.dispatch("pointerup", event(260, 50));
+      assert.equal(f.back.hidden, touch, spec.tag + " mouse flips while touch is exempt");
+      assert.equal(f.card.dispatch("dragstart", { target }).defaultPrevented, false,
+        "outside a tracked gesture native dragging is untouched");
+    }
+  }
 });
 
 test("drag hint is a decorative, fine-pointer-only line without backend jargon", () => {
@@ -3744,7 +3815,7 @@ test("drag hint is a decorative, fine-pointer-only line without backend jargon",
   const hint = collectAllNodes(card).find(n => n.className === "species-card-drag-hint");
   assert.ok(hint);
   assert.equal(hint.getAttribute("aria-hidden"), "true");
-  assert.match(hint.textContent, /빈 곳.*끌어/);
+  assert.match(hint.textContent, /사진·글씨·빈 곳.*끌어/);
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /\.species-card-drag-hint \{ display: none; \}/);
   assert.match(css, /hover: hover\) and \(pointer: fine\)[\s\S]*species-card-drag-hint \{ display: block/);
@@ -3880,7 +3951,7 @@ test("touch starts on non-interactive body text but not on controls, photos, edi
   assert.equal(attempt(g => g.card, g => { g.win.selection.isCollapsed = false; g.win.selection.rangeCount = 1; }), false, "existing selection is respected and untouched");
 });
 
-test("pen and non-primary or non-left touch contacts are unsupported; mouse regressions: text still blocks mouse drag", () => {
+test("pen and non-primary or non-left touch contacts are unsupported; mouse text drag retains selection clearing and cancellation", () => {
   for (const extra of [{ pointerType: "pen" }, { isPrimary: false }, { button: 2 }]) {
     const f = dragFixture(false);
     f.card.dispatch("pointerdown", f.tev(100, 50, extra));
@@ -3889,12 +3960,8 @@ test("pen and non-primary or non-left touch contacts are unsupported; mouse regr
     assert.equal(f.animations.length, 0);
     assert.equal(docListenerCount(f), 0);
   }
-  const f = dragFixture(false);
-  f.card.dispatch("pointerdown", f.ev(100, 50, { target: textNodes(f.card)[0] }));
-  f.card.dispatch("pointermove", f.ev(260, 50));
-  assert.notEqual(f.card.getAttribute("data-dragging"), "true");
   const m = dragFixture(false);
-  m.card.dispatch("pointerdown", m.ev(100, 50));
+  m.card.dispatch("pointerdown", m.ev(100, 50, { target: textNodes(m.card)[0] }));
   assert.equal(docListenerCount(m), 0, "mouse drags add no document guards");
   assert.equal(m.card.dispatch("pointermove", m.ev(200, 50)).defaultPrevented, true, "mouse drag still prevents default");
   assert.equal(m.win.cleared, true, "mouse drag still clears selection");

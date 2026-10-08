@@ -2313,31 +2313,24 @@
     });
 
     // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
-    // A mouse gesture may only start on blank card surface (the card itself and
-    // its layout containers). Card text selection is disabled by CSS. A touch
-    // swipe may also start on non-interactive body text because vertical
-    // scrolling stays native (touch-action: pan-y pinch-zoom). Any active
-    // selection still cancels the gesture. Any control, link, photo or
-    // editable/draggable node keeps its native behavior for both.
-    var DRAG_SURFACE_CLASSES = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area", "species-card-swipe-hint"];
-    function hasClass(node, name) {
-      return (" " + String(node.className || "") + " ").indexOf(" " + name + " ") !== -1;
-    }
+    // Both may start on non-interactive card text, whose selection is disabled
+    // by CSS. Mouse drags also include photos and decorative graphics. Touch
+    // photos, scrolling (touch-action: pan-y pinch-zoom), and active selections
+    // stay native. Controls, links and editable/draggable nodes are exempt for both.
     function isDragExempt(node, touch) {
       if (!node) { return true; }
-      if (!touch && node !== card && !DRAG_SURFACE_CLASSES.some(function (name) { return hasClass(node, name); })) { return true; }
       while (node && node !== card) {
         var tag = String(node.tagName || "").toLowerCase();
         if (tag === "a" || tag === "button" || tag === "summary" || tag === "input" || tag === "select" ||
-            tag === "textarea" || tag === "label" || tag === "video" || tag === "audio" || tag === "img" ||
-            tag === "picture" || tag === "canvas" || tag === "svg") { return true; }
+            tag === "textarea" || tag === "label" || tag === "video" || tag === "audio") { return true; }
+        if (touch && (tag === "img" || tag === "picture" || tag === "canvas" || tag === "svg")) { return true; }
         if (node.isContentEditable) { return true; }
         var attr = function (name) { return node.getAttribute ? node.getAttribute(name) : null; };
         var editable = attr("contenteditable");
         if (editable !== null && editable !== "false") { return true; }
         if (attr("draggable") === "true") { return true; }
         var role = attr("role");
-        if (role === "button" || role === "link" || role === "textbox" || role === "img") { return true; }
+        if (role === "button" || role === "link" || role === "textbox" || (touch && role === "img")) { return true; }
         node = node.parentNode;
       }
       return false;
@@ -2500,7 +2493,10 @@
       event.preventDefault();
       if (event.stopPropagation) { event.stopPropagation(); }
     }, true);
-    card.addEventListener("dragstart", function (event) { if (drag && drag.active) { event.preventDefault(); } });
+    card.addEventListener("dragstart", function (event) {
+      // An image's native drag can start before the flip gesture reaches its slop.
+      if (drag && (drag.active || drag.kind === "mouse")) { event.preventDefault(); }
+    });
 
     var swipeHint = doc.createElement("div");
     swipeHint.className = "species-card-swipe-hint";
@@ -2511,7 +2507,7 @@
     var dragHint = doc.createElement("span");
     dragHint.className = "species-card-drag-hint";
     dragHint.setAttribute("aria-hidden", "true");
-    dragHint.textContent = "카드 빈 곳을 좌우로 끌어도 뒤집혀요";
+    dragHint.textContent = "카드의 사진·글씨·빈 곳을 좌우로 끌어 뒤집어 보세요";
     footer.appendChild(dragHint);
     card.appendChild(footer);
     card.appendChild(gloss);

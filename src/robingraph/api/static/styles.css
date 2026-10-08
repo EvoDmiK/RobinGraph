@@ -1248,13 +1248,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-card[data-dragging="true"][data-drag-commit="false"] { outline: 2px dashed #7e9a55; outline-offset: -3px; }
 }
 
-/* Drag hint and grab cursor appear only for fine pointers; text keeps its native cursor. */
+/* Fine pointers can grab both the card surface and non-interactive text. */
 .species-card-drag-hint { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .species-popup .species-card { cursor: grab; }
-  .species-popup .species-card p, .species-popup .species-card li, .species-popup .species-card dt,
-  .species-popup .species-card dd, .species-popup .species-card h3, .species-popup .species-card summary,
-  .species-popup .species-card blockquote { cursor: auto; }
+  .species-popup .species-card[data-dragging="true"] { cursor: grabbing; }
   .species-popup .species-card-flip { cursor: pointer; }
   .species-card-drag-hint { display: block; flex-basis: 100%; margin-top: 4px; font-size: .72rem; color: #4a5f31; }
 }
