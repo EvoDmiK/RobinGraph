@@ -1,0 +1,27 @@
+{
+  "environment": "Actual pre-change NAS TEST Chrome mobile emulation and trusted CDP touch input",
+  "touch_action": "auto",
+  "back_visible": false,
+  "events": [
+    {
+      "type": "pointerdown",
+      "pointerType": "touch",
+      "trusted": true
+    },
+    {
+      "type": "pointermove",
+      "pointerType": "touch",
+      "trusted": true
+    },
+    {
+      "type": "pointermove",
+      "pointerType": "touch",
+      "trusted": true
+    },
+    {
+      "type": "pointercancel",
+      "pointerType": "touch",
+      "trusted": true
+    }
+  ]
+}
