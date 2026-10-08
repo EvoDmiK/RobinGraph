@@ -1,0 +1,58 @@
+{
+  "scope": "Actual NAS TEST MLflow exported traces, connected Jev LLM spans and token/credit metadata, credential absence check",
+  "passed": true,
+  "checks": [
+    {
+      "trace_id": "tr-e7f418fe690963970b54455e628f77b4",
+      "span_name": "jev_router.classify",
+      "connected": true,
+      "requested_model": "typesafe/jev-1.13",
+      "reported_model": null,
+      "elapsed_ms": 1881,
+      "attempts": 1,
+      "failure": null,
+      "credits_used": 1.0,
+      "usage": {
+        "input_tokens": 826,
+        "output_tokens": 128,
+        "total_tokens": 954
+      },
+      "credential_absent": true
+    },
+    {
+      "trace_id": "tr-9fd826ceafb026ed867a72c53461b820",
+      "span_name": "jev_router.classify",
+      "connected": true,
+      "requested_model": "typesafe/jev-1.13",
+      "reported_model": null,
+      "elapsed_ms": 1811,
+      "attempts": 1,
+      "failure": null,
+      "credits_used": 1.0,
+      "usage": {
+        "input_tokens": 826,
+        "output_tokens": 128,
+        "total_tokens": 954
+      },
+      "credential_absent": true
+    },
+    {
+      "trace_id": "tr-23b4bb1b29ae5a06c6289d84abb8c8a4",
+      "span_name": "jev_router.classify",
+      "connected": true,
+      "requested_model": "typesafe/jev-1.13",
+      "reported_model": null,
+      "elapsed_ms": 2013,
+      "attempts": 1,
+      "failure": "uncertain",
+      "credits_used": 1.0,
+      "usage": {
+        "input_tokens": 832,
+        "output_tokens": 128,
+        "total_tokens": 960
+      },
+      "credential_absent": true
+    }
+  ],
+  "tested_revision": "42f49275e783dd3eda1dde92d01fc0e109de077e"
+}
