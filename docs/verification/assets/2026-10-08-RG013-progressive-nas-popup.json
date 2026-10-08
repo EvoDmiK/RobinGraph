@@ -1,0 +1,21 @@
+{
+  "scope": "Real NAS TEST Chrome mobile popup and flip across enrichment; no mocks",
+  "passed": true,
+  "popup_preserved": true,
+  "flip_preserved": true,
+  "photos_after_enrichment": 2,
+  "loadedPhotos": [
+    {
+      "complete": true,
+      "naturalWidth": 960,
+      "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Anas_platyrhynchos_%28mixed_pair%29_%2832428014687%29.jpg/960px-Anas_platyrhynchos_%28mixed_pair%29_%2832428014687%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+    },
+    {
+      "complete": false,
+      "naturalWidth": 0,
+      "src": ""
+    }
+  ],
+  "errors": [],
+  "tested_revision": "722e903cbd584d775a3aee41d0b9e153073a0343"
+}

@@ -1,0 +1,37 @@
+{
+  "tested_revision": "722e903cbd584d775a3aee41d0b9e153073a0343",
+  "python": {
+    "discovered": 604,
+    "passed": 604,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 37.812,
+    "real_database_tests_enabled": true,
+    "temporary_postgres_schema_removed": true,
+    "pinned_source_cache_tests_enabled": true,
+    "optional_sdk_tests_enabled": true
+  },
+  "frontend": {
+    "discovered": 148,
+    "passed": 148,
+    "failures": 0,
+    "skipped": 0,
+    "added_async_regressions": 14
+  },
+  "deployment": {
+    "target": "NAS TEST",
+    "release": "/home/kimdove/RobinGraph-rg013-722e903",
+    "image": "robingraph-api:test-rg013-722e903",
+    "oci_revision": "722e903cbd584d775a3aee41d0b9e153073a0343",
+    "health": "healthy",
+    "archive_sha256": "c0d99bdc70bd20adc2da73be37b497ecbb3822dafe5d4883bc2125c10cf5a1d0",
+    "previous_image": "robingraph-api:test-rg013-42f4927",
+    "prod_changed": false
+  },
+  "limitations": [
+    "Regression suite includes mock HTTP/SDK tests; live API/browser evidence is separate",
+    "Frontend regression promises control completion order; live browser uses real API responses",
+    "Cold and warm cache conditions not controlled for live timing samples"
+  ]
+}

@@ -1,0 +1,318 @@
+{
+  "scope": "Actual NAS TEST MLflow traces after deployment; initial deferred chat spans contain no Gemini generation or optional recommendation work",
+  "tested_revision": "722e903cbd584d775a3aee41d0b9e153073a0343",
+  "passed": true,
+  "checks": [
+    {
+      "trace_id": "tr-41a97ef88894f654e556cc1c99cbb99c",
+      "question": "청둥오리에 대해 알려줘",
+      "root_ms": 343.83,
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "ms": 343.83
+        },
+        {
+          "name": "name_relations.lookup",
+          "ms": 133.85
+        },
+        {
+          "name": "RunnableSequence",
+          "ms": 203.87
+        },
+        {
+          "name": "resolve_species",
+          "ms": 104.68
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "ms": 84.67
+        },
+        {
+          "name": "RunnablePassthrough",
+          "ms": 1.36
+        },
+        {
+          "name": "trait_stage",
+          "ms": 75.7
+        },
+        {
+          "name": "image_stage",
+          "ms": 2.07
+        },
+        {
+          "name": "conservation_stage",
+          "ms": 13.71
+        },
+        {
+          "name": "notes_stage",
+          "ms": 2.16
+        },
+        {
+          "name": "reference_stage",
+          "ms": 2.07
+        },
+        {
+          "name": "metadata_stage",
+          "ms": 2.24
+        },
+        {
+          "name": "assemble",
+          "ms": 5.67
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-b7c87abc44350d7c08993c73a1cae739",
+      "question": "청둥오리 아종 알려줘",
+      "root_ms": 2442.19,
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "ms": 2442.19
+        },
+        {
+          "name": "jev_router.classify",
+          "ms": 1863.62
+        },
+        {
+          "name": "name_relations.lookup",
+          "ms": 141.83
+        },
+        {
+          "name": "RunnableSequence",
+          "ms": 261.61
+        },
+        {
+          "name": "resolve_species",
+          "ms": 133.34
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "ms": 106.52
+        },
+        {
+          "name": "RunnablePassthrough",
+          "ms": 1.92
+        },
+        {
+          "name": "trait_stage",
+          "ms": 95.01
+        },
+        {
+          "name": "conservation_stage",
+          "ms": 12.75
+        },
+        {
+          "name": "image_stage",
+          "ms": 2.67
+        },
+        {
+          "name": "reference_stage",
+          "ms": 13.19
+        },
+        {
+          "name": "notes_stage",
+          "ms": 11.48
+        },
+        {
+          "name": "metadata_stage",
+          "ms": 3.28
+        },
+        {
+          "name": "assemble",
+          "ms": 7.81
+        },
+        {
+          "name": "subspecies.lookup",
+          "ms": 162.82
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-ca9fcfee7a9cb268a303501c943eb4c9",
+      "question": "청둥오리에 대해 알려줘",
+      "root_ms": 279.61,
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "ms": 279.61
+        },
+        {
+          "name": "name_relations.lookup",
+          "ms": 81.52
+        },
+        {
+          "name": "RunnableSequence",
+          "ms": 193.05
+        },
+        {
+          "name": "resolve_species",
+          "ms": 87.18
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "ms": 92.53
+        },
+        {
+          "name": "RunnablePassthrough",
+          "ms": 1.53
+        },
+        {
+          "name": "trait_stage",
+          "ms": 82.83
+        },
+        {
+          "name": "conservation_stage",
+          "ms": 26.33
+        },
+        {
+          "name": "image_stage",
+          "ms": 2.13
+        },
+        {
+          "name": "reference_stage",
+          "ms": 2.49
+        },
+        {
+          "name": "metadata_stage",
+          "ms": 3.36
+        },
+        {
+          "name": "notes_stage",
+          "ms": 2.4
+        },
+        {
+          "name": "assemble",
+          "ms": 5.16
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-01089fc8155763e60bc7fdd04d9c77f3",
+      "question": "청둥오리 아종 알려줘",
+      "root_ms": 3238.89,
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "ms": 3238.89
+        },
+        {
+          "name": "jev_router.classify",
+          "ms": 2742.0
+        },
+        {
+          "name": "name_relations.lookup",
+          "ms": 91.79
+        },
+        {
+          "name": "RunnableSequence",
+          "ms": 259.27
+        },
+        {
+          "name": "resolve_species",
+          "ms": 109.94
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "ms": 128.7
+        },
+        {
+          "name": "RunnablePassthrough",
+          "ms": 2.42
+        },
+        {
+          "name": "trait_stage",
+          "ms": 115.34
+        },
+        {
+          "name": "image_stage",
+          "ms": 3.1
+        },
+        {
+          "name": "notes_stage",
+          "ms": 21.35
+        },
+        {
+          "name": "reference_stage",
+          "ms": 35.18
+        },
+        {
+          "name": "conservation_stage",
+          "ms": 17.15
+        },
+        {
+          "name": "metadata_stage",
+          "ms": 2.52
+        },
+        {
+          "name": "assemble",
+          "ms": 9.02
+        },
+        {
+          "name": "subspecies.lookup",
+          "ms": 136.0
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-8b042d41f8feb9f9959a22abc312da84",
+      "question": "청둥오리에 대해 알려줘",
+      "root_ms": 425.63,
+      "spans": [
+        {
+          "name": "POST /v1/chat",
+          "ms": 425.63
+        },
+        {
+          "name": "name_relations.lookup",
+          "ms": 122.52
+        },
+        {
+          "name": "RunnableSequence",
+          "ms": 269.25
+        },
+        {
+          "name": "resolve_species",
+          "ms": 120.01
+        },
+        {
+          "name": "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+          "ms": 124.69
+        },
+        {
+          "name": "trait_stage",
+          "ms": 112.53
+        },
+        {
+          "name": "image_stage",
+          "ms": 2.6
+        },
+        {
+          "name": "RunnablePassthrough",
+          "ms": 9.49
+        },
+        {
+          "name": "conservation_stage",
+          "ms": 26.2
+        },
+        {
+          "name": "notes_stage",
+          "ms": 9.73
+        },
+        {
+          "name": "reference_stage",
+          "ms": 2.42
+        },
+        {
+          "name": "metadata_stage",
+          "ms": 2.52
+        },
+        {
+          "name": "assemble",
+          "ms": 7.52
+        }
+      ]
+    }
+  ]
+}
