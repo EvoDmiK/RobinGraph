@@ -3,6 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 
 from .species_profile import SpeciesNotFoundError
+from .taxonomy_lineage import sourced_korean_names
 from .taxonomy_lineage_neo4j import _parse_lineage_items
 
 SOURCE_QUERY = """
@@ -23,19 +24,19 @@ WHERE peer.id <> $target_id
       WHERE r.concept_set_id=$concept_set_id
   })
 WITH DISTINCT concept, peer
-OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'ko', policy_status:'allowed'})
-WHERE name.dataset_id=$korean_dataset_id AND name.name =~ '.*[가-힣].*'
-WITH concept,peer,name ORDER BY name.name,name.id
-WITH concept,peer,head(collect(name)) AS chosen
 OPTIONAL MATCH (peer)-[:HAS_VERNACULAR_NAME]->(english:VernacularName {language:'en',policy_status:'allowed',status:'source-preferred'})
 WHERE english.dataset_id=peer.dataset_id AND english.source_release=peer.source_release
-WITH concept,peer,chosen,min(english.name) AS english_name
+WITH concept,peer,min(english.name) AS english_name
+WITH concept,peer,english_name,$korean_reference_names[peer.id] AS reference
+WITH concept,peer,english_name,
+     CASE WHEN reference.scientific_name=peer.scientific_name AND reference.english_name=english_name
+          THEN reference.name ELSE null END AS korean_name
 RETURN {taxon_id:peer.id, rank:peer.rank, scientific_name:peer.scientific_name,
-        authority:peer.authority, korean_name:chosen.name, korean_name_status:chosen.status,
+        authority:peer.authority, korean_name:korean_name,
         english_name:english_name} AS taxon,
        concept.snapshot_uri AS source_url, concept.title AS source_name
-ORDER BY CASE WHEN chosen.name IS NULL THEN 1 ELSE 0 END,
-         coalesce(chosen.name,english_name,peer.scientific_name),peer.id
+ORDER BY CASE WHEN korean_name IS NULL THEN 1 ELSE 0 END,
+         coalesce(korean_name,english_name,peer.scientific_name),peer.id
 LIMIT 13
 """
 
@@ -54,7 +55,8 @@ def related_species(repository, resolve, name):
     url = urlsplit(source.get('source_url') or '')
     if url.scheme not in ('https', 'http') or not url.hostname:
         raise ValueError('Taxonomy provenance unavailable')
-    korean_dataset_id = repository._korean_dataset_id()
+    korean_reference_names = {taxon_id: {key: label[key] for key in ('name', 'scientific_name', 'english_name')}
+                              for taxon_id, label in sourced_korean_names().items()}
     groups = []
     for rank, label in [('genus', '같은 속의 새'), ('family', '같은 과의 다른 속 새')]:
         ancestor = next((item for item in lineage.items if item.rank == rank), None)
@@ -63,7 +65,7 @@ def related_species(repository, resolve, name):
             taxonomy_release=lineage.taxonomy_release, parent_id=ancestor.taxon_id,
             target_id=target.taxon_id, rank=rank,
             excluded_genus=genus.taxon_id if rank == 'family' and genus else None,
-            korean_dataset_id=korean_dataset_id)
+            korean_reference_names=korean_reference_names)
         groups.append({'rank':rank, 'label':label, 'ancestor':asdict(ancestor) if ancestor else None,
                        'items':[asdict(item) for item in _parse_lineage_items([r['taxon'] for r in rows[:12]])],
                        'has_more':len(rows) > 12,
