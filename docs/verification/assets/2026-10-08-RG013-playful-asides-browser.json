@@ -1,0 +1,461 @@
+{
+  "scope": "Actual NAS TEST public Chrome UI and real API/DB/Jev; reported question answered as 곤줄박이, independent-request and conflicting-filter guards checked. No mocked HTTP.",
+  "tested_revision": "a91ef5ed8e3b51869bbb5c1910c7aacb883a2630",
+  "passed": true,
+  "question": "곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요",
+  "first_reply_ms": 6188,
+  "response": {
+    "selected_intent": "profile",
+    "route_method": "jev",
+    "disposition": "answer",
+    "answer_text": "곤줄박이의 서식 환경은 숲이며, 주 생활 방식은 나무 위 생활입니다. 먹이 정보는 ‘무척추동물 섭식’입니다. 체중은 17 g입니다.",
+    "warnings": [],
+    "result": {
+      "kind": "profile",
+      "profile": {
+        "taxon": {
+          "taxon_id": "avilist-taxon:v2025b:20897",
+          "rank": "species",
+          "scientific_name": "Sittiparus varius",
+          "authority": "(Temminck, CJ; Schlegel, H, 1845)",
+          "korean_name": "곤줄박이",
+          "korean_name_status": "source-reference",
+          "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+          "english_name": "Varied Tit"
+        },
+        "lineage": {
+          "query_scientific_name": "Sittiparus varius",
+          "taxonomy_source": "AviList",
+          "taxonomy_release": "v2025b",
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "items": [
+            {
+              "taxon_id": "avilist-taxon:v2025b:12324",
+              "rank": "order",
+              "scientific_name": "Passeriformes",
+              "authority": null,
+              "korean_name": "참새목",
+              "korean_name_status": "community-sourced-reference",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25341",
+              "english_name": null
+            },
+            {
+              "taxon_id": "avilist-taxon:v2025b:20682",
+              "rank": "family",
+              "scientific_name": "Paridae",
+              "authority": null,
+              "korean_name": "박새과",
+              "korean_name_status": "community-sourced-reference",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q168473",
+              "english_name": null
+            },
+            {
+              "taxon_id": "avilist-taxon:v2025b:20894",
+              "rank": "genus",
+              "scientific_name": "Sittiparus",
+              "authority": "de Sélys Longchamps, ME, 1884",
+              "korean_name": null,
+              "korean_name_status": null,
+              "korean_name_source_url": null,
+              "english_name": null
+            },
+            {
+              "taxon_id": "avilist-taxon:v2025b:20897",
+              "rank": "species",
+              "scientific_name": "Sittiparus varius",
+              "authority": "(Temminck, CJ; Schlegel, H, 1845)",
+              "korean_name": "곤줄박이",
+              "korean_name_status": "source-reference",
+              "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+              "english_name": "Varied Tit"
+            }
+          ],
+          "query_name": "곤줄박이",
+          "resolved_query_scientific_name": "Sittiparus varius",
+          "matched_by": "korean_name"
+        },
+        "traits": [
+          {
+            "name": "beak_depth",
+            "label": "부리 높이",
+            "value": 4.8,
+            "display": "4.8",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Beak.Depth",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "beak_length_culmen",
+            "label": "부리 길이 (전체)",
+            "value": 12.2,
+            "display": "12.2",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Beak.Length_Culmen",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "beak_length_nares",
+            "label": "부리 길이 (콧구멍 기준)",
+            "value": 8.7,
+            "display": "8.7",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Beak.Length_Nares",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "beak_width",
+            "label": "부리 너비",
+            "value": 4.5,
+            "display": "4.5",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Beak.Width",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "body_mass",
+            "label": "체중",
+            "value": 17,
+            "display": "17",
+            "unit": "g",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Mass",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "habitat",
+            "label": "서식 환경",
+            "value": "Forest",
+            "display": "숲",
+            "unit": null,
+            "inferred": false,
+            "summary_statistic": "species_category",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Habitat",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "habitat_density_category",
+            "label": "서식지 밀도 범주",
+            "value": "semi_open",
+            "display": "반개방형",
+            "unit": null,
+            "inferred": false,
+            "summary_statistic": "species_category",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Habitat.Density",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "primary_lifestyle",
+            "label": "주 생활 방식",
+            "value": "Insessorial",
+            "display": "나무 위 생활",
+            "unit": null,
+            "inferred": false,
+            "summary_statistic": "species_category",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Primary.Lifestyle",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "tail_length",
+            "label": "꼬리 길이",
+            "value": 51.3,
+            "display": "51.3",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Tail.Length",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "tarsus_length",
+            "label": "다리 길이 (부척)",
+            "value": 18.5,
+            "display": "18.5",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Tarsus.Length",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "trophic_level",
+            "label": "영양 단계",
+            "value": "Carnivore",
+            "display": "육식",
+            "unit": null,
+            "inferred": false,
+            "summary_statistic": "species_category",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Trophic.Level",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "trophic_niche",
+            "label": "먹이 생태 범주",
+            "value": "Invertivore",
+            "display": "무척추동물 섭식",
+            "unit": null,
+            "inferred": false,
+            "summary_statistic": "species_category",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Trophic.Niche",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "name": "wing_length",
+            "label": "접은 날개 길이",
+            "value": 73.8,
+            "display": "73.8",
+            "unit": "mm",
+            "inferred": false,
+            "summary_statistic": "species_mean",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Wing.Length",
+            "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+            "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+            "release": "figshare-article-16586228-v7:file-34480856",
+            "license_name": "CC BY 4.0",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "images": [
+          {
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/New_Friend_Varied_Tit.jpg/960px-New_Friend_Varied_Tit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+            "source_url": "https://commons.wikimedia.org/wiki/File:New_Friend_Varied_Tit.jpg",
+            "creator": "Charles Lam",
+            "credit": "Flickr: New Friend",
+            "license_name": "CC BY-SA 2.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+            "title": "New Friend Varied Tit"
+          },
+          {
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Poecile_varius_on_plate.JPG/960px-Poecile_varius_on_plate.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+            "source_url": "https://commons.wikimedia.org/wiki/File:Poecile_varius_on_plate.JPG",
+            "creator": "Alpsdake",
+            "credit": "Own work",
+            "license_name": "CC BY-SA 3.0",
+            "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+            "title": "Poecile varius on plate"
+          }
+        ],
+        "photo_availability": {
+          "status": "available",
+          "message": "출처와 라이선스가 확인된 사진입니다."
+        },
+        "conservation": {
+          "category": "LC",
+          "category_raw": "LC",
+          "label": "관심대상",
+          "source_name": "AviList global avian checklist",
+          "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+          "source_release": "v2025b"
+        },
+        "summary": "곤줄박이의 서식 환경은 숲이며, 주 생활 방식은 나무 위 생활입니다. 먹이 정보는 ‘무척추동물 섭식’입니다. 체중은 17 g입니다.",
+        "sections": [
+          {
+            "key": "basic",
+            "title": "기본 정보",
+            "items": [
+              {
+                "text": "학명: Sittiparus varius"
+              },
+              {
+                "text": "체중: 17 g",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Mass",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              }
+            ],
+            "empty_text": "확인된 기본 정보가 없습니다."
+          },
+          {
+            "key": "appearance",
+            "title": "외관 특징",
+            "items": [
+              {
+                "text": "부리 길이 (전체): 12.2 mm",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Beak.Length_Culmen",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              },
+              {
+                "text": "접은 날개 길이: 73.8 mm",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Wing.Length",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              },
+              {
+                "text": "꼬리 길이: 51.3 mm",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Tail.Length",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              },
+              {
+                "text": "이 새는 길이가 12에서 14센티미터이고 무게는 16에서 18그램이다.",
+                "source_name": "Wikipedia · Varied tit",
+                "source_url": "https://en.wikipedia.org/w/index.php?oldid=1376512969",
+                "license_name": "CC BY-SA 4.0",
+                "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "source_release": "1376512969"
+              }
+            ],
+            "empty_text": "깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다."
+          },
+          {
+            "key": "ecology",
+            "title": "생활과 먹이",
+            "items": [
+              {
+                "text": "서식 환경: 숲",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Habitat",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              },
+              {
+                "text": "주 생활 방식: 나무 위 생활",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Primary.Lifestyle",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              },
+              {
+                "text": "먹이 생태 범주: 무척추동물 섭식",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6243&field=Trophic.Niche",
+                "license_name": "CC BY 4.0",
+                "license_url": null
+              }
+            ],
+            "empty_text": "서식 환경과 먹이 자료를 아직 확인하지 못했습니다."
+          },
+          {
+            "key": "fun_facts",
+            "title": "재미있는 사실",
+            "items": [
+              {
+                "text": "이 새의 울음소리는 작은 음색으로 이루어져 있으며 tzu....tzu....tzu...처럼 들린다.",
+                "source_name": "Wikipedia · Varied tit",
+                "source_url": "https://en.wikipedia.org/w/index.php?oldid=1376512969",
+                "license_name": "CC BY-SA 4.0",
+                "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+                "source_release": "1376512969"
+              }
+            ],
+            "empty_text": "출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다."
+          }
+        ],
+        "warnings": [],
+        "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다."
+      },
+      "question_answer": null,
+      "similar_species": null,
+      "subspecies": null
+    }
+  },
+  "screenshot": "docs/verification/assets/2026-10-08-RG013-playful-asides-browser.png",
+  "boundaries": [
+    {
+      "request": {
+        "question": "곤줄박이 설명해줘 요구르트 효능도 알려줘",
+        "defer_discovery": true
+      },
+      "status": 200,
+      "data": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        }
+      }
+    },
+    {
+      "request": {
+        "question": "곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요",
+        "filters": {
+          "kind": "profile",
+          "name": "왜가리"
+        },
+        "defer_discovery": true
+      },
+      "status": 200,
+      "data": {
+        "selected_intent": "profile",
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "조회할 새 이름을 하나 명확히 입력하고, 질문과 필터의 이름을 맞춰 주세요.",
+        "warnings": [
+          "종 이름을 임의로 추정하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "예: 청둥오리 아종 알려줘"
+        }
+      }
+    }
+  ],
+  "errors": []
+}
