@@ -1,0 +1,115 @@
+{
+  "scope": "Actual NAS TEST Chrome UI with real DB/APIs: ranked answers rendered once, source controls and genuine comparison click tested; no mocked HTTP",
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "expected": [
+        {
+          "id": "avilist-taxon:v2025b:541",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "score": 98.28,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:534",
+          "score": 96.55,
+          "rank": 3
+        }
+      ],
+      "actual": [
+        {
+          "id": "avilist-taxon:v2025b:541",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "score": 98.28,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:534",
+          "score": 96.55,
+          "rank": 3
+        }
+      ],
+      "cards": 3,
+      "score_texts": [
+        "100점",
+        "98.28점",
+        "96.55점"
+      ],
+      "source_details": 3,
+      "automatic_relation_requests": 0,
+      "comparison_bubbles": 2,
+      "requests": [
+        "/v1/chat",
+        "/v1/taxa/profile"
+      ],
+      "errors": [],
+      "scrollWidth": 390,
+      "before": "docs/verification/assets/2026-10-08-RG013-ranked-cards-390.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-ranked-cards-390-comparison.png"
+    },
+    {
+      "width": 900,
+      "expected": [
+        {
+          "id": "avilist-taxon:v2025b:541",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "score": 98.28,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:534",
+          "score": 96.55,
+          "rank": 3
+        }
+      ],
+      "actual": [
+        {
+          "id": "avilist-taxon:v2025b:541",
+          "score": 100,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "score": 98.28,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:534",
+          "score": 96.55,
+          "rank": 3
+        }
+      ],
+      "cards": 3,
+      "score_texts": [
+        "100점",
+        "98.28점",
+        "96.55점"
+      ],
+      "source_details": 3,
+      "automatic_relation_requests": 0,
+      "comparison_bubbles": 2,
+      "requests": [
+        "/v1/chat",
+        "/v1/taxa/profile"
+      ],
+      "errors": [],
+      "scrollWidth": 900,
+      "before": "docs/verification/assets/2026-10-08-RG013-ranked-cards-900.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-ranked-cards-900-comparison.png"
+    }
+  ],
+  "tested_revision": "ddba07ee8f2bc52715c34ac13f7eb950e9a5a301"
+}

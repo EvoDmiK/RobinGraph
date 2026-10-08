@@ -1,0 +1,75 @@
+{
+  "scope": "Actual NAS TEST Chrome UI with real APIs/DB: lineage identical to before, ordered hierarchy and provenance preserved, details toggle and specific rank question checked; no mocked HTTP",
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "lineage_unchanged": true,
+      "ranks": [
+        "목",
+        "과",
+        "속",
+        "종"
+      ],
+      "names": [
+        "기러기목",
+        "오리과",
+        "오리속",
+        "흰뺨검둥오리"
+      ],
+      "source_labels": [
+        "Wikidata 출처",
+        "Wikidata 출처",
+        "Wikidata 출처",
+        "국명 출처"
+      ],
+      "source_urls": [
+        "https://www.wikidata.org/wiki/Q21651",
+        "https://www.wikidata.org/wiki/Q7556",
+        "https://www.wikidata.org/wiki/Q214264",
+        "https://sites.google.com/khu.ac.kr/korornsoc/%EC%95%8C%EB%A6%BC%EB%A7%88%EB%8B%B9/%EC%9E%90%EB%A3%8C%EC%8B%A4"
+      ],
+      "concept_details_preserved": true,
+      "rank_answer": null,
+      "errors": [],
+      "scrollWidth": 390,
+      "before": "docs/verification/assets/2026-10-08-RG013-taxonomy-390.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-taxonomy-390-details.png"
+    },
+    {
+      "width": 900,
+      "lineage_unchanged": true,
+      "ranks": [
+        "목",
+        "과",
+        "속",
+        "종"
+      ],
+      "names": [
+        "기러기목",
+        "오리과",
+        "오리속",
+        "흰뺨검둥오리"
+      ],
+      "source_labels": [
+        "Wikidata 출처",
+        "Wikidata 출처",
+        "Wikidata 출처",
+        "국명 출처"
+      ],
+      "source_urls": [
+        "https://www.wikidata.org/wiki/Q21651",
+        "https://www.wikidata.org/wiki/Q7556",
+        "https://www.wikidata.org/wiki/Q214264",
+        "https://sites.google.com/khu.ac.kr/korornsoc/%EC%95%8C%EB%A6%BC%EB%A7%88%EB%8B%B9/%EC%9E%90%EB%A3%8C%EC%8B%A4"
+      ],
+      "concept_details_preserved": true,
+      "rank_answer": "흰뺨검둥오리의 과 분류는 오리과(Anatidae)입니다.",
+      "errors": [],
+      "scrollWidth": 900,
+      "before": "docs/verification/assets/2026-10-08-RG013-taxonomy-900.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-taxonomy-900-details.png"
+    }
+  ],
+  "tested_revision": "ddba07ee8f2bc52715c34ac13f7eb950e9a5a301"
+}
