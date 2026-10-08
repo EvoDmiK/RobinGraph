@@ -1,0 +1,186 @@
+{
+  "source": "Actual NAS TEST 719e5bc API/DB/assets; Chrome 1280px mouse",
+  "bug_reproduced": true,
+  "results": [
+    {
+      "kind": "title",
+      "back": false,
+      "dx": 530,
+      "closed": false,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "species-title",
+          "x": 495.1640625,
+          "y": 174.546875,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-card risk-lc",
+          "x": 1025.1640625,
+          "y": 174.546875,
+          "default_prevented": false,
+          "open": true
+        }
+      ]
+    },
+    {
+      "kind": "title",
+      "back": false,
+      "dx": -530,
+      "closed": false,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "species-title",
+          "x": 495.1640625,
+          "y": 174.546875,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-card risk-lc",
+          "x": 5,
+          "y": 174.546875,
+          "default_prevented": false,
+          "open": true
+        }
+      ]
+    },
+    {
+      "kind": "body",
+      "back": true,
+      "dx": 530,
+      "closed": false,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "",
+          "x": 640,
+          "y": 221.171875,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-card risk-lc",
+          "x": 1170,
+          "y": 221.171875,
+          "default_prevented": false,
+          "open": true
+        }
+      ]
+    },
+    {
+      "kind": "body",
+      "back": true,
+      "dx": -530,
+      "closed": false,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "",
+          "x": 640,
+          "y": 221.171875,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-card risk-lc",
+          "x": 110,
+          "y": 221.171875,
+          "default_prevented": false,
+          "open": true
+        }
+      ]
+    },
+    {
+      "kind": "padding",
+      "back": false,
+      "dx": 530,
+      "closed": true,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "species-popup risk-lc",
+          "x": 868,
+          "y": 231.953125,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-popup risk-lc",
+          "x": 1275,
+          "y": 231.953125,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "click",
+          "target": "species-popup risk-lc",
+          "x": 1275,
+          "y": 231,
+          "default_prevented": false,
+          "open": false
+        },
+        {
+          "type": "click",
+          "target": "species-popup risk-lc",
+          "x": 1275,
+          "y": 231,
+          "default_prevented": false,
+          "open": false
+        },
+        {
+          "type": "close",
+          "target": "species-popup risk-lc",
+          "default_prevented": false,
+          "open": false
+        }
+      ]
+    },
+    {
+      "kind": "padding",
+      "back": true,
+      "dx": -530,
+      "closed": true,
+      "trace": [
+        {
+          "type": "pointerdown",
+          "target": "species-popup risk-lc",
+          "x": 412,
+          "y": 166,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "pointerup",
+          "target": "species-popup risk-lc",
+          "x": 5,
+          "y": 166,
+          "default_prevented": false,
+          "open": true
+        },
+        {
+          "type": "click",
+          "target": "species-popup risk-lc",
+          "x": 5,
+          "y": 166,
+          "default_prevented": false,
+          "open": false
+        },
+        {
+          "type": "close",
+          "target": "species-popup risk-lc",
+          "default_prevented": false,
+          "open": false
+        }
+      ]
+    }
+  ]
+}
