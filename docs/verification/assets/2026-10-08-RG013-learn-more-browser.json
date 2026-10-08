@@ -1,0 +1,119 @@
+{
+  "scope": "Real NAS TEST public Chrome interactions with real APIs: zero extra requests before genuine button click, one profile and optional recommendation request after click; no mocked responses",
+  "tested_revision": "f5412e9b733ff921fa44906a160f69df8346d98a",
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "question": "청둥오리에 대해 알려줘",
+      "initial_ms": 741,
+      "before_click_extra_requests": 0,
+      "idle_observation_ms": 350,
+      "profile_requests": 1,
+      "similar_requests": 1,
+      "post_click_ms": 5774,
+      "subspecies_count": 0,
+      "button_disabled_after_click": true,
+      "errors": [],
+      "scrollWidth": 390,
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 34
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "at_ms": 1198
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "at_ms": 1198
+        }
+      ],
+      "before": "docs/verification/assets/2026-10-08-RG013-learn-more-390-0-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-learn-more-390-0-after.png"
+    },
+    {
+      "width": 390,
+      "question": "청둥오리 아종 알려줘",
+      "initial_ms": 2618,
+      "before_click_extra_requests": 0,
+      "idle_observation_ms": 350,
+      "profile_requests": 1,
+      "similar_requests": 0,
+      "post_click_ms": 598,
+      "subspecies_count": 2,
+      "button_disabled_after_click": true,
+      "errors": [],
+      "scrollWidth": 390,
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 26
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "at_ms": 3057
+        }
+      ],
+      "before": "docs/verification/assets/2026-10-08-RG013-learn-more-390-1-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-learn-more-390-1-after.png"
+    },
+    {
+      "width": 900,
+      "question": "청둥오리에 대해 알려줘",
+      "initial_ms": 618,
+      "before_click_extra_requests": 0,
+      "idle_observation_ms": 350,
+      "profile_requests": 1,
+      "similar_requests": 1,
+      "post_click_ms": 2719,
+      "subspecies_count": 0,
+      "button_disabled_after_click": true,
+      "errors": [],
+      "scrollWidth": 900,
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 30
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "at_ms": 1095
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "at_ms": 1095
+        }
+      ],
+      "before": "docs/verification/assets/2026-10-08-RG013-learn-more-900-0-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-learn-more-900-0-after.png"
+    },
+    {
+      "width": 900,
+      "question": "청둥오리 아종 알려줘",
+      "initial_ms": 3136,
+      "before_click_extra_requests": 0,
+      "idle_observation_ms": 350,
+      "profile_requests": 1,
+      "similar_requests": 0,
+      "post_click_ms": 563,
+      "subspecies_count": 2,
+      "button_disabled_after_click": true,
+      "errors": [],
+      "scrollWidth": 900,
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 25
+        },
+        {
+          "path": "/v1/taxa/profile",
+          "at_ms": 3607
+        }
+      ],
+      "before": "docs/verification/assets/2026-10-08-RG013-learn-more-900-1-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-learn-more-900-1-after.png"
+    }
+  ]
+}
