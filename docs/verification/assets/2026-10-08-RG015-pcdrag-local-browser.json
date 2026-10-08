@@ -1,0 +1,429 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST API/DB, locally intercepted JS/CSS, external photos replaced with SVG fixtures",
+  "results": [
+    {
+      "width": 1280,
+      "reduced_motion": false,
+      "drags": [
+        {
+          "selector": "species-title",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "H3",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-scientific-name",
+          "direction": "right",
+          "commit": false,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.248,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "DD",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-note",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "diet-icon-label",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "SPAN",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "IMG",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": {},
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        }
+      ],
+      "loaded_photo_fixture": true,
+      "photo_next_index": 1,
+      "source_details_toggle": true,
+      "source_link_focusable_and_drag_exempt": true,
+      "keyboard_enter_space": true,
+      "escape_reopen_clean": true,
+      "native_dragstart_events": [
+        {
+          "tag": "A",
+          "prevented": false
+        }
+      ],
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 1440,
+      "reduced_motion": false,
+      "drags": [
+        {
+          "selector": "species-title",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "H3",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-scientific-name",
+          "direction": "right",
+          "commit": false,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.248,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "DD",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-note",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "diet-icon-label",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "SPAN",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "IMG",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": {},
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0.632,
+            "display": "block"
+          }
+        }
+      ],
+      "loaded_photo_fixture": true,
+      "photo_next_index": 1,
+      "source_details_toggle": true,
+      "source_link_focusable_and_drag_exempt": true,
+      "keyboard_enter_space": true,
+      "escape_reopen_clean": true,
+      "native_dragstart_events": [
+        {
+          "tag": "A",
+          "prevented": false
+        }
+      ],
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "reduced_motion": true,
+      "drags": [
+        {
+          "selector": "species-title",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "H3",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "species-scientific-name",
+          "direction": "right",
+          "commit": false,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "DD",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "species-note",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "diet-icon-label",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "SPAN",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "IMG",
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": {},
+          "direction": "right",
+          "commit": true,
+          "expected_back": true,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        },
+        {
+          "selector": "species-title",
+          "direction": "left",
+          "commit": true,
+          "expected_back": false,
+          "cursor": "grabbing",
+          "gloss": {
+            "opacity": 0,
+            "display": "none"
+          }
+        }
+      ],
+      "loaded_photo_fixture": true,
+      "photo_next_index": 1,
+      "source_details_toggle": true,
+      "source_link_focusable_and_drag_exempt": true,
+      "keyboard_enter_space": true,
+      "escape_reopen_clean": true,
+      "native_dragstart_events": [
+        {
+          "tag": "A",
+          "prevented": false
+        }
+      ],
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-08T11:09:57.476Z",
+  "source_commit": "719e5bcf44e920a5cb9a3d8639279bd1f7b3d066",
+  "image": "robingraph-api:test-rg015pcdrag-719e5bc",
+  "container_health": "healthy",
+  "image_oci_revision": "719e5bcf44e920a5cb9a3d8639279bd1f7b3d066",
+  "package_sha256": "d9cb1515034b83b6a15e2c9abf95bff115ffd9859cb44f74da935f8f7fccb92d",
+  "assets": [
+    {
+      "path": "/static/chat.js",
+      "sha256": "046418377ee2dc1ad3c28f0b3ffbb945c9b4e5f3522dbe2bdf36731811a16921",
+      "matches_local_source": true
+    },
+    {
+      "path": "/static/styles.css",
+      "sha256": "9aeb73f79ccd1fada496d4c32742489a5fb06abc85c1305265235aebb4d811be",
+      "matches_local_source": true
+    }
+  ],
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "runner_status": {
+    "local_pc": {
+      "assertions_passed": true,
+      "exit_code": 143,
+      "note": "Results written and Chrome exited; lingering Node terminated with TERM."
+    },
+    "local_touch": {
+      "assertions_passed": true,
+      "exit_code": 143,
+      "note": "Results written and Chrome exited; lingering Node terminated with TERM."
+    },
+    "local_controls": {
+      "assertions_passed": true,
+      "exit_code": 0
+    },
+    "deployed_pc": {
+      "assertions_passed": true,
+      "exit_code": 0,
+      "browser_close_timed_out": true,
+      "teardown_timeout_seconds": 10
+    },
+    "deployed_touch": {
+      "assertions_passed": true,
+      "exit_code": 0,
+      "browser_close_timed_out": true,
+      "teardown_timeout_seconds": 10
+    },
+    "deployed_controls": {
+      "assertions_passed": true,
+      "exit_code": 0
+    }
+  }
+}

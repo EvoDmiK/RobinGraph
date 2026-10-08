@@ -1,0 +1,18 @@
+{
+  "bug_reproduced": true,
+  "environment": "Actual NAS TEST 570fd3f API/DB/assets, Chrome 1280px mouse",
+  "results": [
+    {
+      "face": "front",
+      "start_selector": ".species-title",
+      "dragging": null,
+      "face_unchanged": true
+    },
+    {
+      "face": "back",
+      "start_selector": ".species-card-back h3",
+      "dragging": null,
+      "face_unchanged": true
+    }
+  ]
+}
