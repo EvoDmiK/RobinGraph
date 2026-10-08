@@ -265,6 +265,12 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
         subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
     )
+    basic_species_flow = create_species_flow(
+        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+        conservation=lambda lineage: read_conservation(lineage_repository, lineage),
+        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+        include_enrichment=False,
+    )
     try:
         app = create_app(
             repository,
@@ -279,6 +285,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             semantic_router=semantic_router,
             jev_router=jev_router,
             species_profile_handler=species_flow.invoke,
+            species_basic_profile_handler=basic_species_flow.invoke,
             related_species_handler=lambda name: related_species(lineage_repository, resolve_species, name),
             similar_species_handler=lambda name: similar_species(lineage_repository, ingest_store, resolve_species, name),
             ecological_relations_handler=lambda name: ecological_relations(lineage_repository, ingest_store, resolve_species, name),

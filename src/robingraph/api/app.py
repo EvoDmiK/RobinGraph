@@ -288,6 +288,7 @@ class ChatRequest(_ChatModel):
     question: str = Field(min_length=1, max_length=2_000)
     intent: Literal["auto", "taxonomy", "profile", "observations", "evidence"] = "auto"
     filters: ChatFilters | None = None
+    defer_enrichment: bool = False
 
     @field_validator("question")
     @classmethod
@@ -779,6 +780,7 @@ def create_app(
     semantic_router: SemanticRouter | None = None,
     jev_router: JevRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
+    species_basic_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
     similar_species_handler: Callable[[str], dict] | None = None,
     ecological_relations_handler: Callable[[str], dict] | None = None,
@@ -1041,7 +1043,8 @@ def create_app(
                             and relation_name.strip().lower() not in reviewed_search_terms())
         if name_relations_handler is not None and request.intent in ("auto", "profile", "taxonomy") and relevant_filter and not scientific_filter and not scientific_query:
             try:
-                relationships = name_relations_handler(relation_name)
+                with tracing.span("name_relations.lookup", tracing.RETRIEVER):
+                    relationships = name_relations_handler(relation_name)
             except Exception as error:
                 logging.getLogger(__name__).warning("Name relationship lookup failed (%s)", type(error).__name__)
                 is_name_request = request.intent in ("profile", "taxonomy") or relation_question is not None or request.filters is not None or re.fullmatch(r"[가-힣]+|[A-Za-z][A-Za-z .-]+", relation_name) is not None
@@ -1120,8 +1123,14 @@ def create_app(
                     warnings=["종 정보 조회 기능을 사용할 수 없습니다."],
                     result=ChatSpeciesResult(profile=None),
                 )
+            # Appearance is the requested answer itself, so it still needs
+            # sourced notes. Other routes can render the verified base card
+            # before external photos/notes and optional recommendations.
+            deferred = (request.defer_enrichment and species_basic_profile_handler is not None
+                        and (species_question is None or species_question.topic != "appearance"))
             try:
-                profile = species_profile_handler(name)
+                profile_handler = species_basic_profile_handler if deferred else species_profile_handler
+                profile = profile_handler(name)
             except SpeciesNotFoundError:
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
@@ -1140,7 +1149,8 @@ def create_app(
                 try:
                     if subspecies_handler is None:
                         raise ValueError("Subspecies lookup unavailable")
-                    data = subspecies_handler(name)
+                    with tracing.span("subspecies.lookup", tracing.RETRIEVER):
+                        data = subspecies_handler(name)
                     lineage = profile.get("lineage") or {}
                     if name_context is not None:
                         expected = name_context["relations"][0]["taxon"]
@@ -1218,9 +1228,10 @@ def create_app(
                 summary = species_summary(profile.get("taxon") or {}, profile.get("traits") or [])
             similar = None
             lineage = profile.get("lineage") or {}
-            if similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
+            if not deferred and similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
                 try:
-                    similar = similar_species_handler(name)
+                    with tracing.span("similar_species.lookup", tracing.RETRIEVER):
+                        similar = similar_species_handler(name)
                     if (similar.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
                             or similar.get("concept_set_id") != lineage.get("concept_set_id")
                             or similar.get("taxonomy_release") != lineage.get("taxonomy_release")):

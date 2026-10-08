@@ -728,6 +728,8 @@
    */
   function buildSpeciesComparison(doc, left, right, options) {
     options = options || {};
+    var comparisonCallback = options.explorer && options.explorer.onComparison;
+    if (comparisonCallback && typeof comparisonCallback.beforeComparison === "function") { comparisonCallback.beforeComparison(); }
     var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive };
     var panel = doc.createElement("section");
     panel.className = "species-comparison";
@@ -1566,6 +1568,7 @@
   // Fixed copy per backend photo status; the server's own `message` is not
   // echoed so an unexpected status never surfaces as trusted text.
   var PHOTO_STATUS_MESSAGES = {
+    cancelled: "사진 조회를 중단했습니다. 질문을 다시 보내 확인하세요.",
     available: "출처와 라이선스가 확인된 사진입니다.",
     no_licensed_photo: "사용 조건이 확인된 대표 사진을 아직 찾지 못했습니다.",
     unconfirmed_taxon: "사진 자료의 종 식별을 확인하지 못해 사진을 표시하지 않습니다.",
@@ -1879,7 +1882,14 @@
       }
       photoSourcesSlot.appendChild(photoSources);
     }
-    renderPhotos(profile.images, profile.photo_availability);
+    if (profile.enrichment_pending) {
+      photoArea.appendChild(buildPhotoPlaceholder("사진을 불러오는 중입니다."));
+    } else { renderPhotos(profile.images, profile.photo_availability); }
+    // Only update the photo slots; preserve the open popup and card face.
+    card.updateEnrichment = function (fresh) { renderPhotos(fresh.images, fresh.photo_availability); };
+    card.setEnrichmentMessage = function (message) {
+      clearNode(photoArea); photoArea.appendChild(buildPhotoPlaceholder(message));
+    };
 
     var dietInfo = dietIconInfo(profile);
     if (dietInfo.icons.length) { front.appendChild(buildDietIcons(doc, dietInfo)); }
@@ -2177,6 +2187,9 @@
     var seen = {};
     profile.sections.slice(0, 4).forEach(function (section) {
       if (!section || typeof section.title !== "string") { return; }
+      if (profile.enrichment_pending && (!Array.isArray(section.items) || !section.items.some(function (item) {
+        return item && typeof item.text === "string" && item.text.trim();
+      }))) { return; }
       var block = doc.createElement("section");
       block.className = "species-answer-section";
       var title = doc.createElement("h4");
@@ -2302,6 +2315,93 @@
     return wrapper;
   }
 
+  function buildDeferredEnrichment(doc, profile, options) {
+    var section = doc.createElement("section"); section.className = "species-enrichment";
+    var active = options.isActive || function () { return true; };
+    var cancelled = false;
+    var photoPending = true;
+    var pendingStatuses = [];
+    function current() { return !cancelled && active(); }
+    function status(text) {
+      var node = doc.createElement("p"); node.setAttribute("role", "status");
+      node.textContent = text; section.appendChild(node); pendingStatuses.push(node); return node;
+    }
+    function finish(node, text) {
+      pendingStatuses = pendingStatuses.filter(function (item) { return item !== node; });
+      node.textContent = text;
+    }
+    function matches(data, lineage) {
+      return data && data.taxon && data.taxon.taxon_id === profile.taxon.taxon_id &&
+        profile.lineage && profile.lineage.concept_set_id && profile.lineage.taxonomy_release && lineage &&
+        lineage.concept_set_id === profile.lineage.concept_set_id && lineage.taxonomy_release === profile.lineage.taxonomy_release;
+    }
+    var profileStatus = status("사진·추가 설명을 불러오는 중입니다.");
+    fetchTaxaJson(doc, options.fetcher, "/v1/taxa/profile", profile.taxon.scientific_name, 60000).then(function (fresh) {
+      if (!current()) { return; }
+      if (!matches(fresh, fresh && fresh.lineage)) { throw new Error("changed"); }
+      options.card.updateEnrichment(fresh);
+      photoPending = false;
+      var initialSections = (Array.isArray(profile.sections) ? profile.sections : []).filter(function (initial) {
+        return initial && Array.isArray(initial.items) && initial.items.some(function (item) {
+          return item && typeof item.text === "string" && item.text.trim();
+        });
+      });
+      var additionalSections = (Array.isArray(fresh.sections) ? fresh.sections : []).filter(function (candidate) {
+        return candidate && !initialSections.some(function (initial) {
+          return (candidate.key ? candidate.key === initial.key : candidate.title === initial.title) &&
+            JSON.stringify(candidate.items || []) === JSON.stringify(initial.items || []);
+        });
+      });
+      var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections });
+      if (explanation) { section.appendChild(explanation); }
+      var initialWarnings = Array.isArray(profile.warnings) ? profile.warnings : [];
+      var newWarnings = (Array.isArray(fresh.warnings) ? fresh.warnings : []).filter(function (warning) {
+        return typeof warning === "string" && initialWarnings.indexOf(warning) === -1;
+      });
+      if (newWarnings.length) {
+        var warnings = doc.createElement("ul"); warnings.className = "warnings";
+        newWarnings.forEach(function (warning) { var item = doc.createElement("li"); item.textContent = "⚠ " + warning; warnings.appendChild(item); });
+        section.appendChild(warnings);
+      }
+      Object.assign(profile, fresh, { enrichment_pending: false });
+      finish(profileStatus, "사진·추가 설명 조회를 마쳤습니다.");
+    }).catch(function (error) {
+      if (!current()) { return; }
+      photoPending = false;
+      profile.enrichment_pending = false;
+      profile.photo_availability = { status: "provider_unavailable" };
+      options.card.setEnrichmentMessage("사진을 불러오지 못했습니다. 질문을 다시 보내 재시도하세요.");
+      finish(profileStatus, error && error.message === "changed"
+        ? "분류 자료가 바뀌어 사진·추가 설명을 표시하지 않았습니다. 질문을 다시 보내주세요."
+        : "사진·추가 설명을 불러오지 못했습니다. 먼저 표시한 답변은 계속 확인할 수 있습니다.");
+    });
+    if (options.onSimilar) {
+      var similarStatus = status("비슷한 새 추천을 불러오는 중입니다.");
+      fetchTaxaJson(doc, options.fetcher, "/v1/taxa/similar", profile.taxon.scientific_name, 30000).then(function (data) {
+        if (!current()) { return; }
+        if (!matches(data, data)) { throw new Error("changed"); }
+        options.onSimilar(data);
+        finish(similarStatus, "비슷한 새 추천을 불러왔습니다.");
+      }).catch(function (error) {
+        if (!current()) { return; }
+        finish(similarStatus, error && error.message === "changed"
+          ? "분류 자료가 바뀌어 추천을 표시하지 않았습니다. 질문을 다시 보내주세요."
+          : "비슷한 새 추천을 불러오지 못했습니다. 다른 자료는 계속 확인할 수 있습니다.");
+      });
+    }
+    section.cancelEnrichment = function () {
+      cancelled = true;
+      if (photoPending) {
+        profile.enrichment_pending = false;
+        profile.photo_availability = { status: "cancelled" };
+        options.card.setEnrichmentMessage("사진 조회를 중단했습니다. 질문을 다시 보내 확인하세요.");
+      }
+      pendingStatuses.forEach(function (node) { node.textContent = "추가 자료 조회를 중단했습니다. 다시 확인하려면 질문을 보내주세요."; });
+      pendingStatuses = [];
+    };
+    return section;
+  }
+
   function init(doc, win) {
     var form = doc.getElementById("chat-form");
     var input = doc.getElementById("question-input");
@@ -2332,6 +2432,13 @@
     // Bumped by 대화 지우기 so lazy lookups that settle after a clear never
     // write into (or announce status for) the discarded conversation.
     var conversationGeneration = 0;
+    var enrichmentSections = [];
+
+    function cancelEnrichments() {
+      enrichmentSections.forEach(function (section) { section.cancelEnrichment(); });
+      enrichmentSections = [];
+    }
+    appendComparisonMessage.beforeComparison = cancelEnrichments;
 
     function conversationGuard() {
       var generation = conversationGeneration;
@@ -2546,7 +2653,9 @@
             } else if (!targeted && result.similar_species) {
               relatedOptions.initialData = result.similar_species;
             }
-            item.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions));
+            var relatedSlot = result.profile.enrichment_pending && !targeted ? doc.createElement("div") : null;
+            if (relatedSlot) { relatedSlot.className = "species-related-slot"; item.appendChild(relatedSlot); }
+            else { item.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions)); }
             var ecological = buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions);
             if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
             else { extra.appendChild(ecological); }
@@ -2559,6 +2668,17 @@
           else { extra.appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
           extra.appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
           item.appendChild(extra);
+          if (result.profile.enrichment_pending) {
+            var deferred = buildDeferredEnrichment(doc, result.profile, {
+              fetcher: taxaFetch, isActive: conversationGuard(), card: speciesCard,
+              onSimilar: relatedSlot ? function (data) {
+                relatedSlot.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, {
+                  initialData: data, onComparison: appendComparisonMessage, isActive: conversationGuard(),
+                }));
+              } : null,
+            });
+            item.appendChild(deferred); enrichmentSections.push(deferred);
+          }
         }
       }
 
@@ -2646,6 +2766,7 @@
      * untouched, so consecutive comparisons stack as separate turns.
      */
     function appendComparisonMessage(panel, info) {
+      cancelEnrichments();
       hideEmptyState();
       var item = doc.createElement("div");
       item.className = "message message-answer message-comparison";
@@ -2703,6 +2824,7 @@
     }
 
     function submitQuestion(question) {
+      cancelEnrichments();
       setBusy(true);
       setStatus("답변을 불러오는 중입니다…");
 
@@ -2711,7 +2833,7 @@
           method: "POST",
           credentials: "omit",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(buildChatPayload(question, intent.value, selectedFilterValues())),
+          body: JSON.stringify(Object.assign(buildChatPayload(question, intent.value, selectedFilterValues()), { defer_enrichment: true })),
         })
         .then(function (response) {
           return response
@@ -2793,6 +2915,7 @@
     syncModeControls();
 
     clearButton.addEventListener("click", function () {
+      cancelEnrichments();
       conversationGeneration += 1;
       messages.length = 0;
       while (history.firstChild) {
@@ -2854,6 +2977,7 @@
     buildChatPayload: buildChatPayload,
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
+    buildDeferredEnrichment: buildDeferredEnrichment,
     buildRelatedExplorer: buildRelatedExplorer,
     buildEcologicalExplorer: buildEcologicalExplorer,
     speciesLabel: speciesLabel,
