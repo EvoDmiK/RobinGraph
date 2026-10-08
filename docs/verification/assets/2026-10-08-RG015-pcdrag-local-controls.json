@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "environment": "NAS API with locally intercepted JS/CSS; no deployment claim",
+  "photo_touch_drag_does_not_flip": true,
+  "photo_next_touch_changes_visible_figure": true,
+  "photo_figure_indices": {
+    "before": 0,
+    "after": 1
+  },
+  "image_load_state": [
+    {
+      "complete": false,
+      "natural_width": 0
+    },
+    {
+      "complete": false,
+      "natural_width": 0
+    }
+  ],
+  "long_press_does_not_flip": true,
+  "native_long_press": {
+    "selection": "",
+    "contextmenu_count": 0
+  },
+  "clear_removes_modal_and_card": true
+}

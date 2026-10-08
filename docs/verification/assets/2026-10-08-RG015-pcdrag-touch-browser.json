@@ -1,0 +1,125 @@
+{
+  "passed": true,
+  "environment": "Actual deployed NAS TEST API/DB/assets, Chrome mobile emulation with CDP trusted touch input; not a physical Android/iOS device test",
+  "results": [
+    {
+      "width": 320,
+      "reduced_motion": false,
+      "trusted_touch_input": true,
+      "touch_action": "pan-y pinch-zoom",
+      "body_text_left_right": true,
+      "hint_swipe": true,
+      "hint_height_at_least_44": true,
+      "short_reverse_tap_preserved": true,
+      "native_vertical_scroll": {
+        "before": 0,
+        "after": 20
+      },
+      "cancel_clean": true,
+      "second_touch_cancels": true,
+      "close_reopen_and_touch_buttons": true,
+      "continuous_rotation": true,
+      "native_pinch_zoom": null,
+      "event_counts": {
+        "pointerdown": 15,
+        "pointermove": 72,
+        "pointerup": 13,
+        "lostpointercapture": 15,
+        "click": 6,
+        "pointercancel": 2
+      },
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "reduced_motion": false,
+      "trusted_touch_input": true,
+      "touch_action": "pan-y pinch-zoom",
+      "body_text_left_right": true,
+      "hint_swipe": true,
+      "hint_height_at_least_44": true,
+      "short_reverse_tap_preserved": true,
+      "native_vertical_scroll": {
+        "before": 0,
+        "after": 50
+      },
+      "cancel_clean": true,
+      "second_touch_cancels": true,
+      "close_reopen_and_touch_buttons": true,
+      "continuous_rotation": true,
+      "native_pinch_zoom": {
+        "before": 1,
+        "after": 1.499999761581421
+      },
+      "event_counts": {
+        "pointerdown": 17,
+        "pointermove": 78,
+        "pointerup": 13,
+        "lostpointercapture": 17,
+        "click": 6,
+        "pointercancel": 4
+      },
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 768,
+      "reduced_motion": false,
+      "trusted_touch_input": true,
+      "touch_action": "pan-y pinch-zoom",
+      "body_text_left_right": true,
+      "hint_swipe": true,
+      "hint_height_at_least_44": true,
+      "short_reverse_tap_preserved": true,
+      "native_vertical_scroll": {
+        "before": 0,
+        "after": 89
+      },
+      "cancel_clean": true,
+      "second_touch_cancels": true,
+      "close_reopen_and_touch_buttons": true,
+      "continuous_rotation": true,
+      "native_pinch_zoom": null,
+      "event_counts": {
+        "pointerdown": 15,
+        "pointermove": 72,
+        "pointerup": 13,
+        "lostpointercapture": 15,
+        "click": 6,
+        "pointercancel": 2
+      },
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "reduced_motion": true,
+      "trusted_touch_input": true,
+      "touch_action": "pan-y pinch-zoom",
+      "body_text_left_right": true,
+      "hint_swipe": true,
+      "hint_height_at_least_44": true,
+      "short_reverse_tap_preserved": true,
+      "native_vertical_scroll": {
+        "before": 0,
+        "after": 50
+      },
+      "cancel_clean": true,
+      "second_touch_cancels": true,
+      "close_reopen_and_touch_buttons": true,
+      "continuous_rotation": false,
+      "native_pinch_zoom": null,
+      "event_counts": {
+        "pointerdown": 15,
+        "pointermove": 72,
+        "pointerup": 13,
+        "lostpointercapture": 15,
+        "click": 6,
+        "pointercancel": 2
+      },
+      "no_horizontal_overflow": true,
+      "page_errors": []
+    }
+  ]
+}
