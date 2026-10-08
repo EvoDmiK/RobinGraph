@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-08",
+  "source_commit": "75377ca5d61a5a8cee139fd9144722bdfa366a8e",
+  "backend_first": {
+    "total": 633,
+    "passed": 631,
+    "failed": 2,
+    "skipped": 0,
+    "failure_reason": "Concurrent per-thread mock.patch restoration race left mock neo4j_hybrid.search globally installed"
+  },
+  "backend_final": {
+    "total": 633,
+    "passed": 633,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 37.205,
+    "environment": "Actual Neo4j, temporary PostgreSQL schema cleaned after run, pinned subspecies source cache; external model calls mocked"
+  },
+  "frontend_final": {
+    "total": 181,
+    "passed": 181,
+    "failed": 0,
+    "skipped": 0,
+    "environment": "Node test runner, mocked DOM"
+  },
+  "graphify_update": {
+    "mode": "AST only",
+    "nodes": 3638,
+    "edges": 7908,
+    "communities": 205,
+    "sql_dependency_missing": true
+  },
+  "nas": {
+    "commit": "75377ca5d61a5a8cee139fd9144722bdfa366a8e",
+    "image": "robingraph-api:test-rg015016-75377ca",
+    "release": "/home/kimdove/RobinGraph-rg015016-75377ca",
+    "previous_image": "robingraph-api:test-rg013-f0fed63"
+  }
+}

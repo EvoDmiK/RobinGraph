@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST real profile and photos in Chrome; actual mouse/photo button/link popup/scroll; touch and lost capture are synthetic DOM events",
+  "outside_card_release": true,
+  "native_photo_drag_preserved": true,
+  "photo_next_works": true,
+  "source_link_opens": true,
+  "source_side_scroll": true,
+  "touch_gate_excluded": true,
+  "lost_capture_cleans": true,
+  "conversation_clear_removes_card": true,
+  "page_errors": []
+}

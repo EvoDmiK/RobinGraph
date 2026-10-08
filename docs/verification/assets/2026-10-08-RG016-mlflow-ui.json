@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "version": "3.14.0",
+  "experiment_id": "33",
+  "filter": "tags.response_reason = 'taxon_not_found'",
+  "verified_trace_id": "tr-3976224f8d47a3aae4ab20ccf54d4da7",
+  "queries": [
+    "attributes.timestamp_ms > 1790844798232 AND attributes.timestamp_ms < 1791449598232",
+    "attributes.timestamp_ms > 1790844798232 AND attributes.timestamp_ms < 1791449598232 AND tags.response_reason = 'taxon_not_found'"
+  ],
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/traces?filter=TAG%3A%3A%3D%3A%3Ataxon_not_found%3A%3Aresponse_reason&selectedEvaluationId=tr-3976224f8d47a3aae4ab20ccf54d4da7",
+  "detail_tags_verified": true,
+  "detail_tags_input": "DOM click on overflow tags button; MLflow onboarding tooltip intercepted pointer",
+  "detail_tag_values": {
+    "response_reason": "taxon_not_found",
+    "response_disposition": "abstain",
+    "selected_intent": "profile",
+    "route_method": "explicit",
+    "failure_stage": "name_resolution"
+  }
+}

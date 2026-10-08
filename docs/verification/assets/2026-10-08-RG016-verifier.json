@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "filter_missing",
+      "http_status": 200,
+      "trace_id": "tr-d5cb069660821170154777c6538a17ec",
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "filter_mismatch",
+        "failure_stage": "validation",
+        "selected_intent": "observations",
+        "route_method": "explicit"
+      },
+      "passed": true
+    },
+    {
+      "case": "taxon_not_found",
+      "http_status": 200,
+      "trace_id": "tr-ba05a0238be1fa711dfc86c80e773128",
+      "trace_state": "OK",
+      "found_by_tag_filter": true,
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "taxon_not_found",
+        "failure_stage": "name_resolution",
+        "selected_intent": "profile",
+        "route_method": "explicit"
+      },
+      "passed": true
+    }
+  ]
+}
