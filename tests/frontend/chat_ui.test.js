@@ -3501,3 +3501,96 @@ test("taxonomy reference labels distinguish community Wikidata names from audite
   assert.equal(collectedText(rows[1]).includes("Wikidata"), false);
   assert.ok(collectAllNodes(rows[1]).some(n => n.tagName === "a" && n.textContent === "국명 출처"));
 });
+
+function weightedSimilarityData(weights) {
+  const data = similarityFixture();
+  data.ranking.method = "taxonomy-phylogeny-ecology-v3";
+  data.ranking.weights = weights || { phylogenetic_clade: 50, same_genus: 20, same_family: 10, same_habitat: 10, same_trophic_niche: 10 };
+  data.note = "계통50%·분류30%·서식환경10%·먹이생태10% 원래 상세 계산 설명";
+  return data;
+}
+
+for (const weights of [
+  { phylogenetic_clade: 50, same_genus: 20, same_family: 10, same_habitat: 10, same_trophic_niche: 10 },
+  { phylogenetic_clade: 40, same_genus: 15, same_family: 5, same_habitat: 25, same_trophic_niche: 15 },
+]) {
+  test("ranking weight badges use the actual API weights: " + JSON.stringify(weights), async () => {
+    const data = weightedSimilarityData(weights);
+    const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, inline: true });
+    await tick();
+    const criteria = collectAllNodes(explorer).find(n => n.className === "similarity-criteria");
+    const badges = collectAllNodes(criteria).find(n => n.className === "similarity-weight-badges");
+    assert.equal(badges.tagName, "dl");
+    assert.deepEqual(badges.children.map(n => n.children[0].textContent), ["계통", "분류", "서식 환경", "먹이 생태"]);
+    assert.deepEqual(badges.children.map(n => n.children[1].textContent), [weights.phylogenetic_clade, weights.same_genus + weights.same_family, weights.same_habitat, weights.same_trophic_niche].map(n => n + "%"));
+    const details = criteria.children.find(n => n.className === "similarity-calculation-details");
+    assert.ok(!details.open);
+    assert.match(collectedText(details), /계통 자료가 부족한 후보/);
+    assert.match(collectedText(details), /100점에 환산/);
+    assert.match(collectedText(details), /실제 진화 거리나 유전 유사도의 측정값이 아닙니다/);
+    assert.match(collectedText(details), /원래 상세 계산 설명/);
+    assert.equal(criteria.children.some(n => n.className === "species-note"), false);
+    assert.equal(collectAllNodes(criteria).some(n => n.tagName === "progress" || n.getAttribute("role") === "progressbar"), false);
+  });
+}
+
+for (const invalid of [null, {}, { phylogenetic_clade: "50", same_genus: 20, same_family: 10, same_habitat: 10, same_trophic_niche: 10 },
+  { phylogenetic_clade: Infinity, same_genus: 20, same_family: 10, same_habitat: 10, same_trophic_niche: 10 },
+  { phylogenetic_clade: 50, same_genus: -5, same_family: 35, same_habitat: 10, same_trophic_niche: 10 },
+  { phylogenetic_clade: 50, same_genus: 10, same_family: 10, same_habitat: 10, same_trophic_niche: 10 },
+]) {
+  test("invalid ranking weights preserve the original safe note: " + JSON.stringify(invalid), async () => {
+    const data = weightedSimilarityData(); data.ranking.weights = invalid;
+    data.note = "<script>기존 설명은 텍스트</script>";
+    const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, inline: true });
+    await tick();
+    const criteria = collectAllNodes(explorer).find(n => n.className === "similarity-criteria");
+    assert.match(collectedText(criteria), /<script>기존 설명은 텍스트<\/script>/);
+    assert.equal(collectAllNodes(criteria).some(n => n.className === "similarity-weight-badges" || n.tagName === "script"), false);
+  });
+}
+
+test("unknown ranking methods keep the original note even when weights look valid", async () => {
+  const data = weightedSimilarityData(); data.ranking.method = "unsupported-v99";
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, inline: true });
+  await tick();
+  const criteria = collectAllNodes(explorer).find(n => n.className === "similarity-criteria");
+  assert.match(collectedText(criteria), /원래 상세 계산 설명/);
+  assert.equal(collectAllNodes(criteria).some(n => n.className === "similarity-weight-badges"), false);
+});
+
+test("Korean-name display priority is explicit and does not reinterpret API rank or score", async () => {
+  const data = weightedSimilarityData(); data.ranking.priority = "korean_name_then_weighted_score";
+  const first = data.groups[0].items.find(n => n.similarity_rank === 1);
+  const second = data.groups[0].items.find(n => n.similarity_rank === 2);
+  first.korean_name = "검토된 이름"; first.korean_name_status = "source-reference";
+  first.similarity_score = 65; second.similarity_score = 100;
+  const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, inline: true });
+  await tick();
+  assert.match(collectedText(explorer), /한국어 이름 우선 · 점수순/);
+  assert.match(collectedText(explorer), /검증표에 한국어 이름이 있는 후보를 먼저 표시/);
+  assert.match(collectedText(explorer), /한국어 이름의 유무로 과학적 근연 순위를 추정하지 않습니다/);
+  const cards = collectAllNodes(explorer).filter(n => n.getAttribute("data-ranked") === "true");
+  assert.equal(cards[0].children.find(n => n.className === "comparison-peer-rank").textContent, "추천 1");
+  assert.match(cards[0].children.find(n => n.className === "comparison-peer-choose").getAttribute("aria-label"), /^추천 1 · 검토된 이름/);
+  assert.equal(cards[0].children.find(n => n.className === "comparison-peer-score").textContent, "65점");
+  assert.equal(cards[1].children.find(n => n.className === "comparison-peer-score").textContent, "100점");
+});
+
+test("direct TOP3 answers show the structured scoring criteria once with the long note folded", async () => {
+  const data = weightedSimilarityData(); data.ranking.priority = "korean_name_then_weighted_score";
+  const payload = fakeProfilePayload();
+  payload.result.question_answer = { topic: "related", title: "청둥오리와 비슷한 새", text: data.note, items: [], relations: data };
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리와 비슷한 새 알려줘";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  assert.equal(collectAllNodes(answer).filter(n => n.className === "similarity-criteria").length, 1);
+  assert.equal(collectAllNodes(answer).filter(n => n.className === "similarity-weight-badges").length, 1);
+  const details = collectAllNodes(answer).find(n => n.className === "similarity-calculation-details");
+  assert.ok(!details.open);
+  assert.equal(collectAllNodes(answer).filter(n => n.textContent === data.note).length, 1);
+  assert.match(collectedText(details), /원래 상세 계산 설명/);
+  assert.deepEqual(collectAllNodes(answer).filter(n => n.className === "comparison-peer-rank").map(n => n.textContent), ["추천 1", "추천 2", "추천 3"]);
+});
