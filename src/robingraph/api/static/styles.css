@@ -646,7 +646,11 @@ body {
   box-shadow: 0 24px 80px #0007, inset 0 1px 2px #fff;
   overflow: auto;
   overscroll-behavior: contain;
+  /* Retain wheel, touch and keyboard scrolling without a visible scrollbar. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.species-popup::-webkit-scrollbar { display: none; width: 0; height: 0; }
 .species-popup::backdrop {
   background: #122316b8;
   backdrop-filter: blur(6px);
@@ -800,6 +804,58 @@ body:has(.species-popup[open]) { overflow: hidden; }
 }
 .species-front-note { margin: 6px 0; color: #405635; font-size: .7rem; }
 .species-card-back h3 { margin: 14px 0; font-size: 1.05rem; }
+.species-popup .species-card-back {
+  min-width: 0;
+  font-size: .82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.species-popup .species-card-back h3 { margin: 8px 0; font-size: .95rem; }
+.species-popup .species-card-back .species-note { margin: 6px 0; font-size: .73rem; }
+.species-popup .species-card-back .species-traits { margin-top: 6px; }
+.species-popup .species-card-back .trait-card {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 7px 2px;
+}
+.species-popup .species-card-back .trait-card strong { min-width: 0; font-size: .78rem; }
+.species-popup .species-card-back .trait-card .trait-value {
+  min-width: 0;
+  max-width: none;
+  font-size: .85rem;
+}
+.species-popup .species-card-back .card-details {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid #69844766;
+  font-size: .78rem;
+}
+.species-card-sources {
+  margin-top: 12px;
+  padding: 0 10px;
+  border: 1px solid #67844966;
+  border-radius: 9px;
+  background: #ffffed55;
+  font-size: .75rem;
+  overflow-wrap: anywhere;
+}
+.species-card-sources > summary {
+  min-height: 24px;
+  padding: 10px 0;
+  color: #405635;
+  font-size: .8rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+.species-card-sources section { min-width: 0; margin: 8px 0; }
+.species-card-sources h4 { margin: 8px 0 5px; font-size: .79rem; }
+.species-card-sources h5 { margin: 7px 0 3px; font-size: .74rem; font-weight: 750; }
+.species-card-sources p { margin: 4px 0; }
+.species-card-sources .trait-source { display: block; margin: 3px 0; font-size: .72rem; }
+.species-card-sources .species-photo-source { padding: 6px 0; }
+.species-card-sources > section + section,
+.species-card-sources .species-photo-sources { padding-top: 5px; border-top: 1px solid #67844944; }
 .species-photo-source { padding: 10px 0; border-bottom: 1px solid #67844966; font-size: .75rem; }
 .species-photo-source strong { display: block; margin-bottom: 4px; }
 .species-card-footer {
@@ -1255,4 +1311,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-popup .species-card[data-dragging="true"] { cursor: grabbing; }
   .species-popup .species-card-flip { cursor: pointer; }
   .species-card-drag-hint { display: block; flex-basis: 100%; margin-top: 4px; font-size: .72rem; color: #4a5f31; }
+}
+/* The whole back remains draggable; repeat the gesture guidance only on front. */
+.species-card:has(.species-card-back:not([hidden])) .species-card-swipe-hint,
+.species-card:has(.species-card-back:not([hidden])) .species-card-drag-hint { display: none; }
+.species-popup .species-card:has(.species-card-back:not([hidden])) .species-card-footer {
+  margin-top: 8px;
+  padding-top: 8px;
 }

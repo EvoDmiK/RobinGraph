@@ -361,6 +361,31 @@
     return traitGrid;
   }
 
+  /** Card-only layout: keep the shared facts renderer and collect its citations. */
+  function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel) {
+    var grid = buildTraitGrid(doc, groups);
+    Array.prototype.slice.call(grid.children).forEach(function (traitCard) {
+      var sourceDetails = Array.prototype.slice.call(traitCard.children).find(function (child) {
+        return child.className === "trait-source-toggle";
+      });
+      if (!sourceDetails) { return; }
+      var entry = doc.createElement("section");
+      entry.className = "species-trait-source-entry";
+      var heading = doc.createElement("h5");
+      var label = traitCard.children[0].textContent;
+      var value = traitCard.children[1].textContent;
+      heading.textContent = (scopeLabel ? scopeLabel + " · " : "") + label + ": " + value;
+      entry.appendChild(heading);
+      // Reuse the actual safe links and provenance nodes, including reviewed
+      // raw-source conflicts, rather than re-creating a narrower source list.
+      sourceDetails.removeChild(sourceDetails.firstChild);
+      while (sourceDetails.firstChild) { entry.appendChild(sourceDetails.firstChild); }
+      traitCard.removeChild(sourceDetails);
+      sourceTarget.appendChild(entry);
+    });
+    return grid;
+  }
+
   // Habitat emblems keyed by the raw AVONET `habitat` trait value (not the
   // Korean display string, which may change). Each is a 24x24 stroked SVG
   // path so it stays crisp and inherits `currentColor`; `glyph` is the
@@ -609,9 +634,9 @@
 
   /** Legend + source links for the diet icons (card back). */
   function buildDietLegend(doc, info) {
-    var details = doc.createElement("details");
+    var details = doc.createElement("section");
     details.className = "species-diet-legend";
-    var summary = doc.createElement("summary");
+    var summary = doc.createElement("h4");
     summary.textContent = "먹이 아이콘 기준 · 출처";
     details.appendChild(summary);
     var basis = doc.createElement("p");
@@ -1701,6 +1726,20 @@
     var backTitle = doc.createElement("h3");
     backTitle.textContent = "출처 · 상세 정보";
     back.appendChild(backTitle);
+    var cardSources = doc.createElement("details");
+    cardSources.className = "species-card-sources";
+    var sourcesSummary = doc.createElement("summary");
+    sourcesSummary.textContent = "출처 · 자료 기준";
+    cardSources.appendChild(sourcesSummary);
+    function sourceSection(className, headingText) {
+      var section = doc.createElement("section");
+      section.className = className;
+      var heading = doc.createElement("h4");
+      heading.textContent = headingText;
+      section.appendChild(heading);
+      return section;
+    }
+    var dataNotes = sourceSection("species-data-notes", "자료 해석 안내");
     if (taxon.rank === "subspecies") {
       var metadata = profile.subspecies_metadata;
       var metadataSection = metadata && metadata.section;
@@ -1711,11 +1750,7 @@
       description.textContent = metadataSource && descriptions.length ? descriptions.join(" ") : "이 아종만의 외형·분포 차이는 검토된 자료에서 아직 확인하지 못했습니다.";
       front.appendChild(description);
       if (metadataSource) {
-        var metadataDetails = doc.createElement("details");
-        metadataDetails.className = "card-details species-subspecies-sources";
-        var metadataSummary = doc.createElement("summary");
-        metadataSummary.textContent = "분류·아종 설명 출처";
-        metadataDetails.appendChild(metadataSummary);
+        var metadataDetails = sourceSection("card-details species-subspecies-sources", "분류·아종 설명 출처");
         metadataDetails.appendChild(safeLink(doc, metadata.source_name || "분류 출처", metadataSource));
         if (taxon.english_name_source_url) { metadataDetails.appendChild(safeLink(doc, "영어 이름 출처", taxon.english_name_source_url)); }
         var descriptionSources = {};
@@ -1728,7 +1763,7 @@
           rawRange.textContent = metadata.range_raw;
           metadataDetails.appendChild(rawRange);
         }
-        back.appendChild(metadataDetails);
+        cardSources.appendChild(metadataDetails);
       }
     }
 
@@ -1739,7 +1774,7 @@
     front.appendChild(photoArea);
     var photoSourcesSlot = doc.createElement("div");
     photoSourcesSlot.className = "species-photo-sources-slot";
-    back.appendChild(photoSourcesSlot);
+    cardSources.appendChild(photoSourcesSlot);
     var photoRetrying = false;
 
     function clearNode(node) {
@@ -1804,11 +1839,7 @@
     function renderPhotos(images, availability) {
       clearNode(photoArea);
       clearNode(photoSourcesSlot);
-      var photoSources = doc.createElement("details");
-      photoSources.className = "species-photo-sources";
-      var photoSummary = doc.createElement("summary");
-      photoSummary.textContent = "사진 출처 · 라이선스";
-      photoSources.appendChild(photoSummary);
+      var photoSources = sourceSection("species-photo-sources", "사진 출처 · 라이선스");
       var photoFigures = [];
       var media = doc.createElement("div");
       media.className = "species-media";
@@ -1954,6 +1985,8 @@
     var dietInfo = dietIconInfo(profile);
     if (dietInfo.icons.length) { front.appendChild(buildDietIcons(doc, dietInfo)); }
     var traitGroups = groupTraits(Array.isArray(profile.traits) ? profile.traits : []);
+    var traitSources = sourceSection("species-trait-sources", "형질 · 측정 자료 출처");
+    cardSources.appendChild(traitSources);
     var facts = doc.createElement("dl");
     facts.className = "species-quick-facts";
     ["body_mass", "diet_category", "habitat", "primary_lifestyle"].forEach(function (name) {
@@ -1979,8 +2012,10 @@
     traitNote.className = "species-note";
     traitNote.textContent =
       "수치는 자료에 기록된 종 평균입니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭(날개폭)과 다릅니다.";
-    back.appendChild(traitNote);
-    if (taxon.rank === "subspecies") { traitNote.textContent = "아종에 직접 연결된 형질입니다. 종 수준 참고 정보는 별도로 표시합니다."; }
+    if (taxon.rank === "subspecies") {
+      traitNote.textContent = "아종에 직접 연결된 형질입니다. 종 수준 참고 정보는 별도로 표시합니다.";
+      back.appendChild(traitNote);
+    } else { dataNotes.appendChild(traitNote); }
     if (taxon.rank === "subspecies" && Array.isArray(profile.reference_traits) && profile.reference_traits.length) {
       var reference = doc.createElement("details");
       reference.className = "card-details species-reference";
@@ -1995,7 +2030,8 @@
         provenance.className = "species-reference-provenance";
         provenance.textContent = "종 수준 참고 · " + nameRelationTaxonLabel(trait.reference_taxon);
         reference.appendChild(provenance);
-        reference.appendChild(buildTraitGrid(doc, groupTraits([trait])));
+        reference.appendChild(buildCardTraitGrid(doc, groupTraits([trait]), traitSources,
+          "종 수준 참고 · " + nameRelationTaxonLabel(trait.reference_taxon)));
       });
       back.appendChild(reference);
     }
@@ -2018,7 +2054,7 @@
       });
 
       if (prominentGroups.length > 0) {
-        back.appendChild(buildTraitGrid(doc, prominentGroups));
+        back.appendChild(buildCardTraitGrid(doc, prominentGroups, traitSources));
       }
       if (remainingGroups.length > 0) {
         var measurementsDetails = doc.createElement("details");
@@ -2026,18 +2062,19 @@
         var measurementsSummary = doc.createElement("summary");
         measurementsSummary.textContent = "측정값 더 보기 (" + remainingGroups.length + ")";
         measurementsDetails.appendChild(measurementsSummary);
-        measurementsDetails.appendChild(buildTraitGrid(doc, remainingGroups));
+        measurementsDetails.appendChild(buildCardTraitGrid(doc, remainingGroups, traitSources));
         back.appendChild(measurementsDetails);
       }
     }
 
-    back.appendChild(buildDietLegend(doc, dietInfo));
+    if (traitSources.children.length === 1) { cardSources.removeChild(traitSources); }
+    cardSources.appendChild(buildDietLegend(doc, dietInfo));
 
     if (typeof profile.vegetation_note === "string" && profile.vegetation_note.trim()) {
       var vegetationNote = doc.createElement("p");
       vegetationNote.className = "vegetation-note";
       vegetationNote.textContent = profile.vegetation_note;
-      back.appendChild(vegetationNote);
+      dataNotes.appendChild(vegetationNote);
     }
 
     var profileWarnings = Array.isArray(profile.warnings) ? profile.warnings : [];
@@ -2056,11 +2093,7 @@
       front.appendChild(warningNote);
     }
 
-    var conservationSection = doc.createElement("details");
-    conservationSection.className = "species-conservation-sources";
-    var conservationSummary = doc.createElement("summary");
-    conservationSummary.textContent = "멸종위기 등급 출처";
-    conservationSection.appendChild(conservationSummary);
+    var conservationSection = sourceSection("species-conservation-sources", "멸종위기 등급 출처");
     var conservationStatus = doc.createElement("p");
     conservationStatus.textContent = conservation.badgeText;
     conservationSection.appendChild(conservationStatus);
@@ -2094,7 +2127,7 @@
     conservationNote.className = "species-note";
     conservationNote.textContent = CONSERVATION_NOTE;
     conservationSection.appendChild(conservationNote);
-    back.appendChild(conservationSection);
+    cardSources.appendChild(conservationSection);
 
     var lineage = profile.lineage;
     var lineageItems = lineage && Array.isArray(lineage.items) ? lineage.items : [];
@@ -2102,9 +2135,12 @@
       var lineageDetails = doc.createElement("details");
       lineageDetails.className = "card-details";
       var lineageSummary = doc.createElement("summary");
-      var sourceParts = [lineage.taxonomy_source, lineage.taxonomy_release].filter(Boolean);
-      lineageSummary.textContent = "분류 계통 보기" + (sourceParts.length ? " (" + sourceParts.join(" · ") + ")" : "");
+      lineageSummary.textContent = "분류 계통 보기";
       lineageDetails.appendChild(lineageSummary);
+      var lineageSources = sourceSection("species-lineage-sources", "분류 계통 · 이름 출처");
+      var lineageBasis = doc.createElement("p");
+      lineageBasis.textContent = [lineage.taxonomy_source, lineage.taxonomy_release, lineage.concept_set_id].filter(Boolean).join(" · ") || "분류 출처 정보 없음";
+      lineageSources.appendChild(lineageBasis);
 
       var lineageList = doc.createElement("ul");
       lineageList.className = "lineage-list";
@@ -2119,18 +2155,18 @@
         li.textContent = rankLabel + ": " + namePart;
         var koreanNameSourceUrl = sanitizeUrl(lineageItem.korean_name_source_url);
         if (koreanNameSourceUrl) {
-          var koreanSourceLink = doc.createElement("a");
-          koreanSourceLink.href = koreanNameSourceUrl;
-          koreanSourceLink.textContent = " (국명 참고 출처)";
-          koreanSourceLink.target = "_blank";
-          koreanSourceLink.rel = "noopener noreferrer";
-          li.appendChild(koreanSourceLink);
+          var nameSource = doc.createElement("p");
+          nameSource.appendChild(safeLink(doc, rankLabel + ": " + namePart + " · 국명 참고 출처", koreanNameSourceUrl));
+          lineageSources.appendChild(nameSource);
         }
         lineageList.appendChild(li);
       });
       lineageDetails.appendChild(lineageList);
       back.appendChild(lineageDetails);
+      cardSources.appendChild(lineageSources);
     }
+    if (dataNotes.children.length > 1) { cardSources.appendChild(dataNotes); }
+    back.appendChild(cardSources);
 
     var footer = doc.createElement("div");
     footer.className = "species-card-footer";
