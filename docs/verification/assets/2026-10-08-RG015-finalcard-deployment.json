@@ -1,0 +1,22 @@
+{
+  "commit": "ddf002f78932633ba49ea68c3b7ab2c4a8212873",
+  "image": "robingraph-api:test-rg015finalcard-ddf002f",
+  "release": "/home/kimdove/RobinGraph-rg015finalcard-ddf002f",
+  "previous_image": "robingraph-api:test-rg015compactback-cb18d1f",
+  "container": "robingraph-api-test",
+  "container_status": "robingraph-api:test-rg015finalcard-ddf002f healthy",
+  "oci_revision": "ddf002f78932633ba49ea68c3b7ab2c4a8212873",
+  "public_assets": {
+    "chat.js": "b1cccf6cb7d8b46a57cae5d8d54e345a5e8cd96df7a518b9c037b43fb0a27eae",
+    "styles.css": "da81489a2e740d05d157624a0ddb7555767434f779e38ad8223ace027af5baeb"
+  },
+  "public_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "archive_sha256": "037ef0ea484faf746b80daa0c8c41a3b63e0b9a0da3ecd7deb9f208d53cf6833",
+  "deploy_and_verify_passed": true,
+  "public_assets_match_local": true
+}
