@@ -2155,6 +2155,73 @@
     var DRAG_SLOP = 6;
     var TOUCH_SLOP = 10;
     var DRAG_MAX_ANGLE = 90;
+    // Glossy coat (RG-015): a noninteractive overlay whose sheen position and
+    // strength are pure functions of the card's current rotation angle, so it
+    // travels with the card, reverses with the drag direction, and is animated
+    // with the same duration/easing as the card transform. At rest it is
+    // invisible (CSS opacity 0), so nothing can stay highlighted.
+    var gloss = doc.createElement("div");
+    gloss.className = "species-card-gloss";
+    gloss.setAttribute("aria-hidden", "true");
+    var glossAnimation = null;
+    // Strength rises quickly (concave) so the sheen is clearly visible by
+    // ~20-30deg yet is exactly 0 flat; the position stays linear in the angle.
+    function glossFrame(angle) {
+      var a = Math.max(-DRAG_MAX_ANGLE, Math.min(DRAG_MAX_ANGLE, angle));
+      var strength = Math.pow(Math.abs(a) / DRAG_MAX_ANGLE, 0.6) * 0.95;
+      return { backgroundPosition: (50 + a / DRAG_MAX_ANGLE * 30) + "% 0%", opacity: String(Math.round(strength * 1000) / 1000) };
+    }
+    function setGlossAngle(angle) {
+      if (!gloss.style) { return; }
+      var frame = glossFrame(angle);
+      gloss.style.backgroundPosition = frame.backgroundPosition;
+      gloss.style.opacity = frame.opacity;
+    }
+    function clearGloss() {
+      if (glossAnimation) { glossAnimation.cancel(); glossAnimation = null; }
+      if (gloss.style) { gloss.style.backgroundPosition = ""; gloss.style.opacity = ""; }
+    }
+    // Runs the sheen alongside a card animation: same options object values,
+    // started in the same task, keyframes derived from the same angles.
+    // stops: [{ angle, offset? }]
+    function animateGloss(stops, options) {
+      if (typeof gloss.animate !== "function") { return null; }
+      // The strength curve is not linear in the angle, so each segment is split
+      // into sub-keyframes at angles interpolated linearly in time. The card's
+      // transform interpolates the angle linearly under the same easing, so the
+      // sheen stays locked to the card's pose.
+      var SUBDIVISIONS = 4;
+      var frames = [];
+      stops.forEach(function (stop, index) {
+        var offset = stop.offset !== undefined ? stop.offset : index / (stops.length - 1);
+        if (index > 0) {
+          var prev = stops[index - 1];
+          var prevOffset = prev.offset !== undefined ? prev.offset : (index - 1) / (stops.length - 1);
+          // Sub-sample times plus the exact sign change (angle 0 => strength 0),
+          // which would otherwise be interpolated to a nonzero strength.
+          var times = [];
+          for (var k = 1; k < SUBDIVISIONS; k += 1) { times.push({ t: k / SUBDIVISIONS, zero: false }); }
+          if (prev.angle * stop.angle < 0) {
+            var zeroAt = prev.angle / (prev.angle - stop.angle);
+            times = times.filter(function (entry) { return Math.abs(entry.t - zeroAt) > 1e-6; });
+            times.push({ t: zeroAt, zero: true });
+            times.sort(function (a, b) { return a.t - b.t; });
+          }
+          times.forEach(function (entry) {
+            var mid = glossFrame(entry.zero ? 0 : prev.angle + (stop.angle - prev.angle) * entry.t);
+            mid.offset = prevOffset + (offset - prevOffset) * entry.t;
+            frames.push(mid);
+          });
+        }
+        var frame = glossFrame(stop.angle);
+        frame.offset = offset;
+        frames.push(frame);
+      });
+      var previous = glossAnimation;
+      glossAnimation = gloss.animate(frames, options);
+      if (previous) { previous.cancel(); }
+      return glossAnimation;
+    }
     function dragView() { return doc.defaultView || null; }
     function clearDragStyle(target) {
       if (target && target.style) {
@@ -2168,6 +2235,7 @@
       }
       card.setAttribute("data-dragging", "false");
       card.setAttribute("data-drag-commit", "false");
+      if (gloss.style) { gloss.style.backgroundPosition = ""; gloss.style.opacity = ""; }
     }
     function addDragGuard(owner, type, fn, capture) {
       if (!owner || !owner.addEventListener) { return; }
@@ -2201,6 +2269,7 @@
     function resetFlip() {
       flipGeneration += 1;
       if (flipAnimation) { flipAnimation.cancel(); flipAnimation = null; }
+      clearGloss();
       if (flipTarget) { flipTarget.setAttribute("data-flipping", "false"); }
       flip.disabled = false;
       cancelDrag();
@@ -2225,6 +2294,7 @@
         { transform: pose(0, 0, 1), filter: "brightness(1)" },
         { transform: pose(90 * direction, -3 * direction, .94), filter: "brightness(1.2)" }
       ], { duration: 270, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
+      animateGloss([{ angle: 0 }, { angle: 90 * direction }], { duration: 270, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
       flipAnimation.onfinish = function () {
         if (generation !== flipGeneration) { return; }
         var outgoing = flipAnimation;
@@ -2234,6 +2304,7 @@
           { transform: pose(5 * direction, -.6 * direction, 1.01), filter: "brightness(1.03)", offset: .82 },
           { transform: pose(0, 0, 1), filter: "brightness(1)" }
         ], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
+        animateGloss([{ angle: -90 * direction }, { angle: 5 * direction, offset: .82 }, { angle: 0 }], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
         outgoing.cancel();
         flipAnimation.onfinish = function () {
           if (generation === flipGeneration) { resetFlip(); }
@@ -2305,6 +2376,7 @@
           { transform: dragPose(angle, 1 - Math.abs(angle) / 900) },
           { transform: dragPose(0, 1) }
         ], { duration: 200, easing: "cubic-bezier(.2,.7,.3,1)", fill: "both" });
+        animateGloss([{ angle: angle }, { angle: 0 }], { duration: 200, easing: "cubic-bezier(.2,.7,.3,1)", fill: "both" });
         flipAnimation.onfinish = function () { if (generation === flipGeneration) { resetFlip(); } };
         return;
       }
@@ -2314,6 +2386,7 @@
         { transform: dragPose(angle, 1 - Math.abs(angle) / 900) },
         { transform: dragPose(DRAG_MAX_ANGLE * direction, .94), filter: "brightness(1.2)" }
       ], { duration: remaining, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
+      animateGloss([{ angle: angle }, { angle: DRAG_MAX_ANGLE * direction }], { duration: remaining, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
       flipAnimation.onfinish = function () {
         if (generation !== flipGeneration) { return; }
         var outgoing = flipAnimation;
@@ -2322,6 +2395,7 @@
           { transform: dragPose(-DRAG_MAX_ANGLE * direction, .94), filter: "brightness(1.2)" },
           { transform: dragPose(0, 1), filter: "brightness(1)" }
         ], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
+        animateGloss([{ angle: -DRAG_MAX_ANGLE * direction }, { angle: 0 }], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
         outgoing.cancel();
         flipAnimation.onfinish = function () { if (generation === flipGeneration) { resetFlip(); } };
       };
@@ -2395,6 +2469,7 @@
       if (drag.target.style) {
         drag.target.style.transform = dragPose(drag.angle, 1 - Math.abs(drag.angle) / 900);
       }
+      setGlossAngle(drag.angle);
     });
     card.addEventListener("pointerup", function (event) {
       if (!drag || event.pointerId !== drag.pointerId) { return; }
@@ -2439,6 +2514,7 @@
     dragHint.textContent = "카드 빈 곳을 좌우로 끌어도 뒤집혀요";
     footer.appendChild(dragHint);
     card.appendChild(footer);
+    card.appendChild(gloss);
     return card;
   }
 
