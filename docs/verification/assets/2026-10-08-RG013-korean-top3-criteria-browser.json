@@ -1,0 +1,99 @@
+{
+  "scope": "Actual NAS TEST Chrome with real API/DB; no mocked HTTP",
+  "passed": true,
+  "results": [
+    {
+      "width": 900,
+      "priority": "korean_name_then_weighted_score",
+      "scanned_count": 11130,
+      "peers": [
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "label": "흰뺨검둥오리",
+          "scientific_name": "Anas zonorhyncha",
+          "score": 98.28,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:548",
+          "label": "미국오리",
+          "scientific_name": "Anas rubripes",
+          "score": 94.83,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:566",
+          "label": "쇠오리",
+          "scientific_name": "Anas crecca",
+          "score": 84.48,
+          "rank": 3
+        }
+      ],
+      "weights": [
+        "계통50%",
+        "분류30%",
+        "서식 환경10%",
+        "먹이 생태10%"
+      ],
+      "details_initially_folded": true,
+      "details_expand_passed": true,
+      "genuine_comparison_passed": true,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "priority": "korean_name_then_weighted_score",
+      "scanned_count": 11130,
+      "peers": [
+        {
+          "id": "avilist-taxon:v2025b:540",
+          "label": "흰뺨검둥오리",
+          "scientific_name": "Anas zonorhyncha",
+          "score": 98.28,
+          "rank": 1
+        },
+        {
+          "id": "avilist-taxon:v2025b:548",
+          "label": "미국오리",
+          "scientific_name": "Anas rubripes",
+          "score": 94.83,
+          "rank": 2
+        },
+        {
+          "id": "avilist-taxon:v2025b:566",
+          "label": "쇠오리",
+          "scientific_name": "Anas crecca",
+          "score": 84.48,
+          "rank": 3
+        }
+      ],
+      "weights": [
+        "계통50%",
+        "분류30%",
+        "서식 환경10%",
+        "먹이 생태10%"
+      ],
+      "details_initially_folded": true,
+      "details_expand_passed": true,
+      "genuine_comparison_passed": false,
+      "errors": []
+    }
+  ],
+  "other": {
+    "name": "곤줄박이",
+    "peers": [
+      {
+        "label": "북방쇠박새",
+        "score": 74.29
+      },
+      {
+        "label": "쇠박새",
+        "score": 74.29
+      },
+      {
+        "label": "진박새",
+        "score": 68.57
+      }
+    ]
+  }
+}
