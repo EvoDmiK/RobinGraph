@@ -167,6 +167,39 @@ class JevChatTest(unittest.TestCase):
         self.assertIsNone(extract_name("청둥오리 그리고 왜가리 아종 알려줘","subspecies"))
         self.assertIsNone(extract_name("그 새 아종 알려줘","subspecies"))
 
+    def test_noisy_single_bird_requests_keep_the_model_topic_and_exact_name(self):
+        question = "곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요"
+        profile = Mock(return_value={**PROFILE, 'summary': '확인된 종 소개'})
+        client = self.make('profile', species_profile_handler=profile)
+        result = client.post('/v1/chat', json={'question': question}).json()
+        self.assertEqual('answer', result['disposition'])
+        self.router.classify.assert_called_once_with(question)
+        profile.assert_called_once_with('곤줄박이')
+        for topic, text in [('diet', '곤줄박이 먹이 알려주세용 요구르트 아줌마 요구르트 주세요'),
+                            ('subspecies', '곤줄박이 아종 알려주세용 요구르트 아줌마 요구르트 주세요')]:
+            with self.subTest(topic=topic):
+                self.assertEqual('곤줄박이', extract_name(text, topic))
+        self.assertEqual('곤줄박', extract_name('곤줄박 설명 해줄레이요', 'profile'))
+
+    def test_noisy_requests_still_respect_uncertainty_and_conflicting_filters(self):
+        question = '곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요'
+        for label, failure, filters in [
+                (None, 'uncertain', None), (None, 'low_confidence', None),
+                ('profile', None, {'kind': 'profile', 'name': '왜가리'})]:
+            with self.subTest(label=label, failure=failure, filters=filters):
+                profile, semantic = Mock(), Mock()
+                client = self.make(label, failure, species_profile_handler=profile, semantic_router=semantic)
+                result = client.post('/v1/chat', json={'question': question, 'filters': filters}).json()
+                self.assertEqual('clarify', result['disposition'])
+                profile.assert_not_called()
+                semantic.classify.assert_not_called()
+        # Even a confident profile decision cannot choose between source names.
+        profile = Mock()
+        client = self.make('profile', species_profile_handler=profile)
+        result = client.post('/v1/chat', json={'question': '곤줄박이 말고 박새 설명해줘'}).json()
+        self.assertEqual('clarify', result['disposition'])
+        profile.assert_not_called()
+
     def test_general_name_relation_answer_preserves_existing_alias_behavior(self):
         profile=Mock()
         relationships={"is_search_term":True,"relations":[{"entity_kind":"common_name","taxon":PROFILE["taxon"]}],
