@@ -1351,12 +1351,104 @@ test("species popup opens from its trigger and closes only from close or outside
   dialog.dispatch("click", { target: card, clientX: 200, clientY: 200 });
   dialog.dispatch("click", { target: dialog, clientX: 110, clientY: 110 });
   assert.equal(closes, 0, "clicks inside the card must preserve it");
+  dialog.dispatch("pointerdown", { target: dialog, pointerId: 1, button: 0, clientX: 20, clientY: 200 });
+  dialog.dispatch("pointerup", { target: dialog, pointerId: 1, button: 0, clientX: 20, clientY: 200 });
   dialog.dispatch("click", { target: dialog, clientX: 20, clientY: 200 });
   assert.equal(closes, 1);
   dialog.children[0].dispatch("click");
   assert.equal(closes, 2);
   trigger.dispatch("click");
   assert.equal(opens, 2, "a closed card can be reopened");
+});
+
+function popupPointerFixture() {
+  const card = createFakeElement("div");
+  let resets = 0;
+  card.showFront = () => { resets += 1; };
+  const popup = chat.buildSpeciesPopup({ createElement: createFakeElement }, card, { taxon: { korean_name: "청둥오리" } });
+  const [trigger, dialog] = popup.children;
+  let closes = 0;
+  dialog.showModal = () => {};
+  dialog.close = () => { closes += 1; dialog.dispatch("close"); };
+  dialog.getBoundingClientRect = () => ({ left: 100, right: 500, top: 100, bottom: 700 });
+  const outside = (extra) => Object.assign({ target: dialog, pointerId: 1, pointerType: "mouse", button: 0, isPrimary: true, clientX: 20, clientY: 200 }, extra);
+  const normalOutsideClick = (extra) => {
+    for (const type of ["pointerdown", "pointerup", "click"]) { dialog.dispatch(type, outside(extra)); }
+  };
+  return { card, trigger, dialog, outside, normalOutsideClick, closes: () => closes, resets: () => resets };
+}
+
+test("popup survives inside-to-outside releases from either face, photo, text, and dialog padding while its bounds rotate", () => {
+  for (const start of ["front", "back", "img", "span", "padding"]) {
+    const f = popupPointerFixture();
+    const target = start === "padding" ? f.dialog : createFakeElement(start);
+    f.dialog.dispatch("pointerdown", f.outside({ target, clientX: 110, clientY: 200 }));
+    // Animation can shrink or move the dialog before the trailing click.
+    f.dialog.getBoundingClientRect = () => ({ left: 160, right: 450, top: 100, bottom: 700 });
+    f.dialog.dispatch("pointerup", f.outside());
+    f.dialog.dispatch("click", f.outside());
+    assert.equal(f.closes(), 0, start + " must not become a backdrop click after dragging");
+    f.normalOutsideClick();
+    assert.equal(f.closes(), 1, "a later intentional outside click must still close");
+  }
+});
+
+test("popup dismisses an intentional backdrop press and release for mouse and touch", () => {
+  for (const pointerType of ["mouse", "touch"]) {
+    const f = popupPointerFixture();
+    f.normalOutsideClick({ pointerType, pointerId: 7 });
+    assert.equal(f.closes(), 1);
+    assert.equal(f.resets(), 1, "native close resets the card face");
+  }
+});
+
+test("popup does not dismiss when a backdrop press ends inside the card or padded dialog", () => {
+  for (const cardTarget of [true, false]) {
+    const f = popupPointerFixture();
+    f.dialog.dispatch("pointerdown", f.outside());
+    f.dialog.dispatch("pointerup", f.outside({ target: cardTarget ? f.card : f.dialog, clientX: 110 }));
+    // Even a retargeted outside click must not revive the rejected release.
+    f.dialog.dispatch("click", f.outside());
+    assert.equal(f.closes(), 0);
+  }
+});
+
+test("popup rejects cancelled, incomplete, mismatched, and non-primary backdrop gestures", () => {
+  const cases = {
+    cancelled: f => { f.dialog.dispatch("pointerdown", f.outside()); f.dialog.dispatch("pointercancel", f.outside()); f.dialog.dispatch("pointerup", f.outside()); },
+    missingPress: f => f.dialog.dispatch("pointerup", f.outside()),
+    missingRelease: f => f.dialog.dispatch("pointerdown", f.outside()),
+    otherRelease: f => { f.dialog.dispatch("pointerdown", f.outside()); f.dialog.dispatch("pointerup", f.outside({ pointerId: 2 })); },
+    otherClick: f => { f.dialog.dispatch("pointerdown", f.outside()); f.dialog.dispatch("pointerup", f.outside()); },
+    extraTouch: f => { f.dialog.dispatch("pointerdown", f.outside()); f.dialog.dispatch("pointerdown", f.outside({ pointerId: 2, isPrimary: false })); f.dialog.dispatch("pointerup", f.outside()); },
+    rightButton: f => { f.dialog.dispatch("pointerdown", f.outside({ button: 2 })); f.dialog.dispatch("pointerup", f.outside({ button: 2 })); },
+  };
+  for (const [name, setup] of Object.entries(cases)) {
+    const f = popupPointerFixture(); setup(f);
+    f.dialog.dispatch("click", f.outside(name === "otherClick" ? { pointerId: 2 } : {}));
+    assert.equal(f.closes(), 0, name + " must not dismiss the dialog");
+    f.normalOutsideClick();
+    assert.equal(f.closes(), 1, name + " must not disable later backdrop clicks");
+  }
+});
+
+test("popup consumes each backdrop click once and clears pending presses on close and reopen", () => {
+  const f = popupPointerFixture();
+  f.normalOutsideClick();
+  f.dialog.dispatch("click", f.outside());
+  assert.equal(f.closes(), 1, "a stale click cannot dismiss again");
+  for (const reset of [() => f.trigger.dispatch("click"), () => f.dialog.dispatch("close")]) {
+    f.dialog.dispatch("pointerdown", f.outside());
+    f.dialog.dispatch("pointerup", f.outside());
+    reset();
+    f.dialog.dispatch("click", f.outside());
+    assert.equal(f.closes(), 1, "close/reopen clears an unfinished click sequence");
+  }
+  f.dialog.children[0].dispatch("click");
+  assert.equal(f.closes(), 2, "the explicit close button still works after rejected gestures");
+  f.trigger.dispatch("click");
+  f.normalOutsideClick();
+  assert.equal(f.closes(), 3, "the reopened popup accepts a fresh backdrop click");
 });
 
 test("card front contains compact facts; photo attribution and full trait sources are on the reversible back", () => {
