@@ -1217,3 +1217,24 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .similarity-calculation-details summary { cursor: pointer; }
 .similarity-calculation-details summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 @media (max-width: 420px) { .similarity-weight-badges { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Mouse drag-to-flip (RG-015): pointer drags rotate the card; touch keeps native scroll. */
+.species-card[data-dragging="true"], .species-popup[data-dragging="true"] { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+.species-popup[data-dragging="true"] { will-change: transform; }
+.species-card img { -webkit-user-drag: none; }
+@media (prefers-reduced-motion: reduce) {
+  /* No continuous 3D rotation; show a clear ready-to-flip outline instead. */
+  .species-card[data-dragging="true"][data-drag-commit="true"] { outline: 3px solid #4f7a2a; outline-offset: -3px; }
+  .species-card[data-dragging="true"][data-drag-commit="false"] { outline: 2px dashed #7e9a55; outline-offset: -3px; }
+}
+
+/* Drag hint and grab cursor appear only for fine pointers; text keeps its native cursor. */
+.species-card-drag-hint { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .species-popup .species-card { cursor: grab; }
+  .species-popup .species-card p, .species-popup .species-card li, .species-popup .species-card dt,
+  .species-popup .species-card dd, .species-popup .species-card h3, .species-popup .species-card summary,
+  .species-popup .species-card blockquote { cursor: auto; }
+  .species-popup .species-card-flip { cursor: pointer; }
+  .species-card-drag-hint { display: block; flex-basis: 100%; margin-top: 4px; font-size: .72rem; color: #4a5f31; }
+}

@@ -2149,11 +2149,49 @@
     var flipAnimation = null;
     var flipTarget = null;
     var flipGeneration = 0;
+    var drag = null;
+    var suppressClick = false;
+    var DRAG_SLOP = 6;
+    var DRAG_MAX_ANGLE = 90;
+    function dragView() { return doc.defaultView || null; }
+    function clearDragStyle(target) {
+      if (target && target.style) {
+        target.style.transform = "";
+        target.style.filter = "";
+        target.style.userSelect = "";
+      }
+      if (target) {
+        target.setAttribute("data-dragging", "false");
+        target.setAttribute("data-drag-commit", "false");
+      }
+      card.setAttribute("data-dragging", "false");
+      card.setAttribute("data-drag-commit", "false");
+    }
+    function detachDragGuards() {
+      var view = dragView();
+      if (view && view.removeEventListener && drag && drag.guard) {
+        view.removeEventListener("blur", drag.guard);
+        view.removeEventListener("resize", drag.guard);
+      }
+    }
+    // Drops any in-progress drag without flipping: used by pointercancel,
+    // lostpointercapture, blur/resize, reopening, and conversation reset.
+    function cancelDrag() {
+      if (!drag) { return; }
+      var current = drag;
+      detachDragGuards();
+      drag = null;
+      if (current.captured && card.releasePointerCapture) {
+        try { card.releasePointerCapture(current.pointerId); } catch (error) { /* capture already gone */ }
+      }
+      clearDragStyle(current.target);
+    }
     function resetFlip() {
       flipGeneration += 1;
       if (flipAnimation) { flipAnimation.cancel(); flipAnimation = null; }
       if (flipTarget) { flipTarget.setAttribute("data-flipping", "false"); }
       flip.disabled = false;
+      cancelDrag();
     }
     card.showFront = function () { resetFlip(); showFace(false); };
     flip.addEventListener("click", function () {
@@ -2190,7 +2228,167 @@
         };
       };
     });
+
+    // Mouse-only drag-to-flip. Touch/pen keep native scroll and tap behavior.
+    // The gesture may only start on blank card surface (the card itself and
+    // its layout containers). Any text element, control, link, photo or
+    // editable/draggable node keeps its native behavior, so mouse text
+    // selection never needs a modifier key.
+    var DRAG_SURFACE_CLASSES = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area"];
+    function hasClass(node, name) {
+      return (" " + String(node.className || "") + " ").indexOf(" " + name + " ") !== -1;
+    }
+    function isDragExempt(node) {
+      if (node !== card && !(node && DRAG_SURFACE_CLASSES.some(function (name) { return hasClass(node, name); }))) { return true; }
+      while (node && node !== card) {
+        var tag = String(node.tagName || "").toLowerCase();
+        if (tag === "a" || tag === "button" || tag === "summary" || tag === "input" || tag === "select" ||
+            tag === "textarea" || tag === "label" || tag === "video" || tag === "audio" || tag === "img" ||
+            tag === "picture" || tag === "canvas" || tag === "svg") { return true; }
+        if (node.isContentEditable) { return true; }
+        var attr = function (name) { return node.getAttribute ? node.getAttribute(name) : null; };
+        var editable = attr("contenteditable");
+        if (editable !== null && editable !== "false") { return true; }
+        if (attr("draggable") === "true") { return true; }
+        var role = attr("role");
+        if (role === "button" || role === "link" || role === "textbox" || role === "img") { return true; }
+        node = node.parentNode;
+      }
+      return false;
+    }
+    function dragTarget() {
+      return card.parentNode && String(card.parentNode.tagName).toLowerCase() === "dialog" ? card.parentNode : card;
+    }
+    function dragPose(angle, scale) {
+      return "perspective(1100px) rotateY(" + angle + "deg) scale(" + scale + ")";
+    }
+    function reducedMotionNow() {
+      var view = dragView();
+      return !!(view && view.matchMedia && view.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+    function dragWidth(target) {
+      var rect = target.getBoundingClientRect ? target.getBoundingClientRect() : null;
+      var width = rect && rect.width ? rect.width : (target.offsetWidth || 320);
+      return Math.max(width, 1);
+    }
+    function dragThreshold(width) { return Math.max(40, width * 0.25); }
+    function finishDrag(commit) {
+      var current = drag;
+      if (!current || !current.active) { cancelDrag(); return; }
+      var target = current.target;
+      var angle = current.angle;
+      var direction = current.dx >= 0 ? 1 : -1;
+      var showBack = back.hidden;
+      cancelDrag();
+      if (commit && (reducedMotion_or_no_animate(target))) { showFace(showBack); return; }
+      if (typeof target.animate !== "function") { if (commit) { showFace(showBack); } return; }
+      flipTarget = target;
+      flip.disabled = true;
+      var generation = ++flipGeneration;
+      if (!commit) {
+        flipAnimation = target.animate([
+          { transform: dragPose(angle, 1 - Math.abs(angle) / 900) },
+          { transform: dragPose(0, 1) }
+        ], { duration: 200, easing: "cubic-bezier(.2,.7,.3,1)", fill: "both" });
+        flipAnimation.onfinish = function () { if (generation === flipGeneration) { resetFlip(); } };
+        return;
+      }
+      target.setAttribute("data-flipping", "true");
+      var remaining = Math.max(60, 270 * (1 - Math.abs(angle) / DRAG_MAX_ANGLE));
+      flipAnimation = target.animate([
+        { transform: dragPose(angle, 1 - Math.abs(angle) / 900) },
+        { transform: dragPose(DRAG_MAX_ANGLE * direction, .94), filter: "brightness(1.2)" }
+      ], { duration: remaining, easing: "cubic-bezier(.45,0,.8,.4)", fill: "both" });
+      flipAnimation.onfinish = function () {
+        if (generation !== flipGeneration) { return; }
+        var outgoing = flipAnimation;
+        showFace(showBack);
+        flipAnimation = target.animate([
+          { transform: dragPose(-DRAG_MAX_ANGLE * direction, .94), filter: "brightness(1.2)" },
+          { transform: dragPose(0, 1), filter: "brightness(1)" }
+        ], { duration: 390, easing: "cubic-bezier(.15,.65,.25,1)", fill: "both" });
+        outgoing.cancel();
+        flipAnimation.onfinish = function () { if (generation === flipGeneration) { resetFlip(); } };
+      };
+    }
+    function reducedMotion_or_no_animate(target) {
+      return reducedMotionNow() || typeof target.animate !== "function";
+    }
+    card.addEventListener("pointerdown", function (event) {
+      suppressClick = false;
+      if (drag || flip.disabled) { return; }
+      if (event.pointerType !== "mouse" || event.button !== 0 || event.isPrimary === false) { return; }
+      if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) { return; }
+      if (isDragExempt(event.target)) { return; }
+      drag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, dx: 0, angle: 0, active: false, captured: false, target: dragTarget(), guard: null };
+      drag.guard = function () { cancelDrag(); };
+      var view = dragView();
+      if (view && view.addEventListener) {
+        view.addEventListener("blur", drag.guard);
+        view.addEventListener("resize", drag.guard);
+      }
+    });
+    card.addEventListener("pointermove", function (event) {
+      if (!drag || event.pointerId !== drag.pointerId) { return; }
+      // Button released outside the window/card while we weren't capturing.
+      if (event.buttons === 0) { cancelDrag(); return; }
+      var dx = event.clientX - drag.startX;
+      var dy = event.clientY - drag.startY;
+      if (!drag.active) {
+        if (Math.abs(dx) < DRAG_SLOP || Math.abs(dx) < Math.abs(dy) * 1.2) {
+          if (Math.abs(dy) > DRAG_SLOP * 2 && Math.abs(dy) > Math.abs(dx)) { cancelDrag(); }
+          return;
+        }
+        drag.active = true;
+        drag.width = dragWidth(drag.target);
+        if (card.setPointerCapture) {
+          try { card.setPointerCapture(drag.pointerId); drag.captured = true; } catch (error) { /* pointer already released */ }
+        }
+        var view = dragView();
+        var selection = view && view.getSelection ? view.getSelection() : null;
+        if (selection && selection.removeAllRanges) { selection.removeAllRanges(); }
+        if (drag.target.style) { drag.target.style.userSelect = "none"; }
+        drag.target.setAttribute("data-dragging", "true");
+        card.setAttribute("data-dragging", "true");
+      }
+      event.preventDefault();
+      drag.dx = dx;
+      var commit = Math.abs(dx) >= dragThreshold(drag.width);
+      drag.commit = commit;
+      drag.target.setAttribute("data-drag-commit", String(commit));
+      card.setAttribute("data-drag-commit", String(commit));
+      if (reducedMotionNow()) { return; }
+      drag.angle = Math.max(-DRAG_MAX_ANGLE, Math.min(DRAG_MAX_ANGLE, dx / drag.width * 120));
+      if (drag.target.style) {
+        drag.target.style.transform = dragPose(drag.angle, 1 - Math.abs(drag.angle) / 900);
+      }
+    });
+    card.addEventListener("pointerup", function (event) {
+      if (!drag || event.pointerId !== drag.pointerId) { return; }
+      if (!drag.active) { cancelDrag(); return; }
+      suppressClick = true;
+      var commit = Math.abs(drag.dx) >= dragThreshold(drag.width);
+      finishDrag(commit);
+      var view = dragView();
+      if (view && view.setTimeout) { view.setTimeout(function () { suppressClick = false; }, 0); }
+    });
+    card.addEventListener("pointercancel", function () { cancelDrag(); });
+    card.addEventListener("lostpointercapture", function () { if (drag && drag.captured) { cancelDrag(); } });
+    // A drag must not also fire the button/link click under the release point.
+    card.addEventListener("click", function (event) {
+      if (!suppressClick) { return; }
+      suppressClick = false;
+      event.preventDefault();
+      if (event.stopPropagation) { event.stopPropagation(); }
+    }, true);
+    card.addEventListener("dragstart", function (event) { if (drag) { event.preventDefault(); } });
+
     footer.appendChild(flip);
+    var dragHint = doc.createElement("span");
+    dragHint.className = "species-card-drag-hint";
+    dragHint.setAttribute("aria-hidden", "true");
+    dragHint.textContent = "카드 빈 곳을 좌우로 끌어도 뒤집혀요";
+    footer.appendChild(dragHint);
     card.appendChild(footer);
     return card;
   }
