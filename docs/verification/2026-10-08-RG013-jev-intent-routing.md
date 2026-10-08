@@ -76,3 +76,48 @@ Jev 호출 지연은 calibration p50 1,806/p95 2,309ms, heldout p50 1,803/p95 1,
 - 공급자는 모델 실제 버전과 USD 비용을 반환하지 않는다. 크레딧 외 금액을 추정해 확정하지 않는다.
 - 출처 없는 자료나 다른 활성 분류판 자료로 답변하지 않는다. 아종 번역 확대와 보류 작업 재개는 별도 지시 대상이다.
 - `graphify update .` AST 갱신을 실행했다. SQL 추출기는 미설치 경고가 있으며 해당 그래프가 SQL 관계 검증을 대신하지 않는다.
+
+## 제공된 테스트 DB로 통합 테스트 재실행 (2026-10-08)
+
+### 재실행 배경과 원인 정정
+
+사용자가 이미 제공한 루트 `.env`에 PostgreSQL `robingraph_test`와 Neo4j 테스트 서버 설정이 있었다. 이전 600개/558개 통과/42개 건너뜀 결과는 테스트 DB가 없어서 발생한 것이 아니다. `unittest discover`는 CLI의 `load_local_environment()`를 호출하지 않으며, 당시 통합 테스트 opt-in 옵션도 활성화하지 않았다. 기존 설명에서 테스트 DB 미제공처럼 읽히는 부분을 정정한다.
+
+### 실행 환경과 격리
+
+제공된 DB 설정으로 실제 접속을 먼저 확인한 뒤 PostgreSQL에는 실행마다 새 `rg013_integration_test_<임의값>` 스키마를 만들었다. 이름 관계 테스트가 활성 분류판을 바꾸므로 기존 `ingest` 스키마를 사용하지 않았다. 각 실행의 임시 스키마는 종료 후 삭제했다. Neo4j는 로컬 Docker `neo4j-test`의 제공된 접속 설정을 사용했다. fixture·테스트 네임스페이스 데이터를 쓰고 복원하는 기존 통합 테스트를 실제 실행했다.
+
+`.env`에서 DB 관련 `NEO4J_*`와 `ROBINGRAPH_PG_*` 값만 테스트 프로세스에 로드하고, 아래 옵션을 테스트 모듈 검색 **전에** 설정했다. Jev/Gemini API 키는 주입하지 않았다.
+
+- `ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1`
+- `ROBINGRAPH_POSTGRES_INTEGRATION_TESTS=1`
+- `ROBINGRAPH_NAME_RELATIONS_INTEGRATION_TESTS=1`
+- `ROBINGRAPH_PG_SCHEMA=rg013_integration_test_<임의값>`
+- `ROBINGRAPH_SUBSPECIES_SOURCE_DIR=<고정 원본 3개가 있는 캐시 디렉터리>`
+
+기존 테스트 가상환경에 선택 의존성 MLflow tracing 3.14.0, google-genai 2.8.0, langchain 1.3.18 및 원본 재생성용 pypdf 6.19.0/cryptography 50.0.2를 설치했다. AviList JSON·DOF PDF·Birds NZ PDF의 기존 캐시를 연결했으며, 원본 검증 테스트가 고정 해시와 재생성 결과를 검사했다.
+
+### 실행 중 실패와 수정
+
+첫 임시 실행기는 저장소 밖 `/tmp`에서 시작하여 프로젝트 루트가 Python import 경로에 빠졌다. 이 실행은 524개 발견/오류 29개였으며 성공으로 계산하지 않는다. 실행기에서 프로젝트 루트를 import 경로에 추가했다. 다음 실행은 600개 중 599개 통과/오류 1개/건너뜀 0개였다. 남은 오류는 원본 PDF 재생성에 필요한 `pypdf` 미설치였고, 빌더에 명시된 버전의 파서 의존성을 설치한 뒤 전체를 다시 실행했다. 애플리케이션 구현이나 테스트의 검증 조건은 변경하지 않았다.
+
+### 최종 검증 결과
+
+전체 Python **600개 발견·600개 통과·실패 0·오류 0·건너뜀 0**, 실행 시간 **37.856초**. 이전에 건너뛴 42개도 모두 실행·통과했다. 임시 PostgreSQL 스키마 삭제를 확인했다. [재실행 결과 JSON](assets/2026-10-08-RG013-integration-rerun.json)에 실제 범위와 환경·선행 실패를 기록했다.
+
+| 이전 건너뜀 항목 | 개수 | 이번 검증 범위 |
+| --- | ---: | --- |
+| Neo4j embedding flow | 1 | 실제 Neo4j 인덱싱·검색, 임베딩 응답은 HTTP stub |
+| n8n DB 통합 | 2 | 실제 Neo4j Cypher 멱등성·동명이명·원자성 |
+| 이름 관계 통합 | 1 | 실제 PostgreSQL/Neo4j, loader subprocess·활성화·역검색·채팅 |
+| Neo4j hybrid | 9 | 실제 DB의 fulltext/vector 검색, 벡터는 결정적 테스트 값 |
+| Neo4j fixture·정책 회귀 | 10 | 실제 DB 적재·검색·정책 재조정 |
+| PostgreSQL ingestion | 9 | 실제 DB 마이그레이션·적재·멱등성·outbox·활성화 |
+| MLflow/Gemini 선택 SDK | 8 | 실제 SDK와 모의 HTTP/exporter; 외부 유료 API/추적 서버 호출 검증과 구분 |
+| 고정 원본 검사·재생성 | 2 | 실제 캐시 원본 해시·AviList 식별자·산출물 byte 일치 |
+
+이번 재실행은 추가 Jev 유료 호출 없이 수행했다. 앞서 수행한 실제 Jev API 평가·공개 API·브라우저·NAS MLflow 검증 결과는 별도 검증으로 유지한다. 프런트엔드 변경은 없으므로 앞서 통과한 134개 결과를 재실행 결과로 표현하지 않는다.
+
+### 변경 파일·배포·커밋 및 남은 한계
+
+변경은 이 검증 문서와 재실행 결과 JSON, Obsidian 상세 기록·백로그 검증 결과다. 기능 코드·DB 연결 설정 파일은 수정하지 않았다. 문서 변경은 별도 커밋으로 `dev`에 보존한다. 이번에는 배포하지 않았으며 NAS TEST 구현 이미지는 기존 `42f4927` 그대로다. 테스트 통과가 의도 평가 정답표의 품질이나 일반 영어 통칭·자연어 관찰 필터 자동 해소 등 기존 범위 밖 항목을 해결했다는 뜻은 아니다.
