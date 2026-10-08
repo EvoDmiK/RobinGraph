@@ -3017,7 +3017,7 @@ test("Jev supplied subspecies lists from another parent or release are rejected"
   }
 });
 
-function progressiveDom(targeted, comparePeer) {
+function rawProgressiveDom(targeted, comparePeer) {
   const profileRequest = deferred();
   const similarRequest = deferred();
   const payload = fakeProfilePayload({ enrichment_pending: true, images: [], sections: [
@@ -3043,6 +3043,15 @@ function progressiveDom(targeted, comparePeer) {
   dom.elementsById["question-input"].value = targeted ? "청둥오리 아종 알려줘" : "청둥오리에 대해 알려줘";
   pressKey(dom, {});
   return { dom, payload, profileRequest, similarRequest };
+}
+
+function progressiveDom(targeted, comparePeer) {
+  const context = rawProgressiveDom(targeted, comparePeer);
+  setImmediate(() => {
+    const button = collectAllNodes(context.dom.elementsById.history).find(n => n.className === "species-enrichment-load");
+    if (button) button.dispatch("click");
+  });
+  return context;
 }
 
 test("progressive chat renders the answer and unlocks input before profile and recommendations settle", async () => {
@@ -3239,4 +3248,50 @@ test("completed enrichment updates the shared profile used by later comparisons"
   const cards = collectAllNodes(comparison).filter(n => /^species-card risk-/.test(n.className));
   assert.ok(collectAllNodes(cards[0]).some(n => n.tagName === "img"));
   assert.equal(collectedText(cards[0]).includes("사진을 불러오는 중"), false);
+});
+
+test("extra information only loads on an explicit click and never repeats while pending or completed", async () => {
+  const { dom, profileRequest, similarRequest } = rawProgressiveDom(false);
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const button = collectAllNodes(answer).find(n => n.className === "species-enrichment-load");
+  assert.equal(button.textContent, "더 알아보기");
+  assert.equal(button.disabled, false);
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0);
+  assert.match(collectedText(answer), /더 알아보기.*눌러 확인하세요/);
+  assert.equal(collectedText(answer).includes("불러오는 중"), false);
+  button.dispatch("click"); button.dispatch("click");
+  await settleEventPath();
+  assert.equal(button.disabled, true);
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 2);
+  profileRequest.resolve(jsonResponse(fakeProfilePayload().result.profile));
+  similarRequest.resolve(jsonResponse(similarityFixture()));
+  await settleEventPath();
+  button.dispatch("click"); await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 2);
+});
+
+test("a previous answer that has not started enrichment can still be expanded after a new question", async () => {
+  const { dom } = rawProgressiveDom(false);
+  await settleEventPath();
+  const oldAnswer = messageRows(dom.elementsById.history)[1];
+  const button = collectAllNodes(oldAnswer).find(n => n.className === "species-enrichment-load");
+  dom.elementsById["question-input"].value = "다른 질문";
+  pressKey(dom, {}); await settleEventPath();
+  assert.equal(button.disabled, false);
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0);
+  button.dispatch("click"); await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 2);
+});
+
+test("clearing chat invalidates an unused extra-information button without making a request", async () => {
+  const { dom } = rawProgressiveDom(false);
+  await settleEventPath();
+  const oldAnswer = messageRows(dom.elementsById.history)[1];
+  const button = collectAllNodes(oldAnswer).find(n => n.className === "species-enrichment-load");
+  dom.elementsById["clear-button"].dispatch("click");
+  assert.equal(button.disabled, true);
+  button.dispatch("click"); await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0);
+  assert.equal(messageRows(dom.elementsById.history).length, 0);
 });
