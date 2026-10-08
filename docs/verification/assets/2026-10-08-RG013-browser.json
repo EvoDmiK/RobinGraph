@@ -1,0 +1,46 @@
+{
+  "scope": "Actual public NAS TEST chat UI: filled textarea, clicked send, real Jev/API/DB; no mocked responses or component injection",
+  "passed": true,
+  "results": [
+    {
+      "question": "청둥오리 아종 알려줘",
+      "width": 390,
+      "route_method": "jev",
+      "scientific_name": "Anas platyrhynchos",
+      "rows": 2,
+      "scrollWidth": 390,
+      "pageErrors": [],
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-chat-390-0.png"
+    },
+    {
+      "question": "흰뺨검둥오리 아종 알려줘",
+      "width": 390,
+      "route_method": "jev",
+      "scientific_name": "Anas zonorhyncha",
+      "rows": 0,
+      "scrollWidth": 390,
+      "pageErrors": [],
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-chat-390-1.png"
+    },
+    {
+      "question": "청둥오리 아종 알려줘",
+      "width": 900,
+      "route_method": "jev",
+      "scientific_name": "Anas platyrhynchos",
+      "rows": 2,
+      "scrollWidth": 900,
+      "pageErrors": [],
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-chat-900-0.png"
+    },
+    {
+      "question": "흰뺨검둥오리 아종 알려줘",
+      "width": 900,
+      "route_method": "jev",
+      "scientific_name": "Anas zonorhyncha",
+      "rows": 0,
+      "scrollWidth": 900,
+      "pageErrors": [],
+      "screenshot": "docs/verification/assets/2026-10-08-RG013-chat-900-1.png"
+    }
+  ]
+}

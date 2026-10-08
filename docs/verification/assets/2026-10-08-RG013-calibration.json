@@ -1,5 +1,5 @@
 {
-  "scope": "Real API intent-only evaluation; deterministic routes preserved, no DB/entity resolution score. Single model annotator, not human gold standard.",
+  "scope": "Real API intent-only evaluation; deterministic routes preserved, no DB/entity resolution score. Single model annotator, not human gold standard. Embedding-only baseline was rerun after recovery; Jev decisions reused from prior live evaluation without new Jev calls.",
   "split": "calibration",
   "model_requested": "typesafe/jev-1.13",
   "model_echoed": false,
@@ -8,6 +8,7 @@
     "probability": 0.8,
     "margin": 0.2
   },
+  "baseline_embedding_probe": "available",
   "baseline": {
     "n": 64,
     "accuracy": 0.375,
@@ -1995,5 +1996,82 @@
       }
     }
   ],
-  "baseline_embedding_probe": "Separate real probe failed with EmbeddingTransportError locally; NAS container also failed with ConnectionRefusedError. Comparison is a degraded-service baseline, not a healthy embedding quality benchmark."
+  "jev_reused_from": "2026-10-08-RG013-calibration.json",
+  "new_jev_calls": 0,
+  "previous_baseline": {
+    "n": 64,
+    "accuracy": 0.375,
+    "macro_f1": 0.4043956043956044,
+    "automatic_rate": 0.328125,
+    "misclassification_rate": 0.03125,
+    "clarification_rate": 0.671875,
+    "per_label": {
+      "profile": {
+        "n": 6,
+        "accuracy": 0.5,
+        "f1": 0.6666666666666666
+      },
+      "subspecies": {
+        "n": 9,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "taxonomy": {
+        "n": 6,
+        "accuracy": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "observations": {
+        "n": 4,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "evidence": {
+        "n": 4,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "diet": {
+        "n": 5,
+        "accuracy": 0.8,
+        "f1": 0.8
+      },
+      "habitat": {
+        "n": 5,
+        "accuracy": 0.6,
+        "f1": 0.6666666666666666
+      },
+      "activity": {
+        "n": 4,
+        "accuracy": 0.75,
+        "f1": 0.8571428571428571
+      },
+      "appearance": {
+        "n": 4,
+        "accuracy": 0.5,
+        "f1": 0.6666666666666666
+      },
+      "related": {
+        "n": 4,
+        "accuracy": 0.25,
+        "f1": 0.4
+      },
+      "ecological_habitat": {
+        "n": 3,
+        "accuracy": 0.3333333333333333,
+        "f1": 0.5
+      },
+      "ecological_diet": {
+        "n": 3,
+        "accuracy": 0.0,
+        "f1": 0.0
+      },
+      "uncertain": {
+        "n": 7,
+        "accuracy": 0.7142857142857143,
+        "f1": 0.2
+      }
+    }
+  },
+  "previous_baseline_embedding_probe": "Separate real probe failed with EmbeddingTransportError locally; NAS container also failed with ConnectionRefusedError. Comparison is a degraded-service baseline, not a healthy embedding quality benchmark."
 }

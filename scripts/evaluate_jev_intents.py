@@ -47,10 +47,11 @@ def percentile(values, percentile):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--live",action="store_true",help="Authorize paid Jev calls and embedding requests")
+    parser.add_argument("--reuse-jev",type=Path,help="Reuse a saved split report; only rerun the embedding baseline (no Jev charge)")
     parser.add_argument("--split",choices=("calibration","heldout"),required=True)
     parser.add_argument("--output",type=Path,required=True)
     args=parser.parse_args()
-    if not args.live: parser.error("--live is required; this evaluation uses API credits")
+    if not args.live and not args.reuse_jev: parser.error("--live or --reuse-jev is required")
     load_local_environment()
     router=JevRouter(JevSettings.from_env())
     embedding_client=JinaEmbeddingClient.from_env()
@@ -62,9 +63,18 @@ def main():
         baseline_availability=type(error).__name__
     cases=json.loads(Path("tests/fixtures/jev_intent_eval.json").read_text())["cases"]
     cases=[c for c in cases if c["split"]==args.split]
+    previous=json.loads(args.reuse_jev.read_text()) if args.reuse_jev else None
+    previous_rows={r["id"]:r for r in previous["rows"]} if previous else {}
+    if previous and (previous["split"] != args.split or set(previous_rows) != {c["id"] for c in cases}):
+        parser.error("saved report does not match the requested split")
     def evaluate(case):
         question=case["question"]; rule=deterministic(question)
         legacy=rule or baseline.classify(question) or "uncertain"
+        if previous:
+            row=previous_rows[case["id"]]
+            if row["question"] != question or row["expected"] != case["label"]:
+                raise ValueError("saved report question/label mismatch")
+            return {**row,"baseline":legacy}
         decision=None if rule else router.classify(question)
         prediction=rule or decision.label or "uncertain"
         entity=extract_name(question,prediction) if not rule else None
@@ -87,6 +97,13 @@ def main():
                    "credits_used":sum(d["credits_used"] or 0 for d in decisions),
                    "failures":{reason:sum(d["failure"]==reason for d in decisions) for reason in {d["failure"] for d in decisions} if reason}},
             "rows":rows}
+    if previous:
+        report["jev_reused_from"]=args.reuse_jev.name
+        report["new_jev_calls"]=0
+        report["previous_baseline"]=previous["baseline"]
+        report["previous_baseline_embedding_probe"]=previous.get("baseline_embedding_probe")
+        report["model_requested"]=previous["model_requested"]
+        report["thresholds"]=previous["thresholds"]
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     print(json.dumps({k:v for k,v in report.items() if k!="rows"},ensure_ascii=False))
