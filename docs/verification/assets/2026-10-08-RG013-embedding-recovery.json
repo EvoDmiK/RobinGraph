@@ -1,0 +1,45 @@
+{
+  "scope": "Actual recovered embedding server; local and NAS probes succeeded; cosine diagnostics use actual vectors and legacy thresholds .70/.08",
+  "rows": [
+    {
+      "question": "청둥오리 아종 알려줘",
+      "dimensions": 512,
+      "scores": {
+        "taxonomy": 0.02839410446889306,
+        "observations": 0.028393228613848798,
+        "evidence": -0.06571440649727137
+      },
+      "selected": null
+    },
+    {
+      "question": "학명 계통",
+      "dimensions": 512,
+      "scores": {
+        "taxonomy": 0.2055039505220198,
+        "observations": -0.04418819456525422,
+        "evidence": 0.007116471855319575
+      },
+      "selected": null
+    },
+    {
+      "question": "서울 청둥오리 관찰 기록",
+      "dimensions": 512,
+      "scores": {
+        "taxonomy": -0.08061490308265912,
+        "observations": 0.3357889019905039,
+        "evidence": -0.0630405447959116
+      },
+      "selected": null
+    },
+    {
+      "question": "청둥오리 근거 자료 출처 알려줘",
+      "dimensions": 512,
+      "scores": {
+        "taxonomy": 0.12428188828339459,
+        "observations": 0.12890491016191716,
+        "evidence": 0.18303831747816468
+      },
+      "selected": null
+    }
+  ]
+}

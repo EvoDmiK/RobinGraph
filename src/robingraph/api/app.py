@@ -1058,7 +1058,7 @@ def create_app(
                 relations=relationships["relations"]
                 targets={r.get("taxon",{}).get("taxon_id") for r in relations}
                 single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
-                if single_common and (species_question or jev_label in ("profile", "subspecies", "taxonomy")):
+                if single_common and (species_question or jev_label == "subspecies"):
                     focused_name = relations[0]["taxon"]["scientific_name"]
                     name_context = relationships
                 else:

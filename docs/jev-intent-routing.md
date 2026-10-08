@@ -44,4 +44,6 @@ ROBINGRAPH_JEV_MARGIN_THRESHOLD=0.20
 - 화면 회귀: `node --test tests/frontend/*.test.js`
 - 실제 API 평가(유료 호출): `python scripts/evaluate_jev_intents.py --live --split calibration --output /tmp/jev-calibration.json`, 이후 설정을 고정하고 `--split heldout` 실행.
 
+임베딩만 다시 비교하려면 `--reuse-jev 저장된평가.json --split heldout --output /tmp/baseline-recheck.json`을 사용한다. 문항과 정답의 일치를 검사하고 이전 Jev 결과를 재사용하므로 Jev 추가 과금은 없다.
+
 평가표는 Claude가 작성한 120문항으로, 사람이 확정한 정답표가 아니다. Codex가 API 평가 전에 이름의 모호함·자료 존재와 의도 분류를 분리하도록 5개 정답을 정정했다. 질문 의도 점수는 실제 종 해소·DB 정답·전체 채팅 성공률을 뜻하지 않는다. 실제 실행 수치·배포·협업 결과는 [검증 기록](verification/2026-10-08-RG013-jev-intent-routing.md)에 별도로 기록한다.

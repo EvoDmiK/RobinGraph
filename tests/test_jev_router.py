@@ -167,5 +167,15 @@ class JevChatTest(unittest.TestCase):
         self.assertIsNone(extract_name("청둥오리 그리고 왜가리 아종 알려줘","subspecies"))
         self.assertIsNone(extract_name("그 새 아종 알려줘","subspecies"))
 
+    def test_general_name_relation_answer_preserves_existing_alias_behavior(self):
+        profile=Mock()
+        relationships={"is_search_term":True,"relations":[{"entity_kind":"common_name","taxon":PROFILE["taxon"]}],
+                       "summary":"검토된 이름의 관계입니다."}
+        client=self.make("profile",species_profile_handler=profile,name_relations_handler=lambda name:relationships)
+        r=client.post("/v1/chat",json={"question":"청둥오리 정보"}).json()
+        self.assertEqual("name_relations",r["result"]["kind"])
+        self.assertEqual("answer",r["disposition"])
+        profile.assert_not_called()
+
 
 if __name__ == "__main__": unittest.main()
