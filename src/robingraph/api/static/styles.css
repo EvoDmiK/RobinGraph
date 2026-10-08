@@ -1222,6 +1222,18 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-card[data-dragging="true"], .species-popup[data-dragging="true"] { cursor: grabbing; user-select: none; -webkit-user-select: none; }
 .species-popup[data-dragging="true"] { will-change: transform; }
 .species-card img { -webkit-user-drag: none; }
+/* Touch swipe (RG-015): declare before the gesture that vertical pan and pinch stay native. */
+.species-card, .species-card-swipe-hint { touch-action: pan-y pinch-zoom; }
+.species-card-swipe-hint { display: none; }
+@media (pointer: coarse) {
+  .species-card-swipe-hint {
+    display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+    width: 100%; min-height: 44px; margin-bottom: 8px; padding: 6px 10px;
+    border: 1px dashed #72934c; border-radius: 9px; background: #eef6c9;
+    color: #3d5a21; font-size: .8rem; font-weight: 600; text-align: center;
+    user-select: none; -webkit-user-select: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   /* No continuous 3D rotation; show a clear ready-to-flip outline instead. */
   .species-card[data-dragging="true"][data-drag-commit="true"] { outline: 3px solid #4f7a2a; outline-offset: -3px; }

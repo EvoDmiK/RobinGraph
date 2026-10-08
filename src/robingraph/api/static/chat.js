@@ -2151,7 +2151,9 @@
     var flipGeneration = 0;
     var drag = null;
     var suppressClick = false;
+    var suppressGeneration = 0;
     var DRAG_SLOP = 6;
+    var TOUCH_SLOP = 10;
     var DRAG_MAX_ANGLE = 90;
     function dragView() { return doc.defaultView || null; }
     function clearDragStyle(target) {
@@ -2167,12 +2169,22 @@
       card.setAttribute("data-dragging", "false");
       card.setAttribute("data-drag-commit", "false");
     }
+    function addDragGuard(owner, type, fn, capture) {
+      if (!owner || !owner.addEventListener) { return; }
+      owner.addEventListener(type, fn, !!capture);
+      drag.guards.push({ owner: owner, type: type, fn: fn, capture: !!capture });
+    }
     function detachDragGuards() {
+      if (!drag || !drag.guards) { return; }
+      drag.guards.forEach(function (g) {
+        if (g.owner.removeEventListener) { g.owner.removeEventListener(g.type, g.fn, g.capture); }
+      });
+      drag.guards = [];
+    }
+    function hasActiveSelection() {
       var view = dragView();
-      if (view && view.removeEventListener && drag && drag.guard) {
-        view.removeEventListener("blur", drag.guard);
-        view.removeEventListener("resize", drag.guard);
-      }
+      var selection = view && view.getSelection ? view.getSelection() : null;
+      return !!(selection && selection.isCollapsed === false && (selection.rangeCount === undefined || selection.rangeCount > 0));
     }
     // Drops any in-progress drag without flipping: used by pointercancel,
     // lostpointercapture, blur/resize, reopening, and conversation reset.
@@ -2193,7 +2205,7 @@
       flip.disabled = false;
       cancelDrag();
     }
-    card.showFront = function () { resetFlip(); showFace(false); };
+    card.showFront = function () { suppressClick = false; suppressGeneration += 1; resetFlip(); showFace(false); };
     flip.addEventListener("click", function () {
       if (flip.disabled) { return; }
       var showBack = back.hidden;
@@ -2229,17 +2241,20 @@
       };
     });
 
-    // Mouse-only drag-to-flip. Touch/pen keep native scroll and tap behavior.
-    // The gesture may only start on blank card surface (the card itself and
-    // its layout containers). Any text element, control, link, photo or
-    // editable/draggable node keeps its native behavior, so mouse text
-    // selection never needs a modifier key.
-    var DRAG_SURFACE_CLASSES = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area"];
+    // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
+    // A mouse gesture may only start on blank card surface (the card itself and
+    // its layout containers), so mouse text selection never needs a modifier
+    // key. A touch swipe may also start on non-interactive body text because
+    // vertical scrolling stays native (touch-action: pan-y pinch-zoom) and a
+    // long-press selection cancels the gesture. Any control, link, photo or
+    // editable/draggable node keeps its native behavior for both.
+    var DRAG_SURFACE_CLASSES = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area", "species-card-swipe-hint"];
     function hasClass(node, name) {
       return (" " + String(node.className || "") + " ").indexOf(" " + name + " ") !== -1;
     }
-    function isDragExempt(node) {
-      if (node !== card && !(node && DRAG_SURFACE_CLASSES.some(function (name) { return hasClass(node, name); }))) { return true; }
+    function isDragExempt(node, touch) {
+      if (!node) { return true; }
+      if (!touch && node !== card && !DRAG_SURFACE_CLASSES.some(function (name) { return hasClass(node, name); })) { return true; }
       while (node && node !== card) {
         var tag = String(node.tagName || "").toLowerCase();
         if (tag === "a" || tag === "button" || tag === "summary" || tag === "input" || tag === "select" ||
@@ -2316,42 +2331,60 @@
     }
     card.addEventListener("pointerdown", function (event) {
       suppressClick = false;
-      if (drag || flip.disabled) { return; }
-      if (event.pointerType !== "mouse" || event.button !== 0 || event.isPrimary === false) { return; }
-      if (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey) { return; }
-      if (isDragExempt(event.target)) { return; }
-      drag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, dx: 0, angle: 0, active: false, captured: false, target: dragTarget(), guard: null };
-      drag.guard = function () { cancelDrag(); };
+      suppressGeneration += 1; // a stale release timer must not clear a newer swipe's suppression
+      if (drag) {
+        // A second touch anywhere (pinch) or a touch during a mouse drag ends the gesture.
+        if (event.pointerId !== drag.pointerId && (drag.kind === "touch" || event.pointerType === "touch")) { cancelDrag(); }
+        return;
+      }
+      if (flip.disabled) { return; }
+      var touch = event.pointerType === "touch";
+      if ((!touch && event.pointerType !== "mouse") || event.button !== 0 || event.isPrimary === false) { return; }
+      if (!touch && (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey)) { return; }
+      if (isDragExempt(event.target, touch)) { return; }
+      if (touch && hasActiveSelection()) { return; }
+      drag = { kind: touch ? "touch" : "mouse", pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, dx: 0, angle: 0, active: false, captured: false, target: dragTarget(), guards: [] };
+      var guard = function () { cancelDrag(); };
       var view = dragView();
-      if (view && view.addEventListener) {
-        view.addEventListener("blur", drag.guard);
-        view.addEventListener("resize", drag.guard);
+      addDragGuard(view, "blur", guard);
+      addDragGuard(view, "resize", guard);
+      if (touch) {
+        // Selection, context menu, or any extra touch anywhere hands control back to the browser.
+        addDragGuard(doc, "pointerdown", function (e) { if (drag && e.pointerId !== drag.pointerId) { cancelDrag(); } }, true);
+        addDragGuard(doc, "contextmenu", guard, true);
+        addDragGuard(doc, "selectionchange", function () { if (hasActiveSelection()) { cancelDrag(); } });
       }
     });
     card.addEventListener("pointermove", function (event) {
       if (!drag || event.pointerId !== drag.pointerId) { return; }
-      // Button released outside the window/card while we weren't capturing.
-      if (event.buttons === 0) { cancelDrag(); return; }
+      var touch = drag.kind === "touch";
+      // Mouse button released outside the window/card while we weren't capturing.
+      // Touch contact reports buttons === 0 only on hover-less releases; not a release signal.
+      if (!touch && event.buttons === 0) { cancelDrag(); return; }
       var dx = event.clientX - drag.startX;
       var dy = event.clientY - drag.startY;
+      var slop = touch ? TOUCH_SLOP : DRAG_SLOP;
       if (!drag.active) {
-        if (Math.abs(dx) < DRAG_SLOP || Math.abs(dx) < Math.abs(dy) * 1.2) {
-          if (Math.abs(dy) > DRAG_SLOP * 2 && Math.abs(dy) > Math.abs(dx)) { cancelDrag(); }
+        if (Math.abs(dx) < slop || Math.abs(dx) < Math.abs(dy) * 1.2) {
+          if (Math.abs(dy) > slop * 2 && Math.abs(dy) > Math.abs(dx)) { cancelDrag(); }
           return;
         }
         drag.active = true;
         drag.width = dragWidth(drag.target);
-        if (card.setPointerCapture) {
+        // Touch pointers are already implicitly captured by the browser.
+        if (!touch && card.setPointerCapture) {
           try { card.setPointerCapture(drag.pointerId); drag.captured = true; } catch (error) { /* pointer already released */ }
         }
-        var view = dragView();
-        var selection = view && view.getSelection ? view.getSelection() : null;
-        if (selection && selection.removeAllRanges) { selection.removeAllRanges(); }
+        if (!touch) {
+          var view = dragView();
+          var selection = view && view.getSelection ? view.getSelection() : null;
+          if (selection && selection.removeAllRanges) { selection.removeAllRanges(); }
+        }
         if (drag.target.style) { drag.target.style.userSelect = "none"; }
         drag.target.setAttribute("data-dragging", "true");
         card.setAttribute("data-dragging", "true");
       }
-      event.preventDefault();
+      if (!touch) { event.preventDefault(); }
       drag.dx = dx;
       var commit = Math.abs(dx) >= dragThreshold(drag.width);
       drag.commit = commit;
@@ -2368,12 +2401,23 @@
       if (!drag.active) { cancelDrag(); return; }
       suppressClick = true;
       var commit = Math.abs(drag.dx) >= dragThreshold(drag.width);
+      var delay = drag.kind === "touch" ? 400 : 0;
+      var generation = ++suppressGeneration;
       finishDrag(commit);
       var view = dragView();
-      if (view && view.setTimeout) { view.setTimeout(function () { suppressClick = false; }, 0); }
+      if (view && view.setTimeout) { view.setTimeout(function () { if (generation === suppressGeneration) { suppressClick = false; } }, delay); }
     });
-    card.addEventListener("pointercancel", function () { cancelDrag(); });
-    card.addEventListener("lostpointercapture", function () { if (drag && drag.captured) { cancelDrag(); } });
+    card.addEventListener("pointercancel", function (event) {
+      if (drag && event.pointerId === drag.pointerId) { cancelDrag(); }
+    });
+    card.addEventListener("lostpointercapture", function (event) {
+      // Only the tracked pointer counts. Touch holds implicit capture on a child
+      // (losing it ends the gesture); mouse capture is explicit on the card, so
+      // bubbled child events are ignored.
+      if (!drag || event.pointerId !== drag.pointerId) { return; }
+      if (drag.kind === "touch") { cancelDrag(); return; }
+      if (drag.captured && (!event.target || event.target === card)) { cancelDrag(); }
+    });
     // A drag must not also fire the button/link click under the release point.
     card.addEventListener("click", function (event) {
       if (!suppressClick) { return; }
@@ -2381,8 +2425,13 @@
       event.preventDefault();
       if (event.stopPropagation) { event.stopPropagation(); }
     }, true);
-    card.addEventListener("dragstart", function (event) { if (drag) { event.preventDefault(); } });
+    card.addEventListener("dragstart", function (event) { if (drag && drag.active) { event.preventDefault(); } });
 
+    var swipeHint = doc.createElement("div");
+    swipeHint.className = "species-card-swipe-hint";
+    swipeHint.setAttribute("aria-hidden", "true");
+    swipeHint.textContent = "← 카드를 좌우로 밀어 뒤집어 보세요 →";
+    footer.appendChild(swipeHint);
     footer.appendChild(flip);
     var dragHint = doc.createElement("span");
     dragHint.className = "species-card-drag-hint";

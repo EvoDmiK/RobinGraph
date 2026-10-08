@@ -3599,8 +3599,10 @@ function dragFixture(reduced) {
   const win = { listeners: {}, matchMedia: () => ({ matches: !!reduced }),
     addEventListener(t, h) { (this.listeners[t] = this.listeners[t] || []).push(h); },
     removeEventListener(t, h) { this.listeners[t] = (this.listeners[t] || []).filter(x => x !== h); },
-    getSelection: () => ({ removeAllRanges() {} }), setTimeout: () => 0 };
-  const doc = { createElement: createFakeElement, defaultView: win };
+    getSelection: () => win.selection, selection: { isCollapsed: true, rangeCount: 0, removeAllRanges() { win.cleared = true; } }, setTimeout: (fn, ms) => { win.timeouts.push({ fn, ms }); return 0; }, timeouts: [] };
+  const doc = { createElement: createFakeElement, defaultView: win, listeners: {},
+    addEventListener(t, h, c) { (this.listeners[t] = this.listeners[t] || []).push({ h, c: !!c }); },
+    removeEventListener(t, h, c) { this.listeners[t] = (this.listeners[t] || []).filter(x => !(x.h === h && x.c === !!c)); } };
   const card = chat.buildSpeciesCard(doc, fakeProfilePayload().result.profile);
   const front = card.children.find(n => n.className === "species-card-front");
   const back = card.children.find(n => n.className === "species-card-back");
@@ -3613,7 +3615,8 @@ function dragFixture(reduced) {
   const animations = [];
   card.animate = (frames, options) => { const a = { frames, options, cancelled: false, cancel() { this.cancelled = true; } }; animations.push(a); return a; };
   const ev = (x, y, extra) => Object.assign({ pointerId: 1, pointerType: "mouse", button: 0, buttons: 1, clientX: x, clientY: y, target: card }, extra);
-  return { card, front, back, flip, win, animations, ev };
+  const tev = (x, y, extra) => ev(x, y, Object.assign({ pointerType: "touch", buttons: 0, isPrimary: true }, extra));
+  return { card, front, back, flip, win, doc, animations, ev, tev };
 }
 
 test("mouse drag past the width-proportional threshold flips in both directions and suppresses the trailing click", () => {
@@ -3745,4 +3748,218 @@ test("drag hint is a decorative, fine-pointer-only line without backend jargon",
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /\.species-card-drag-hint \{ display: none; \}/);
   assert.match(css, /hover: hover\) and \(pointer: fine\)[\s\S]*species-card-drag-hint \{ display: block/);
+});
+
+const docListenerCount = f => Object.values(f.doc.listeners).reduce((n, l) => n + l.length, 0);
+const winListenerCount = f => Object.values(f.win.listeners).reduce((n, l) => n + l.length, 0);
+const textNodes = card => collectAllNodes(card).filter(n => ["p", "li", "dt", "dd", "h3"].includes(n.tagName));
+
+test("touch swipe past the width threshold flips both ways via the real touch pointer path without preventDefault or capture", () => {
+  for (const dx of [120, -120]) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.tev(100, 50));
+    assert.equal(docListenerCount(f) > 0, true, "document guards attached while tracking");
+    f.card.dispatch("pointermove", f.tev(100 + dx / 2, 53));
+    assert.equal(f.card.getAttribute("data-dragging"), "true");
+    assert.match(f.card.style.transform, /rotateY\(/);
+    assert.equal(f.card.captured.length, 0, "touch is already implicitly captured; no setPointerCapture");
+    const move = f.card.dispatch("pointermove", f.tev(100 + dx, 53));
+    assert.equal(move.defaultPrevented, false, "touch moves are never preventDefault-ed");
+    assert.equal(f.card.getAttribute("data-drag-commit"), "true");
+    assert.equal(f.win.cleared, undefined, "touch does not clear the selection");
+    f.card.dispatch("pointerup", f.tev(100 + dx, 53));
+    assert.equal(docListenerCount(f), 0);
+    assert.equal(winListenerCount(f), 0);
+    f.animations[0].onfinish();
+    assert.equal(f.back.hidden, false);
+    assert.equal(f.card.dispatch("click", { target: f.flip }).defaultPrevented, true, "trailing click swallowed");
+    assert.equal(f.win.timeouts.at(-1).ms >= 300, true, "touch click guard outlives the synthesized click");
+    f.animations[f.animations.length - 1].onfinish();
+    assert.equal(f.flip.disabled, false);
+  }
+});
+
+test("touch pointerdown never calls preventDefault and buttons===0 during touch moves is not a release", () => {
+  const f = dragFixture(false);
+  assert.equal(f.card.dispatch("pointerdown", f.tev(100, 50)).defaultPrevented, false);
+  f.card.dispatch("pointermove", f.tev(140, 50, { buttons: 0 }));
+  assert.equal(f.card.getAttribute("data-dragging"), "true");
+  f.card.dispatch("pointercancel", f.tev(140, 50));
+});
+
+test("touch taps, short, reverse and vertical gestures never flip and leave no listeners", () => {
+  const cases = {
+    tap: f => { f.card.dispatch("pointerup", f.tev(100, 50)); },
+    short: f => { f.card.dispatch("pointermove", f.tev(130, 52)); f.card.dispatch("pointerup", f.tev(130, 52)); },
+    reverse: f => { f.card.dispatch("pointermove", f.tev(230, 52)); f.card.dispatch("pointermove", f.tev(110, 52)); f.card.dispatch("pointerup", f.tev(110, 52)); },
+    vertical: f => { f.card.dispatch("pointermove", f.tev(103, 140)); f.card.dispatch("pointermove", f.tev(300, 140)); f.card.dispatch("pointerup", f.tev(300, 140)); },
+    diagonal: f => { f.card.dispatch("pointermove", f.tev(140, 140)); f.card.dispatch("pointerup", f.tev(140, 140)); },
+  };
+  for (const [name, run] of Object.entries(cases)) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.tev(100, 50));
+    run(f);
+    if (f.animations.length) { f.animations[0].onfinish(); }
+    assert.equal(f.back.hidden, true, name);
+    assert.equal(f.card.style.transform, "", name);
+    assert.equal(f.card.getAttribute("data-dragging"), "false", name);
+    assert.equal(docListenerCount(f), 0, name);
+    assert.equal(winListenerCount(f), 0, name);
+    assert.equal(f.flip.disabled, false, name);
+    if (name === "tap" || name === "vertical" || name === "diagonal") { assert.equal(f.card.dispatch("click", {}).defaultPrevented, false, name + ": click untouched"); }
+  }
+});
+
+test("touch below slop does not lock the axis; at slop a horizontal move starts", () => {
+  const f = dragFixture(false);
+  f.card.dispatch("pointerdown", f.tev(100, 50));
+  f.card.dispatch("pointermove", f.tev(108, 50));
+  assert.notEqual(f.card.getAttribute("data-dragging"), "true");
+  f.card.dispatch("pointermove", f.tev(111, 50));
+  assert.equal(f.card.getAttribute("data-dragging"), "true");
+});
+
+test("a second touch anywhere, selection, contextmenu, cancel, blur, resize and reset all cancel a touch gesture and clean up", () => {
+  const exits = {
+    secondTouchOnCard: f => f.card.dispatch("pointerdown", f.tev(200, 60, { pointerId: 2, isPrimary: false })),
+    secondTouchElsewhere: f => f.doc.listeners.pointerdown.forEach(l => l.h({ pointerId: 2, pointerType: "touch" })),
+    selection: f => { f.win.selection.isCollapsed = false; f.win.selection.rangeCount = 1; f.doc.listeners.selectionchange.forEach(l => l.h()); },
+    contextmenu: f => f.doc.listeners.contextmenu.forEach(l => l.h({})),
+    pointercancel: f => f.card.dispatch("pointercancel", f.tev(220, 50)),
+    blur: f => f.win.listeners.blur.forEach(h => h()),
+    resize: f => f.win.listeners.resize.forEach(h => h()),
+    reset: f => f.card.showFront(),
+  };
+  for (const [name, exit] of Object.entries(exits)) {
+    for (const active of [false, true]) {
+      const f = dragFixture(false);
+      f.card.dispatch("pointerdown", f.tev(100, 50));
+      if (active) { f.card.dispatch("pointermove", f.tev(220, 50)); }
+      assert.equal(docListenerCount(f) > 0, true);
+      exit(f);
+      f.card.dispatch("pointerup", f.tev(260, 50));
+      assert.equal(f.back.hidden, true, name);
+      assert.equal(f.animations.length, 0, name + ": cancelled gesture does not animate a flip");
+      assert.equal(f.card.style.transform, "", name);
+      assert.equal(f.card.getAttribute("data-dragging"), "false", name);
+      assert.equal(docListenerCount(f), 0, name);
+      assert.equal(winListenerCount(f), 0, name);
+    }
+  }
+});
+
+test("pointercancel and lostpointercapture for another pointer or a bubbled child do not cancel; the own pointer does", () => {
+  const f = dragFixture(false);
+  f.card.dispatch("pointerdown", f.ev(100, 50));
+  f.card.dispatch("pointermove", f.ev(220, 50));
+  f.card.dispatch("pointercancel", f.ev(220, 50, { pointerId: 9 }));
+  f.card.dispatch("lostpointercapture", f.ev(220, 50, { pointerId: 9 }));
+  f.card.dispatch("lostpointercapture", f.ev(220, 50, { target: f.flip }));
+  assert.equal(f.card.getAttribute("data-dragging"), "true");
+  f.card.dispatch("lostpointercapture", f.ev(220, 50));
+  assert.equal(f.card.getAttribute("data-dragging"), "false");
+});
+
+test("touch starts on non-interactive body text but not on controls, photos, editable or draggable nodes, nor over an active selection", () => {
+  const attempt = (pick, prep) => {
+    const g = dragFixture(false);
+    if (prep) { prep(g); }
+    g.card.dispatch("pointerdown", g.tev(100, 50, { target: pick(g) }));
+    g.card.dispatch("pointermove", g.tev(260, 50));
+    g.card.dispatch("pointerup", g.tev(260, 50));
+    return g.back.hidden === false || g.animations.length > 0;
+  };
+  const texts = textNodes(dragFixture(false).card);
+  assert.ok(texts.length > 3);
+  for (let i = 0; i < texts.length; i += 1) { assert.equal(attempt(g => textNodes(g.card)[i]), true, "body text #" + i + " allows touch swipe"); }
+  const make = (tag, setup) => g => { const el = createFakeElement(tag); if (setup) { setup(el); } el.parentNode = g.card; return el; };
+  [make("div", el => el.setAttribute("contenteditable", "true")), make("div", el => el.setAttribute("draggable", "true")),
+    make("img"), make("svg"), make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
+    make("div", el => el.setAttribute("role", "button"))].forEach((pick, i) => assert.equal(attempt(pick), false, "touch exclusion #" + i));
+  assert.equal(attempt(g => g.flip), false, "flip button keeps native tap");
+  assert.equal(attempt(g => g.card, g => { g.win.selection.isCollapsed = false; g.win.selection.rangeCount = 1; }), false, "existing selection is respected and untouched");
+});
+
+test("pen and non-primary or non-left touch contacts are unsupported; mouse regressions: text still blocks mouse drag", () => {
+  for (const extra of [{ pointerType: "pen" }, { isPrimary: false }, { button: 2 }]) {
+    const f = dragFixture(false);
+    f.card.dispatch("pointerdown", f.tev(100, 50, extra));
+    f.card.dispatch("pointermove", f.tev(260, 50, extra));
+    f.card.dispatch("pointerup", f.tev(260, 50, extra));
+    assert.equal(f.animations.length, 0);
+    assert.equal(docListenerCount(f), 0);
+  }
+  const f = dragFixture(false);
+  f.card.dispatch("pointerdown", f.ev(100, 50, { target: textNodes(f.card)[0] }));
+  f.card.dispatch("pointermove", f.ev(260, 50));
+  assert.notEqual(f.card.getAttribute("data-dragging"), "true");
+  const m = dragFixture(false);
+  m.card.dispatch("pointerdown", m.ev(100, 50));
+  assert.equal(docListenerCount(m), 0, "mouse drags add no document guards");
+  assert.equal(m.card.dispatch("pointermove", m.ev(200, 50)).defaultPrevented, true, "mouse drag still prevents default");
+  assert.equal(m.win.cleared, true, "mouse drag still clears selection");
+  m.card.dispatch("pointerdown", m.tev(10, 10, { pointerId: 3, isPrimary: false }));
+  assert.equal(m.card.getAttribute("data-dragging"), "false", "a touch during a mouse drag cancels it");
+});
+
+test("styles declare touch-action pan-y pinch-zoom up front and a coarse-pointer Korean swipe surface of at least 44px", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-card[^{]*\{ touch-action: pan-y pinch-zoom; \}/);
+  assert.doesNotMatch(css, /touch-action:\s*(none|manipulation)/);
+  const coarse = css.match(/@media \(pointer: coarse\) \{[\s\S]*?\n\}/)[0];
+  assert.match(coarse, /species-card-swipe-hint[\s\S]*display: flex/);
+  assert.match(coarse, /width: 100%/);
+  assert.match(coarse, /min-height: 44px/);
+  assert.match(css, /\.species-card-swipe-hint \{ display: none; \}/);
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, fakeProfilePayload().result.profile);
+  const hint = collectAllNodes(card).find(n => n.className === "species-card-swipe-hint");
+  assert.ok(hint);
+  assert.equal(hint.getAttribute("aria-hidden"), "true");
+  assert.match(hint.textContent, /좌우로 밀어/);
+  assert.equal(collectAllNodes(hint).length, 1, "noninteractive");
+});
+
+test("touch swipe on reduced motion flips without rotation", () => {
+  const f = dragFixture(true);
+  f.card.dispatch("pointerdown", f.tev(100, 50));
+  f.card.dispatch("pointermove", f.tev(260, 50));
+  assert.equal(f.card.style.transform, undefined);
+  f.card.dispatch("pointerup", f.tev(260, 50));
+  assert.equal(f.animations.length, 0);
+  assert.equal(f.back.hidden, false);
+  assert.equal(docListenerCount(f), 0);
+});
+
+test("losing the tracked touch's implicit capture cancels it, while other pointer IDs are ignored", () => {
+  const f = dragFixture(false);
+  f.card.dispatch("pointerdown", f.tev(100, 50));
+  f.card.dispatch("pointermove", f.tev(220, 50));
+  f.card.dispatch("lostpointercapture", f.tev(220, 50, { pointerId: 9 }));
+  assert.equal(f.card.getAttribute("data-dragging"), "true");
+  f.card.dispatch("lostpointercapture", f.tev(220, 50, { target: f.flip }));
+  assert.equal(f.card.getAttribute("data-dragging"), "false");
+  assert.equal(docListenerCount(f), 0);
+  f.card.dispatch("pointerup", f.tev(260, 50));
+  assert.equal(f.animations.length, 0);
+  assert.equal(f.back.hidden, true);
+});
+
+test("a stale touch click-guard timer never clears a newer swipe's suppression; reopen/clear drops it", () => {
+  const f = dragFixture(false);
+  const swipe = () => { f.card.dispatch("pointerdown", f.tev(100, 50)); f.card.dispatch("pointermove", f.tev(260, 50)); f.card.dispatch("pointerup", f.tev(260, 50)); };
+  swipe();
+  const stale = f.win.timeouts.at(-1);
+  f.animations.at(-1).onfinish(); f.animations.at(-1).onfinish();
+  swipe();
+  assert.equal(f.flip.disabled, true);
+  stale.fn();
+  assert.equal(f.card.dispatch("click", { target: f.flip }).defaultPrevented, true, "stale timer is ignored");
+  f.win.timeouts.at(-1).fn();
+  assert.equal(f.card.dispatch("click", {}).defaultPrevented, false, "current timer still releases the guard");
+  const g = dragFixture(false);
+  g.card.dispatch("pointerdown", g.tev(100, 50)); g.card.dispatch("pointermove", g.tev(260, 50)); g.card.dispatch("pointerup", g.tev(260, 50));
+  g.card.showFront();
+  assert.equal(g.card.dispatch("click", {}).defaultPrevented, false, "reopen/clear drops pending suppression");
+  g.win.timeouts.at(-1).fn();
+  assert.equal(g.back.hidden, true);
 });
