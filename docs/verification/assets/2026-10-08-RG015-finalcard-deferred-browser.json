@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "environment": "Actual deployed JS/CSS and Chrome DOM with mocked initial/deferred APIs, fixtures based on actual profile",
+  "actual_deferred_api": false,
+  "actual_photo_transfer": false,
+  "single_disclosure_after_deferred": true,
+  "open_state_preserved": true,
+  "unique_shared_url": true,
+  "different_locator_license_evidence_preserved": true,
+  "late_description_and_photo_sources_preserved": true,
+  "source_summary_before": "답변 출처 보기 (19)",
+  "source_summary_after": "답변 출처 보기 (23)",
+  "page_errors": []
+}
