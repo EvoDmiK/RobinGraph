@@ -3963,3 +3963,204 @@ test("a stale touch click-guard timer never clears a newer swipe's suppression; 
   g.win.timeouts.at(-1).fn();
   assert.equal(g.back.hidden, true);
 });
+
+// ---- RG-015 glossy coat (fake DOM only: no real compositing or GPU is exercised) ----
+function glossFixture(reduced) {
+  const f = dragFixture(reduced);
+  const gloss = f.card.children.find(n => n.className === "species-card-gloss");
+  gloss.style = {};
+  gloss.animations = [];
+  gloss.animate = (frames, options) => { const a = { frames, options, cancelled: false, cancel() { this.cancelled = true; } }; gloss.animations.push(a); return a; };
+  f.gloss = gloss;
+  return f;
+}
+const glossPos = (n) => parseFloat(n.style ? n.style.backgroundPosition : n.backgroundPosition);
+
+test("glossy overlay is a noninteractive aria-hidden last child that is invisible at rest", () => {
+  const f = glossFixture(false);
+  assert.equal(f.gloss.getAttribute("aria-hidden"), "true");
+  assert.equal(f.card.children[f.card.children.length - 1], f.gloss);
+  assert.equal(f.gloss.tabIndex, undefined);
+  assert.equal(f.gloss.style.opacity, undefined, "no inline opacity at rest; CSS keeps it at 0");
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  const rule = css.match(/\.species-card-gloss \{[^}]*\}/)[0];
+  assert.match(rule, /pointer-events: none/);
+  assert.match(rule, /opacity: 0/);
+  assert.doesNotMatch(css, /species-flip-glint/, "the unrelated fixed flash is gone");
+  assert.match(css, /prefers-reduced-motion: reduce\) \{\s*\.species-card-gloss \{ display: none; \}/);
+});
+
+test("drag sheen depends on the angle and reverses with the drag direction", () => {
+  const seen = {};
+  for (const dx of [40, 90, -40, -90]) {
+    const f = glossFixture(false);
+    f.card.dispatch("pointerdown", f.ev(100, 50));
+    f.card.dispatch("pointermove", f.ev(100 + dx, 50));
+    seen[dx] = { pos: glossPos(f.gloss), op: parseFloat(f.gloss.style.opacity) };
+  }
+  assert.ok(seen[40].pos > 50 && seen[-40].pos < 50, "opposite drags move the sheen opposite ways");
+  assert.ok(Math.abs((seen[40].pos - 50) + (seen[-40].pos - 50)) < 1e-6, "mirror symmetric");
+  assert.ok(seen[90].pos > seen[40].pos, "sheen travels further as the angle grows");
+  assert.ok(seen[90].op > seen[40].op && seen[40].op > 0, "sheen strengthens with the angle");
+  assert.equal(seen[90].op, seen[-90].op);
+});
+
+test("button flip runs both gloss phases with the card's duration, easing and fill", () => {
+  const f = glossFixture(false);
+  f.flip.dispatch("click");
+  assert.equal(f.gloss.animations.length, 1);
+  assert.deepEqual(f.gloss.animations[0].options, f.animations[0].options);
+  const p1 = f.gloss.animations[0].frames;
+  assert.ok(glossPos(p1[p1.length - 1]) > glossPos(p1[0]));
+  assert.equal(f.gloss.animations[0].frames[0].opacity, "0");
+  f.animations[0].onfinish();
+  assert.equal(f.gloss.animations.length, 2);
+  assert.deepEqual(f.gloss.animations[1].options, f.animations[1].options);
+  assert.equal(f.gloss.animations[0].cancelled, true);
+  const frames = f.gloss.animations[1].frames;
+  assert.ok(glossPos(frames[0]) < 50, "second phase starts on the mirrored side");
+  const cardOffset = f.animations[1].frames[1].offset;
+  assert.ok(frames.some(fr => fr.offset === cardOffset), "overshoot keyframe offset matches the card's");
+  assert.equal(frames[frames.length - 1].opacity, "0", "ends invisible");
+  assert.equal(frames[frames.length - 1].offset, 1);
+  assert.deepEqual(frames.map(fr => fr.offset), frames.map(fr => fr.offset).slice().sort((a, b) => a - b), "offsets are ordered");
+  f.animations[1].onfinish();
+  assert.equal(f.gloss.animations[1].cancelled, true, "finish clears the gloss animation");
+  f.flip.dispatch("click");
+  const back = f.gloss.animations[2].frames;
+  assert.ok(glossPos(back[back.length - 1]) < glossPos(back[0]), "back-to-front sweeps the opposite way");
+});
+
+test("drag release continues from the current angle with matching timing for commit and snapback", () => {
+  const commit = glossFixture(false);
+  commit.card.dispatch("pointerdown", commit.ev(100, 50));
+  commit.card.dispatch("pointermove", commit.ev(190, 50));
+  const posAtRelease = glossPos(commit.gloss);
+  commit.card.dispatch("pointerup", commit.ev(190, 50));
+  assert.equal(commit.gloss.style.opacity, "", "inline drag sheen is replaced by the animation");
+  assert.deepEqual(commit.gloss.animations[0].options, commit.animations[0].options);
+  assert.equal(glossPos(commit.gloss.animations[0].frames[0]), posAtRelease, "starts at the pose the drag left");
+  commit.animations[0].onfinish();
+  assert.deepEqual(commit.gloss.animations[1].options, commit.animations[1].options);
+  assert.ok(glossPos(commit.gloss.animations[1].frames[0]) < 50);
+
+  const snap = glossFixture(false);
+  snap.card.dispatch("pointerdown", snap.ev(100, 50));
+  snap.card.dispatch("pointermove", snap.ev(130, 50));
+  const snapStart = glossPos(snap.gloss);
+  snap.card.dispatch("pointerup", snap.ev(130, 50));
+  assert.equal(snap.gloss.animations.length, 1);
+  assert.equal(snap.gloss.animations[0].options.duration, 200);
+  assert.deepEqual(snap.gloss.animations[0].options, snap.animations[0].options);
+  assert.equal(glossPos(snap.gloss.animations[0].frames[0]), snapStart);
+  const sf = snap.gloss.animations[0].frames;
+  assert.equal(sf[sf.length - 1].opacity, "0");
+  snap.animations[0].onfinish();
+  assert.equal(snap.gloss.animations[0].cancelled, true);
+});
+
+test("cancel, blur, resize, capture loss and showFront leave no stuck sheen", () => {
+  const releases = {
+    pointercancel: f => f.card.dispatch("pointercancel", f.ev(220, 50)),
+    lostcapture: f => f.card.dispatch("lostpointercapture", f.ev(220, 50)),
+    blur: f => f.win.listeners.blur.forEach(h => h()),
+    resize: f => f.win.listeners.resize.forEach(h => h()),
+    reset: f => f.card.showFront(),
+  };
+  for (const [name, release] of Object.entries(releases)) {
+    const f = glossFixture(false);
+    f.card.dispatch("pointerdown", f.ev(100, 50));
+    f.card.dispatch("pointermove", f.ev(220, 50));
+    assert.notEqual(f.gloss.style.opacity, undefined);
+    release(f);
+    assert.equal(f.gloss.style.opacity, "", name);
+    assert.equal(f.gloss.style.backgroundPosition, "", name);
+  }
+  const f = glossFixture(false);
+  f.flip.dispatch("click");
+  const running = f.gloss.animations[0];
+  f.card.showFront();
+  assert.equal(running.cancelled, true, "reopen/clear cancels an in-flight gloss animation");
+  assert.equal(f.flip.disabled, false);
+});
+
+test("reduced motion neither rotates nor shows a moving sheen, and flips stay instant", () => {
+  const f = glossFixture(true);
+  f.card.dispatch("pointerdown", f.ev(100, 50));
+  f.card.dispatch("pointermove", f.ev(200, 50));
+  assert.equal(f.gloss.style.opacity, undefined);
+  f.card.dispatch("pointerup", f.ev(200, 50));
+  assert.equal(f.back.hidden, false);
+  assert.equal(f.gloss.animations.length, 0);
+  f.flip.dispatch("click");
+  assert.equal(f.front.hidden, false);
+  assert.equal(f.gloss.animations.length, 0);
+});
+
+test("touch drag drives the sheen and a cancelled touch clears it", () => {
+  const f = glossFixture(false);
+  f.card.dispatch("pointerdown", f.tev(100, 50));
+  f.card.dispatch("pointermove", f.tev(180, 52));
+  assert.notEqual(f.gloss.style.opacity, undefined);
+  f.card.dispatch("pointercancel", f.tev(180, 52));
+  assert.equal(f.gloss.style.opacity, "");
+});
+
+test("sheen is clearly perceptible around 20-35deg, zero when flat, and sub-keyframes track the card's linear angle", () => {
+  const f = glossFixture(false);
+  const opacityAt = (dx) => {
+    const g = glossFixture(false);
+    g.card.dispatch("pointerdown", g.ev(100, 50));
+    g.card.dispatch("pointermove", g.ev(100 + dx, 50)); // angle = dx / 300 * 120 = dx * .4
+    return parseFloat(g.gloss.style.opacity);
+  };
+  assert.ok(opacityAt(54) >= 0.35, "21.6deg is clearly visible");
+  assert.ok(opacityAt(87) >= 0.45 && opacityAt(87) <= 0.95, "35deg stronger but restrained");
+  assert.ok(opacityAt(87) > opacityAt(54));
+  f.flip.dispatch("click");
+  const frames = f.gloss.animations[0].frames;
+  assert.equal(frames[0].opacity, "0");
+  assert.ok(frames.length > 2);
+  // Position is linear in time (hence in the card's eased angle); strength is monotonic.
+  const pos = frames.map(glossPos), step = pos[1] - pos[0];
+  pos.forEach((v, i) => { if (i) { assert.ok(Math.abs(v - pos[i - 1] - step) < 1e-6); } });
+  frames.forEach((fr, i) => { if (i) { assert.ok(parseFloat(fr.opacity) > parseFloat(frames[i - 1].opacity)); } });
+});
+
+test("gloss style has a narrow bright core over a broad reflection, normal blending, no soft-light", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  const rule = css.match(/\.species-card-gloss \{[^}]*\}/)[0];
+  assert.equal((rule.match(/linear-gradient\(115deg/g) || []).length, 2, "core + broad reflection layers");
+  assert.match(rule, /#fffffff2/, "near-opaque white core");
+  assert.doesNotMatch(rule, /soft-light|mix-blend-mode: (multiply|overlay)/);
+  assert.match(rule, /pointer-events: none/);
+});
+
+test("incoming flip phase has an exact zero-strength keyframe at the angle-0 crossing, in both directions", () => {
+  const f = glossFixture(false);
+  for (const direction of [1, -1]) {
+    // front->back uses direction 1 (incoming -90 -> +5 -> 0), back->front uses -1.
+    f.flip.dispatch("click");
+    const before = f.gloss.animations.length;
+    f.animations[f.animations.length - 1].onfinish();
+    const frames = f.gloss.animations[f.gloss.animations.length - 1].frames;
+    assert.equal(f.gloss.animations.length, before + 1);
+    const cardFrames = f.animations[f.animations.length - 1].frames;
+    const overshootOffset = cardFrames[1].offset;
+    const zeroOffset = overshootOffset * 90 / 95; // -90d -> +5d crosses 0 at 90/95 of the segment
+    const zero = frames.find(fr => Math.abs(fr.offset - zeroOffset) < 1e-9);
+    assert.ok(zero, "direction " + direction + ": keyframe at the zero crossing");
+    assert.equal(zero.opacity, "0");
+    assert.equal(parseFloat(zero.backgroundPosition), 50);
+    const offsets = frames.map(fr => fr.offset);
+    assert.deepEqual(offsets, offsets.slice().sort((a, b) => a - b), "ordered");
+    assert.equal(new Set(offsets).size, offsets.length, "no duplicates");
+    assert.ok(offsets.includes(overshootOffset) && offsets[0] === 0 && offsets[offsets.length - 1] === 1);
+    // Position stays linear in time across the whole segment (sign flips at 50).
+    const firstSegment = frames.filter(fr => fr.offset <= overshootOffset + 1e-12);
+    const slope = (glossPos(firstSegment[1]) - glossPos(firstSegment[0])) / (firstSegment[1].offset - firstSegment[0].offset);
+    firstSegment.forEach((fr, i) => { if (i) { assert.ok(Math.abs((glossPos(fr) - glossPos(firstSegment[0])) - slope * (fr.offset - firstSegment[0].offset)) < 1e-6); } });
+    f.animations[f.animations.length - 1].onfinish();
+    assert.equal(f.flip.disabled, false);
+  }
+});
