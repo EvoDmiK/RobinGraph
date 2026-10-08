@@ -332,7 +332,7 @@ def species_sections(taxon, traits, notes):
             )]
 
 
-def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None):
+def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True):
     """Resolve once, collect independent sources, then assemble a sourced response."""
     def resolve_species(query):
         lineage = resolve(query)
@@ -356,6 +356,8 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
     def metadata_stage(lineage):
         return subspecies_info(lineage) if lineage.items[-1].rank=='subspecies' else {}
     def image_stage(lineage):
+        if not include_enrichment:
+            return {'images':[], 'photo_availability':{'status':'pending', 'message':'사진을 불러오는 중입니다.'}, 'warnings':[]}
         try:
             target=lineage.items[-1]
             images = photos(target.scientific_name,rank=target.rank) if photos is licensed_images else photos(target.scientific_name)
@@ -383,7 +385,7 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             return {'conservation':unconfirmed_conservation(),
                     'warnings':['보전 상태를 현재 확인할 수 없습니다.']}
     def notes_stage(lineage):
-        if lineage.items[-1].rank == 'subspecies':
+        if not include_enrichment or lineage.items[-1].rank == 'subspecies':
             return {'notes':{},'warnings':[]}
         try:
             value = notes(lineage) if notes is not None else {}
@@ -414,6 +416,8 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             result['subspecies_metadata']=metadata
             result['sections'].insert(0,metadata['section'])
             result['summary']=metadata['section']['items'][0]['text']
+        if not include_enrichment:
+            result['enrichment_pending'] = True
         return result
     return (RunnableLambda(resolve_species)
             | RunnableParallel(lineage=RunnablePassthrough(), traits=RunnableLambda(trait_stage), media=RunnableLambda(image_stage), conservation=RunnableLambda(conservation_stage), notes=RunnableLambda(notes_stage),reference=RunnableLambda(reference_stage),metadata=RunnableLambda(metadata_stage))

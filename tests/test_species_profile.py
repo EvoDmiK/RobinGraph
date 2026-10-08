@@ -16,6 +16,70 @@ LINEAGE = TaxonomyLineage('Anas platyrhynchos', 'AviList', 'v2025b', 'concept', 
 
 
 class SpeciesProfileTest(unittest.TestCase):
+    def test_deferred_card_does_not_call_external_photos_or_notes(self):
+        photos, notes = Mock(), Mock()
+        flow = create_species_flow(lambda _: LINEAGE,
+            lambda _: [{'name':'habitat', 'display':'습지', 'source_name':'AVONET',
+                        'source_url':'https://example.com/avonet'}],
+            photos=photos, notes=notes, include_enrichment=False)
+        profile = flow.invoke('청둥오리')
+        photos.assert_not_called()
+        notes.assert_not_called()
+        self.assertTrue(profile['enrichment_pending'])
+        self.assertEqual('pending', profile['photo_availability']['status'])
+        self.assertEqual('t', profile['taxon']['taxon_id'])
+        self.assertEqual('concept', profile['lineage']['concept_set_id'])
+        self.assertIn('습지', profile['summary'])
+
+    def test_deferred_chat_skips_recommendations_and_preserves_legacy_full_response(self):
+        basic = create_species_flow(lambda _: LINEAGE, lambda _: [], include_enrichment=False)
+        full = Mock(return_value={'taxon':{'rank':'species'}, 'summary':'전체 카드', 'lineage':{}, 'warnings':[]})
+        similar = Mock(return_value={})
+        client = TestClient(create_app(species_profile_handler=full,
+            species_basic_profile_handler=basic.invoke, similar_species_handler=similar))
+        early = client.post('/v1/chat', json={'question':'청둥오리', 'intent':'profile', 'defer_enrichment':True})
+        self.assertEqual(200, early.status_code)
+        self.assertTrue(early.json()['result']['profile']['enrichment_pending'])
+        self.assertIsNone(early.json()['result']['similar_species'])
+        full.assert_not_called()
+        similar.assert_not_called()
+        legacy = client.post('/v1/chat', json={'question':'청둥오리', 'intent':'profile'}).json()
+        self.assertEqual('전체 카드', legacy['answer_text'])
+        full.assert_called_once()
+        similar.assert_called_once()
+
+    def test_deferred_subspecies_returns_verified_list_before_full_profile(self):
+        basic = create_species_flow(lambda _: LINEAGE, lambda _: [], include_enrichment=False)
+        full, similar = Mock(), Mock()
+        router = Mock()
+        router.classify.return_value = NS(label='subspecies', failure=None)
+        data = {'parent_species':{'taxon':{'taxon_id':'t'}}, 'concept_set_id':'concept',
+                'taxonomy_release':'v2025b', 'subspecies':[{'taxon_id':'child'}], 'has_more':False}
+        client = TestClient(create_app(jev_router=router, species_profile_handler=full,
+            species_basic_profile_handler=basic.invoke, similar_species_handler=similar,
+            subspecies_handler=lambda _: data))
+        result = client.post('/v1/chat', json={'question':'청둥오리 아종 알려줘', 'defer_enrichment':True}).json()
+        self.assertEqual('answer', result['disposition'])
+        self.assertEqual(data, result['result']['subspecies'])
+        full.assert_not_called()
+        similar.assert_not_called()
+        # An active context mismatch still fails closed on the fast path.
+        data['taxonomy_release'] = 'stale'
+        changed = client.post('/v1/chat', json={'question':'청둥오리 아종 알려줘', 'defer_enrichment':True}).json()
+        self.assertEqual('abstain', changed['disposition'])
+
+    def test_deferred_appearance_question_still_loads_its_requested_sourced_notes(self):
+        basic = Mock()
+        notes = Mock(return_value={'appearance':[{'text':'녹색 머리가 있습니다.',
+            'source_name':'Wikipedia', 'source_url':'https://en.wikipedia.org/w/index.php?oldid=1'}], 'fun_facts':[]})
+        full = create_species_flow(lambda _: LINEAGE, lambda _: [], photos=lambda _: [], notes=notes)
+        client = TestClient(create_app(species_profile_handler=full.invoke, species_basic_profile_handler=basic))
+        result = client.post('/v1/chat', json={'question':'청둥오리 외관 알려줘', 'defer_enrichment':True}).json()
+        self.assertEqual('answer', result['disposition'])
+        self.assertIn('녹색 머리', result['answer_text'])
+        notes.assert_called_once()
+        basic.assert_not_called()
+
     def test_conservation_normalizes_only_known_codes_with_snapshot_provenance(self):
         repository = Mock()
         source = {'source_name':'AviList global avian checklist',

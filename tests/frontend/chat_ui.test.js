@@ -761,6 +761,7 @@ test("buildChatPayload + selectedFilterValues contract: selecting the profile ro
     question: "청둥오리에 대해 알고 싶어.",
     intent: "profile",
     filters: { kind: "profile", name: "청둥오리" },
+    defer_enrichment: true,
   });
 });
 
@@ -3014,4 +3015,228 @@ test("Jev supplied subspecies lists from another parent or release are rejected"
     assert.doesNotMatch(collectedText(explorer), /Wrong bird/);
     assert.match(collectedText(explorer), /확인하지 못했습니다/);
   }
+});
+
+function progressiveDom(targeted, comparePeer) {
+  const profileRequest = deferred();
+  const similarRequest = deferred();
+  const payload = fakeProfilePayload({ enrichment_pending: true, images: [], sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "먼저 표시한 답변" }] },
+  ] });
+  if (targeted) {
+    payload.result.question_answer = { topic: "subspecies", title: "아종 목록", text: "아종 목록을 먼저 확인하세요.", items: [] };
+    payload.result.subspecies = {
+      parent_species: { taxon: payload.result.profile.taxon }, concept_set_id: "cs1", taxonomy_release: "v2025b",
+      subspecies: [{ taxon_id: "sub1", rank: "subspecies", scientific_name: "Anas platyrhynchos platyrhynchos", display_label: "청둥오리 기준아종" }],
+    };
+  }
+  const dom = createFakeDom(url => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    if (url.startsWith("/v1/taxa/profile")) {
+      if (comparePeer && url.includes(encodeURIComponent(comparePeer.taxon.scientific_name))) return Promise.resolve(jsonResponse(comparePeer));
+      return profileRequest.promise;
+    }
+    if (url.startsWith("/v1/taxa/similar")) return similarRequest.promise;
+    return Promise.resolve(jsonResponse(payload));
+  });
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = targeted ? "청둥오리 아종 알려줘" : "청둥오리에 대해 알려줘";
+  pressKey(dom, {});
+  return { dom, payload, profileRequest, similarRequest };
+}
+
+test("progressive chat renders the answer and unlocks input before profile and recommendations settle", async () => {
+  const { dom, profileRequest, similarRequest } = progressiveDom(false);
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  assert.match(collectedText(answer), /먼저 표시한 답변/);
+  assert.equal(dom.elementsById["send-button"].disabled, false);
+  assert.equal(dom.elementsById["question-input"].disabled, false);
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 2, "both follow-up requests start without awaiting each other");
+  const card = collectAllNodes(answer).find(n => /^species-card risk-/.test(n.className));
+  const flip = collectAllNodes(card).find(n => n.className === "species-card-flip");
+  flip.dispatch("click", {});
+  const fresh = fakeProfilePayload({ sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "먼저 표시한 답변" }] },
+    { key: "appearance", title: "외관 특징", items: [{ text: "나중에 표시한 설명", source_name: "설명 출처", source_url: "https://example.org/appearance" }] },
+  ] }).result.profile;
+  profileRequest.resolve(jsonResponse(fresh));
+  await settleEventPath();
+  assert.equal(collectAllNodes(answer).find(n => /^species-card risk-/.test(n.className)), card);
+  assert.equal(flip.getAttribute("aria-pressed"), "true", "photo enrichment preserves the card face");
+  assert.match(collectedText(answer), /나중에 표시한 설명/);
+  assert.equal(collectedText(answer).match(/먼저 표시한 답변/g).length, 1);
+  assert.match(collectedText(answer), /설명 출처/);
+  assert.equal(collectAllNodes(card).some(n => n.tagName === "img"), true);
+  similarRequest.resolve(jsonResponse(similarityFixture()));
+  await settleEventPath();
+  assert.match(collectedText(answer), /근연 관계 우선 3종 살펴보기/);
+});
+
+test("subspecies answers and selected subspecies explorer survive late enrichment without requesting recommendations", async () => {
+  const { dom, profileRequest } = progressiveDom(true);
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const explorer = collectAllNodes(answer).find(n => n.className === "species-subspecies");
+  assert.ok(explorer);
+  assert.match(collectedText(explorer), /청둥오리 기준아종/);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/similar")), false);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/subspecies")), false);
+  profileRequest.resolve(jsonResponse(fakeProfilePayload().result.profile));
+  await settleEventPath();
+  assert.equal(collectAllNodes(answer).find(n => n.className === "species-subspecies"), explorer);
+  assert.match(collectedText(answer), /아종 목록을 먼저 확인하세요/);
+});
+
+test("profile failure leaves the initial answer intact and allows recommendations to finish", async () => {
+  const { dom, profileRequest, similarRequest } = progressiveDom(false);
+  await settleEventPath();
+  profileRequest.resolve({ ok: true, json: () => Promise.reject(new Error("private transport failure")) });
+  similarRequest.resolve(jsonResponse(similarityFixture()));
+  await settleEventPath();
+  const text = collectedText(messageRows(dom.elementsById.history)[1]);
+  assert.match(text, /먼저 표시한 답변/);
+  assert.match(text, /사진·추가 설명을 불러오지 못했습니다/);
+  assert.match(text, /근연 관계 우선 3종 살펴보기/);
+  assert.equal(text.includes("private transport failure"), false);
+});
+
+test("recommendation failure does not prevent photos or initial answer display", async () => {
+  const { dom, profileRequest, similarRequest } = progressiveDom(false);
+  await settleEventPath();
+  similarRequest.resolve({ ok: false });
+  profileRequest.resolve(jsonResponse(fakeProfilePayload().result.profile));
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  assert.match(collectedText(answer), /먼저 표시한 답변/);
+  assert.match(collectedText(answer), /비슷한 새 추천을 불러오지 못했습니다/);
+  assert.ok(collectAllNodes(answer).some(n => n.tagName === "img"));
+});
+
+for (const mismatch of ["taxon_id", "concept_set_id", "taxonomy_release"]) {
+  test("deferred profile and recommendations reject mismatched " + mismatch, async () => {
+    const { dom, profileRequest, similarRequest } = progressiveDom(false);
+    await settleEventPath();
+    const fresh = fakeProfilePayload().result.profile;
+    const similar = similarityFixture();
+    if (mismatch === "taxon_id") { fresh.taxon.taxon_id = "wrong"; similar.taxon.taxon_id = "wrong"; }
+    else { fresh.lineage[mismatch] = "wrong"; similar[mismatch] = "wrong"; }
+    profileRequest.resolve(jsonResponse(fresh)); similarRequest.resolve(jsonResponse(similar));
+    await settleEventPath();
+    const answer = messageRows(dom.elementsById.history)[1];
+    assert.match(collectedText(answer), /먼저 표시한 답변/);
+    assert.match(collectedText(answer), /분류 자료가/);
+    assert.equal(collectAllNodes(answer).some(n => n.tagName === "img"), false);
+    assert.equal(collectedText(answer).includes("근연 관계 우선 3종 살펴보기"), false);
+  });
+}
+
+for (const action of ["clear", "new question"]) {
+  test("late enrichment cannot change an old answer after " + action, async () => {
+    const { dom, profileRequest, similarRequest } = progressiveDom(false);
+    await settleEventPath();
+    const oldAnswer = messageRows(dom.elementsById.history)[1];
+    if (action === "clear") dom.elementsById["clear-button"].dispatch("click", {});
+    else {
+      dom.elementsById["question-input"].value = "다른 질문";
+      pressKey(dom, {});
+    }
+    const snapshot = collectedText(oldAnswer);
+    profileRequest.resolve(jsonResponse(fakeProfilePayload().result.profile));
+    similarRequest.resolve(jsonResponse(similarityFixture()));
+    await settleEventPath();
+    assert.equal(collectedText(oldAnswer), snapshot);
+    assert.equal(collectAllNodes(oldAnswer).some(n => n.tagName === "img"), false);
+    if (action === "clear") assert.equal(messageRows(dom.elementsById.history).length, 0);
+  });
+}
+
+test("appending a comparison cancels pending enrichment without replacing the original answer", async () => {
+  const similar = similarityFixture();
+  const peer = profileFor(similar.groups[0].items.find(p => p.similarity_rank === 1));
+  const { dom, profileRequest, similarRequest } = progressiveDom(false, peer);
+  await settleEventPath();
+  similarRequest.resolve(jsonResponse(similar));
+  await settleEventPath();
+  const oldAnswer = messageRows(dom.elementsById.history)[1];
+  const explorer = collectAllNodes(oldAnswer).find(n => n.className === "species-related");
+  explorer.children[0].dispatch("click");
+  await settleEventPath();
+  const choice = collectAllNodes(explorer).find(n => n.tagName === "button" && /비교하기/.test(n.textContent));
+  choice.dispatch("click");
+  await settleEventPath();
+  assert.equal(messageRows(dom.elementsById.history).length, 3);
+  const comparison = messageRows(dom.elementsById.history)[2];
+  assert.equal(collectedText(comparison).includes("사진을 불러오는 중입니다"), false);
+  assert.match(collectedText(comparison), /사진 조회를 중단했습니다/);
+  const snapshot = collectedText(oldAnswer);
+  assert.match(snapshot, /추가 자료 조회를 중단했습니다/);
+  profileRequest.resolve(jsonResponse(fakeProfilePayload().result.profile));
+  await settleEventPath();
+  assert.equal(collectedText(oldAnswer), snapshot);
+  assert.equal(collectAllNodes(oldAnswer).some(n => n.tagName === "img"), false);
+});
+
+test("pending profiles do not claim missing explanations before enrichment finishes", () => {
+  const profile = fakeProfilePayload({ enrichment_pending: true, sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "확인된 기본 정보" }] },
+    { key: "appearance", title: "외관 특징", items: [], empty_text: "설명을 아직 찾지 못했습니다." },
+    { key: "fun_facts", title: "재미있는 사실", items: [], empty_text: "사실을 아직 확인하지 못했습니다." },
+  ] }).result.profile;
+  const answer = chat.buildSpeciesAnswer({ createElement: createFakeElement }, profile);
+  assert.match(collectedText(answer), /확인된 기본 정보/);
+  assert.equal(collectedText(answer).includes("찾지 못했습니다"), false);
+  assert.equal(collectedText(answer).includes("확인하지 못했습니다"), false);
+  profile.enrichment_pending = false;
+  assert.match(collectedText(chat.buildSpeciesAnswer({ createElement: createFakeElement }, profile)), /설명을 아직 찾지 못했습니다/);
+});
+
+test("successful enrichment preserves provider warnings without duplicating initial warnings", async () => {
+  const { dom, payload, profileRequest, similarRequest } = progressiveDom(false);
+  await settleEventPath();
+  const fresh = fakeProfilePayload({ warnings: payload.result.profile.warnings.concat(["추가 설명 제공처를 조회할 수 없습니다."]) }).result.profile;
+  profileRequest.resolve(jsonResponse(fresh));
+  similarRequest.resolve(jsonResponse(similarityFixture()));
+  await settleEventPath();
+  const section = collectAllNodes(messageRows(dom.elementsById.history)[1]).find(n => n.className === "species-enrichment");
+  assert.match(collectedText(section), /추가 설명 제공처를 조회할 수 없습니다/);
+  assert.equal(collectedText(section).includes(payload.result.profile.warnings[0]), false);
+});
+
+test("deferred enrichment shows confirmed empty sections that were hidden while loading", async () => {
+  const { dom, payload, profileRequest, similarRequest } = progressiveDom(false);
+  const empty = { key: "appearance", title: "외관 특징", items: [], empty_text: "외관 설명을 아직 찾지 못했습니다." };
+  payload.result.profile.sections.push(empty);
+  await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  assert.equal(collectedText(answer).includes(empty.empty_text), false);
+  profileRequest.resolve(jsonResponse(fakeProfilePayload({ sections: payload.result.profile.sections }).result.profile));
+  similarRequest.resolve(jsonResponse(similarityFixture()));
+  await settleEventPath();
+  assert.match(collectedText(answer), /외관 설명을 아직 찾지 못했습니다/);
+  assert.equal(collectedText(answer).match(/먼저 표시한 답변/g).length, 1);
+});
+
+test("completed enrichment updates the shared profile used by later comparisons", async () => {
+  const similar = similarityFixture();
+  const peer = profileFor(similar.groups[0].items.find(p => p.similarity_rank === 1));
+  const { dom, payload, profileRequest, similarRequest } = progressiveDom(false, peer);
+  const originalProfile = payload.result.profile;
+  await settleEventPath();
+  const fresh = fakeProfilePayload({ sections: [{ key: "appearance", title: "외관 특징", items: [{ text: "검증된 후속 외관 정보" }] }] }).result.profile;
+  profileRequest.resolve(jsonResponse(fresh)); similarRequest.resolve(jsonResponse(similar));
+  await settleEventPath();
+  assert.equal(payload.result.profile, originalProfile);
+  assert.equal(originalProfile.enrichment_pending, false);
+  assert.equal(originalProfile.images.length, fresh.images.length);
+  assert.equal(originalProfile.sections, fresh.sections);
+  const oldAnswer = messageRows(dom.elementsById.history)[1];
+  const explorer = collectAllNodes(oldAnswer).find(n => n.className === "species-related");
+  explorer.children[0].dispatch("click"); await settleEventPath();
+  collectAllNodes(explorer).find(n => n.tagName === "button" && /비교하기/.test(n.textContent)).dispatch("click");
+  await settleEventPath();
+  const comparison = messageRows(dom.elementsById.history)[2];
+  const cards = collectAllNodes(comparison).filter(n => /^species-card risk-/.test(n.className));
+  assert.ok(collectAllNodes(cards[0]).some(n => n.tagName === "img"));
+  assert.equal(collectedText(cards[0]).includes("사진을 불러오는 중"), false);
 });
