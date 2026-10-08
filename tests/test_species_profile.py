@@ -68,6 +68,52 @@ class SpeciesProfileTest(unittest.TestCase):
         changed = client.post('/v1/chat', json={'question':'청둥오리 아종 알려줘', 'defer_enrichment':True}).json()
         self.assertEqual('abstain', changed['disposition'])
 
+    def test_deferred_discovery_returns_full_description_without_optional_relation_queries(self):
+        basic, similar, relations, ecological, subspecies = Mock(), Mock(), Mock(), Mock(), Mock()
+        notes = Mock(return_value={
+            'appearance': [{'text': '부리 끝이 노랗습니다.', 'source_name': 'Wikipedia',
+                            'source_url': 'https://en.wikipedia.org/w/index.php?oldid=1'}],
+            'fun_facts': [{'text': '무리를 이루어 생활합니다.', 'source_name': 'Wikipedia',
+                           'source_url': 'https://en.wikipedia.org/w/index.php?oldid=1'}]})
+        measurements = [{'name': name, 'display': value, 'unit': 'mm',
+                         'source_name': 'AVONET', 'source_url': 'https://example.com/avonet'}
+                        for name, value in [('beak_length_culmen', '59.9'), ('wing_length', '268.2'), ('tail_length', '87.2')]]
+        full = create_species_flow(lambda _: LINEAGE, lambda _: measurements, photos=lambda _: [], notes=notes)
+        client = TestClient(create_app(species_profile_handler=full.invoke,
+            species_basic_profile_handler=basic, similar_species_handler=similar,
+            name_relations_handler=relations, ecological_relations_handler=ecological,
+            subspecies_handler=subspecies))
+        response = client.post('/v1/chat', json={
+            'question': 'Anas platyrhynchos', 'intent': 'profile', 'defer_discovery': True})
+        self.assertEqual(200, response.status_code)
+        result = response.json()['result']
+        self.assertFalse(result['profile'].get('enrichment_pending', False))
+        text = str(result['profile']['sections'])
+        self.assertIn('부리 끝이 노랗습니다.', text)
+        self.assertIn('무리를 이루어 생활합니다.', text)
+        for value in ('59.9 mm', '268.2 mm', '87.2 mm'):
+            self.assertIn(value, text)
+        self.assertIsNone(result['similar_species'])
+        notes.assert_called_once()
+        for handler in (basic, similar, relations, ecological, subspecies):
+            handler.assert_not_called()
+
+    def test_deferred_discovery_does_not_defer_explicit_subspecies_question(self):
+        full = create_species_flow(lambda _: LINEAGE, lambda _: [], photos=lambda _: [])
+        router = Mock()
+        router.classify.return_value = NS(label='subspecies', failure=None)
+        data = {'parent_species': {'taxon': {'taxon_id': 't'}}, 'concept_set_id': 'concept',
+                'taxonomy_release': 'v2025b', 'subspecies': [{'taxon_id': 'child'}], 'has_more': False}
+        subspecies, similar = Mock(return_value=data), Mock()
+        client = TestClient(create_app(jev_router=router, species_profile_handler=full.invoke,
+            subspecies_handler=subspecies, similar_species_handler=similar))
+        response = client.post('/v1/chat', json={
+            'question': '청둥오리 아종 알려줘', 'defer_discovery': True}).json()
+        self.assertEqual('answer', response['disposition'])
+        self.assertEqual(data, response['result']['subspecies'])
+        subspecies.assert_called_once()
+        similar.assert_not_called()
+
     def test_deferred_appearance_question_still_loads_its_requested_sourced_notes(self):
         basic = Mock()
         notes = Mock(return_value={'appearance':[{'text':'녹색 머리가 있습니다.',

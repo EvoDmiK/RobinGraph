@@ -761,7 +761,7 @@ test("buildChatPayload + selectedFilterValues contract: selecting the profile ro
     question: "청둥오리에 대해 알고 싶어.",
     intent: "profile",
     filters: { kind: "profile", name: "청둥오리" },
-    defer_enrichment: true,
+    defer_discovery: true,
   });
 });
 
@@ -1737,7 +1737,7 @@ test("related exploration stays in the explanation and comparison, outside every
   await settleEventPath();
   const answer = messageRows(dom.elementsById["history"])[1];
   const explanation = collectAllNodes(answer).find(n => n.className === "species-answer");
-  assert.equal(answer.children.filter(n => n.className === "species-related").length, 1);
+  assert.equal(collectAllNodes(answer).filter(n => n.className === "species-related").length, 1);
   const cards = collectAllNodes(answer).filter(n => n.className.startsWith("species-card risk-"));
   assert.equal(cards.length, 1);
   assert.equal(collectAllNodes(cards[0]).some(n => n.className === "species-related"), false);
@@ -1931,7 +1931,7 @@ test("species explanation offers a lazy 통칭·가축형 button outside the car
   await settleEventPath();
   const answer = messageRows(dom.elementsById["history"])[1];
   const explanation = collectAllNodes(answer).find((n) => n.className === "species-answer");
-  assert.equal(answer.children.filter((n) => n.className === "species-related").length, 1, "same genus/family explorer is preserved");
+  assert.equal(collectAllNodes(answer).filter((n) => n.className === "species-related").length, 1, "same genus/family explorer is preserved");
   const extra = answer.children.find(n => n.className === "species-extra-info");
   assert.equal(extra.tagName, "details"); assert.ok(!extra.open);
   const explorer = extra.children.find((n) => n.className === "species-name-relations");
@@ -2041,7 +2041,7 @@ async function rg005Start(peerResponder) {
   const dom = createFakeDom((url) => {
     if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
     if (url === "/v1/chat") return Promise.resolve(jsonResponse(payload));
-    if (url.startsWith("/v1/taxa/related")) return Promise.resolve(jsonResponse(rg005Related()));
+    if (url.startsWith("/v1/taxa/related") || url.startsWith("/v1/taxa/similar")) return Promise.resolve(jsonResponse(rg005Related()));
     if (url.startsWith("/v1/taxa/profile")) return peerResponder(decodeURIComponent(url.split("name=")[1]));
     return Promise.resolve(jsonResponse({}, 404));
   });
@@ -2896,13 +2896,14 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.match(collectedText(explanation), /기본 정보\s+전체 종 소개/);
   assert.ok(explanation.children.some(n => /^species-chat-brief /.test(n.className || "")));
   assert.ok(collectAllNodes(answer).some(n => /^species-popup-trigger /.test(n.className || "")));
-  const explorer = answer.children.find(n => n.className === "species-related");
+  const explorer = collectAllNodes(answer).find(n => n.className === "species-related");
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "false");
   assert.equal(explorer.children[1].hidden, true);
   assert.equal(explorer.children[0].textContent, "근연 관계 우선 3종 살펴보기");
   const extra = answer.children.find(n => n.className === "species-extra-info");
   assert.equal(extra.tagName, "details"); assert.ok(!extra.open);
-  assert.deepEqual(extra.children.slice(1).map(n => n.className), ["species-ecological-related", "species-subspecies", "species-name-relations"]);
+  assert.equal(extra.children[0].textContent, "더 알아보기");
+  assert.deepEqual(extra.children.slice(1).map(n => n.className), ["species-related", "species-ecological-related", "species-subspecies", "species-name-relations"]);
   const sources = answer.children.find(n => n.className === "species-answer-sources");
   assert.equal(answer.children.at(-1), sources); assert.ok(!sources.open);
   for (const name of ["Reviewed profile", "Appearance source", "Ecology source", "Fun facts source", "IUCN Red List", "API evidence"]) {
@@ -2913,8 +2914,8 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(explanation.children.some(n => n.className === "species-answer-sources"), false);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false, "folded exploration never fetches");
   assert.ok(answer.children.indexOf(explanation) < answer.children.findIndex(n => n.className === "species-popup-entry"));
-  assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(explorer));
-  assert.ok(answer.children.indexOf(explorer) < answer.children.indexOf(extra));
+  assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(extra));
+  assert.equal(explorer.parentNode, extra);
   explorer.children[0].dispatch("click"); await tick();
   assert.equal(explorer.children[0].getAttribute("aria-expanded"), "true");
   assert.equal(explorer.children[1].hidden, false);
@@ -3294,4 +3295,45 @@ test("clearing chat invalidates an unused extra-information button without makin
   button.dispatch("click"); await settleEventPath();
   assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0);
   assert.equal(messageRows(dom.elementsById.history).length, 0);
+});
+
+test("full introductions show facts and external explanations immediately while all discovery stays under 더 알아보기", async () => {
+  const payload = fakeProfilePayload({ sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "확인된 기본 정보" }] },
+    { key: "appearance", title: "외관 특징", items: [
+      { text: "측정된 부리 길이" }, { text: "측정된 날개 길이" }, { text: "측정된 꼬리 길이" },
+      { text: "외부 자료에서 확인한 외관 설명" }, { text: "외부 자료에서 확인한 두 번째 외관 설명" },
+    ] },
+    { key: "ecology", title: "생활과 먹이", items: [{ text: "확인된 생활과 먹이 설명" }] },
+    { key: "fun_facts", title: "재미있는 사실", items: [{ text: "외부 자료에서 확인한 재미있는 사실" }] },
+  ] });
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(
+    url === "/health" ? { mode: "fixture" } : url.startsWith("/v1/taxa/similar") ? similarityFixture() : payload
+  )));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리 알려줘";
+  pressKey(dom, {}); await settleEventPath();
+  const request = JSON.parse(dom.fetchCalls.find(c => c.url === "/v1/chat").options.body);
+  assert.equal(request.defer_discovery, true);
+  assert.equal(Object.hasOwn(request, "defer_enrichment"), false);
+  const answer = messageRows(dom.elementsById.history)[1];
+  const explanation = answer.children.find(n => n.className === "species-answer");
+  for (const text of ["확인된 기본 정보", "측정된 부리 길이", "측정된 날개 길이", "측정된 꼬리 길이", "외부 자료에서 확인한 외관 설명", "외부 자료에서 확인한 두 번째 외관 설명", "확인된 생활과 먹이 설명", "외부 자료에서 확인한 재미있는 사실"]) {
+    assert.ok(collectedText(explanation).includes(text), "initial answer includes " + text);
+  }
+  assert.equal(explanation.hidden, false);
+  assert.equal(collectAllNodes(explanation).some(n => n.tagName === "details"), false, "answer facts and prose are unfolded");
+  assert.equal(collectAllNodes(answer).some(n => n.className === "species-enrichment-load"), false);
+  const extra = answer.children.find(n => n.className === "species-extra-info");
+  assert.equal(extra.children[0].textContent, "더 알아보기");
+  assert.ok(!extra.open);
+  assert.deepEqual(extra.children.slice(1).map(n => n.className), ["species-related", "species-ecological-related", "species-subspecies", "species-name-relations"]);
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0);
+  extra.open = true; extra.dispatch("toggle"); await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).length, 0, "opening the menu does not fetch unselected discovery");
+  const related = extra.children.find(n => n.className === "species-related");
+  related.children[0].dispatch("click"); await settleEventPath();
+  assert.deepEqual(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).map(c => c.url), ["/v1/taxa/similar?name=Anas%20platyrhynchos"]);
+  assert.match(collectedText(related), /Peer 1/);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/profile")), false, "full profile is already available");
 });
