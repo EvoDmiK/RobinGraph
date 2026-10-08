@@ -840,9 +840,23 @@
     var scientific = doc.createElement("i"); scientific.textContent = peer.scientific_name; identity.appendChild(scientific);
     row.appendChild(identity);
     if (ranked) {
+      row.setAttribute("data-ranked", "true");
+      var rank = doc.createElement("span"); rank.className = "comparison-peer-rank";
+      rank.textContent = peer.similarity_rank + "위"; row.appendChild(rank);
       var score = doc.createElement("span"); score.className = "comparison-peer-score";
-      score.textContent = peer.similarity_rank + "위 · " + (peer.score_basis === "taxonomy_ecology_fallback" ? "분류·생태 대체 점수(계통 자료 부족) " : "가중 점수 ") + peer.similarity_score + "점";
-      score.setAttribute("aria-label", "비교 후보 " + score.textContent); row.appendChild(score);
+      score.textContent = peer.similarity_score + "점";
+      score.setAttribute("aria-label", "비교 후보 " + similarityLabel(peer)); row.appendChild(score);
+      var basis = doc.createElement("span"); basis.className = "comparison-peer-basis";
+      basis.textContent = peer.score_basis === "taxonomy_ecology_fallback" ? "분류·생태 대체 점수(계통 자료 부족)" : "가중 점수";
+      row.appendChild(basis);
+      var chips = doc.createElement("div"); chips.className = "comparison-peer-reasons";
+      var seenReasons = {};
+      (Array.isArray(peer.similarity_reasons) ? peer.similarity_reasons : []).forEach(function (reason) {
+        if (!reason || typeof reason.label !== "string" || !reason.label.trim() || seenReasons[reason.label] || chips.children.length >= 3) { return; }
+        seenReasons[reason.label] = true;
+        var chip = doc.createElement("span"); chip.textContent = reason.label; chips.appendChild(chip);
+      });
+      row.appendChild(chips);
     }
     var button = doc.createElement("button"); button.type = "button"; button.className = "comparison-peer-choose";
     button.textContent = "비교하기";
@@ -860,7 +874,9 @@
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 속·과의 새 살펴보기";
     if ((options.initialData && options.initialData.ranking) || options.endpoint === "/v1/taxa/similar") { open.textContent = "근연 관계 우선 3종 살펴보기"; }
-    open.setAttribute("aria-expanded", "false"); section.appendChild(open);
+    open.setAttribute("aria-expanded", "false");
+    if (options.inline) { section.setAttribute("data-inline", "true"); }
+    else { section.appendChild(open); }
     var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
     var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
     var results = doc.createElement("div"); content.appendChild(results);
@@ -974,11 +990,13 @@
         status.textContent = "비교할 새를 선택하세요.";
       }).catch(function () {
         loaded = false; if (!active()) { return; }
-        status.textContent = "분류 관계를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
+        status.textContent = options.inline
+          ? "분류 관계를 불러오지 못했습니다. 분류 자료가 갱신되었을 수 있으니 질문을 다시 보내주세요."
+          : "분류 관계를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
       });
     }
     open.addEventListener("click", toggle);
-    if (options.initiallyOpen) { toggle(); }
+    if (options.initiallyOpen || options.inline) { toggle(); }
     return section;
   }
 
@@ -2140,20 +2158,72 @@
    * habitat name, and the validated red-list badge. The prose explanation
    * itself is the server's `answer_text` (built from `profile.summary`).
    */
-  function buildQuestionAnswer(doc, questionAnswer) {
+  function buildTaxonomyAnswer(doc, lineage) {
+    var section = doc.createElement("section"); section.className = "taxonomy-answer";
+    var header = doc.createElement("div"); header.className = "taxonomy-answer-header";
+    var title = doc.createElement("h3"); title.textContent = "분류 계통"; header.appendChild(title);
+    var data = lineage && typeof lineage === "object" ? lineage : {};
+    [data.taxonomy_source, data.taxonomy_release].forEach(function (value) {
+      if (typeof value !== "string" || !value.trim()) { return; }
+      var chip = doc.createElement("span"); chip.className = "taxonomy-version-chip"; chip.textContent = value; header.appendChild(chip);
+    });
+    section.appendChild(header);
+    var taxa = (Array.isArray(data.lineage) ? data.lineage : []).filter(function (taxon) { return taxon && typeof taxon === "object"; }).slice(0, 20);
+    if (taxa.length) {
+      var list = doc.createElement("ol"); list.className = "taxonomy-timeline"; list.setAttribute("aria-label", "상위 분류부터 조회한 분류군까지");
+      taxa.forEach(function (taxon, index) {
+        var row = doc.createElement("li"); row.className = "taxonomy-taxon";
+        if (index === taxa.length - 1) { row.setAttribute("data-terminal", "true"); }
+        var rank = typeof taxon.rank === "string" && taxon.rank.trim() ? taxon.rank : "unknown";
+        var badge = doc.createElement("span"); badge.className = "taxonomy-rank-badge"; badge.textContent = RANK_LABELS[rank] || "분류"; row.appendChild(badge);
+        var identity = doc.createElement("div"); identity.className = "taxonomy-taxon-identity";
+        var scientific = typeof taxon.scientific_name === "string" && taxon.scientific_name.trim() ? taxon.scientific_name : null;
+        var korean = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" && taxon.korean_name.trim() ? taxon.korean_name : null;
+        var name = doc.createElement(korean ? "strong" : "i"); name.className = "taxonomy-taxon-name"; name.textContent = korean || scientific || "이름 미등록"; identity.appendChild(name);
+        if (korean && scientific) { var latin = doc.createElement("i"); latin.className = "taxonomy-scientific-name"; latin.textContent = scientific; identity.appendChild(latin); }
+        var rankEnglish = doc.createElement("span"); rankEnglish.className = "taxonomy-rank-english"; rankEnglish.textContent = rank === "unknown" ? "분류 단계 미등록" : rank; identity.appendChild(rankEnglish);
+        if (korean) {
+          var sourceUrl = sanitizeUrl(taxon.korean_name_source_url);
+          var naming = doc.createElement("div"); naming.className = "taxonomy-name-provenance";
+          var status = doc.createElement("span");
+          status.textContent = taxon.korean_name_status === "community-sourced" || taxon.korean_name_status === "community-sourced-reference" ? "참고 국명" : "국명";
+          naming.appendChild(status);
+          if (sourceUrl) {
+            var sourceHost = new URL(sourceUrl).hostname;
+            naming.appendChild(safeLink(doc, sourceHost === "www.wikidata.org" || sourceHost === "wikidata.org" ? "Wikidata 출처" : "국명 출처", sourceUrl));
+          }
+          identity.appendChild(naming);
+        }
+        row.appendChild(identity); list.appendChild(row);
+      });
+      section.appendChild(list);
+    } else {
+      var empty = doc.createElement("p"); empty.className = "taxonomy-empty"; empty.textContent = "표시할 분류 계통 자료가 없습니다."; section.appendChild(empty);
+    }
+    var details = doc.createElement("details"); details.className = "taxonomy-context-details";
+    var summary = doc.createElement("summary"); summary.textContent = "분류 기준 상세"; details.appendChild(summary);
+    var concept = doc.createElement("p"); concept.textContent = "개념집합: " + (typeof data.concept_set_id === "string" && data.concept_set_id.trim() ? data.concept_set_id : "미등록"); details.appendChild(concept);
+    section.appendChild(details);
+    return section;
+  }
+
+  function buildQuestionAnswer(doc, questionAnswer, options) {
     if (!questionAnswer || ["diet", "habitat", "activity", "appearance", "related", "ecological_related", "subspecies"].indexOf(questionAnswer.topic) === -1) { return null; }
     var section = doc.createElement("section"); section.className = "species-question-answer";
     var title = doc.createElement("h3"); title.textContent = typeof questionAnswer.title === "string" ? questionAnswer.title : "질문에 대한 답변"; section.appendChild(title);
-    var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
-    var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
-    (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
-      if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
-      var item = doc.createElement("li");
-      var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
-      if (typeof fact.source_name === "string" && fact.source_name.trim()) { item.appendChild(safeLink(doc, " · " + fact.source_name, fact.source_url)); }
-      facts.appendChild(item);
-    });
-    if (facts.children.length) { section.appendChild(facts); }
+    var rankedExplorer = options && options.rankedExplorer;
+    if (!rankedExplorer) {
+      var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
+      var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
+      (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
+        if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
+        var item = doc.createElement("li");
+        var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
+        if (typeof fact.source_name === "string" && fact.source_name.trim()) { item.appendChild(safeLink(doc, " · " + fact.source_name, fact.source_url)); }
+        facts.appendChild(item);
+      });
+      if (facts.children.length) { section.appendChild(facts); }
+    } else { section.appendChild(rankedExplorer); }
     var context = questionAnswer.name_context;
     if (isNameRelationsPayload(context)) {
       var aliases = doc.createElement("details"); aliases.className = "question-answer-name-context";
@@ -2572,14 +2642,20 @@
       item.appendChild(badge);
 
       var questionAnswer = answer.result && answer.result.kind === "profile" && answer.result.question_answer;
-      var targeted = buildQuestionAnswer(doc, questionAnswer);
+      var ranking = questionAnswer && questionAnswer.relations && questionAnswer.relations.ranking;
+      var directRanked = questionAnswer && questionAnswer.topic === "related" && ranking && ranking.limit === 3 &&
+        ["taxonomy-ecology-v1", "taxonomy-phylogeny-ecology-v2", "taxonomy-phylogeny-ecology-v3"].indexOf(ranking.method) !== -1;
+      var rankedExplorer = directRanked ? buildRelatedExplorer(doc, answer.result.profile, taxaFetch, {
+        initialData: questionAnswer.relations, inline: true, onComparison: appendComparisonMessage, isActive: conversationGuard(),
+      }) : null;
+      var targeted = buildQuestionAnswer(doc, questionAnswer, { rankedExplorer: rankedExplorer });
       var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile, true) : null);
       var answerSources = null;
       if (structured) {
         answerSources = Array.from(structured.children).find(function (child) { return child.className === "species-answer-sources"; }) || null;
         if (answerSources) { structured.removeChild(answerSources); }
       }
-      if (targeted) {
+      if (targeted && !directRanked) {
         var factSourceUrls = {};
         (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
           var url = fact && sanitizeUrl(fact.source_url);
@@ -2613,21 +2689,9 @@
         }
       }
 
-      var answerMetadata = [];
       var result = answer && answer.result;
-      if (result && result.kind === "taxonomy" && result.lineage) {
-        answerMetadata.push("분류 출처: " + result.lineage.taxonomy_source);
-        answerMetadata.push("분류 릴리스: " + result.lineage.taxonomy_release);
-        answerMetadata.push("개념집합: " + result.lineage.concept_set_id);
-      }
-      if (answerMetadata.length > 0) {
-        var metadata = doc.createElement("p");
-        metadata.className = "answer-metadata";
-        metadata.textContent = answerMetadata.join(" · ");
-        item.appendChild(metadata);
-      }
-
-      var resultLines = resultSummaryLines(result);
+      if (result && result.kind === "taxonomy") { item.appendChild(buildTaxonomyAnswer(doc, result.lineage)); }
+      var resultLines = result && result.kind === "taxonomy" ? [] : resultSummaryLines(result);
       if (resultLines.length > 0) {
         var resultList = doc.createElement("ul");
         resultList.className = "route-results";
@@ -2669,7 +2733,7 @@
             if (!targeted) { relatedOptions.endpoint = "/v1/taxa/similar"; }
             var relatedSlot = result.profile.enrichment_pending && !targeted ? doc.createElement("div") : null;
             if (relatedSlot) { relatedSlot.className = "species-related-slot"; extra.appendChild(relatedSlot); }
-            else {
+            else if (!directRanked) {
               var related = buildRelatedExplorer(doc, result.profile, taxaFetch, relatedOptions);
               if (targeted && questionAnswer.topic === "related") { item.appendChild(related); }
               else { extra.appendChild(related); }
@@ -3010,6 +3074,7 @@
     dietIconInfo: dietIconInfo,
     buildSpeciesAnswer: buildSpeciesAnswer,
     buildQuestionAnswer: buildQuestionAnswer,
+    buildTaxonomyAnswer: buildTaxonomyAnswer,
     conservationInfo: conservationInfo,
     photoAvailabilityInfo: photoAvailabilityInfo,
     init: init,
