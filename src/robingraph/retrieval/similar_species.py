@@ -4,7 +4,7 @@ from dataclasses import asdict
 from .ecological_relations import _web_url
 from .phylogenetic_relations import phylogenetic_relations, phylogeny_metadata
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
-from .taxonomy_lineage import with_korean_display_name
+from .taxonomy_lineage import sourced_korean_names, with_korean_display_name
 
 WEIGHTS = {'phylogenetic_clade': 50, 'same_genus': 20, 'same_family': 10, 'same_habitat': 10, 'same_trophic_niche': 10}
 METHOD = 'taxonomy-phylogeny-ecology-v3'
@@ -156,15 +156,24 @@ def similar_species(repository, store, resolve, name):
         if score:
             ranked.append((score,candidate,reasons))
     ranked.sort(key=lambda item:(-item[0], item[1]['scientific_name'], item[1]['taxon_id']))
-    top = ranked[:3]
+    # Score the full active pool first. Only the checked-name candidates and
+    # the three score leaders need a name projection to select three peers.
+    references = sourced_korean_names()
+    name_ids = {candidate['taxon_id'] for _,candidate,_ in ranked
+                if candidate['taxon_id'] in references}
+    name_ids.update(candidate['taxon_id'] for _,candidate,_ in ranked[:3])
     names = repository._run(NAMES_QUERY, concept_set_id=lineage.concept_set_id,
                             taxonomy_release=lineage.taxonomy_release,
-                            taxon_ids=[candidate['taxon_id'] for _,candidate,_ in top],
-                            korean_dataset_id=repository._korean_dataset_id()) if top else []
-    selected_ids = {candidate['taxon_id'] for _,candidate,_ in top}
-    if any(row.get('taxon_id') not in selected_ids for row in names) or len({row.get('taxon_id') for row in names})!=len(names):
+                            taxon_ids=sorted(name_ids),
+                            korean_dataset_id=repository._korean_dataset_id()) if name_ids else []
+    if any(row.get('taxon_id') not in name_ids for row in names) or len({row.get('taxon_id') for row in names})!=len(names):
         raise ValueError('Invalid selected species name projection')
-    labels = {row['taxon_id']:row for row in names}
+    labels = {row['taxon_id']:with_korean_display_name({**row, 'rank':'species',
+              'scientific_name':candidates[row['taxon_id']]['scientific_name']}) for row in names}
+    top = [entry for entry in ranked if labels.get(entry[1]['taxon_id'], {}).get('korean_name')][:3]
+    selected_ids = {candidate['taxon_id'] for _,candidate,_ in top}
+    top.extend(entry for entry in ranked[:3] if entry[1]['taxon_id'] not in selected_ids)
+    top = top[:3]
     items = []
     for position,(score,candidate,reasons) in enumerate(top,1):
         name_row = labels.get(candidate['taxon_id'],{})
@@ -178,11 +187,11 @@ def similar_species(repository, store, resolve, name):
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
             'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
                        'eligible_count':len(ranked),'limit':3,'weights':WEIGHTS.copy(),
-                       'priority':'weighted_score',
+                       'priority':'korean_name_then_weighted_score',
                        'phylogeny_normalization':'ordinal_supported_ancestor_levels',
                        'missing_phylogeny':'exclude_and_renormalize_available_weights',
                        'tie_break':'scientific_name,taxon_id',
                        'phylogeny':phylogeny_metadata(lineage.taxonomy_release, lineage.concept_set_id)},
-            'groups':[{'rank':'similarity','label':'근연·분류·생태 가중 점수 상위 3종','items':items,
+            'groups':[{'rank':'similarity','label':'한국어 이름 우선 비교 후보 3종','items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'계통 50% · 분류 30% · 서식 환경 10% · 먹이 생태 10%를 반영해 점수순으로 정렬합니다. 계통 자료가 없으면 분류·생태 점수로 표시합니다. 점수는 실제 진화 거리를 뜻하지 않습니다.'}
+            'note':'검증된 한국어 이름이 있는 후보를 먼저 선정하고, 같은 이름 조건 안에서 가중 점수순으로 정렬합니다. 한국어 이름 후보가 3종 미만이면 나머지는 영어 이름 후보로 채웁니다. 계통 50% · 분류 30% · 서식 환경 10% · 먹이 생태 10%를 반영합니다. 계통 자료가 없으면 분류·생태 점수를 100점으로 환산합니다. 점수는 실제 진화 거리를 뜻하지 않습니다.'}

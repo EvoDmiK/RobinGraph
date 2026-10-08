@@ -1205,3 +1205,15 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .taxonomy-context-details > summary { cursor: pointer; }
 .taxonomy-context-details > summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 @media (max-width: 420px) { .taxonomy-taxon { grid-template-columns: 2.4rem minmax(0, 1fr); gap: .6rem; } .taxonomy-taxon:not(:last-child)::after { left: 1.2rem; } .taxonomy-taxon-name { font-size: .95rem; } }
+
+.similarity-criteria { margin: .2rem 0 .85rem; padding: .8rem; border: 1px solid var(--color-answer-border); border-radius: .75rem; background: var(--color-surface); }
+.similarity-criteria h4 { margin: 0 0 .6rem; font-size: .85rem; font-weight: 600; color: var(--color-muted); }
+.similarity-weight-badges { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .45rem; margin: 0; }
+.similarity-weight-badges > div { padding: .5rem .35rem; border-radius: .55rem; background: var(--color-answer-bg); text-align: center; }
+.similarity-weight-badges dt { font-size: .75rem; line-height: 1.35; color: var(--color-muted); overflow-wrap: anywhere; }
+.similarity-weight-badges dd { margin: .2rem 0 0; font-size: 1.05rem; font-weight: 700; color: var(--color-accent); }
+.similarity-criteria .similarity-priority { margin: 0 0 .65rem; color: var(--color-accent); font-size: .85rem; font-weight: 600; }
+.similarity-calculation-details { margin-top: .65rem; font-size: .8rem; line-height: 1.6; color: var(--color-muted); overflow-wrap: anywhere; }
+.similarity-calculation-details summary { cursor: pointer; }
+.similarity-calculation-details summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+@media (max-width: 420px) { .similarity-weight-badges { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

@@ -110,7 +110,8 @@ def focused_answer(profile, question, relations=None):
                         if len(reason_labels)!=len(reasons):
                             continue
                         score_label = ' · 분류·생태 대체 점수(계통 자료 부족)' if peer.get('score_basis') == 'taxonomy_ecology_fallback' else ''
-                        items.append({**source,'text':f"{rank}위 {peer_label}: {score:g}점{score_label} · {', '.join(reason_labels)}",
+                        rank_label = f'추천 {rank}' if (relations.get('ranking') or {}).get('priority') == 'korean_name_then_weighted_score' else f'{rank}위'
+                        items.append({**source,'text':f"{rank_label} {peer_label}: {score:g}점{score_label} · {', '.join(reason_labels)}",
                                       'peer':peer})
                 elif question.topic == 'ecological_related':
                     for peer in peers:
