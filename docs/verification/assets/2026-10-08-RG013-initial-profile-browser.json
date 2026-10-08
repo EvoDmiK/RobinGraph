@@ -1,0 +1,157 @@
+{
+  "scope": "Real NAS TEST Chrome UI with real APIs and DB: complete initial species explanation; discovery menu folded, zero optional API before selecting category; direct subspecies immediate; no mocked HTTP",
+  "passed": true,
+  "results": [
+    {
+      "width": 390,
+      "question": "흰뺨검둥오리에 대해 알려줘",
+      "first_reply_ms": 4248,
+      "appearance_count": 5,
+      "fun_fact_count": 2,
+      "before_click_discovery_requests": 0,
+      "after_menu_open_requests": 0,
+      "direct_subspecies_count": 0,
+      "actions": [
+        {
+          "path": "/v1/taxa/subspecies",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/name-relations",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/ecological-related",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "status": 200
+        }
+      ],
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 42
+        },
+        {
+          "path": "/v1/taxa/subspecies",
+          "at_ms": 4948
+        },
+        {
+          "path": "/v1/taxa/name-relations",
+          "at_ms": 5386
+        },
+        {
+          "path": "/v1/taxa/ecological-related",
+          "at_ms": 5814
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "at_ms": 6785
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 390,
+      "before": "docs/verification/assets/2026-10-08-RG013-initial-profile-390-0-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-initial-profile-390-0-after.png"
+    },
+    {
+      "width": 390,
+      "question": "청둥오리 아종 알려줘",
+      "first_reply_ms": 6846,
+      "appearance_count": 5,
+      "fun_fact_count": 2,
+      "before_click_discovery_requests": 0,
+      "after_menu_open_requests": 0,
+      "direct_subspecies_count": 2,
+      "actions": [],
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 22
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 390,
+      "before": "docs/verification/assets/2026-10-08-RG013-initial-profile-390-1-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-initial-profile-390-1-after.png"
+    },
+    {
+      "width": 900,
+      "question": "흰뺨검둥오리에 대해 알려줘",
+      "first_reply_ms": 648,
+      "appearance_count": 5,
+      "fun_fact_count": 2,
+      "before_click_discovery_requests": 0,
+      "after_menu_open_requests": 0,
+      "direct_subspecies_count": 0,
+      "actions": [
+        {
+          "path": "/v1/taxa/subspecies",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/name-relations",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/ecological-related",
+          "status": 200
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "status": 200
+        }
+      ],
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 38
+        },
+        {
+          "path": "/v1/taxa/subspecies",
+          "at_ms": 1392
+        },
+        {
+          "path": "/v1/taxa/name-relations",
+          "at_ms": 1824
+        },
+        {
+          "path": "/v1/taxa/ecological-related",
+          "at_ms": 2239
+        },
+        {
+          "path": "/v1/taxa/similar",
+          "at_ms": 3043
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 900,
+      "before": "docs/verification/assets/2026-10-08-RG013-initial-profile-900-0-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-initial-profile-900-0-after.png"
+    },
+    {
+      "width": 900,
+      "question": "청둥오리 아종 알려줘",
+      "first_reply_ms": 2840,
+      "appearance_count": 5,
+      "fun_fact_count": 2,
+      "before_click_discovery_requests": 0,
+      "after_menu_open_requests": 0,
+      "direct_subspecies_count": 2,
+      "actions": [],
+      "requests": [
+        {
+          "path": "/v1/chat",
+          "at_ms": 29
+        }
+      ],
+      "errors": [],
+      "scrollWidth": 900,
+      "before": "docs/verification/assets/2026-10-08-RG013-initial-profile-900-1-before.png",
+      "after": "docs/verification/assets/2026-10-08-RG013-initial-profile-900-1-after.png"
+    }
+  ],
+  "tested_revision": "5e1d725b1b5c34b854185f6697859fda2b60c701"
+}
