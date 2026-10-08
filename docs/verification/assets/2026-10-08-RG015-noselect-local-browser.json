@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "environment": "Actual NAS API/DB with locally intercepted JS/CSS",
+  "results": [
+    {
+      "width": 1280,
+      "touch": false,
+      "reduced_motion": false,
+      "all_card_descendants_user_select_none": true,
+      "native_mouse_drag_and_double_click_selection_empty": true,
+      "front_back_verified": true,
+      "details_toggle": true,
+      "source_link_focusable": true,
+      "keyboard_enter_space": true,
+      "card_drag_or_swipe": true,
+      "gloss_visible_when_motion_allowed": true,
+      "native_vertical_scroll": null,
+      "touch_action": "pan-y pinch-zoom",
+      "input_selection_preserved": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": false,
+      "all_card_descendants_user_select_none": true,
+      "native_mouse_drag_and_double_click_selection_empty": true,
+      "front_back_verified": true,
+      "details_toggle": true,
+      "source_link_focusable": true,
+      "keyboard_enter_space": true,
+      "card_drag_or_swipe": true,
+      "gloss_visible_when_motion_allowed": true,
+      "native_vertical_scroll": 105,
+      "touch_action": "pan-y pinch-zoom",
+      "input_selection_preserved": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "reduced_motion": true,
+      "all_card_descendants_user_select_none": true,
+      "native_mouse_drag_and_double_click_selection_empty": true,
+      "front_back_verified": true,
+      "details_toggle": true,
+      "source_link_focusable": true,
+      "keyboard_enter_space": true,
+      "card_drag_or_swipe": true,
+      "gloss_visible_when_motion_allowed": false,
+      "native_vertical_scroll": 110,
+      "touch_action": "pan-y pinch-zoom",
+      "input_selection_preserved": true,
+      "page_errors": []
+    }
+  ]
+}
