@@ -1174,7 +1174,9 @@ test("renders a species profile card with validated photos, sourced trait fact c
   assert.ok(lineageDetails, "expected a <details> element for the collapsible lineage");
   assert.notEqual(lineageDetails.open, true, "lineage must be collapsed by default");
   const lineageSummary = lineageDetails.children.find((child) => child.tagName === "summary");
-  assert.ok(lineageSummary && lineageSummary.textContent.includes("AviList") && lineageSummary.textContent.includes("v2025b"));
+  assert.equal(lineageSummary.textContent, "분류 계통 보기");
+  const lineageSources = allNodes.find(node => node.className === "species-lineage-sources");
+  assert.ok(collectedText(lineageSources).includes("AviList") && collectedText(lineageSources).includes("v2025b"));
   assert.ok(renderedText.includes("오리속"));
 
   // Reference lineage source link (Wikidata) for the genus-level entry.
@@ -1240,8 +1242,9 @@ test("species profile card groups identical measurements from multiple sources i
   // Those secondary measurements must appear only inside the collapsed
   // section, never duplicated into the always-visible part of the card.
   const measurementsSubtree = new Set(collectAllNodes(measurementsDetails));
+  const sourceSubtree = new Set(collectAllNodes(allNodes.find(node => node.className === "species-card-sources")));
   const visibleText = allNodes
-    .filter((node) => !measurementsSubtree.has(node))
+    .filter((node) => !measurementsSubtree.has(node) && !sourceSubtree.has(node))
     .map((node) => node.textContent || "")
     .join(" ");
   assert.equal(visibleText.includes("254.1 mm"), false, "wing length must not be duplicated outside the collapsed section");
@@ -1554,11 +1557,92 @@ test("photo buttons move between validated images and sources start collapsed", 
   assert.equal(count.textContent, "사진 2 / 2");
   previous.dispatch("click");
   assert.deepEqual(figures.map(node => node.hidden), [false, true]);
-  for (const details of all.filter(node => ["species-photo-sources", "trait-source-toggle"].includes(node.className))) {
-    assert.notEqual(details.open, true);
-    assert.equal(details.children[0].tagName, "summary");
-    assert.ok(collectedText(details).includes("CC"));
+  const sources = all.find(node => node.className === "species-card-sources");
+  assert.notEqual(sources.open, true);
+  assert.equal(sources.children[0].tagName, "summary");
+  assert.ok(collectedText(sources).includes("CC"));
+  assert.equal(collectAllNodes(sources).filter(node => node.tagName === "details").length, 1);
+});
+
+test("card consolidates every source category without nested source toggles and keeps warnings outside", () => {
+  const profile = fakeProfilePayload().result.profile;
+  profile.traits.push(...nightHeronProfile().traits);
+  profile.traits.push({ ...profile.traits[0], value: 1100, display: "1100", inferred: true, citation: "Other estimate", source_url: "https://example.org/estimate" });
+  profile.conservation = { category: "CR", category_raw: "CR (PE)", ...VERIFIED_SOURCE };
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const back = card.children.find(n => n.className === "species-card-back");
+  const all = collectAllNodes(back);
+  const sources = all.find(n => n.className === "species-card-sources");
+  assert.equal(sources.tagName, "details");
+  assert.notEqual(sources.open, true);
+  assert.equal(sources.children[0].textContent, "출처 · 자료 기준");
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "details").length, 1, "one source toggle, with section headings inside");
+  assert.equal(all.some(n => n.className === "trait-source-toggle"), false);
+  for (const className of ["species-photo-sources", "species-trait-sources", "species-diet-legend", "species-conservation-sources", "species-lineage-sources", "species-data-notes"]) {
+    const section = collectAllNodes(sources).find(n => n.className === className);
+    assert.equal(section.tagName, "section", className);
+    assert.equal(section.children[0].tagName, "h4", className);
   }
+  assert.deepEqual(all.filter(n => n.tagName === "a").map(n => n.href), collectAllNodes(sources).filter(n => n.tagName === "a").map(n => n.href), "all card citations are inside the shared panel");
+  for (const expected of ["Some Credit", "CC BY-SA 4.0", "CC BY 4.0", "원자료 분류값 (현재 결론 아님): nocturnal = false", "1100 g (추정값)", "원본 등급: CR (PE)", "현재 최신 평가와 다를 수 있습니다", "AviList", "v2025b", "cs1", profile.vegetation_note, "종 평균", "날개폭"]) {
+    assert.ok(collectedText(sources).includes(expected), expected);
+  }
+  const sourceNodes = new Set(collectAllNodes(sources));
+  const visibleText = all.filter(n => !sourceNodes.has(n)).map(n => n.textContent || "").join(" ");
+  assert.ok(visibleText.includes(profile.warnings[0]), "active data warnings remain in the main back");
+  assert.ok(visibleText.includes("1100 g (추정값)"), "inferred facts remain visibly qualified");
+  assert.equal(visibleText.includes(profile.vegetation_note), false);
+});
+
+test("late photo enrichment updates the source slot while preserving the open source panel and back face", () => {
+  const profile = fakeProfilePayload({ enrichment_pending: true }).result.profile;
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const sources = collectAllNodes(card).find(n => n.className === "species-card-sources");
+  const slot = collectAllNodes(sources).find(n => n.className === "species-photo-sources-slot");
+  const originalTraitSources = collectAllNodes(sources).find(n => n.className === "species-trait-sources");
+  collectAllNodes(card).find(n => n.className === "species-card-flip").dispatch("click");
+  sources.open = true;
+  const fresh = fakeProfilePayload().result.profile;
+  fresh.images = [{ ...fresh.images[0], creator: "New photographer", credit: "Fresh credit", source_url: "https://commons.wikimedia.org/wiki/File:Fresh.jpg" }];
+  card.updateEnrichment(fresh);
+  assert.equal(collectAllNodes(card).find(n => n.className === "species-card-sources"), sources);
+  assert.equal(sources.open, true);
+  assert.equal(card.children.find(n => n.className === "species-card-back").hidden, false);
+  assert.equal(collectAllNodes(sources).find(n => n.className === "species-photo-sources-slot"), slot);
+  assert.equal(collectAllNodes(sources).find(n => n.className === "species-trait-sources"), originalTraitSources);
+  assert.match(collectedText(slot), /New photographer/);
+  assert.match(collectedText(slot), /Fresh credit/);
+  assert.ok(collectAllNodes(slot).some(n => n.href === fresh.images[0].license_url));
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "details").length, 1);
+  card.updateEnrichment({ images: [], photo_availability: { status: "no_licensed_photo" } });
+  assert.equal(slot.children.length, 0, "removed photos do not leave stale credit or license claims");
+  assert.equal(sources.open, true);
+  assert.ok(collectedText(originalTraitSources).includes("AVONET"));
+});
+
+test("subspecies source consolidation retains separate parent-reference provenance and visible scope warnings", () => {
+  const profile = fakeProfilePayload().result.profile;
+  profile.taxon = { ...profile.taxon, rank: "subspecies", scientific_name: "Anas platyrhynchos test", taxon_id: "sub1", english_name_source_url: "https://example.org/english-name" };
+  const parent = { taxon_id: "t1", scientific_name: "Anas platyrhynchos", rank: "species" };
+  profile.parent_species = { taxon: parent };
+  profile.reference_traits = [{ ...profile.traits[0], display: "999", value: 999, reference_scope: "species", reference_taxon: parent, citation: "Parent source", source_url: "https://example.org/parent" }];
+  profile.subspecies_metadata = { source_name: "AviList", source_url: "https://example.org/avilist", range_raw: "Reviewed range", section: { key: "subspecies_taxonomy", items: [{ text: "Taxonomy" }, { text: "Reviewed distribution", source_name: "Distribution review", source_url: "https://example.org/distribution" }] } };
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const back = card.children.find(n => n.className === "species-card-back");
+  const sources = collectAllNodes(back).find(n => n.className === "species-card-sources");
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "details").length, 1);
+  const metadata = collectAllNodes(sources).find(n => n.className === "card-details species-subspecies-sources");
+  assert.equal(metadata.tagName, "section");
+  assert.match(collectedText(metadata), /Reviewed range/);
+  for (const url of ["https://example.org/avilist", "https://example.org/distribution", "https://example.org/english-name", "https://example.org/parent"]) {
+    assert.ok(collectAllNodes(sources).some(n => n.tagName === "a" && n.href === url), url);
+  }
+  assert.ok(collectAllNodes(sources).some(n => n.tagName === "h5" && /종 수준 참고.*Anas platyrhynchos.*999 g/.test(n.textContent)), "the parent source cannot be mistaken for an own measurement");
+  const reference = collectAllNodes(back).find(n => n.className === "card-details species-reference");
+  assert.ok(!collectAllNodes(sources).includes(reference), "reference information stays a separately labelled fact section");
+  assert.match(collectedText(reference), /이 아종의 측정값·먹이·서식지로 확정할 수 없습니다/);
+  assert.ok(back.children.some(n => /아종에 직접 연결된 형질/.test(n.textContent || "")));
+  assert.doesNotMatch(collectedText(collectAllNodes(card).find(n => n.className === "species-quick-facts")), /999/);
 });
 
 // ---------------------------------------------------------------------------
@@ -1667,8 +1751,9 @@ test("card, dialog, and chat button carry the verified tier; sources and the abu
   const back = card.children.find((node) => node.className === "species-card-back");
   assert.equal(collectAllNodes(front).some((node) => node.tagName === "a"), false, "front stays link-free");
   const sources = collectAllNodes(back).find((node) => node.className === "species-conservation-sources");
-  assert.equal(sources.tagName, "details");
-  assert.notEqual(sources.open, true);
+  assert.equal(sources.tagName, "section");
+  assert.equal(sources.parentNode.className, "species-card-sources");
+  assert.notEqual(sources.parentNode.open, true);
   assert.equal(sources.children[0].textContent, "멸종위기 등급 출처");
   assert.ok(collectAllNodes(sources).some((node) => node.tagName === "a" && node.textContent === "IUCN Red List" && node.href === VERIFIED_SOURCE.source_url && node.rel === "noopener noreferrer"));
   assert.ok(collectedText(sources).includes("릴리스 2025-1 기준"));
@@ -2617,7 +2702,7 @@ test("RG-006 follow-up: reviewed activity stays visible; the raw nocturnal=false
   assert.ok(activity, "activity_pattern is a prominent trait, not hidden under 측정값 더 보기");
   assert.equal(collectAllNodes(back).some((n) => n.className === "card-details" && collectAllNodes(n).includes(activity)), false);
   assert.equal(activity.children[1].textContent, "야행성");
-  const details = activity.children.find((n) => n.className === "trait-source-toggle");
+  const details = collectAllNodes(back).find((n) => n.className === "species-card-sources");
   assert.notEqual(details.open, true, "provenance starts collapsed");
   assert.ok(collectAllNodes(details).some((n) => n.className === "trait-review-note" && /원자료의 야행성 코드/.test(n.textContent)));
   const claims = collectAllNodes(details).filter((n) => n.className === "trait-source-claim");
