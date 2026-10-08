@@ -2944,7 +2944,7 @@ test("ranked fallback scores disclose missing phylogeny and retain fractional sc
   peer.similarity_score = 66.67;
   const explorer = chat.buildRelatedExplorer({ createElement: createFakeElement }, profileFor({ taxon_id: "t1" }), () => {}, { initialData: data, initiallyOpen: true });
   await tick();
-  assert.match(collectedText(explorer), /분류·생태 대체 점수\(계통 자료 부족\) 66.67점/);
+  assert.match(collectedText(explorer), /66.67점 분류·생태 대체 점수\(계통 자료 부족\)/);
 });
 
 test("ranked similar species render TOP3 in rank order with scores, explanation and safe provenance", async () => {
@@ -2957,7 +2957,9 @@ test("ranked similar species render TOP3 in rank order with scores, explanation 
   rows.forEach((row, index) => {
     assert.ok(collectAllNodes(row).some(n => n.tagName === "strong" && n.textContent === "Peer " + (index + 1)));
     assert.ok(collectAllNodes(row).some(n => n.tagName === "i" && n.textContent === "Similar species " + (index + 1)));
-    assert.equal(row.children.find(n => n.className === "comparison-peer-score").textContent, (index + 1) + "위 · 가중 점수 " + (90 - index * 10) + "점");
+    assert.equal(row.children.find(n => n.className === "comparison-peer-rank").textContent, (index + 1) + "위");
+    assert.equal(row.children.find(n => n.className === "comparison-peer-score").textContent, (90 - index * 10) + "점");
+    assert.equal(row.children.find(n => n.className === "comparison-peer-basis").textContent, "가중 점수");
     assert.equal(row.children.find(n => n.tagName === "button").textContent, "비교하기");
     assert.equal(row.children.filter(n => n.tagName === "details").length, 1);
     assert.ok(!row.children.find(n => n.tagName === "details").open);
@@ -3336,4 +3338,166 @@ test("full introductions show facts and external explanations immediately while 
   assert.deepEqual(dom.fetchCalls.filter(c => c.url.startsWith("/v1/taxa/")).map(c => c.url), ["/v1/taxa/similar?name=Anas%20platyrhynchos"]);
   assert.match(collectedText(related), /Peer 1/);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/profile")), false, "full profile is already available");
+});
+
+test("direct ranked questions render exactly one unfolded TOP3 card set and compare in a new bubble", async () => {
+  const data = similarityFixture();
+  data.ranking.method = "taxonomy-phylogeny-ecology-v3";
+  const winner = data.groups[0].items.find(p => p.similarity_rank === 1);
+  winner.korean_name = "검증 안 된 번역"; winner.korean_name_status = "machine-translated";
+  winner.score_basis = "taxonomy_ecology_fallback"; winner.similarity_score = 66.67;
+  winner.similarity_reasons[0].supporting_studies = [{ citation: "검토 연구", source_url: "https://example.org/study" }];
+  winner.similarity_reasons[0].conflicting_sources = [{ citation: "상충 연구" }];
+  winner.similarity_reasons[0].target_source_url = "https://example.org/ecology";
+  const payload = fakeProfilePayload();
+  payload.result.question_answer = {
+    topic: "related", title: "청둥오리와 비슷한 새", text: "숨겨야 할 긴 요약 문장", relations: data,
+    items: [{ text: "숨겨야 할 1위 후보와 점수와 근거 쉼표 문장", source_name: "중복 출처", source_url: "https://example.org/duplicate" }],
+  };
+  const peer = profileFor(winner);
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : url.startsWith("/v1/taxa/profile") ? peer : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리와 비슷한 새 알려줘";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const direct = answer.children.find(n => n.className === "species-question-answer");
+  const explorer = collectAllNodes(direct).find(n => n.className === "species-related");
+  assert.equal(explorer.getAttribute("data-inline"), "true");
+  assert.equal(collectAllNodes(answer).filter(n => n.className === "species-related").length, 1);
+  assert.equal(collectAllNodes(explorer).some(n => n.tagName === "button" && n.getAttribute("aria-expanded") !== null), false);
+  const cards = collectAllNodes(answer).filter(n => n.getAttribute("data-ranked") === "true");
+  assert.equal(cards.length, 3);
+  assert.equal(collectedText(answer).includes("숨겨야 할"), false);
+  assert.equal(collectedText(answer).includes("검증 안 된 번역"), false);
+  assert.equal(collectedText(answer).includes("Peer 4"), false);
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false);
+  assert.equal(cards[0].children.find(n => n.className === "comparison-peer-rank").textContent, "1위");
+  assert.equal(cards[0].children.find(n => n.className === "comparison-peer-score").textContent, "66.67점");
+  assert.match(collectedText(cards[0]), /분류·생태 대체 점수\(계통 자료 부족\)/);
+  assert.match(collectedText(cards[0]), /Peer 1/);
+  assert.match(collectedText(cards[0]), /검토 연구|일부 연구에서는 다른 계통 관계/);
+  assert.equal(collectAllNodes(cards[0]).some(n => n.className === "comparison-peer-reasons"), true);
+  assert.ok(!cards[0].children.find(n => n.className === "similarity-evidence").open);
+  assert.ok(collectAllNodes(cards[0]).filter(n => n.tagName === "a").every(n => n.href.startsWith("https://example.org/")));
+  assert.equal(collectAllNodes(answer).some(n => n.tagName === "script"), false);
+  assert.equal(collectAllNodes(answer).some(n => n.tagName === "progress" || n.getAttribute("role") === "progressbar"), false);
+  cards[0].children.find(n => n.className === "comparison-peer-choose").dispatch("click");
+  await settleEventPath();
+  assert.equal(messageRows(dom.elementsById.history).length, 3);
+  assert.equal(messageRows(dom.elementsById.history)[1], answer);
+  assert.match(collectedText(messageRows(dom.elementsById.history)[2]), /분류·생태 대체 점수\(계통 자료 부족\) 66.67점/);
+});
+
+for (const mismatch of ["concept_set_id", "taxonomy_release", "taxon_id"]) {
+  test("direct inline ranked cards reject changed " + mismatch, async () => {
+    const data = similarityFixture();
+    if (mismatch === "taxon_id") data.taxon.taxon_id = "wrong";
+    else data[mismatch] = "old";
+    const payload = fakeProfilePayload();
+    payload.result.question_answer = { topic: "related", title: "비슷한 새", text: "숨겨야 할 후보", items: [], relations: data };
+    const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "청둥오리와 비슷한 새 알려줘";
+    pressKey(dom, {}); await settleEventPath();
+    const answer = messageRows(dom.elementsById.history)[1];
+    assert.equal(collectAllNodes(answer).some(n => n.getAttribute("data-ranked") === "true"), false);
+    assert.match(collectedText(answer), /분류 관계를 불러오지 못했습니다/);
+  });
+}
+
+function taxonomyPayload(lineageOverrides) {
+  return {
+    disposition: "answer", selected_intent: "taxonomy", warnings: [], citations: [],
+    answer_text: "청둥오리는 오리과(Anatidae)에 속합니다.",
+    result: { kind: "taxonomy", lineage: Object.assign({
+      taxonomy_source: "AviList", taxonomy_release: "v2025b", concept_set_id: "rg:concept-set:avilist-v2025b",
+      lineage: [
+        { rank: "order", scientific_name: "Anseriformes", korean_name: "기러기목", korean_name_status: "community-sourced", korean_name_source_url: "https://www.wikidata.org/wiki/Q10908" },
+        { rank: "family", scientific_name: "Anatidae", korean_name: "오리과", korean_name_status: "community-sourced", korean_name_source_url: "https://www.wikidata.org/wiki/Q7556" },
+        { rank: "genus", scientific_name: "Anas", korean_name: "오리속", korean_name_status: "community-sourced", korean_name_source_url: "https://www.wikidata.org/wiki/Q214264" },
+        { rank: "species", scientific_name: "Anas platyrhynchos", korean_name: "청둥오리", korean_name_status: "community-sourced", korean_name_source_url: "https://www.wikidata.org/wiki/Q27141" },
+      ],
+    }, lineageOverrides || {}) },
+  };
+}
+
+test("taxonomy answers show one ordered lineage with rank badges, italic scientific names and folded context", async () => {
+  const payload = taxonomyPayload();
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리는 무슨 과야?";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  assert.equal(answer.children.filter(n => n.tagName === "p" && n.textContent === payload.answer_text).length, 1, "preserve the requested rank answer");
+  assert.equal(collectAllNodes(answer).filter(n => n.className === "taxonomy-answer").length, 1);
+  const list = collectAllNodes(answer).find(n => n.className === "taxonomy-timeline");
+  assert.equal(list.tagName, "ol");
+  assert.deepEqual(list.children.map(n => n.children[0].textContent), ["목", "과", "속", "종"]);
+  assert.deepEqual(list.children.map(n => n.children[1].children[0].textContent), ["기러기목", "오리과", "오리속", "청둥오리"]);
+  assert.equal(list.children.at(-1).getAttribute("data-terminal"), "true");
+  for (const row of list.children) {
+    assert.equal(row.tagName, "li");
+    assert.ok(collectAllNodes(row).some(n => n.tagName === "i" && n.className === "taxonomy-scientific-name"));
+    assert.match(collectedText(row), /참고 국명/);
+    assert.ok(collectAllNodes(row).some(n => n.tagName === "a" && n.textContent === "Wikidata 출처"));
+  }
+  assert.deepEqual(collectAllNodes(answer).filter(n => n.className === "taxonomy-version-chip").map(n => n.textContent), ["AviList", "v2025b"]);
+  const context = collectAllNodes(answer).find(n => n.className === "taxonomy-context-details");
+  assert.equal(context.children[0].textContent, "분류 기준 상세");
+  assert.ok(!context.open);
+  assert.match(collectedText(context), /rg:concept-set:avilist-v2025b/);
+  assert.equal(collectAllNodes(answer).some(n => n.className === "answer-metadata" || n.className === "route-results"), false);
+});
+
+test("taxonomy names reject machine translations, keep scientific fallback and sanitize name-source links", () => {
+  const payload = taxonomyPayload({ lineage: [
+    { rank: "genus", scientific_name: "Anas", korean_name: "가짜번역속", korean_name_status: "machine-translated", korean_name_source_url: "https://www.wikidata.org/wiki/Q1" },
+    { rank: "family", scientific_name: "Anatidae", korean_name: "오리과", korean_name_status: "community-sourced", korean_name_source_url: "javascript:alert(1)" },
+    { rank: "species", scientific_name: "Anas platyrhynchos", korean_name: "<script>inert name</script>", korean_name_source_url: "https://example.org/wikidata.org/name" },
+  ] });
+  const section = chat.buildTaxonomyAnswer({ createElement: createFakeElement }, payload.result.lineage);
+  const rows = collectAllNodes(section).find(n => n.className === "taxonomy-timeline").children;
+  assert.equal(rows[0].children[1].children[0].textContent, "Anas");
+  assert.equal(rows[0].children[1].children[0].tagName, "i");
+  assert.equal(collectedText(section).includes("가짜번역속"), false);
+  assert.equal(collectAllNodes(rows[0]).some(n => n.tagName === "a"), false);
+  assert.equal(collectAllNodes(rows[1]).some(n => n.tagName === "a"), false);
+  assert.ok(collectAllNodes(rows[2]).some(n => n.tagName === "a" && n.textContent === "국명 출처"));
+  assert.equal(collectAllNodes(section).some(n => n.tagName === "script"), false);
+  assert.match(collectedText(section), /<script>inert name<\/script>/);
+});
+
+test("taxonomy lineage handles missing ranks, names and optional subspecies without dropping valid ancestors", () => {
+  const data = taxonomyPayload({ lineage: [null, { rank: "kingdom", scientific_name: "Animalia" }, { rank: "species" }, { rank: "subspecies", scientific_name: "Anas platyrhynchos conboschas" }] }).result.lineage;
+  const section = chat.buildTaxonomyAnswer({ createElement: createFakeElement }, data);
+  const rows = collectAllNodes(section).find(n => n.className === "taxonomy-timeline").children;
+  assert.equal(rows.length, 3);
+  assert.equal(rows[0].children[0].textContent, "분류");
+  assert.match(collectedText(rows[0]), /kingdom/);
+  assert.match(collectedText(rows[1]), /이름 미등록/);
+  assert.equal(rows[2].children[0].textContent, "아종");
+  assert.equal(rows[2].getAttribute("data-terminal"), "true");
+});
+
+for (const data of [null, {}, { lineage: [] }, { lineage: "malformed" }]) {
+  test("empty or malformed taxonomy data keeps an explicit empty message: " + JSON.stringify(data), () => {
+    const section = chat.buildTaxonomyAnswer({ createElement: createFakeElement }, data);
+    assert.match(collectedText(section), /표시할 분류 계통 자료가 없습니다/);
+    assert.match(collectedText(section), /개념집합: 미등록/);
+    assert.equal(collectedText(section).includes("undefined"), false);
+  });
+}
+
+test("taxonomy reference labels distinguish community Wikidata names from audited Korean source names", () => {
+  const data = taxonomyPayload({ lineage: [
+    { rank: "order", scientific_name: "Anseriformes", korean_name: "기러기목", korean_name_status: "community-sourced-reference", korean_name_source_url: "https://www.wikidata.org/wiki/Q10908" },
+    { rank: "species", scientific_name: "Anas zonorhyncha", korean_name: "흰뺨검둥오리", korean_name_status: "source-reference", korean_name_source_url: "https://sites.google.com/site/birdnames/" },
+  ] }).result.lineage;
+  const section = chat.buildTaxonomyAnswer({ createElement: createFakeElement }, data);
+  const rows = collectAllNodes(section).find(n => n.className === "taxonomy-timeline").children;
+  assert.match(collectedText(rows[0]), /참고 국명/);
+  assert.match(collectedText(rows[0]), /Wikidata 출처/);
+  assert.equal(collectedText(rows[1]).includes("참고 국명"), false);
+  assert.equal(collectedText(rows[1]).includes("Wikidata"), false);
+  assert.ok(collectAllNodes(rows[1]).some(n => n.tagName === "a" && n.textContent === "국명 출처"));
 });
