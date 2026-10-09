@@ -99,6 +99,30 @@ class SearchCLITest(unittest.TestCase):
         fixture_type.return_value.close.assert_called_once_with()
         operational_type.return_value.close.assert_called_once_with()
 
+    def test_species_resolver_tries_english_only_after_scientific_miss(self):
+        with patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository"), \
+             patch("robingraph.retrieval.operational_neo4j.Neo4jOperationalObservationRepository"), \
+             patch("robingraph.retrieval.taxonomy_lineage_neo4j.Neo4jTaxonomyLineageRepository") as lineage_type, \
+             patch("robingraph.retrieval.species_profile.create_species_flow") as factory, \
+             patch("uvicorn.run"):
+            self.invoke("serve-neo4j")
+        resolve = factory.call_args_list[0].args[0]
+        repo = lineage_type.return_value
+        scientific = object()
+        repo.lineage_for_scientific_name.return_value = scientific
+        self.assertIs(scientific, resolve("Parus cinereus"))
+        repo.lineage_for_english_name.assert_not_called()
+        repo.lineage_for_scientific_name.return_value = None
+        english = object()
+        repo.lineage_for_english_name.return_value = english
+        self.assertIs(english, resolve("Cinereous Tit"))
+        repo.lineage_for_english_name.assert_called_once_with("Cinereous Tit")
+        korean = object()
+        repo.lineage_for_korean_name.return_value = korean
+        self.assertIs(korean, resolve("박새"))
+        self.assertEqual(2, repo.lineage_for_scientific_name.call_count)
+        self.assertEqual(1, repo.lineage_for_english_name.call_count)
+
     def test_serve_neo4j_wires_both_lineage_handlers_and_closes_the_lineage_repository(self):
         with patch("robingraph.retrieval.neo4j_repository.Neo4jGraphRepository") as fixture_type, \
              patch(

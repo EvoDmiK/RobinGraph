@@ -25,7 +25,7 @@ import json
 from pathlib import Path
 from typing import Literal, Protocol
 
-MatchedBy = Literal["scientific_name", "korean_name"]
+MatchedBy = Literal["scientific_name", "korean_name", "english_name"]
 
 # Reference English names; no invented Korean subspecies names.
 SUBSPECIES_NAME_REFERENCES = {

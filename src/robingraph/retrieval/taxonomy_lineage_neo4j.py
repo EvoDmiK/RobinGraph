@@ -13,9 +13,10 @@ graph or the GBIF operational graph. Every query below:
   it -- the two taxonomies are never merged (see
   `docs/graph-database-schema.md`).
 
-Two independent read paths are exposed: `lineage_for_scientific_name`
-(matches `Taxon.scientific_name`) and `lineage_for_korean_name` (matches a
-directly attached `VernacularName {language: 'ko'}`). Both walk the same
+Three read paths are exposed: `lineage_for_scientific_name`
+(matches `Taxon.scientific_name`), `lineage_for_korean_name` (matches a
+directly attached Korean name), and `lineage_for_english_name` (matches a
+unique active source-preferred English species name). They walk the same
 ancestor chain and both project each ancestor's own Korean vernacular name
 (nullable) into `LineageTaxon.korean_name`. Neither path ever reads or
 writes `ExternalTaxonConcept`. Graph queries only project licensed
@@ -174,6 +175,18 @@ RETURN targetScientificName,
 """
 
 
+_SPECIES_BY_ENGLISH_NAME_QUERY = """
+MATCH (conceptSet:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})
+MATCH (target:Taxon:BirdTaxon {rank:'species', source_release:$taxonomy_release, policy_status:'allowed'})-[:IN_CONCEPT_SET]->(conceptSet)
+MATCH (target)-[:HAS_VERNACULAR_NAME]->(name:VernacularName {language:'en', status:'source-preferred', policy_status:'allowed'})
+WHERE name.dataset_id=target.dataset_id AND target.dataset_id=conceptSet.dataset_id
+  AND name.source_release=$taxonomy_release AND toLower(name.name)=toLower($english_name)
+WITH collect(DISTINCT target) AS targets
+WHERE size(targets)=1
+RETURN targets[0].id AS taxon_id, targets[0].scientific_name AS scientific_name
+"""
+
+
 def _parse_lineage_items(raw_items: Any) -> tuple[LineageTaxon, ...]:
     if not isinstance(raw_items, list):
         raise ValueError("Invalid AviList lineage projection")
@@ -309,6 +322,30 @@ class Neo4jTaxonomyLineageRepository:
             resolved_query_scientific_name=items[-1].scientific_name,
             matched_by="scientific_name",
         )
+
+    def lineage_for_english_name(self, english_name: str) -> TaxonomyLineage | None:
+        """Resolve one active source-preferred English species name, never guess."""
+        cleaned = english_name.strip()
+        if not cleaned:
+            raise ValueError("english_name must not be blank")
+        concept_set_id, taxonomy_release = self._active_concept_set()
+        rows = self._run(
+            _SPECIES_BY_ENGLISH_NAME_QUERY, concept_set_id=concept_set_id,
+            taxonomy_release=taxonomy_release, english_name=cleaned,
+        )
+        if len(rows) != 1:
+            return None
+        target = rows[0]
+        if not isinstance(target, dict) or not isinstance(target.get("scientific_name"), str) or not target["scientific_name"].strip():
+            return None
+        lineage = self.lineage_for_scientific_name(target["scientific_name"])
+        if (lineage is None or not lineage.items or lineage.items[-1].rank != "species"
+                or lineage.items[-1].taxon_id != target.get("taxon_id")
+                or lineage.items[-1].scientific_name != target["scientific_name"]
+                or lineage.taxonomy_release != taxonomy_release
+                or lineage.concept_set_id != concept_set_id):
+            return None
+        return replace(lineage, query_name=cleaned, matched_by="english_name")
 
     def lineage_for_korean_name(self, korean_name: str) -> TaxonomyLineage | None:
         cleaned = korean_name.strip()

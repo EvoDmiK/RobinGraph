@@ -54,8 +54,8 @@ class KoreanDisplayNamesTest(TestCase):
 
     def test_snapshot_sources_crosswalks_and_split_species(self):
         labels = sourced_korean_names()
-        self.assertEqual(646, len(labels))
-        self.assertEqual(646, len({v['scientific_name'] for v in labels.values()}))
+        self.assertEqual(665, len(labels))
+        self.assertEqual(665, len({v['scientific_name'] for v in labels.values()}))
         for key, label in labels.items():
             self.assertTrue(key.startswith('avilist-taxon:v2025b:'))
             self.assertEqual('source-reference', label['status'])
@@ -72,6 +72,20 @@ class KoreanDisplayNamesTest(TestCase):
         self.assertEqual({'Anas carolinensis', 'Saxicola stejnegeri'},
                          {v['scientific_name'] for v in snapshot['unmatched_source_species']})
         self.assertEqual('쇠오리', with_korean_display_name(self.row_for('Anas crecca'))['korean_name'])
+
+    def test_institutional_supplement_preserves_exact_identity_and_source_evidence(self):
+        snapshot = json.loads(Path(lineage_module.__file__).with_name('species_ko_names.json').read_text())
+        added = [v for v in snapshot['labels'].values() if v.get('source_sha256') == '2a0538adbdd042b4328cd96f04df57e7c85598c15983986b7a9afe751a22eb12']
+        self.assertEqual(19, len(added))
+        for label in added:
+            with self.subTest(scientific_name=label['scientific_name']):
+                row = self.row_for(label['scientific_name'])
+                self.assertEqual(label['name'], with_korean_display_name(row)['korean_name'])
+                self.assertIn(label['source_page'], (2, 3))
+                self.assertEqual(label['scientific_name'], label['source_scientific_name'])
+                self.assertTrue(label['source_url'].startswith('https://www.law.go.kr/'))
+        self.assertEqual('자바뿔찌르레기', with_korean_display_name(self.row_for('Acridotheres javanicus'))['korean_name'])
+        self.assertEqual('이집트기러기', with_korean_display_name(self.row_for('Alopochen aegyptiaca'))['korean_name'])
 
     def test_foreign_names_require_sources_and_reject_conflicting_names(self):
         for science, name in [('Struthio camelus', '타조'), ('Gracula religiosa', '구관조'),
