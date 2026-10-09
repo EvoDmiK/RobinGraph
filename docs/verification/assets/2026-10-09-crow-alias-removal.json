@@ -1,0 +1,34 @@
+[
+  {
+    "endpoint": "name-relations",
+    "query": "까마귀",
+    "targets": [
+      "Corvus corone"
+    ]
+  },
+  {
+    "endpoint": "name-relations",
+    "query": "Corvus macrorhynchos",
+    "targets": []
+  },
+  {
+    "endpoint": "profile",
+    "query": "Corvus corone",
+    "target": "Corvus corone"
+  },
+  {
+    "endpoint": "profile",
+    "query": "큰부리까마귀",
+    "target": "Corvus macrorhynchos"
+  },
+  {
+    "endpoint": "chat",
+    "question": "까마귀에 대해 알려줘",
+    "disposition": "answer",
+    "kind": "name_relations",
+    "targets": [
+      "Corvus corone"
+    ],
+    "actual_http": true
+  }
+]
