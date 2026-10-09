@@ -1,4 +1,4 @@
-# RG-013 — Jev 질문 의도 분석 구현·검증 기록
+# RG-301 — Jev 질문 의도 분석 구현·검증 기록
 
 ## 배경·목표와 확인한 원인
 
@@ -22,7 +22,7 @@ Orca run `run_8bdb7fd51302`에서 역할을 나눴다. Codex가 구현·API 실�
 | `tests/fixtures/jev_intent_eval.json`, `scripts/evaluate_jev_intents.py` | 120문항, calibration/heldout 분리, opt-in 실제 API 비교 평가 |
 | `docs/jev-intent-routing.md`, 이 기록·JSON 첨부 | 설정·계약·검증 범위·한계와 실제 결과 |
 
-명시적 모드와 기존 확실한 규칙은 기존 결과를 유지하며 Jev를 호출하지 않는다. 추가 자동 경로만 13개 의도를 판단한다. 아종 목록은 `selected_intent=profile`, `route_method=jev`, `question_answer.topic=subspecies`, `result.subspecies`로 기존 profile 계약에 추가했다. 낮은 확신도·불확실·원문 이름 추출 실패는 조회를 강제하지 않는다. 관찰 날짜·장소는 자유형 모델 출력으로 생성하지 않고 기존 검증 필터를 요구한다. 답변 생성 모델과 RG-014/RG-016은 변경하지 않는다.
+명시적 모드와 기존 확실한 규칙은 기존 결과를 유지하며 Jev를 호출하지 않는다. 추가 자동 경로만 13개 의도를 판단한다. 아종 목록은 `selected_intent=profile`, `route_method=jev`, `question_answer.topic=subspecies`, `result.subspecies`로 기존 profile 계약에 추가했다. 낮은 확신도·불확실·원문 이름 추출 실패는 조회를 강제하지 않는다. 관찰 날짜·장소는 자유형 모델 출력으로 생성하지 않고 기존 검증 필터를 요구한다. 답변 생성 모델과 RG-202/RG-602은 변경하지 않는다.
 
 ## 테스트와 실제 API 평가
 
@@ -67,7 +67,7 @@ Jev 호출 지연은 calibration p50 1,806/p95 2,309ms, heldout p50 1,803/p95 1,
 
 최종 이미지 `42f4927`에서 공개 채팅 HTTP 9개와 브라우저 실제 입력·전송 4개를 다시 실행해 모두 통과했다. 최종 이미지에서도 MLflow Jev span 3개를 다시 확인했다. 해당 JSON에 tested_revision을 명시했다. 구현 커밋 `162e540`, 호환성 보완·평가 재확인 커밋 `42f4927`은 origin/dev에 push 완료(`04389fc..42f4927`). 이번 후속 기록·최종 증거 갱신은 별도 문서 커밋으로 보존한다.
 
-**RG-013 구현·NAS TEST 적용 완료**로 기록한다. 평가 정답표의 한계와 일반 영어 통칭·자동 관찰 필터·임베딩 임계값 최적화 미포함은 아래에 남긴다. Obsidian 상세 기록과 백로그·프로젝트 index에도 같은 핵심 결과를 기록한다. PROD 배포는 수행하지 않았다.
+**RG-301 구현·NAS TEST 적용 완료**로 기록한다. 평가 정답표의 한계와 일반 영어 통칭·자동 관찰 필터·임베딩 임계값 최적화 미포함은 아래에 남긴다. Obsidian 상세 기록과 백로그·프로젝트 index에도 같은 핵심 결과를 기록한다. PROD 배포는 수행하지 않았다.
 
 ## 남은 한계·후속 사항
 

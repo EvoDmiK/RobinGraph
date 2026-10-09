@@ -1,4 +1,4 @@
-# RG-004 통칭·가축형 관계 자료 확대 검증
+# RG-501 통칭·가축형 관계 자료 확대 검증
 
 구현 커밋: `f2fd88e85d043f035d4e92ec4352f62eb91f8850`.
 
@@ -64,4 +64,4 @@
 - 실행 중 TEST API에서 70개 검색어의 모든 후보 집합과 출처, 33개 이름의 자연어 질문(`clarify`, `name_relations`), 5개 학명의 역방향 조회를 확인했다.
 - TEST 컨테이너의 HTTP `/health`가 정상이고 `deployment_target=test` 확인. health의 `taxonomy_release=fixture-avlist-2025`는 정적 설정 표기이며, 실제 관계 dry-run·조회에 사용한 활성 분류판은 위의 AviList 개념집합이다.
 - NAS TEST로 SSH 터널을 연결한 실제 Chromium 320·390·1280px 화면: 거위 후보 선택→관련 종 설명, 이어서 앵무새 질문→3개 후보, 가축형 안내, 가로 넘침·JS 오류 없음.
-- PROD 활성 데이터 준비는 RG-002 별도 범위다.
+- PROD 활성 데이터 준비는 RG-102 별도 범위다.
