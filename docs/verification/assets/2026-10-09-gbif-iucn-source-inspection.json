@@ -1,0 +1,97 @@
+{
+  "source_dataset_key": "19491596-35ae-4a91-9a98-85cf505f1bd3",
+  "source_release": "2026-1",
+  "download_url": "https://hosted-datasets.gbif.org/datasets/iucn/iucn-latest.zip",
+  "archive_sha256": "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+  "license": "CC BY 4.0",
+  "total_taxon_rows": 310544,
+  "accepted_bird_species_rows": 11185,
+  "duplicate_bird_sis_ids": 0,
+  "birds_without_global_status": 0,
+  "multiple_global_status_ids": 0,
+  "global_status_counts": {
+    "Data Deficient": 36,
+    "Vulnerable": 668,
+    "Near Threatened": 967,
+    "Critically Endangered": 216,
+    "Least Concern": 8757,
+    "Endangered": 372,
+    "Extinct in the Wild": 5,
+    "Extinct": 164
+  },
+  "avilist_species_count": 11131,
+  "avilist_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "existing_mapping_checks": {
+    "exact_existing_id_and_name": 9849,
+    "no_existing_birdlife_link": 808,
+    "linked_name_mismatch": 474
+  },
+  "status_differences": [],
+  "samples": [
+    {
+      "sis_id": "22685533",
+      "scientific_name": "Cyanopsitta spixii",
+      "authorship": "(Wagler, 1832)",
+      "reference_url": "https://www.iucnredlist.org/species/22685533/153022606",
+      "global_statuses": [
+        "Extinct in the Wild"
+      ],
+      "citation": "BirdLife International 2019. Cyanopsitta spixii (Wagler, 1832). The IUCN Red List of Threatened Species 2019: https://doi.org/10.2305/IUCN.UK.2019-3.RLTS.T22685533A153022606.en"
+    },
+    {
+      "sis_id": "22693452",
+      "scientific_name": "Calidris pygmaea",
+      "authorship": "(Linnaeus, 1758)",
+      "reference_url": "https://www.iucnredlist.org/species/22693452/154738156",
+      "global_statuses": [
+        "Critically Endangered"
+      ],
+      "citation": "BirdLife International 2021. Calidris pygmaea (Linnaeus, 1758). The IUCN Red List of Threatened Species 2021: https://doi.org/10.2305/IUCN.UK.2021-3.RLTS.T22693452A154738156.en"
+    },
+    {
+      "sis_id": "22690059",
+      "scientific_name": "Raphus cucullatus",
+      "authorship": "(Linnaeus, 1758)",
+      "reference_url": "https://www.iucnredlist.org/species/22690059/261916273",
+      "global_statuses": [
+        "Extinct"
+      ],
+      "citation": "BirdLife International 2024. Raphus cucullatus (Linnaeus, 1758). The IUCN Red List of Threatened Species 2024: https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T22690059A261916273.en"
+    },
+    {
+      "sis_id": "22680186",
+      "scientific_name": "Anas platyrhynchos",
+      "authorship": "Linnaeus, 1758",
+      "reference_url": "https://www.iucnredlist.org/species/22680186/281835571",
+      "global_statuses": [
+        "Least Concern"
+      ],
+      "citation": "BirdLife International 2025. Anas platyrhynchos Linnaeus, 1758. The IUCN Red List of Threatened Species 2025: https://doi.org/10.2305/IUCN.UK.2025-2.RLTS.T22680186A281835571.en"
+    },
+    {
+      "sis_id": "103727048",
+      "scientific_name": "Pica pica",
+      "authorship": "(Linnaeus, 1758)",
+      "reference_url": "https://www.iucnredlist.org/species/103727048/264575751",
+      "global_statuses": [
+        "Least Concern"
+      ],
+      "citation": "BirdLife International 2024. Pica pica (Linnaeus, 1758). The IUCN Red List of Threatened Species 2024: https://doi.org/10.2305/IUCN.UK.2024-2.RLTS.T103727048A264575751.en"
+    }
+  ],
+  "pica_serica_present": false,
+  "independent_assessment_detail_checked": false,
+  "database_or_app_changed": false,
+  "checked_at": "2026-10-09T06:59:40.081379+00:00",
+  "scope": "official_public_archive_inspection_and_crosscheck_against_pinned_AviList_snapshot",
+  "publication_date": "2026-07-28",
+  "eml_license_confirmed": true,
+  "grade_field": "Distribution.threatStatus",
+  "database_check_performed": false,
+  "limitations": [
+    "Not an independent biological reassessment",
+    "No assessment_date, latest flag, Avibase identifiers, or CR(PE/PEW) flags in this archive",
+    "SIS and scientific-name candidate matching requires additional mapping validation before activation",
+    "Pica serica absent; Pica pica LC cannot be inherited by Pica serica"
+  ]
+}
