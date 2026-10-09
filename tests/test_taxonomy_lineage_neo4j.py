@@ -15,6 +15,48 @@ from robingraph.retrieval.taxonomy_lineage_neo4j import (
 
 
 class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
+    def test_english_lookup_uses_unique_active_source_name_and_preserves_query(self):
+        from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
+        from robingraph.retrieval.taxonomy_lineage_neo4j import _SPECIES_BY_ENGLISH_NAME_QUERY
+        concept = "rg:concept-set:avilist-v2025b"
+        taxon = LineageTaxon("avilist-taxon:v2025b:20751", "species", "Parus cinereus", None)
+        lineage = TaxonomyLineage("Parus cinereus", "AviList", "v2025b", concept, (taxon,))
+        self.repository._active_concept_set = Mock(return_value=(concept, "v2025b"))
+        self.repository._run = Mock(return_value=[{"taxon_id": taxon.taxon_id, "scientific_name": taxon.scientific_name}])
+        self.repository.lineage_for_scientific_name = Mock(return_value=lineage)
+        result = self.repository.lineage_for_english_name(" Cinereous Tit ")
+        self.assertEqual("Cinereous Tit", result.query_name)
+        self.assertEqual("english_name", result.matched_by)
+        self.assertEqual(taxon, result.items[-1])
+        self.repository._run.assert_called_once_with(_SPECIES_BY_ENGLISH_NAME_QUERY,
+            concept_set_id=concept, taxonomy_release="v2025b", english_name="Cinereous Tit")
+        for guard in ("policy_status:'allowed'", "source_release:$taxonomy_release", "status:'source-preferred'",
+                      "name.dataset_id=target.dataset_id", "target.dataset_id=conceptSet.dataset_id",
+                      "name.source_release=$taxonomy_release", "collect(DISTINCT target)", "size(targets)=1"):
+            self.assertIn(guard, _SPECIES_BY_ENGLISH_NAME_QUERY)
+
+    def test_english_lookup_rejects_ambiguity_missing_identity_and_context_change(self):
+        from dataclasses import replace
+        from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
+        concept = "rg:concept-set:avilist-v2025b"
+        taxon = LineageTaxon("avilist-taxon:v2025b:20751", "species", "Parus cinereus", None)
+        lineage = TaxonomyLineage("Parus cinereus", "AviList", "v2025b", concept, (taxon,))
+        row = {"taxon_id": taxon.taxon_id, "scientific_name": taxon.scientific_name}
+        self.repository._active_concept_set = Mock(return_value=(concept, "v2025b"))
+        self.repository.lineage_for_scientific_name = Mock(return_value=lineage)
+        for rows in ([], [row, row], [{}], [{"scientific_name": " "}]):
+            self.repository._run = Mock(return_value=rows)
+            self.assertIsNone(self.repository.lineage_for_english_name("Shared name"))
+        self.repository.lineage_for_scientific_name.assert_not_called()
+        self.repository._run = Mock(return_value=[row])
+        for invalid in (None, replace(lineage, taxonomy_release="old"), replace(lineage, concept_set_id="other"),
+                        replace(lineage, items=(replace(taxon, taxon_id="wrong"),)),
+                        replace(lineage, items=(replace(taxon, rank="subspecies"),))):
+            self.repository.lineage_for_scientific_name.return_value = invalid
+            self.assertIsNone(self.repository.lineage_for_english_name("Shared name"))
+        with self.assertRaises(ValueError):
+            self.repository.lineage_for_english_name(" ")
+
     def test_all_sourced_species_names_resolve_exact_active_identity(self):
         from dataclasses import replace
         from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon, sourced_korean_names
@@ -22,7 +64,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.repository._active_concept_set = Mock(return_value=(concept, "v2025b"))
         self.repository._active_korean_dataset_id = Mock(return_value=None)
         labels = sourced_korean_names()
-        self.assertEqual(646, len(labels))
+        self.assertEqual(665, len(labels))
         self.assertEqual("Parus cinereus", next(v["scientific_name"] for v in labels.values() if v["name"] == "박새"))
         for taxon_id, label in labels.items():
             with self.subTest(name=label["name"]):

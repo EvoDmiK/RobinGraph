@@ -1,0 +1,225 @@
+{
+  "source": {
+    "source_title": "국가법령정보센터 · 별표 7의2 유입주의 생물 · 국명/학명 표",
+    "source_url": "https://www.law.go.kr/LSW/flDownload.do?bylClsCd=200201&flSeq=148704025",
+    "sha256": "2a0538adbdd042b4328cd96f04df57e7c85598c15983986b7a9afe751a22eb12",
+    "reviewed_records": 27,
+    "added_species_count": 19,
+    "reviewed_on": "2026-10-09",
+    "scope": "Korean names only; no legal status, conservation grade, ecological trait, or taxonomic synonym inferred"
+  },
+  "records": [
+    {
+      "scientific_name": "Acridotheres tristis",
+      "name": "검은머리갈색찌르레기",
+      "source_page": 2,
+      "source_row": 1,
+      "decision": "existing_reviewed_name_preserved",
+      "existing_name": "검은머리갈색찌르레기"
+    },
+    {
+      "scientific_name": "Passer domesticus",
+      "name": "집참새",
+      "source_page": 2,
+      "source_row": 2,
+      "decision": "existing_reviewed_name_preserved",
+      "existing_name": "집참새"
+    },
+    {
+      "scientific_name": "Phasianus versicolor",
+      "name": "일본꿩",
+      "source_page": 2,
+      "source_row": 3,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:1237"
+    },
+    {
+      "scientific_name": "Pycnonotus jocosus",
+      "name": "붉은수염직박구리",
+      "source_page": 2,
+      "source_row": 4,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:23528"
+    },
+    {
+      "scientific_name": "Streptopelia chinensis",
+      "name": "목점박이비둘기",
+      "source_page": 2,
+      "source_row": 5,
+      "decision": "no_exact_active_species"
+    },
+    {
+      "scientific_name": "Carpodacus mexicanus",
+      "name": "집양진이",
+      "source_page": 2,
+      "source_row": 6,
+      "decision": "no_exact_active_species"
+    },
+    {
+      "scientific_name": "Corvus splendens",
+      "name": "집까마귀",
+      "source_page": 2,
+      "source_row": 7,
+      "decision": "existing_reviewed_name_preserved",
+      "existing_name": "집까마귀"
+    },
+    {
+      "scientific_name": "Zenaida asiatica",
+      "name": "흰죽지비둘기",
+      "source_page": 3,
+      "source_row": 1,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:2398"
+    },
+    {
+      "scientific_name": "Acridotheres fuscus",
+      "name": "숲찌르레기",
+      "source_page": 3,
+      "source_row": 2,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:26390"
+    },
+    {
+      "scientific_name": "Cardinalis cardinalis",
+      "name": "붉은홍관조",
+      "source_page": 3,
+      "source_row": 3,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:32368"
+    },
+    {
+      "scientific_name": "Geopelia placida",
+      "name": "평화비둘기",
+      "source_page": 3,
+      "source_row": 4,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:2922"
+    },
+    {
+      "scientific_name": "Acridotheres ginginianus",
+      "name": "회색뿔찌르레기",
+      "source_page": 3,
+      "source_row": 5,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:26372"
+    },
+    {
+      "scientific_name": "Alopochen aegyptiaca",
+      "name": "이집트기러기",
+      "source_page": 3,
+      "source_row": 6,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:384"
+    },
+    {
+      "scientific_name": "Aplonis panayensis",
+      "name": "붉은눈검은찌르레기",
+      "source_page": 3,
+      "source_row": 7,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:26272"
+    },
+    {
+      "scientific_name": "Garrulax perspicillatus",
+      "name": "가면웃음지빠귀",
+      "source_page": 3,
+      "source_row": 8,
+      "decision": "no_exact_active_species"
+    },
+    {
+      "scientific_name": "Garrulax sannio",
+      "name": "흰눈썹웃음지빠귀",
+      "source_page": 3,
+      "source_row": 9,
+      "decision": "no_exact_active_species"
+    },
+    {
+      "scientific_name": "Ianthocincla cineracea",
+      "name": "검은턱웃음지빠귀",
+      "source_page": 3,
+      "source_row": 10,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:25180"
+    },
+    {
+      "scientific_name": "Molothrus ater",
+      "name": "갈색머리검은피리새",
+      "source_page": 3,
+      "source_row": 11,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:31757"
+    },
+    {
+      "scientific_name": "Pitangus sulphuratus",
+      "name": "큰타이런트새",
+      "source_page": 3,
+      "source_row": 12,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:13813"
+    },
+    {
+      "scientific_name": "Porphyrio porphyrio",
+      "name": "자색물닭",
+      "source_page": 3,
+      "source_row": 13,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:3602"
+    },
+    {
+      "scientific_name": "Pycnonotus cafer",
+      "name": "붉은꽁지직박구리",
+      "source_page": 3,
+      "source_row": 14,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:23538"
+    },
+    {
+      "scientific_name": "Gymnorhina tibicen",
+      "name": "호주까치",
+      "source_page": 3,
+      "source_row": 15,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:17940"
+    },
+    {
+      "scientific_name": "Estrilda astrild",
+      "name": "긴꼬리단풍조",
+      "source_page": 3,
+      "source_row": 16,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:29503"
+    },
+    {
+      "scientific_name": "Quelea quelea",
+      "name": "붉은부리베짜는새",
+      "source_page": 3,
+      "source_row": 17,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:29092"
+    },
+    {
+      "scientific_name": "Streptopelia roseogrisea",
+      "name": "아프리카염주비둘기",
+      "source_page": 3,
+      "source_row": 18,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:2644"
+    },
+    {
+      "scientific_name": "Corvus albus",
+      "name": "흰가슴까마귀",
+      "source_page": 3,
+      "source_row": 19,
+      "decision": "added",
+      "taxon_id": "avilist-taxon:v2025b:20255"
+    },
+    {
+      "scientific_name": "Acridotheres javanicus",
+      "name": "자바찌르레기",
+      "source_page": 3,
+      "source_row": 20,
+      "decision": "existing_reviewed_name_preserved",
+      "existing_name": "자바뿔찌르레기"
+    }
+  ]
+}

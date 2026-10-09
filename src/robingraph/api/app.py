@@ -212,7 +212,7 @@ class TaxonomyLineageResponse(BaseModel):
     query_name: str
     query_scientific_name: str
     resolved_query_scientific_name: str
-    matched_by: Literal["scientific_name", "korean_name"]
+    matched_by: Literal["scientific_name", "korean_name", "english_name"]
     taxonomy_source: Literal["AviList"] = "AviList"
     taxonomy_release: str
     concept_set_id: str

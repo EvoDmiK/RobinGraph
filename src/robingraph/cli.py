@@ -220,7 +220,8 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
     def resolve_species(name):
         if any("\uac00" <= char <= "\ud7a3" for char in name):
             return lineage_repository.lineage_for_korean_name(name)
-        return lineage_repository.lineage_for_scientific_name(name)
+        lineage = lineage_repository.lineage_for_scientific_name(name)
+        return lineage if lineage is not None else lineage_repository.lineage_for_english_name(name)
 
     # Constructing the stdlib client is configuration-only: it makes no HTTP
     # request.  A missing/invalid non-secret embedding configuration merely
