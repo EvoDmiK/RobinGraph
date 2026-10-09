@@ -3,7 +3,7 @@
 ## 요청 배경과 목표
 
 사용자가 뒷면 도넛 차트 아래 `항목·비율`에 나오는 내용을 조금 더 예쁘게 다듬고, 두 차트 모두 도넛 아래의 `자료 1`을 지워 달라고 요청했다(스크린샷 첨부).
-완료 범위는 코드와 TEST 배포·검증까지이며 PROD 배포와 `main` 병합은 하지 않았다.
+TEST에서 확인한 뒤 사용자의 지시로 네 변경(항목·비율 스크롤, TEST 파란 파비콘 코드, 프레임 두께, 항목·비율 목록 디자인)을 한꺼번에 PROD에 배포하고 `main`에 병합했다.
 
 ## 변경 전 상태
 
@@ -52,7 +52,9 @@
 
 - 구현 커밋 `e90ff8535ba677cb52ea67f6e06e30af8d9d5ed3`(`dev-claude`). 릴리스 묶음 SHA-256 `8737d8ed3a3ee00c7721f32b66cd340fbc15f7f880e10b0fa613dbbd793e8a80`, NAS 일치·MANIFEST 불일치 0.
 - NAS 체크아웃 `~/RobinGraph-e90ff85`, TEST env는 직전 TEST env를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경.
-- **PROD 배포와 `main` 병합은 하지 않았다.** 현재 PROD는 `robingraph-api:prod-5fb401e`이며, PROD에는 `항목·비율` 스크롤(`c305f7f`), TEST 파란 파비콘 코드(`e07379f`), 프레임 두께(`51cecd1`), 이 목록 디자인(`e90ff85`)이 아직 없다.
+- PROD 배포: 네 변경을 담은 릴리스 `e90ff85`(`robingraph-api:prod-e90ff85`)로 PROD에 한꺼번에 배포했다. 16:00:02 시작, 16:00:10 종료. healthy, 재시작 0, OCI revision `e90ff85…`, `verify` ok(`deployment_target: prod`), `verify_api_deployment.py` `passed: true`. 컨테이너 안 HTTP로 서빙 자산 확인: `chat.js`(스크롤 선택자·프레임 추종·주의 문구), `styles.css`(스크롤 규칙·알약 토글), 아이콘은 PROD 기본(주황) 그대로(8,568 / 2,559 / 46,864 / 24,595바이트, TEST 변형과 다른 해시). `.env.nas.prod`는 직전 PROD env(`~/RobinGraph-5fb401e`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했고 Jev·Gemini 키는 그대로 이어졌다(컨테이너 환경에 3개 설정 확인).
+- 롤백: 직전 PROD 이미지 `robingraph-api:prod-5fb401e`가 NAS에 있다. `cd ~/RobinGraph-e90ff85 && ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-5fb401e`(실행하지 않음).
+- `main` 병합은 병합 커밋으로 반영했다. PROD 공개 도메인·실제 브라우저·휴대폰 확인은 하지 못했다(컨테이너 안 HTTP까지).
 
 ## 남은 한계
 
