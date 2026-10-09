@@ -5992,7 +5992,7 @@ test("review metadata stays in answer sources while absent grades have no visibl
   assert.match(collectedText(source), /분류 범위는 독립 검증/);
   assert.doesNotMatch(answer.children.filter(n => n !== source).map(collectedText).join(" "), /분류 범위|평가 범위 확인 필요|출처 범위별 설명/);
   assert.match(collectedText(answer), /머리가 검고 뺨은 흽니다/);
-  const badge = collectAllNodes(answer).find(n => n.className === "species-conservation-badge");
+  const badge = collectAllNodes(chat.buildSpeciesBrief(svgCapableDoc(), p)).find(n => n.className === "species-conservation-badge");
   assert.equal(badge.hidden, true);
   assert.equal(badge.textContent, "");
 });
