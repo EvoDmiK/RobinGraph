@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-09T00:28:31.987Z",
+  "deployment_completed": false,
+  "source_commit": "a8aa6c1d964f30b8ee866ac25c44ad13bcc26077",
+  "previous_source_commit": "ddf002f78932633ba49ea68c3b7ab2c4a8212873",
+  "archive_sha256": "2b38c358add5adc8adb681513a51c57b2892478e5d2c06635547431b285a025e",
+  "reason": "NAS SSH connection refused; release archive prepared, not uploaded or deployed",
+  "public_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "asset_comparisons": {
+    "chat.js": {
+      "server_sha256": "b1cccf6cb7d8b46a57cae5d8d54e345a5e8cd96df7a518b9c037b43fb0a27eae",
+      "previous_sha256": "b1cccf6cb7d8b46a57cae5d8d54e345a5e8cd96df7a518b9c037b43fb0a27eae",
+      "prepared_sha256": "1e3c65672689a38026c5512f74a329c2354e87428d5045601160895a6215532c",
+      "matches_previous": true,
+      "matches_prepared": false
+    },
+    "styles.css": {
+      "server_sha256": "da81489a2e740d05d157624a0ddb7555767434f779e38ad8223ace027af5baeb",
+      "previous_sha256": "da81489a2e740d05d157624a0ddb7555767434f779e38ad8223ace027af5baeb",
+      "prepared_sha256": "4b513f2cf1edd8316eab35e26a02f1cb8502e315a01cf372cbd2fefc4d4f8524",
+      "matches_previous": true,
+      "matches_prepared": false
+    }
+  }
+}
