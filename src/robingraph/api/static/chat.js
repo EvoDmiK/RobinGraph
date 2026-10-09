@@ -2308,12 +2308,6 @@
       facts.appendChild(value);
     });
     front.appendChild(facts);
-    var frontNote = doc.createElement("p");
-    frontNote.className = "species-front-note";
-    frontNote.textContent = "수치는 종 평균 · 자료 출처는 답변 출처 보기";
-    if (taxon.rank === "subspecies") { frontNote.textContent = "아종에 직접 연결된 자료 · 출처는 답변 출처 보기"; }
-    front.appendChild(frontNote);
-
     var traitNote = doc.createElement("p");
     traitNote.className = "species-note";
     traitNote.textContent =
@@ -2473,8 +2467,6 @@
     }
     if (dataNotes.children.length > 1) { cardSources.appendChild(dataNotes); }
 
-    var footer = doc.createElement("div");
-    footer.className = "species-card-footer";
     var flipping = false;
     card.setAttribute("tabindex", "0");
     card.setAttribute("role", "group");
@@ -2851,17 +2843,6 @@
       if (drag && (drag.active || drag.kind === "mouse")) { event.preventDefault(); }
     });
 
-    var swipeHint = doc.createElement("div");
-    swipeHint.className = "species-card-swipe-hint";
-    swipeHint.setAttribute("aria-hidden", "true");
-    swipeHint.textContent = "← 카드를 좌우로 밀어 뒤집어 보세요 →";
-    footer.appendChild(swipeHint);
-    var dragHint = doc.createElement("span");
-    dragHint.className = "species-card-drag-hint";
-    dragHint.setAttribute("aria-hidden", "true");
-    dragHint.textContent = "카드의 사진·글씨·빈 곳을 좌우로 끌어 뒤집어 보세요";
-    footer.appendChild(dragHint);
-    card.appendChild(footer);
     card.appendChild(gloss);
     return card;
   }

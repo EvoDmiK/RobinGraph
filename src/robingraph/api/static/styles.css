@@ -877,15 +877,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-answer-sources .species-photo-sources { padding-top: 5px; border-top: 1px solid #67844944; }
 .species-photo-source { padding: 10px 0; border-bottom: 1px solid #67844966; font-size: .75rem; }
 .species-photo-source strong { display: block; margin-bottom: 4px; }
-.species-card-footer {
-  position: sticky;
-  bottom: -20px;
-  padding: 12px 0 0;
-  margin-top: 12px;
-  background: #ddefa0;
-  border-top: 3px double #698447;
-}
-
 .species-popup[data-flipping="true"] { will-change: transform, filter; }
 /* Glossy coat (RG-015): sheen position/opacity are driven by chat.js from the
    card's rotation angle (inline while dragging, WAAPI during flips). Idle = invisible. */
@@ -909,7 +900,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-card-gloss { display: none; }
 }
 @media (max-width: 420px) {
-  .species-card-footer { bottom: -16px; }
   .species-quick-facts { font-size: .82rem; }
 }
 
@@ -1024,12 +1014,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
 /* Card palette by verified Red List tier: higher assessed risk -> rarer-
    looking frame (plain -> silver -> gold -> foil -> holographic). Text stays
    dark on light card stock in every tier. Unverified/DD/NE are neutral. */
-.species-card { --card-footer-bg: #ddefa0; }
-.species-popup .species-card-footer { background: var(--card-footer-bg); }
 
 .species-popup.risk-unconfirmed { background: linear-gradient(135deg, #e6e7e4, #b5b8b3 50%, #d9dbd6); }
 .species-popup .species-card.risk-unconfirmed {
-  --card-footer-bg: #e3e5df;
   border-color: #a5aa9f;
   background: linear-gradient(135deg, #d9ddd3, #eef0ea 50%, #d2d6cc);
   box-shadow: inset 0 0 0 3px #f6f7f388;
@@ -1041,7 +1028,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 .species-popup.risk-nt { background: linear-gradient(135deg, #f4f8fa, #8fa7b2 35%, #e6eef1 58%, #9db3bc); }
 .species-popup .species-card.risk-nt {
-  --card-footer-bg: #cfeadf;
   border-color: #6fa290;
   background: radial-gradient(ellipse at 20% 65%, #e9fbf2, transparent 65%), linear-gradient(135deg, #8fc7b0, #d8f1e6 45%, #9fd0bd);
 }
@@ -1049,7 +1035,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 .species-popup.risk-vu { background: linear-gradient(135deg, #fff6cf, #c9a13b 30%, #fbe7a1 52%, #a97f1d 78%, #f5df98); box-shadow: 0 24px 80px #0007, 0 0 0 1px #8a6614, inset 0 1px 2px #fff; }
 .species-popup .species-card.risk-vu {
-  --card-footer-bg: #f7e6a8;
   border-color: #b8902b;
   background: radial-gradient(ellipse at 20% 65%, #fffbe2, transparent 65%), linear-gradient(135deg, #e8c86a, #fbf0c4 45%, #e3c25a);
 }
@@ -1062,7 +1047,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
   box-shadow: 0 24px 80px #0007, 0 0 18px #e0763a66, inset 0 1px 2px #fff;
 }
 .species-popup .species-card.risk-en {
-  --card-footer-bg: #fbd6b8;
   border-color: #c06a36;
   background: radial-gradient(ellipse at 20% 65%, #fff1e4, transparent 65%), linear-gradient(135deg, #f2a774, #fde4cf 45%, #ee9e66);
 }
@@ -1077,7 +1061,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
   box-shadow: 0 24px 80px #0008, 0 0 26px #e5396b88, inset 0 1px 2px #fff;
 }
 .species-popup .species-card.risk-cr {
-  --card-footer-bg: #fbd0dc;
   border-color: #c2185b;
   background: radial-gradient(ellipse at 20% 65%, #fff0f4, transparent 65%), linear-gradient(135deg, #f3a0b8, #fde3ea 45%, #ee8eaa);
 }
@@ -1088,7 +1071,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
   box-shadow: 0 24px 80px #0008, 0 0 26px #9c4dcc88, inset 0 1px 2px #fff;
 }
 .species-popup .species-card.risk-ew {
-  --card-footer-bg: #e2d6f7;
   border-color: #6a4bb0;
   background: radial-gradient(ellipse at 20% 65%, #f6f0ff, transparent 65%), linear-gradient(135deg, #c5b0ee, #efe7fd 45%, #b9a3e6);
 }
@@ -1100,7 +1082,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
 }
 .species-popup.risk-ex .species-popup-close { border-color: #fff6; }
 .species-popup .species-card.risk-ex {
-  --card-footer-bg: #dedce4;
   border-color: #3b3b44;
   background: radial-gradient(ellipse at 20% 65%, #f7f6fb, transparent 65%), linear-gradient(135deg, #b9b6c4, #ecebf1 45%, #aeabbb);
 }
@@ -1293,17 +1274,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-popup[data-dragging="true"] { will-change: transform; }
 .species-card img { -webkit-user-drag: none; }
 /* Touch swipe (RG-015): declare before the gesture that vertical pan and pinch stay native. */
-.species-card, .species-card-swipe-hint { touch-action: pan-y pinch-zoom; }
-.species-card-swipe-hint { display: none; }
-@media (pointer: coarse) {
-  .species-card-swipe-hint {
-    display: flex; align-items: center; justify-content: center; box-sizing: border-box;
-    width: 100%; min-height: 44px; margin-bottom: 8px; padding: 6px 10px;
-    border: 1px dashed #72934c; border-radius: 9px; background: #eef6c9;
-    color: #3d5a21; font-size: .8rem; font-weight: 600; text-align: center;
-    user-select: none; -webkit-user-select: none;
-  }
-}
+.species-card { touch-action: pan-y pinch-zoom; }
 @media (prefers-reduced-motion: reduce) {
   /* No continuous 3D rotation; show a clear ready-to-flip outline instead. */
   .species-card[data-dragging="true"][data-drag-commit="true"] { outline: 3px solid #4f7a2a; outline-offset: -3px; }
@@ -1311,17 +1282,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
 }
 
 /* Fine pointers can grab both the card surface and non-interactive text. */
-.species-card-drag-hint { display: none; }
 @media (hover: hover) and (pointer: fine) {
   .species-popup .species-card { cursor: grab; }
   .species-popup .species-card[data-dragging="true"] { cursor: grabbing; }
-  .species-card-drag-hint { display: block; flex-basis: 100%; margin-top: 4px; font-size: .72rem; color: #4a5f31; }
 }
-/* The whole back remains draggable; repeat the gesture guidance only on front. */
-.species-card:has(.species-card-back:not([hidden])) .species-card-swipe-hint,
-.species-card:has(.species-card-back:not([hidden])) .species-card-drag-hint { display: none; }
-.species-card:has(.species-card-back:not([hidden])) .species-card-footer { display: none; }
-
 /* The card surface supplies the keyboard equivalent of a horizontal swipe. */
 .species-card[tabindex]:focus-visible { outline: 3px solid #264f32; outline-offset: -3px; }
 /* Two independently sourced distributions share one compact row, including phones. */
