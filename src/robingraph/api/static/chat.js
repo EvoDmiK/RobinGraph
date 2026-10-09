@@ -316,6 +316,13 @@
     });
   }
 
+  function traitStudyMetadata(source) {
+    var statistic = source.summary_statistic === "sample_mean" ? "연구 표본 평균" :
+      (source.summary_statistic === "mean" ? "종 평균" : null);
+    return [statistic, typeof source.source_scope === "string" ? source.source_scope.trim() : null,
+      Number.isInteger(source.sample_size) && source.sample_size > 0 ? "표본 " + source.sample_size + "개체" : null].filter(Boolean);
+  }
+
   /** Render one `.species-traits` grid of fact cards from grouped trait claims. */
   function buildTraitGrid(doc, groups) {
     var traitGrid = doc.createElement("div");
@@ -327,6 +334,7 @@
 
       var label = doc.createElement("strong");
       label.textContent = trait.label || trait.name || "형질";
+      if (trait.name === "body_mass" && trait.summary_statistic === "sample_mean") { label.textContent += " · 표본 평균"; }
       traitCard.appendChild(label);
 
       var value = doc.createElement("span");
@@ -353,6 +361,13 @@
           source.appendChild(licenseSuffix);
         }
         sourceDetails.appendChild(source);
+        var studyMetadata = traitStudyMetadata(sourceTrait);
+        if (studyMetadata.length) {
+          var study = doc.createElement("p");
+          study.className = "trait-study-scope";
+          study.textContent = studyMetadata.join(" · ");
+          sourceDetails.appendChild(study);
+        }
       });
       appendTraitProvenance(doc, sourceDetails, trait);
       if (sourceDetails.children.length > 1) { traitCard.appendChild(sourceDetails); }
@@ -919,12 +934,12 @@
 
   // Source identity and URL/release completeness are separate from risk color.
   // These checks verify provenance fields, never a live IUCN assessment.
-  var PICA_SERICA_OVERRIDE_NOTE = "사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.";
+  var PICA_SERICA_OVERRIDE_NOTE = "까치의 앱 표시 등급은 LC입니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 별도로 보존합니다.";
 
   function isPicaSericaManualOverride(data) {
     var original = data.original_snapshot;
     return data.evidence_kind === "manual_override" && data.assessment_status === "manual_override" &&
-      data.source_id === "robingraph-manual-pica-serica" && data.source_name === "RobinGraph 임시 보정" &&
+      data.source_id === "robingraph-manual-pica-serica" && data.source_name === "RobinGraph 보전 등급 표시" &&
       data.source_release === "2026-10-09" && data.source_url === null &&
       data.category === "LC" && data.category_raw === "LC" && data.label === "관심대상" &&
       data.independently_verified === false && data.taxon_id === "avilist-taxon:v2025b:20193" &&
@@ -944,12 +959,17 @@
     reason.textContent = data.override_reason;
     parent.appendChild(reason);
     var limitation = doc.createElement("p");
-    limitation.textContent = "앱 표시만 임시 보정한 값입니다. 공식 평가를 새로 확인한 결과가 아닙니다.";
+    limitation.textContent = "IUCN 평가 원문의 독립 검증은 완료되지 않았습니다.";
     parent.appendChild(limitation);
     var original = doc.createElement("p");
     original.textContent = "원자료: AviList NE · 릴리스 " + data.original_snapshot.source_release + " · 평가 자료 연결 확인 필요 · ";
     original.appendChild(safeLink(doc, data.original_snapshot.source_name, data.original_snapshot.source_url));
     parent.appendChild(original);
+    var conservationReference = doc.createElement("p");
+    conservationReference.textContent = "홍콩 조류학회 종 정보의 Pica serica 보전 상태: IUCN LC · ";
+    conservationReference.appendChild(safeLink(doc, "HKBWS · Oriental Magpie",
+      "https://avifauna.hkbws.org.hk/species/0260/033600"));
+    parent.appendChild(conservationReference);
   }
 
   function isLinkedRedListChecklist(data) {
@@ -982,7 +1002,7 @@
         (taxon && taxon.taxon_id === data.taxon_id && taxon.scientific_name === data.scientific_name && taxon.rank === "species"))) {
       return { category: "LC", label: "관심대상", tier: "lc", verified: false, sourceVerified: false,
         snapshot: false, checklist: false, manualOverride: true, note: PICA_SERICA_OVERRIDE_NOTE,
-        badgeText: "관심대상 (LC) · 임시 보정" };
+        badgeText: "관심대상 (LC)" };
     }
     var checklist = isLinkedRedListChecklist(data);
     var url = sanitizeUrl(data.source_url), parsed = null;
@@ -1204,7 +1224,7 @@
           group.sources.forEach(function (source) {
             details.appendChild(safeLink(doc, source.source_name, source.source_url));
             var meta = doc.createElement("p");
-            meta.textContent = [source.release, source.license_name, source.summary_statistic === "mean" ? "종 평균" : null, source.citation].filter(Boolean).join(" · ");
+            meta.textContent = [source.release, source.license_name].concat(traitStudyMetadata(source), [source.citation]).filter(Boolean).join(" · ");
             details.appendChild(meta);
           });
           cell.appendChild(details);
@@ -2499,6 +2519,7 @@
       var trait = group && group.trait;
       var label = doc.createElement("dt");
       label.textContent = trait ? trait.label || CARD_BASIC_LABELS[name] : CARD_BASIC_LABELS[name];
+      if (trait && name === "body_mass" && trait.summary_statistic === "sample_mean") { label.textContent += " · 표본 평균"; }
       var value = doc.createElement("dd");
       value.textContent = trait ? cardTraitValue(trait) : "자료 없음";
       facts.appendChild(label);
@@ -2508,7 +2529,7 @@
     var traitNote = doc.createElement("p");
     traitNote.className = "species-note";
     traitNote.textContent =
-      "수치는 자료에 기록된 종 평균입니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭(날개폭)과 다릅니다.";
+      "측정 수치는 자료의 표본과 조사 범위에 따릅니다. 자료마다 먹이 분류가 다를 수 있습니다. 접은 날개 길이는 날개를 펼친 폭(날개폭)과 다릅니다.";
     if (taxon.rank === "subspecies") {
       traitNote.textContent = "아종에 직접 연결된 형질입니다. 종 수준 참고 정보는 별도로 표시합니다.";
       back.appendChild(traitNote);
@@ -2615,7 +2636,7 @@
           ? "연결 상태: 평가 대상의 종 범위를 확인해야 합니다. AviList NE를 실제 IUCN 미평가 판정으로 단정할 수 없습니다."
           : "검증 범위: 분류 자료에 기록된 등급과 출처·릴리스 확인. 평가 원문·평가 연도의 독립 검증은 완료되지 않았습니다.")
         : "검증 범위: 출처·자료 버전 확인. 최신 평가를 실시간으로 조회한 결과가 아닙니다.";
-      if (conservation.manualOverride) { quality.textContent = "표시 기준: 사용자 요청에 따른 까치 한정 임시 LC 보정 · 독립 평가 검증 전"; }
+      if (conservation.manualOverride) { quality.textContent = "표시 기준: 까치 LC · 원자료의 AviList NE와 평가 연결 상태는 별도로 보존합니다."; }
       else if (!conservation.sourceVerified) { quality.textContent = "출처 또는 자료 버전을 확인하지 못해 카드 색상을 중립으로 표시합니다."; }
       conservationSection.appendChild(quality);
       if (conservation.checklist) {

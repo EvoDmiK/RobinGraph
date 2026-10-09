@@ -1,0 +1,29 @@
+{
+  "source_sha256": "32b8d981cf09216ff9b5ae2a009ecb559e7c30ca8a722b2b831068c2be34bf3d",
+  "sheet": "sheet1",
+  "field": "weight",
+  "unit": "g",
+  "sample_size": 115,
+  "sample_mean": 220.64,
+  "sample_min": 167.9,
+  "sample_max": 257.2,
+  "sex_counts": {
+    "m": 62,
+    "f": 53
+  },
+  "age_codes": {
+    "s": 55,
+    "a": 60
+  },
+  "location_codes": {
+    "AD": 19,
+    "CW": 19,
+    "DG": 30,
+    "KS": 21,
+    "WJ": 26
+  },
+  "scope": "한국 5개 지역·2008년 3월·2년차 이상 115개체",
+  "source_url": "https://www.nature.com/articles/s41598-025-13894-4",
+  "license_name": "CC BY 4.0",
+  "limitation": "해당 조사 표본의 평균과 범위이며 종 전체의 평균·일반 범위가 아님"
+}
