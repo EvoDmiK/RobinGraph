@@ -1,0 +1,486 @@
+{
+  "test": [
+    {
+      "query": "까치",
+      "expected_id": "avilist-taxon:v2025b:20193",
+      "actual_id": "avilist-taxon:v2025b:20193",
+      "expected_korean": "까치",
+      "actual_korean": "까치",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "까마귀",
+      "expected_id": "avilist-taxon:v2025b:20280",
+      "actual_id": "avilist-taxon:v2025b:20280",
+      "expected_korean": "까마귀",
+      "actual_korean": "까마귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "박새",
+      "expected_id": "avilist-taxon:v2025b:20751",
+      "actual_id": "avilist-taxon:v2025b:20751",
+      "expected_korean": "박새",
+      "actual_korean": "박새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "꼬까직박구리",
+      "expected_id": "avilist-taxon:v2025b:27932",
+      "actual_id": "avilist-taxon:v2025b:27932",
+      "expected_korean": "꼬까직박구리",
+      "actual_korean": "꼬까직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "일본꿩",
+      "expected_id": "avilist-taxon:v2025b:1237",
+      "actual_id": "avilist-taxon:v2025b:1237",
+      "expected_korean": "일본꿩",
+      "actual_korean": "일본꿩",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은수염직박구리",
+      "expected_id": "avilist-taxon:v2025b:23528",
+      "actual_id": "avilist-taxon:v2025b:23528",
+      "expected_korean": "붉은수염직박구리",
+      "actual_korean": "붉은수염직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "흰죽지비둘기",
+      "expected_id": "avilist-taxon:v2025b:2398",
+      "actual_id": "avilist-taxon:v2025b:2398",
+      "expected_korean": "흰죽지비둘기",
+      "actual_korean": "흰죽지비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "숲찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26390",
+      "actual_id": "avilist-taxon:v2025b:26390",
+      "expected_korean": "숲찌르레기",
+      "actual_korean": "숲찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은홍관조",
+      "expected_id": "avilist-taxon:v2025b:32368",
+      "actual_id": "avilist-taxon:v2025b:32368",
+      "expected_korean": "붉은홍관조",
+      "actual_korean": "붉은홍관조",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "평화비둘기",
+      "expected_id": "avilist-taxon:v2025b:2922",
+      "actual_id": "avilist-taxon:v2025b:2922",
+      "expected_korean": "평화비둘기",
+      "actual_korean": "평화비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "회색뿔찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26372",
+      "actual_id": "avilist-taxon:v2025b:26372",
+      "expected_korean": "회색뿔찌르레기",
+      "actual_korean": "회색뿔찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "이집트기러기",
+      "expected_id": "avilist-taxon:v2025b:384",
+      "actual_id": "avilist-taxon:v2025b:384",
+      "expected_korean": "이집트기러기",
+      "actual_korean": "이집트기러기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은눈검은찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26272",
+      "actual_id": "avilist-taxon:v2025b:26272",
+      "expected_korean": "붉은눈검은찌르레기",
+      "actual_korean": "붉은눈검은찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "검은턱웃음지빠귀",
+      "expected_id": "avilist-taxon:v2025b:25180",
+      "actual_id": "avilist-taxon:v2025b:25180",
+      "expected_korean": "검은턱웃음지빠귀",
+      "actual_korean": "검은턱웃음지빠귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "갈색머리검은피리새",
+      "expected_id": "avilist-taxon:v2025b:31757",
+      "actual_id": "avilist-taxon:v2025b:31757",
+      "expected_korean": "갈색머리검은피리새",
+      "actual_korean": "갈색머리검은피리새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "큰타이런트새",
+      "expected_id": "avilist-taxon:v2025b:13813",
+      "actual_id": "avilist-taxon:v2025b:13813",
+      "expected_korean": "큰타이런트새",
+      "actual_korean": "큰타이런트새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "자색물닭",
+      "expected_id": "avilist-taxon:v2025b:3602",
+      "actual_id": "avilist-taxon:v2025b:3602",
+      "expected_korean": "자색물닭",
+      "actual_korean": "자색물닭",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은꽁지직박구리",
+      "expected_id": "avilist-taxon:v2025b:23538",
+      "actual_id": "avilist-taxon:v2025b:23538",
+      "expected_korean": "붉은꽁지직박구리",
+      "actual_korean": "붉은꽁지직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "호주까치",
+      "expected_id": "avilist-taxon:v2025b:17940",
+      "actual_id": "avilist-taxon:v2025b:17940",
+      "expected_korean": "호주까치",
+      "actual_korean": "호주까치",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "긴꼬리단풍조",
+      "expected_id": "avilist-taxon:v2025b:29503",
+      "actual_id": "avilist-taxon:v2025b:29503",
+      "expected_korean": "긴꼬리단풍조",
+      "actual_korean": "긴꼬리단풍조",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은부리베짜는새",
+      "expected_id": "avilist-taxon:v2025b:29092",
+      "actual_id": "avilist-taxon:v2025b:29092",
+      "expected_korean": "붉은부리베짜는새",
+      "actual_korean": "붉은부리베짜는새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "아프리카염주비둘기",
+      "expected_id": "avilist-taxon:v2025b:2644",
+      "actual_id": "avilist-taxon:v2025b:2644",
+      "expected_korean": "아프리카염주비둘기",
+      "actual_korean": "아프리카염주비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "흰가슴까마귀",
+      "expected_id": "avilist-taxon:v2025b:20255",
+      "actual_id": "avilist-taxon:v2025b:20255",
+      "expected_korean": "흰가슴까마귀",
+      "actual_korean": "흰가슴까마귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Cinereous Tit",
+      "expected_id": "avilist-taxon:v2025b:20751",
+      "actual_id": "avilist-taxon:v2025b:20751",
+      "expected_korean": "박새",
+      "actual_korean": "박새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Mallard",
+      "expected_id": "avilist-taxon:v2025b:544",
+      "actual_id": "avilist-taxon:v2025b:544",
+      "expected_korean": "청둥오리",
+      "actual_korean": "청둥오리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Oriental Magpie",
+      "expected_id": "avilist-taxon:v2025b:20193",
+      "actual_id": "avilist-taxon:v2025b:20193",
+      "expected_korean": "까치",
+      "actual_korean": "까치",
+      "status": 200,
+      "ok": true
+    }
+  ],
+  "prod": [
+    {
+      "query": "까치",
+      "expected_id": "avilist-taxon:v2025b:20193",
+      "actual_id": "avilist-taxon:v2025b:20193",
+      "expected_korean": "까치",
+      "actual_korean": "까치",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "까마귀",
+      "expected_id": "avilist-taxon:v2025b:20280",
+      "actual_id": "avilist-taxon:v2025b:20280",
+      "expected_korean": "까마귀",
+      "actual_korean": "까마귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "박새",
+      "expected_id": "avilist-taxon:v2025b:20751",
+      "actual_id": "avilist-taxon:v2025b:20751",
+      "expected_korean": "박새",
+      "actual_korean": "박새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "꼬까직박구리",
+      "expected_id": "avilist-taxon:v2025b:27932",
+      "actual_id": "avilist-taxon:v2025b:27932",
+      "expected_korean": "꼬까직박구리",
+      "actual_korean": "꼬까직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "일본꿩",
+      "expected_id": "avilist-taxon:v2025b:1237",
+      "actual_id": "avilist-taxon:v2025b:1237",
+      "expected_korean": "일본꿩",
+      "actual_korean": "일본꿩",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은수염직박구리",
+      "expected_id": "avilist-taxon:v2025b:23528",
+      "actual_id": "avilist-taxon:v2025b:23528",
+      "expected_korean": "붉은수염직박구리",
+      "actual_korean": "붉은수염직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "흰죽지비둘기",
+      "expected_id": "avilist-taxon:v2025b:2398",
+      "actual_id": "avilist-taxon:v2025b:2398",
+      "expected_korean": "흰죽지비둘기",
+      "actual_korean": "흰죽지비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "숲찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26390",
+      "actual_id": "avilist-taxon:v2025b:26390",
+      "expected_korean": "숲찌르레기",
+      "actual_korean": "숲찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은홍관조",
+      "expected_id": "avilist-taxon:v2025b:32368",
+      "actual_id": "avilist-taxon:v2025b:32368",
+      "expected_korean": "붉은홍관조",
+      "actual_korean": "붉은홍관조",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "평화비둘기",
+      "expected_id": "avilist-taxon:v2025b:2922",
+      "actual_id": "avilist-taxon:v2025b:2922",
+      "expected_korean": "평화비둘기",
+      "actual_korean": "평화비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "회색뿔찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26372",
+      "actual_id": "avilist-taxon:v2025b:26372",
+      "expected_korean": "회색뿔찌르레기",
+      "actual_korean": "회색뿔찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "이집트기러기",
+      "expected_id": "avilist-taxon:v2025b:384",
+      "actual_id": "avilist-taxon:v2025b:384",
+      "expected_korean": "이집트기러기",
+      "actual_korean": "이집트기러기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은눈검은찌르레기",
+      "expected_id": "avilist-taxon:v2025b:26272",
+      "actual_id": "avilist-taxon:v2025b:26272",
+      "expected_korean": "붉은눈검은찌르레기",
+      "actual_korean": "붉은눈검은찌르레기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "검은턱웃음지빠귀",
+      "expected_id": "avilist-taxon:v2025b:25180",
+      "actual_id": "avilist-taxon:v2025b:25180",
+      "expected_korean": "검은턱웃음지빠귀",
+      "actual_korean": "검은턱웃음지빠귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "갈색머리검은피리새",
+      "expected_id": "avilist-taxon:v2025b:31757",
+      "actual_id": "avilist-taxon:v2025b:31757",
+      "expected_korean": "갈색머리검은피리새",
+      "actual_korean": "갈색머리검은피리새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "큰타이런트새",
+      "expected_id": "avilist-taxon:v2025b:13813",
+      "actual_id": "avilist-taxon:v2025b:13813",
+      "expected_korean": "큰타이런트새",
+      "actual_korean": "큰타이런트새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "자색물닭",
+      "expected_id": "avilist-taxon:v2025b:3602",
+      "actual_id": "avilist-taxon:v2025b:3602",
+      "expected_korean": "자색물닭",
+      "actual_korean": "자색물닭",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은꽁지직박구리",
+      "expected_id": "avilist-taxon:v2025b:23538",
+      "actual_id": "avilist-taxon:v2025b:23538",
+      "expected_korean": "붉은꽁지직박구리",
+      "actual_korean": "붉은꽁지직박구리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "호주까치",
+      "expected_id": "avilist-taxon:v2025b:17940",
+      "actual_id": "avilist-taxon:v2025b:17940",
+      "expected_korean": "호주까치",
+      "actual_korean": "호주까치",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "긴꼬리단풍조",
+      "expected_id": "avilist-taxon:v2025b:29503",
+      "actual_id": "avilist-taxon:v2025b:29503",
+      "expected_korean": "긴꼬리단풍조",
+      "actual_korean": "긴꼬리단풍조",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "붉은부리베짜는새",
+      "expected_id": "avilist-taxon:v2025b:29092",
+      "actual_id": "avilist-taxon:v2025b:29092",
+      "expected_korean": "붉은부리베짜는새",
+      "actual_korean": "붉은부리베짜는새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "아프리카염주비둘기",
+      "expected_id": "avilist-taxon:v2025b:2644",
+      "actual_id": "avilist-taxon:v2025b:2644",
+      "expected_korean": "아프리카염주비둘기",
+      "actual_korean": "아프리카염주비둘기",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "흰가슴까마귀",
+      "expected_id": "avilist-taxon:v2025b:20255",
+      "actual_id": "avilist-taxon:v2025b:20255",
+      "expected_korean": "흰가슴까마귀",
+      "actual_korean": "흰가슴까마귀",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Cinereous Tit",
+      "expected_id": "avilist-taxon:v2025b:20751",
+      "actual_id": "avilist-taxon:v2025b:20751",
+      "expected_korean": "박새",
+      "actual_korean": "박새",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Mallard",
+      "expected_id": "avilist-taxon:v2025b:544",
+      "actual_id": "avilist-taxon:v2025b:544",
+      "expected_korean": "청둥오리",
+      "actual_korean": "청둥오리",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "query": "Oriental Magpie",
+      "expected_id": "avilist-taxon:v2025b:20193",
+      "actual_id": "avilist-taxon:v2025b:20193",
+      "expected_korean": "까치",
+      "actual_korean": "까치",
+      "status": 200,
+      "ok": true
+    }
+  ],
+  "names_after_deploy": {
+    "test": {
+      "species": 11131,
+      "rendered_korean": 665,
+      "suppressed": []
+    },
+    "prod": {
+      "species": 11131,
+      "rendered_korean": 665,
+      "suppressed": []
+    }
+  }
+}
