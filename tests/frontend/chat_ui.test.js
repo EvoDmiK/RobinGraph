@@ -2467,7 +2467,7 @@ test("effective category null with raw NE and a valid needs_review snapshot is t
   profile.conservation = { ...nullNe, reference_assessment: REFERENCE_ASSESSMENT };
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.equal(card.className, "species-card risk-lc");
-  assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\)/);
+  assert.doesNotMatch(collectedText(card), /참고 평가:/);
   assert.match(collectedText(card.sourceMaterial), /명명자: BirdLife International/);
   assert.doesNotMatch(collectedText(card), /미평가/);
   for (const bad of [{ assessment_status: "snapshot_only" }, { assessment_status: undefined }, { category_raw: "LC" }, { category_raw: "DD" },
@@ -2518,18 +2518,17 @@ function referenceProfile(ref, name) {
   return profile;
 }
 
-test("reference-only assessment is shown on card, brief, answer and source toggle with grade colour while alignment stays unresolved", () => {
+test("reference grade colours and standard badges omit inline notices while source toggle retains alignment details", () => {
   const profile = referenceProfile(REFERENCE_ASSESSMENT);
-  const line = "참고 평가: 관심대상 (LC) · 2024 · 현재 분류 범위와 일치 여부 확인 필요";
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.equal(card.className, "species-card risk-lc");
   assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
-  assert.ok(card.children.some((n) => n.className === "species-reference-assessment" && n.textContent === line));
+  assert.equal(card.children.some((n) => n.className === "species-reference-assessment"), false);
   const badge = card.children.find((n) => n.className === "species-conservation-badge");
   assert.equal(badge.textContent, "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준");
   const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
   assert.match(brief.className, /risk-lc/);
-  assert.match(collectedText(brief), /참고 평가: 관심대상 \(LC\)/);
+  assert.doesNotMatch(collectedText(brief), /참고 평가:/);
   const src = collectedText(card.sourceMaterial);
   assert.match(src, /참고 평가: 관심대상 \(LC\)/);
   assert.match(src, /평가 연도 2024/);
@@ -2554,7 +2553,7 @@ test("actual Corvus macrorhynchos backend payload renders as reference beside an
   const profile = JSON.parse(fs.readFileSync(file, "utf8"));
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.equal(card.className, "species-card risk-lc");
-  assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\) · 2024 · 현재 분류 범위와 일치 여부 확인 필요/);
+  assert.doesNotMatch(collectedText(card), /참고 평가:/);
   assert.doesNotMatch(collectedText(card), /미평가/);
   assert.match(collectedText(card.sourceMaterial), /동일 학명·명명자 기준의 전 세계 공개 평가/);
 });
@@ -2567,7 +2566,7 @@ test("validated reference colours follow every source grade without asserting ta
     assert.equal(info.verified, false);
     assert.equal(info.state, "link-unresolved");
     assert.match(info.badgeText, new RegExp("\\(" + category + "\\)"));
-    assert.match(collectedText(chat.buildSpeciesCard(svgCapableDoc(), profile)), /현재 분류 범위와 일치 여부 확인 필요/);
+    assert.match(collectedText(chat.buildSpeciesCard(svgCapableDoc(), profile).sourceMaterial), /현재 분류 범위와 일치 여부 확인 필요/);
   }
 });
 
