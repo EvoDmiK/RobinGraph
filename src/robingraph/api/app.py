@@ -974,11 +974,16 @@ def create_app(
         return _chat_asset_response(assets, "index.html")
 
     def icon_asset(name: str) -> Response:
-        assets = _read_chat_asset_bundle(asset_root, (name,))
-        if assets is None:
-            raise HTTPException(status_code=404, detail="Not Found")
-        return Response(assets[name], media_type=_ICON_ASSET_MEDIA_TYPES[name],
-                        headers={"Cache-Control": "public, max-age=3600"})
+        # The TEST deployment serves a blue variant (favicon-32-test.png, ...) under
+        # the same URLs so it is not mistaken for PROD; a missing variant falls back.
+        stem, _, extension = name.rpartition(".")
+        candidates = [f"{stem}-test.{extension}", name] if os.getenv("ROBINGRAPH_DEPLOY_TARGET") == "test" else [name]
+        for candidate in candidates:
+            assets = _read_chat_asset_bundle(asset_root, (candidate,))
+            if assets is not None:
+                return Response(assets[candidate], media_type=_ICON_ASSET_MEDIA_TYPES[name],
+                                headers={"Cache-Control": "public, max-age=3600"})
+        raise HTTPException(status_code=404, detail="Not Found")
 
     @app.get("/favicon.ico", include_in_schema=False, response_model=None)
     def favicon() -> Response:
