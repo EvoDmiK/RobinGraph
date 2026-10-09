@@ -10,6 +10,7 @@ from urllib.parse import urlencode, urlsplit, unquote
 from urllib.request import Request, urlopen
 
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
+from robingraph.retrieval.conservation import linked_checklist
 
 class SpeciesNotFoundError(LookupError):
     """The requested name is not a species in the active taxonomy."""
@@ -79,7 +80,7 @@ def _conservation_source_url(value, *, reference=False):
 
 
 def read_conservation(repository, lineage):
-    """Read the resolved taxonomy snapshot, never imply a live IUCN assessment."""
+    """Prefer an exact public checklist link; retain qualified taxonomy fallback."""
     rows = repository._run(CONSERVATION_QUERY, taxon_id=lineage.items[-1].taxon_id,
                            concept_set_id=lineage.concept_set_id,
                            taxonomy_release=lineage.taxonomy_release)
@@ -123,6 +124,10 @@ def read_conservation(repository, lineage):
             else:
                 result['quality_note'] = (
                     '분류 자료에 기록된 등급입니다. 실제 평가 원문과 평가 연도는 별도로 검증하지 않았습니다.')
+    primary = linked_checklist(lineage, result)
+    if primary is not None:
+        primary['label'] = CONSERVATION_LABELS[primary['category']]
+        return primary
     return result
 
 
