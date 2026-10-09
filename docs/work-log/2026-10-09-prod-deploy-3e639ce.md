@@ -46,6 +46,7 @@
 | `scripts/verify_api_deployment.py`(컨테이너 내부, `--lineage-name 대륙검은지빠귀 --expected-scientific-name 'Turdus mandarinus'`) | `passed: true`, `backend_reachable`·`contract_parity_ok` true, structural/schema/response drift와 canary 이슈 없음 |
 | 경로 스모크(컨테이너 내부 HTTP, 읽기 전용) | `/chat` 200, `/static/chat.js` 200(219,258바이트), `/v1/taxa/lineage` 정상 |
 | 종 프로필 조회 `/v1/taxa/profile` | 흰뺨검둥오리·대륙검은지빠귀 모두 taxon, lineage, 형질 13개, 이미지 2개, 보전 정보, 요약 반환 |
+| 채팅 스모크(키 추가 후, `/v1/chat`) | `흰뺨검둥오리에 대해서 알려줘` → 200, 18.4초, `route_method: jev`, `selected_intent: profile`, `disposition: answer`, 경고 없음. `곤줄박이와 비슷한 새는?` → 200, 8.8초, `route_method: deterministic`, `disposition: answer`, 경고 없음 |
 | 로그 | 시작 완료, `/health`·`/openapi.json`·lineage 모두 200 |
 
 모의 검증은 없었다. 위 조회는 이관된 PROD Neo4j·PostgreSQL에 대한 실제 요청이다.
@@ -58,11 +59,14 @@
 
 ## 설정 차이와 남은 한계
 
-- **외부 연동 키 미설정**: PROD의 `.env.nas.prod`에는 TEST에 있는 `GEMINI_API_KEY`, `JEV_API_KEY`와
-  `ROBINGRAPH_INTENT_ROUTER`, `ROBINGRAPH_JEV_*`, `ROBINGRAPH_GEMINI_MODEL`이 없다. TEST와 PROD가 자격 증명을
-  분리하는 방침이라 TEST의 키를 복사하지 않았다. 따라서 PROD에서는 Jev 의도 분석이 켜지지 않고
-  (`auto` 라우터가 키가 없으면 기존 규칙·임베딩 경로로 동작) Gemini 답변 생성도 쓰지 않는다.
-  PROD용 키를 발급·설정할지는 사용자가 정해야 한다.
+- **외부 연동 키 추가(같은 날 후속)**: 처음 배포 때 PROD의 `.env.nas.prod`에는 Jev·Gemini 설정이 없었다. 사용자의 지시로
+  최신 TEST env(`~/RobinGraph-rg015scroll-3e639ce/.env.nas.test`, 같은 커밋 3e639ce 배포에 쓴 파일)와 키 이름을
+  비교해 PROD에 없던 11개를 NAS 안에서만 `~/RobinGraph-3e639ce/.env.nas.prod`에 추가했다
+  (`GEMINI_API_KEY`, `JEV_API_KEY`, `ROBINGRAPH_GEMINI_MODEL`, `ROBINGRAPH_INTENT_ROUTER`, `ROBINGRAPH_JEV_*` 7개).
+  TEST와 같은 값을 쓰므로 `ROBINGRAPH_INTENT_ROUTER=jev`, Gemini 모델은 TEST와 같은 값이다. 값은 출력하지 않았고 추가 전 파일은
+  `.env.nas.prod.bak-before-keys`로 NAS에 보존했다. 기존 체크아웃(`~/RobinGraph-rg001-20261002`)의 env는 바꾸지 않았다.
+  추가 후 `deploy`를 한 번 더 실행해 컨테이너를 재생성했고(healthy, 재시작 0), 컨테이너 환경에 네 키가 설정된 것을 이름만으로 확인했다.
+  TEST와 PROD가 같은 외부 API 키를 공유하게 되므로 사용량·한도는 함께 소모되고, 한쪽 키를 폐기하면 양쪽에 영향이 있다.
 - **MLflow 추적**: PROD는 `ROBINGRAPH_MLFLOW_TRACING=false`(실험 이름 `robingraph-prod`)로 그대로 뒀다.
 - **외부 공개 도메인 확인 못 함**: 검증은 컨테이너 안에서 했다. 컨테이너 이름과 네트워크(`proxy_manager`)는
   그대로여서 NPM 라우팅이 유지될 것으로 보지만 공개 도메인으로 직접 열어 보지는 않았다.
