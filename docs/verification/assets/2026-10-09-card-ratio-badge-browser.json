@@ -1,0 +1,68 @@
+[
+  {
+    "width": 1280,
+    "bird": "까치",
+    "badge": "관심대상 (LC)",
+    "actual_api": true,
+    "response_status": 200,
+    "boxes": [
+      {
+        "text": "먹이 유형 · 잡식\n비율 자료 없음",
+        "center_delta": 0,
+        "text_align": "center",
+        "align_items": "center",
+        "justify_content": "center"
+      },
+      {
+        "text": "생활 방식 · 땅에서 먹이 탐색\n비율 자료 없음",
+        "center_delta": 0,
+        "text_align": "center",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    ],
+    "page_errors": []
+  },
+  {
+    "width": 1280,
+    "bird": "큰부리까마귀",
+    "badge": "관심대상 (LC) · 2024 평가 · 참고",
+    "actual_api": true,
+    "response_status": 200,
+    "boxes": [],
+    "page_errors": []
+  },
+  {
+    "width": 390,
+    "bird": "까치",
+    "badge": "관심대상 (LC)",
+    "actual_api": true,
+    "response_status": 200,
+    "boxes": [
+      {
+        "text": "먹이 유형 · 잡식\n비율 자료 없음",
+        "center_delta": -0.000003814697265625,
+        "text_align": "center",
+        "align_items": "center",
+        "justify_content": "center"
+      },
+      {
+        "text": "생활 방식 · 땅에서 먹이 탐색\n비율 자료 없음",
+        "center_delta": 0,
+        "text_align": "center",
+        "align_items": "center",
+        "justify_content": "center"
+      }
+    ],
+    "page_errors": []
+  },
+  {
+    "width": 390,
+    "bird": "큰부리까마귀",
+    "badge": "관심대상 (LC) · 2024 평가 · 참고",
+    "actual_api": true,
+    "response_status": 200,
+    "boxes": [],
+    "page_errors": []
+  }
+]
