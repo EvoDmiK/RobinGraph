@@ -1,0 +1,535 @@
+{
+  "passed": true,
+  "environment": "Actual NAS TEST API/DB with local JS/CSS interception",
+  "physical_device": false,
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "reduced_motion": false,
+      "layout": {
+        "clientWidth": 460,
+        "scrollWidth": 460,
+        "clientHeight": 794,
+        "scrollHeight": 794,
+        "scrollbarWidth": "none"
+      },
+      "chart_boxes": [
+        {
+          "x": 443,
+          "y": 575.328125,
+          "width": 193,
+          "height": 168.421875
+        },
+        {
+          "x": 644,
+          "y": 575.328125,
+          "width": 193,
+          "height": 168.421875
+        }
+      ],
+      "checks": [
+        {
+          "trait": "diet_distribution",
+          "key": "invertebrate",
+          "percent": 40,
+          "tooltip": "무척추동물 · 40%",
+          "tooltip_bounds": {
+            "x": 491.3671875,
+            "y": 577.328125,
+            "width": 96.265625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "ectotherm_vertebrate",
+          "percent": 10,
+          "tooltip": "변온 척추동물 · 10%",
+          "tooltip_bounds": {
+            "x": 486.15625,
+            "y": 577.328125,
+            "width": 106.6875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "fish",
+          "percent": 10,
+          "tooltip": "물고기 · 10%",
+          "tooltip_bounds": {
+            "x": 502.1640625,
+            "y": 577.328125,
+            "width": 74.671875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "seed",
+          "percent": 20,
+          "tooltip": "씨앗 · 20%",
+          "tooltip_bounds": {
+            "x": 506.046875,
+            "y": 577.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "other_plant",
+          "percent": 20,
+          "tooltip": "기타 식물 · 20%",
+          "tooltip_bounds": {
+            "x": 494.890625,
+            "y": 577.328125,
+            "width": 89.21875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "below_water_surface",
+          "percent": 20,
+          "tooltip": "수중 · 20%",
+          "tooltip_bounds": {
+            "x": 707.046875,
+            "y": 577.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "around_water_surface",
+          "percent": 60,
+          "tooltip": "수면 주변 · 60%",
+          "tooltip_bounds": {
+            "x": 695.7734375,
+            "y": 577.328125,
+            "width": 89.453125,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "ground",
+          "percent": 20,
+          "tooltip": "지면 · 20%",
+          "tooltip_bounds": {
+            "x": 707.046875,
+            "y": 577.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        }
+      ],
+      "same_row": true,
+      "pointer_chart_does_not_flip": true,
+      "keyboard_tooltip": true,
+      "tooltip_clears_on_flip": true,
+      "body_drag_flips": true,
+      "source_provenance_preserved": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": false,
+      "layout": {
+        "clientWidth": 366,
+        "scrollWidth": 366,
+        "clientHeight": 774,
+        "scrollHeight": 774,
+        "scrollbarWidth": "none"
+      },
+      "chart_boxes": [
+        {
+          "x": 37,
+          "y": 545.328125,
+          "width": 154,
+          "height": 168.421875
+        },
+        {
+          "x": 199,
+          "y": 545.328125,
+          "width": 154,
+          "height": 168.421875
+        }
+      ],
+      "checks": [
+        {
+          "trait": "diet_distribution",
+          "key": "invertebrate",
+          "percent": 40,
+          "tooltip": "무척추동물 · 40%",
+          "tooltip_bounds": {
+            "x": 65.8671875,
+            "y": 547.328125,
+            "width": 96.265625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "ectotherm_vertebrate",
+          "percent": 10,
+          "tooltip": "변온 척추동물 · 10%",
+          "tooltip_bounds": {
+            "x": 60.65625,
+            "y": 547.328125,
+            "width": 106.6875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "fish",
+          "percent": 10,
+          "tooltip": "물고기 · 10%",
+          "tooltip_bounds": {
+            "x": 76.6640625,
+            "y": 547.328125,
+            "width": 74.671875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "seed",
+          "percent": 20,
+          "tooltip": "씨앗 · 20%",
+          "tooltip_bounds": {
+            "x": 80.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "other_plant",
+          "percent": 20,
+          "tooltip": "기타 식물 · 20%",
+          "tooltip_bounds": {
+            "x": 69.390625,
+            "y": 547.328125,
+            "width": 89.21875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "below_water_surface",
+          "percent": 20,
+          "tooltip": "수중 · 20%",
+          "tooltip_bounds": {
+            "x": 242.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "around_water_surface",
+          "percent": 60,
+          "tooltip": "수면 주변 · 60%",
+          "tooltip_bounds": {
+            "x": 231.2734375,
+            "y": 547.328125,
+            "width": 89.453125,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "ground",
+          "percent": 20,
+          "tooltip": "지면 · 20%",
+          "tooltip_bounds": {
+            "x": 242.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        }
+      ],
+      "same_row": true,
+      "pointer_chart_does_not_flip": true,
+      "keyboard_tooltip": true,
+      "tooltip_clears_on_flip": true,
+      "body_drag_flips": true,
+      "source_provenance_preserved": true,
+      "page_errors": []
+    },
+    {
+      "width": 320,
+      "height": 640,
+      "touch": true,
+      "reduced_motion": false,
+      "layout": {
+        "clientWidth": 296,
+        "scrollWidth": 296,
+        "clientHeight": 608,
+        "scrollHeight": 773,
+        "scrollbarWidth": "none"
+      },
+      "chart_boxes": [
+        {
+          "x": 37,
+          "y": 526.265625,
+          "width": 119,
+          "height": 167.421875
+        },
+        {
+          "x": 164,
+          "y": 526.265625,
+          "width": 119,
+          "height": 167.421875
+        }
+      ],
+      "checks": [
+        {
+          "trait": "diet_distribution",
+          "key": "invertebrate",
+          "percent": 40,
+          "tooltip": "무척추동물 · 40%",
+          "tooltip_bounds": {
+            "x": 48.3671875,
+            "y": 525.265625,
+            "width": 96.265625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "ectotherm_vertebrate",
+          "percent": 10,
+          "tooltip": "변온 척추동물 · 10%",
+          "tooltip_bounds": {
+            "x": 43.15625,
+            "y": 516.265625,
+            "width": 106.6875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "fish",
+          "percent": 10,
+          "tooltip": "물고기 · 10%",
+          "tooltip_bounds": {
+            "x": 59.1640625,
+            "y": 516.265625,
+            "width": 74.671875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "seed",
+          "percent": 20,
+          "tooltip": "씨앗 · 20%",
+          "tooltip_bounds": {
+            "x": 63.046875,
+            "y": 516.265625,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "other_plant",
+          "percent": 20,
+          "tooltip": "기타 식물 · 20%",
+          "tooltip_bounds": {
+            "x": 51.890625,
+            "y": 516.265625,
+            "width": 89.21875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "below_water_surface",
+          "percent": 20,
+          "tooltip": "수중 · 20%",
+          "tooltip_bounds": {
+            "x": 190.046875,
+            "y": 516.265625,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "around_water_surface",
+          "percent": 60,
+          "tooltip": "수면 주변 · 60%",
+          "tooltip_bounds": {
+            "x": 178.7734375,
+            "y": 516.265625,
+            "width": 89.453125,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "ground",
+          "percent": 20,
+          "tooltip": "지면 · 20%",
+          "tooltip_bounds": {
+            "x": 190.046875,
+            "y": 516.265625,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        }
+      ],
+      "same_row": true,
+      "pointer_chart_does_not_flip": true,
+      "keyboard_tooltip": true,
+      "tooltip_clears_on_flip": true,
+      "body_drag_flips": true,
+      "source_provenance_preserved": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": true,
+      "layout": {
+        "clientWidth": 366,
+        "scrollWidth": 366,
+        "clientHeight": 774,
+        "scrollHeight": 774,
+        "scrollbarWidth": "none"
+      },
+      "chart_boxes": [
+        {
+          "x": 37,
+          "y": 545.328125,
+          "width": 154,
+          "height": 168.421875
+        },
+        {
+          "x": 199,
+          "y": 545.328125,
+          "width": 154,
+          "height": 168.421875
+        }
+      ],
+      "checks": [
+        {
+          "trait": "diet_distribution",
+          "key": "invertebrate",
+          "percent": 40,
+          "tooltip": "무척추동물 · 40%",
+          "tooltip_bounds": {
+            "x": 65.8671875,
+            "y": 547.328125,
+            "width": 96.265625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "ectotherm_vertebrate",
+          "percent": 10,
+          "tooltip": "변온 척추동물 · 10%",
+          "tooltip_bounds": {
+            "x": 60.65625,
+            "y": 547.328125,
+            "width": 106.6875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "fish",
+          "percent": 10,
+          "tooltip": "물고기 · 10%",
+          "tooltip_bounds": {
+            "x": 76.6640625,
+            "y": 547.328125,
+            "width": 74.671875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "seed",
+          "percent": 20,
+          "tooltip": "씨앗 · 20%",
+          "tooltip_bounds": {
+            "x": 80.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "diet_distribution",
+          "key": "other_plant",
+          "percent": 20,
+          "tooltip": "기타 식물 · 20%",
+          "tooltip_bounds": {
+            "x": 69.390625,
+            "y": 547.328125,
+            "width": 89.21875,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "below_water_surface",
+          "percent": 20,
+          "tooltip": "수중 · 20%",
+          "tooltip_bounds": {
+            "x": 242.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "around_water_surface",
+          "percent": 60,
+          "tooltip": "수면 주변 · 60%",
+          "tooltip_bounds": {
+            "x": 231.2734375,
+            "y": 547.328125,
+            "width": 89.453125,
+            "height": 29.109375
+          }
+        },
+        {
+          "trait": "foraging_strata_distribution",
+          "key": "ground",
+          "percent": 20,
+          "tooltip": "지면 · 20%",
+          "tooltip_bounds": {
+            "x": 242.546875,
+            "y": 547.328125,
+            "width": 66.90625,
+            "height": 29.109375
+          }
+        }
+      ],
+      "same_row": true,
+      "pointer_chart_does_not_flip": true,
+      "keyboard_tooltip": true,
+      "tooltip_clears_on_flip": true,
+      "body_drag_flips": true,
+      "source_provenance_preserved": true,
+      "page_errors": []
+    }
+  ]
+}

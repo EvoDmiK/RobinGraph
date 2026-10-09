@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "environment": "Chrome DOM with local JS/CSS and mocked initial API, controlled geometry fixtures",
+  "actual_db": false,
+  "physical_device": false,
+  "results": [
+    {
+      "fixture": "halves",
+      "geometry_preserved": true,
+      "invalid_not_normalized": false,
+      "page_errors": []
+    },
+    {
+      "fixture": "full",
+      "geometry_preserved": true,
+      "invalid_not_normalized": false,
+      "page_errors": []
+    },
+    {
+      "fixture": "incomplete-invalid",
+      "geometry_preserved": true,
+      "invalid_not_normalized": true,
+      "page_errors": []
+    }
+  ]
+}

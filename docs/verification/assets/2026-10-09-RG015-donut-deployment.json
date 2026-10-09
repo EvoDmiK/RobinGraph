@@ -1,0 +1,26 @@
+{
+  "commit": "a8aa6c1d964f30b8ee866ac25c44ad13bcc26077",
+  "image": "robingraph-api:test-rg015donut-a8aa6c1",
+  "release": "/home/kimdove/RobinGraph-rg015donut-a8aa6c1",
+  "previous_image": "robingraph-api:test-rg015finalcard-ddf002f",
+  "checked_at": "2026-10-09T00:32:25.901704+00:00",
+  "deployment_completed": true,
+  "archive_sha256": "2b38c358add5adc8adb681513a51c57b2892478e5d2c06635547431b285a025e",
+  "remote_archive_and_manifest_verified": true,
+  "deploy_exit": 0,
+  "verify_exit": 0,
+  "container": "robingraph-api-test",
+  "container_health": "healthy",
+  "oci_revision": "a8aa6c1d964f30b8ee866ac25c44ad13bcc26077",
+  "public_assets_match_source": true,
+  "public_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "browser_settings_passed": 4,
+  "segment_checks_passed": 32,
+  "mocked_api_geometry_cases_passed": 3,
+  "physical_device": false
+}
