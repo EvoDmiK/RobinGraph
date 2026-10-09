@@ -127,7 +127,12 @@ test("chat.js wires the fail-closed disposition guard into the /v1/chat success 
 test("chat submission and health checks fetch same-origin /health and /v1/chat", () => {
   const calls = Array.from(jsSource.matchAll(/\.fetch\(\s*"([^"]+)"/g)).map((match) => match[1]);
   assert.deepEqual(calls.sort(), ["/health", "/v1/chat"]);
-  assert.equal(jsSource.includes("https://"), false, "no absolute/remote URL literal is allowed in chat.js");
+  const provenanceUrls = new Set([
+    "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+    "https://www.iucnredlist.org/species/", "https://creativecommons.org/licenses/by/4.0/",
+  ]);
+  const absoluteUrls = Array.from(jsSource.matchAll(/"(https:\/\/[^"\n]+)"/g)).map(match => match[1]);
+  assert.ok(absoluteUrls.every(url => provenanceUrls.has(url)), "absolute URL constants are limited to pinned provenance validation");
   assert.equal(jsSource.includes("http://"), false, "no absolute/remote URL literal is allowed in chat.js");
 });
 
@@ -2100,6 +2105,117 @@ function habitatProfile(value, conservation) {
 }
 
 const VERIFIED_SOURCE = { source_name: "IUCN Red List", source_url: "https://www.iucnredlist.org/species/22680186", source_release: "2025-1" };
+
+const LINKED_CHECKLIST = {
+  evidence_kind: "red_list_checklist", assessment_status: "linked_checklist", independently_verified: false,
+  source_id: "gbif-iucn-2026-1", source_release: "2026-1",
+  source_url: "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+  source_name: "IUCN Red List · GBIF public checklist",
+  snapshot_sha256: "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+  mapping_method: "exact_avilist_birdlife_sis_and_scientific_name",
+  category: "LC", category_raw: "LC", taxonomy_category_raw: "LC",
+  sis_id: "22680186", assessment_id: "264102561",
+  assessment_reference_url: "https://www.iucnredlist.org/species/22680186/264102561",
+  assessment_year: 2025, assessment_scope: "global",
+  assessment_citation: "BirdLife International 2025. Anas platyrhynchos. The IUCN Red List of Threatened Species 2025.",
+  publisher: "International Union for Conservation of Nature",
+  citation: "IUCN (2026). The IUCN Red List of Threatened Species. Version 2026-1.",
+  license_name: "CC BY 4.0", license_url: "https://creativecommons.org/licenses/by/4.0/",
+};
+
+test("the pinned public IUCN checklist accepts eight categories without claiming live verification", () => {
+  for (const category of ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD"]) {
+    const info = chat.conservationInfo({ ...LINKED_CHECKLIST, category, category_raw: category });
+    assert.equal(info.category, category);
+    assert.equal(info.checklist, true);
+    assert.equal(info.sourceVerified, true);
+    assert.equal(info.snapshot, false);
+    assert.equal(info.verified, category !== "DD");
+    assert.match(info.badgeText, / · 공개 평가목록 기준$/);
+  }
+  // The dataset release is separate from an individual assessment year.
+  for (const assessment_year of [undefined, null]) {
+    const info = chat.conservationInfo({ ...LINKED_CHECKLIST, assessment_year });
+    assert.equal(info.checklist, true);
+    const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", { ...LINKED_CHECKLIST, assessment_year }));
+    assert.match(collectedText(card.sourceMaterial), /평가 연도 확인되지 않음/);
+    assert.doesNotMatch(collectedText(card.sourceMaterial), /개별 평가 연도: 2026/);
+  }
+});
+
+test("checklist provenance rejects alternate sources, incomplete metadata, and mismatched assessment links", () => {
+  const alterations = [
+    { evidence_kind: "independently_verified" }, { assessment_status: "snapshot_only" },
+    { independently_verified: true }, { independently_verified: undefined },
+    { source_id: "gbif-other" }, { source_release: "2026-2" }, { source_name: "IUCN Red List" },
+    { source_url: "https://www.gbif.org/dataset/other" },
+    { source_url: LINKED_CHECKLIST.source_url + "?verified=true" },
+    { source_url: "https://www.gbif.org.evil.test/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3" },
+    { source_url: "https://www.iucnredlist.org/species/22680186" },
+    { snapshot_sha256: "0".repeat(64) }, { mapping_method: "scientific_name_only" },
+    { assessment_scope: "regional" }, { license_name: "CC0" }, { license_url: "https://evil.test/license" },
+    { sis_id: 22680186 }, { sis_id: "22680186/../1" }, { assessment_id: "0" }, { assessment_id: 264102561 },
+    { assessment_reference_url: "https://www.iucnredlist.org/species/22680186/1" },
+    { assessment_reference_url: LINKED_CHECKLIST.assessment_reference_url + "#assessment" },
+    { assessment_reference_url: "https://www.iucnredlist.org.evil.test/species/22680186/264102561" },
+    { assessment_year: "2025" }, { assessment_year: 2027 }, { assessment_year: 1899 }, { assessment_year: 2025.5 },
+    { assessment_citation: " " }, { citation: null }, { publisher: "" },
+    { category: "NE", category_raw: "NE" }, { category: "CR (PE)", category_raw: "CR (PE)" },
+    { category_raw: "NT" }, { category_raw: undefined }, { category: "lc", category_raw: "lc" },
+  ];
+  for (const alteration of alterations) {
+    const info = chat.conservationInfo({ ...LINKED_CHECKLIST, ...alteration });
+    assert.equal(info.tier, "unconfirmed", JSON.stringify(alteration));
+    assert.equal(info.category, null, JSON.stringify(alteration));
+    assert.equal(info.checklist, false, JSON.stringify(alteration));
+    assert.equal(info.verified, false, JSON.stringify(alteration));
+  }
+  const invalid = { ...LINKED_CHECKLIST, source_url: "https://www.gbif.org/dataset/other" };
+  const invalidCard = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", invalid));
+  assert.equal(collectAllNodes(invalidCard.sourceMaterial).some(n => n.tagName === "a" && n.href === invalid.source_url), false);
+});
+
+test("primary checklist sources show release, individual assessment year, attribution, and official assessment URL", () => {
+  const profile = habitatProfile("Forest", { ...LINKED_CHECKLIST, category: "EN", category_raw: "EN" });
+  profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(card.className, /risk-en/);
+  const section = collectAllNodes(card.sourceMaterial).find(n => n.className === "species-conservation-sources");
+  const text = collectedText(section);
+  assert.match(text, /릴리스 2026-1 기준/);
+  assert.match(text, /개별 평가 연도: 2025/);
+  assert.match(text, /전 세계 \(global\)/);
+  assert.match(text, /독립 검증하거나 최신 평가를 실시간 조회한 결과가 아닙니다/);
+  assert.match(text, /International Union for Conservation of Nature/);
+  for (const href of [LINKED_CHECKLIST.source_url, LINKED_CHECKLIST.assessment_reference_url, LINKED_CHECKLIST.license_url]) {
+    assert.equal(collectAllNodes(section).some(n => n.tagName === "a" && n.href === href), true);
+  }
+  assert.match(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), profile)), /공개 평가목록 기준/);
+  for (const showBrief of [true, false]) {
+    const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief);
+    const sources = collectAllNodes(answer).find(n => n.className === "species-answer-sources");
+    assert.match(collectedText(sources), /릴리스 2026-1 · 개별 평가 연도 2025/);
+    assert.match(collectedText(sources), /CC BY 4.0/);
+    assert.match(collectedText(sources), /원문의 독립 검증/);
+    assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === LINKED_CHECKLIST.source_url).length, 1);
+    assert.equal(collectAllNodes(sources).some(n => n.tagName === "a" && n.href === LINKED_CHECKLIST.assessment_reference_url), true);
+  }
+  const missingYear = chat.buildSpeciesAnswer(svgCapableDoc(), { ...profile, conservation: { ...LINKED_CHECKLIST, assessment_year: undefined } }, true);
+  assert.match(collectedText(missingYear), /평가 연도 확인되지 않음/);
+  assert.doesNotMatch(collectedText(missingYear), /개별 평가 연도 2026/);
+  const taxonomyProfile = { ...profile, conservation: { ...LINKED_CHECKLIST, taxonomy_category_raw: "CR (PEW)" } };
+  const taxonomyCard = chat.buildSpeciesCard(svgCapableDoc(), taxonomyProfile);
+  assert.match(collectedText(taxonomyCard.sourceMaterial), /AviList 분류 원본 등급: CR \(PEW\)/);
+  assert.doesNotMatch(collectedText(taxonomyCard), /절멸 가능성/);
+  assert.match(collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), taxonomyProfile, true)), /AviList 분류 원본 등급: CR \(PEW\)/);
+  const duplicateProfile = { ...profile, sections: [{ key: "basic", title: "기본 정보", items: [{
+    text: "공개 평가목록 설명", source_name: LINKED_CHECKLIST.source_name, source_url: LINKED_CHECKLIST.source_url,
+    license_name: LINKED_CHECKLIST.license_name, license_url: LINKED_CHECKLIST.license_url,
+  }] }] };
+  const duplicateSources = collectAllNodes(chat.buildSpeciesAnswer(svgCapableDoc(), duplicateProfile, true)).find(n => n.className === "species-answer-sources");
+  assert.equal(collectAllNodes(duplicateSources).filter(n => n.tagName === "a" && n.href === LINKED_CHECKLIST.source_url).length, 1);
+  assert.match(collectedText(duplicateSources), /개별 평가 연도 2025/);
+});
 
 test("habitatEmblemInfo maps every raw AVONET habitat value to a distinct emblem and falls back to unknown", () => {
   const infos = HABITAT_VALUES.map((value) => chat.habitatEmblemInfo(habitatProfile(value)));
