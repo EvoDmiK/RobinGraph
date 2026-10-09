@@ -1528,3 +1528,5 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-bounded-description { color: #586b5c; font-size: .85rem; margin: 8px 0; }
 .species-bounded-group { margin: 10px 0; }
 .species-bounded-group h5 { margin: 0 0 4px; font-size: .85rem; overflow-wrap: anywhere; }
+
+.species-conservation-badge[hidden] { display: none !important; }

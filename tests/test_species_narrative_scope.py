@@ -11,7 +11,7 @@ class NarrativeScopeTests(unittest.TestCase):
                 'source_scope_kind': 'encyclopedia_taxon',
                 'taxonomy_alignment': {'status': 'article_identity_only'}, 'source_release': '123'}
 
-    def test_all_356_pinned_species_bound_notes_even_without_fallback_traits(self):
+    def test_all_356_pinned_species_keep_article_notes_in_normal_sections(self):
         groups = list(subgroup_index().values())
         self.assertEqual(len(groups), 356)
         self.assertEqual(sum(len(group) > 1 for group in groups), 290)
@@ -19,12 +19,26 @@ class NarrativeScopeTests(unittest.TestCase):
             with self.subTest(name=group[0]['target_name']):
                 sections = species_sections({'scientific_name': group[0]['target_name']}, [],
                                             {'appearance': [self.note()], 'fun_facts': [self.note('나무 구멍에 둥지를 만듭니다.')]})
-                self.assertFalse(any(s['key'] in ('appearance', 'fun_facts') for s in sections))
-                scoped = next(s for s in sections if s['key'] == 'source_scope_notes')
-                self.assertEqual(len(scoped['items']), 2)
-                self.assertTrue(scoped['collapsed'])
-                self.assertTrue(all(n['taxonomy_alignment']['status'] == 'unverified' for n in scoped['items']))
-                self.assertTrue(all(n['source_release'] == '123' for n in scoped['items']))
+                self.assertEqual([s['key'] for s in sections], ['basic', 'appearance', 'ecology', 'fun_facts'])
+                for index in (1, 3):
+                    self.assertEqual(len(sections[index]['items']), 1)
+                    item = sections[index]['items'][0]
+                    self.assertEqual(item['taxonomy_alignment']['status'], 'article_identity_only')
+                    self.assertEqual(item['source_release'], '123')
+
+    def test_actual_bounded_notes_keep_explicit_scope_without_separate_section(self):
+        scoped = {**self.note(), 'source_scope': 'Bird alpha', 'source_scope_kind': 'subspecies_group'}
+        unverified = {**self.note('몸은 흰색입니다.'), 'taxonomy_alignment': {'status': 'unverified'}}
+        sections = species_sections({}, [], {'appearance': [scoped, unverified]})
+        self.assertEqual(len(sections), 4)
+        self.assertEqual(len(sections[1]['items']), 1)
+        self.assertEqual(sections[1]['items'][0]['text'], 'Bird alpha: 수컷의 머리는 검은색입니다.')
+        self.assertEqual(sections[1]['items'][0]['source_scope_kind'], 'subspecies_group')
+        target = lineage(next(iter(subgroup_index().values()))[0])
+        flow = create_species_flow(lambda _: target, lambda _: [], photos=lambda _: [],
+                                   notes=lambda _: {'appearance': [scoped, unverified]})
+        profile = flow.invoke('query')
+        self.assertEqual(profile['note_evidence'], [scoped, unverified])
 
     def test_unbounded_control_and_exact_duplicate(self):
         # Deliberately outside the relationship artifact; source is still attributed.
