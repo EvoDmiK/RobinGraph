@@ -153,6 +153,57 @@ def _assessment_year(citation):
     return None
 
 
+def _reference_index(active, source, source_ids, global_rows, linked_taxa):
+    """Separate same-name published assessments, without concept/grade inheritance."""
+    ids = Counter(row[0] for row in active)
+    names = Counter(row[5] for row in active)
+    by_name = defaultdict(list)
+    for row in source:
+        by_name[' '.join((row[7], row[8]))].append(row)
+    references, excluded = {}, Counter()
+    for taxonomy in active:
+        sequence, name, authority, raw = (taxonomy[i] for i in (0, 5, 6, 15))
+        key = f'avilist-taxon:{TAXONOMY_RELEASE}:{sequence}'
+        if key in linked_taxa:
+            continue
+        candidates = by_name[name]
+        if ids[sequence] != 1 or names[name] != 1:
+            reason = 'ambiguous_avilist_identity'
+        elif len(candidates) != 1:
+            reason = 'missing_or_ambiguous_exact_source_name'
+        else:
+            row = candidates[0]
+            sis = row[0]
+            method = _authority_match(authority, row[9])
+            if source_ids[sis] != 1 or row[13] != sis:
+                reason = 'ambiguous_source_identity'
+            elif not method:
+                reason = 'authority_mismatch'
+            elif len(global_rows[sis]) != 1:
+                reason = 'missing_or_ambiguous_global_assessment'
+            else:
+                distribution = global_rows[sis][0]
+                category = CATEGORIES.get(distribution[5])
+                assessment = _assessment_identity(row, sis)
+                if not category:
+                    reason = 'unsupported_source_category'
+                elif not assessment or distribution[3] != row[14]:
+                    reason = 'assessment_identity_or_citation_mismatch'
+                else:
+                    record = dict(scientific_name=name, authority=authority,
+                                  assessment_authority=row[9], authority_match_method=method,
+                                  taxonomy_category_raw=raw, category=category, sis_id=int(sis),
+                                  assessment_id=assessment, assessment_reference_url=row[15],
+                                  assessment_citation=row[14], taxonomy_alignment='unverified')
+                    year = _assessment_year(row[14])
+                    if year is not None:
+                        record['assessment_year'] = year
+                    references[key] = record
+                    continue
+        excluded[reason] += 1
+    return dict(sorted(references.items())), dict(sorted(excluded.items()))
+
+
 def build_index(avilist_content, source_content):
     _checksum(avilist_content, AVILIST_SHA256, 'AviList')
     _checksum(source_content, SOURCE_SHA256, 'IUCN GBIF')
@@ -225,6 +276,7 @@ def build_index(avilist_content, source_content):
                     taxa[f'avilist-taxon:{TAXONOMY_RELEASE}:{sequence}'] = record
         if reason:
             excluded[reason] += 1
+    references, reference_excluded = _reference_index(active, source, source_ids, global_rows, taxa)
     return dict(schema_version=1, taxonomy_release=TAXONOMY_RELEASE,
                 concept_set_id=CONCEPT_SET_ID, mapping_method=METHOD,
                 taxonomy_snapshot_sha256=AVILIST_SHA256,
@@ -235,7 +287,10 @@ def build_index(avilist_content, source_content):
                             published_at=published),
                 coverage=dict(active_species=len(active), source_bird_species=len(source),
                               mapped_species=len(taxa), excluded_reasons=dict(sorted(excluded.items()))),
-                taxa=dict(sorted(taxa.items())))
+                taxa=dict(sorted(taxa.items())), references=references,
+                reference_coverage=dict(unlinked_species=len(active)-len(taxa),
+                                        reference_species=len(references),
+                                        excluded_reasons=reference_excluded))
 
 
 def main():

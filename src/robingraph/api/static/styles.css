@@ -1081,6 +1081,15 @@ body:has(.species-popup[open]) { overflow: hidden; }
   font-size: .75rem;
   font-weight: 750;
 }
+.species-reference-assessment {
+  margin: 0 0 8px;
+  font-size: .74rem;
+  font-weight: 650;
+  line-height: 1.4;
+  color: #3b3f38;
+  overflow-wrap: anywhere;
+}
+.species-chat-brief .species-reference-assessment { margin: 0; flex-basis: 100%; }
 .species-conservation-sources { margin: 12px 0; font-size: .82rem; }
 .species-conservation-sources summary { color: #405635; cursor: pointer; }
 .species-conservation-sources p { margin: 6px 0; }

@@ -1062,6 +1062,71 @@
     parent.appendChild(conservationReference);
   }
 
+  var UNLINKED_NE_NOTE = "분류 자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 쓰입니다. 실제 IUCN 미평가 판정이 아니며 등급을 추정하지 않았습니다.";
+
+  // Optional, reference-only IUCN assessment shown beside an unlinked taxonomy NE.
+  // It is never the current taxon grade: category/tier/card colour stay unresolved.
+  var REFERENCE_CATEGORIES = ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD"];
+  var REFERENCE_ALIGNMENT_NOTE = "현재 분류 범위와 일치 여부 확인 필요";
+
+  function referenceAssessmentInfo(conservation, taxon) {
+    var data = conservation && typeof conservation === "object" ? conservation : null;
+    var ref = data && data.reference_assessment && typeof data.reference_assessment === "object" ? data.reference_assessment : null;
+    if (!ref || Array.isArray(ref)) { return null; }
+    var text = function (value) { return typeof value === "string" && !!value.trim(); };
+    if (REFERENCE_CATEGORIES.indexOf(ref.category) === -1 ||
+        ref.assessment_status !== "reference_only" || ref.evidence_kind !== "red_list_checklist_reference" ||
+        ref.independently_verified !== false || ref.taxonomy_alignment !== "unverified" ||
+        !text(ref.scientific_name) || !text(ref.assessment_authority) || !text(ref.assessment_citation) ||
+        ref.source_name !== "IUCN Red List · GBIF public checklist" || ref.source_id !== "gbif-iucn-2026-1" ||
+        ref.source_release !== "2026-1" || ref.source_url !== "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3" ||
+        ref.snapshot_sha256 !== "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d") { return null; }
+    if (taxon && typeof taxon === "object" && text(taxon.scientific_name) && taxon.scientific_name !== ref.scientific_name) { return null; }
+    var digits = /^[1-9][0-9]*$/;
+    if (typeof ref.sis_id !== "string" || !digits.test(ref.sis_id) || typeof ref.assessment_id !== "string" || !digits.test(ref.assessment_id) ||
+        ref.assessment_reference_url !== "https://www.iucnredlist.org/species/" + ref.sis_id + "/" + ref.assessment_id) { return null; }
+    if (ref.assessment_year != null && !(Number.isInteger(ref.assessment_year) && ref.assessment_year >= 1900 && ref.assessment_year <= 2026)) { return null; }
+    var label = CONSERVATION_CATEGORIES[ref.category].label;
+    var sourceUrl = sanitizeUrl(ref.source_url);
+    var parsed = null;
+    try { parsed = sourceUrl ? new URL(sourceUrl) : null; } catch (_) { /* no link */ }
+    if (!(parsed && parsed.protocol === "https:" && !parsed.username && !parsed.password)) { sourceUrl = null; }
+    return { category: ref.category, label: label, year: ref.assessment_year == null ? null : ref.assessment_year,
+      sourceUrl: sourceUrl, data: ref,
+      text: "참고 평가: " + label + " (" + ref.category + ")" + (ref.assessment_year == null ? "" : " · " + ref.assessment_year) +
+        " · " + REFERENCE_ALIGNMENT_NOTE };
+  }
+
+  /** Reference line shown only while the taxon's own grade is an unlinked NE. */
+  function referenceFor(info, profile) {
+    return info.state === "link-unresolved" ? referenceAssessmentInfo(profile && profile.conservation, profile && profile.taxon) : null;
+  }
+
+  function appendReferenceSource(doc, parent, ref) {
+    var head = doc.createElement("p");
+    head.className = "species-reference-assessment";
+    head.textContent = ref.text;
+    parent.appendChild(head);
+    var meta = doc.createElement("p");
+    meta.className = "species-note";
+    meta.textContent = "대상 학명: " + ref.data.scientific_name + " · " +
+      (ref.year == null ? "평가 연도 확인되지 않음" : "평가 연도 " + ref.year) + " · 평가 자료의 명명자: " + ref.data.assessment_authority +
+      " · 범위: 동일 학명·명명자 기준의 전 세계 공개 평가 · 이 평가는 참고용이며 현재 종 등급으로 확정하지 않았습니다.";
+    parent.appendChild(meta);
+    var links = doc.createElement("p");
+    links.className = "species-note";
+    links.appendChild(safeLink(doc, ref.data.source_name, ref.sourceUrl));
+    var release = doc.createElement("span");
+    release.textContent = " · 릴리스 " + ref.data.source_release.trim() + " · ";
+    links.appendChild(release);
+    links.appendChild(safeLink(doc, "공식 IUCN 개별 평가 페이지", ref.data.assessment_reference_url));
+    parent.appendChild(links);
+    var cite = doc.createElement("p");
+    cite.className = "species-note";
+    cite.textContent = "개별 평가 인용: " + ref.data.assessment_citation;
+    parent.appendChild(cite);
+  }
+
   function isLinkedRedListChecklist(data) {
     var digits = /^[1-9][0-9]*$/;
     return data.evidence_kind === "red_list_checklist" &&
@@ -1116,6 +1181,8 @@
       sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "멸종위기 등급 미확인" };
     if ((data.evidence_kind && data.evidence_kind !== "taxonomy_snapshot" && !checklist) ||
         (data.evidence_kind === "taxonomy_snapshot" && !snapshot)) { return base; }
+    if (snapshot && category == null && raw === "NE" && data.evidence_kind === "taxonomy_snapshot" &&
+        data.assessment_status === "needs_review" && data.independently_verified === false) { category = "NE"; }
     if (!sourceVerified || typeof category !== "string" ||
         !Object.prototype.hasOwnProperty.call(CONSERVATION_CATEGORIES, category)) { return base; }
     if (typeof data.category_raw === "string") {
@@ -1123,8 +1190,8 @@
       if (rawCode !== category) { return base; }
     }
     if (snapshot && category === "NE") {
-      return Object.assign(base, { category: "NE", label: "평가 연결 확인 필요",
-        badgeText: "평가 자료 연결 확인 필요 (AviList NE)" });
+      return Object.assign(base, { category: "NE", label: "평가 연결 확인 필요", state: "link-unresolved",
+        note: UNLINKED_NE_NOTE, badgeText: "평가 범위 확인 필요" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -2198,6 +2265,7 @@
     var card = doc.createElement("div");
     card.className = "species-card risk-" + conservation.tier;
     card.setAttribute("data-conservation-tier", conservation.tier);
+    if (conservation.state) { card.setAttribute("data-conservation-state", conservation.state); }
 
     var title = doc.createElement("p");
     title.className = "species-title";
@@ -2241,6 +2309,13 @@
     conservationBadge.textContent = conservation.badgeText;
     conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
+    var cardReference = referenceFor(conservation, profile);
+    if (cardReference) {
+      var cardReferenceLine = doc.createElement("p");
+      cardReferenceLine.className = "species-reference-assessment";
+      cardReferenceLine.textContent = cardReference.text;
+      card.appendChild(cardReferenceLine);
+    }
 
     var front = doc.createElement("section");
     front.className = "species-card-front";
@@ -2776,6 +2851,8 @@
       noConservation.textContent = "검증된 멸종위기 등급 자료가 없어 카드 색상을 중립으로 표시합니다.";
       conservationSection.appendChild(noConservation);
     }
+    var sectionReference = referenceFor(conservation, profile);
+    if (sectionReference) { appendReferenceSource(doc, conservationSection, sectionReference); }
     var conservationNote = doc.createElement("p");
     conservationNote.className = "species-note";
     conservationNote.textContent = conservation.manualOverride ? PICA_SERICA_OVERRIDE_NOTE : CONSERVATION_NOTE;
@@ -3373,15 +3450,17 @@
         }
       });
     }
-    if (sources.length || answerConservation.manualOverride) {
+    var answerReference = referenceFor(answerConservation, profile);
+    if (sources.length || answerConservation.manualOverride || answerReference) {
       var details = doc.createElement("details");
       details.className = "species-answer-sources";
       var summary = doc.createElement("summary");
-      summary.textContent = "답변 출처 보기 (" + (sources.length + (answerConservation.manualOverride ? 1 : 0)) + ")";
+      summary.textContent = "답변 출처 보기 (" + (sources.length + (answerConservation.manualOverride ? 1 : 0) + (answerReference ? 1 : 0)) + ")";
       details.appendChild(summary);
       if (answerConservation.manualOverride) {
         appendManualOverrideEvidence(doc, details, profile.conservation);
       }
+      if (answerReference) { appendReferenceSource(doc, details, answerReference); }
       sources.forEach(function (source) {
         var row = doc.createElement("p");
         row.appendChild(safeLink(doc, source.name, source.url));
@@ -3436,6 +3515,13 @@
     badge.textContent = conservation.badgeText;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
+    var briefReference = referenceFor(conservation, profile);
+    if (briefReference) {
+      var briefReferenceLine = doc.createElement("span");
+      briefReferenceLine.className = "species-reference-assessment";
+      briefReferenceLine.textContent = briefReference.text;
+      brief.appendChild(briefReferenceLine);
+    }
     return brief;
   }
 
@@ -4317,6 +4403,7 @@
     buildQuestionAnswer: buildQuestionAnswer,
     buildTaxonomyAnswer: buildTaxonomyAnswer,
     conservationInfo: conservationInfo,
+    referenceAssessmentInfo: referenceAssessmentInfo,
     photoAvailabilityInfo: photoAvailabilityInfo,
     init: init,
   };

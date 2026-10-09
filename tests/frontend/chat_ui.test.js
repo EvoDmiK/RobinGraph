@@ -2182,7 +2182,7 @@ test("Pica serica manual LC override colors only that species and preserves the 
   const other = { ...profile, taxon: { ...profile.taxon, taxon_id: "another-species", scientific_name: "Pica pica" } };
   assert.match(chat.buildSpeciesCard(svgCapableDoc(), other).className, /risk-unconfirmed/);
   assert.match(chat.buildSpeciesBrief(svgCapableDoc(), other).className, /risk-unconfirmed/);
-  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "평가 자료 연결 확인 필요 (AviList NE)");
+  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "평가 범위 확인 필요");
 });
 
 test("manual override fails closed for any incomplete or altered Pica contract", () => {
@@ -2406,7 +2406,7 @@ test("snapshot NE preserves raw provenance without claiming IUCN Not Evaluated",
   assert.equal(info.sourceVerified, true);
   assert.equal(info.verified, false);
   assert.equal(info.tier, "unconfirmed");
-  assert.equal(info.badgeText, "평가 자료 연결 확인 필요 (AviList NE)");
+  assert.equal(info.badgeText, "평가 범위 확인 필요");
   const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", ne));
   assert.doesNotMatch(collectedText(card), /IUCN 적색목록 미평가/);
   assert.match(collectedText(card.sourceMaterial), /실제 IUCN 미평가 판정으로 단정할 수 없습니다/);
@@ -2429,6 +2429,163 @@ test("snapshot NE preserves raw provenance without claiming IUCN Not Evaluated",
     assert.match(collectedText(card), raw.includes("PEW") ? /야생절멸 가능성/ : /절멸 가능성/);
     assert.match(collectedText(card.sourceMaterial), raw.includes("PEW") ? /야생절멸 가능성이 있는 위급종/ : /절멸 가능성이 있는 위급종/);
   }
+});
+
+test("unlinked taxonomy NE reads as unresolved on every shared surface, for any species, without a grade", () => {
+  const snap = { source_name: "AviList global avian checklist", source_url: "https://explore.avilist.org/data/avilist-2025b.json", source_release: "v2025b", source_id: "avilist-v2025b", evidence_kind: "taxonomy_snapshot", assessment_status: "needs_review", independently_verified: false };
+  // The API label ("미평가") must never leak: only the raw code and the unresolved wording may appear.
+  for (const apiLabel of ["미평가", "Not Evaluated", "관심대상"]) {
+    const ne = { category: "NE", category_raw: "NE", label: apiLabel, ...snap };
+    const info = chat.conservationInfo(ne);
+    assert.deepEqual([info.category, info.tier, info.verified, info.state], ["NE", "unconfirmed", false, "link-unresolved"]);
+    assert.match(info.note, /실제 IUCN 미평가 판정이 아니며/);
+    const profile = habitatProfile("Forest", ne);
+    profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
+    const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+    assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
+    assert.equal(card.getAttribute("data-conservation-tier"), "unconfirmed");
+    const badge = card.children.find((node) => node.className === "species-conservation-badge");
+    assert.equal(badge.textContent, "평가 범위 확인 필요");
+    assert.match(badge.getAttribute("title"), /실제 IUCN 미평가 판정이 아니며/);
+    assert.doesNotMatch(badge.getAttribute("title"), /카드 색상은 이 등급만/);
+    const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
+    assert.match(brief.className, /risk-unconfirmed/);
+    assert.match(collectedText(brief), /평가 범위 확인 필요/);
+    for (const showBrief of [false, true]) {
+      const text = collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief));
+      assert.doesNotMatch(text, /IUCN 적색목록 미평가|\(NE\) · |관심대상 \(LC\)/);
+    }
+    assert.doesNotMatch(collectedText(card) + collectedText(card.sourceMaterial), /IUCN 적색목록 (미평가|관심대상)/);
+  }
+});
+
+test("effective category null with raw NE and a valid needs_review snapshot is the same unresolved state; other nulls stay unconfirmed", () => {
+  const nullNe = { ...UNLINKED_NE, category: null, taxonomy_category_raw: "NE" };
+  const info = chat.conservationInfo(nullNe);
+  assert.deepEqual([info.state, info.tier, info.verified, info.badgeText], ["link-unresolved", "unconfirmed", false, "평가 범위 확인 필요"]);
+  const profile = referenceProfile(REFERENCE_ASSESSMENT);
+  profile.conservation = { ...nullNe, reference_assessment: REFERENCE_ASSESSMENT };
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\)/);
+  assert.match(collectedText(card.sourceMaterial), /명명자: BirdLife International/);
+  assert.doesNotMatch(collectedText(card), /미평가|IUCN 적색목록/);
+  for (const bad of [{ assessment_status: "snapshot_only" }, { assessment_status: undefined }, { category_raw: "LC" }, { category_raw: "DD" },
+    { independently_verified: true }, { evidence_kind: "unconfirmed" }, { source_id: "avilist-v1" }, { source_url: "https://evil.test/x" }]) {
+    const other = chat.conservationInfo({ ...nullNe, ...bad });
+    assert.equal(other.state, undefined, JSON.stringify(bad));
+    assert.equal(other.category, null, JSON.stringify(bad));
+    assert.doesNotMatch(other.badgeText, /미평가/, JSON.stringify(bad));
+  }
+  assert.equal(chat.conservationInfo({ ...UNLINKED_NE, category: null, category_raw: null }).state, undefined);
+});
+
+test("DD stays a distinct assessed outcome and real sourced NE is not relabelled; corrupted NE metadata is neutral", () => {
+  const dd = chat.conservationInfo({ category: "DD", category_raw: "DD", ...VERIFIED_SOURCE });
+  assert.equal(dd.badgeText, "IUCN 적색목록 정보부족 (DD)");
+  assert.equal(dd.state, undefined);
+  const real = chat.conservationInfo({ category: "NE", category_raw: "NE", ...VERIFIED_SOURCE });
+  assert.equal(real.badgeText, "IUCN 적색목록 미평가 (NE)");
+  assert.equal(real.state, undefined);
+  const snap = { source_name: "AviList global avian checklist", source_url: "https://explore.avilist.org/data/avilist-2025b.json", source_release: "v2025b", source_id: "avilist-v2025b", evidence_kind: "taxonomy_snapshot" };
+  for (const bad of [
+    { category: "ne" }, { category: "NE", category_raw: "LC" }, { category: " NE " }, { category: "NE", source_id: "avilist-v1" },
+    { category: "NE", source_url: "https://explore.avilist.org.evil.test/x" }, { category: "NE", source_release: "" },
+    { category: ["NE"] }, { category: "NE", evidence_kind: "red_list_checklist" }, { category: "NE", evidence_kind: "manual_override" },
+  ]) {
+    const info = chat.conservationInfo({ category_raw: "NE", ...snap, ...bad });
+    assert.equal(info.tier, "unconfirmed", JSON.stringify(bad));
+    assert.equal(info.state, undefined, JSON.stringify(bad));
+    assert.doesNotMatch(info.badgeText, /미평가/, JSON.stringify(bad));
+    assert.notEqual(info.category === "NE" && info.verified, true);
+  }
+});
+
+const REFERENCE_ASSESSMENT = {
+  category: "LC", label: "관심대상", assessment_status: "reference_only", evidence_kind: "red_list_checklist_reference",
+  scientific_name: "Pica pica", assessment_authority: "BirdLife International", sis_id: "22712305", assessment_id: "264221174",
+  assessment_reference_url: "https://www.iucnredlist.org/species/22712305/264221174", assessment_citation: "BirdLife International 2024. Pica pica.",
+  assessment_year: 2024, source_name: "IUCN Red List · GBIF public checklist", source_url: "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+  source_release: "2026-1", source_id: "gbif-iucn-2026-1", snapshot_sha256: "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+  taxonomy_alignment: "unverified", independently_verified: false,
+};
+const UNLINKED_NE = { category: "NE", category_raw: "NE", label: "평가 연결 확인 필요", source_name: "AviList global avian checklist", source_url: "https://explore.avilist.org/data/avilist-2025b.json", source_release: "v2025b", source_id: "avilist-v2025b", evidence_kind: "taxonomy_snapshot", assessment_status: "needs_review", independently_verified: false };
+
+function referenceProfile(ref, name) {
+  const profile = habitatProfile("Forest", { ...UNLINKED_NE, reference_assessment: ref });
+  profile.taxon = { ...profile.taxon, scientific_name: name || "Pica pica" };
+  profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
+  return profile;
+}
+
+test("reference-only assessment is shown on card, brief, answer and source toggle while the card stays unresolved", () => {
+  const profile = referenceProfile(REFERENCE_ASSESSMENT);
+  const line = "참고 평가: 관심대상 (LC) · 2024 · 현재 분류 범위와 일치 여부 확인 필요";
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
+  assert.ok(card.children.some((n) => n.className === "species-reference-assessment" && n.textContent === line));
+  const badge = card.children.find((n) => n.className === "species-conservation-badge");
+  assert.equal(badge.textContent, "평가 범위 확인 필요");
+  const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
+  assert.match(brief.className, /risk-unconfirmed/);
+  assert.match(collectedText(brief), /참고 평가: 관심대상 \(LC\)/);
+  const src = collectedText(card.sourceMaterial);
+  assert.match(src, /참고 평가: 관심대상 \(LC\)/);
+  assert.match(src, /평가 연도 2024/);
+  assert.match(src, /BirdLife International/);
+  assert.match(src, /현재 종 등급으로 확정하지 않았습니다/);
+  const hrefs = collectAllNodes(card.sourceMaterial).filter((n) => n.tagName === "a").map((n) => n.href);
+  assert.ok(hrefs.includes(REFERENCE_ASSESSMENT.assessment_reference_url));
+  assert.ok(hrefs.includes(REFERENCE_ASSESSMENT.source_url));
+  for (const showBrief of [false, true]) {
+    const text = collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief));
+    assert.match(text, /참고 평가: 관심대상 \(LC\)/);
+    assert.doesNotMatch(text, /IUCN 적색목록 (미평가|관심대상)/);
+  }
+  assert.doesNotMatch(collectedText(card), /미평가 \(NE\)|IUCN 적색목록/);
+  const noYear = chat.referenceAssessmentInfo({ ...UNLINKED_NE, reference_assessment: { ...REFERENCE_ASSESSMENT, assessment_year: undefined } });
+  assert.equal(noYear.text, "참고 평가: 관심대상 (LC) · 현재 분류 범위와 일치 여부 확인 필요");
+});
+
+test("actual Corvus macrorhynchos backend payload renders as reference beside an unresolved NE", () => {
+  const file = "/tmp/rg-crow-profile-with-ref.json";
+  if (!fs.existsSync(file)) { return; }
+  const profile = JSON.parse(fs.readFileSync(file, "utf8"));
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\) · 2024 · 현재 분류 범위와 일치 여부 확인 필요/);
+  assert.doesNotMatch(collectedText(card), /IUCN 적색목록|미평가/);
+  assert.match(collectedText(card.sourceMaterial), /동일 학명·명명자 기준의 전 세계 공개 평가/);
+});
+
+test("malformed or mismatched reference assessments are ignored and never colour the card", () => {
+  const bad = [
+    { category: "NE" }, { category: "lc" }, { category: "XX" }, { assessment_status: "linked_checklist" }, { evidence_kind: "red_list_checklist" },
+    { independently_verified: true }, { taxonomy_alignment: "verified" }, { scientific_name: "Corvus corax" }, { scientific_name: "" },
+    { sis_id: "abc" }, { assessment_id: "0" }, { assessment_reference_url: "https://evil.test/species/22712305/264221174" },
+    { assessment_reference_url: "javascript:alert(1)" }, { assessment_year: 1800 }, { assessment_year: "2024" }, { assessment_year: 2024.5 },
+    { assessment_authority: "" }, { assessment_citation: null }, { source_name: 5 }, { source_release: " " },
+    { source_id: "other" }, { source_release: "2025-1" }, { snapshot_sha256: "0".repeat(64) }, { source_url: "https://evil.test/dataset" }, { source_name: "Arbitrary source" },
+  ];
+  for (const change of bad) {
+    const profile = referenceProfile({ ...REFERENCE_ASSESSMENT, ...change });
+    const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+    assert.equal(card.className, "species-card risk-unconfirmed", JSON.stringify(change));
+    assert.doesNotMatch(collectedText(card) + collectedText(card.sourceMaterial), /참고 평가/, JSON.stringify(change));
+    assert.doesNotMatch(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), profile)), /참고 평가/, JSON.stringify(change));
+  }
+  for (const ref of [null, [], "LC", 7, {}]) {
+    assert.equal(chat.referenceAssessmentInfo({ ...UNLINKED_NE, reference_assessment: ref }), null);
+  }
+  assert.equal(chat.referenceAssessmentInfo(null), null);
+  const direct = habitatProfile("Forest", { category: "LC", ...VERIFIED_SOURCE, reference_assessment: REFERENCE_ASSESSMENT });
+  assert.doesNotMatch(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), direct)), /참고 평가/);
+  assert.equal(chat.buildSpeciesCard(svgCapableDoc(), direct).className, "species-card risk-lc");
+  const hostile = referenceProfile({ ...REFERENCE_ASSESSMENT, source_url: "javascript:alert(1)", assessment_citation: "<img src=x onerror=alert(1)>" });
+  const hostileCard = chat.buildSpeciesCard(svgCapableDoc(), hostile);
+  assert.equal(collectAllNodes(hostileCard.sourceMaterial).some((n) => n.tagName === "a" && /javascript/.test(n.href || "")), false);
+  assert.equal(collectAllNodes(hostileCard.sourceMaterial).some((n) => n.tagName === "img"), false);
 });
 
 test("card, dialog, and chat button carry the verified tier; sources and the abundance caveat sit on the back", () => {
