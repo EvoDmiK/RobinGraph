@@ -134,6 +134,12 @@ test("chat submission and health checks fetch same-origin /health and /v1/chat",
     "https://doi.org/10.6084/m9.figshare.27051040.v1",
     "https://www.nature.com/articles/s41597-025-05615-3",
   ]);
+  const approvedRecords = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records;
+  for (const record of approvedRecords) {
+    for (const key of ["source_url", "taxonomic_evidence_url"]) {
+      if (record[key]) provenanceUrls.add(record[key]);
+    }
+  }
   const absoluteUrls = Array.from(jsSource.matchAll(/"(https:\/\/[^"\n]+)"/g)).map(match => match[1]);
   assert.ok(absoluteUrls.every(url => provenanceUrls.has(url)), "absolute URL constants are limited to pinned provenance validation");
   assert.equal(jsSource.includes("http://"), false, "no absolute/remote URL literal is allowed in chat.js");
@@ -5995,4 +6001,51 @@ test("review metadata stays in sources while the IUCN badge remains visible with
   const badge = collectAllNodes(chat.buildSpeciesBrief(svgCapableDoc(), p)).find(n => n.className === "species-conservation-badge");
   assert.equal(badge.hidden, false);
   assert.equal(badge.textContent, "IUCN 적색목록 · 등급 정보 없음");
+});
+
+const EXPERT_REFERENCE = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records[0];
+test("reviewed expert grades show in card and answer with scope and real source dates retained only in sources", () => {
+  const taxon = { taxon_id: EXPERT_REFERENCE.taxon_id, scientific_name: EXPERT_REFERENCE.scientific_name, rank: "species" };
+  const conservation = { ...PICA_ORIGINAL_SNAPSHOT, reference_assessment: EXPERT_REFERENCE };
+  const info = chat.conservationInfo(conservation, taxon);
+  assert.equal(info.tier, "lc");
+  assert.equal(info.verified, false);
+  assert.equal(info.badgeText, "IUCN 적색목록 관심대상 (LC) · 홍콩조류관찰회 자료 기준");
+  assert.doesNotMatch(info.badgeText, /2024 평가|등급 정보 없음/);
+  const profile = { ...habitatProfile("Forest"), taxon, conservation };
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(card.sourceMaterial), /자료 갱신일은 IUCN 평가일이 아닙니다/);
+  assert.match(collectedText(card.sourceMaterial), /Parus major/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /undefined/);
+});
+test("expert references cannot colour another taxon or accept invented assessment identities", () => {
+  const taxon = { taxon_id: EXPERT_REFERENCE.taxon_id, scientific_name: EXPERT_REFERENCE.scientific_name };
+  for (const change of [{ scientific_name: "Parus major" }, { taxon_id: "another" }, { source_url: "https://example.org" },
+    { source_release: "2026" }, { assessment_year: 2024 }, { assessment_id: "123" }, { sis_id: "123" },
+    { category_raw: "EN" }, { category: "NE" }, { independently_verified: true }, { taxonomy_alignment: "accepted" },
+    { source_scope_note: "" }, { record_sha256: "bad" }, { snapshot_sha256: "bad" }]) {
+    assert.equal(chat.referenceAssessmentInfo({ reference_assessment: { ...EXPERT_REFERENCE, ...change } }, taxon), null, JSON.stringify(change));
+  }
+  assert.equal(chat.referenceAssessmentInfo({reference_assessment: EXPERT_REFERENCE}), null);
+});
+
+test("expert manifest rejects coordinated grade changes and fabricated scope/date even with original hashes", () => {
+  const taxon = {taxon_id:EXPERT_REFERENCE.taxon_id, scientific_name:EXPERT_REFERENCE.scientific_name};
+  for (const change of [ {category:"EN", category_raw:"EN"},
+    {taxonomy_alignment:"exact_source_name", source_scientific_name:"Other bird"},
+    {source_updated_at:"2024-99-99", source_release:"2024-99-99"}]) {
+    assert.equal(chat.referenceAssessmentInfo({reference_assessment:{...EXPERT_REFERENCE,...change}},taxon),null);
+  }
+});
+
+test("every approved expert record renders through the shared path and rejects unapproved extra evidence", () => {
+  const records = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records;
+  for (const ref of records) {
+    const taxon = {taxon_id:ref.taxon_id, scientific_name:ref.scientific_name, rank:"species"};
+    const evidence = {...PICA_ORIGINAL_SNAPSHOT, reference_assessment:ref};
+    const info = chat.conservationInfo(evidence,taxon);
+    assert.equal(info.tier,ref.category.toLowerCase(),ref.scientific_name);
+    assert.match(info.badgeText,/홍콩조류관찰회 자료 기준/);
+    assert.equal(chat.referenceAssessmentInfo({reference_assessment:{...ref,unreviewed_source:"https://example.org"}},taxon),null);
+  }
 });

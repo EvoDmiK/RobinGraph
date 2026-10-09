@@ -330,7 +330,9 @@ def birdbase_reference_checklist(lineage, snapshot):
 
 def best_reference_assessment(lineage, snapshot):
     """Prefer the official public checklist before a publisher dataset reference."""
-    return reference_checklist(lineage, snapshot) or birdbase_reference_checklist(lineage, snapshot)
+    from .reviewed_conservation import reviewed_reference_assessment
+    return (reference_checklist(lineage, snapshot) or birdbase_reference_checklist(lineage, snapshot)
+            or reviewed_reference_assessment(lineage, snapshot))
 
 
 def reference_checklist(lineage, snapshot):
