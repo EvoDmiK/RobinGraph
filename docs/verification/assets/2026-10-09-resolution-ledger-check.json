@@ -1,0 +1,40 @@
+{
+  "records": 447,
+  "nominal_candidates_checked": 506,
+  "nominal_taxonomy_failures": 0,
+  "parus_candidates": [
+    "Parus major"
+  ],
+  "counts": {
+    "input_unresolved": 447,
+    "processed": 447,
+    "review_status": {
+      "different_name_or_taxonomy_scope_candidates": 302,
+      "no_candidate_in_pinned_public_source": 27,
+      "reference_added_concept_unverified": 25,
+      "same_name_identity_or_integrity_conflict": 93
+    },
+    "candidate_issues": {
+      "different_name_taxonomy_scope_candidate": 548,
+      "same_name_authorship_notation_or_identity_conflict": 53,
+      "same_name_authorship_year_conflict": 40,
+      "same_name_reference_available_concept_unverified": 25
+    },
+    "taxonomy_relations": {
+      "genus_change": 15,
+      "lump": 116,
+      "split": 269
+    },
+    "without_taxonomy_decision": 23,
+    "excluded_nominal_collisions": 449,
+    "primary_grades_assigned": 0,
+    "combined_reference_sources": {
+      "birdbase-v2025.1": 117,
+      "gbif-iucn-2026-1": 25,
+      "missing": 305
+    },
+    "birdbase_category_present": 142,
+    "birdbase_category_missing": 305,
+    "excluded_unreleased_recommendations": 4
+  }
+}
