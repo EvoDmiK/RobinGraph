@@ -1,0 +1,20 @@
+{
+  "equal": false,
+  "checks": {
+    "pg_schemas": true,
+    "pg_tables": true,
+    "pg_hashes": false,
+    "pg_running_ingestions": true,
+    "neo4j_nodes": true,
+    "neo4j_relationships": true,
+    "neo4j_labels": true,
+    "neo4j_types": true,
+    "neo4j_indexes": true,
+    "neo4j_node_content": true,
+    "neo4j_relationship_content": true,
+    "neo4j_constraints": true,
+    "quiescent_ingestion": true,
+    "indexes_online": true
+  },
+  "compared_at": "2026-10-09T13:47:04.543910+00:00"
+}

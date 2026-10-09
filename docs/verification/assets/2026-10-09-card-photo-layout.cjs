@@ -1,4 +1,4 @@
-// Real TEST profile payloads and browser layout; optional local CSS interception.
+// Real API profile payloads and browser layout; optional local CSS interception.
 // This exercises card rendering directly, not intent routing or language generation.
 const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),assert=require('node:assert/strict');
 (async()=>{
@@ -67,7 +67,7 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
       }
       assert.deepEqual(errors,[]);checks.push({name,width,height,variant,front,back,photoSwitch,touchSwipe,decodedImages,pageErrors:errors});await context.close();
     }
-    const report={passed:true,mode:local?'TEST API profiles with local CSS interception':'TEST API profiles and deployed CSS/JS',profiles:process.env.RG_LAYOUT_PROFILE_CACHE?'previously fetched TEST API payloads':'fresh TEST API payloads',cases:checks.length,checks};
+    const report={passed:true,base_url:base,mode:local?'API profiles with local CSS interception':'API profiles and deployed CSS/JS',profiles:process.env.RG_LAYOUT_PROFILE_CACHE?'previously fetched API payloads (cache provenance must be recorded separately)':'fresh API payloads from base_url',cases:checks.length,checks};
     fs.writeFileSync(path.join(out,'checks.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({passed:true,mode:report.mode,cases:checks.length}));
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

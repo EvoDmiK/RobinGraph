@@ -1,0 +1,25 @@
+{
+  "mode": "live DB batch rows replayed through deployed reader; not all-species HTTP",
+  "input_rows_sha256": "ed0558789c41b75d8fa613beea6b74c7fed4f42a9510d0aa77708c4989672c62",
+  "species_count": 11131,
+  "processed": 11131,
+  "errors": [],
+  "status_counts": {
+    "linked_checklist": 7507,
+    "snapshot_only": 2816,
+    "needs_review": 807,
+    "manual_override": 1
+  },
+  "reference_sources": {
+    "none": 10620,
+    "birdbase-v2025.1": 117,
+    "gbif-iucn-2026-1": 385,
+    "hkbws-avifauna": 9
+  },
+  "unlinked_without_reference": 296,
+  "passed": true,
+  "matches_test_conservation_payloads": true,
+  "artifact_sha256": "f2d7506f8747ea802dea4aa6d9b568334453229a9e7d8be97863fb71a8c473a7",
+  "reader_source": "deployed PROD container robingraph-api; scripts/audit_conservation_runtime_all.py",
+  "species_payloads_omitted": "17 MB full runtime output kept in /tmp; aggregated results and input/output hashes recorded"
+}
