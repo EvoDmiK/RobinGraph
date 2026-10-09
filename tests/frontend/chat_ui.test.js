@@ -1933,7 +1933,7 @@ test("a full single-component donut preserves the center hole and an incomplete 
     if (value.fish === 12.5) {
       assert.equal(segments[2].getAttribute("data-component"), "unrecorded");
       assert.equal(segments[2].getAttribute("data-percent"), "50");
-      segments[2].dispatch("mouseenter");
+      segments[2].dispatch("pointerenter", { pointerType: "mouse", buttons: 0 });
       assert.match(collectedText(chart), /미기록분 · 50%/);
     }
   }
@@ -1960,7 +1960,7 @@ test("unknown component tooltip text is inert and parent-scope charts stay clear
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
   const chart = distributionCharts(card)[0];
   assert.match(chart.getAttribute("aria-label"), /종 수준 참고.*Anas platyrhynchos.*추정값/);
-  const unknown = distributionSegments(chart)[0]; unknown.dispatch("focus");
+  const unknown = distributionSegments(chart)[0]; unknown.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 });
   const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
   assert.equal(tooltip.hidden, false);
   assert.match(tooltip.textContent, /미분류 항목 \(<script>bad\(\)<\/script>\) · 40% · 추정값/);
@@ -1968,33 +1968,22 @@ test("unknown component tooltip text is inert and parent-scope charts stay clear
   assert.match(collectedText(card.sourceMaterial), /종 수준 참고.*Anas platyrhynchos/);
 });
 
-test("distribution hover, focus, tap and keys expose raw percentages without starting a card drag", () => {
-  for (const touch of [false, true]) {
-    const f = dragFixture(true, distributionProfile());
-    f.card.dispatch("keydown", { key: "Enter", target: f.card });
-    const chart = distributionCharts(f.card)[0];
-    const segment = distributionSegments(chart)[0];
-    const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
-    segment.dispatch("mouseenter"); assert.equal(tooltip.hidden, false); assert.equal(tooltip.textContent, "물고기 · 70%");
-    segment.dispatch("mouseleave"); assert.equal(tooltip.hidden, true);
-    segment.dispatch("focus"); assert.equal(tooltip.hidden, false);
-    assert.equal(segment.getAttribute("aria-describedby"), tooltip.id);
-    assert.equal(segment.getAttribute("tabindex"), "0");
-    const event = (touch ? f.tev : f.ev)(100, 50, { target: segment });
-    segment.dispatch("pointerdown", event); chart.dispatch("pointerdown", event); f.card.dispatch("pointerdown", event);
-    assert.equal(event.defaultPrevented, false, "native chart scrolling stays available");
-    f.card.dispatch("pointermove", (touch ? f.tev : f.ev)(260, 50, { target: segment }));
-    f.card.dispatch("pointerup", (touch ? f.tev : f.ev)(260, 50, { target: segment }));
-    assert.equal(f.card.getAttribute("data-face"), "back"); assert.equal(f.card.getAttribute("data-dragging"), null);
-    assert.equal(segment.dispatch("keydown", { key: " ", target: segment }).defaultPrevented, true);
-    f.card.dispatch("keydown", { key: " ", target: segment });
-    assert.equal(f.card.getAttribute("data-face"), "back", "the segment's key must not flip its parent card");
-    segment.dispatch("keydown", { key: "Escape", target: segment }); assert.equal(tooltip.hidden, true);
-    f.card.dispatch("pointerdown", (touch ? f.tev : f.ev)(100, 50));
-    f.card.dispatch("pointermove", (touch ? f.tev : f.ev)(260, 50));
-    f.card.dispatch("pointerup", (touch ? f.tev : f.ev)(260, 50));
-    assert.equal(f.card.getAttribute("data-face"), "front", "the surrounding card still flips after chart interaction");
+test("static distribution sectors expose mouse hover only while touch, click, focus and keys do not activate them", () => {
+  const f = dragFixture(true, distributionProfile());
+  const chart = distributionCharts(f.card)[0], segment = distributionSegments(chart)[0];
+  const tooltip = cardPart(chart, "species-distribution-tooltip");
+  assert.equal(chart.getAttribute("data-card-drag-exempt"), null);
+  assert.equal(segment.getAttribute("role"), null); assert.equal(segment.getAttribute("tabindex"), null);
+  assert.equal(collectAllNodes(chart).find(n => n.tagName === "svg").getAttribute("role"), "img");
+  for (const [type, event] of [["pointerenter", { pointerType: "touch" }], ["mouseenter", {}], ["focus", {}], ["pointerdown", { pointerType: "touch" }], ["click", {}], ["keydown", { key: "Enter" }], ["keydown", { key: " " }]]) {
+    assert.equal(segment.dispatch(type, event).defaultPrevented, false, type);
+    assert.equal(tooltip.hidden, true, type);
   }
+  segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 });
+  assert.equal(tooltip.hidden, false); assert.equal(tooltip.textContent, "물고기 · 70%");
+  segment.dispatch("pointerleave"); assert.equal(tooltip.hidden, true);
+  segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 1 }); assert.equal(tooltip.hidden, true);
+  assert.match(collectedText(cardPart(chart, "species-distribution-values")), /물고기 · 70%.*꽃꿀 · 0%/s);
 });
 
 test("distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset", () => {
@@ -2016,7 +2005,7 @@ test("distribution tooltip temporary guards clear on scroll, blur, resize, cance
     dialog.getBoundingClientRect = () => ({ left: 100, top: 100, right: 500, bottom: 700 });
     f.card.dispatch("keydown", { key: "Enter", target: f.card });
     const chart = distributionCharts(f.card)[0]; const segment = distributionSegments(chart)[0];
-    segment.dispatch("focus"); segment.dispatch("mouseenter");
+    segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 }); segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 });
     const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
     assert.equal(tooltip.hidden, false);
     assert.equal(f.win.listeners.blur.length, 1, name + ": repeated activation adds no duplicate guards");
@@ -4309,7 +4298,7 @@ test("mouse drags from front and back text, including nested spans, flip in eith
   }
 });
 
-test("mouse drags preserve controls, editable and draggable nodes, including nested control text", () => {
+test("mouse drags preserve editing, media and explicit draggable nodes, including their descendants", () => {
   // `pick(g)` resolves the pointerdown target inside a fresh card per attempt.
   const attempt = (pick) => {
     const g = dragFixture(false);
@@ -4326,9 +4315,8 @@ test("mouse drags preserve controls, editable and draggable nodes, including nes
     make("div", el => { el.isContentEditable = true; }),
     make("div", el => el.setAttribute("draggable", "true")),
     make("img", el => el.setAttribute("draggable", "true")), make("video"), make("audio"),
-    make("input"), make("textarea"), make("select"), make("label"), make("button"), make("a"), make("summary"),
-    make("div", el => el.setAttribute("role", "button")), make("div", el => el.setAttribute("role", "textbox")),
-    make("div", el => el.setAttribute("role", "link")),
+    make("input"), make("textarea"), make("select"), make("label"),
+    make("div", el => el.setAttribute("role", "textbox")),
   ];
   exclusions.forEach((pick, i) => {
     assert.equal(attempt(pick), false, "exclusion #" + i);
@@ -4492,7 +4480,7 @@ test("pointercancel and lostpointercapture for another pointer or a bubbled chil
   assert.equal(f.card.getAttribute("data-dragging"), "false");
 });
 
-test("touch starts on non-interactive body text and photos but not controls, editable or draggable nodes, nor over an active selection", () => {
+test("touch starts on text, photos and action controls but preserves editing, explicit dragging and active selections", () => {
   const attempt = (pick, prep) => {
     const g = dragFixture(false);
     if (prep) { prep(g); }
@@ -4506,9 +4494,8 @@ test("touch starts on non-interactive body text and photos but not controls, edi
   for (let i = 0; i < texts.length; i += 1) { assert.equal(attempt(g => textNodes(g.card)[i]), true, "body text #" + i + " allows touch swipe"); }
   const make = (tag, setup) => g => { const el = createFakeElement(tag); if (setup) { setup(el); } el.parentNode = g.card; return el; };
   [make("div", el => el.setAttribute("contenteditable", "true")), make("div", el => el.setAttribute("draggable", "true")),
-    make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
-    make("div", el => el.setAttribute("role", "button"))].forEach((pick, i) => assert.equal(attempt(pick), false, "touch exclusion #" + i));
-  assert.equal(attempt(make("button")), false, "photo/retry buttons keep native tap");
+    make("input"), make("textarea"), make("select")].forEach((pick, i) => assert.equal(attempt(pick), false, "touch exclusion #" + i));
+  assert.equal(attempt(make("button")), true, "photo/retry buttons allow horizontal swipe while a tap stays native");
   assert.equal(attempt(g => g.card, g => { g.win.selection.isCollapsed = false; g.win.selection.rangeCount = 1; }), false, "existing selection is respected and untouched");
 });
 
@@ -5034,4 +5021,58 @@ test("clearing a conversation disposes nested popup fitting resources before det
   fixture.dom.elementsById["clear-button"].dispatch("click");
   assert.equal(disposed, 1);
   assert.equal(messageRows(fixture.dom.elementsById.history).length, 0);
+});
+
+test("mouse and touch swipes start on every static chart surface and clear hover before dragging", () => {
+  const picks = [
+    chart => distributionSegments(chart)[0],
+    chart => collectAllNodes(chart).find(n => n.tagName === "svg"),
+    chart => collectAllNodes(chart).find(n => n.getAttribute("class") === "species-distribution-total"),
+    chart => cardPart(chart, "species-distribution-note"),
+    chart => collectAllNodes(chart).find(n => n.tagName === "li"),
+    chart => collectAllNodes(chart).find(n => n.tagName === "summary"),
+  ];
+  for (const touch of [false, true]) for (const pick of picks) {
+    const f = dragFixture(true, distributionProfile());
+    f.card.dispatch("keydown", { key: "Enter", target: f.card });
+    const chart = distributionCharts(f.card)[0], segment = distributionSegments(chart)[0], tooltip = cardPart(chart, "species-distribution-tooltip");
+    segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 }); assert.equal(tooltip.hidden, false);
+    const event = touch ? f.tev : f.ev, target = pick(chart);
+    f.card.dispatch("pointerdown", event(100, 50, { target }));
+    assert.equal(tooltip.hidden, true);
+    f.card.dispatch("pointermove", event(260, 50, { target }));
+    segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 0 });
+    assert.equal(tooltip.hidden, true, "transform-related hover cannot reappear during a drag on " + target.tagName + " " + target.className);
+    f.card.dispatch("pointerup", event(260, 50, { target }));
+    assert.equal(f.card.getAttribute("data-face"), "front", target.tagName);
+    assert.equal(docListenerCount(f), 0); assert.equal(winListenerCount(f), 0);
+  }
+});
+
+test("button, link and summary taps remain native while horizontal drags and snapbacks suppress their click", () => {
+  for (const touch of [false, true]) for (const tag of ["button", "a", "summary", "role-button", "role-link"]) {
+    for (const distance of [30, 160]) {
+      const f = dragFixture(true);
+      const control = createFakeElement(tag.startsWith("role-") ? "span" : tag);
+      if (tag.startsWith("role-")) control.setAttribute("role", tag.slice(5));
+      const nested = createFakeElement("span"); control.appendChild(nested); f.front.appendChild(control);
+      const event = touch ? f.tev : f.ev;
+      const down = f.card.dispatch("pointerdown", event(100, 50, { target: nested }));
+      f.card.dispatch("pointerup", event(100, 50, { target: nested }));
+      assert.equal(down.defaultPrevented, false);
+      assert.equal(f.card.dispatch("click", { target: nested }).defaultPrevented, false, tag + " tap retains its default action");
+      f.card.dispatch("pointerdown", event(100, 50, { target: nested }));
+      assert.equal(f.card.dispatch("dragstart", { target: control }).defaultPrevented, true, "native link/image dragging cannot steal the swipe");
+      f.card.dispatch("pointermove", event(100 + distance, 50, { target: nested }));
+      f.card.dispatch("pointerup", event(100 + distance, 50, { target: nested }));
+      let stopped = false;
+      const click = f.card.dispatch("click", { target: nested, stopPropagation() { stopped = true; } });
+      assert.equal(click.defaultPrevented, true, tag + " swipe cannot navigate, toggle or change photos");
+      assert.equal(stopped, true);
+      assert.equal(f.card.getAttribute("data-face"), distance >= 75 ? "back" : "front");
+      f.card.dispatch("pointerdown", event(100, 50, { target: nested }));
+      f.card.dispatch("pointerup", event(100, 50, { target: nested }));
+      assert.equal(f.card.dispatch("click", { target: nested }).defaultPrevented, false, "the next normal press is not suppressed");
+    }
+  }
 });

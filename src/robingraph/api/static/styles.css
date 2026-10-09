@@ -1403,10 +1403,12 @@ body:has(.species-popup[open]) { overflow: hidden; }
   font-size: .72rem;
   font-weight: 400;
 }
-.species-distribution-chart { position: relative; min-width: 0; cursor: default; }
+.species-distribution-chart { position: relative; min-width: 0; cursor: inherit; }
 .species-distribution-svg { display: block; width: min(120px, 100%); height: auto; margin: 0 auto; overflow: visible; }
-.species-distribution-segment { cursor: pointer; stroke: #ffffed88; stroke-width: .5; }
-.species-distribution-segment:hover, .species-distribution-segment:focus-visible { outline: none; stroke: #193c2e; stroke-width: 1.5; filter: brightness(1.1); }
+.species-distribution-segment { cursor: inherit; stroke: #ffffed88; stroke-width: .5; }
+@media (hover: hover) and (pointer: fine) {
+  .species-distribution-segment:hover { stroke: #193c2e; stroke-width: 1.5; filter: brightness(1.1); }
+}
 .species-distribution-total { fill: #294932; font-size: 15px; font-weight: 750; }
 .species-distribution-total-label { fill: #405635; font-size: 8px; }
 .species-distribution-tooltip {

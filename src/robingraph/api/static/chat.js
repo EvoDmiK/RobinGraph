@@ -486,7 +486,6 @@
     var chart = doc.createElement("div"); chart.className = "species-distribution-chart";
     chart.setAttribute("data-trait", trait.name);
     chart.setAttribute("data-source-label", datasetLabel);
-    chart.setAttribute("data-card-drag-exempt", "true");
     chart.setAttribute("data-tooltip-visible", "false");
     chart.setAttribute("aria-label", (scopeLabel ? scopeLabel + " · " : "") + (trait.label || trait.name) + " · " + datasetLabel + (trait.inferred ? " · 추정값" : ""));
     var values = trait.value;
@@ -548,7 +547,7 @@
     if (drawable) {
       var svg = svgNode("svg");
       svg.setAttribute("class", "species-distribution-svg"); svg.setAttribute("viewBox", "0 0 120 120");
-      svg.setAttribute("role", "group"); svg.setAttribute("aria-label", (trait.label || trait.name) + " 도넛 차트");
+      svg.setAttribute("role", "img"); svg.setAttribute("aria-label", (trait.label || trait.name) + " 도넛 차트 · 항목과 비율은 아래 목록에서 확인할 수 있습니다.");
       var colors = ["#387b63", "#7da052", "#c2a65b", "#5f8eae", "#997398", "#8e9b73", "#c48164", "#639c9d", "#a3a85c", "#6d7796"];
       var offset = 0;
       var visible = entries.filter(function (entry) { return entry.amount > 0; });
@@ -559,19 +558,17 @@
         segment.setAttribute("data-component", entry.key); segment.setAttribute("data-percent", String(entry.amount));
         var colorIndex = Object.keys(labels).indexOf(entry.key);
         segment.setAttribute("fill", entry.missing ? "#c8cdbf" : colors[(colorIndex >= 0 ? colorIndex : Object.keys(labels).length) % colors.length]);
-        segment.setAttribute("tabindex", "0"); segment.setAttribute("role", "button");
         segment.setAttribute("aria-label", entry.label + " " + distributionAmountText(entry.amount) + (trait.inferred ? " · 추정값" : ""));
-        segment.setAttribute("aria-describedby", tooltip.id);
-        segment.addEventListener("mouseenter", function () { showTooltip(entry); });
-        segment.addEventListener("mouseleave", chart.clearTooltip);
-        segment.addEventListener("focus", function () { showTooltip(entry); });
-        segment.addEventListener("blur", chart.clearTooltip);
-        segment.addEventListener("pointerdown", function (event) { if (event.isPrimary === false) { chart.clearTooltip(); } else { showTooltip(entry); } });
-        segment.addEventListener("click", function () { showTooltip(entry); });
-        segment.addEventListener("keydown", function (event) {
-          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showTooltip(entry); }
-          else if (event.key === "Escape") { chart.clearTooltip(); }
+        segment.addEventListener("pointerenter", function (event) {
+          if (event.pointerType !== "mouse" || event.buttons) { return; }
+          var ancestor = chart;
+          while (ancestor) {
+            if (ancestor.getAttribute && (ancestor.getAttribute("data-dragging") === "true" || ancestor.getAttribute("aria-busy") === "true")) { return; }
+            ancestor = ancestor.parentNode;
+          }
+          showTooltip(entry);
         });
+        segment.addEventListener("pointerleave", chart.clearTooltip);
         svg.appendChild(segment); offset += entry.amount;
       });
       var center = svgNode("text"); center.setAttribute("x", "60"); center.setAttribute("y", "61"); center.setAttribute("text-anchor", "middle");
@@ -602,10 +599,8 @@
     if (!entries.length) { var noData = doc.createElement("li"); noData.textContent = "원자료: " + distributionAmountText(values); list.appendChild(noData); }
     details.appendChild(list); chart.appendChild(details);
     chart.addEventListener("pointercancel", chart.clearTooltip);
-    chart.addEventListener("pointerdown", function (event) {
-      if (!event.target || !event.target.getAttribute || !event.target.getAttribute("data-percent")) { chart.clearTooltip(); }
-    });
-    chart.addEventListener("mouseleave", chart.clearTooltip);
+    chart.addEventListener("pointerdown", chart.clearTooltip);
+    chart.addEventListener("pointerleave", chart.clearTooltip);
     return chart;
   }
 
@@ -2770,12 +2765,13 @@
 
     // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
     // Photos, placeholders and decorative graphics share the card's swipe.
-    // Controls, charts and editable/draggable nodes keep their native actions.
+    // Taps still activate controls; horizontal drags over them flip the card.
+    // Text editing and explicit media/drag interactions remain native.
     function isDragExempt(node, touch) {
       if (!node) { return true; }
       while (node && node !== card) {
         var tag = String(node.tagName || "").toLowerCase();
-        if (tag === "a" || tag === "button" || tag === "summary" || tag === "input" || tag === "select" ||
+        if (tag === "input" || tag === "select" ||
             tag === "textarea" || tag === "label" || tag === "video" || tag === "audio") { return true; }
         if (node.isContentEditable) { return true; }
         var attr = function (name) { return node.getAttribute ? node.getAttribute(name) : null; };
@@ -2783,7 +2779,7 @@
         if (editable !== null && editable !== "false") { return true; }
         if (attr("draggable") === "true" || attr("data-card-drag-exempt") === "true") { return true; }
         var role = attr("role");
-        if (role === "button" || role === "link" || role === "textbox") { return true; }
+        if (role === "textbox") { return true; }
         node = node.parentNode;
       }
       return false;
@@ -2850,7 +2846,7 @@
       return reducedMotionNow() || typeof target.animate !== "function";
     }
     card.addEventListener("pointerdown", function (event) {
-      clearDistributionTooltips(card, event.target);
+      clearDistributionTooltips(card);
       suppressClick = false;
       suppressGeneration += 1; // a stale release timer must not clear a newer swipe's suppression
       if (drag) {
