@@ -364,33 +364,46 @@
   /** Card-only layout: keep the shared facts renderer and collect its citations. */
   function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel) {
     var grid = buildTraitGrid(doc, groups);
-    var distributionNumber = 0;
+    var distributionNumbers = { diet_distribution: 0, foraging_strata_distribution: 0 };
+    var pair = doc.createElement("div"); pair.className = "species-distribution-pair";
+    var columns = {};
+    Object.keys(distributionNumbers).forEach(function (name) {
+      var column = doc.createElement("section"); column.className = "species-distribution-column";
+      column.setAttribute("data-distribution-kind", name);
+      var title = doc.createElement("h4"); title.textContent = name === "diet_distribution" ? "먹이 구성" : "먹이 활동 위치";
+      column.appendChild(title); pair.appendChild(column); columns[name] = column;
+    });
     Array.prototype.slice.call(grid.children).forEach(function (traitCard, index) {
       var trait = groups[index].trait;
       var originalValue = traitCard.children[1].textContent;
+      var originalLabel = traitCard.children[0].textContent;
       var compositionLabel = "";
-      if (trait.name === "diet_distribution") {
-        compositionLabel = "자료 " + (++distributionNumber);
-        traitCard.className += " trait-card-diet-composition";
-        var composition = buildDietComposition(doc, trait, compositionLabel);
-        if (composition) {
-          traitCard.children[1].textContent = "";
-          traitCard.children[1].appendChild(composition);
-        }
+      var distribution = Object.prototype.hasOwnProperty.call(distributionNumbers, trait.name);
+      if (distribution) {
+        compositionLabel = "자료 " + (++distributionNumbers[trait.name]);
+        traitCard.className += " trait-card-distribution";
+        var chart = buildDistributionChart(doc, trait, compositionLabel, scopeLabel);
+        traitCard.children[0].textContent = compositionLabel;
+        traitCard.children[1].textContent = "";
+        traitCard.children[1].appendChild(chart);
+        columns[trait.name].appendChild(traitCard);
       }
       var sourceDetails = Array.prototype.slice.call(traitCard.children).find(function (child) {
         return child.className === "trait-source-toggle";
       });
-      if (!sourceDetails && trait.name !== "diet_distribution") { return; }
+      if (!sourceDetails && !distribution) { return; }
       var entry = doc.createElement("section");
       entry.className = "species-trait-source-entry";
       var heading = doc.createElement("h5");
-      var label = traitCard.children[0].textContent;
-      var value = originalValue;
-      heading.textContent = (scopeLabel ? scopeLabel + " · " : "") + label + (compositionLabel ? " · " + compositionLabel : "") + ": " + value;
+      heading.textContent = (scopeLabel ? scopeLabel + " · " : "") + originalLabel + (compositionLabel ? " · " + compositionLabel : "") + ": " + originalValue;
       entry.appendChild(heading);
-      // Reuse the actual safe links and provenance nodes, including reviewed
-      // raw-source conflicts, rather than re-creating a narrower source list.
+      // The source panel keeps the original display and every recorded member,
+      // including 0%, invalid values, and independently sourced distributions.
+      if (distribution) {
+        var raw = doc.createElement("p"); raw.className = "species-distribution-source-values";
+        raw.textContent = distributionRawText(trait);
+        entry.appendChild(raw);
+      }
       if (sourceDetails) {
         sourceDetails.removeChild(sourceDetails.firstChild);
         while (sourceDetails.firstChild) { entry.appendChild(sourceDetails.firstChild); }
@@ -400,53 +413,175 @@
       }
       sourceTarget.appendChild(entry);
     });
+    if (distributionNumbers.diet_distribution || distributionNumbers.foraging_strata_distribution) {
+      Object.keys(columns).forEach(function (name) {
+        if (columns[name].children.length === 1) {
+          var empty = doc.createElement("p"); empty.className = "species-distribution-empty";
+          empty.textContent = "기록된 자료 없음"; columns[name].appendChild(empty);
+        }
+      });
+      grid.appendChild(pair);
+    }
     return grid;
   }
 
-  /** Percentages are displayed as recorded, per dataset, without normalization. */
-  function buildDietComposition(doc, trait, datasetLabel) {
+  var DISTRIBUTION_LABELS = {
+    diet_distribution: { invertebrate: "무척추동물", endotherm_vertebrate: "온혈 척추동물", ectotherm_vertebrate: "변온 척추동물",
+      unknown_vertebrate: "기타 척추동물", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" },
+    foraging_strata_distribution: { ground: "지면", understory: "하층", midhigh: "중상층", mid_high: "중상층", canopy: "수관",
+      aerial: "공중", water: "수면", pelagic: "외해", below_water_surface: "수중", around_water_surface: "수면 주변" },
+  };
+  var distributionTooltipSequence = 0;
+  function distributionAmountText(value) {
+    if (typeof value === "number") { return String(value) + "%"; }
+    if (value !== null && typeof value === "object") {
+      try { return JSON.stringify(value); } catch (error) { return "비율 미확인"; }
+    }
+    return String(value);
+  }
+  function distributionRawText(trait) {
     var values = trait.value;
-    if (!values || typeof values !== "object" || Array.isArray(values)) { return null; }
-    var labels = { invertebrate: "무척추동물", endotherm_vertebrate: "온혈 척추동물", ectotherm_vertebrate: "변온 척추동물",
-      unknown_vertebrate: "기타 척추동물", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" };
-    var section = doc.createElement("div"); section.className = "species-diet-composition";
-    section.setAttribute("data-source-label", datasetLabel || "자료");
-    section.setAttribute("aria-label", (trait.label || "먹이 구성") + (trait.inferred ? " · 추정값" : ""));
-    var rows = doc.createElement("div"); rows.className = "species-diet-components";
-    var zeros = doc.createElement("div"); zeros.className = "species-diet-zero-items";
-    var total = 0; var invalid = false; var unknown = false;
-    Object.keys(values).forEach(function (key) {
+    if (!values || typeof values !== "object" || Array.isArray(values)) { return "원자료: " + distributionAmountText(values); }
+    var labels = DISTRIBUTION_LABELS[trait.name] || {};
+    return Object.keys(values).map(function (key) {
+      var label = Object.prototype.hasOwnProperty.call(labels, key) ? labels[key] : "미분류 항목 (" + key + ")";
+      return label + " [" + key + "] " + distributionAmountText(values[key]);
+    }).join(" · ") || "기록된 구성 항목 없음";
+  }
+  function clearDistributionTooltips(root, preserveTarget) {
+    var preserved = preserveTarget;
+    while (preserved && preserved !== root && typeof preserved.clearTooltip !== "function") { preserved = preserved.parentNode; }
+    function visit(node) {
+      if (typeof node.clearTooltip === "function" && node !== preserved) { node.clearTooltip(); }
+      Array.prototype.slice.call(node.children || []).forEach(visit);
+    }
+    visit(root);
+  }
+
+  /** Filled donut arcs use a fixed 100% circle, never a normalized dataset sum. */
+  function buildDistributionChart(doc, trait, datasetLabel, scopeLabel) {
+    var chart = doc.createElement("div"); chart.className = "species-distribution-chart";
+    chart.setAttribute("data-trait", trait.name);
+    chart.setAttribute("data-source-label", datasetLabel);
+    chart.setAttribute("data-card-drag-exempt", "true");
+    chart.setAttribute("data-tooltip-visible", "false");
+    chart.setAttribute("aria-label", (scopeLabel ? scopeLabel + " · " : "") + (trait.label || trait.name) + " · " + datasetLabel + (trait.inferred ? " · 추정값" : ""));
+    var values = trait.value;
+    var objectValues = !!values && typeof values === "object" && !Array.isArray(values);
+    var labels = DISTRIBUTION_LABELS[trait.name] || {};
+    var entries = objectValues ? Object.keys(values).map(function (key) {
       var amount = values[key];
-      var valid = typeof amount === "number" && Number.isFinite(amount) && amount >= 0 && amount <= 100;
-      var known = Object.prototype.hasOwnProperty.call(labels, key);
-      if (!known) { unknown = true; }
-      if (!valid) { invalid = true; }
-      if (valid) { total += amount; }
-      var row = doc.createElement("div"); row.className = "species-diet-component" + (valid && amount === 0 ? " diet-component-zero" : "");
-      row.setAttribute("data-component", key);
-      if (valid) { row.setAttribute("data-percent", String(amount)); }
-      var name = doc.createElement("span"); name.className = "diet-component-name";
-      name.textContent = known ? labels[key] : "미분류 항목 (" + key + ")";
-      row.appendChild(name);
-      var percent = doc.createElement("strong"); percent.className = "diet-component-percent";
-      percent.textContent = valid ? amount + "%" : (typeof amount === "number" && Number.isFinite(amount) ? amount + "% · 범위 확인 필요" : "비율 미확인");
-      row.appendChild(percent);
-      if (valid && amount > 0) {
-        var track = doc.createElement("span"); track.className = "diet-component-track"; track.setAttribute("aria-hidden", "true");
-        var fill = doc.createElement("span"); fill.className = "diet-component-fill"; fill.setAttribute("style", "width: " + amount + "%");
-        track.appendChild(fill); row.appendChild(track);
+      return { key: key, amount: amount, valid: typeof amount === "number" && Number.isFinite(amount) && amount >= 0 && amount <= 100,
+        known: Object.prototype.hasOwnProperty.call(labels, key), label: Object.prototype.hasOwnProperty.call(labels, key) ? labels[key] : "미분류 항목 (" + key + ")" };
+    }) : [];
+    var total = entries.reduce(function (sum, entry) { return sum + (entry.valid ? entry.amount : 0); }, 0);
+    var invalid = !objectValues || !entries.length || entries.some(function (entry) { return !entry.valid; });
+    var drawable = !invalid && total <= 100;
+    chart.setAttribute("data-chart-state", drawable ? "ready" : "unconfirmed");
+    var tooltip = doc.createElement("div"); tooltip.className = "species-distribution-tooltip";
+    tooltip.setAttribute("role", "tooltip"); tooltip.id = "distribution-tooltip-" + (++distributionTooltipSequence); tooltip.hidden = true;
+    var temporary = [];
+    function detachTemporary() {
+      temporary.forEach(function (guard) { guard.owner.removeEventListener(guard.type, chart.clearTooltip); });
+      temporary = [];
+    }
+    chart.clearTooltip = function () {
+      tooltip.hidden = true;
+      chart.setAttribute("data-tooltip-visible", "false");
+      chart.setAttribute("data-active-component", "");
+      detachTemporary();
+    };
+    function temporaryGuard(owner, type) {
+      if (owner && owner.addEventListener && owner.removeEventListener) {
+        owner.addEventListener(type, chart.clearTooltip); temporary.push({ owner: owner, type: type });
       }
-      (valid && amount === 0 ? zeros : rows).appendChild(row);
-    });
-    section.appendChild(rows);
-    if (zeros.children.length) { section.appendChild(zeros); }
-    var note = doc.createElement("p"); note.className = "species-diet-composition-note";
-    note.textContent = (datasetLabel ? datasetLabel + " · " : "") + (invalid ? "비율을 확인할 수 없는 항목이 있어 전체 구성을 확정할 수 없습니다."
-      : "자료 비율 합계 " + Math.round(total * 1000000) / 1000000 + "%");
-    if (unknown) { note.textContent += " · 미분류 항목 포함"; }
+    }
+    function showTooltip(entry) {
+      detachTemporary();
+      tooltip.textContent = entry.label + " · " + distributionAmountText(entry.amount) + (trait.inferred ? " · 추정값" : "");
+      tooltip.hidden = false;
+      chart.setAttribute("data-tooltip-visible", "true"); chart.setAttribute("data-active-component", entry.key);
+      temporaryGuard(doc.defaultView, "blur"); temporaryGuard(doc.defaultView, "resize");
+      var dialog = chart.parentNode;
+      while (dialog && String(dialog.tagName).toLowerCase() !== "dialog") { dialog = dialog.parentNode; }
+      temporaryGuard(dialog, "scroll");
+    }
+    function svgNode(tag) { return doc.createElementNS ? doc.createElementNS(SVG_NS, tag) : doc.createElement(tag); }
+    function point(radius, percent) {
+      var angle = percent / 100 * Math.PI * 2;
+      return [Math.round((60 + radius * Math.sin(angle)) * 1000000) / 1000000, Math.round((60 - radius * Math.cos(angle)) * 1000000) / 1000000];
+    }
+    function ringPath(start, amount) {
+      var end = start + amount;
+      var pieces = Math.ceil(amount / 50);
+      var path = "M " + point(50, start).join(" ");
+      for (var i = 1; i <= pieces; i += 1) { path += " A 50 50 0 0 1 " + point(50, start + amount * i / pieces).join(" "); }
+      path += " L " + point(31, end).join(" ");
+      for (var j = 1; j <= pieces; j += 1) { path += " A 31 31 0 0 0 " + point(31, end - amount * j / pieces).join(" "); }
+      return path + " Z";
+    }
+    if (drawable) {
+      var svg = svgNode("svg");
+      svg.setAttribute("class", "species-distribution-svg"); svg.setAttribute("viewBox", "0 0 120 120");
+      svg.setAttribute("role", "group"); svg.setAttribute("aria-label", (trait.label || trait.name) + " 도넛 차트");
+      var colors = ["#387b63", "#7da052", "#c2a65b", "#5f8eae", "#997398", "#8e9b73", "#c48164", "#639c9d", "#a3a85c", "#6d7796"];
+      var offset = 0;
+      var visible = entries.filter(function (entry) { return entry.amount > 0; });
+      if (total < 100) { visible.push({ key: "unrecorded", amount: 100 - total, label: "미기록분", missing: true }); }
+      visible.forEach(function (entry) {
+        var segment = svgNode("path"); segment.setAttribute("class", "species-distribution-segment");
+        segment.setAttribute("d", ringPath(offset, entry.amount)); segment.setAttribute("data-start-percent", String(offset));
+        segment.setAttribute("data-component", entry.key); segment.setAttribute("data-percent", String(entry.amount));
+        var colorIndex = Object.keys(labels).indexOf(entry.key);
+        segment.setAttribute("fill", entry.missing ? "#c8cdbf" : colors[(colorIndex >= 0 ? colorIndex : Object.keys(labels).length) % colors.length]);
+        segment.setAttribute("tabindex", "0"); segment.setAttribute("role", "button");
+        segment.setAttribute("aria-label", entry.label + " " + distributionAmountText(entry.amount) + (trait.inferred ? " · 추정값" : ""));
+        segment.setAttribute("aria-describedby", tooltip.id);
+        segment.addEventListener("mouseenter", function () { showTooltip(entry); });
+        segment.addEventListener("mouseleave", chart.clearTooltip);
+        segment.addEventListener("focus", function () { showTooltip(entry); });
+        segment.addEventListener("blur", chart.clearTooltip);
+        segment.addEventListener("pointerdown", function (event) { if (event.isPrimary === false) { chart.clearTooltip(); } else { showTooltip(entry); } });
+        segment.addEventListener("click", function () { showTooltip(entry); });
+        segment.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showTooltip(entry); }
+          else if (event.key === "Escape") { chart.clearTooltip(); }
+        });
+        svg.appendChild(segment); offset += entry.amount;
+      });
+      var center = svgNode("text"); center.setAttribute("x", "60"); center.setAttribute("y", "61"); center.setAttribute("text-anchor", "middle");
+      center.setAttribute("class", "species-distribution-total"); center.setAttribute("aria-hidden", "true"); center.textContent = Math.round(total * 1000000) / 1000000 + "%"; svg.appendChild(center);
+      var centerLabel = svgNode("text"); centerLabel.setAttribute("x", "60"); centerLabel.setAttribute("y", "74"); centerLabel.setAttribute("text-anchor", "middle");
+      centerLabel.setAttribute("class", "species-distribution-total-label"); centerLabel.setAttribute("aria-hidden", "true"); centerLabel.textContent = "기록 비율"; svg.appendChild(centerLabel);
+      chart.appendChild(svg);
+    } else {
+      var fallback = doc.createElement("p"); fallback.className = "species-distribution-fallback";
+      fallback.textContent = total > 100 ? "합계 " + Math.round(total * 1000000) / 1000000 + "% · 비율 확인 필요" : "구성 비율 확인 필요";
+      chart.appendChild(fallback);
+    }
+    chart.appendChild(tooltip);
+    var note = doc.createElement("p"); note.className = "species-distribution-note";
+    note.textContent = datasetLabel + (drawable && total < 100 ? " · 미기록분 " + Math.round((100 - total) * 1000000) / 1000000 + "%" : "");
     if (trait.inferred) { note.textContent += " · 추정값"; }
-    section.appendChild(note);
-    return section;
+    if (entries.some(function (entry) { return !entry.known; })) { note.textContent += " · 미분류 항목 포함"; }
+    chart.appendChild(note);
+    var details = doc.createElement("details"); details.className = "species-distribution-values";
+    var summary = doc.createElement("summary"); summary.textContent = "항목·비율"; details.appendChild(summary);
+    var list = doc.createElement("ul");
+    entries.forEach(function (entry) {
+      var row = doc.createElement("li"); row.setAttribute("data-component", entry.key);
+      if (entry.valid) { row.setAttribute("data-raw-percent", String(entry.amount)); }
+      row.textContent = entry.label + " · " + distributionAmountText(entry.amount) + (entry.valid ? "" : " · 비율 미확인");
+      list.appendChild(row);
+    });
+    if (!entries.length) { var noData = doc.createElement("li"); noData.textContent = "원자료: " + distributionAmountText(values); list.appendChild(noData); }
+    details.appendChild(list); chart.appendChild(details);
+    chart.addEventListener("pointercancel", chart.clearTooltip);
+    chart.addEventListener("pointerdown", function (event) {
+      if (!event.target || !event.target.getAttribute || !event.target.getAttribute("data-percent")) { chart.clearTooltip(); }
+    });
+    chart.addEventListener("mouseleave", chart.clearTooltip);
+    return chart;
   }
 
   // Habitat emblems keyed by the raw AVONET `habitat` trait value (not the
@@ -2346,6 +2481,7 @@
     card.setAttribute("aria-roledescription", "양면 조류 카드");
     card.setAttribute("aria-keyshortcuts", "Enter Space");
     function showFace(showBack) {
+      clearDistributionTooltips(card);
       back.hidden = !showBack;
       front.hidden = showBack;
       card.setAttribute("data-face", showBack ? "back" : "front");
@@ -2473,6 +2609,7 @@
       clearDragStyle(current.target);
     }
     function resetFlip() {
+      clearDistributionTooltips(card);
       flipGeneration += 1;
       if (flipAnimation) { flipAnimation.cancel(); flipAnimation = null; }
       clearGloss();
@@ -2543,7 +2680,7 @@
         var attr = function (name) { return node.getAttribute ? node.getAttribute(name) : null; };
         var editable = attr("contenteditable");
         if (editable !== null && editable !== "false") { return true; }
-        if (attr("draggable") === "true") { return true; }
+        if (attr("draggable") === "true" || attr("data-card-drag-exempt") === "true") { return true; }
         var role = attr("role");
         if (role === "button" || role === "link" || role === "textbox" || (touch && role === "img")) { return true; }
         node = node.parentNode;
@@ -2612,6 +2749,7 @@
       return reducedMotionNow() || typeof target.animate !== "function";
     }
     card.addEventListener("pointerdown", function (event) {
+      clearDistributionTooltips(card, event.target);
       suppressClick = false;
       suppressGeneration += 1; // a stale release timer must not clear a newer swipe's suppression
       if (drag) {
@@ -2957,6 +3095,7 @@
     // began on the backdrop can dismiss the popup; release coordinates alone
     // cannot distinguish that drag from an intentional outside click.
     dialog.addEventListener("pointerdown", function (event) {
+      clearDistributionTooltips(card, event.target);
       backdropPress = null;
       if (event.button === 0 && event.isPrimary !== false && isBackdrop(event)) {
         backdropPress = { pointerId: event.pointerId, released: false };
