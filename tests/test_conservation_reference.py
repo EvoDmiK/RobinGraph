@@ -113,7 +113,7 @@ class ReferenceRuntimeTest(unittest.TestCase):
     def test_real_full_index_denominators_and_linked_coverage_unchanged(self):
         coverage = self.index['reference_coverage']
         self.assertEqual(3624, coverage['unlinked_species'])
-        self.assertEqual(360, coverage['reference_species'])
+        self.assertEqual(385, coverage['reference_species'])
         self.assertEqual(3624, len(self.index['references']) + sum(coverage['excluded_reasons'].values()))
         self.assertEqual(7507, len(self.index['taxa']))
         self.assertTrue(all(r['taxonomy_category_raw'] == 'NE' for r in self.index['references'].values()))

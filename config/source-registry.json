@@ -185,5 +185,22 @@
     "adapter_owner": "RobinGraph species profiles",
     "enabled": true,
     "license_policy_status": "allowed"
+  },
+  {
+    "source_id": "traits-birdbase-v2025-1",
+    "name": "BIRDBASE v2025.1",
+    "provider": "BIRDBASE authors",
+    "landing_uri": "https://doi.org/10.6084/m9.figshare.27051040.v1",
+    "access_method": "download",
+    "auth_method": "none",
+    "release_strategy": "versioned",
+    "incremental_cursor": null,
+    "rate_limit_note": "Pinned Figshare article 27051040 v1, file 55634729, SHA-256 cccb01fe229c7b39156639e001098b29880fa1c91d294c17cb74a4a76381276b. Packaged source extract with sheet/row provenance. Preserve literature mass ranges and category inference; IUCN 2024 is a source-data year, not an individual assessment year.",
+    "license_uri": "https://creativecommons.org/licenses/by/4.0/",
+    "license_name": "CC BY 4.0",
+    "terms_uri": "https://api.figshare.com/v2/articles/27051040/versions/1",
+    "adapter_owner": "RobinGraph traits and conservation references",
+    "enabled": true,
+    "license_policy_status": "allowed"
   }
 ]

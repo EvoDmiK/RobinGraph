@@ -101,6 +101,7 @@ def similar_species(repository, store, resolve, name):
     category_sources = {}
     for trait in read_traits(repository,store,lineage):
         if (trait.get('name') in ('habitat','trophic_niche') and isinstance(trait.get('value'),str)
+                and trait.get('source_scope_kind') != 'subspecies_group'
                 and trait['value'] in VALUES and trait.get('inferred') is False and _web_url(trait.get('source_url'))):
             descriptor = {key:trait[key] for key in ('dataset_id','release')}
             descriptor.update(trait_name=trait['name'],value=trait['value'])

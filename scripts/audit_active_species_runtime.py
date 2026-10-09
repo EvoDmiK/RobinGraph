@@ -6,7 +6,7 @@ runtime readers; accepted candidate recovery uses real DB queries. Korean name
 lookups execute the actual repository path. This is not an all-species HTTP test.
 JSON goes to stdout; credentials are never serialized.
 """
-import json,collections,datetime
+import json,collections,datetime,os,sys
 from types import SimpleNamespace as NS
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.ingest.postgres import PostgresSettings
@@ -30,6 +30,7 @@ for r in repo._run(q,concept_set_id=concept,taxonomy_release=release):conservati
 real_run=repo._run
 store.active_release_context=lambda p:contexts.get(p)
 results=[];errors=[]
+detail_ids=set(os.environ.get('ROBINGRAPH_AUDIT_DETAIL_IDS','').split(',')) - {''}
 for t in taxa:
  tid=t['id'];lineage=TaxonomyLineage(t['scientific_name'],'AviList',release,concept,(LineageTaxon(tid,'species',t['scientific_name'],t['authority']),))
  def run(query,**params):
@@ -39,13 +40,18 @@ for t in taxa:
  adapter=NS(_run=run)
  try:
   ts=sp.read_traits(adapter,store,lineage);cs=sp.read_conservation(adapter,lineage)
-  results.append({**t,'trait_names':sorted({v['name'] for v in ts}),'trait_count':len(ts),'alignment':dict(collections.Counter(v.get('taxonomy_alignment',{}).get('status','none') for v in ts)), 'conservation':cs})
+  result={**t,'trait_names':sorted({v['name'] for v in ts}),'trait_count':len(ts),'alignment':dict(collections.Counter(v.get('taxonomy_alignment',{}).get('status','none') for v in ts)), 'conservation':cs}
+  if tid in detail_ids: result['traits']=ts
+  results.append(result)
  except Exception as e:errors.append({'id':tid,'type':type(e).__name__})
+ if (len(results)+len(errors)) % 1000 == 0:
+  print('Audited species: '+str(len(results)+len(errors)),file=sys.stderr,flush=True)
 ko=[]
 for tid,label in sourced_korean_names().items():
  try:
   found=repo.lineage_for_korean_name(label['name']);actual=found.items[-1] if found and found.items else None
   ko.append({'query':label['name'],'expected_id':tid,'actual_id':actual.taxon_id if actual else None,'ok':bool(actual and actual.taxon_id==tid and actual.scientific_name==label['scientific_name'])})
  except Exception as e:ko.append({'query':label['name'],'ok':False,'error':type(e).__name__})
+ if len(ko) % 100 == 0: print('Audited Korean lookups: '+str(len(ko)),file=sys.stderr,flush=True)
 print(json.dumps({'time':datetime.datetime.now(datetime.timezone.utc).isoformat(),'mode':'live DB batch rows replayed through deployed readers; actual Korean lineage queries','species_count':len(taxa),'errors':errors,'species':results,'korean_lookups':ko},ensure_ascii=False))
 repo.close()

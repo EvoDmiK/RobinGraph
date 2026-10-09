@@ -54,12 +54,12 @@ class KoreanDisplayNamesTest(TestCase):
 
     def test_snapshot_sources_crosswalks_and_split_species(self):
         labels = sourced_korean_names()
-        self.assertEqual(665, len(labels))
-        self.assertEqual(665, len({v['scientific_name'] for v in labels.values()}))
+        self.assertEqual(850, len(labels))
+        self.assertEqual(850, len({v['scientific_name'] for v in labels.values()}))
         for key, label in labels.items():
             self.assertTrue(key.startswith('avilist-taxon:v2025b:'))
             self.assertEqual('source-reference', label['status'])
-            self.assertTrue(label.get('source_row', 0) > 0 or '/animal/animalView.do?' in label['source_url'])
+            self.assertTrue(label.get('source_row', 0) > 0 or label.get('source_locator') or '/animal/animalView.do?' in label['source_url'])
             self.assertTrue(label['source_url'])
             self.assertEqual(label['name'].strip(), label['name'])
         for science, expected in [('Thinornis dubius', '꼬마물떼새'), ('Thinornis placidus', '흰목물떼새'),
@@ -97,3 +97,43 @@ class KoreanDisplayNamesTest(TestCase):
         labels = sourced_korean_names()
         self.assertNotIn('Anthus rubescens', {v['scientific_name'] for v in labels.values()})
         self.assertNotIn('Nycticorax caledonicus', {v['scientific_name'] for v in labels.values()})
+
+    def test_408_review_additions_require_exact_identity_and_real_source_locator(self):
+        labels = sourced_korean_names()
+        additions = {k: v for k, v in labels.items() if v.get('review_batch') == '2026-10-09-ko408'}
+        self.assertEqual(185, len(additions))
+        previous_names = {v['name'] for v in labels.values() if v.get('review_batch') != '2026-10-09-ko408'}
+        for key, label in additions.items():
+            with self.subTest(scientific_name=label['scientific_name']):
+                self.assertNotIn(label['name'], previous_names)
+                self.assertEqual(label['scientific_name'], label['source_scientific_name'])
+                self.assertTrue(label['source_locator'])
+                self.assertTrue(label['source_title'])
+                self.assertNotIn('wikidata.org', label['source_url'])
+                row = self.row_for(label['scientific_name'])
+                self.assertEqual(label['name'], with_korean_display_name(row)['korean_name'])
+                self.assertIsNone(with_korean_display_name({**row, 'scientific_name': 'Different species'})['korean_name'])
+        for science, expected in [('Carduelis carduelis', '오색방울새'), ('Sterna paradisaea', '북극제비갈매기'),
+                                  ('Phoenicurus schisticeps', '흰목딱새'), ('Melopsittacus undulatus', '사랑앵무'),
+                                  ('Pygoscelis antarcticus', '턱끈펭귄'), ('Urocynchramus pylzowi', '프르제발스키되새')]:
+            self.assertEqual(expected, with_korean_display_name(self.row_for(science))['korean_name'])
+        for science in ('Pica pica', 'Turdus merula', 'Coturnix coturnix', 'Otus scops', 'Aquila rapax'):
+            self.assertNotIn(science, {v['scientific_name'] for v in additions.values()})
+
+    def test_all_408_dispositions_are_auditable_without_claiming_all_are_resolved(self):
+        root = Path(__file__).resolve().parents[1]
+        report = json.loads((root / 'docs/verification/assets/2026-10-09-korean-name-408-resolution.json').read_text())
+        records = report['records']
+        self.assertEqual(408, len(records))
+        self.assertEqual(408, len({r['taxon_id'] for r in records}))
+        self.assertEqual(185, sum(bool(r['selected']) for r in records))
+        labels = sourced_korean_names()
+        for record in records:
+            with self.subTest(scientific_name=record['scientific_name']):
+                self.assertTrue(record['reason'])
+                self.assertTrue(record['investigations'][0]['source_url'])
+                self.assertTrue(record['investigations'][0]['sha256'])
+                if record['selected']:
+                    self.assertEqual(record['selected']['name'], labels[record['taxon_id']]['name'])
+                else:
+                    self.assertNotIn(record['taxon_id'], labels)

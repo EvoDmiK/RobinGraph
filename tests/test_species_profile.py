@@ -465,27 +465,27 @@ class ReferenceAssessmentIntegrationTest(unittest.TestCase):
 
     def test_helper_contract_is_filtered_and_failures_degrade_to_plain_ne(self):
         good = {'category': 'EN', 'assessment_status': 'reference_only'}
-        with patch('robingraph.retrieval.species_profile.reference_checklist', return_value=good) as helper:
+        with patch('robingraph.retrieval.species_profile.best_reference_assessment', return_value=good) as helper:
             result = self.read('NE')
             self.assertEqual('위기', result['reference_assessment']['label'])
             self.assertIsNone(result['category'])
             self.assertEqual('NE', result['taxonomy_category_raw'])
             self.assertEqual('needs_review', helper.call_args.args[1]['assessment_status'])
         for bad in (None, [], 'LC', {'category': 'NE'}, {'category': 'XX'}, {}):
-            with patch('robingraph.retrieval.species_profile.reference_checklist', return_value=bad):
+            with patch('robingraph.retrieval.species_profile.best_reference_assessment', return_value=bad):
                 result = self.read('NE')
                 self.assertNotIn('reference_assessment', result, repr(bad))
                 self.assertIsNone(result['category'])
                 self.assertEqual('NE', result['category_raw'])
-        with patch('robingraph.retrieval.species_profile.reference_checklist', side_effect=RuntimeError('boom')):
+        with patch('robingraph.retrieval.species_profile.best_reference_assessment', side_effect=RuntimeError('boom')):
             self.assertNotIn('reference_assessment', self.read('NE'))
 
     def test_linked_and_manual_override_take_precedence_and_skip_reference(self):
         with patch('robingraph.retrieval.species_profile.linked_checklist', return_value={'category': 'LC'}), \
-             patch('robingraph.retrieval.species_profile.reference_checklist') as helper:
+             patch('robingraph.retrieval.species_profile.best_reference_assessment') as helper:
             self.assertEqual({'category': 'LC', 'label': '관심대상'}, self.read('NE'))
             helper.assert_not_called()
         with patch('robingraph.retrieval.species_profile.manual_magpie_override', return_value={'category': 'LC', 'evidence_kind': 'manual_override'}), \
-             patch('robingraph.retrieval.species_profile.reference_checklist') as helper:
+             patch('robingraph.retrieval.species_profile.best_reference_assessment') as helper:
             self.assertEqual('manual_override', self.read('NE')['evidence_kind'])
             helper.assert_not_called()

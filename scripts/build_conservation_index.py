@@ -13,8 +13,12 @@ import io
 import json
 from pathlib import Path
 import re
+import sys
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
+from robingraph.retrieval.conservation import _reference_authority_match, _reference_assessment_identity
 
 AVILIST_SHA256 = '3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411'
 SOURCE_SHA256 = '2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d'
@@ -174,7 +178,9 @@ def _reference_index(active, source, source_ids, global_rows, linked_taxa):
         else:
             row = candidates[0]
             sis = row[0]
-            method = _authority_match(authority, row[9])
+            ne_reference = isinstance(raw, str) and raw.strip().upper() == 'NE'
+            method = (_reference_authority_match(authority, row[9]) if ne_reference
+                      else _authority_match(authority, row[9]))
             if source_ids[sis] != 1 or row[13] != sis:
                 reason = 'ambiguous_source_identity'
             elif not method:
@@ -184,7 +190,10 @@ def _reference_index(active, source, source_ids, global_rows, linked_taxa):
             else:
                 distribution = global_rows[sis][0]
                 category = CATEGORIES.get(distribution[5])
-                assessment = _assessment_identity(row, sis)
+                strict_assessment = _assessment_identity(row, sis)
+                identity = (_reference_assessment_identity(name, row[9], row[14], row[15], sis) if ne_reference
+                            else (str(strict_assessment), 'citation_doi') if strict_assessment else None)
+                assessment = int(identity[0]) if identity else None
                 if not category:
                     reason = 'unsupported_source_category'
                 elif not assessment or distribution[3] != row[14]:
@@ -194,7 +203,8 @@ def _reference_index(active, source, source_ids, global_rows, linked_taxa):
                                   assessment_authority=row[9], authority_match_method=method,
                                   taxonomy_category_raw=raw, category=category, sis_id=int(sis),
                                   assessment_id=assessment, assessment_reference_url=row[15],
-                                  assessment_citation=row[14], taxonomy_alignment='unverified')
+                                  assessment_citation=row[14], taxonomy_alignment='unverified',
+                                  assessment_identity_method=identity[1])
                     year = _assessment_year(row[14])
                     if year is not None:
                         record['assessment_year'] = year

@@ -38,7 +38,7 @@ def reviewed_magpie_traits(lineage, traits):
     result = list(traits)
     if not _matches(lineage):
         return result
-    existing = {trait.get('name') for trait in result}
+    existing = {trait.get('name') for trait in result if not trait.get('inferred')}
     records = [
         dict(name='body_mass', label='체중', value=220.64, display='220.64', unit='g',
              summary_statistic='sample_mean', inferred=False, **MASS),
@@ -49,7 +49,9 @@ def reviewed_magpie_traits(lineage, traits):
         dict(name='primary_lifestyle', label='주 생활 방식', value='Terrestrial',
              display='땅에서 먹이 탐색·나무와 전선에 앉기', unit=None, inferred=False, **OBSERVATIONS),
     ]
-    result.extend(deepcopy(record) for record in records if record['name'] not in existing)
+    replacements = {record['name'] for record in records if record['name'] not in existing}
+    result = [trait for trait in result if trait.get('name') not in replacements]
+    result.extend(deepcopy(record) for record in records if record['name'] in replacements)
     return result
 
 
