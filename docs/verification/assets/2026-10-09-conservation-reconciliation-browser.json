@@ -1,0 +1,61 @@
+{
+  "response_mocking": false,
+  "checks": [
+    {
+      "width": 1280,
+      "question": "큰부리까마귀에 대해 알고 싶어",
+      "name": "Corvus macrorhynchos",
+      "actual_api": true,
+      "primary_category": null,
+      "reference_category": "LC",
+      "neutral_colour": true,
+      "fits": true,
+      "scroll_delta": 0,
+      "gesture": "mouse drag",
+      "source_citation": true,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "question": "Pyrrhura subandina에 대해 알고 싶어",
+      "name": "Pyrrhura subandina",
+      "actual_api": true,
+      "primary_category": null,
+      "reference_category": "CR",
+      "neutral_colour": true,
+      "fits": true,
+      "scroll_delta": 0,
+      "gesture": "mouse drag",
+      "source_citation": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "question": "큰부리까마귀에 대해 알고 싶어",
+      "name": "Corvus macrorhynchos",
+      "actual_api": true,
+      "primary_category": null,
+      "reference_category": "LC",
+      "neutral_colour": true,
+      "fits": true,
+      "scroll_delta": 0,
+      "gesture": "CDP touch swipe",
+      "source_citation": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "question": "Pyrrhura subandina에 대해 알고 싶어",
+      "name": "Pyrrhura subandina",
+      "actual_api": true,
+      "primary_category": null,
+      "reference_category": "CR",
+      "neutral_colour": true,
+      "fits": true,
+      "scroll_delta": 0,
+      "gesture": "CDP touch swipe",
+      "source_citation": true,
+      "page_errors": []
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "method": "current reader replay over read-only actual TEST DB rows; not 11131 HTTP calls",
+  "taxonomy_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "rows_sha256": "ee60f23871259d4cf2b8bb6d4be10475fa45b294f453018271180b1ad2abc982",
+  "total_species": 11131,
+  "raw_categories": {
+    "LC": 8027,
+    "NE": 808,
+    "NT": 909,
+    "VU": 642,
+    "EN": 356,
+    "DD": 35,
+    "EX": 147,
+    "CR": 183,
+    "CR (PE)": 17,
+    "EW": 5,
+    "CR (PEW)": 2
+  },
+  "statuses": {
+    "linked_checklist": 7507,
+    "needs_review": 807,
+    "snapshot_only": 2816,
+    "manual_override": 1
+  },
+  "reference_categories": {
+    "LC": 332,
+    "NT": 15,
+    "VU": 9,
+    "CR": 1,
+    "EN": 3
+  },
+  "reference_total": 360,
+  "normalized_source_whitespace": [
+    "avilist-taxon:v2025b:17511"
+  ],
+  "issues": [],
+  "full_ledger": {
+    "path": "2026-10-09-conservation-runtime-replay.json.gz",
+    "uncompressed_sha256": "9f55de189dbc05c8f605da6782a0c561a43e4e755db1269c04969e8e3c9d3cbd",
+    "rows": 11131
+  }
+}

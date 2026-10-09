@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-10-09T09:21Z",
+  "method": "read-only Neo4j MATCH via running TEST container; no DB mutations",
+  "source_taxonomy_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "rows_sha256": "ee60f23871259d4cf2b8bb6d4be10475fa45b294f453018271180b1ad2abc982",
+  "species": 11131,
+  "unique_ids": 11131,
+  "missing_ids": [],
+  "mismatches_after_ingest_trim": [],
+  "whitespace_trimmed_ids": [
+    "avilist-taxon:v2025b:17511"
+  ],
+  "not_live_http_per_species": true
+}

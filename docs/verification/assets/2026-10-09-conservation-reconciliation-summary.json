@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "source": {
+    "dataset_key": "19491596-35ae-4a91-9a98-85cf505f1bd3",
+    "name": "The IUCN Red List of Threatened Species",
+    "url": "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+    "release": "2026-1",
+    "license_name": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "publisher": "International Union for Conservation of Nature",
+    "citation": "IUCN (2026). The IUCN Red List of Threatened Species. Version 2026-1. https://www.iucnredlist.org. Downloaded on 2026-07-28. https://doi.org/10.15468/0qnb58",
+    "snapshot_sha256": "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+    "published_at": "2026-07-28"
+  },
+  "taxonomy_snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "denominators": {
+    "all_species": 11131,
+    "ne_subset": 808,
+    "accepted_source_bird_species": 11185
+  },
+  "methodology": {
+    "baseline_revision": "0689001",
+    "current_status_semantics": "fixed_HEAD_0689001_baseline_not_final_runtime",
+    "candidate_routes": [
+      "exact_scientific_name",
+      "avilist_birdlife_sis"
+    ],
+    "fuzzy_or_synonym_matching": false,
+    "same_name_is_concept_proof": false,
+    "same_authorship_is_concept_proof": false,
+    "individual_assessment_originals_reviewed": 0,
+    "source_pins_verified": true,
+    "audit_operation_read_only": true,
+    "packaged_index_reproduced": true
+  },
+  "reference_coverage": {
+    "unlinked_species": 3624,
+    "reference_species": 360,
+    "excluded_reasons": {
+      "assessment_identity_or_citation_mismatch": 62,
+      "authority_mismatch": 2398,
+      "missing_or_ambiguous_exact_source_name": 804
+    }
+  },
+  "counts": {
+    "all_species": 11131,
+    "taxonomy_ne": 808,
+    "source_accepted_bird_species": 11185,
+    "current_mapping_categories": {
+      "assessment_identity_or_citation_mismatch": 56,
+      "authority_mismatch": 2286,
+      "avilist_ne_requires_concept_review": 808,
+      "mapped_species": 7507,
+      "scientific_name_mismatch": 474
+    },
+    "reference_comparison_categories": {
+      "no_reference_candidate": 330,
+      "reference_integrity_gap": 94,
+      "reference_name_differs": 466,
+      "taxonomy_NE_reference_assessed": 471,
+      "taxonomy_reference_grade_agree": 9770
+    },
+    "taxonomy_category_counts": {
+      "CR": 183,
+      "CR (PE)": 17,
+      "CR (PEW)": 2,
+      "DD": 35,
+      "EN": 356,
+      "EW": 5,
+      "EX": 147,
+      "LC": 8027,
+      "NE": 808,
+      "NT": 909,
+      "VU": 642
+    },
+    "current_category_counts": {
+      "CR": 202,
+      "DD": 35,
+      "EN": 356,
+      "EW": 5,
+      "EX": 147,
+      "LC": 8028,
+      "NE": 807,
+      "NT": 909,
+      "VU": 642
+    },
+    "ne_evidence_categories": {
+      "no_exact_name_or_sis_reference": 330,
+      "same_name_or_sis_reference_with_identity_or_integrity_gap": 118,
+      "unique_integrity_valid_name_authorship_reference_concept_unverified": 360
+    },
+    "reference_only_category_counts": {
+      "CR": 1,
+      "EN": 3,
+      "LC": 332,
+      "NT": 15,
+      "VU": 9
+    },
+    "ne_safe_independent_same_concept_evidence": 0
+  },
+  "representatives": {
+    "current_mapping_category": {
+      "assessment_identity_or_citation_mismatch": [
+        "Megapodius laperouse",
+        "Megapodius geelvinkianus",
+        "Podiceps auritus",
+        "Podiceps nigricollis",
+        "Caloenas maculata"
+      ],
+      "authority_mismatch": [
+        "Apteryx rowi",
+        "Apteryx mantelli",
+        "Rhynchotus maculicollis",
+        "Nothoprocta taczanowskii",
+        "Nothoprocta curvirostris"
+      ],
+      "avilist_ne_requires_concept_review": [
+        "Dromaius novaehollandiae",
+        "Oxyura jamaicensis",
+        "Anser serrirostris",
+        "Anser fabalis",
+        "Anas diazi"
+      ],
+      "mapped_species": [
+        "Struthio molybdophanes",
+        "Struthio camelus",
+        "Casuarius casuarius",
+        "Casuarius bennetti",
+        "Casuarius unappendiculatus"
+      ],
+      "scientific_name_mismatch": [
+        "Apteryx maxima",
+        "Anser cygnoides",
+        "Mareca marecula",
+        "Synoicus monorthonyx",
+        "Crinifer concolor"
+      ]
+    },
+    "reference_comparison_category": {
+      "no_reference_candidate": [
+        "Anser serrirostris",
+        "Anas diazi",
+        "Penelope bridgesi",
+        "Ortalis ruficeps",
+        "Lagopus scotica"
+      ],
+      "reference_integrity_gap": [
+        "Megapodius laperouse",
+        "Megapodius geelvinkianus",
+        "Podiceps auritus",
+        "Podiceps nigricollis",
+        "Centropus violaceus"
+      ],
+      "reference_name_differs": [
+        "Apteryx maxima",
+        "Anser cygnoides",
+        "Mareca marecula",
+        "Synoicus monorthonyx",
+        "Crinifer concolor"
+      ],
+      "taxonomy_NE_reference_assessed": [
+        "Dromaius novaehollandiae",
+        "Oxyura jamaicensis",
+        "Anser fabalis",
+        "Anas fulvigula",
+        "Anas crecca"
+      ],
+      "taxonomy_reference_grade_agree": [
+        "Struthio molybdophanes",
+        "Struthio camelus",
+        "Casuarius casuarius",
+        "Casuarius bennetti",
+        "Casuarius unappendiculatus"
+      ]
+    },
+    "ne_evidence_category": {
+      "no_exact_name_or_sis_reference": [
+        "Anser serrirostris",
+        "Anas diazi",
+        "Penelope bridgesi",
+        "Ortalis ruficeps",
+        "Lagopus scotica"
+      ],
+      "same_name_or_sis_reference_with_identity_or_integrity_gap": [
+        "Tropicoperdix chloropus",
+        "Pternistis castaneicollis",
+        "Centropus superciliosus",
+        "Eudynamys orientalis",
+        "Cacomantis variolosus"
+      ],
+      "unique_integrity_valid_name_authorship_reference_concept_unverified": [
+        "Dromaius novaehollandiae",
+        "Oxyura jamaicensis",
+        "Anser fabalis",
+        "Anas fulvigula",
+        "Anas crecca"
+      ]
+    }
+  },
+  "input_paths": {
+    "avilist": "/private/tmp/robingraph-global-avilist-2025b.json",
+    "iucn": "/private/tmp/robingraph-alternative-sources/iucn-2026-1.zip"
+  },
+  "full_ledger": {
+    "path": "2026-10-09-conservation-reconciliation.json.gz",
+    "uncompressed_sha256": "c38dcee0221d9682e62c46d99578a489f87463f2f76e002eb92c83430ab3f630",
+    "rows": 11131
+  }
+}
