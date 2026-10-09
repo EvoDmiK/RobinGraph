@@ -139,9 +139,11 @@ class SpeciesProfileTest(unittest.TestCase):
             with self.subTest(raw=raw):
                 repository._run.return_value = [{'category_raw':raw, **source}]
                 result = read_conservation(repository, LINEAGE)
-                self.assertEqual(expected, result['category'])
+                self.assertEqual(None if expected == 'NE' else expected, result['category'])
                 self.assertEqual(raw if isinstance(raw, str) else None, result['category_raw'])
-                self.assertEqual(CONSERVATION_LABELS.get(expected, '확인되지 않음'), result['label'])
+                # Unlinked taxonomy NE is shown as unresolved, never as genuine IUCN 미평가.
+                label = '평가 연결 확인 필요' if expected == 'NE' else CONSERVATION_LABELS.get(expected, '확인되지 않음')
+                self.assertEqual(label, result['label'])
                 for key, value in source.items():
                     self.assertEqual(value, result[key])
                 self.assertNotIn('assessment_date', result)
@@ -168,7 +170,11 @@ class SpeciesProfileTest(unittest.TestCase):
         repository = Mock()
         repository._run.return_value = [{'category_raw':'NE', **source}]
         result = read_conservation(repository, LINEAGE)
-        self.assertEqual('NE', result['category'])
+        self.assertIsNone(result['category'])
+        self.assertEqual('NE', result['category_raw'])
+        # Raw NE is preserved, but the label never claims a genuine IUCN "미평가".
+        self.assertEqual('평가 연결 확인 필요', result['label'])
+        self.assertNotEqual('미평가', result['label'])
         self.assertEqual('taxonomy_snapshot', result['evidence_kind'])
         self.assertEqual('needs_review', result['assessment_status'])
         self.assertFalse(result['independently_verified'])
@@ -176,6 +182,14 @@ class SpeciesProfileTest(unittest.TestCase):
         self.assertEqual('a' * 64, result['snapshot_sha256'])
         # A contradictory link must never imply that NE has a matched assessment.
         self.assertNotIn('assessment_reference_url', result)
+        for raw in ('DD', 'LC'):
+            repository._run.return_value = [{'category_raw':raw, **source}]
+            self.assertNotEqual('평가 연결 확인 필요', read_conservation(repository, LINEAGE)['label'])
+        for raw in (' ne ', 'Ne'):
+            repository._run.return_value = [{'category_raw':raw, **source}]
+            ne = read_conservation(repository, LINEAGE)
+            self.assertEqual((None, raw, 'needs_review'), (ne['category'], ne['category_raw'], ne['assessment_status']))
+            self.assertEqual('평가 연결 확인 필요', ne['label'])
         repository._run.return_value = [{'category_raw':'LC', **source}]
         self.assertEqual('snapshot_only', read_conservation(repository, LINEAGE)['assessment_status'])
         for override in [
@@ -413,3 +427,65 @@ class SpeciesProfileTest(unittest.TestCase):
         response = client.get('/v1/taxa/profile?name=청둥오리')
         self.assertEqual(503, response.status_code)
         self.assertNotIn('secret', response.text)
+
+
+CROW_SNAPSHOT = {
+    'source_name': 'AviList global avian checklist', 'source_url': 'https://explore.avilist.org/data/avilist-2025b.json',
+    'source_release': 'v2025b', 'source_id': 'avilist-v2025b',
+    'snapshot_sha256': '3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411',
+}
+CROW_LINEAGE = TaxonomyLineage('Corvus macrorhynchos', 'AviList', 'v2025b', 'rg:concept-set:avilist-v2025b', (
+    LineageTaxon('avilist-taxon:v2025b:20236', 'genus', 'Corvus', 'Linnaeus, C, 1758'),
+    LineageTaxon('avilist-taxon:v2025b:20296', 'species', 'Corvus macrorhynchos', 'Wagler, JG, 1827')))
+
+
+class ReferenceAssessmentIntegrationTest(unittest.TestCase):
+    def read(self, raw, lineage=CROW_LINEAGE):
+        repository = Mock()
+        repository._run.return_value = [{'category_raw': raw, **CROW_SNAPSHOT}]
+        return read_conservation(repository, lineage)
+
+    def test_actual_crow_helper_and_index_attach_reference_without_changing_the_grade(self):
+        result = self.read('NE')
+        self.assertEqual((None, 'NE', 'needs_review', '평가 연결 확인 필요'),
+                         (result['category'], result['category_raw'], result['assessment_status'], result['label']))
+        ref = result['reference_assessment']
+        self.assertEqual(('LC', '관심대상', 'reference_only', 'red_list_checklist_reference', 'Corvus macrorhynchos'),
+                         (ref['category'], ref['label'], ref['assessment_status'], ref['evidence_kind'], ref['scientific_name']))
+        self.assertEqual(('unverified', False, 2024), (ref['taxonomy_alignment'], ref['independently_verified'], ref['assessment_year']))
+        self.assertEqual('https://www.iucnredlist.org/species/103727590/264280673', ref['assessment_reference_url'])
+        self.assertIn('RLTS.T103727590A264280673', ref['assessment_citation'])
+        self.assertIn('확정하지 않습니다', ref['quality_note'])
+
+    def test_non_ne_snapshot_and_other_species_never_get_a_reference(self):
+        self.assertNotIn('reference_assessment', self.read('LC'))
+        other = replace(CROW_LINEAGE, items=(CROW_LINEAGE.items[0],
+                        replace(CROW_LINEAGE.items[1], taxon_id='avilist-taxon:v2025b:0', scientific_name='Corvus corax')))
+        self.assertNotIn('reference_assessment', self.read('NE', other))
+
+    def test_helper_contract_is_filtered_and_failures_degrade_to_plain_ne(self):
+        good = {'category': 'EN', 'assessment_status': 'reference_only'}
+        with patch('robingraph.retrieval.species_profile.reference_checklist', return_value=good) as helper:
+            result = self.read('NE')
+            self.assertEqual('위기', result['reference_assessment']['label'])
+            self.assertIsNone(result['category'])
+            self.assertEqual('NE', result['taxonomy_category_raw'])
+            self.assertEqual('needs_review', helper.call_args.args[1]['assessment_status'])
+        for bad in (None, [], 'LC', {'category': 'NE'}, {'category': 'XX'}, {}):
+            with patch('robingraph.retrieval.species_profile.reference_checklist', return_value=bad):
+                result = self.read('NE')
+                self.assertNotIn('reference_assessment', result, repr(bad))
+                self.assertIsNone(result['category'])
+                self.assertEqual('NE', result['category_raw'])
+        with patch('robingraph.retrieval.species_profile.reference_checklist', side_effect=RuntimeError('boom')):
+            self.assertNotIn('reference_assessment', self.read('NE'))
+
+    def test_linked_and_manual_override_take_precedence_and_skip_reference(self):
+        with patch('robingraph.retrieval.species_profile.linked_checklist', return_value={'category': 'LC'}), \
+             patch('robingraph.retrieval.species_profile.reference_checklist') as helper:
+            self.assertEqual({'category': 'LC', 'label': '관심대상'}, self.read('NE'))
+            helper.assert_not_called()
+        with patch('robingraph.retrieval.species_profile.manual_magpie_override', return_value={'category': 'LC', 'evidence_kind': 'manual_override'}), \
+             patch('robingraph.retrieval.species_profile.reference_checklist') as helper:
+            self.assertEqual('manual_override', self.read('NE')['evidence_kind'])
+            helper.assert_not_called()

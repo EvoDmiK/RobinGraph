@@ -10,7 +10,7 @@ from urllib.parse import urlencode, urlsplit, unquote
 from urllib.request import Request, urlopen
 
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
-from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override
+from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override, reference_checklist
 from robingraph.retrieval.reviewed_magpie import reviewed_magpie_traits, reviewed_magpie_notes
 
 class SpeciesNotFoundError(LookupError):
@@ -56,6 +56,8 @@ CONSERVATION_LABELS = {
     'LC':'관심대상', 'NT':'준위협', 'VU':'취약', 'EN':'위기',
     'CR':'위급', 'EW':'야생절멸', 'EX':'절멸', 'DD':'정보부족', 'NE':'미평가',
 }
+
+UNLINKED_NE_LABEL = '평가 연결 확인 필요'
 
 
 def unconfirmed_conservation():
@@ -119,6 +121,9 @@ def read_conservation(repository, lineage):
             result.update(category=code, label=CONSERVATION_LABELS[code])
             if code == 'NE':
                 result['assessment_status'] = 'needs_review'
+                # Raw NE stays in category/category_raw for provenance, but the
+                # display label must not assert a genuine IUCN "Not Evaluated".
+                result['label'] = UNLINKED_NE_LABEL
                 result['quality_note'] = (
                     'AviList 원자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 사용됩니다. '
                     '실제 IUCN 미평가 판정으로 단정할 수 없습니다.')
@@ -129,7 +134,28 @@ def read_conservation(repository, lineage):
     if primary is not None:
         primary['label'] = CONSERVATION_LABELS[primary['category']]
         return primary
-    return manual_magpie_override(lineage, result) or result
+    override = manual_magpie_override(lineage, result)
+    if override is not None:
+        return override
+    if result.get('assessment_status') == 'needs_review':
+        attach_reference_assessment(lineage, result)
+        # Taxonomy NE is not a known current grade: keep the raw code for
+        # provenance but expose no effective category to machine consumers.
+        result['taxonomy_category_raw'] = result['category']
+        result['category'] = None
+    return result
+
+
+def attach_reference_assessment(lineage, snapshot):
+    """Attach a reference-only assessment to an unlinked taxonomy NE, never as its grade."""
+    try:
+        reference = reference_checklist(lineage, snapshot)
+    except Exception:
+        return
+    if (not isinstance(reference, dict) or reference.get('category') not in CONSERVATION_LABELS
+            or reference['category'] == 'NE'):
+        return
+    snapshot['reference_assessment'] = {**reference, 'label': CONSERVATION_LABELS[reference['category']]}
 
 
 def species_summary(taxon, traits):
