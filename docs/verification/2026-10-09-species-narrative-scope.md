@@ -1,5 +1,7 @@
 # 종 설명과 아종군 참고 자료 분리 (2026-10-09)
 
+> 최종 정책 변경: 사용자의 추가 요청에 따라 종 프로필의 아종군 형질 fallback 자체를 제거했다. 아래 최초 토글 구현은 변경 이력이며 현재 종 응답에 `subspecies_groups` 섹션을 생성하지 않는다. 백과 `source_scope_notes` 정책은 유지한다.
+
 ### 요청과 확인 원인
 
 사용자는 외관·생활과 먹이 본문에 아종군별 숫자가 연속으로 섞이고, 같은 먹이 범주와 백과 설명이 반복되어 읽기 어려운 문제를 지적했다. `species_sections()`는 종 범위 형질에서는 아종군을 제외했지만, 이후 별도 루프에서 그 아종군 값을 다시 기본·외관·생태 섹션에 삽입하고 있었다. `species_summary()`도 종 설명 뒤에 아종군 목록을 붙였다. 또한 Wikipedia 연결은 학명(P225), 종 계급, 단일 문서와 Wikidata ID, 고정 revision을 확인했으나 현재 AviList 종 개념 전체와 문서의 분류 범위가 같다는 근거는 없었다.
@@ -47,3 +49,39 @@
 - 검증 도구와 결과: `assets/2026-10-09-narrative-browser-check.cjs`, `assets/2026-10-09-narrative-runtime-checks.json`. 스크린샷은 로컬 `/tmp/rg-scope-browser-test`, `/tmp/rg-scope-browser-prod-final`에서 확인했고 저장소에 대량 추가하지 않았다.
 
 이번 작업은 설명 구성·번역·범위 구분을 수정했다. 11,131종 DB를 다시 전수 조사하거나 356종 원문을 모두 새로 생성했다고 주장하지 않는다. 앞 작업의 전체 데이터 감사 결과와 이번 구조·대표 실환경 검증은 구분한다.
+
+
+## 최종 수정: 종 프로필에서 아종군 형질 제외
+
+### 배경과 변경 전후
+
+사용자는 박새라는 종을 검색했는데 아종군 정보를 붙이는 것 자체가 원하지 않는 동작이라고 명확히 했다. 처음에는 별도 토글로 분리했지만 종 프로필에 하위군 값을 보충하는 정책이 남아 있었으므로 요구를 만족하지 못했다. 최종 변경에서는 해당 fallback을 런타임 경로에서 제거했다.
+
+- `read_traits()`에서 `subgroup_traits()` 호출을 제거했다. 기존 종 범위의 DB 형질, AVONET 동일 개념 보완, BIRDBASE 문헌 자료와 종 생활 방식 검토 자료는 유지한다.
+- 종 프로필 assemble 단계에서 외부 provider가 `source_scope_kind=subspecies_group` 형질을 주입하더라도 필터링한다. API `traits`, summary, sections 모두 같은 필터된 배열을 사용한다.
+- `species_sections()`는 이제 `subspecies_groups` 섹션을 생성하지 않는다. 직접 전달된 아종군 수치도 기본 네 섹션에서 제외한다.
+- 원자료 JSON, 관계 근거, 독립 추출 함수와 그 정확성 테스트는 감사·후속 연구를 위해 보존한다. 종 프로필의 보완값으로 사용하지 않는다.
+- 백과 설명의 출처 범위를 제한하는 `source_scope_notes` 정책은 이번 변경에서 수정하지 않았다. 아종군 형질과 백과 설명의 분류 범위 검증은 별개다.
+
+### 검증
+
+고정 관계 자료의 전체 356종에 종 범위 habitat 하나와 해당 종의 모든 연결 아종군 mass를 함께 주입해 실제 LCEL `create_species_flow().invoke()` 경로를 실행했다. 종 형질은 유지되고 모든 subgroup 형질이 traits/summary/sections에서 제외되었다. 이는 외부 DB/API 호출을 대체하는 모의 provider 구조 전수 검증이다. 관련 37개 테스트 통과(실패 0, 건너뛰기 0, 0.546초). `git diff --check` 통과. 실제 배포·HTTP·브라우저 확인은 통합 담당자가 별도 기록한다.
+
+### 종 범위 수정의 통합 검증 및 근거
+
+코드 `48add3a9bb0d8a6f04b165a7ec1e56aaee6ddb28`은 종 조회에서 아종군 fallback 자체를 제거한다. API 조립 단계도 `source_scope_kind=subspecies_group`를 종 traits에서 제외하므로 카드뿐 아니라 종 비교·요약에 다시 흘러가지 않는다. 프런트는 이전 응답이 입력되더라도 아종군 카드값·비교값·`subspecies_groups` 섹션을 거절한다. 자료를 종 정보로 자동 보충하지 않는 정책이며, 원본 추출 파일과 관계 근거를 삭제한 것은 아니다.
+
+최종 Python 129개와 프런트 291개 통과(실패·건너뛰기 0), 고정 관계 파일의 전체 356종에 종 형질과 하위군 형질을 함께 주입한 구조 검증도 통과했다. 이 숫자는 실제 356종의 HTTP 전수 호출이나 원문 전체 검토 수가 아니다.
+
+독립 검토에서 BIRDBASE Data!row7501의 학명은 AviList·IOC·Clements 대응 열 모두 Parus cinereus로 확인됐다. 16.55g은 문헌 최소11g·최대22.1g의 범위값 평균이며 한국 개체를 측정한 표본 평균이라고 표현하지 않는다. 숲·무척추동물은 주요 서식지·먹이 범주다. 이 종 수준 원자료는 유지하고, AVONET 일부 아종군의 10.6/63.1/57.9mm 등을 종 값으로 보충하던 경로만 제거했다. 개별 원문 BOTW의 모든 표본 범위까지 독립 검증한 것은 아니다.
+
+Wikipedia 고정 revision1379211352는 taxonomy에 minor도 포함한다. 따라서 아종군 연결이 있는356종이라는 사실만으로 백과 문서의 범위가 현재종과 반드시 다르다고 확정할 수 없다. 기존 `source_scope_notes`는 검토 전 참고 설명이며 실제 불일치 판정이 아니다. 개별 문장은 과거 문헌·특정 지역/아종 내용이 섞일 수 있어 모든 설명을 종 전체 사실로 승격하지 않는다. 이번 변경에서 보전 평가를 임의 확정하거나 학명·국명을 바꾸지 않았다.
+
+배포 패키지 SHA-256: `08fc42e2b93e5f7dd7662053477ce27226fcf926791f0f5c41f11158c5718de2`. NAS 배포 결과는 아래에 실제 실행 결과로 기록한다.
+
+
+최종 배포: NAS TEST/Production 모두 `48add3a` revision healthy. TEST는 `robingraph-api:test-species-only-48add3a`, 운영은 검증한 동일 이미지에 태그를 붙인 `robingraph-api:prod-species-only-48add3a`다. 이전 `prod-scope-5acaf54`는 롤백용으로 남겼다. DB 변경은 없었다.
+
+실제 HTTP 프로필 20건씩 양 환경 모두 통과했다. 실제 Chrome에서 박새 질문을 PC1280px·모바일390px로 실행해 양 환경 각2건 모두 통과했다. 응답 traits는 `body_mass, habitat, diet_category` 3개이며 아종군11개는 더 이상 전달되지 않는다. 본문·카드에서 10.6/63.1/57.9mm와 아종군 토글이 나오지 않으며 체중16.55g은 유지된다. 백과 참고 설명은 별도 범위 정책을 유지한다. 테스트는 명시적 profile 의도로 실행했으므로 자동 의도분류의 추가 검증으로 해석하지 않는다.
+
+재현 도구 `assets/2026-10-09-species-only-browser.cjs`, 증거 `assets/2026-10-09-species-only-runtime-checks.json`. 기존 narrative-browser 검증은 앞선 토글 구현의 역사적 증거이며 최종 동작은 species-only 검증을 기준으로 한다. 작업 문서의 최종 정책을 Obsidian 동일 문서에도 반영한다.
