@@ -16,13 +16,13 @@ def main():
     if not records:raise SystemExit('Pinned expert index invalid or empty')
     literal=json.dumps(records,ensure_ascii=False,sort_keys=True,separators=(',',':'))
     generated=START+'\n  var REVIEWED_CONSERVATION_MANIFEST = '+literal+';\n'+END
-    path=ROOT/'src/robingraph/api/static/chat.js';text=path.read_text()
+    path=ROOT/'src/robingraph/api/static/chat.js';text=path.read_text(encoding="utf-8")
     if START in text:
         a=text.index(START);b=text.index(END,a)+len(END);updated=text[:a]+generated+text[b:]
     else:
         updated=text.replace('  function expertReferenceInfo(',generated+'\n\n  function expertReferenceInfo(',1)
     if args.check:
         if updated!=text:raise SystemExit('Frontend expert manifest stale; run sync script')
-    else:path.write_text(updated)
+    else:path.write_text(updated, encoding="utf-8")
 
 if __name__=='__main__':main()
