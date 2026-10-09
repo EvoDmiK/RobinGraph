@@ -40,7 +40,12 @@ def encyclopedia_excerpt(scientific_name, hour):
     return {'text':text[:18000], 'source_name':'Wikipedia · ' + page.get('title', title),
             'source_url':f'https://en.wikipedia.org/w/index.php?oldid={revision}',
             'license_name':'CC BY-SA 4.0', 'license_url':'https://creativecommons.org/licenses/by-sa/4.0/',
-            'source_release':str(revision)}
+            'source_release':str(revision),
+            'source_scientific_name':scientific_name, 'source_scope':scientific_name,
+            'source_scope_kind':'encyclopedia_taxon',
+            'taxonomy_alignment':{'status':'article_identity_only', 'method':'scientific_name_article_identity',
+                                  'wikidata_id':rows[0]['item']['value'].rsplit('/', 1)[-1]},
+            'source_note':'학명과 문서 식별자를 확인한 백과 설명입니다. 현재 AviList 종의 전체 분류 범위와 일치하는지는 별도로 검증하지 않았습니다.'}
 
 
 def create_species_notes(summarize):

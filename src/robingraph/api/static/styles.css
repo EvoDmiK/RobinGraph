@@ -1521,3 +1521,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
 }
 .species-distribution-qualitative-note { color: #4d6046; font-size: .64rem; font-weight: 400; }
 .trait-taxonomy-alignment { margin: 2px 0; font-size: .7rem; line-height: 1.4; overflow-wrap: anywhere; }
+
+/* Bounded source material stays accessible without interrupting the species description. */
+.species-bounded-data { border: 1px solid #88aa9066; border-radius: 12px; padding: 10px 14px; }
+.species-bounded-data > summary { cursor: pointer; color: #244d38; font-weight: 650; }
+.species-bounded-description { color: #586b5c; font-size: .85rem; margin: 8px 0; }
+.species-bounded-group { margin: 10px 0; }
+.species-bounded-group h5 { margin: 0 0 4px; font-size: .85rem; overflow-wrap: anywhere; }

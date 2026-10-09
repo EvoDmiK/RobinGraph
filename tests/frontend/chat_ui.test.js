@@ -5953,3 +5953,35 @@ test("comparison keeps visible literature statistic, original bounds and inferen
   assert.match(collectedText(comparison), /성별 미구분 최소 11 g · 성별 미구분 최대 22\.1 g/);
   assert.match(collectedText(comparison), /문헌 범위값이며 표본 평균이 아닙니다/);
 });
+
+test("bounded source sections stay collapsed, preserve all groups, and retain attributed sources", () => {
+  const item = (scope, n) => ({ text: "측정값 " + n + ": 12 mm", source_scope: scope,
+    source_scope_kind: "subspecies_group", source_name: "AVONET", source_url: "https://example.org/avonet" });
+  const profile = photoProfile({ sections: [
+    ...["basic", "appearance", "ecology", "fun_facts"].map(key => ({ key, title: key, items: [{ text: "종 본문 " + key }] })),
+    { key: "subspecies_groups", title: "아종군별 자료", description: "종 전체를 대표하는 값이 아닙니다.",
+      items: [...Array.from({ length: 6 }, (_, n) => item("Group A", n)), item("Group B", 7)] },
+    { key: "source_scope_notes", title: "출처 범위의 참고 설명", description: "현재 분류와 범위를 대조해야 합니다.",
+      items: [{ text: "출처에서 설명한 흰 뺨", source_scope: "원문 범위", source_name: "원문", source_url: "https://example.org/note" }] }
+  ] });
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile);
+  const bounded = answer.children.filter(n => n.className.includes("species-bounded-data"));
+  assert.equal(bounded.length, 2);
+  assert.ok(bounded.every(n => n.tagName === "details" && !n.open));
+  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "li").length, 7, "no arbitrary truncation of subgroup evidence");
+  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "h5").length, 2);
+  assert.doesNotMatch(answer.children.filter(n => n.className === "species-answer-section").map(collectedText).join(" "), /측정값|출처에서 설명/);
+  const sources = answer.children.find(n => n.className === "species-answer-sources");
+  assert.match(collectedText(sources), /AVONET/);
+  assert.match(collectedText(sources), /원문/);
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.doesNotMatch(collectedText(observationPart(card)), /측정값|출처에서 설명/);
+});
+
+test("empty bounded sections do not create empty toggles", () => {
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), photoProfile({ sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "학명" }] },
+    { key: "subspecies_groups", title: "아종군별 자료", items: [] }
+  ] }));
+  assert.equal(collectAllNodes(answer).filter(n => n.className?.includes("species-bounded-data")).length, 0);
+});

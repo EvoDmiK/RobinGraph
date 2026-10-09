@@ -2487,7 +2487,8 @@
           (Array.isArray(observationSections) ? observationSections : []).forEach(function (section) {
             if (!section || section.key !== key) { return; }
             (Array.isArray(section.items) ? section.items : []).forEach(function (item) {
-              if (selected.length >= 2 || !item || typeof item.text !== "string" || !item.text.trim() ||
+              if (selected.length >= 2 || !item || item.source_scope_kind === "subspecies_group" ||
+                  item.taxonomy_alignment === "unverified" || typeof item.text !== "string" || !item.text.trim() ||
                   typeof item.source_name !== "string" || !item.source_name.trim() || !sanitizeUrl(item.source_url)) { return; }
               var text = item.text.trim();
               if (/^(?:평균\s+)?(?:부리 길이\s*\(전체\)|접은 날개 길이|꼬리 길이)\s*:/.test(text) || seenTexts[text]) { return; }
@@ -3502,34 +3503,62 @@
     answer.appendChild(heading);
     var sources = [];
     var seen = {};
-    profile.sections.slice(0, 4).forEach(function (section) {
+    profile.sections.forEach(function (section) {
       if (!section || typeof section.title !== "string") { return; }
       if (profile.enrichment_pending && (!Array.isArray(section.items) || !section.items.some(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
       }))) { return; }
-      var block = doc.createElement("section");
-      block.className = "species-answer-section";
-      var title = doc.createElement("h4");
-      title.textContent = section.title;
-      block.appendChild(title);
+      var bounded = section.key === "subspecies_groups" || section.key === "source_scope_notes";
       var items = Array.isArray(section.items) ? section.items.filter(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
-      }).slice(0, section.key === "appearance" ? 5 : 4) : [];
+      }) : [];
+      if (bounded && !items.length) { return; }
+      if (!bounded) { items = items.slice(0, section.key === "appearance" ? 5 : 4); }
+      var block = doc.createElement(bounded ? "details" : "section");
+      block.className = bounded ? "species-answer-section species-bounded-data" : "species-answer-section";
+      var title = doc.createElement(bounded ? "summary" : "h4");
+      title.textContent = section.title;
+      block.appendChild(title);
+      if (bounded && typeof section.description === "string" && section.description.trim()) {
+        var description = doc.createElement("p");
+        description.className = "species-bounded-description";
+        description.textContent = section.description;
+        block.appendChild(description);
+      }
       if (items.length) {
         var list = doc.createElement("ul");
+        var scopeLists = Object.create(null);
         items.forEach(function (item) {
+          var targetList = list;
+          if (bounded && typeof item.source_scope === "string" && item.source_scope.trim()) {
+            var scope = item.source_scope.trim();
+            if (!scopeLists[scope]) {
+              var group = doc.createElement("section");
+              group.className = "species-bounded-group";
+              var groupTitle = doc.createElement("h5");
+              groupTitle.textContent = scope;
+              group.appendChild(groupTitle);
+              scopeLists[scope] = doc.createElement("ul");
+              group.appendChild(scopeLists[scope]);
+              block.appendChild(group);
+            }
+            targetList = scopeLists[scope];
+          }
           var li = doc.createElement("li");
           li.textContent = item.text;
-          list.appendChild(li);
-          var url = sanitizeUrl(item.source_url);
-          var sourceKey = JSON.stringify([url, item.source_name, item.license_name, item.license_url]);
-          if (url && typeof item.source_name === "string" && !seen[sourceKey]) {
-            seen[sourceKey] = true;
-            sources.push({ name:item.source_name, url:url, license:item.license_name,
-              licenseUrl:sanitizeUrl(item.license_url) });
-          }
+          targetList.appendChild(li);
+          [item].concat(Array.isArray(item.additional_sources) ? item.additional_sources : []).forEach(function (source) {
+            if (!source || typeof source !== "object") { return; }
+            var url = sanitizeUrl(source.source_url);
+            var sourceKey = JSON.stringify([url, source.source_name, source.license_name, source.license_url]);
+            if (url && typeof source.source_name === "string" && !seen[sourceKey]) {
+              seen[sourceKey] = true;
+              sources.push({ name:source.source_name, url:url, license:source.license_name,
+                licenseUrl:sanitizeUrl(source.license_url) });
+            }
+          });
         });
-        block.appendChild(list);
+        if (list.children.length) { block.appendChild(list); }
       } else {
         var empty = doc.createElement("p");
         empty.className = "species-answer-empty";
