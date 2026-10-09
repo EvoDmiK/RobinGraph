@@ -1,0 +1,144 @@
+{
+  "passed": false,
+  "mode": "before",
+  "physical_device": false,
+  "simulated_long_content_update": false,
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 756.875,
+          "bottom": 780.875,
+          "right": 300
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 246,
+          "height": 586.890625,
+          "bottom": 763.875,
+          "right": 283
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 246,
+          "height": 586.890625,
+          "bottom": 763.875,
+          "right": 283
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 773,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 587,
+          "client": 587
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 587,
+          "client": 587
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,2391 @@
+{
+  "passed": true,
+  "mode": "local",
+  "physical_device": false,
+  "simulated_long_content_update": true,
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "bottom": 860,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 638,
+          "client": 638
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 638,
+          "client": 638
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualHeight": 900,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "bottom": 860,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 638,
+          "client": 638
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 638,
+          "client": 638
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualHeight": 900,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 1018.796875,
+          "bottom": 1058.796875,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 836.8125,
+          "bottom": 1037.796875,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 836.8125,
+          "bottom": 1037.796875,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 1043,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 837,
+          "client": 837
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 837,
+          "client": 837
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualHeight": 900,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": false,
+      "resize_fits": false,
+      "tooltip_clears_on_inner_scroll": false,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 837,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "touch": true,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "bottom": 643,
+          "right": 355
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 635,
+          "client": 635
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 531,
+          "client": 467
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 467
+        },
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualHeight": 667,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "bottom": 643,
+          "right": 355
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 635,
+          "client": 635
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 531,
+          "client": 467
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 467
+        },
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualHeight": 667,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "bottom": 643,
+          "right": 355
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 635,
+          "client": 635
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 531,
+          "client": 467
+        },
+        "backScroll": {
+          "top": 121,
+          "height": 837,
+          "client": 467
+        },
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualHeight": 667,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "bottom": 643,
+          "right": 355
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 309,
+          "height": 467.015625,
+          "bottom": 630,
+          "right": 342
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 635,
+          "client": 635
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 531,
+          "client": 467
+        },
+        "backScroll": {
+          "top": 121,
+          "height": 588,
+          "client": 467
+        },
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualHeight": 667,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 220,
+          "height": 854,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 220,
+          "height": 588,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 412,
+      "height": 915,
+      "touch": true,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 35.5,
+          "width": 388,
+          "height": 844,
+          "bottom": 879.5,
+          "right": 400
+        },
+        "card": {
+          "x": 20,
+          "y": 43.5,
+          "width": 372,
+          "height": 828,
+          "bottom": 871.5,
+          "right": 392
+        },
+        "front": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "back": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "close": {
+          "x": 348,
+          "y": 43.5,
+          "width": 44,
+          "height": 44,
+          "bottom": 87.5,
+          "right": 392
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "viewport": {
+          "width": 412,
+          "height": 915,
+          "visualHeight": 915,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 35.5,
+          "width": 388,
+          "height": 844,
+          "bottom": 879.5,
+          "right": 400
+        },
+        "card": {
+          "x": 20,
+          "y": 43.5,
+          "width": 372,
+          "height": 828,
+          "bottom": 871.5,
+          "right": 392
+        },
+        "front": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "back": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "close": {
+          "x": 348,
+          "y": 43.5,
+          "width": 44,
+          "height": 44,
+          "bottom": 87.5,
+          "right": 392
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "viewport": {
+          "width": 412,
+          "height": 915,
+          "visualHeight": 915,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 35.5,
+          "width": 388,
+          "height": 844,
+          "bottom": 879.5,
+          "right": 400
+        },
+        "card": {
+          "x": 20,
+          "y": 43.5,
+          "width": 372,
+          "height": 828,
+          "bottom": 871.5,
+          "right": 392
+        },
+        "front": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "back": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "close": {
+          "x": 348,
+          "y": 43.5,
+          "width": 44,
+          "height": 44,
+          "bottom": 87.5,
+          "right": 392
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 837,
+          "client": 658
+        },
+        "viewport": {
+          "width": 412,
+          "height": 915,
+          "visualHeight": 915,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 35.5,
+          "width": 388,
+          "height": 844,
+          "bottom": 879.5,
+          "right": 400
+        },
+        "card": {
+          "x": 20,
+          "y": 43.5,
+          "width": 372,
+          "height": 828,
+          "bottom": 871.5,
+          "right": 392
+        },
+        "front": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "back": {
+          "x": 37,
+          "y": 196.484375,
+          "width": 338,
+          "height": 658.015625,
+          "bottom": 854.5,
+          "right": 375
+        },
+        "close": {
+          "x": 348,
+          "y": 43.5,
+          "width": 44,
+          "height": 44,
+          "bottom": 87.5,
+          "right": 392
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 844,
+          "client": 844
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 658,
+          "client": 658
+        },
+        "viewport": {
+          "width": 412,
+          "height": 915,
+          "visualHeight": 915,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 204,
+          "y": 28,
+          "width": 436,
+          "height": 334,
+          "bottom": 362,
+          "right": 640
+        },
+        "front": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "back": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 358,
+          "client": 358
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 451,
+          "client": 178
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 178
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualHeight": 390,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 204,
+          "y": 28,
+          "width": 436,
+          "height": 334,
+          "bottom": 362,
+          "right": 640
+        },
+        "front": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "back": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 358,
+          "client": 358
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 451,
+          "client": 178
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 588,
+          "client": 178
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualHeight": 390,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 204,
+          "y": 28,
+          "width": 436,
+          "height": 334,
+          "bottom": 362,
+          "right": 640
+        },
+        "front": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "back": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 358,
+          "client": 358
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 451,
+          "client": 178
+        },
+        "backScroll": {
+          "top": 410,
+          "height": 837,
+          "client": 178
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualHeight": 390,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 204,
+          "y": 28,
+          "width": 436,
+          "height": 334,
+          "bottom": 362,
+          "right": 640
+        },
+        "front": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "back": {
+          "x": 217,
+          "y": 170.984375,
+          "width": 410,
+          "height": 178.015625,
+          "bottom": 349,
+          "right": 627
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 358,
+          "client": 358
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 451,
+          "client": 178
+        },
+        "backScroll": {
+          "top": 410,
+          "height": 588,
+          "client": 178
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualHeight": 390,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "843.42 g",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "bird": "흰뺨검둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 727,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "1.16 kg",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": false,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "bird": "모의 자료 없음",
+      "fixture": "missing",
+      "actual_db": false,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 812,
+          "client": 812
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 626,
+          "client": 626
+        },
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualHeight": 844,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": false,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "bird": "모의 1024g",
+      "fixture": "mass",
+      "actual_db": false,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 623,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 0,
+          "height": 623,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 255,
+          "height": 889,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "scrolled": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "back": {
+          "x": 33,
+          "y": 162.984375,
+          "width": 254,
+          "height": 368.015625,
+          "bottom": 531,
+          "right": 287
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "dialogScroll": {
+          "top": 0,
+          "height": 536,
+          "client": 536
+        },
+        "frontScroll": {
+          "top": 0,
+          "height": 528,
+          "client": 368
+        },
+        "backScroll": {
+          "top": 255,
+          "height": 623,
+          "client": 368
+        },
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualHeight": 568,
+          "offsetTop": 0
+        },
+        "horizontalOverflow": false
+      },
+      "mass_display": "1.02 kg",
+      "native_vertical_scroll_verified": true,
+      "resize_fits": true,
+      "tooltip_clears_on_inner_scroll": true,
+      "body_drag_flips": true,
+      "reopen_fits": true,
+      "page_errors": [],
+      "api_warnings": []
+    }
+  ]
+}
