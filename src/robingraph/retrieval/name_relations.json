@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "reviewed_at": "2026-10-03",
+  "reviewed_at": "2026-10-09",
   "policy_status": "allowed",
   "scope": "통칭·별칭·가축형·닭 품종의 확대 검토 목록. 사용자 예시는 조사 범위의 제한이 아니다. 넓은 통칭의 후보는 출처로 확인한 일부이며 모든 조류·품종을 망라하지 않는다. 가축형은 자동으로 아종으로 판정하지 않는다.",
   "reuse_policy": "RobinGraph original factual summaries with citations; no source prose or images copied. Source copyright is not relicensed.",
@@ -54,24 +54,6 @@
         "까마귀"
       ],
       "note": "국내 자료의 까마귀(Corvus corone)를 후보로 안내합니다. 활성 AviList에 연결된 한국어 이름은 별도로 표시하며, 지역·자료의 이름 사용 차이를 구분합니다.",
-      "sources": [
-        {
-          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
-          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
-        }
-      ]
-    },
-    {
-      "id": "crow-large-billed",
-      "entity_id": "crow-common",
-      "name": "까마귀",
-      "entity_kind": "common_name",
-      "relation_type": "common_usage",
-      "scientific_name": "Corvus macrorhynchos",
-      "search_terms": [
-        "까마귀"
-      ],
-      "note": "검은 까마귀류를 통칭하는 질문에서는 큰부리까마귀도 구분할 후보입니다. 까마귀와 큰부리까마귀를 동의어 또는 같은 종으로 합치지 않습니다. 이 목록은 모든 까마귀류를 열거한 것이 아닙니다.",
       "sources": [
         {
           "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
