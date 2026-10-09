@@ -316,6 +316,57 @@
     });
   }
 
+  var ALIGNMENT_METHOD_LABELS = {
+    avibase_id_unique: "분류 개념 ID 일치",
+    birdtree_birdlife_avibase_chain: "공개 분류 대응표와 개념 ID 일치",
+    exact_name_legacy: "학명 일치, 개념 일치는 미확인",
+  };
+  // Only fixed Korean sentences for known codes are shown; an unknown code or
+  // free text from the payload is never echoed, and no reason claims that a
+  // mismatch is caused by a taxonomic split.
+  var ALIGNMENT_REASON_TEXT = {
+    exact_name_concept_id_mismatch: "학명은 같지만 분류 개념 ID가 달라 같은 개념인지 확인이 필요합니다.",
+    taxo_not_bl3_crosswalk_basis_unverified: "원자료 분류 기준의 대응이 아직 검증되지 않았습니다.",
+    multiple_source_rows_same_target: "같은 대상에 원자료 행이 여러 개 연결되어 자동으로 확정하지 않았습니다.",
+    exact_name_chain_target_mismatch: "학명 일치와 개념 ID 대응이 서로 다른 종을 가리켜 확인이 필요합니다.",
+  };
+
+  function alignmentName(value) {
+    return typeof value === "string" && value.trim() ? "\u2018" + value.trim().slice(0, 100) + "\u2019" : null;
+  }
+
+  /**
+   * Explain, inside the source toggle, how a source row's scientific name was
+   * tied to the current taxon. Optional: only a well-formed
+   * `taxonomy_alignment` with a known status renders anything.
+   */
+  function appendTaxonomyAlignment(doc, sourceDetails, trait, seen) {
+    var alignment = trait && trait.taxonomy_alignment;
+    if (!alignment || typeof alignment !== "object" || Array.isArray(alignment)) { return; }
+    var source = alignmentName(alignment.source_scientific_name);
+    var target = alignmentName(alignment.target_scientific_name);
+    var method = Object.prototype.hasOwnProperty.call(ALIGNMENT_METHOD_LABELS, alignment.method) ? ALIGNMENT_METHOD_LABELS[alignment.method] : null;
+    var text;
+    if (alignment.status === "accepted") {
+      var same = source && target && source === target;
+      text = source && target && !same
+        ? "원자료 학명 " + source + "을(를) 현재 분류의 " + target + "와 같은 분류 개념으로 연결했습니다."
+        : "원자료 학명" + (source ? " " + source : "") + "과 현재 분류가 같은 분류 개념으로 확인되었습니다.";
+    } else if (alignment.status === "needs_review") {
+      text = "원자료" + (source ? " " + source : "") + "의 수치가 현재 분류" + (target ? "의 " + target : "") +
+        "와 범위가 같은지 확인이 필요합니다. 개념 일치 검증이 끝나지 않았습니다.";
+      if (Object.prototype.hasOwnProperty.call(ALIGNMENT_REASON_TEXT, alignment.reason)) { text += " " + ALIGNMENT_REASON_TEXT[alignment.reason]; }
+    } else { return; }
+    if (method) { text += " (근거: " + method + ")"; }
+    if (seen[text]) { return; }
+    seen[text] = true;
+    var note = doc.createElement("p");
+    note.className = "trait-taxonomy-alignment";
+    note.setAttribute("data-alignment-status", alignment.status);
+    note.textContent = text;
+    sourceDetails.appendChild(note);
+  }
+
   function traitStudyMetadata(source) {
     var statistic = source.summary_statistic === "sample_mean" ? "연구 표본 평균" :
       (source.summary_statistic === "mean" ? "종 평균" : null);
@@ -348,7 +399,9 @@
       var sourceSummary = doc.createElement("summary");
       sourceSummary.textContent = "자료 출처 (" + group.sources.length + ")";
       sourceDetails.appendChild(sourceSummary);
+      var alignmentSeen = {};
       group.sources.forEach(function (sourceTrait) {
+        appendTaxonomyAlignment(doc, sourceDetails, sourceTrait, alignmentSeen);
         if (!sourceTrait.citation && !sourceTrait.source_name) {
           return;
         }
@@ -388,6 +441,44 @@
       if (Number.isFinite(amount) && amount >= 1000) { display = (amount / 1000).toFixed(2); unit = " kg"; }
     }
     return display + unit + (trait.inferred ? " (추정값)" : "");
+  }
+
+  // When a distribution has no percentages, show an already-sourced category in
+  // the same box instead (never a donut). The source entry for each category
+  // already sits in the shared source toggle, so nothing is added there.
+  var QUALITATIVE_FALLBACKS = {
+    diet_distribution: { traits: ["diet_category", "trophic_niche"], note: null },
+    foraging_strata_distribution: { traits: ["primary_lifestyle"], note: "먹이 찾는 층을 뜻하지 않음" },
+  };
+  var QUALITATIVE_LABELS = { diet_category: "먹이 유형", trophic_niche: "먹이 생태 범주", primary_lifestyle: "주 생활 방식" };
+
+  function buildQualitativeFallback(doc, kind, groups) {
+    var spec = QUALITATIVE_FALLBACKS[kind];
+    var shown = [];
+    var seenText = {};
+    spec.traits.forEach(function (name) {
+      var group = groups.find(function (item) { return item.trait.name === name; });
+      var trait = group && group.trait;
+      var text = trait ? cardTraitValue(trait).trim() : "";
+      if (!text || seenText[text]) { return; }
+      seenText[text] = true;
+      shown.push({ name: name, label: typeof trait.label === "string" && trait.label.trim() ? trait.label : QUALITATIVE_LABELS[name], text: text });
+    });
+    var box = doc.createElement("p");
+    if (!shown.length) { box.className = "species-distribution-empty"; box.textContent = "기록된 자료 없음"; return box; }
+    box.className = "species-distribution-empty species-distribution-qualitative";
+    box.setAttribute("data-qualitative-fallback", shown.map(function (item) { return item.name; }).join(","));
+    shown.forEach(function (item) {
+      var line = doc.createElement("span"); line.className = "species-distribution-qualitative-value";
+      line.textContent = item.label + " · " + item.text; box.appendChild(line);
+    });
+    var qualifier = doc.createElement("span"); qualifier.className = "species-distribution-qualitative-note";
+    qualifier.textContent = "비율 자료 없음"; box.appendChild(qualifier);
+    if (spec.note) {
+      var scope = doc.createElement("span"); scope.className = "species-distribution-qualitative-note";
+      scope.textContent = spec.note; box.appendChild(scope);
+    }
+    return box;
   }
 
   function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel, ensureLayout) {
@@ -454,8 +545,7 @@
     if (ensureLayout || distributionNumbers.diet_distribution || distributionNumbers.foraging_strata_distribution) {
       Object.keys(columns).forEach(function (name) {
         if (columns[name].children.length === 1) {
-          var empty = doc.createElement("p"); empty.className = "species-distribution-empty";
-          empty.textContent = "기록된 자료 없음"; columns[name].appendChild(empty);
+          columns[name].appendChild(buildQualitativeFallback(doc, name, groups));
         }
       });
       grid.appendChild(pair);
