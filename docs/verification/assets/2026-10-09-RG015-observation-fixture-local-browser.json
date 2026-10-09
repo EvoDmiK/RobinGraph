@@ -1,0 +1,242 @@
+{
+  "passed": true,
+  "actual_db": false,
+  "physical_device": false,
+  "environment": "Chrome DOM with local JS/CSS, mocked API and photo SVG",
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "known",
+      "observation_state": "ready",
+      "points": [
+        "날개에 2개의 밝은 줄무늬가 있습니다.",
+        "머리와 부리의 모양을 함께 살펴보세요."
+      ],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "missing",
+      "observation_state": "unavailable",
+      "points": [],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "partial",
+      "observation_state": "ready",
+      "points": [
+        "날개에 2개의 밝은 줄무늬가 있습니다.",
+        "알아두기모의 행동 자료를 관찰 포인트의 알아두기로 표시합니다."
+      ],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "pending",
+      "observation_state": "pending",
+      "points": [],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "subspecies",
+      "observation_state": "subspecies",
+      "points": [],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "fixture": "long",
+      "observation_state": "ready",
+      "points": [
+        "긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. ",
+        "<img src=x onerror=\"window.fixtureInjected=true\"> 출처 문자열은 텍스트로 표시합니다."
+      ],
+      "frame": {
+        "x": 410,
+        "y": 28,
+        "width": 460,
+        "height": 844
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "known",
+      "observation_state": "ready",
+      "points": [
+        "날개에 2개의 밝은 줄무늬가 있습니다.",
+        "머리와 부리의 모양을 함께 살펴보세요."
+      ],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "missing",
+      "observation_state": "unavailable",
+      "points": [],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "partial",
+      "observation_state": "ready",
+      "points": [
+        "날개에 2개의 밝은 줄무늬가 있습니다.",
+        "알아두기모의 행동 자료를 관찰 포인트의 알아두기로 표시합니다."
+      ],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "pending",
+      "observation_state": "pending",
+      "points": [],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "subspecies",
+      "observation_state": "subspecies",
+      "points": [],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": "long",
+      "observation_state": "ready",
+      "points": [
+        "긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. 긴 관찰 설명에서도 줄바꿈과 스크롤을 유지합니다. ",
+        "<img src=x onerror=\"window.fixtureInjected=true\"> 출처 문자열은 텍스트로 표시합니다."
+      ],
+      "frame": {
+        "x": 12,
+        "y": 16,
+        "width": 366,
+        "height": 812
+      },
+      "faces_equal": true,
+      "format_slots_preserved": true,
+      "extra_profile_requests": 0,
+      "page_errors": []
+    }
+  ]
+}
