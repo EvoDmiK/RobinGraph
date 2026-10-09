@@ -1,129 +1,149 @@
 # RobinGraph
 
-그래프 데이터베이스와 LLM을 이용해 근거가 확인되는 조류 정보를 제공하는 GraphRAG 프로젝트입니다.
+그래프 데이터베이스와 LLM을 이용해 **출처를 확인할 수 있는 조류 정보**를 제공하는 GraphRAG 프로젝트입니다. 한국어로 새를 질문하고 분류·생태·외관·사진을 확인하거나, 도감 카드를 뒤집고 관련 종을 비교할 수 있습니다.
 
-종의 분류·생태·형태 정보, 사진과 문헌 근거를 한국어 대화 화면에서 확인할 수 있습니다. 현재는 NAS에서 운영하는 개인 프로젝트이며, 실제 종 데이터가 준비된 TEST 환경에서 기능을 검증하고 있습니다.
+현재 구현 설명은 **2026-10-09 기준**입니다. 실제 종 데이터가 적재된 [NAS TEST 대화 화면](https://robingraph-test.dove-nest.com/chat)에서 기능을 검증하고 있습니다. 로컬 합성 fixture는 DB·외부 API 없이 기본 응답과 UI를 확인하는 용도이며, 실제 종 데이터 환경과 제공 범위가 다릅니다.
+
+## 목차
+
+- [현재 제공 기능](#현재-제공-기능)
+- [로컬에서 빠르게 실행](#로컬에서-빠르게-실행)
+- [실제 종 데이터 환경](#실제-종-데이터-환경)
+- [외부 API와 MLflow 설정](#외부-api와-mlflow-설정)
+- [구조와 API](#구조와-api)
+- [문헌 검색과 평가](#문헌-검색과-평가)
+- [NAS 배포와 패키징](#nas-배포와-패키징)
+- [테스트](#테스트)
+- [문서 안내](#문서-안내)
+- [기여자](#기여자)
 
 ## 현재 제공 기능
 
-- **구조화된 종 설명**: 기본 정보, 외관적 특징, 생태와 재미있는 사실을 확인된 자료와 출처를 바탕으로 표시합니다. 자료가 없는 내용은 추측하지 않습니다.
-- **조류 도감 카드**: 간단한 설명과 함께 카드 열기 버튼을 제공합니다. 앞면에는 사진과 핵심 특성, 뒷면에는 전체 특성과 출처·라이선스를 담습니다. 사진은 버튼으로 이동하고 출처는 펼치거나 접을 수 있습니다.
-- **수집형 카드 표현**: 서식 환경별 문양과 자료에 기록된 IUCN 등급별 색상·광택을 적용합니다. 앞뒤 전환에는 입체 회전, 빛 반사와 작은 반동 효과가 있으며 움직임 줄이기 설정을 존중합니다.
-- **그래프 관계 탐색과 비교**: 설명창에서 같은 속·과의 다른 새를 찾아 특성과 출처를 비교합니다. 관련 목록은 한국어 표시명을 사용하며, 최대 12종씩 표시합니다. 같은 분류에 속한다는 관계이며 진화적 거리나 가장 가까운 종을 의미하지 않습니다.
-- **자연어 질문별 답변**: `왜가리는 무엇을 먹고 사니?`, `청둥오리와 비슷한 종은 어떤게 있니?`처럼 물으면 먹이·관련 종과 출처를 바로 답합니다. 일반 유사종 질문은 전체 활성 종의 분류·생태 관계를 비교해 점수와 근거를 갖춘 상위 3종만 보여줍니다. `멧비둘기에 대해 알고싶어.` 같은 일반 소개에도 소개·카드 버튼과 TOP-3를 함께 제공합니다. 서식 환경·활동 시간·외관 및 먹이·서식지가 비슷한 새 질문도 지원합니다. [질문 처리·근거 정책](docs/species-questions.md)
-- **생태 관계 탐색**: 설명창에서 같은 자료의 서식 환경·먹이 생태 범주를 공유하는 새를 찾고, 별도 말풍선에서 비교합니다. 각 범주의 두 종 출처를 확인할 수 있으며, 학명과 출처를 확인한 한국어 이름을 표시하고, 확인되지 않은 종은 영어로 표시합니다. [RG-003 조회·표시 정책](docs/ecological-relations.md)
-- **독립된 새 비교 답변**: 같은 속·과의 새를 비교하면 원래 설명을 유지하고 별도 말풍선에 두 종의 특성·출처·카드 버튼을 표시합니다.
-- **먹이 생태와 사진 상태**: 출처로 확인한 먹이 항목을 다중 아이콘으로 표시하고, 사진이 없거나 조회·로딩이 실패해도 설명과 카드를 제공합니다. [후속 작업·표시 정책](docs/graph-exploration-expansion.md)
-- **아종 카드**: 설명창에서 소속 종의 아종 목록을 그래프로 조회하고, 선택한 아종의 카드·분류·검토된 분포 설명을 제공합니다. 부모 종 자료는 별도 ‘종 수준 참고 정보’로 표시합니다. [조회·자료 정책](docs/subspecies-cards.md)
-- **통칭·가축형 관계 탐색**: 검토된 관계 자료를 적재하면 `닭`, `거위`, `칠면조`, `뱁새`, `앵무새` 등 통칭·별칭·가축형 질문에 관계·후보·출처를 안내합니다. 한 종으로 확인되는 통칭은 연결된 종의 설명·카드를 바로 준비하고, 여러 종이면 후보를 선택합니다. 가축형은 관련 야생종 자료와 구분합니다. 설명창에서 이름 관계를 역방향으로도 탐색합니다. [조사 목록](docs/name-relations-coverage.md) · [적재·검증 방법](docs/name-relations.md)
-- **이름 표시**: 한국조류학회 2025 목록을 우선하고, 국내 목록 밖의 종도 IOC 한국어 목록·기관 자료에서 학명과 이름을 확인해 적용합니다. 확인되지 않은 종은 영어 이름으로 표시하며 자동 번역명을 사용하지 않습니다. 카드·설명·유사종·비교에 같은 표시 규칙을 적용하고 학명과 원문 영명은 유지합니다. [한국어 표시명 정책](docs/korean-display-names.md)
-- **분류·관찰·문헌 조회**: AviList 분류 계보, GBIF 관찰 기록, 문헌 전문·벡터 결합 검색을 제공합니다. Gemini가 설정된 문헌 경로에서는 검색 근거로 답변을 생성하고 근거 ID를 검증합니다.
+### 질문과 종 설명
 
-[TEST 대화 화면](https://robingraph-test.dove-nest.com/chat)에서 `청둥오리에 대해 알려줘` 또는 `흰뺨검둥오리에 대해 알려줘`를 입력하고, 카드의 `출처 보기 ↻` 버튼으로 뒤집기 효과를 확인할 수 있습니다. 대화 기록은 현재 창에서만 유지됩니다.
+- **한국어 자연어 질문**: 일반 소개, 먹이, 서식 환경, 활동 시간, 외관, 아종, 분류, 관찰 기록, 문헌 근거를 구분합니다. 명확한 규칙으로 처리할 수 있는 질문을 먼저 해석하고, 설정에 따라 Jev System1 의도 분석 또는 임베딩 기반 라우터를 사용합니다. 낮은 확신도나 모호한 이름은 추가 확인으로 처리합니다.
+- **종 설명과 선택적 관계 탐색**: 기본 정보·외관·생활과 먹이·재미있는 사실과 가용 사진을 첫 설명에 제공합니다. `더 알아보기`에서 아종·통칭/가축형·생태 관계 등 탐색 항목을 선택하면 후속 조회합니다. 일반 소개에서 비교 후보를 항상 자동 조회하지 않습니다.
+- **출처와 자료 부족 표시**: 확인된 자료로 답변하고, 자료가 없는 내용은 추측하지 않습니다. 카드의 사진·라이선스·형질 출처와 자료 기준은 설명창의 `답변 출처 보기`에 중복을 줄여 모읍니다.
+- **한국어 이름 우선 표시**: 한국조류학회 목록과 학명을 대조한 보충 자료를 사용합니다. 검증된 한국어 이름이 없으면 영어 이름을 표시하며 자동 번역명을 만들지 않습니다. 카드에는 한국어 이름과 작은 영어 이름, 학명을 함께 표시합니다.
 
-TEST에는 활성 종 데이터가 있습니다. PROD에도 같은 코드를 배포했지만 활성 종 데이터가 아직 없어, 실제 종 질문 검증과 PROD의 서비스 상태·정적 파일 검증을 구분합니다.
+### PC·모바일 도감 카드
 
-AviList 분류, EltonTraits 식성·체중, AVONET 형태·서식 환경과 GBIF 관찰 기록은 수집 workflow와 검증 로더를 통해 적재합니다. Wikidata는 승인된 한국어 이름의 보충 자료로 사용합니다. Neo4j는 종과 자료의 관계를, PostgreSQL은 수집·활성 스냅샷 상태를 관리합니다. 문헌 검색에는 Jina의 512차원 임베딩과 Neo4j 전문·벡터 검색을 사용합니다.
+- **앞면**: 사진, 체중, 먹이 유형, 서식 환경, 주 생활 방식과 관찰 포인트를 표시합니다. 체중은 1,000g 이상이면 kg로 표시합니다.
+- **뒷면**: 상세 특성과 먹이 구성·먹이 활동 위치 도넛 차트를 나란히 표시합니다. PC에서 차트 영역에 마우스를 올리면 항목과 비율이 뜹니다. 차트 클릭·탭으로 선택하지 않습니다.
+- **카드 넘기기**: 양면의 사진·글씨·빈 곳·차트 영역에서 좌우 드래그 또는 터치 스와이프로 뒤집습니다. 카드에 포커스한 상태에서는 `Enter`·`Space`도 지원합니다. 별도의 `출처보기`·`앞면보기` 버튼은 없습니다.
+- **화면 맞춤**: 앞·뒷면 높이를 같게 유지하고 화면 크기에 맞춰 카드 전체를 축소합니다. 카드 내부 스크롤을 없애고 모바일 테두리 간격을 맞췄습니다. 사진이나 자료가 없어도 같은 카드 형식을 유지합니다.
+- **표현과 조작**: 서식 환경별 문양, 기록된 IUCN 등급별 색상, 회전 각도를 따라 움직이는 유광 반사를 적용합니다. 글씨 드래그 선택을 막고, 움직임 줄이기 설정과 모바일 핀치 확대를 고려합니다. 사진 이전·다음 버튼은 일반 클릭으로 사용할 수 있습니다.
 
-## 문서
+### 관계 탐색·비교·검색
 
-- [통합 대화 화면과 카드](docs/chat-ui.md)
-- [분류 계보 API](docs/taxonomy-lineage-api.md)
-- [시스템 설계](docs/system-design.md)
-- [그래프 DB 스키마](docs/graph-database-schema.md)
-- [2026-09-04 작업 기록](docs/work-log/2026-09-04.md)
-- [2026-09-07 작업 기록](docs/work-log/2026-09-07.md)
-- [2026-09-08 작업 기록](docs/work-log/2026-09-08.md)
-- [2026-09-09 작업 기록](docs/work-log/2026-09-09.md)
-- [2026-09-10 작업 기록](docs/work-log/2026-09-10.md)
-- [외부 데이터 소스 조사](docs/data-source-decision-input.md)
-- [종 정보 수집 포인트와 평가](docs/collection-points.md)
-- [n8n 종별 분류·생태·형태 정보 수집](docs/n8n/species-information-ingest.md)
-- [데이터 계약](docs/data-contracts.md)
-- [구현 준비 체크리스트](docs/implementation-readiness.md)
-- [보유 인프라 적용안](docs/deployment-profile.md)
-- [NAS 배포 런북](docs/nas-deployment.md)
-- [기술 의사결정 기록](docs/decisions/)
-- [평가 fixture와 gold 질문](docs/evaluation.md)
-- [PMC 실제 문헌 1편 TEST 적재 파일럿](docs/pmc-literature-pilot.md)
-- [현재 구현 상태](docs/current-implementation.md)
-- [개발환경과 자동 테스트](docs/development.md)
-- [다음 구현 배치와 담당 작업](docs/next-implementation-batch.md)
-- [Jina 임베딩 어댑터](docs/embedding-adapter.md)
-- [문헌 하이브리드 검색](docs/hybrid-retrieval.md)
-- [n8n 운영 수집 워크플로우와 실행 런북](docs/n8n/README.md)
-- [NAS Docker·Nginx Proxy Manager 배포 런북](docs/nas-deployment.md)
-- [기여자와 AI 협업 기록](CONTRIBUTORS.md)
+- **비교 후보 TOP 3**: 전체 활성 종에서 계통 50%·분류 30%·서식 환경 10%·먹이 생태 10%로 점수를 계산합니다. **검증 국명이 있는 후보를 먼저 선정하고, 그 안에서 점수순**으로 추천합니다. 부족한 수는 영어 이름 후보로 채웁니다. 계통 자료가 없으면 가용 분류·생태 점수를 재환산하며, 점수는 실제 진화 거리나 유전 유사도가 아닙니다.
+- **분류·생태 관계**: 같은 속·과 또는 서식 환경·먹이 생태 범주를 공유하는 새를 탐색합니다. 비교 결과는 원래 설명을 유지한 별도 말풍선에 표시하고, 추천 점수·근거와 분류 계보는 구조화된 화면으로 제공합니다.
+- **아종·통칭·가축형**: 활성 분류판의 아종과 검토된 이름 관계를 조회합니다. 아종 자체 자료와 부모 종 수준 참고 정보를 구분하고, 여러 종을 가리키는 이름은 후보를 선택하도록 안내합니다.
+- **관찰·문헌**: GBIF 관찰 기록과 문헌 전문·벡터 결합 검색을 제공합니다. Gemini가 설정된 문헌 경로는 검색 근거로 답변을 생성하고 근거 ID를 검증합니다.
+- **MLflow 추적**: LangChain LCEL autolog와 Jev의 명시적 자식 span으로 흐름을 추적합니다. Gemini 호출과 검색 단계도 기록하고, 답변 성공·추가 확인·자료 없음·기술 오류를 결과 태그로 구분합니다.
 
-## 기여자
+TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 새 알려줘`, `청둥오리 아종 알려줘`, `흰뺨검둥오리의 분류 계통 알려줘`를 입력해 확인할 수 있습니다. 대화 기록은 현재 창에서만 유지됩니다.
 
-RobinGraph는 프로젝트 소유자 김둘기와 AI 개발 도구인 [OpenAI Codex](https://github.com/apps/chatgpt-codex-connector), [Anthropic Claude](https://github.com/apps/claude)의 협업으로 개발하고 있습니다. 역할과 Git 커밋 표기 기준은 [CONTRIBUTORS.md](CONTRIBUTORS.md)에 기록합니다.
+## 로컬에서 빠르게 실행
 
-## Fixture 검증
-
-개발환경은 `.python-version`의 Python 3.12.13과 `uv.lock`으로 통일한다. [uv](https://docs.astral.sh/uv/getting-started/installation/)를 설치한 뒤 아래 명령을 Windows PowerShell, macOS, Linux에서 동일하게 실행한다. uv가 Python과 `.venv`를 준비하므로 가상환경 활성화는 필요 없다.
+소스 체크아웃에서 실행합니다. 개발환경은 `.python-version`의 Python **3.12.13**과 `uv.lock`으로 고정합니다. [uv 설치](https://docs.astral.sh/uv/getting-started/installation/) 후 Windows PowerShell·macOS·Linux에서 아래 명령을 사용합니다. 가상환경 활성화는 필요 없습니다.
 
 ```sh
-uv sync --locked --extra test
+uv sync --locked
 uv run --locked robingraph validate-fixture
 uv run --locked robingraph evaluate-fixture
-uv run --locked --extra test python -m unittest discover -s tests -v
-```
-
-커밋된 fixture를 먼저 검증한다. 재생성 비교는 테스트가 임시 폴더에서 수행하므로 원본 손상이나 줄바꿈 문제를 덮어쓰지 않는다. 기존 Windows 작업공간의 CRLF 복구와 의도적인 fixture 변경 방법은 [개발 가이드](docs/development.md)를 참고한다.
-
-Neo4j 연결 정보는 Git에 넣지 않고 로컬 `.env` 또는 환경 변수로만 제공한다. CLI는 실행 디렉터리의 `.env`를 읽으며, 명시적으로 설정한 환경 변수가 같은 키를 우선한다. `NEO4J_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`를 설정한 뒤 아래 명령으로 합성 fixture를 graph에 적재하고 안전 조건을 검증한다.
-
-```sh
-uv run --locked robingraph verify-neo4j
-uv run --locked robingraph load-neo4j-fixture
-uv run --locked robingraph verify-neo4j-fixture
-```
-
-합성 fixture API는 다음 명령으로 실행한다. 이 API는 실제 외부 데이터나 LLM을 사용하지 않으며, `GET /health`가 `mode: fixture`를 반환한다.
-
-```sh
 uv run --locked robingraph serve-fixture
 ```
 
-Neo4j에 fixture를 적재한 뒤 실제 그래프 조회를 사용하는 API 또는 단일 질문 CLI를 실행할 수 있다. `/health`의 `mode`는 `neo4j`다.
+브라우저에서 <http://127.0.0.1:8000/chat>으로 채팅 셸을 확인합니다. `/docs`는 API 문서이고, `/health`는 `mode: fixture`를 반환합니다. fixture 답변은 합성 데이터로 구성하며 외부 DB·LLM을 사용하지 않습니다. 이 모드에는 실제 종 프로필·사진·관계 탐색과 자동 의도 분석 핸들러가 연결되지 않아 채팅에서 추가 확인이나 미지원 안내가 나올 수 있습니다.
+
+기본 답변은 `/docs`의 `POST /v1/answers`에 `{"question":"참새의 학명은 무엇인가?"}`를 보내 확인합니다. [fixture 질문](data/eval/v1/gold-questions.jsonl)과 `evaluate-fixture`의 15개 gold 평가는 이 규칙 기반 답변 경로를 대상으로 하며, 전체 종 채팅 기능 평가와 구분합니다.
+
+## 실제 종 데이터 환경
+
+Neo4j에 종과 자료의 관계를, PostgreSQL에 수집 작업·활성 스냅샷·분류판 상태를 저장합니다. **실제 종 설명과 관계 탐색에는 두 DB의 데이터와 활성 수집 상태가 함께 필요합니다.** 빈 DB에 API만 실행하거나 합성 fixture만 적재해도 전체 종 서비스가 준비되는 것은 아닙니다.
+
+1. [.env.example](.env.example)을 참고해 저장소 루트의 로컬 `.env`를 준비합니다. 기존 `.env`가 있으면 필요한 항목만 추가합니다.
+2. `NEO4J_*`와 `ROBINGRAPH_PG_*` 연결 정보를 설정하고 PostgreSQL 스키마를 준비합니다.
+3. 수집 workflow·검증 로더로 분류·국명·형질 등 필요한 자료를 적재하고 해당 스냅샷을 활성화합니다. [수집 런북](docs/n8n/README.md)과 [PostgreSQL 수집 관리](docs/postgres-ingest-control-plane.md)를 참고합니다.
+4. 실제 그래프 API를 실행합니다.
 
 ```sh
+uv run --locked robingraph verify-neo4j
+uv run --locked robingraph migrate-postgres
+uv run --locked robingraph verify-postgres
 uv run --locked robingraph serve-neo4j
-# 또는 API 서버 없이 질문 한 건 실행
+```
+
+CLI는 **실행 디렉터리의 `.env`**를 읽으며, 이미 설정된 환경 변수가 같은 키를 우선합니다. `.env`와 인증 정보는 Git에 넣지 않습니다. PostgreSQL 연결 변수는 [.env.nas.example](.env.nas.example)과 [개발 가이드](docs/development.md)를 참고합니다. `/health`의 `mode: neo4j`는 백엔드 모드이며 특정 종 데이터나 활성 분류판 검증을 대신하지 않습니다.
+
+합성 그래프 적재·검증이 필요한 개발 환경에서는 다음 명령을 별도로 사용합니다. 실제 운영 데이터 준비와 구분합니다.
+
+```sh
+uv run --locked robingraph load-neo4j-fixture
+uv run --locked robingraph verify-neo4j-fixture
 uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 이름은?"
 ```
 
-fixture 검증 경로는 작은 합성 데이터에 대해 이름·장소·날짜를 해소하고 규칙으로 답변을 구성한다. 실제 Neo4j 모드에서는 별도로 적재한 분류·형질·관찰·문헌 자료를 조회하며, Jina·Gemini 설정에 따라 문헌 검색과 근거 답변 생성을 사용한다. 활성 분류·한국어 이름 스냅샷은 PostgreSQL 수집 상태로 결정되므로 실제 종 조회에는 그래프 데이터와 수집 상태가 함께 필요하다. DB 통합 테스트 실행법은 [개발 가이드](docs/development.md#neo4j-통합-테스트)를 참고한다.
+## 외부 API와 MLflow 설정
 
-## 브라우저 채팅 UI와 API 경계
+설정은 서버의 `.env` 또는 배포 환경 변수로 주입합니다. 브라우저에 API 키를 입력할 필요는 없습니다.
 
-패키지에 포함된 한국어 채팅 UI는 `serve-fixture`와 `serve-neo4j` 모두에서
-`/` 및 `/chat`으로 제공되고, JS·CSS 같은 정적 파일은 같은 origin의 `/static/`에
-제공된다. 따라서 브라우저는 별도 API URL, 프록시, 토큰 또는 임베딩/Neo4j 자격 증명을
-가질 필요 없이 상대 경로 `POST /v1/chat`를 호출한다. 관련 종 탐색과 비교는
-같은 origin의 `GET /v1/taxa/related`와 `GET /v1/taxa/profile`을 사용한다. 배포 산출물에
-`src/robingraph/api/static/index.html`과 관련 자산이 누락된 경우에도 API는 시작되며,
-UI 경로만 세부 경로를 노출하지 않는 일반적인 HTTP 503을 반환한다.
+| 기능 | 주요 설정 | 적용 범위 |
+| --- | --- | --- |
+| Jev System1 | `JEV_API_KEY`, `ROBINGRAPH_INTENT_ROUTER=auto` | 규칙으로 해석되지 않은 질문의 의도 분석. 종 이름 존재 여부는 DB에서 별도 검증 |
+| Jina 호환 임베딩 | `ROBINGRAPH_JINA_ENDPOINT`, `ROBINGRAPH_JINA_MODEL`, `ROBINGRAPH_JINA_DIMENSIONS`, `ROBINGRAPH_JINA_API_KEY` 등 | 문헌 벡터 검색·임베딩 라우터. 현재 BirdsNest 프로필은 512차원 |
+| Gemini | `GEMINI_API_KEY`, `ROBINGRAPH_GEMINI_MODEL` | 문헌 근거 답변 생성·추가 종 설명 등 설정된 생성 경로 |
+| MLflow | `ROBINGRAPH_MLFLOW_TRACING=true`, `MLFLOW_TRACKING_URI`, `MLFLOW_EXPERIMENT_NAME` | 선택적 추적. 별도 MLflow 서버 필요 |
 
-프런트엔드는 `/v1/chat` 응답을 다음처럼 표시한다.
+`auto`는 Jev 키가 있으면 Jev를 선택하고, 없으면 기존 규칙·임베딩 경로를 사용합니다. `ROBINGRAPH_INTENT_ROUTER=semantic`은 임베딩 경로를 선택합니다. 모든 질문에서 Jev를 호출하는 것은 아닙니다. Jev·라우팅 상세 설정은 [.env.example](.env.example), [Jev 라우팅](docs/jev-intent-routing.md), [RG-013 검증 기록](docs/verification/2026-10-08-RG013-jev-intent-routing.md)에 있습니다.
 
-- `answer_text`는 서버가 근거 확인을 마친 본문이며, 클라이언트가 검색 결과나 모델 출력으로 보완·재작성하지 않는다.
-- `disposition`이 `answer`이면 답변으로, `abstain`이면 답변 불가 안내로, `clarify`이면 추가 선택 질문으로 표시한다. 알 수 없는 값은 성공 답변으로 취급하지 않는다.
-- `result.kind`에 따라 종 프로필·분류 계보·관찰·문헌 검색·추가 확인 화면을 구성한다. 각 결과에 포함된 출처 URL, 근거 ID와 라이선스를 표시하며 `warnings`도 함께 보여준다.
-- 분류 결과에는 AviList 릴리스와 개념집합을 표시한다. 별도 `POST /v1/answers`는 기존 규칙 기반 답변 계약이며, `citations`, `taxonomy_release`, `data_cutoff`을 반환한다.
+Gemini SDK/autolog와 MLflow 추적을 사용할 때는 추가 의존성을 설치합니다. Gemini의 기본 REST 생성 경로는 SDK 없이도 동작합니다.
 
-`POST /v1/search`는 문헌 청크 검색 계약이며 채팅 답변 생성 API가 아니다. 결과의
-본문·점수·citation만으로 `answer_text` 또는 `disposition`을 만들어 내거나, `/v1/answers`
-실패 시 그 결과를 채팅 답변처럼 표시해서는 안 된다. `GET /health`의 `mode`는 현재
-`fixture` 또는 `neo4j` 백엔드를 운영 상태로 표시하는 용도이며, UI가 답변 내용을
-추론하는 입력이 아니다.
+```sh
+uv sync --locked --extra tracing
+uv run --locked --extra tracing robingraph serve-neo4j
+```
 
-## 문헌 청크 검색
+MLflow Traces의 태그 필터로 다음을 조회할 수 있습니다.
 
-위 질문 API와 별도로, 문헌 검색 결과의 본문·순위·출처·라이선스를 CLI와
-`POST /v1/search`에서 JSON으로 확인할 수 있다. 먼저 현재 버전의 loader로
-fixture를 적재한 뒤 전문 검색 인덱스를 준비한다.
+| 태그 | 예시 |
+| --- | --- |
+| `response_disposition` | `answer`, `clarify`, `abstain`, `error` |
+| `response_reason` | `taxon_not_found`, `intent_uncertain`, `evidence_not_found` |
+| `failure_stage` | `routing`, `name_resolution`, `retrieval`, `generation` |
+| `selected_intent`, `route_method` | 선택한 질문 의도·라우팅 방식 |
+
+예를 들어 태그 필터에서 `response_reason`을 `taxon_not_found`로 지정하면 종을 찾지 못한 응답을 구분합니다. SDK 검색 식은 `tags.response_reason = 'taxon_not_found'`입니다. 추적용 `error`는 기술 실패를 나타내며 HTTP 응답의 `disposition` 계약과 구분합니다. [MLflow 설정](docs/mlflow-tracing.md)과 [RG-016 실제 저장·검색 검증](docs/verification/2026-10-08-rg015-rg016-trace-tags-drag.md)을 참고합니다.
+
+## 구조와 API
+
+```text
+브라우저 채팅·도감 카드
+        ↓ 같은 origin의 API
+FastAPI → 질문 규칙 / Jev / 임베딩 라우터
+        ↓
+종·분류·관계 조회 / 문헌 검색 → 선택적 Gemini 생성
+        ↓
+Neo4j: 그래프·문헌·벡터   PostgreSQL: 수집·활성 스냅샷
+        └──────── 선택적 MLflow 추적
+```
+
+| 경로 | 용도 |
+| --- | --- |
+| `GET /`, `GET /chat`, `GET /static/*` | 같은 서버에서 제공하는 한국어 UI·정적 자산 |
+| `GET /health` | 백엔드 모드·서비스 상태 |
+| `POST /v1/chat` | 의도별 채팅 답변·구조화된 결과 |
+| `GET /v1/taxa/profile`, `GET /v1/taxa/related` | 종 프로필·관련 종 탐색 |
+| `POST /v1/search` | 문헌 청크·점수·출처 검색. 채팅 답변 생성과 구분 |
+| `GET /v1/observations` | 운영 GBIF 관찰 기록·출처·허용 media 조회 |
+| `POST /v1/answers` | 기존 fixture 규칙 기반 답변 계약 |
+
+표는 주요 경로입니다. 비교 후보·생태 관계·아종·이름 관계·분류 계보를 포함한 전체 계약은 실행한 서버의 `/docs`에서 확인합니다. UI는 서버의 `answer_text`, `disposition`, `result`, `warnings`를 표시하고 답변을 임의로 보완하지 않습니다. API `disposition`은 `answer`·`abstain`·`clarify`로 성공 답변·미응답·추가 확인을 구분합니다. 관찰의 출처·라이선스를 검증하며 일반화 대상 좌표는 API에서도 숨깁니다.
+
+## 문헌 검색과 평가
+
+Neo4j의 문헌 청크에 전문 검색 인덱스를 준비합니다. 아래는 **합성 fixture 검색** 명령이며 실제 문헌 수집·적재와 구분합니다.
 
 ```sh
 uv run --locked robingraph load-neo4j-fixture
@@ -131,19 +151,15 @@ uv run --locked robingraph index-neo4j-fixture
 uv run --locked robingraph search-neo4j --question "fixture 호수" --limit 5
 ```
 
-이 기본 경로는 Jina를 호출하지 않는다. 키워드 검색은 한국어 형태소를 해석하지 않으므로 일부 표현을 놓칠 수 있다.
-
-`.env.example`의 `ROBINGRAPH_JINA_*` 변수를 로컬 `.env` 또는 환경 변수로 설정하면 다음 명령으로 허용된 fixture 청크를 임베딩하고 벡터 검색을 함께 사용할 수 있다. 제공된 API 문서에 맞춰 BirdsNest 프로필과 512차원을 반영했다. `.env`는 CLI가 자동으로 읽고 Git에서는 제외된다. API 키는 `.env` 또는 secret store에서만 제공한다. [연결 검증 기록](docs/embedding-adapter.md)을 참고한다.
+임베딩 설정 후 벡터 색인과 전문·벡터 결합 검색을 사용할 수 있습니다.
 
 ```sh
 uv run --locked robingraph index-neo4j-fixture --embeddings
 uv run --locked robingraph search-neo4j --question "물가에 사는 새에 대한 기록" --hybrid --limit 5
+uv run --locked robingraph evaluate-search-neo4j --mode all --limit 3
 ```
 
-`--embeddings`는 HTTP 요청과 Neo4j 벡터 쓰기를 수행한다. 동일 프로필의 전체 허용 청크 집합으로 벡터를 갱신하므로 부분 배치 갱신용 명령이 아니다. `--hybrid`는 읽기 전용 검색과 질문 임베딩 요청을 수행하며, 벡터를 사용할 수 없으면 `warnings`에 이유를 표시한다. 현재 이 경로는 근거 검색까지 제공하며 LLM 답변 생성은 포함하지 않는다.
-
-`serve-neo4j`의 Swagger(`/docs`)에서는 `mode`를 `fulltext` 또는 `hybrid`로
-선택한다. 기본값은 `fulltext`이며 이때 Jina를 호출하지 않는다.
+`--embeddings`는 외부 임베딩 요청과 벡터 쓰기를 수행하고, 동일 프로필의 전체 허용 fixture 청크 집합을 갱신합니다. `--hybrid`는 질문 임베딩과 읽기 검색을 수행합니다. 벡터를 사용할 수 없으면 전문 검색으로 대체하고 경고를 반환합니다. 평가 결과는 recall@k·MRR·평균/p95 지연시간 등을 JSON으로 제공합니다.
 
 ```sh
 curl -X POST http://127.0.0.1:8000/v1/search \
@@ -151,39 +167,42 @@ curl -X POST http://127.0.0.1:8000/v1/search \
   -d '{"question":"호수와 하천에서 관찰된 물새","mode":"hybrid","limit":5}'
 ```
 
-응답의 `requested_mode`는 요청값, `mode`는 실제 결과에 사용된 모드다. 임베딩
-호출이 일시적으로 실패하면 전문 검색으로 폴백하고 `warnings`에 이유를 남긴다.
-`serve-fixture`에서도 OpenAPI 계약은 보이지만 검색 호출은 HTTP 503을 반환한다.
-설정된 검색 백엔드 자체를 사용할 수 없어 HTTP 503이 되는 경우에도
-`{"detail":"Document search is temporarily unavailable."}`라는 고정 상세만
-반환한다. 이 보안 처리로 상태 코드와 성공 응답 `DocumentSearchResponse` 스키마,
-요청의 `mode`·`limit` 범위는 바뀌지 않으며, 공급자 오류·설정·토큰 같은 내부
-상세는 응답에 포함하지 않는다.
+`requested_mode`는 요청값, `mode`는 실제 검색 모드입니다. `fulltext`는 Jina를 호출하지 않습니다. `serve-fixture`에는 계약이 노출되지만 문헌 검색과 운영 관찰 조회는 HTTP 503을 반환합니다. 자세한 정책은 [하이브리드 검색](docs/hybrid-retrieval.md), [임베딩 어댑터](docs/embedding-adapter.md), [실제 PMC 문헌 파일럿](docs/pmc-literature-pilot.md)을 참고합니다.
 
-## 운영 GBIF 관찰 조회
+## NAS 배포와 패키징
 
-n8n 운영 workflow가 적재한 실제 GBIF `BirdTaxon`·`Observation`은
-`serve-neo4j`의 `GET /v1/observations`에서 조회한다. GBIF taxon key, 학명,
-장소명, 관찰일 범위와 pagination을 조합할 수 있다.
+[Dockerfile](Dockerfile)은 API와 UI를 함께 묶습니다. [compose.nas.yml](compose.nas.yml)은 기존 Neo4j·PostgreSQL·외부 Docker 네트워크·프록시를 사용하는 **NAS 운영용 구성**이며, 처음 설치하는 사용자를 위한 전체 DB 포함 설치 구성이 아닙니다. [package_nas_release.sh](scripts/package_nas_release.sh)는 커밋 기준 런타임 소스 아카이브와 해시 manifest를 만듭니다. DB 데이터와 인증 정보는 포함하지 않습니다.
+
+배포·검증·복구는 [NAS 런북](docs/nas-deployment.md)을 따릅니다. Git push·CI 통과가 NAS 자동 배포를 뜻하지 않습니다. 최신 카드 동작의 NAS TEST 검증은 [PC 무스크롤·모바일 테두리 기록](docs/verification/2026-10-09-rg015-pc-no-scroll-mobile-border.md)에 있으며, 해당 작업의 PROD 배포는 수행하지 않았습니다.
+
+독립형 Docker 설치 번들·공개 패키지 배포·HippoRAG 스타일 검색 전환·한국 서식종 토글은 현재 제공 기능에 포함되지 않습니다.
+
+## 테스트
 
 ```sh
-curl "http://127.0.0.1:8000/v1/observations?scientific_name=Anas%20zonorhyncha&observed_from=2026-09-01&limit=25"
+uv sync --locked --extra test
+uv run --locked robingraph validate-fixture
+uv run --locked robingraph evaluate-fixture
+uv run --locked --extra test python -m unittest discover -s tests -v
+node --test tests/frontend/*.test.js
 ```
 
-응답은 `mode: operational`, `data_source: gbif`, `fixture_only: false`를 명시하고,
-각 관찰에 taxon·place·허용된 media·EvidenceUnit·원본 GBIF URL·dataset URL·
-허용 라이선스를 포함한다. `SourceRecord → SourceDataset → License`의 허용 provenance 체인이
-완전한 레코드만 반환한다. `sensitivity: generalized`인 관찰은 저장된 공개 좌표도
-API에서 숨기며 `coordinate_disclosure: withheld`와 경고를 반환한다.
+Node.js는 프런트엔드 테스트에 필요합니다. Python 테스트의 실제 DB 통합 검증은 명시적 opt-in과 전용 테스트 DB를 요구하며, 설정이 없으면 해당 검증을 건너뜁니다. 모의 API·DOM 테스트와 실제 DB·외부 API·브라우저 검증은 별도 범위로 기록합니다. fixture 재생성 비교는 임시 폴더에서 수행합니다.
 
-이 endpoint는 구조화된 관찰 검색이다. 문헌 전문·벡터 검색은 `/v1/search`에서,
-검색 근거를 사용한 자연어 답변은 `/v1/chat`에서 제공한다. `serve-neo4j`에
-`GEMINI_API_KEY`를 설정하면 Gemini API가 근거 답변을 생성한다. 모델은
-`ROBINGRAPH_GEMINI_MODEL`로 지정할 수 있다. `serve-fixture`에서는 계약만
-노출하고 호출은 HTTP 503을 반환한다.
+GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/Compose, Neo4j·PostgreSQL 통합 검증을 실행합니다. 설정과 실행 방법은 [CI workflow](.github/workflows/ci.yml), [개발 가이드](docs/development.md), [평가 가이드](docs/evaluation.md)를 참고합니다.
 
-한국어 문헌 검색 품질은 fixture의 별도 5개 gold 질문으로 비교한다. `all`은 전문, 벡터, RRF 결합 검색의 recall@k, MRR, 평균/p95 지연시간과 정책 제외 결과를 JSON으로 출력한다.
+## 문서 안내
 
-```sh
-uv run --locked robingraph evaluate-search-neo4j --mode all --limit 3
-```
+| 분야 | 문서 |
+| --- | --- |
+| 화면·질문 | [채팅 UI](docs/chat-ui.md) · [질문 처리·근거 정책](docs/species-questions.md) · [분류 계보 API](docs/taxonomy-lineage-api.md) |
+| 이름·관계 | [국명 정책](docs/korean-display-names.md) · [생태 관계](docs/ecological-relations.md) · [아종](docs/subspecies-cards.md) · [통칭·가축형](docs/name-relations.md) · [관계 조사 목록](docs/name-relations-coverage.md) |
+| 설계·데이터 | [시스템 설계](docs/system-design.md) · [그래프 스키마](docs/graph-database-schema.md) · [데이터 계약](docs/data-contracts.md) · [수집 포인트](docs/collection-points.md) · [기술 결정](docs/decisions/) |
+| 수집·배포 | [n8n 수집 런북](docs/n8n/README.md) · [PostgreSQL 수집 관리](docs/postgres-ingest-control-plane.md) · [NAS 배포](docs/nas-deployment.md) |
+| 개발·기록 | [개발환경·테스트](docs/development.md) · [평가](docs/evaluation.md) · [작업 이력](docs/work-log/) · [검증·배포 기록](docs/verification/) |
+
+설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-013 Jev 의도 분석, RG-015 카드 조작·반응형 화면, RG-016 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
+
+## 기여자
+
+RobinGraph는 프로젝트 소유자 김둘기와 AI 개발 도구인 [OpenAI Codex](https://github.com/apps/chatgpt-codex-connector), [Anthropic Claude](https://github.com/apps/claude)의 협업으로 개발합니다. 역할과 Git 커밋 표기 기준은 [CONTRIBUTORS.md](CONTRIBUTORS.md)를 참고합니다.
