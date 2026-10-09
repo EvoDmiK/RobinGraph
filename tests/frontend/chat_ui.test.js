@@ -5682,9 +5682,9 @@ test("diet and foraging fall back to sourced categories with a '비율 자료 �
     assert.match(collectedText(diet), /먹이 유형 · 잡식/);
     assert.match(collectedText(diet), /먹이 생태 범주 · Omnivore/);
     assert.match(collectedText(diet), /비율 자료 없음/);
-    assert.match(collectedText(foraging), /주 생활 방식 · Terrestrial/);
+    assert.match(collectedText(foraging), /생활 방식 · Terrestrial/);
     assert.match(collectedText(foraging), /비율 자료 없음/);
-    assert.match(collectedText(foraging), /먹이 찾는 층을 뜻하지 않음/);
+    assert.match(foraging.getAttribute("title"), /먹이 찾는 층을 뜻하지 않음/);
     assert.doesNotMatch(collectedText(foraging), /지면|하층|중상층|수관|공중|ground|understory|canopy/, "no foraging level is inferred from a lifestyle");
     assert.equal(percentNodes(pair).length, 0);
     assert.equal(collectAllNodes(pair).some(n => n.tagName === "svg" || n.tagName === "path"), false);

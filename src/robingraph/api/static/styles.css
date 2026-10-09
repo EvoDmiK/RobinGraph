@@ -1479,7 +1479,8 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-distribution-sep { display: none; }
 .species-distribution-amount { flex: none; margin-left: auto; color: #294932; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .species-distribution-zero .species-distribution-name, .species-distribution-zero .species-distribution-amount { color: #4d6046; font-weight: 400; }
-.species-distribution-fallback, .species-distribution-empty {
+.species-distribution-column .species-distribution-fallback,
+.species-distribution-column .species-distribution-empty {
   display: grid;
   place-items: center;
   box-sizing: border-box;
