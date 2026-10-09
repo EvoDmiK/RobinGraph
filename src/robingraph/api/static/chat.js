@@ -1067,7 +1067,7 @@
   var UNLINKED_NE_NOTE = "분류 자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 쓰입니다. 실제 IUCN 미평가 판정이 아니며 등급을 추정하지 않았습니다.";
 
   // Optional, reference-only IUCN assessment shown beside an unlinked taxonomy NE.
-  // It is never the current taxon grade: category/tier/card colour stay unresolved.
+  // A sourced reference may label the badge; current taxon grade/tier stay unresolved.
   var REFERENCE_CATEGORIES = ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD"];
   var REFERENCE_ALIGNMENT_NOTE = "현재 분류 범위와 일치 여부 확인 필요";
 
@@ -1192,8 +1192,10 @@
       if (rawCode !== category) { return base; }
     }
     if (snapshot && category === "NE") {
+      var reference = referenceAssessmentInfo(data, taxon);
       return Object.assign(base, { category: "NE", label: "평가 연결 확인 필요", state: "link-unresolved",
-        note: UNLINKED_NE_NOTE, badgeText: "평가 범위 확인 필요" });
+        note: UNLINKED_NE_NOTE, badgeText: reference ? reference.label + " (" + reference.category + ")" +
+          (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 참고" : "평가 범위 확인 필요" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -1201,6 +1203,7 @@
     return Object.assign(base, { category: category, label: known.label, tier: known.tier,
       verified: known.tier !== "unconfirmed",
       badgeText: "IUCN 적색목록 " + known.label + " (" + category + ")" + qualifier +
+        (Number.isInteger(data.assessment_year) && data.assessment_year >= 1900 && data.assessment_year <= 2026 ? " · " + data.assessment_year + " 평가" : "") +
         (checklist ? " · 공개 평가목록 기준" : (snapshot ? " · 자료 기준" : "")) });
   }
 
