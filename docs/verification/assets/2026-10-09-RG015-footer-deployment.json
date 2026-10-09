@@ -1,0 +1,22 @@
+{
+  "commit": "128da7f7c604e4ec3af032ee152921b4ec1559a5",
+  "image": "robingraph-api:test-rg015footer-128da7f",
+  "release": "/home/kimdove/RobinGraph-rg015footer-128da7f",
+  "previous_image": "robingraph-api:test-rg015donut-a8aa6c1",
+  "checked_at": "2026-10-09T00:38:52.639684+00:00",
+  "archive_sha256": "e0850b2dfb6c3cec23cb5926b562a7a00f68830a20e96824b19ea1d059c682ed",
+  "remote_archive_and_manifest_verified": true,
+  "deploy_exit": 0,
+  "verify_exit": 0,
+  "container_health": "healthy",
+  "oci_revision": "128da7f7c604e4ec3af032ee152921b4ec1559a5",
+  "public_assets_match_source": true,
+  "public_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "browser_profiles_passed": 2,
+  "physical_device": false
+}
