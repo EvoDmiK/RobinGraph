@@ -26,7 +26,9 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
       const context=await browser.newContext({viewport:{width,height},isMobile:width<600,hasTouch:width<600,reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
       page.on('pageerror',e=>errors.push(e.message));
       if(local)await page.route('**/static/styles.css**',route=>route.fulfill({path:path.resolve('src/robingraph/api/static/styles.css')}));
-      await page.goto(base+'/chat');const profile=structuredClone(profiles[name]);
+      await page.goto(base+'/chat',{waitUntil:'domcontentloaded',timeout:60000});
+      await page.waitForFunction(()=>!!window.RobinGraphChat);
+      const profile=structuredClone(profiles[name]);
       if(variant==='missing'){profile.images=[];profile.traits=[];profile.sections=[];profile.photo_availability={status:'not_found'};}
       if(variant==='long'){for(const s of profile.sections||[])if(s.key==='appearance')for(const item of s.items||[])if(item.text)item.text+=' '+item.text;}
       await page.evaluate(profile=>{const host=document.createElement('div');host.className='message-answer';document.body.appendChild(host);const card=RobinGraphChat.buildSpeciesCard(document,profile);host.appendChild(RobinGraphChat.buildSpeciesPopup(document,card,profile));host.querySelector('.species-popup-trigger').click();},profile);

@@ -43,7 +43,7 @@
 
 ## 배포·커밋 정보
 
-최종 TEST 이미지, 커밋, 릴리스 해시, 실제 배포 후 검증은 완료 후 덧붙인다. 이 초기 문서만으로 배포 완료를 판단하지 않는다.
+구현 커밋과 실제 TEST 배포 정보는 아래 최종 검증 기록에 명시한다.
 
 ## 한계와 후속
 
@@ -60,3 +60,20 @@
 - 자료 없는 점선 박스의 중심과 각 열·제목의 중심 차이는 1px 미만이다. 실제 비율 도넛이 있는 청둥오리도 두 열이 유지된다.
 - 첫 매트릭스 실행은 세 프로필을 다시 조회하는 단계에서 응답이 길어져 중단했다. 레이아웃 단정 실패가 발생한 것은 아니다. 반복 API 조회 대신 이번 작업 초기에 실제 조회한 응답을 재사용했다. 이미지 decode는 각 5초 제한을 두고 성공 개수를 결과에 별도로 기록한다.
 - 결과: `docs/verification/assets/2026-10-09-card-photo-layout-local.json`. 32개의 앞뒤 스크린샷은 `/tmp/rg-card-layout-local/`에 두고 저장소에는 추가하지 않았다. PC 청둥오리 앞면 및 모바일 까치 뒷면 이미지를 직접 열어 확인했다.
+
+## 최종 NAS TEST 배포 및 실제 서버 자산 검증
+
+- 구현 커밋: `a2c8bcc374211f0c8d3cb7b2964114e1fdf7d043`, `dev`에 커밋 및 `origin/dev` push 완료. 뒤의 검증 도구 대기 조건·문서·결과 JSON 추가는 앱 CSS/JS를 바꾸지 않는다.
+- TEST 이미지: `robingraph-api:test-card-photo-a2c8bcc`.
+- NAS 릴리스 디렉터리: `/home/kimdove/RobinGraph-card-photo-a2c8bcc`.
+- 릴리스 archive SHA-256: `03559cefd9cf16fc655b7f0088255830af9dcea8ccc57220ea123d29c1347a7d`. NAS에서 해시 검증 후 추출했다.
+- `.env.nas.test`만 직전 TEST에서 복사하고 TEST 이미지 태그만 바꿨다. `ROBINGRAPH_DEPLOY_TARGET=test`로 배포·verify 실행. verify 반환 `status: ok`, `deployment_target: test`. Docker TEST 상태 healthy, 재시작 0.
+- 로컬 CSS·NAS 컨테이너 CSS·공개 TEST HTTPS가 제공하는 CSS SHA-256은 모두 `e1ac11fe342c6959a605c5182306ef6ba990030e8aacc5378f031cdb9db8f9a1`로 일치했다.
+- 배포 후 동일 16가지 브라우저 매트릭스: 16 통과, 실패 0, 건너뜀 0. 새 서버 CSS/JS와 작업 초기에 실제 TEST API에서 조회한 세 종의 응답을 사용했으며 API 응답을 새로 조회했다고 주장하지 않는다.
+- 기본 양면이 각 화면 안에 들어오고, 휠 입력 후 내부 scrollTop 0, 앞뒤 높이 동일, PC 공통 사진 비율 7:6, 점선 박스와 열/제목 중심 차이 1px 미만, 사진 전환 4회, 모바일 터치 스와이프 8회가 통과했다. 사진 없는 변형과 긴 관찰 설명 변형도 포함했다.
+- 결과: `docs/verification/assets/2026-10-09-card-photo-layout-deployed.json`. 32개 스크린샷은 `/tmp/rg-card-layout-deployed/`에 보관했다. 배포 후 PC 청둥오리 앞면과 작은 모바일 도도 뒷면을 직접 열어 확인했다.
+- 첫 배포 후 브라우저 실행은 두 번째 사례의 페이지 `load` 대기에서 30초 timeout으로 중단됐다. 통과 처리하지 않았다. 검증 도구를 DOMContentLoaded와 카드 JS 준비까지 기다리도록 수정했다. 문서·자산이 준비된 이후 화면과 이미지 상태를 따로 측정하는 재실행에서 위 16개가 통과했다. 자연어 처리 API의 응답 시간 문제를 해결한 작업은 아니다.
+- 전체 프런트엔드 Node 296 통과 결과는 CSS 구현 후 실행한 결과다. 검증 도구만 바꾼 뒤 동일 전체 테스트를 중복 실행하지 않았다. 변경된 도구는 `node --check` 통과 및 위 실제 Chrome 재실행으로 검증했다.
+- Production 읽기 전용 전후 비교: 컨테이너 ID `d8bfcf42794b201dd5402d68da0c890f7ddbd431b08475993fbe24b72b009f79`, 이미지 `robingraph-api:prod-readable-5fce6eb`, 시작 시각 `2026-10-09T12:30:58.003826995Z`가 완전히 같았다. 운영 배포·재시작·DB 변경 없음.
+- CI 결과는 이번 작업에서 조회하지 않았으므로 CI 통과를 주장하지 않는다.
+- 같은 본문을 Obsidian `Work/RobinGraph/작업기록/2026-10-09-카드사진확대-모바일박스중앙정렬-TEST전용.md`에 저장하고 작업기록·프로젝트 인덱스에 연결한다. 저장 후 본문 읽기 검증으로 일치를 확인한다.
