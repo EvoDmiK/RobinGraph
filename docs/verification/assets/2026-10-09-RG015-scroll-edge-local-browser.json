@@ -1,0 +1,2651 @@
+{
+  "passed": true,
+  "mode": "local",
+  "physical_device": false,
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "fixture": null,
+      "actual_api_db": true,
+      "front": {
+        "before": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "front"
+        },
+        "after": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "front"
+        },
+        "forced": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "front"
+        }
+      },
+      "back": {
+        "before": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        },
+        "after": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        },
+        "forced": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        }
+      },
+      "expanded": {
+        "before": {
+          "dialog": {
+            "x": 21,
+            "y": 16,
+            "width": 347.984375,
+            "height": 812,
+            "right": 368.984375,
+            "bottom": 828
+          },
+          "card": {
+            "x": 29.001983642578125,
+            "y": 24,
+            "width": 331.99603271484375,
+            "height": 795.8394165039062,
+            "right": 360.9980163574219,
+            "bottom": 819.8394165039062
+          },
+          "close": {
+            "x": 316.984375,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 360.984375,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8.001983642578125,
+            "right": 7.986358642578125,
+            "top": 8,
+            "bottom": 8.16058349609375
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1007,
+              "client": 1007,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1005,
+              "client": 1005,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 427,
+              "client": 427,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.7904667328699106",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        },
+        "after": {
+          "dialog": {
+            "x": 21,
+            "y": 16,
+            "width": 347.984375,
+            "height": 812,
+            "right": 368.984375,
+            "bottom": 828
+          },
+          "card": {
+            "x": 29.001983642578125,
+            "y": 24,
+            "width": 331.99603271484375,
+            "height": 795.8394165039062,
+            "right": 360.9980163574219,
+            "bottom": 819.8394165039062
+          },
+          "close": {
+            "x": 316.984375,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 360.984375,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8.001983642578125,
+            "right": 7.986358642578125,
+            "top": 8,
+            "bottom": 8.16058349609375
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1007,
+              "client": 1007,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1005,
+              "client": 1005,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 427,
+              "client": 427,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.7904667328699106",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        },
+        "forced": {
+          "dialog": {
+            "x": 21,
+            "y": 16,
+            "width": 347.984375,
+            "height": 812,
+            "right": 368.984375,
+            "bottom": 828
+          },
+          "card": {
+            "x": 29.001983642578125,
+            "y": 24,
+            "width": 331.99603271484375,
+            "height": 795.8394165039062,
+            "right": 360.9980163574219,
+            "bottom": 819.8394165039062
+          },
+          "close": {
+            "x": 316.984375,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 360.984375,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8.001983642578125,
+            "right": 7.986358642578125,
+            "top": 8,
+            "bottom": 8.16058349609375
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1007,
+              "client": 1007,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1005,
+              "client": 1005,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 427,
+              "client": 427,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 837,
+              "client": 837,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.7904667328699106",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "back"
+        }
+      },
+      "resizes": [
+        {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 742,
+            "right": 378,
+            "bottom": 758
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 725.9895629882812,
+            "right": 370,
+            "bottom": 749.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 742,
+              "client": 742,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 726,
+              "client": 726,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 871,
+              "client": 871,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 869,
+              "client": 869,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 701,
+              "client": 701,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 701,
+              "client": 701,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 291,
+              "client": 291,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 701,
+              "client": 701,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 774
+          },
+          "face": "front"
+        },
+        {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812,
+            "right": 378,
+            "bottom": 828
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 795.9895629882812,
+            "right": 370,
+            "bottom": 819.9895629882812
+          },
+          "close": {
+            "x": 326,
+            "y": 24,
+            "width": 44,
+            "height": 44,
+            "right": 370,
+            "bottom": 68
+          },
+          "gaps": {
+            "left": 8,
+            "right": 8,
+            "top": 8,
+            "bottom": 8.01043701171875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 812,
+              "client": 812,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 796,
+              "client": 796,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 955,
+              "client": 955,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 953,
+              "client": 953,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 375,
+              "client": 375,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 785,
+              "client": 785,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.8333333333333334",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "face": "front"
+        }
+      ],
+      "reopened": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "right": 378,
+          "bottom": 828
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "right": 370,
+          "bottom": 819.9895629882812
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "right": 370,
+          "bottom": 68
+        },
+        "gaps": {
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8.01043701171875
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "height": 796,
+            "client": 796,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-fit-surface",
+            "top": 0,
+            "left": 0,
+            "height": 955,
+            "client": 955,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "left": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-faces",
+            "top": 0,
+            "left": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "left": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-media",
+            "top": 0,
+            "left": 0,
+            "height": 375,
+            "client": 375,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "left": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "root": {
+          "top": 200,
+          "left": 0
+        },
+        "fit": "0.8333333333333334",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "face": "front"
+      },
+      "pinch": {
+        "enlarged": {
+          "scale": 1.500000238418579,
+          "fit": "0.8333333333333334"
+        },
+        "restoredFit": "0.8333333333333334"
+      },
+      "page_errors": [],
+      "chat_scroll_after_close": {
+        "before": 0,
+        "after": 200
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "touch": false,
+      "fixture": "long",
+      "actual_api_db": false,
+      "front": {
+        "before": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "front"
+        },
+        "after": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "front"
+        },
+        "forced": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "front"
+        }
+      },
+      "back": {
+        "before": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        },
+        "after": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        },
+        "forced": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        }
+      },
+      "expanded": {
+        "before": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        },
+        "after": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        },
+        "forced": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "back"
+        }
+      },
+      "resizes": [
+        {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 618,
+            "right": 870,
+            "bottom": 634
+          },
+          "card": {
+            "x": 514.5232543945312,
+            "y": 28,
+            "width": 250.9534912109375,
+            "height": 593.9639892578125,
+            "right": 765.4767456054688,
+            "bottom": 621.9639892578125
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 104.52325439453125,
+            "right": 104.52325439453125,
+            "top": 12,
+            "bottom": 12.0360107421875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 618,
+              "client": 618,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 594,
+              "client": 594,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1032,
+              "client": 1032,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1030,
+              "client": 1030,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 850,
+              "client": 850,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 850,
+              "client": 850,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 162,
+              "client": 162,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 850,
+              "client": 850,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.5755813953488372",
+          "viewport": {
+            "width": 1280,
+            "height": 650
+          },
+          "face": "front"
+        },
+        {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 688,
+            "right": 870,
+            "bottom": 704
+          },
+          "card": {
+            "x": 502.009521484375,
+            "y": 28,
+            "width": 275.98095703125,
+            "height": 663.8318481445312,
+            "right": 777.990478515625,
+            "bottom": 691.8318481445312
+          },
+          "close": {
+            "x": 814,
+            "y": 28,
+            "width": 44,
+            "height": 44,
+            "right": 858,
+            "bottom": 72
+          },
+          "gaps": {
+            "left": 92.009521484375,
+            "right": 92.009521484375,
+            "top": 12,
+            "bottom": 12.16815185546875
+          },
+          "scroll": [
+            {
+              "class": "species-popup risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 688,
+              "client": 688,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-frame",
+              "top": 0,
+              "left": 0,
+              "height": 664,
+              "client": 664,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-fit-surface",
+              "top": 0,
+              "left": 0,
+              "height": 1049,
+              "client": 1049,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card risk-lc",
+              "top": 0,
+              "left": 0,
+              "height": 1047,
+              "client": 1047,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-faces",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-card-front",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            },
+            {
+              "class": "species-media",
+              "top": 0,
+              "left": 0,
+              "height": 179,
+              "client": 179,
+              "overflow": "clip"
+            },
+            {
+              "class": "species-card-back",
+              "top": 0,
+              "left": 0,
+              "height": 867,
+              "client": 867,
+              "overflow": "visible"
+            }
+          ],
+          "root": {
+            "top": 0,
+            "left": 0
+          },
+          "fit": "0.6329837940896091",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "face": "front"
+        }
+      ],
+      "reopened": {
+        "dialog": {
+          "x": 410,
+          "y": 16,
+          "width": 460,
+          "height": 688,
+          "right": 870,
+          "bottom": 704
+        },
+        "card": {
+          "x": 502.009521484375,
+          "y": 28,
+          "width": 275.98095703125,
+          "height": 663.8318481445312,
+          "right": 777.990478515625,
+          "bottom": 691.8318481445312
+        },
+        "close": {
+          "x": 814,
+          "y": 28,
+          "width": 44,
+          "height": 44,
+          "right": 858,
+          "bottom": 72
+        },
+        "gaps": {
+          "left": 92.009521484375,
+          "right": 92.009521484375,
+          "top": 12,
+          "bottom": 12.16815185546875
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "height": 688,
+            "client": 688,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "height": 664,
+            "client": 664,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-fit-surface",
+            "top": 0,
+            "left": 0,
+            "height": 1049,
+            "client": 1049,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "left": 0,
+            "height": 1047,
+            "client": 1047,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-faces",
+            "top": 0,
+            "left": 0,
+            "height": 867,
+            "client": 867,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "left": 0,
+            "height": 867,
+            "client": 867,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-media",
+            "top": 0,
+            "left": 0,
+            "height": 179,
+            "client": 179,
+            "overflow": "clip"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "left": 0,
+            "height": 867,
+            "client": 867,
+            "overflow": "visible"
+          }
+        ],
+        "root": {
+          "top": 0,
+          "left": 0
+        },
+        "fit": "0.6329837940896091",
+        "viewport": {
+          "width": 1280,
+          "height": 720
+        },
+        "face": "front"
+      },
+      "photoControls": {
+        "before": "사진 1 / 2",
+        "after": "사진 2 / 2",
+        "restored": true
+      },
+      "page_errors": [],
+      "chat_scroll_after_close": {
+        "before": 0,
+        "after": 0
+      }
+    }
+  ]
+}
