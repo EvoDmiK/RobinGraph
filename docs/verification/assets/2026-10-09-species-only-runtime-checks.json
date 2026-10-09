@@ -1,0 +1,100 @@
+{
+  "revision": "48add3a9bb0d8a6f04b165a7ec1e56aaee6ddb28",
+  "python_tests": 129,
+  "frontend_tests": 291,
+  "synthetic_flow_taxa": 356,
+  "environments": {
+    "test": {
+      "http_requests": 20,
+      "http_failures": [],
+      "browser": [
+        {
+          "width": 1280,
+          "taxon": "Parus cinereus",
+          "traits": [
+            "body_mass",
+            "habitat",
+            "diet_category"
+          ],
+          "sections": [
+            "basic",
+            "ecology",
+            "source_scope_notes"
+          ],
+          "noSubgroup": true,
+          "body": [
+            "박새기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g서식 환경: 숲먹이: 무척추동물평가 범위 확인 필요생활과 먹이서식 환경: 숲먹이 유형: 무척추동물출처 범위별 설명이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.Parus cinereus이 새는 회색 등을 가지며 아랫면은 흰색입니다.암컷은 더 좁은 복부 선을 가지며 약간 더 둔탁합니다.이 새들은 주로 털어내기를 통해 곤충을 포획하며 먹이를 찾습니다.정상적인 한 배 산란 수는 약 4개에서 6개의 알입니다."
+          ],
+          "card": "조류 도감\n\n박새\n\nCinereous Tit\n\nParus cinereus\n\n평가 범위 확인 필요\n\n←\n사진 1 / 2\n→\n먹이: 무척추동물\n체중 · 문헌 범위 평균\n16.55 g\n먹이 유형\n무척추동물\n서식 환경\n숲\n주 생활 방식\n자료 없음\n관찰 포인트\n\n출처가 확인된 관찰 자료가 아직 없습니다.",
+          "warnings": []
+        },
+        {
+          "width": 390,
+          "taxon": "Parus cinereus",
+          "traits": [
+            "body_mass",
+            "habitat",
+            "diet_category"
+          ],
+          "sections": [
+            "basic",
+            "ecology",
+            "source_scope_notes"
+          ],
+          "noSubgroup": true,
+          "body": [
+            "박새기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g서식 환경: 숲먹이: 무척추동물평가 범위 확인 필요생활과 먹이서식 환경: 숲먹이 유형: 무척추동물출처 범위별 설명이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.Parus cinereus이 새는 회색 등을 가지며 아랫면은 흰색입니다.암컷은 더 좁은 복부 선을 가지며 약간 더 둔탁합니다.이 새들은 주로 털어내기를 통해 곤충을 포획하며 먹이를 찾습니다.정상적인 한 배 산란 수는 약 4개에서 6개의 알입니다."
+          ],
+          "card": "조류 도감\n\n박새\n\nCinereous Tit\n\nParus cinereus\n\n평가 범위 확인 필요\n\n←\n사진 1 / 2\n→\n먹이: 무척추동물\n체중 · 문헌 범위 평균\n16.55 g\n먹이 유형\n무척추동물\n서식 환경\n숲\n주 생활 방식\n자료 없음\n관찰 포인트\n\n출처가 확인된 관찰 자료가 아직 없습니다.",
+          "warnings": []
+        }
+      ]
+    },
+    "prod": {
+      "http_requests": 20,
+      "http_failures": [],
+      "browser": [
+        {
+          "width": 1280,
+          "taxon": "Parus cinereus",
+          "traits": [
+            "body_mass",
+            "habitat",
+            "diet_category"
+          ],
+          "sections": [
+            "basic",
+            "ecology",
+            "source_scope_notes"
+          ],
+          "noSubgroup": true,
+          "body": [
+            "박새기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g서식 환경: 숲먹이: 무척추동물평가 범위 확인 필요생활과 먹이서식 환경: 숲먹이 유형: 무척추동물출처 범위별 설명이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.Parus cinereus이 새는 윗등이 회색이고 아랫면은 흰색이며, 넓은 검은색 배 줄무늬가 있고 볏이 없습니다.암컷은 배의 줄무늬가 더 좁고 색이 약간 더 칙칙합니다.이 새들은 주로 털어내며 먹이를 찾고, 주로 애벌레, 빈대, 딱정벌레 같은 곤충을 잡으며 싹과 열매도 먹습니다.둥지 구멍 안에서 위협을 받으면 쉿하는 소리를 냅니다."
+          ],
+          "card": "조류 도감\n\n박새\n\nCinereous Tit\n\nParus cinereus\n\n평가 범위 확인 필요\n\n←\n사진 1 / 2\n→\n먹이: 무척추동물\n체중 · 문헌 범위 평균\n16.55 g\n먹이 유형\n무척추동물\n서식 환경\n숲\n주 생활 방식\n자료 없음\n관찰 포인트\n\n출처가 확인된 관찰 자료가 아직 없습니다.",
+          "warnings": []
+        },
+        {
+          "width": 390,
+          "taxon": "Parus cinereus",
+          "traits": [
+            "body_mass",
+            "habitat",
+            "diet_category"
+          ],
+          "sections": [
+            "basic",
+            "ecology",
+            "source_scope_notes"
+          ],
+          "noSubgroup": true,
+          "body": [
+            "박새기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g서식 환경: 숲먹이: 무척추동물평가 범위 확인 필요생활과 먹이서식 환경: 숲먹이 유형: 무척추동물출처 범위별 설명이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.Parus cinereus이 새는 윗등이 회색이고 아랫면은 흰색이며, 넓은 검은색 배 줄무늬가 있고 볏이 없습니다.암컷은 배의 줄무늬가 더 좁고 색이 약간 더 칙칙합니다.이 새들은 주로 털어내며 먹이를 찾고, 주로 애벌레, 빈대, 딱정벌레 같은 곤충을 잡으며 싹과 열매도 먹습니다.둥지 구멍 안에서 위협을 받으면 쉿하는 소리를 냅니다."
+          ],
+          "card": "조류 도감\n\n박새\n\nCinereous Tit\n\nParus cinereus\n\n평가 범위 확인 필요\n\n←\n사진 1 / 2\n→\n먹이: 무척추동물\n체중 · 문헌 범위 평균\n16.55 g\n먹이 유형\n무척추동물\n서식 환경\n숲\n주 생활 방식\n자료 없음\n관찰 포인트\n\n출처가 확인된 관찰 자료가 아직 없습니다.",
+          "warnings": []
+        }
+      ]
+    }
+  }
+}
