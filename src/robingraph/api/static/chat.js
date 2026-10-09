@@ -544,11 +544,17 @@
       for (var j = 1; j <= pieces; j += 1) { path += " A 31 31 0 0 0 " + point(31, end - amount * j / pieces).join(" "); }
       return path + " Z";
     }
+    var colors = ["#387b63", "#7da052", "#c2a65b", "#5f8eae", "#997398", "#8e9b73", "#c48164", "#639c9d", "#a3a85c", "#6d7796"];
+    // The donut segments and the 항목·비율 swatches share one palette.
+    function componentColor(entry) {
+      if (entry.missing) { return "#c8cdbf"; }
+      var colorIndex = Object.keys(labels).indexOf(entry.key);
+      return colors[(colorIndex >= 0 ? colorIndex : Object.keys(labels).length) % colors.length];
+    }
     if (drawable) {
       var svg = svgNode("svg");
       svg.setAttribute("class", "species-distribution-svg"); svg.setAttribute("viewBox", "0 0 120 120");
       svg.setAttribute("role", "img"); svg.setAttribute("aria-label", (trait.label || trait.name) + " 도넛 차트 · 항목과 비율은 아래 목록에서 확인할 수 있습니다.");
-      var colors = ["#387b63", "#7da052", "#c2a65b", "#5f8eae", "#997398", "#8e9b73", "#c48164", "#639c9d", "#a3a85c", "#6d7796"];
       var offset = 0;
       var visible = entries.filter(function (entry) { return entry.amount > 0; });
       if (total < 100) { visible.push({ key: "unrecorded", amount: 100 - total, label: "미기록분", missing: true }); }
@@ -556,8 +562,7 @@
         var segment = svgNode("path"); segment.setAttribute("class", "species-distribution-segment");
         segment.setAttribute("d", ringPath(offset, entry.amount)); segment.setAttribute("data-start-percent", String(offset));
         segment.setAttribute("data-component", entry.key); segment.setAttribute("data-percent", String(entry.amount));
-        var colorIndex = Object.keys(labels).indexOf(entry.key);
-        segment.setAttribute("fill", entry.missing ? "#c8cdbf" : colors[(colorIndex >= 0 ? colorIndex : Object.keys(labels).length) % colors.length]);
+        segment.setAttribute("fill", componentColor(entry));
         segment.setAttribute("aria-label", entry.label + " " + distributionAmountText(entry.amount) + (trait.inferred ? " · 추정값" : ""));
         segment.addEventListener("pointerenter", function (event) {
           if (event.pointerType !== "mouse" || event.buttons) { return; }
@@ -582,10 +587,14 @@
       chart.appendChild(fallback);
     }
     chart.appendChild(tooltip);
+    // The dataset label ("자료 1") stays in data-source-label, the aria-label and the
+    // sources toggle; the card face only shows caveats, and nothing when there are none.
+    var caveats = [];
+    if (drawable && total < 100) { caveats.push("미기록분 " + Math.round((100 - total) * 1000000) / 1000000 + "%"); }
+    if (trait.inferred) { caveats.push("추정값"); }
+    if (entries.some(function (entry) { return !entry.known; })) { caveats.push("미분류 항목 포함"); }
     var note = doc.createElement("p"); note.className = "species-distribution-note";
-    note.textContent = datasetLabel + (drawable && total < 100 ? " · 미기록분 " + Math.round((100 - total) * 1000000) / 1000000 + "%" : "");
-    if (trait.inferred) { note.textContent += " · 추정값"; }
-    if (entries.some(function (entry) { return !entry.known; })) { note.textContent += " · 미분류 항목 포함"; }
+    note.textContent = caveats.join(" · "); note.hidden = caveats.length === 0;
     chart.appendChild(note);
     var details = doc.createElement("details"); details.className = "species-distribution-values";
     var summary = doc.createElement("summary"); summary.textContent = "항목·비율"; details.appendChild(summary);
@@ -593,7 +602,16 @@
     entries.forEach(function (entry) {
       var row = doc.createElement("li"); row.setAttribute("data-component", entry.key);
       if (entry.valid) { row.setAttribute("data-raw-percent", String(entry.amount)); }
-      row.textContent = entry.label + " · " + distributionAmountText(entry.amount) + (entry.valid ? "" : " · 비율 미확인");
+      if (entry.valid && entry.amount === 0) { row.className = "species-distribution-zero"; }
+      var swatch = svgNode("svg"); swatch.setAttribute("class", "species-distribution-swatch");
+      swatch.setAttribute("viewBox", "0 0 10 10"); swatch.setAttribute("aria-hidden", "true");
+      var dot = svgNode("circle"); dot.setAttribute("cx", "5"); dot.setAttribute("cy", "5"); dot.setAttribute("r", "4.5");
+      dot.setAttribute("fill", componentColor(entry)); swatch.appendChild(dot); row.appendChild(swatch);
+      var name = doc.createElement("span"); name.className = "species-distribution-name"; name.textContent = entry.label; row.appendChild(name);
+      // The separator keeps the plain-text form "항목 · 40%" for text extraction; CSS hides it.
+      var separator = doc.createElement("span"); separator.className = "species-distribution-sep"; separator.textContent = " · "; row.appendChild(separator);
+      var amountText = doc.createElement("span"); amountText.className = "species-distribution-amount";
+      amountText.textContent = distributionAmountText(entry.amount) + (entry.valid ? "" : " · 비율 미확인"); row.appendChild(amountText);
       list.appendChild(row);
     });
     if (!entries.length) { var noData = doc.createElement("li"); noData.textContent = "원자료: " + distributionAmountText(values); list.appendChild(noData); }
