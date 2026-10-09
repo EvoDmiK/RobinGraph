@@ -825,14 +825,12 @@ body:has(.species-popup[open]) { overflow: hidden; }
   aspect-ratio: 16 / 10;
   max-height: min(240px, 28dvh);
 }
-/* The image slot, rather than an auto margin above observations, consumes the
-   front's spare space on every viewport, so no blank band sits between the basic
-   facts and 관찰 포인트. Absolute images cannot inflate the natural card height
-   and feed a percentage-height/fit measurement cycle. Growth is capped; beyond
-   the cap any remainder sits below the observations, not above them. */
-.species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 1 0 auto; max-height: min(480px, 56dvh); }
-.species-popup .species-photo-area .species-media { flex: 1 1 0; min-height: 0; }
-.species-popup .species-photo-area .species-media figure { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
+/* Give every species the same generous photo proportions. Diet chips, photo
+   controls and the opposite face no longer consume the image's spare height.
+   The popup fitter scales the complete card to the viewport without scrolling. */
+.species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; }
+.species-popup .species-photo-area .species-media { flex: 0 0 auto; min-height: 0; }
+.species-popup .species-photo-area .species-media figure { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; aspect-ratio: 7 / 6; }
 .species-popup .species-photo-area .species-media figure img { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; max-height: none; aspect-ratio: auto; object-fit: cover; }
 .species-popup .species-photo-area .species-photo-placeholder { flex: 1 0 auto; }
 .species-quick-facts {
@@ -983,6 +981,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-popup .species-card-front > * { flex-shrink: 0; }
   .species-popup .species-photo-area,
   .species-popup .species-photo-placeholder { min-height: min(240px, 30dvh); }
+  /* Phones retain their tall photo slot while the whole card fits the screen. */
+  .species-popup .species-card-front .species-photo-area { flex: 1 0 auto; max-height: min(480px, 56dvh); }
+  .species-popup .species-photo-area .species-media { flex: 1 1 0; }
+  .species-popup .species-photo-area .species-media figure { aspect-ratio: auto; }
   .species-popup .species-photo-area .species-media img { max-height: min(240px, 30dvh); }
   .species-popup .species-quick-facts { font-size: .95rem; }
   .species-popup .species-quick-facts dt,
@@ -1405,10 +1407,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
   gap: 8px;
   margin-top: 8px;
 }
-.species-distribution-column { min-width: 0; }
-.species-distribution-column > h4 { margin: 0 0 4px; font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
+.species-distribution-column { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.species-distribution-column > h4 { width: 100%; margin: 0 0 4px; font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
 .species-popup .species-card-back .species-distribution-column .trait-card {
   display: block;
+  width: 100%;
   min-width: 0;
   padding: 4px 0;
   border: 0;
