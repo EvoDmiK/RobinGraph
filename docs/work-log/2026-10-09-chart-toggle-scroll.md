@@ -5,7 +5,7 @@
 사용자가 뒷면 도넛 차트 아래의 `▶ 항목·비율` 토글(스크린샷)을 열어도 카드가 축소되지 않고 비율을 유지한 채 스크롤되도록 해 달라고 요청했다.
 "ponytail을 이용해서"라는 지시에 따라 Ponytail 방식(공식 저장소 `DietrichGebert/ponytail` revision `9cc65d0`의 `ponytail` SKILL, "요청을 완전히 해결하는 가장 작은 변경, 새 추상화·옵션 없음")으로 진행했다.
 Ponytail SKILL.md는 새 빈 임시 디렉터리에 받아 읽기만 했고 설치하거나 그 안의 코드를 실행하지 않았다.
-완료 범위는 코드와 TEST 배포·검증까지이며 PROD 배포와 `main` 병합은 하지 않았다.
+TEST에서 확인한 뒤 사용자의 지시로 네 변경(항목·비율 스크롤, TEST 파란 파비콘 코드, 프레임 두께, 항목·비율 목록 디자인)을 한꺼번에 PROD에 배포하고 `main`에 병합했다.
 
 ## 원인과 접근
 
@@ -48,7 +48,9 @@ CSS는 바꾸지 않았다(`data-fit-scroll="true"` 규칙이 이미 있다). �
 
 - 구현 커밋 `c305f7f39b235e80c919f90852fa16102015d313`(`dev-claude`). 릴리스 묶음 SHA-256 `b49c7963a7f47a1f7de4a0ad714becedfd61ae16f828a5ab272ae1d5602bd034`, NAS 일치·MANIFEST 불일치 0.
 - NAS 체크아웃 `~/RobinGraph-c305f7f`. TEST env는 직전 TEST env(`~/RobinGraph-5fb401e/.env.nas.test`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했다.
-- **PROD 배포와 `main` 병합은 하지 않았다.** 현재 PROD는 `robingraph-api:prod-5fb401e`다.
+- PROD 배포: 네 변경을 담은 릴리스 `e90ff85`(`robingraph-api:prod-e90ff85`)로 PROD에 한꺼번에 배포했다. 16:00:02 시작, 16:00:10 종료. healthy, 재시작 0, OCI revision `e90ff85…`, `verify` ok(`deployment_target: prod`), `verify_api_deployment.py` `passed: true`. 컨테이너 안 HTTP로 서빙 자산 확인: `chat.js`(스크롤 선택자·프레임 추종·주의 문구), `styles.css`(스크롤 규칙·알약 토글), 아이콘은 PROD 기본(주황) 그대로(8,568 / 2,559 / 46,864 / 24,595바이트, TEST 변형과 다른 해시). `.env.nas.prod`는 직전 PROD env(`~/RobinGraph-5fb401e`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했고 Jev·Gemini 키는 그대로 이어졌다(컨테이너 환경에 3개 설정 확인).
+- 롤백: 직전 PROD 이미지 `robingraph-api:prod-5fb401e`가 NAS에 있다. `cd ~/RobinGraph-e90ff85 && ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-5fb401e`(실행하지 않음).
+- `main` 병합은 병합 커밋으로 반영했다. PROD 공개 도메인·실제 브라우저·휴대폰 확인은 하지 못했다(컨테이너 안 HTTP까지).
 
 ## 남은 한계
 

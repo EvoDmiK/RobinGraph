@@ -5,7 +5,7 @@
 1. "TEST 웹의 파비콘은 다른 색으로 만들어 줄 수 있을까? PROD랑 헷갈려" — TEST와 PROD 탭을 구분할 수 있게 한다.
 2. "테두리의 굵기는 토글을 열든 말든 얇은 걸로 통일해줘" — 카드를 둘러싼 은색 팝업 프레임의 두께가 토글 상태와 상관없이 얇고 같게 한다.
 
-완료 범위는 코드와 TEST 배포·검증까지이며 PROD 배포와 `main` 병합은 하지 않았다.
+TEST에서 확인한 뒤 사용자의 지시로 네 변경(항목·비율 스크롤, TEST 파란 파비콘 코드, 프레임 두께, 항목·비율 목록 디자인)을 한꺼번에 PROD에 배포하고 `main`에 병합했다.
 
 ## 1. TEST 전용 파란 파비콘
 
@@ -77,7 +77,9 @@
 - 커밋: 파비콘 변형 `e07379f`, 프레임 두께 `51cecd128897419f673b62e13e43f870bc930a59`(`dev-claude`). 이전 `항목·비율` 스크롤 커밋 `c305f7f`도 이 TEST 이미지에 포함된다.
 - 릴리스 묶음 SHA-256 `3aa166642abc827fdd6cf2dc406b916265696761330a597467e9c5757ef540e2`, NAS 일치·MANIFEST 불일치 0.
 - NAS 체크아웃 `~/RobinGraph-51cecd1`, TEST env는 직전 TEST env를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경.
-- **PROD 배포와 `main` 병합은 하지 않았다.** 현재 PROD는 `robingraph-api:prod-5fb401e`이며, PROD에는 `항목·비율` 스크롤(`c305f7f`), TEST 파비콘 변형(`e07379f`), 프레임 두께(`51cecd1`)가 아직 없다.
+- PROD 배포: 네 변경을 담은 릴리스 `e90ff85`(`robingraph-api:prod-e90ff85`)로 PROD에 한꺼번에 배포했다. 16:00:02 시작, 16:00:10 종료. healthy, 재시작 0, OCI revision `e90ff85…`, `verify` ok(`deployment_target: prod`), `verify_api_deployment.py` `passed: true`. 컨테이너 안 HTTP로 서빙 자산 확인: `chat.js`(스크롤 선택자·프레임 추종·주의 문구), `styles.css`(스크롤 규칙·알약 토글), 아이콘은 PROD 기본(주황) 그대로(8,568 / 2,559 / 46,864 / 24,595바이트, TEST 변형과 다른 해시). `.env.nas.prod`는 직전 PROD env(`~/RobinGraph-5fb401e`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했고 Jev·Gemini 키는 그대로 이어졌다(컨테이너 환경에 3개 설정 확인).
+- 롤백: 직전 PROD 이미지 `robingraph-api:prod-5fb401e`가 NAS에 있다. `cd ~/RobinGraph-e90ff85 && ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-5fb401e`(실행하지 않음).
+- `main` 병합은 병합 커밋으로 반영했다. PROD 공개 도메인·실제 브라우저·휴대폰 확인은 하지 못했다(컨테이너 안 HTTP까지).
 
 ## 남은 한계
 
