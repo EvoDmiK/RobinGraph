@@ -130,7 +130,7 @@ class SpeciesProfileTest(unittest.TestCase):
         repository = Mock()
         source = {'source_name':'AviList global avian checklist',
                   'source_url':'https://www.avilist.org/snapshot-v2025b.xlsx',
-                  'source_release':'v2025b'}
+                  'source_release':'v2025b', 'source_id':'avilist-v2025b'}
         for raw, expected in [(code, code) for code in CONSERVATION_LABELS] + [
                 (' lc ', 'LC'), ('CR (PE)', 'CR'), ('CR (PEW)', 'CR'),
                 ('rare', None), ('LC/NT', None), ('CR (maybe)', None),
@@ -158,6 +158,41 @@ class SpeciesProfileTest(unittest.TestCase):
                      [{'category_raw':'LC'}], [{**source}, {**source}]):
             repository._run.return_value = rows
             self.assertIsNone(read_conservation(repository, LINEAGE)['category'])
+
+    def test_snapshot_assessment_boundary_and_source_identity(self):
+        source = {'source_name':'AviList global avian checklist',
+                  'source_url':'https://explore.avilist.org/data/avilist-2025b.json',
+                  'source_release':'v2025b', 'source_id':'avilist-v2025b',
+                  'snapshot_sha256':'a' * 64,
+                  'assessment_reference_url':'https://datazone.birdlife.org/species/factsheet/mallard-anas-platyrhynchos'}
+        repository = Mock()
+        repository._run.return_value = [{'category_raw':'NE', **source}]
+        result = read_conservation(repository, LINEAGE)
+        self.assertEqual('NE', result['category'])
+        self.assertEqual('taxonomy_snapshot', result['evidence_kind'])
+        self.assertEqual('needs_review', result['assessment_status'])
+        self.assertFalse(result['independently_verified'])
+        self.assertIn('단정할 수 없습니다', result['quality_note'])
+        self.assertEqual('a' * 64, result['snapshot_sha256'])
+        # A contradictory link must never imply that NE has a matched assessment.
+        self.assertNotIn('assessment_reference_url', result)
+        repository._run.return_value = [{'category_raw':'LC', **source}]
+        self.assertEqual('snapshot_only', read_conservation(repository, LINEAGE)['assessment_status'])
+        for override in [
+            {'source_id':'other-v2025b'}, {'source_id':None},
+            {'source_url':'https://avilist.org.evil.test/snapshot'},
+            {'source_url':'https://user:pass@www.avilist.org/snapshot'},
+            {'source_url':'http://www.avilist.org/snapshot'},
+            {'source_url':'https://www.avilist.org:444/snapshot'},
+            {'source_url':'https://www.avilist.org:bad/snapshot'},
+            {'snapshot_sha256':'not-a-checksum'},
+        ]:
+            with self.subTest(override=override):
+                repository._run.return_value = [{'category_raw':'LC', **source, **override}]
+                self.assertIsNone(read_conservation(repository, LINEAGE)['category'])
+        repository._run.return_value = [{'category_raw':'LC', **source}]
+        self.assertIsNone(read_conservation(repository, replace(LINEAGE, taxonomy_source='Other'))['category'])
+        self.assertIn('t.dataset_id=s.dataset_id', repository._run.call_args.args[0])
 
     def test_summary_is_brief_and_uses_only_attributed_ecology_fields(self):
         def trait(name, display, **extra):
@@ -201,7 +236,7 @@ class SpeciesProfileTest(unittest.TestCase):
         repository._run.return_value = [{'category_raw':'CR (PE)',
             'source_name':'AviList global avian checklist',
             'source_url':'https://www.avilist.org/snapshot-v2025b.xlsx',
-            'source_release':'v2025b'}]
+            'source_release':'v2025b', 'source_id':'avilist-v2025b'}]
         flow = create_species_flow(lambda _: LINEAGE,
             lambda _: [{'name':'habitat', 'display':'습지', 'source_name':'AVONET',
                         'source_url':'https://example.com/avonet'}],

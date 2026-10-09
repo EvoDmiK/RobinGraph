@@ -899,37 +899,46 @@
     NE: { label: "미평가", tier: "unconfirmed" },
   };
 
-  /**
-   * Validate `profile.conservation`. Only an exact known category code with a
-   * named source counts as verified; DD/NE keep their code in the badge but
-   * use the neutral palette, and anything missing/unknown is "미확인". The
-   * Korean label comes from the fixed table above so it can never disagree
-   * with the code.
-   */
+  // Source identity and URL/release completeness are separate from risk color.
+  // These checks verify provenance fields, never a live IUCN assessment.
   function conservationInfo(conservation) {
-    var category = conservation && typeof conservation === "object" ? conservation.category : null;
-    // The source dataset annotates some CR rows as "CR (PE)" / "CR (PEW)"
-    // (possibly extinct / in the wild); the backend normalizes these, but
-    // accept the exact raw forms here too rather than dropping to 미확인.
-    if (category === "CR (PE)" || category === "CR (PEW)") {
-      category = "CR";
+    var data = conservation && typeof conservation === "object" ? conservation : {};
+    var url = sanitizeUrl(data.source_url), parsed = null;
+    try { parsed = url ? new URL(url) : null; } catch (_) { /* unconfirmed */ }
+    var hosts = ["avilist.org", "www.avilist.org", "explore.avilist.org",
+      "iucnredlist.org", "www.iucnredlist.org", "nrl.iucnredlist.org", "datazone.birdlife.org"];
+    var sourceVerified = !!(parsed && parsed.protocol === "https:" && !parsed.username && !parsed.password &&
+      (!parsed.port || parsed.port === "443") && hosts.indexOf(parsed.hostname) !== -1 &&
+      typeof data.source_name === "string" && data.source_name.trim() &&
+      typeof data.source_release === "string" && data.source_release.trim());
+    var aviListHost = parsed && ["avilist.org", "www.avilist.org", "explore.avilist.org"].indexOf(parsed.hostname) !== -1;
+    var snapshot = !!(sourceVerified && aviListHost &&
+      ((data.evidence_kind === "taxonomy_snapshot" && data.source_id === "avilist-" + data.source_release) ||
+       (!data.evidence_kind && data.source_name === "AviList global avian checklist")));
+    var category = data.category;
+    var raw = typeof data.category_raw === "string" ? data.category_raw.trim().toUpperCase() : category;
+    var qualifierMatch = typeof raw === "string" ? /^CR\s*\((PEW?)\)$/.exec(raw) : null;
+    if (typeof category === "string" && /^CR\s*\((PEW?)\)$/.test(category)) { category = "CR"; }
+    var base = { category: null, label: "미확인", tier: "unconfirmed", verified: false,
+      sourceVerified: sourceVerified, snapshot: snapshot, badgeText: "멸종위기 등급 미확인" };
+    if ((data.evidence_kind && data.evidence_kind !== "taxonomy_snapshot") ||
+        (data.evidence_kind === "taxonomy_snapshot" && !snapshot)) { return base; }
+    if (!sourceVerified || typeof category !== "string" ||
+        !Object.prototype.hasOwnProperty.call(CONSERVATION_CATEGORIES, category)) { return base; }
+    if (typeof data.category_raw === "string") {
+      var rawCode = /^CR\s*\(PEW?\)$/.test(raw) ? "CR" : raw;
+      if (rawCode !== category) { return base; }
     }
-    var hasSource = !!(conservation && typeof conservation.source_name === "string" && conservation.source_name.trim());
-    if (typeof category !== "string" || !Object.prototype.hasOwnProperty.call(CONSERVATION_CATEGORIES, category) || !hasSource) {
-      return { category: null, label: "미확인", tier: "unconfirmed", verified: false,
-        badgeText: "멸종위기 등급 미확인" };
+    if (snapshot && category === "NE") {
+      return Object.assign(base, { category: "NE", label: "평가 연결 확인 필요",
+        badgeText: "평가 자료 연결 확인 필요 (AviList NE)" });
     }
     var known = CONSERVATION_CATEGORIES[category];
-    var rawCategory = typeof conservation.category_raw === "string" ? conservation.category_raw.trim().toUpperCase() : "";
-    var qualifier = category === "CR" && rawCategory === "CR (PE)" ? " · 절멸 가능성" :
-      category === "CR" && rawCategory === "CR (PEW)" ? " · 야생절멸 가능성" : "";
-    return {
-      category: category,
-      label: known.label,
-      tier: known.tier,
+    var qualifier = category === "CR" && qualifierMatch ?
+      (qualifierMatch[1] === "PE" ? " · 절멸 가능성" : " · 야생절멸 가능성") : "";
+    return Object.assign(base, { category: category, label: known.label, tier: known.tier,
       verified: known.tier !== "unconfirmed",
-      badgeText: "IUCN 적색목록 " + known.label + " (" + category + ")" + qualifier,
-    };
+      badgeText: "IUCN 적색목록 " + known.label + " (" + category + ")" + qualifier + (snapshot ? " · 자료 기준" : "") });
   }
 
   var CONSERVATION_NOTE =
@@ -2497,7 +2506,7 @@
     conservationStatus.textContent = conservation.badgeText;
     conservationSection.appendChild(conservationStatus);
     var rawConservation = profile.conservation && typeof profile.conservation === "object" ? profile.conservation : null;
-    if (conservation.category && rawConservation) {
+    if (rawConservation && typeof rawConservation.source_name === "string") {
       var conservationSource = doc.createElement("span");
       conservationSource.className = "trait-source";
       var sourcePrefix = doc.createElement("span");
@@ -2510,11 +2519,30 @@
         : " · 릴리스 정보 없음";
       conservationSource.appendChild(releaseSuffix);
       conservationSection.appendChild(conservationSource);
+      var quality = doc.createElement("p");
+      quality.className = "species-note";
+      quality.textContent = conservation.snapshot
+        ? (conservation.category === "NE"
+          ? "연결 상태: 평가 대상의 종 범위를 확인해야 합니다. AviList NE를 실제 IUCN 미평가 판정으로 단정할 수 없습니다."
+          : "검증 범위: 분류 자료에 기록된 등급과 출처·릴리스 확인. 평가 원문·평가 연도의 독립 검증은 완료되지 않았습니다.")
+        : "검증 범위: 출처·자료 버전 확인. 최신 평가를 실시간으로 조회한 결과가 아닙니다.";
+      if (!conservation.sourceVerified) { quality.textContent = "출처 또는 자료 버전을 확인하지 못해 카드 색상을 중립으로 표시합니다."; }
+      conservationSection.appendChild(quality);
+      if (typeof rawConservation.snapshot_sha256 === "string" && /^[a-f0-9]{64}$/i.test(rawConservation.snapshot_sha256)) {
+        var checksum = doc.createElement("p");
+        checksum.className = "species-note";
+        checksum.textContent = "원자료 SHA-256: " + rawConservation.snapshot_sha256;
+        conservationSection.appendChild(checksum);
+      }
+      var referenceUrl = sanitizeUrl(rawConservation.assessment_reference_url);
+      if (referenceUrl && new URL(referenceUrl).hostname === "datazone.birdlife.org" && new URL(referenceUrl).protocol === "https:" && !new URL(referenceUrl).username && !new URL(referenceUrl).password && (!new URL(referenceUrl).port || new URL(referenceUrl).port === "443") && conservation.category !== "NE") {
+        conservationSection.appendChild(safeLink(doc, "평가 참고 페이지 (원문 독립 검증 전)", referenceUrl));
+      }
       var rawCategory = typeof rawConservation.category_raw === "string" ? rawConservation.category_raw.trim().toUpperCase() : "";
-      if (rawCategory === "CR (PE)" || rawCategory === "CR (PEW)") {
+      if (/^CR\s*\(PEW?\)$/.test(rawCategory)) {
         var annotation = doc.createElement("p");
         annotation.className = "species-note";
-        annotation.textContent = "원본 등급: " + rawCategory + (rawCategory === "CR (PE)" ? " · 절멸 가능성이 있는 위급종" : " · 야생절멸 가능성이 있는 위급종");
+        annotation.textContent = "원본 등급: " + rawCategory + (/^CR\s*\(PE\)$/.test(rawCategory) ? " · 절멸 가능성이 있는 위급종" : " · 야생절멸 가능성이 있는 위급종");
         conservationSection.appendChild(annotation);
       }
     } else {
@@ -3093,7 +3121,7 @@
     });
     if (showBrief) {
       var briefSources = dietIconInfo(profile).sources.concat((profile.traits || []).filter(function (trait) { return trait.name === "habitat"; }));
-      if (conservationInfo(profile.conservation).verified) { briefSources.push(profile.conservation); }
+      if (conservationInfo(profile.conservation).sourceVerified) { briefSources.push(profile.conservation); }
       briefSources.forEach(function (source) {
         var url = sanitizeUrl(source.source_url);
         var sourceKey = JSON.stringify([url, source.source_name, source.license_name, source.license_url]);

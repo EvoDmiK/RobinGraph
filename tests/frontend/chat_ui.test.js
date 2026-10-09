@@ -2099,7 +2099,7 @@ test("conservationInfo trusts only exact category codes with a source; DD/NE/unk
   }
   for (const raw of ["CR (PE)", "CR (PEW)"]) {
     const info = chat.conservationInfo(Object.assign({ category: raw }, VERIFIED_SOURCE));
-    assert.deepEqual([info.category, info.tier, info.badgeText], ["CR", "cr", "IUCN 적색목록 위급 (CR)"]);
+    assert.deepEqual([info.category, info.tier, info.badgeText], ["CR", "cr", "IUCN 적색목록 위급 (CR)" + (raw.includes("PEW") ? " · 야생절멸 가능성" : " · 절멸 가능성")]);
   }
   const unconfirmedInputs = [
     { category: "CR (XX)", source_name: "IUCN" }, { category: "CR(PE)", source_name: "IUCN" },
@@ -2112,6 +2112,38 @@ test("conservationInfo trusts only exact category codes with a source; DD/NE/unk
     assert.equal(info.tier, "unconfirmed", JSON.stringify(input));
     assert.equal(info.category, null);
     assert.equal(info.badgeText, "멸종위기 등급 미확인");
+  }
+});
+
+test("snapshot NE preserves raw provenance without claiming IUCN Not Evaluated", () => {
+  const source = { source_name: "AviList global avian checklist", source_url: "https://explore.avilist.org/data/avilist-2025b.json", source_release: "v2025b", source_id: "avilist-v2025b", evidence_kind: "taxonomy_snapshot" };
+  const ne = { category: "NE", category_raw: "NE", ...source };
+  const info = chat.conservationInfo(ne);
+  assert.equal(info.sourceVerified, true);
+  assert.equal(info.verified, false);
+  assert.equal(info.tier, "unconfirmed");
+  assert.equal(info.badgeText, "평가 자료 연결 확인 필요 (AviList NE)");
+  const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", ne));
+  assert.doesNotMatch(collectedText(card), /IUCN 적색목록 미평가/);
+  assert.match(collectedText(card.sourceMaterial), /실제 IUCN 미평가 판정으로 단정할 수 없습니다/);
+  assert.ok(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === source.source_url));
+  const lc = chat.conservationInfo({ category: "LC", ...source });
+  assert.equal(lc.tier, "lc");
+  assert.match(lc.badgeText, /자료 기준/);
+  for (const changes of [
+    { source_url: "javascript:alert(1)" }, { source_url: "http://www.iucnredlist.org/" },
+    { source_url: "https://www.iucnredlist.org.evil.test/" }, { source_url: "https://user:pass@www.iucnredlist.org/" },
+    { source_release: "" }, { source_release: null }, { category_raw: "EN" },
+    { evidence_kind: "unconfirmed" }, { evidence_kind: "taxonomy_snapshot", source_id: "unknown" },
+  ]) {
+    const invalid = chat.conservationInfo({ category: "LC", ...VERIFIED_SOURCE, ...changes });
+    assert.equal(invalid.tier, "unconfirmed", JSON.stringify(changes));
+    assert.equal(invalid.verified, false);
+  }
+  for (const raw of ["CR(PE)", "CR  (PEW)"]) {
+    const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", { category: "CR", category_raw: raw, ...source }));
+    assert.match(collectedText(card), raw.includes("PEW") ? /야생절멸 가능성/ : /절멸 가능성/);
+    assert.match(collectedText(card.sourceMaterial), raw.includes("PEW") ? /야생절멸 가능성이 있는 위급종/ : /절멸 가능성이 있는 위급종/);
   }
 });
 
@@ -2147,7 +2179,7 @@ test("card, dialog, and chat button carry the verified tier; sources and the abu
 test("hostile or unverified conservation data renders neutral, inert text", () => {
   const profile = habitatProfile("Forest", { category: "CR", label: "<b>x</b>", source_name: "evil", source_url: "javascript:alert(1)" });
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
-  assert.equal(card.className, "species-card risk-cr");
+  assert.equal(card.className, "species-card risk-unconfirmed");
   const nodes = collectAllNodes(card);
   assert.equal(nodes.some((node) => node.href === "javascript:alert(1)"), false);
   assert.ok(collectAllNodes(card.sourceMaterial).some((node) => node.tagName === "span" && node.textContent === "evil"));
