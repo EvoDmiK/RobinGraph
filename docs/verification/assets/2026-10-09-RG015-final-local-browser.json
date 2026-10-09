@@ -1,0 +1,2277 @@
+{
+  "passed": true,
+  "mode": "local",
+  "physical_device": false,
+  "results": [
+    {
+      "gap": 18.9375,
+      "changedVisual": {
+        "photo": {
+          "x": 446,
+          "y": 213.984375,
+          "width": 388,
+          "height": 216,
+          "bottom": 429.984375
+        },
+        "facts": {
+          "x": 443,
+          "y": 586.984375,
+          "width": 394,
+          "height": 107.4375,
+          "bottom": 694.421875
+        },
+        "factsFont": "14.4px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 443,
+          "y": 713.359375,
+          "width": 394,
+          "height": 125.640625,
+          "bottom": 839
+        },
+        "beforeObservationBottom": 694.421875,
+        "observationFont": "12.96px",
+        "observationText": "관찰 포인트수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지닙니다.이 새의 몸길이는 50~65cm이며, 날개는 81~98cm이고 부리는 4.4~6.1cm 길이입니다.",
+        "fit": "1"
+      },
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "reduced": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "bottom": 860,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 844,
+            "client": 844,
+            "overflow": "auto"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 818,
+            "client": 818,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "bottom": 860,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 844,
+            "client": 844,
+            "overflow": "auto"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 818,
+            "client": 818,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "bottom": 872,
+          "right": 870
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "bottom": 860,
+          "right": 858
+        },
+        "front": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "back": {
+          "x": 443,
+          "y": 200.984375,
+          "width": 394,
+          "height": 638.015625,
+          "bottom": 839,
+          "right": 837
+        },
+        "close": {
+          "x": 814,
+          "y": 40,
+          "width": 44,
+          "height": 44,
+          "bottom": 84,
+          "right": 858
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 844,
+            "client": 844,
+            "overflow": "auto"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 818,
+            "client": 818,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 638,
+            "client": 638,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 521.8,
+          "y": 322.484375
+        },
+        "to": {
+          "x": 761,
+          "y": 330.484375
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "chart-0-arc",
+        "chart-0-center",
+        "chart-0-note",
+        "chart-0-summary",
+        "chart-0-list",
+        "chart-1-arc",
+        "chart-1-center",
+        "chart-1-note",
+        "chart-1-summary",
+        "chart-1-list",
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": false,
+      "page_errors": []
+    },
+    {
+      "gap": 8.33331298828125,
+      "changedVisual": {
+        "photo": {
+          "x": 36.666664123535156,
+          "y": 162.3203125,
+          "width": 316.6666564941406,
+          "height": 291.14581298828125,
+          "bottom": 453.46612548828125
+        },
+        "facts": {
+          "x": 34.166664123535156,
+          "y": 555.9661254882812,
+          "width": 321.6666564941406,
+          "height": 136.82293701171875,
+          "bottom": 692.7890625
+        },
+        "factsFont": "15.2px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 34.166664123535156,
+          "y": 701.1223754882812,
+          "width": 321.6666564941406,
+          "height": 104.70050048828125,
+          "bottom": 805.8228759765625
+        },
+        "beforeObservationBottom": 692.7890625,
+        "observationFont": "12.96px",
+        "observationText": "관찰 포인트수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지닙니다.이 새의 몸길이는 50~65cm이며, 날개는 81~98cm이고 부리는 4.4~6.1cm 길이입니다.",
+        "fit": "0.8333333333333334"
+      },
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 29.001983642578125,
+          "y": 24,
+          "width": 331.99603271484375,
+          "height": 795.8394165039062,
+          "bottom": 819.8394165039062,
+          "right": 360.9980163574219
+        },
+        "front": {
+          "x": 42.439918518066406,
+          "y": 144.92904663085938,
+          "width": 305.12017822265625,
+          "height": 661.472412109375,
+          "bottom": 806.4014587402344,
+          "right": 347.56009674072266
+        },
+        "back": {
+          "x": 42.439918518066406,
+          "y": 144.92904663085938,
+          "width": 305.12017822265625,
+          "height": 661.472412109375,
+          "bottom": 806.4014587402344,
+          "right": 347.56009674072266
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 1005,
+            "client": 1005,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 98.49999389648438,
+          "y": 302.75259857177736
+        },
+        "to": {
+          "x": 288.8199938964844,
+          "y": 310.75259857177736
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "chart-0-arc",
+        "chart-0-center",
+        "chart-0-note",
+        "chart-0-summary",
+        "chart-0-list",
+        "chart-1-arc",
+        "chart-1-center",
+        "chart-1-note",
+        "chart-1-summary",
+        "chart-1-list",
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": true,
+      "visible_front_contents": [
+        {
+          "class": "species-quick-facts",
+          "bottom": 692.7890625,
+          "right": 355.8333206176758
+        },
+        {
+          "class": "species-observation-points",
+          "bottom": 805.8228759765625,
+          "right": 355.8333206176758
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "gap": 4.76153564453125,
+      "changedVisual": {
+        "photo": {
+          "x": 33.543582916259766,
+          "y": 141.4388885498047,
+          "width": 307.912841796875,
+          "height": 169.9770050048828,
+          "bottom": 311.4158935546875
+        },
+        "facts": {
+          "x": 31.162811279296875,
+          "y": 405.85308837890625,
+          "width": 312.6743469238281,
+          "height": 125.53594970703125,
+          "bottom": 531.3890380859375
+        },
+        "factsFont": "15.2px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 31.162811279296875,
+          "y": 536.1505737304688,
+          "width": 312.6743469238281,
+          "height": 96.53277587890625,
+          "bottom": 632.683349609375
+        },
+        "beforeObservationBottom": 531.3890380859375,
+        "observationFont": "12.96px",
+        "observationText": "관찰 포인트수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지닙니다.이 새의 몸길이는 50~65cm이며, 날개는 81~98cm이고 부리는 4.4~6.1cm 길이입니다.",
+        "fit": "0.7935897435897435"
+      },
+      "width": 375,
+      "height": 667,
+      "touch": true,
+      "reduced": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20.846145629882812,
+          "y": 24,
+          "width": 333.3077392578125,
+          "height": 619,
+          "bottom": 643,
+          "right": 354.1538848876953
+        },
+        "front": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "back": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 635,
+            "client": 635,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20.846145629882812,
+          "y": 24,
+          "width": 333.3077392578125,
+          "height": 619,
+          "bottom": 643,
+          "right": 354.1538848876953
+        },
+        "front": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "back": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 635,
+            "client": 635,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualScale": 1
+        }
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 56.064208984375,
+          "y": 24,
+          "width": 262.87158203125,
+          "height": 618.8728637695312,
+          "bottom": 642.8728637695312,
+          "right": 318.935791015625
+        },
+        "front": {
+          "x": 64.20071411132812,
+          "y": 110.98819732666016,
+          "width": 246.59857177734375,
+          "height": 523.7481079101562,
+          "bottom": 634.7363052368164,
+          "right": 310.7992858886719
+        },
+        "back": {
+          "x": 64.20071411132812,
+          "y": 110.98819732666016,
+          "width": 246.59857177734375,
+          "height": 523.7481079101562,
+          "bottom": 634.7363052368164,
+          "right": 310.7992858886719
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 635,
+            "client": 635,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 987,
+            "client": 987,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "bottom": 651,
+          "right": 363
+        },
+        "card": {
+          "x": 20.846145629882812,
+          "y": 24,
+          "width": 333.3077392578125,
+          "height": 619,
+          "bottom": 643,
+          "right": 354.1538848876953
+        },
+        "front": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "back": {
+          "x": 31.162811279296875,
+          "y": 134.29656982421875,
+          "width": 312.6743469238281,
+          "height": 498.38677978515625,
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        },
+        "close": {
+          "x": 311,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 355
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 635,
+            "client": 635,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 375,
+          "height": 667,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 93.6976806640625,
+          "y": 228.64199218750002
+        },
+        "to": {
+          "x": 276.2176806640625,
+          "y": 236.64199218750002
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "chart-0-arc",
+        "chart-0-center",
+        "chart-0-note",
+        "chart-0-summary",
+        "chart-0-list",
+        "chart-1-arc",
+        "chart-1-center",
+        "chart-1-note",
+        "chart-1-summary",
+        "chart-1-list",
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": true,
+      "visible_front_contents": [
+        {
+          "class": "species-quick-facts",
+          "bottom": 531.3890380859375,
+          "right": 343.837158203125
+        },
+        {
+          "class": "species-observation-points",
+          "bottom": 632.683349609375,
+          "right": 343.837158203125
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "gap": 4,
+      "changedVisual": {
+        "photo": {
+          "x": 30.666667938232422,
+          "y": 122.65625,
+          "width": 258.66668701171875,
+          "height": 142.79168701171875,
+          "bottom": 265.44793701171875
+        },
+        "facts": {
+          "x": 28.666667938232422,
+          "y": 344.78125,
+          "width": 262.66668701171875,
+          "height": 105.45834350585938,
+          "bottom": 450.2395935058594
+        },
+        "factsFont": "15.2px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 28.666667938232422,
+          "y": 454.2395935058594,
+          "width": 262.66668701171875,
+          "height": 81.09378051757812,
+          "bottom": 535.3333740234375
+        },
+        "beforeObservationBottom": 450.2395935058594,
+        "observationFont": "12.96px",
+        "observationText": "관찰 포인트수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지닙니다.이 새의 몸길이는 50~65cm이며, 날개는 81~98cm이고 부리는 4.4~6.1cm 길이입니다.",
+        "fit": "0.6666666666666666"
+      },
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "reduced": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "back": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 536,
+            "client": 536,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "back": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 536,
+            "client": 536,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualScale": 1
+        }
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 49.58544158935547,
+          "y": 24,
+          "width": 220.8291015625,
+          "height": 519.8931884765625,
+          "bottom": 543.8931884765625,
+          "right": 270.41454315185547
+        },
+        "front": {
+          "x": 56.42062759399414,
+          "y": 97.0757064819336,
+          "width": 207.15875244140625,
+          "height": 439.9822692871094,
+          "bottom": 537.057975769043,
+          "right": 263.5793800354004
+        },
+        "back": {
+          "x": 56.42062759399414,
+          "y": 97.0757064819336,
+          "width": 207.15875244140625,
+          "height": 439.9822692871094,
+          "bottom": 537.057975769043,
+          "right": 263.5793800354004
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 536,
+            "client": 536,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 987,
+            "client": 987,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "bottom": 552,
+          "right": 308
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "bottom": 544,
+          "right": 300
+        },
+        "front": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "back": {
+          "x": 28.666667938232422,
+          "y": 116.65625,
+          "width": 262.66668701171875,
+          "height": 418.6771240234375,
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        },
+        "close": {
+          "x": 256,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 300
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 536,
+            "client": 536,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 628,
+            "client": 628,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 320,
+          "height": 568,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 81.20000305175782,
+          "y": 195.91250000000002
+        },
+        "to": {
+          "x": 235.12000305175783,
+          "y": 203.91250000000002
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "chart-0-arc",
+        "chart-0-center",
+        "chart-0-note",
+        "chart-0-summary",
+        "chart-0-list",
+        "chart-1-arc",
+        "chart-1-center",
+        "chart-1-note",
+        "chart-1-summary",
+        "chart-1-list",
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": true,
+      "visible_front_contents": [
+        {
+          "class": "species-quick-facts",
+          "bottom": 450.2395935058594,
+          "right": 291.3333549499512
+        },
+        {
+          "class": "species-observation-points",
+          "bottom": 535.3333740234375,
+          "right": 291.3333549499512
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "gap": 2.5692138671875,
+      "changedVisual": {
+        "photo": {
+          "x": 338.92822265625,
+          "y": 93.08049011230469,
+          "width": 166.1435546875,
+          "height": 75.44439697265625,
+          "bottom": 168.52488708496094
+        },
+        "facts": {
+          "x": 337.6435852050781,
+          "y": 234.04026794433594,
+          "width": 168.71282958984375,
+          "height": 67.73670959472656,
+          "bottom": 301.7769775390625
+        },
+        "factsFont": "15.2px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 337.6435852050781,
+          "y": 304.34619140625,
+          "width": 168.71282958984375,
+          "height": 52.087158203125,
+          "bottom": 356.433349609375
+        },
+        "beforeObservationBottom": 301.7769775390625,
+        "observationFont": "12.96px",
+        "observationText": "관찰 포인트수컷은 광택이 나는 병 녹색 머리와 흰색 목깃을 가지고 있으며, 암컷은 주로 갈색 얼룩무늬 깃털을 지닙니다.이 새의 몸길이는 50~65cm이며, 날개는 81~98cm이고 부리는 4.4~6.1cm 길이입니다.",
+        "fit": "0.4282051282051282"
+      },
+      "width": 844,
+      "height": 390,
+      "touch": true,
+      "reduced": false,
+      "bird": "청둥오리",
+      "fixture": null,
+      "actual_db": true,
+      "baseline": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 332.076904296875,
+          "y": 28,
+          "width": 179.84619140625,
+          "height": 334,
+          "bottom": 362,
+          "right": 511.923095703125
+        },
+        "front": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "back": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 358,
+            "client": 358,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 332.076904296875,
+          "y": 28,
+          "width": 179.84619140625,
+          "height": 334,
+          "bottom": 362,
+          "right": 511.923095703125
+        },
+        "front": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "back": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 358,
+            "client": 358,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualScale": 1
+        }
+      },
+      "expanded": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 351.36553955078125,
+          "y": 28,
+          "width": 141.2689208984375,
+          "height": 333.93170166015625,
+          "bottom": 361.93170166015625,
+          "right": 492.63446044921875
+        },
+        "front": {
+          "x": 355.7381591796875,
+          "y": 76.09343719482422,
+          "width": 132.523681640625,
+          "height": 281.46563720703125,
+          "bottom": 357.55907440185547,
+          "right": 488.2618408203125
+        },
+        "back": {
+          "x": 355.7381591796875,
+          "y": 76.09343719482422,
+          "width": 132.523681640625,
+          "height": 281.46563720703125,
+          "bottom": 357.55907440185547,
+          "right": 488.2618408203125
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 358,
+            "client": 358,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 991,
+            "client": 991,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 837,
+            "client": 837,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 192,
+          "y": 16,
+          "width": 460,
+          "height": 358,
+          "bottom": 374,
+          "right": 652
+        },
+        "card": {
+          "x": 332.076904296875,
+          "y": 28,
+          "width": 179.84619140625,
+          "height": 334,
+          "bottom": 362,
+          "right": 511.923095703125
+        },
+        "front": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "back": {
+          "x": 337.6435852050781,
+          "y": 89.22663879394531,
+          "width": 168.71282958984375,
+          "height": 267.20672607421875,
+          "bottom": 356.43336486816406,
+          "right": 506.3564147949219
+        },
+        "close": {
+          "x": 600,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 644
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 358,
+            "client": 358,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 778,
+            "client": 778,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 624,
+            "client": 624,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 844,
+          "height": 390,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 371.3861511230469,
+          "y": 132.81123580932618
+        },
+        "to": {
+          "x": 610.5861511230469,
+          "y": 140.81123580932618
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "chart-0-arc",
+        "chart-0-center",
+        "chart-0-note",
+        "chart-0-summary",
+        "chart-0-list",
+        "chart-1-arc",
+        "chart-1-center",
+        "chart-1-note",
+        "chart-1-summary",
+        "chart-1-list",
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": true,
+      "visible_front_contents": [
+        {
+          "class": "species-quick-facts",
+          "bottom": 301.7769775390625,
+          "right": 506.3564147949219
+        },
+        {
+          "class": "species-observation-points",
+          "bottom": 356.433349609375,
+          "right": 506.3564147949219
+        }
+      ],
+      "page_errors": []
+    },
+    {
+      "gap": 0,
+      "changedVisual": {
+        "photo": {
+          "x": 34.166664123535156,
+          "y": 158.1536407470703,
+          "width": 321.6666564941406,
+          "height": 413.17706298828125,
+          "bottom": 571.3307037353516
+        },
+        "facts": {
+          "x": 34.166664123535156,
+          "y": 589.6640625,
+          "width": 321.6666564941406,
+          "height": 136.8228759765625,
+          "bottom": 726.4869384765625
+        },
+        "factsFont": "15.2px",
+        "factLabels": [
+          "체중",
+          "먹이 유형",
+          "서식 환경",
+          "주 생활 방식"
+        ],
+        "observation": {
+          "x": 34.166664123535156,
+          "y": 756.4739379882812,
+          "width": 321.6666564941406,
+          "height": 49.34893798828125,
+          "bottom": 805.8228759765625
+        },
+        "beforeObservationBottom": 756.4739379882812,
+        "observationFont": "12.8px",
+        "observationText": "관찰 포인트출처가 확인된 관찰 자료가 아직 없습니다.",
+        "fit": "0.8333333333333334"
+      },
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced": false,
+      "bird": "모의 자료 없음",
+      "fixture": "missing",
+      "actual_db": false,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-unconfirmed",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-unconfirmed",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "back": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-unconfirmed",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-unconfirmed",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "expanded": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-unconfirmed",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-unconfirmed",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "reopened": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "bottom": 819.9895629882812,
+          "right": 370
+        },
+        "front": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "back": {
+          "x": 34.166664123535156,
+          "y": 151.48696899414062,
+          "width": 321.6666564941406,
+          "height": 654.3359375,
+          "bottom": 805.8229064941406,
+          "right": 355.8333206176758
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-unconfirmed",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-unconfirmed",
+            "top": 0,
+            "height": 953,
+            "client": 953,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 785,
+            "client": 785,
+            "overflow": "visible"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 98.49999389648438,
+          "y": 343.41665191650395
+        },
+        "to": {
+          "x": 288.8199938964844,
+          "y": 351.41665191650395
+        },
+        "face": "back"
+      },
+      "all_area_swipes": [
+        "back-detail-summary"
+      ],
+      "body_swipes_both_faces": true,
+      "vertical_gesture_does_not_scroll": true,
+      "visible_front_contents": [
+        {
+          "class": "species-quick-facts",
+          "bottom": 726.4869384765625,
+          "right": 355.8333206176758
+        },
+        {
+          "class": "species-observation-points",
+          "bottom": 805.8228759765625,
+          "right": 355.8333206176758
+        }
+      ],
+      "page_errors": []
+    }
+  ]
+}
