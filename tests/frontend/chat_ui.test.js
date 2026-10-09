@@ -1535,7 +1535,7 @@ test("card front contains compact facts and keeps source material outside both r
   assert.equal(back.getAttribute("aria-hidden"), "true");
   assert.ok(collectedText(front).includes("1083.3 g"));
   assert.equal(collectAllNodes(front).some(node => node.tagName === "a"), false);
-  assert.equal(collectAllNodes(front).filter(node => node.tagName === "dt").length, 1);
+  assert.equal(collectAllNodes(front).filter(node => node.tagName === "dt").length, 4);
   assert.ok(collectedText(card.sourceMaterial).includes("Some Credit"));
   assert.ok(collectedText(card.sourceMaterial).includes("AVONET"));
   assert.ok(collectAllNodes(card.sourceMaterial).some(node => node.href === "https://creativecommons.org/licenses/by-sa/4.0"));
@@ -1829,6 +1829,7 @@ test("deferred photos and additional explanation feed the same open source panel
   const message = messageRows(dom.elementsById.history)[1];
   const sources = collectAllNodes(message).find(n => n.className === "species-answer-sources"); sources.open = true;
   const card = collectAllNodes(message).find(n => /^species-card risk-/.test(n.className || ""));
+  assert.equal(cardPart(card, "species-observation-points").getAttribute("data-observation-state"), "pending");
   card.dispatch("keydown", { key: "Enter", target: card });
   collectAllNodes(message).find(n => n.className === "species-enrichment-load").dispatch("click"); await settleEventPath();
   assert.equal(collectAllNodes(message).filter(n => n.className === "species-answer-sources").length, 1);
@@ -1836,6 +1837,9 @@ test("deferred photos and additional explanation feed the same open source panel
   assert.equal(sources.open, true);
   assert.equal(card.getAttribute("data-face"), "back");
   assert.match(collectedText(message), /추가 외형 설명/);
+  assert.equal(cardPart(card, "species-observation-points").getAttribute("data-observation-state"), "ready");
+  assert.match(collectedText(cardPart(card, "species-observation-list")), /추가 외형 설명.*두번째 외형 설명/s);
+  assert.ok(collectAllNodes(message).some(n => n.className === "species-answer-section" && collectedText(n).includes("추가 외형 설명")), "deferred comparison still creates the additional explanation outside the card");
   for (const value of ["Initial license", "Additional license", "New source", "Some Credit", "CC BY-SA 4.0"]) { assert.ok(collectedText(sources).includes(value), value); }
   assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === "https://example.org/shared").length, 1);
 });
@@ -4773,5 +4777,117 @@ test("incoming flip phase has an exact zero-strength keyframe at the angle-0 cro
     firstSegment.forEach((fr, i) => { if (i) { assert.ok(Math.abs((glossPos(fr) - glossPos(firstSegment[0])) - slope * (fr.offset - firstSegment[0].offset)) < 1e-6); } });
     f.animations[f.animations.length - 1].onfinish();
     assert.equal((f.card.getAttribute("aria-busy") === "true"), false);
+  }
+});
+
+const observationItem = (text, extra = {}) => ({ text, source_name: "Reviewed field guide", source_url: "https://example.org/field-guide", ...extra });
+const observationSection = items => ({ key: "appearance", title: "외관 특징", items });
+const observationPart = card => cardPart(card, "species-observation-points");
+
+test("observation points prefer two sourced appearances, exclude only measurement labels, and retain original provenance safely", async () => {
+  const original = observationItem("번식기 수컷은 2개의 흰 무늬가 있으며, 암컷과 어린 새는 다릅니다. <img src=x>", {
+    license_name: "CC BY", license_url: "https://example.org/license", release: "2025", locator: "page 12", evidence_id: "e-42", citation: { title: "검토 자료", locator: "figure 3" },
+  });
+  const profile = photoProfile({ sections: [observationSection([
+    observationItem("평균 부리 길이 (전체): 59.9 mm"), observationItem("접은 날개 길이: 268 mm"), observationItem("꼬리 길이: 87 mm"),
+    observationItem("출처가 위험함", { source_url: "javascript:alert(1)" }), observationItem("출처 이름이 없음", { source_name: " " }), original,
+    observationItem("암컷은 갈색 무늬가 있습니다."), observationItem("세 번째 특징은 제외됩니다."),
+  ]), { key: "fun_facts", title: "재미있는 사실", items: [observationItem("후순위 사실")] }] });
+  const initialSections = profile.sections;
+  const { card, sources } = await renderProfileMessage(profile);
+  const points = observationPart(card);
+  assert.equal(points.getAttribute("data-observation-state"), "ready");
+  const list = cardPart(card, "species-observation-list");
+  assert.equal(list.children.length, 2);
+  assert.equal(list.children[0].children[0].textContent, original.text);
+  assert.match(collectedText(points), /2개의 흰 무늬/);
+  assert.doesNotMatch(collectedText(points), /59\.9|268|87 mm|후순위|세 번째|출처가 위험함/);
+  assert.equal(collectAllNodes(points).some(n => n.tagName === "img" || n.tagName === "a"), false);
+  assert.equal(profile.sections, initialSections, "card rendering does not mutate initial sections");
+  for (const value of [original.text, "CC BY", "2025", "page 12", "e-42", "figure 3", "https://example.org/license"]) {
+    assert.ok(collectedText(sources).includes(value), value);
+  }
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === original.source_url).length, 1);
+});
+
+test("observation supplements are labeled 알아두기 and explicit empty updates clear notes and their source slot", async () => {
+  const initial = photoProfile({ sections: [observationSection([observationItem("외형 하나")]), { key: "fun_facts", title: "재미있는 사실", items: [observationItem("번식기 외에는 무리를 이룹니다.", { source_url: "https://example.org/fact" })] }] });
+  const { card, sources } = await renderProfileMessage(initial);
+  sources.open = true;
+  assert.match(collectedText(observationPart(card)), /외형 하나.*알아두기.*번식기 외에는/s);
+  const freshSections = [observationSection([observationItem("새 관찰", { source_url: "https://example.org/fresh", license_name: "Fresh license" })])];
+  card.updateEnrichment({ sections: freshSections, images: [], photo_availability: { status: "no_licensed_photo" } });
+  assert.match(collectedText(observationPart(card)), /새 관찰/);
+  assert.equal(initial.sections.length, 2, "the card updater leaves the deferred comparison input untouched");
+  assert.match(collectedText(sources), /Fresh license/);
+  assert.equal(sources.open, true);
+  card.updateEnrichment({ images: [] });
+  assert.match(collectedText(observationPart(card)), /새 관찰/, "absent sections means photo-only update");
+  for (const sections of [[], null]) {
+    card.updateEnrichment({ sections: freshSections });
+    card.updateEnrichment({ sections });
+    assert.equal(observationPart(card).getAttribute("data-observation-state"), "unavailable");
+    assert.equal(cardPart(card.sourceMaterial, "species-observation-sources-slot").children.length, 0);
+    assert.equal(collectAllNodes(sources).some(n => n.href === "https://example.org/fresh"), false);
+  }
+});
+
+test("missing, pending and subspecies cards retain four facts, two distribution places and honest observation states without fabricated sources", () => {
+  for (const [state, overrides] of [["unavailable", {}], ["pending", { enrichment_pending: true }], ["subspecies", { taxon: { ...photoProfile().taxon, rank: "subspecies" }, sections: [observationSection([observationItem("종 특징을 아종으로 쓰면 안됨")])], parent_species: photoProfile(), reference_traits: photoProfile().traits }]]) {
+    const profile = photoProfile({ traits: [], images: [], ...overrides });
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+    const facts = cardPart(card, "species-quick-facts");
+    assert.equal(facts.children.length, 8);
+    assert.deepEqual(facts.children.filter(n => n.tagName === "dd").map(n => n.textContent), Array(4).fill("자료 없음"));
+    const pair = cardPart(card, "species-distribution-pair");
+    assert.equal(pair.children.length, 2);
+    assert.equal(collectAllNodes(pair).filter(n => n.className === "species-distribution-empty").length, 2);
+    assert.equal(collectAllNodes(pair).some(n => n.getAttribute("data-percent") !== null), false);
+    assert.equal(observationPart(card).getAttribute("data-observation-state"), state);
+    assert.equal(cardPart(card.sourceMaterial, "species-observation-sources-slot").children.length, 0);
+    assert.doesNotMatch(collectedText(observationPart(card)), /종 특징을 아종으로/);
+    assert.equal(profile.traits.length, 0);
+  }
+});
+
+test("observation retry refresh is gated by active taxon and release checks", async () => {
+  for (const mode of ["success", "taxon", "release", "inactive"]) {
+    const initial = photoProfile({ images: [], photo_availability: { status: "provider_unavailable" }, sections: [observationSection([observationItem("원래 관찰")])] });
+    const fresh = photoProfile({ sections: [observationSection([observationItem("검증 후 관찰", { source_url: "https://example.org/retry" })])] });
+    if (mode === "taxon") fresh.taxon.taxon_id = "different";
+    if (mode === "release") fresh.lineage = { ...fresh.lineage, taxonomy_release: "different" };
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, initial, { fetcher: async () => jsonResponse(fresh), isActive: () => mode !== "inactive" });
+    cardPart(card, "species-photo-retry").dispatch("click"); await settleEventPath();
+    assert.equal(collectedText(observationPart(card)).includes("검증 후 관찰"), mode === "success", mode);
+    assert.equal(collectedText(card.sourceMaterial).includes("https://example.org/retry"), false, "URL is stored on safe links rather than text");
+    assert.equal(collectAllNodes(card.sourceMaterial).some(n => n.href === "https://example.org/retry"), mode === "success", mode);
+    assert.equal(initial.sections[0].items[0].text, "원래 관찰");
+  }
+});
+
+test("uniform card frames preserve scrolling and flex layout for the inactive front", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /height: min\(844px, calc\(100dvh - 32px\)\)/);
+  assert.match(css, /\.species-popup \.species-card \{ min-height: 100%; display: flex; flex-direction: column; \}/);
+  assert.match(css, /\.species-card-faces > \.species-card-front \{ display: flex; flex-direction: column; \}/);
+  assert.ok(css.indexOf(".species-card-faces > .species-card-front { display: flex") > css.indexOf(".species-card-faces > [hidden] { display: block"));
+  assert.match(css, /\.species-observation-points \{ margin-top: auto;/);
+  assert.match(css, /overflow: auto;/);
+});
+
+test("failed or cancelled enrichment stops inviting a finished 더 알아보기 and preserves any sourced observations", () => {
+  for (const sections of [[], [observationSection([observationItem("확인된 기존 관찰")])]]) {
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({ enrichment_pending: true, sections }));
+    card.setEnrichmentMessage("사진을 불러오는 중입니다.");
+    assert.equal(observationPart(card).getAttribute("data-observation-state"), sections.length ? "ready" : "pending");
+    card.setEnrichmentMessage("사진 조회를 중단했습니다.", true);
+    assert.equal(observationPart(card).getAttribute("data-observation-state"), sections.length ? "ready" : "unavailable");
+    if (sections.length) {
+      assert.match(collectedText(observationPart(card)), /확인된 기존 관찰/);
+      assert.equal(cardPart(card.sourceMaterial, "species-observation-sources-slot").children.length, 1);
+    } else {
+      assert.match(collectedText(observationPart(card)), /추가 관찰 자료를 확인하지 못했습니다/);
+      assert.doesNotMatch(collectedText(observationPart(card)), /더 알아보기/);
+    }
   }
 });
