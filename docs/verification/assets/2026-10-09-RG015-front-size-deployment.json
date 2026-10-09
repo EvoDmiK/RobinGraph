@@ -1,0 +1,17 @@
+{
+  "commit": "bb7739c1c0a7c2c7cc7edce43fac94d0f45f380c",
+  "image": "robingraph-api:test-rg015frontsize-bb7739c",
+  "release": "/home/kimdove/RobinGraph-rg015frontsize-bb7739c",
+  "previous_image": "robingraph-api:test-rg015noscroll-198ebca",
+  "running": true,
+  "health": "healthy",
+  "revision": "bb7739c1c0a7c2c7cc7edce43fac94d0f45f380c",
+  "api_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "archive_sha256": "136d0640e0f899ffbd07d36c9aee54b425e7e8b0748bf8b6c8789bf8836d4421",
+  "archive_manifest_verified": true
+}
