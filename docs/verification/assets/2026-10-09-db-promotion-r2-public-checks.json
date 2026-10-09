@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://robingraph.dove-nest.com/health",
+    "result": {
+      "status": "ok",
+      "mode": "neo4j",
+      "taxonomy_release": "fixture-avlist-2025",
+      "deployment_target": "legacy"
+    }
+  },
+  {
+    "url": "https://robingraph-test.dove-nest.com/health",
+    "result": {
+      "status": "ok",
+      "mode": "neo4j",
+      "taxonomy_release": "fixture-avlist-2025",
+      "deployment_target": "legacy"
+    }
+  },
+  {
+    "url": "https://robingraph.dove-nest.com/v1/taxa/name-relations",
+    "query": "Corvus macrorhynchos",
+    "relations": []
+  },
+  {
+    "url": "https://robingraph.dove-nest.com/v1/taxa/name-relations",
+    "query": "까마귀",
+    "targets": [
+      "Corvus corone"
+    ]
+  }
+]
