@@ -1,0 +1,102 @@
+{
+  "rows": 11131,
+  "expected_species": 11131,
+  "releases": {
+    "v2025b": 11131
+  },
+  "category_counts": {
+    "CR": 183,
+    "CR (PE)": 17,
+    "CR (PEW)": 2,
+    "DD": 35,
+    "EN": 356,
+    "EW": 5,
+    "EX": 147,
+    "LC": 8027,
+    "NE": 808,
+    "NT": 909,
+    "VU": 642
+  },
+  "category_shares": {
+    "LC": 0.721139,
+    "NE": 0.07259,
+    "NT": 0.081664,
+    "VU": 0.057677,
+    "EN": 0.031983,
+    "DD": 0.003144,
+    "EX": 0.013206,
+    "CR": 0.016441,
+    "CR (PE)": 0.001527,
+    "EW": 0.000449,
+    "CR (PEW)": 0.00018
+  },
+  "duplicate_taxon_ids": 0,
+  "missing_source_rows": [],
+  "missing_graph_sequences": [],
+  "source_mismatches": [],
+  "source_format_differences": [
+    {
+      "taxon_id": "avilist-taxon:v2025b:17511",
+      "source_value": "LC ",
+      "stored_value": "LC"
+    }
+  ],
+  "invalid_source_identity_or_category": [],
+  "ne_rows": 808,
+  "ne_with_birdlife_url": 0,
+  "matched_category_without_birdlife_url": 0,
+  "samples": [
+    {
+      "taxon_id": "avilist-taxon:v2025b:11693",
+      "sequence": "11693",
+      "scientific_name": "Cyanopsitta spixii",
+      "source_id": "avilist-v2025b",
+      "source_release": "v2025b",
+      "category_raw": "EW",
+      "birdlife_url": "https://datazone.birdlife.org/species/factsheet/22685533",
+      "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+      "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20193",
+      "sequence": "20193",
+      "scientific_name": "Pica serica",
+      "source_id": "avilist-v2025b",
+      "source_release": "v2025b",
+      "category_raw": "NE",
+      "birdlife_url": null,
+      "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+      "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20198",
+      "sequence": "20198",
+      "scientific_name": "Pica pica",
+      "source_id": "avilist-v2025b",
+      "source_release": "v2025b",
+      "category_raw": "NE",
+      "birdlife_url": null,
+      "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+      "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:544",
+      "sequence": "544",
+      "scientific_name": "Anas platyrhynchos",
+      "source_id": "avilist-v2025b",
+      "source_release": "v2025b",
+      "category_raw": "LC",
+      "birdlife_url": "https://datazone.birdlife.org/species/factsheet/22680186",
+      "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+      "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"
+    }
+  ],
+  "concept_set_id": "rg:concept-set:avilist-v2025b",
+  "taxonomy_release": "v2025b",
+  "checked_at": "2026-10-09T06:22:41.083872+00:00",
+  "mode": "neo4j_read_only",
+  "comparison_snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "independent_iucn_assessment_check": false,
+  "ne_meaning": "AviList source code; taxonomy/assessment linking needs review, not a confirmed IUCN NE assessment",
+  "stored_snapshot_checksum_matches": true
+}

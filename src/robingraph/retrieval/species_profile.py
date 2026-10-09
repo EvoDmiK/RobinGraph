@@ -40,11 +40,14 @@ LABELS = {
 }
 
 CONSERVATION_QUERY = """
-MATCH (t:Taxon:BirdTaxon {id:$taxon_id, rank:'species'})-[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, policy_status:'allowed'})
+MATCH (t:Taxon:BirdTaxon {id:$taxon_id, rank:'species', policy_status:'allowed'})-[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, policy_status:'allowed'})
 WHERE t.source_release=$taxonomy_release AND s.version=$taxonomy_release
+  AND t.dataset_id=s.dataset_id
 RETURN t.iucn_red_list_category_raw AS category_raw,
        s.title AS source_name, s.snapshot_uri AS source_url,
-       s.version AS source_release
+       s.version AS source_release, t.source_id AS source_id,
+       t.birdlife_url AS assessment_reference_url,
+       s.snapshot_sha256 AS snapshot_sha256, s.retrieved_at AS retrieved_at
 """
 
 CONSERVATION_LABELS = {
@@ -55,7 +58,24 @@ CONSERVATION_LABELS = {
 
 def unconfirmed_conservation():
     return {'category':None, 'category_raw':None, 'label':'확인되지 않음',
-            'source_name':None, 'source_url':None, 'source_release':None}
+            'source_name':None, 'source_url':None, 'source_release':None,
+            'evidence_kind':'unconfirmed', 'assessment_status':'unconfirmed',
+            'independently_verified':False}
+
+
+def _conservation_source_url(value, *, reference=False):
+    """Validate official snapshot/reference origins, not just URL syntax."""
+    if not isinstance(value, str) or not value.strip():
+        return False
+    try:
+        url = urlsplit(value.strip())
+        hosts = {'datazone.birdlife.org'} if reference else {
+            'avilist.org', 'www.avilist.org', 'explore.avilist.org'}
+        return (url.scheme == 'https' and url.hostname in hosts
+                and not url.username and not url.password
+                and url.port in (None, 443))
+    except ValueError:
+        return False
 
 
 def read_conservation(repository, lineage):
@@ -70,11 +90,23 @@ def read_conservation(repository, lineage):
     for key in ('source_name', 'source_url', 'source_release'):
         value = row.get(key)
         result[key] = value.strip() if isinstance(value, str) and value.strip() else None
-    if (result['source_release'] != lineage.taxonomy_release
+    source_id = row.get('source_id')
+    if (lineage.taxonomy_source != 'AviList'
+            or source_id != f'avilist-{lineage.taxonomy_release}'
+            or result['source_release'] != lineage.taxonomy_release
             or not result['source_name'] or not result['source_url']
-            or urlsplit(result['source_url']).scheme not in ('https', 'http')
-            or not urlsplit(result['source_url']).hostname):
+            or not _conservation_source_url(result['source_url'])):
         return unconfirmed_conservation()
+    result.update(evidence_kind='taxonomy_snapshot', source_id=source_id,
+                  assessment_status='snapshot_only')
+    checksum = row.get('snapshot_sha256')
+    if checksum is not None and not (isinstance(checksum, str) and re.fullmatch(r'[0-9a-fA-F]{64}', checksum)):
+        return unconfirmed_conservation()
+    if isinstance(checksum, str):
+        result['snapshot_sha256'] = checksum.lower()
+    reference = row.get('assessment_reference_url')
+    if str(row.get('category_raw', '')).strip().upper() != 'NE' and _conservation_source_url(reference, reference=True):
+        result['assessment_reference_url'] = reference.strip()
     raw = row.get('category_raw')
     if isinstance(raw, str):
         result['category_raw'] = raw
@@ -83,6 +115,14 @@ def read_conservation(repository, lineage):
             code = 'CR'
         if code in CONSERVATION_LABELS:
             result.update(category=code, label=CONSERVATION_LABELS[code])
+            if code == 'NE':
+                result['assessment_status'] = 'needs_review'
+                result['quality_note'] = (
+                    'AviList 원자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 사용됩니다. '
+                    '실제 IUCN 미평가 판정으로 단정할 수 없습니다.')
+            else:
+                result['quality_note'] = (
+                    '분류 자료에 기록된 등급입니다. 실제 평가 원문과 평가 연도는 별도로 검증하지 않았습니다.')
     return result
 
 
