@@ -3,7 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 
 from .species_profile import SpeciesNotFoundError
-from .taxonomy_lineage import sourced_korean_names
+from .taxonomy_lineage import korean_display_names
 from .taxonomy_lineage_neo4j import _parse_lineage_items
 
 SOURCE_QUERY = """
@@ -56,7 +56,7 @@ def related_species(repository, resolve, name):
     if url.scheme not in ('https', 'http') or not url.hostname:
         raise ValueError('Taxonomy provenance unavailable')
     korean_reference_names = {taxon_id: {key: label[key] for key in ('name', 'scientific_name', 'english_name')}
-                              for taxon_id, label in sourced_korean_names().items()}
+                              for taxon_id, label in korean_display_names().items()}
     groups = []
     for rank, label in [('genus', '같은 속의 새'), ('family', '같은 과의 다른 속 새')]:
         ancestor = next((item for item in lineage.items if item.rank == rank), None)

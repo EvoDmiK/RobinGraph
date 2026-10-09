@@ -10,7 +10,7 @@ from urllib.parse import urlencode, urlsplit, unquote
 from urllib.request import Request, urlopen
 
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
-from robingraph.retrieval.conservation import linked_checklist
+from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override
 
 class SpeciesNotFoundError(LookupError):
     """The requested name is not a species in the active taxonomy."""
@@ -128,7 +128,7 @@ def read_conservation(repository, lineage):
     if primary is not None:
         primary['label'] = CONSERVATION_LABELS[primary['category']]
         return primary
-    return result
+    return manual_magpie_override(lineage, result) or result
 
 
 def species_summary(taxon, traits):

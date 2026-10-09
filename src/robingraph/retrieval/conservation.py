@@ -14,6 +14,31 @@ PUBLISHER = 'International Union for Conservation of Nature'
 CATEGORIES = frozenset(('LC', 'NT', 'VU', 'EN', 'CR', 'EW', 'EX', 'DD'))
 
 
+def manual_magpie_override(lineage, snapshot):
+    """User-requested display correction, separate from assessment evidence."""
+    taxon = lineage.items[-1]
+    if (lineage.taxonomy_source != 'AviList' or lineage.taxonomy_release != 'v2025b'
+            or lineage.concept_set_id != 'rg:concept-set:avilist-v2025b'
+            or taxon.taxon_id != 'avilist-taxon:v2025b:20193'
+            or taxon.rank != 'species' or taxon.scientific_name != 'Pica serica'
+            or snapshot.get('evidence_kind') != 'taxonomy_snapshot'
+            or snapshot.get('assessment_status') != 'needs_review'
+            or snapshot.get('category') != 'NE'
+            or snapshot.get('snapshot_sha256') != TAXONOMY_SHA256):
+        return None
+    reason = ('사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. '
+              '원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.')
+    return dict(category='LC', category_raw='LC', label='관심대상',
+                source_id='robingraph-manual-pica-serica', source_name='RobinGraph 임시 보정',
+                source_release='2026-10-09', source_url=None,
+                evidence_kind='manual_override', assessment_status='manual_override',
+                independently_verified=False, taxon_id=taxon.taxon_id,
+                scientific_name=taxon.scientific_name,
+                taxonomy_release=lineage.taxonomy_release, concept_set_id=lineage.concept_set_id,
+                taxonomy_category_raw=snapshot['category_raw'],
+                original_snapshot=dict(snapshot), override_reason=reason, quality_note=reason)
+
+
 @lru_cache(maxsize=1)
 def _index():
     try:

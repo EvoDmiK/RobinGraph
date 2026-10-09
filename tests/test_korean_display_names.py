@@ -8,6 +8,21 @@ from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
 
 
 class KoreanDisplayNamesTest(TestCase):
+    def test_requested_magpie_display_keeps_separate_species_and_english_name(self):
+        row = {'taxon_id':'avilist-taxon:v2025b:20198', 'rank':'species',
+               'scientific_name':'Pica pica', 'english_name':'Eurasian Magpie'}
+        result = with_korean_display_name(row)
+        self.assertEqual('까치', result['korean_name'])
+        self.assertEqual('user-designated', result['korean_name_status'])
+        self.assertIsNone(result['korean_name_source_url'])
+        self.assertEqual('Pica pica', result['scientific_name'])
+        self.assertEqual('Eurasian Magpie', result['english_name'])
+        self.assertEqual('까치', _parse_lineage_items([row])[0].korean_name)
+        self.assertNotIn(row['taxon_id'], sourced_korean_names())
+        for changed in ({'taxon_id':'avilist-taxon:v2026:20198'},
+                        {'scientific_name':'Pica other'}, {'english_name':'Other Magpie'}):
+            self.assertIsNone(with_korean_display_name({**row, **changed})['korean_name'])
+
     def row_for(self, science):
         key, label = next((k, v) for k, v in sourced_korean_names().items() if v['scientific_name'] == science)
         return {'taxon_id': key, 'rank': 'species', 'scientific_name': science,

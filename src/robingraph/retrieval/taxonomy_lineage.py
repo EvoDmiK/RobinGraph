@@ -88,6 +88,15 @@ def sourced_korean_names() -> dict:
 
 
 @cache
+def korean_display_names() -> dict:
+    """Keep requested display names separate from the source-checked file."""
+    return {**sourced_korean_names(), 'avilist-taxon:v2025b:20198': {
+        'scientific_name':'Pica pica', 'english_name':'Eurasian Magpie',
+        'name':'까치', 'status':'user-designated', 'source_url':None,
+    }}
+
+
+@cache
 def sourced_subspecies_names() -> dict:
     """Source-audited common-name facts, bound to exact AviList subspecies IDs."""
     data = json.loads(Path(__file__).with_name('subspecies_name_references.json').read_text(encoding='utf-8'))
@@ -106,7 +115,7 @@ def sourced_subspecies_names() -> dict:
 
 
 def with_korean_display_name(taxon: dict) -> dict:
-    """Use checked Korean species names, otherwise let callers display English."""
+    """Use scoped Korean display names, preserving their source or manual status."""
     if taxon.get("rank") == "subspecies":
         if taxon.get('korean_name_status') == 'machine-translated':
             taxon = {**taxon, 'korean_name': None, 'korean_name_status': None, 'korean_name_source_url': None}
@@ -119,7 +128,7 @@ def with_korean_display_name(taxon: dict) -> dict:
         return taxon
     if taxon.get("rank") != "species":
         return taxon
-    label = sourced_korean_names().get(taxon.get("taxon_id"))
+    label = korean_display_names().get(taxon.get("taxon_id"))
     if (label and label["scientific_name"] == taxon.get("scientific_name")
             and label["english_name"] == taxon.get("english_name")):
         return {**taxon, "korean_name": label["name"],

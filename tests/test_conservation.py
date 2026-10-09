@@ -100,3 +100,40 @@ class PublicConservationTest(unittest.TestCase):
         primary = c.linked_checklist(lineage, snapshot)
         self.assertEqual('red_list_checklist', primary['evidence_kind'])
         self.assertEqual('LC ', primary['taxonomy_category_raw'])
+
+    def test_manual_magpie_display_preserves_unverified_original_and_scope(self):
+        taxon = LineageTaxon('avilist-taxon:v2025b:20193', 'species', 'Pica serica', 'Gould, J, 1845')
+        lineage = replace(self.lineage, items=(taxon,))
+        snapshot = {**self.snapshot, 'category':'NE', 'category_raw':'NE',
+                    'assessment_status':'needs_review'}
+        result = c.manual_magpie_override(lineage, snapshot)
+        self.assertEqual('LC', result['category'])
+        self.assertEqual('manual_override', result['evidence_kind'])
+        self.assertEqual('NE', result['original_snapshot']['category'])
+        self.assertFalse(result['independently_verified'])
+        self.assertIsNone(result['source_url'])
+        self.assertNotIn('assessment_year', result)
+        self.assertNotIn('assessment_reference_url', result)
+        for changed in (replace(lineage, taxonomy_release='v2026'),
+                        replace(lineage, concept_set_id='other'),
+                        replace(lineage, items=(replace(taxon, taxon_id='other'),)),
+                        replace(lineage, items=(replace(taxon, scientific_name='Pica pica'),)),
+                        replace(lineage, items=(replace(taxon, rank='subspecies'),))):
+            self.assertIsNone(c.manual_magpie_override(changed, snapshot))
+        self.assertIsNone(c.manual_magpie_override(lineage, {**snapshot, 'category':'LC'}))
+        self.assertIsNone(c.manual_magpie_override(lineage, {**snapshot, 'snapshot_sha256':'a'*64}))
+
+    def test_repository_applies_only_magpie_manual_display(self):
+        taxon = LineageTaxon('avilist-taxon:v2025b:20193', 'species', 'Pica serica', 'Gould, J, 1845')
+        lineage = replace(self.lineage, items=(taxon,))
+        row = dict(category_raw='NE', source_name='AviList global avian checklist',
+                   source_url='https://explore.avilist.org/data/avilist-2025b.json',
+                   source_id='avilist-v2025b', source_release='v2025b',
+                   snapshot_sha256=c.TAXONOMY_SHA256)
+        repository = Mock(); repository._run.return_value = [row]
+        result = read_conservation(repository, lineage)
+        self.assertEqual('LC', result['category'])
+        self.assertEqual(row['source_url'], result['original_snapshot']['source_url'])
+        self.assertEqual('needs_review', result['original_snapshot']['assessment_status'])
+        other = replace(lineage, items=(replace(taxon, taxon_id='other', scientific_name='Aegithalos concinnus'),))
+        self.assertEqual('NE', read_conservation(repository, other)['category'])
