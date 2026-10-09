@@ -1,0 +1,90 @@
+{
+  "test": [
+    {
+      "base": "https://robingraph-test.dove-nest.com",
+      "width": 1280,
+      "species": "Tarsiger cyanurus",
+      "reference": true,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2025 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    },
+    {
+      "base": "https://robingraph-test.dove-nest.com",
+      "width": 1280,
+      "species": "Monticola gularis",
+      "reference": false,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    }
+  ],
+  "prod": [
+    {
+      "base": "https://robingraph.dove-nest.com",
+      "width": 1280,
+      "species": "Tarsiger cyanurus",
+      "reference": true,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2025 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    },
+    {
+      "base": "https://robingraph.dove-nest.com",
+      "width": 1280,
+      "species": "Monticola gularis",
+      "reference": false,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    },
+    {
+      "base": "https://robingraph.dove-nest.com",
+      "width": 390,
+      "species": "Tarsiger cyanurus",
+      "reference": true,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2025 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    },
+    {
+      "base": "https://robingraph.dove-nest.com",
+      "width": 390,
+      "species": "Monticola gularis",
+      "reference": false,
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "paint": {
+        "background": "repeating-radial-gradient(at 18% 32%, rgba(255, 255, 255, 0.082) 0px, rgba(255, 255, 255, 0.082) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px), radial-gradient(at 20% 65%, rgb(237, 250, 159), rgba(0, 0, 0, 0) 65%), linear-gradient(135deg, rgb(143, 187, 92), rgb(222, 241, 154) 45%, rgb(178, 210, 96))",
+        "tier": "lc"
+      },
+      "actual_chat": true,
+      "errors": []
+    }
+  ]
+}
