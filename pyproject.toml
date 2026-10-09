@@ -42,6 +42,8 @@ robingraph = [
   "api/static/*.html",
   "api/static/*.js",
   "api/static/*.css",
+  "api/static/*.png",
+  "api/static/*.ico",
   "ingest/migrations/*.sql",
   "retrieval/*.json",
 ]
