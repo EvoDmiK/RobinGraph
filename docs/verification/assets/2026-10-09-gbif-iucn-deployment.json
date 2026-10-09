@@ -1,0 +1,113 @@
+{
+  "source_commit": "fd8e959a6266c38f2a8172f185870bb382c63502",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "profiles": [
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "category": "LC",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2025,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Numenius arquata",
+      "category": "NT",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2017,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Antigone vipio",
+      "category": "VU",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "evidence_kind": "taxonomy_snapshot",
+      "assessment_year": null,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Ciconia boyciana",
+      "category": "EN",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2018,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Calidris pygmaea",
+      "category": "CR",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2021,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Cyanopsitta spixii",
+      "category": "EW",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2019,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Raphus cucullatus",
+      "category": "EX",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2024,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Bathmocercus cerviniventris",
+      "category": "DD",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2018,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Aegithalos concinnus",
+      "category": "NE",
+      "assessment_status": "needs_review",
+      "independently_verified": false,
+      "evidence_kind": "taxonomy_snapshot",
+      "assessment_year": null,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Pica serica",
+      "category": "NE",
+      "assessment_status": "needs_review",
+      "independently_verified": false,
+      "evidence_kind": "taxonomy_snapshot",
+      "assessment_year": null,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Tragopan caboti",
+      "category": "VU",
+      "assessment_status": "linked_checklist",
+      "independently_verified": false,
+      "evidence_kind": "red_list_checklist",
+      "assessment_year": 2020,
+      "http_status": 200
+    }
+  ],
+  "javascript_sha256": "939055e3b30849b525307b2b38144a8c55610ab9c05a3a6a0003f35c30efbd4d",
+  "stylesheet_sha256": "fc5b89580c263d6d45b57fb6e17207b4405a7d699967e82c9adcac47f86ec67e",
+  "deployed_static_files_match_commit": true
+}
