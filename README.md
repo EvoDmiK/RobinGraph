@@ -48,7 +48,9 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 분류는 AviList v2025b를 기준으로 하고, 보전 등급은 **IUCN이 GBIF에 CC BY 4.0으로 공개한 평가목록 2026-1**을 우선 연결합니다. 기존 BirdLife SIS 링크·학명·명명자·평가 ID를 검증해 11,131종 중 7,507종에 연결했습니다. 자료 버전과 개별 평가 연도를 구분하고, 답변 출처에서 평가 링크와 라이선스를 확인할 수 있습니다. 런타임은 저장소에 포함된 고정 스냅샷을 읽으므로 IUCN API 키가 필요하지 않습니다.
 
-연결되지 않은 종은 AviList의 기록을 `자료 기준`으로 표시합니다. AviList의 NE는 **평가 자료 연결 확인 필요**로 표시하며, 실제 IUCN 미평가 판정으로 단정하지 않습니다. 까치 Pica serica처럼 평가 대상의 종 범위가 확실하지 않은 종에 다른 종의 등급을 상속하지 않습니다. 공개 평가목록 연결은 실시간 조회나 평가 원문 전체의 독립 검증을 뜻하지 않습니다. 사용자의 요청에 따라 까치(Pica serica) 한 종은 앱에서 LC로 임시 보정하며, 원자료 NE와 미검증 상태를 별도로 보존하고 배지·출처에 임시 보정임을 표시합니다. Pica pica는 `Eurasian magpie`, Pica serica는 `까치 / Oriental magpie`로 표시합니다. 한국어 `까치` 검색은 활성 AviList v2025b의 Pica serica 종 ID로 연결하며 두 종을 합치지 않습니다.
+연결되지 않은 종은 AviList의 기록을 `자료 기준`으로 표시합니다. AviList의 NE는 **평가 자료 연결 확인 필요**로 표시하며, 실제 IUCN 미평가 판정으로 단정하지 않습니다. 까치 Pica serica처럼 평가 대상의 종 범위가 확실하지 않은 종에 다른 종의 등급을 상속하지 않습니다. 공개 평가목록 연결은 실시간 조회나 평가 원문 전체의 독립 검증을 뜻하지 않습니다. 사용자의 요청에 따라 까치(Pica serica) 한 종의 앱 표시 등급은 LC이며, 원자료 NE와 평가 종 범위 확인 필요 상태는 답변 출처에 별도로 보존합니다. 배지에는 `관심대상 (LC)`를 표시합니다. Pica pica는 `Eurasian magpie`, Pica serica는 `까치 / Oriental magpie`로 표시합니다. 한국어 `까치` 검색은 활성 AviList v2025b의 Pica serica 종 ID로 연결하며 두 종을 합치지 않습니다.
+
+까치의 누락된 외관·생활 정보는 [Hong Kong Bird Watching Society의 종 계정](https://avifauna.hkbws.org.hk/species/0260/033600)을 바탕으로 독자적으로 요약합니다. 현지 관찰의 지역 범위는 답변 출처에 표시합니다. 체중 `220.64g`은 [Chae et al. (2025)의 공개 보충 자료](https://www.nature.com/articles/s41598-025-13894-4)에 포함된 한국 5개 지역의 2008년 3월, 2년차 이상 115개체의 **표본 평균**입니다. 기존 DB 형질이 있으면 우선 사용하며, 다른 종의 자료나 먹이 비율을 자동으로 상속하지 않습니다. [표본 평균 검증 스크립트](scripts/verify_reviewed_magpie_mass.py)로 저장된 원본 파일의 체크섬과 계산을 재현할 수 있습니다.
 
 - [공개 평가목록과 인용](https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3)
 - [연결 구현·검증 기록](docs/work-log/2026-10-09-gbif-iucn-conservation-integration.md)

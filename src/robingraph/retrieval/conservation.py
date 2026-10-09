@@ -26,10 +26,10 @@ def manual_magpie_override(lineage, snapshot):
             or snapshot.get('category') != 'NE'
             or snapshot.get('snapshot_sha256') != TAXONOMY_SHA256):
         return None
-    reason = ('사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. '
-              '원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.')
+    reason = ('까치의 앱 표시 등급은 LC입니다. '
+              '원자료의 NE와 평가 종 범위 확인 필요 상태는 별도로 보존합니다.')
     return dict(category='LC', category_raw='LC', label='관심대상',
-                source_id='robingraph-manual-pica-serica', source_name='RobinGraph 임시 보정',
+                source_id='robingraph-manual-pica-serica', source_name='RobinGraph 보전 등급 표시',
                 source_release='2026-10-09', source_url=None,
                 evidence_kind='manual_override', assessment_status='manual_override',
                 independently_verified=False, taxon_id=taxon.taxon_id,

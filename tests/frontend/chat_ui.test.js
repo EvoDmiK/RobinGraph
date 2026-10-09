@@ -130,6 +130,7 @@ test("chat submission and health checks fetch same-origin /health and /v1/chat",
   const provenanceUrls = new Set([
     "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
     "https://www.iucnredlist.org/species/", "https://creativecommons.org/licenses/by/4.0/",
+    "https://avifauna.hkbws.org.hk/species/0260/033600",
   ]);
   const absoluteUrls = Array.from(jsSource.matchAll(/"(https:\/\/[^"\n]+)"/g)).map(match => match[1]);
   assert.ok(absoluteUrls.every(url => provenanceUrls.has(url)), "absolute URL constants are limited to pinned provenance validation");
@@ -1673,7 +1674,7 @@ test("answer consolidates every card source category without nested source toggl
   assert.equal(all.some(n => n.tagName === "a"), false, "card faces contain no citations");
   const links = collectAllNodes(sources).filter(n => n.tagName === "a").map(n => n.href);
   assert.equal(new Set(links).size, links.length, "each source URL is linked only once");
-  for (const expected of ["Some Credit", "CC BY-SA 4.0", "CC BY 4.0", "원자료 분류값 (현재 결론 아님): nocturnal = false", "1100 g (추정값)", "원본 등급: CR (PE)", "현재 최신 평가와 다를 수 있습니다", "AviList", "v2025b", "cs1", profile.vegetation_note, "종 평균", "날개폭"]) {
+  for (const expected of ["Some Credit", "CC BY-SA 4.0", "CC BY 4.0", "원자료 분류값 (현재 결론 아님): nocturnal = false", "1100 g (추정값)", "원본 등급: CR (PE)", "현재 최신 평가와 다를 수 있습니다", "AviList", "v2025b", "cs1", profile.vegetation_note, "자료의 표본과 조사 범위", "날개폭"]) {
     assert.ok(collectedText(sources).includes(expected), expected);
   }
   const sourceNodes = new Set(collectAllNodes(sources));
@@ -2131,11 +2132,11 @@ const PICA_ORIGINAL_SNAPSHOT = {
   snapshot_sha256: "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
   quality_note: "AviList 원자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 사용됩니다.",
 };
-const PICA_OVERRIDE_REASON = "사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.";
+const PICA_OVERRIDE_REASON = "까치의 앱 표시 등급은 LC입니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 별도로 보존합니다.";
 const PICA_MANUAL_OVERRIDE = {
   category: "LC", category_raw: "LC", label: "관심대상", evidence_kind: "manual_override",
   assessment_status: "manual_override", independently_verified: false,
-  source_id: "robingraph-manual-pica-serica", source_name: "RobinGraph 임시 보정",
+  source_id: "robingraph-manual-pica-serica", source_name: "RobinGraph 보전 등급 표시",
   source_release: "2026-10-09", source_url: null, taxon_id: "avilist-taxon:v2025b:20193",
   scientific_name: "Pica serica", taxonomy_release: "v2025b", concept_set_id: "rg:concept-set:avilist-v2025b",
   taxonomy_category_raw: "NE", original_snapshot: PICA_ORIGINAL_SNAPSHOT,
@@ -2148,28 +2149,32 @@ test("Pica serica manual LC override colors only that species and preserves the 
   assert.equal(info.manualOverride, true);
   assert.equal(info.verified, false);
   assert.equal(info.sourceVerified, false);
-  assert.equal(info.badgeText, "관심대상 (LC) · 임시 보정");
+  assert.equal(info.badgeText, "관심대상 (LC)");
   const profile = habitatProfile("Forest", PICA_MANUAL_OVERRIDE);
   profile.taxon = { ...profile.taxon, taxon_id: PICA_MANUAL_OVERRIDE.taxon_id, scientific_name: "Pica serica", korean_name: "까치" };
   profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
   const originalBefore = JSON.stringify(PICA_ORIGINAL_SNAPSHOT);
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.match(card.className, /risk-lc/);
-  assert.match(collectedText(card), /관심대상 \(LC\) · 임시 보정/);
+  assert.match(collectedText(card), /관심대상 \(LC\)/);
   assert.doesNotMatch(collectedText(card), /IUCN 적색목록 관심대상/);
   const sources = card.sourceMaterial;
-  assert.match(collectedText(sources), /사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정/);
+  assert.match(collectedText(sources), /까치의 앱 표시 등급은 LC입니다/);
   assert.match(collectedText(sources), /원자료: AviList NE/);
-  assert.match(collectedText(sources), /공식 평가를 새로 확인한 결과가 아닙니다/);
+  assert.match(collectedText(sources), /IUCN 평가 원문의 독립 검증은 완료되지 않았습니다/);
+  assert.match(collectedText(sources), /홍콩 조류학회.*Pica serica.*IUCN LC/);
+  assert.equal(collectAllNodes(sources).some(n => n.href === "https://avifauna.hkbws.org.hk/species/0260/033600"), true);
+  assert.doesNotMatch(collectedText(card) + collectedText(sources), /임시 보정/);
   assert.doesNotMatch(collectedText(sources), /카드 색상을 중립으로/);
   assert.equal(collectAllNodes(sources).some(n => n.href === PICA_ORIGINAL_SNAPSHOT.source_url), true);
-  assert.match(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), profile)), /LC\) · 임시 보정/);
+  assert.match(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), profile)), /관심대상 \(LC\)/);
   const popup = chat.buildSpeciesPopup(svgCapableDoc(), card, profile);
   assert.match(popup.children[0].className, /risk-lc/);
   for (const showBrief of [true, false]) {
     const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief);
     const answerSources = collectAllNodes(answer).find(n => n.className === "species-answer-sources");
-    assert.match(collectedText(answerSources), /사용자 요청/);
+    assert.match(collectedText(answerSources), /까치의 앱 표시 등급은 LC입니다/);
+    assert.doesNotMatch(collectedText(answerSources), /임시 보정/);
     assert.match(collectedText(answerSources), /AviList NE/);
     assert.equal(collectAllNodes(answerSources).some(n => n.href === PICA_ORIGINAL_SNAPSHOT.source_url), true);
   }
@@ -2202,6 +2207,35 @@ test("manual override fails closed for any incomplete or altered Pica contract",
     assert.equal(info.manualOverride, false, JSON.stringify(change));
     assert.equal(info.verified, false, JSON.stringify(change));
   }
+});
+
+test("sample mean body mass retains its value and explains the study population in card and comparison sources", () => {
+  const profile = habitatProfile("Forest");
+  const scope = "한국 5개 지역·2008년 3월·2년차 이상 115개체";
+  profile.traits = [{ name: "body_mass", label: "체중", value: 220.64, display: "220.64", unit: "g",
+    source_name: "까치 체중 연구", source_url: "https://example.org/magpie-study",
+    summary_statistic: "sample_mean", source_scope: scope, sample_size: 115,
+    citation: "연구 표본의 체중", release: "2012", license_name: "CC BY 4.0" }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const quickFacts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
+  assert.match(collectedText(quickFacts), /220\.64 g/);
+  assert.match(collectedText(quickFacts), /체중 · 표본 평균/);
+  assert.equal(collectAllNodes(card).some(n => n.tagName === "strong" && n.textContent === "체중 · 표본 평균"), true);
+  const ordinaryCard = chat.buildSpeciesCard(svgCapableDoc(), { ...profile, traits: [{ ...profile.traits[0], summary_statistic: "mean" }] });
+  assert.equal(collectAllNodes(ordinaryCard).some(n => (n.tagName === "dt" || n.tagName === "strong") && /표본 평균/.test(n.textContent)), false);
+  const sources = collectedText(card.sourceMaterial);
+  assert.match(sources, /연구 표본 평균/);
+  assert.ok(sources.includes(scope));
+  assert.match(sources, /표본 115개체/);
+  assert.match(sources, /측정 수치는 자료의 표본과 조사 범위에 따릅니다/);
+  assert.doesNotMatch(sources, /종 평균/);
+  const comparison = chat.buildSpeciesComparison(svgCapableDoc(), profile, profile);
+  assert.match(collectedText(comparison), /연구 표본 평균/);
+  assert.ok(collectedText(comparison).includes(scope));
+  assert.match(collectedText(comparison), /표본 115개체/);
+  assert.doesNotMatch(collectedText(comparison), /종 평균/);
+  const invalidSample = { ...profile, traits: [{ ...profile.traits[0], sample_size: "115" }] };
+  assert.doesNotMatch(collectedText(chat.buildSpeciesCard(svgCapableDoc(), invalidSample).sourceMaterial), /표본 115개체/);
 });
 
 test("the pinned public IUCN checklist accepts eight categories without claiming live verification", () => {

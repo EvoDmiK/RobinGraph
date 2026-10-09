@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
 from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override
+from robingraph.retrieval.reviewed_magpie import reviewed_magpie_traits, reviewed_magpie_notes
 
 class SpeciesNotFoundError(LookupError):
     """The requested name is not a species in the active taxonomy."""
@@ -150,7 +151,8 @@ def species_summary(taxon, traits):
         sentences.append(f"먹이 정보는 ‘{diet['display']}’입니다.")
     weight = fields.get('body_mass')
     if weight:
-        statistic = '평균 ' if weight.get('summary_statistic') == 'mean' else ''
+        statistic = ('연구 표본 평균 ' if weight.get('summary_statistic') == 'sample_mean'
+                     else '평균 ' if weight.get('summary_statistic') == 'mean' else '')
         unit = f" {weight['unit']}" if weight.get('unit') else ''
         sentences.append(f"{statistic}체중은 {weight['display']}{unit}입니다.")
     if not sentences:
@@ -355,9 +357,10 @@ def species_sections(taxon, traits, notes):
         if trait is None:
             return None
         unit = f" {trait['unit']}" if trait.get('unit') else ''
-        prefix = '평균 ' if trait.get('summary_statistic') == 'mean' else ''
+        prefix = ('연구 표본 평균 ' if trait.get('summary_statistic') == 'sample_mean'
+                  else '평균 ' if trait.get('summary_statistic') == 'mean' else '')
         return {'text':f"{prefix}{LABELS[name]}: {trait['display']}{unit}",
-                **{key:trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'license_url')}}
+                **{key:trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'license_url', 'source_scope', 'citation')}}
     basic = [{'text':'학명: ' + taxon['scientific_name']}] if taxon.get('scientific_name') else []
     weight = fact('body_mass')
     if weight:
@@ -416,9 +419,9 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
                     'warnings':['사진 제공처를 현재 조회할 수 없습니다.']}
     def trait_stage(lineage):
         try:
-            return {'traits':traits(lineage), 'warnings':[]}
+            return {'traits':reviewed_magpie_traits(lineage, traits(lineage)), 'warnings':[]}
         except Exception:
-            return {'traits':[], 'warnings':['종 특성 제공처를 현재 조회할 수 없습니다.']}
+            return {'traits':reviewed_magpie_traits(lineage, []), 'warnings':['종 특성 제공처를 현재 조회할 수 없습니다.']}
     def conservation_stage(lineage):
         if lineage.items[-1].rank == 'subspecies':
             return {'conservation':unconfirmed_conservation(),'warnings':[]}
@@ -429,6 +432,9 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             return {'conservation':unconfirmed_conservation(),
                     'warnings':['보전 상태를 현재 확인할 수 없습니다.']}
     def notes_stage(lineage):
+        reviewed = reviewed_magpie_notes(lineage)
+        if reviewed:
+            return {'notes':reviewed, 'warnings':[]}
         if not include_enrichment or lineage.items[-1].rank == 'subspecies':
             return {'notes':{},'warnings':[]}
         try:
