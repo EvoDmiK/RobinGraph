@@ -1,6 +1,6 @@
 # 전체 종 형질 자료 연결 복구와 카드의 비율 부재 표시
 
-작성일: 2026-10-09. 작업 시작 기준 `4c62562eca085122c0edd399149f5d179928303b` / dev. 구현과 로컬·실 DB 조회 검증을 마쳤고 TEST 배포 결과는 아래에 별도 기록한다.
+작성일: 2026-10-09. 작업 시작 기준 `4c62562eca085122c0edd399149f5d179928303b` / dev. 구현·실 DB 검증·NAS TEST 배포·공개 HTTP 및 PC/모바일 브라우저 검증을 완료했다.
 
 ## 배경과 목표
 
@@ -66,9 +66,40 @@ Claude는 기존 Ponytail 작업 트리의 옛 코드를 병합하지 않고 최
 
 ## 배포·커밋 및 남은 한계
 
-통합 변경은 아직 배포 전이다. 기존 TEST는 `60ce6af`, PROD는 `e90ff85`였다. 작업 중 PROD 컨테이너 ID `71d938bb700e8b75ccc8f470357b38c4f96f03d67da30736d70fe769ec4423cf`를 확인했다. 최종 TEST 배포 및 검증 결과는 이 절을 갱신한다.
+구현 커밋은 `663ef4ffb25c96c44214153797deadb516926c41`이다. Git 객체에서 비밀정보 없는 NAS 패키지를 만들고 파일별 MANIFEST 및 전송 아카이브 SHA-256을 검증한 뒤 TEST에 배포했다.
+
+- TEST 이미지: `robingraph-api:test-traits-663ef4f`.
+- TEST OCI revision: `663ef4ffb25c96c44214153797deadb516926c41` (환경 변수 `ROBINGRAPH_VCS_REF`로 빌드에 명시하고 실제 라벨 대조).
+- TEST 컨테이너: `55e27687a4e0405f433d43a62425f936088b878dad6d7e5d5b9e3acdda68af1a`, healthy.
+- NAS 실행 경로: `/home/kimdove/RobinGraph-traits-663ef4f`.
+- 패키지 SHA-256: `9e5ceaec9bdebc7ad360c464af66c6483bd17f5190c79273fe09726b9bc1b9a4`.
+- PROD 이미지 `robingraph-api:prod-e90ff85`, 컨테이너 `71d938bb700e8b75ccc8f470357b38c4f96f03d67da30736d70fe769ec4423cf`와 revision은 배포 전후 동일, healthy였다. PROD 변경 없음.
+- DB/후보/graph 관계 변경 및 n8n 실행 없음. 환경 파일은 NAS 내부에서 기존 TEST 설정을 새 실행 경로에 복사했고 문서·전송 패키지에는 포함하지 않았다.
+
+### 공개 주소 검증
+
+[실 HTTP 결과](../verification/2026-10-09-trait-recovery-api.json), [실 브라우저 결과](../verification/2026-10-09-trait-recovery-browser.json), [함수 실 DB 검증 상세](../verification/2026-10-09-trait-runtime-verification.md)를 보존했다.
+
+`https://robingraph-test.dove-nest.com`에서 실제 profile HTTP 9건이 모두 200이고 다음을 확인했다.
+
+| 조회 | 실제 결과 |
+|---|---|
+| Hypsipetes amaurotis / Ardea alba / Tachyspiza badia | 각각 18형질, 두 비율의 승인된 옛 학명 연결·원값 확인 |
+| Pica serica / 까치 | 둘 다 까치·Oriental magpie·LC, 문헌 보완 4형질, 없는 비율 미생성 |
+| Pica pica | Eurasian magpie, 기존 18형질, 개념 연결 `needs_review` 표시 |
+| Anas platyrhynchos | 기존 18형질 유지 |
+| Tinamus osgoodi / Megapodius decollatus | 기존 정확연결/복구 연결 양쪽 식이 D1의 `inferred: true`와 원 certainty 확인 |
+
+실제 배포 `chat.js`, `styles.css` 바이트가 검증한 로컬 파일과 일치했다. Playwright의 실제 Chrome에서 API 응답 모킹 없이 까치·직박구리 질문을 PC 1280×900/모바일 390×844로 각각 실행했다. 네 시나리오 모두 카드가 화면 안에 들어왔고 기본 상태 휠 스크롤 이동 0, JS 오류 0이었다. PC 실제 마우스 드래그와 모바일 CDP 터치 스와이프로 뒷면→앞면 전환을 확인했다. 직박구리 출처 토글에 원자료 학명 `Ixos amaurotis`가 표시됐다. 물리 모바일 기기와 Safari/Firefox 검증은 하지 않았다. 펼쳐진 상세 토글의 기존 스크롤 정책을 이번 수정으로 바꾸지는 않았다.
+
+![모바일 까치: 비율 부재와 정성 정보](../verification/assets/2026-10-09-trait-recovery-magpie-back-390.png)
+
+![PC 직박구리: 복구된 두 비율 차트](../verification/assets/2026-10-09-trait-recovery-bulbul-back-1280.png)
+
+### 알려진 한계
 
 - 까치의 수치 비율은 새로 확보하지 못했다. 기존 연구·문헌의 정성 정보와 표본 체중을 사용하며 비율 부재를 유지한다.
 - 읽기 시점 복구이므로 후보 상태/graph 관계 자체는 바뀌지 않는다. graph 전용 질의·순위 산정의 자료 범위까지 모두 확장했다고 주장하지 않는다.
+- 추정 코드 보완의 실 TEST 재검증에서도 값·플래그 불일치 0이었다. 복구 Elton의 추정 표시는 체중 191개, 활동 위치 45개, 식이 유형/구성 각각 139개다. 기존 정확연결에서도 같은 규칙을 적용하며 C 코드를 확정 추정으로 단정하지 않는다.
 - n8n 사용 허용은 받았으나 기존 후보값이 온전하여 이번 복구에는 재수집이 필요하지 않았다. 신규 n8n 워크플로 작성·실행은 없고 향후 IUCN 배포본 갱신 절차를 조사 문서에 제안했다.
 - 공식 세계 등급과 국가 적색목록/법정 보호등급은 구분한다. 이번 보전 조사는 읽기 전용이며 추가 2,816개 후보를 확정 연결 수로 계산하지 않는다.

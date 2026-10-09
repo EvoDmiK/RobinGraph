@@ -1,0 +1,57 @@
+{
+  "response_mocking": false,
+  "checks": [
+    {
+      "width": 1280,
+      "question": "까치에 대해 알고 싶어",
+      "scientific_name": "Pica serica",
+      "actual_api": true,
+      "profile_traits": 4,
+      "fits": true,
+      "qualitative_fallback": true,
+      "wheel_no_scroll": true,
+      "pc_drag": true,
+      "mobile_touch_swipe": false,
+      "page_errors": []
+    },
+    {
+      "width": 1280,
+      "question": "직박구리에 대해 알고 싶어",
+      "scientific_name": "Hypsipetes amaurotis",
+      "actual_api": true,
+      "profile_traits": 18,
+      "fits": true,
+      "qualitative_fallback": false,
+      "wheel_no_scroll": true,
+      "pc_drag": true,
+      "mobile_touch_swipe": false,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "question": "까치에 대해 알고 싶어",
+      "scientific_name": "Pica serica",
+      "actual_api": true,
+      "profile_traits": 4,
+      "fits": true,
+      "qualitative_fallback": true,
+      "wheel_no_scroll": true,
+      "pc_drag": false,
+      "mobile_touch_swipe": true,
+      "page_errors": []
+    },
+    {
+      "width": 390,
+      "question": "직박구리에 대해 알고 싶어",
+      "scientific_name": "Hypsipetes amaurotis",
+      "actual_api": true,
+      "profile_traits": 18,
+      "fits": true,
+      "qualitative_fallback": false,
+      "wheel_no_scroll": true,
+      "pc_drag": false,
+      "mobile_touch_swipe": true,
+      "page_errors": []
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "source_commit": "663ef4ffb25c96c44214153797deadb516926c41",
+  "actual_api": true,
+  "profiles": [
+    {
+      "query": "Hypsipetes amaurotis",
+      "scientific_name": "Hypsipetes amaurotis",
+      "trait_count": 18,
+      "recovered": [
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 10,
+            "endotherm_vertebrate": 0,
+            "ectotherm_vertebrate": 0,
+            "fish": 0,
+            "unknown_vertebrate": 0,
+            "carrion": 0,
+            "fruit": 70,
+            "nectar": 10,
+            "seed": 0,
+            "other_plant": 10
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Ixos amaurotis",
+            "target_scientific_name": "Hypsipetes amaurotis",
+            "reason": null
+          }
+        },
+        {
+          "name": "foraging_strata_distribution",
+          "value": {
+            "below_water_surface": 0,
+            "around_water_surface": 0,
+            "ground": 0,
+            "understory": 50,
+            "mid_high": 50,
+            "canopy": 0,
+            "aerial": 0
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Ixos amaurotis",
+            "target_scientific_name": "Hypsipetes amaurotis",
+            "reason": null
+          }
+        }
+      ],
+      "http_status": 200
+    },
+    {
+      "query": "Ardea alba",
+      "scientific_name": "Ardea alba",
+      "trait_count": 18,
+      "recovered": [
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 40,
+            "endotherm_vertebrate": 10,
+            "ectotherm_vertebrate": 30,
+            "fish": 20,
+            "unknown_vertebrate": 0,
+            "carrion": 0,
+            "fruit": 0,
+            "nectar": 0,
+            "seed": 0,
+            "other_plant": 0
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Casmerodius albus",
+            "target_scientific_name": "Ardea alba",
+            "reason": null
+          }
+        },
+        {
+          "name": "foraging_strata_distribution",
+          "value": {
+            "below_water_surface": 0,
+            "around_water_surface": 50,
+            "ground": 50,
+            "understory": 0,
+            "mid_high": 0,
+            "canopy": 0,
+            "aerial": 0
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Casmerodius albus",
+            "target_scientific_name": "Ardea alba",
+            "reason": null
+          }
+        }
+      ],
+      "http_status": 200
+    },
+    {
+      "query": "Tachyspiza badia",
+      "scientific_name": "Tachyspiza badia",
+      "trait_count": 18,
+      "recovered": [
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 10,
+            "endotherm_vertebrate": 30,
+            "ectotherm_vertebrate": 60,
+            "fish": 0,
+            "unknown_vertebrate": 0,
+            "carrion": 0,
+            "fruit": 0,
+            "nectar": 0,
+            "seed": 0,
+            "other_plant": 0
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Accipiter badius",
+            "target_scientific_name": "Tachyspiza badia",
+            "reason": null
+          }
+        },
+        {
+          "name": "foraging_strata_distribution",
+          "value": {
+            "below_water_surface": 0,
+            "around_water_surface": 0,
+            "ground": 50,
+            "understory": 0,
+            "mid_high": 50,
+            "canopy": 0,
+            "aerial": 0
+          },
+          "alignment": {
+            "status": "accepted",
+            "method": "birdtree_birdlife_avibase_chain",
+            "source_scientific_name": "Accipiter badius",
+            "target_scientific_name": "Tachyspiza badia",
+            "reason": null
+          }
+        }
+      ],
+      "http_status": 200
+    },
+    {
+      "query": "Pica serica",
+      "scientific_name": "Pica serica",
+      "trait_count": 4,
+      "recovered": [],
+      "http_status": 200
+    },
+    {
+      "query": "까치",
+      "scientific_name": "Pica serica",
+      "trait_count": 4,
+      "recovered": [],
+      "http_status": 200
+    },
+    {
+      "query": "Pica pica",
+      "scientific_name": "Pica pica",
+      "trait_count": 18,
+      "recovered": [],
+      "http_status": 200
+    },
+    {
+      "query": "Anas platyrhynchos",
+      "scientific_name": "Anas platyrhynchos",
+      "trait_count": 18,
+      "recovered": [],
+      "http_status": 200
+    },
+    {
+      "query": "Tinamus osgoodi",
+      "scientific_name": "Tinamus osgoodi",
+      "trait_count": 18,
+      "recovered": [],
+      "http_status": 200
+    },
+    {
+      "query": "Megapodius decollatus",
+      "scientific_name": "Megapodius decollatus",
+      "trait_count": 18,
+      "recovered": [],
+      "http_status": 200
+    }
+  ],
+  "static_matches": {
+    "chat.js": "fd363462b68e6975e831cd5d9c71428ff885bc66960ec57703918f50127320c1",
+    "styles.css": "4e496a94af8d2be70a74175076bc193393f638806e5cae8a19128195a80693a4"
+  }
+}
