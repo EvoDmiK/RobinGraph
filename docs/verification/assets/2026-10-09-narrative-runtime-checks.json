@@ -1,0 +1,68 @@
+{
+  "revision": "5acaf54696ce7d095a2cf3db7380e6c01f668573",
+  "python_tests": 128,
+  "frontend_tests": 291,
+  "structural_scope_species": 356,
+  "multiple_subgroup_species": 290,
+  "structural_mode": "pinned real relationship artifact with synthetic notes; not live 356-species LLM audit",
+  "parus_trait_and_conservation_unchanged": true,
+  "parus_subgroup_items_retained": 11,
+  "environments": {
+    "test": {
+      "http_count": 20,
+      "http_failures": [],
+      "browser": [
+        {
+          "width": 1280,
+          "main": [
+            "기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g",
+            "생활과 먹이서식 환경: 숲먹이 유형: 무척추동물"
+          ],
+          "notes": "출처 범위별 설명\n\n이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.\n\nParus cinereus\n이 새는 윗면이 회색이고 아랫면은 흰색이며, 넓은 검은색 배 줄무늬가 있고 볏이 없습니다.\n암컷은 배의 줄무늬가 더 좁고 색이 약간 더 칙칙합니다.\n이 새들은 주로 나뭇가지나 잎에서 곤충을 잡거나 싹과 열매를 먹으며 섭식합니다.\n번식기 동안 울음소리가 특히 지속적으로 나타납니다.",
+          "subgroupClosedInitially": true,
+          "referenceClosedInitially": true
+        },
+        {
+          "width": 390,
+          "main": [
+            "기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g",
+            "생활과 먹이서식 환경: 숲먹이 유형: 무척추동물"
+          ],
+          "notes": "출처 범위별 설명\n\n이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.\n\nParus cinereus\n이 새는 윗면이 회색이고 아랫면은 흰색이며, 넓은 검은색 배 줄무늬가 있고 볏이 없습니다.\n암컷은 배의 줄무늬가 더 좁고 색이 약간 더 칙칙합니다.\n이 새들은 주로 나뭇가지나 잎에서 곤충을 잡거나 싹과 열매를 먹으며 섭식합니다.\n번식기 동안 울음소리가 특히 지속적으로 나타납니다.",
+          "subgroupClosedInitially": true,
+          "referenceClosedInitially": true
+        }
+      ]
+    },
+    "prod": {
+      "http_count": 20,
+      "http_failures": [],
+      "browser": [
+        {
+          "width": 1280,
+          "main": [
+            "기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g",
+            "생활과 먹이서식 환경: 숲먹이 유형: 무척추동물"
+          ],
+          "notes": "출처 범위별 설명\n\n이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.\n\nParus cinereus\n이 새는 윗면이 회색이고 아랫면은 흰색이며, 검은색 머리와 뺨의 흰색 무늬, 날개의 흰색 띠가 특징입니다.\n암컷은 배의 검은색 선이 더 좁고 약간 덜 선명합니다.\n이 새는 주로 곤충을 잡거나 새싹과 열매를 먹으며 먹이 활동을 합니다.\n둥지 구멍 안에서 위협을 받으면 이 새는 쉭쉭거리는 소리를 냅니다.",
+          "subgroupClosedInitially": true,
+          "referenceClosedInitially": true
+        },
+        {
+          "width": 390,
+          "main": [
+            "기본 정보학명: Parus cinereus문헌 범위값 평균 체중: 16.55 g",
+            "생활과 먹이서식 환경: 숲먹이 유형: 무척추동물"
+          ],
+          "notes": "출처 범위별 설명\n\n이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.\n\nParus cinereus\n이 새는 윗면이 회색이고 아랫면은 흰색이며, 검은색 머리와 뺨의 흰색 무늬, 날개의 흰색 띠가 특징입니다.\n암컷은 배의 검은색 선이 더 좁고 약간 덜 선명합니다.\n이 새는 주로 곤충을 잡거나 새싹과 열매를 먹으며 먹이 활동을 합니다.\n둥지 구멍 안에서 위협을 받으면 이 새는 쉭쉭거리는 소리를 냅니다.",
+          "subgroupClosedInitially": true,
+          "referenceClosedInitially": true
+        }
+      ]
+    }
+  },
+  "initial_failures": [
+    "Browser test initially assumed an enrichment button for an already-enriched explicit profile response; test fixed to support both flows.",
+    "Production first Parus response had notes lookup warning. A fresh real request returned notes without warnings; final desktop/mobile browser checks passed. Exact underlying initial generation failure not exposed by profile response."
+  ]
+}
