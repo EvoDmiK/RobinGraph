@@ -1,0 +1,21 @@
+{
+  "url": "https://robingraph-test.dove-nest.com/chat",
+  "status": 200,
+  "viewport": {
+    "w": 390,
+    "h": 844,
+    "scale": 1
+  },
+  "css_url": "https://robingraph-test.dove-nest.com/static/styles.css?v=61188eb949ec1aa8",
+  "css_sha256": "61188eb949ec1aa8c274c3dc126e3662581c8906870054e33d447c4408e9da3a",
+  "matches_preceding_source": true,
+  "html_cache_control": "no-cache, must-revalidate",
+  "html_cf_cache": "DYNAMIC",
+  "css_cache_control": "max-age=14400, must-revalidate",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  }
+}
