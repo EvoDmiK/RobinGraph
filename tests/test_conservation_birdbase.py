@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from robingraph.retrieval import conservation as c
+from robingraph.retrieval.reviewed_conservation import reviewed_index
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,13 +33,23 @@ class BirdbaseConservationTest(unittest.TestCase):
         ledger = json.loads((ROOT / 'docs/verification/assets/2026-10-09-unresolved-conservation-review.json').read_text())
         self.assertEqual({'birdbase-v2025.1': 117, 'gbif-iucn-2026-1': 25, 'missing': 305}, ledger['counts']['combined_reference_sources'])
         self.assertEqual(11131, len(self.index['entries']))
+        approved = reviewed_index()
+        expert_ids, missing_ids = set(), set()
         for row in ledger['species']:
             lookup = row['birdbase_lookup']
             lineage = self.lineage_for(lookup)
             ref = c.best_reference_assessment(lineage, self.snapshot)
             if row['selected_reference_source'] is None:
-                self.assertIsNone(ref, row['scientific_name'])
                 self.assertIsNone(lookup['category'])
+                if row['taxon_id'] in approved:
+                    self.assertEqual(approved[row['taxon_id']], ref)
+                    self.assertEqual('reference_only', ref['assessment_status'])
+                    self.assertFalse(ref['independently_verified'])
+                    self.assertIsNone(ref['assessment_year'])
+                    expert_ids.add(row['taxon_id'])
+                else:
+                    self.assertIsNone(ref, row['scientific_name'])
+                    missing_ids.add(row['taxon_id'])
             else:
                 self.assertEqual(row['selected_reference_source'], ref['source_id'])
                 self.assertEqual(row['reference_category'], ref['category'])
@@ -51,6 +62,8 @@ class BirdbaseConservationTest(unittest.TestCase):
                     self.assertNotIn('assessment_id', ref)
                     self.assertEqual(f"Data!row {ref['source_row']}", ref['source_locator'])
             self.assertIsNone(c.linked_checklist(lineage, self.snapshot))
+        self.assertEqual(set(approved), expert_ids)
+        self.assertEqual(305 - len(expert_ids), len(missing_ids))
         self.assertEqual(4, ledger['counts']['excluded_unreleased_recommendations'])
         for row in ledger['species']:
             if 'unreleased_recommendation' in row:

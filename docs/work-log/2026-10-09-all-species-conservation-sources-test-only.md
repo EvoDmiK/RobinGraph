@@ -72,7 +72,7 @@ HKBWS 목록과 현재 등급이 다른 7종은 공식 IUCN 변경표·자료 �
 ## 최종 실행 기록
 
 - 프런트 전체: `node --test tests/frontend/*.test.js` 296개 통과, 실패 0, 건너뛰기 0.
-- 백엔드 관련 범위: `tests.test_reviewed_conservation`, `tests.test_conservation_index`, `tests.test_species_profile` 54개 통과, 실패 0, 건너뛰기 0. 모의 repository와 고정 출처 레코드 검증이며 이 결과를 실제 DB 테스트로 계산하지 않았다. 협업자의 중복 실행 건수는 합산하지 않았다.
+- 백엔드 관련 범위: `tests.test_reviewed_conservation`, `tests.test_conservation_index`, `tests.test_species_profile`, `tests.test_conservation_birdbase` 59개 통과, 실패 0, 건너뛰기 0. 모의 repository와 고정 출처 레코드 검증이며 이 결과를 실제 DB 테스트로 계산하지 않았다. 협업자의 중복 실행 건수는 합산하지 않았다.
 - 프런트 초기 전체 실행 1건은 신규 승인 출처 URL이 기존 URL 제한 테스트에 등록되지 않아 실패했다. 허용 출처는 고정 JSON에서만 읽도록 보완한 뒤 최종 296개가 통과했다. 초기 해시 검증의 논리적 허점도 독립 검토 후 보완했다.
 - 실제 TEST DB 배치 조회: 전체 11,131종 처리, 예외 0. primary linked_checklist 7,507종, snapshot_only 2,816종, needs_review 807종, 기존 수동 까치 표시 1종. 참고자료 연결은 GBIF 385종 + BIRDBASE 117종 + HKBWS 9종. needs_review 중 참고자료도 없는 대상은 296종이다. 직접 11,131회 HTTP 호출한 테스트가 아니다.
 - 실제 DB 반환값 전체의 프런트 표시 함수 검증: 11,131종 처리, 실패 0. 표시 기준 LC 8,502, NT 926, VU 653, EN 360, CR 206, EW 5, EX 148, DD 35. 중립색 331은 DD 35와 미연결 296을 포함한다. 참고자료를 독립된 신규 평가로 계산하지 않는다.
@@ -102,3 +102,5 @@ HKBWS 목록과 현재 등급이 다른 7종은 공식 IUCN 변경표·자료 �
 공식·전문가 교차 검토의 최종 결과는 `docs/verification/2026-10-09-conservation-source-crosscheck.md`에 기록했다. HKBWS 목록과 다른 7종 모두 IUCN 공식 2025-2 또는 2023-1 변경표 PDF로 과거 등급 변경이 확인되어 기존 앱 값을 유지했다. 해당 7개 개별 IUCN 평가 페이지는 403/접근 불가였으므로 원문 본문을 직접 읽었다고 주장하지 않는다. 공식 변경표 PDF는 직접 다운로드와 해당 페이지 이미지 검증까지 수행했다.
 
 Obsidian에는 `Work/RobinGraph/작업기록/2026-10-09-전체종-보전출처-재조사-TEST전용.md`와 `Work/RobinGraph/검토자료/2026-10-09-보전등급-전수출처-교차검토.md`를 저장하고 읽기 재검증했다. 프로젝트·작업기록·검토자료 index에도 각각 링크를 추가했다. 저장소 문서 본문과 Obsidian 본문이 일치함을 확인했다.
+
+추가 회귀 점검에서 기존 BIRDBASE 447종 전수 테스트는 옛 미연결 305종이 계속 None이어야 한다는 기대 때문에 5개 중 1개 실패했다. 이번에 검토한 승인 레코드에 속한 종만 정확한 전문가 레코드를 반환하고, 나머지는 여전히 None이며 기존 GBIF/BIRDBASE 우선순위가 유지되는지 검사하도록 수정했다. 해당 5개를 포함한 최종 백엔드 관련 59개가 모두 통과했다. 애플리케이션 코드를 재변경한 것은 아니므로 TEST 런타임 revision은 71501e3을 유지한다.
