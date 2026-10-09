@@ -1,0 +1,111 @@
+{
+  "passed": false,
+  "mode": "before",
+  "physical_device": false,
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "baseline": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "bottom": 828,
+          "right": 378
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "bottom": 820,
+          "right": 370
+        },
+        "front": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "back": {
+          "x": 37,
+          "y": 176.984375,
+          "width": 316,
+          "height": 626.015625,
+          "bottom": 803,
+          "right": 353
+        },
+        "close": {
+          "x": 326,
+          "y": 24,
+          "width": 44,
+          "height": 44,
+          "bottom": 68,
+          "right": 370
+        },
+        "scroll": [
+          {
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "height": 812,
+            "client": 812,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card risk-lc",
+            "top": 0,
+            "height": 794,
+            "client": 794,
+            "overflow": "hidden"
+          },
+          {
+            "class": "species-card-front",
+            "top": 0,
+            "height": 626,
+            "client": 626,
+            "overflow": "auto"
+          },
+          {
+            "class": "species-card-back",
+            "top": 0,
+            "height": 626,
+            "client": 626,
+            "overflow": "auto"
+          }
+        ],
+        "scale": "",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "visualScale": 1
+        }
+      },
+      "photo_swipe": {
+        "from": {
+          "x": 100.2,
+          "y": 288.471875
+        },
+        "to": {
+          "x": 290.52,
+          "y": 296.471875
+        },
+        "face": "front"
+      },
+      "title_swipe": {
+        "from": {
+          "x": 52.65,
+          "y": 91.2
+        },
+        "to": {
+          "x": 242.97,
+          "y": 99.2
+        },
+        "face": "back"
+      }
+    }
+  ]
+}
