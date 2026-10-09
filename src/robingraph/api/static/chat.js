@@ -470,13 +470,15 @@
     box.setAttribute("data-qualitative-fallback", shown.map(function (item) { return item.name; }).join(","));
     shown.forEach(function (item) {
       var line = doc.createElement("span"); line.className = "species-distribution-qualitative-value";
-      line.textContent = item.label + " · " + item.text; box.appendChild(line);
+      var label = item.name === "primary_lifestyle" ? "생활 방식" : item.label;
+      var value = item.name === "primary_lifestyle" ? item.text.split(/[·;；\n]/)[0].trim() : item.text;
+      if (value !== item.text && /\(추정값\)$/.test(item.text)) { value += " (추정값)"; }
+      line.textContent = label + " · " + value; box.appendChild(line);
     });
     var qualifier = doc.createElement("span"); qualifier.className = "species-distribution-qualitative-note";
     qualifier.textContent = "비율 자료 없음"; box.appendChild(qualifier);
     if (spec.note) {
-      var scope = doc.createElement("span"); scope.className = "species-distribution-qualitative-note";
-      scope.textContent = spec.note; box.appendChild(scope);
+      box.setAttribute("title", shown.map(function (item) { return item.label + " · " + item.text; }).join(" / ") + " — " + spec.note);
     }
     return box;
   }
