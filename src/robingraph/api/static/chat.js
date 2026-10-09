@@ -2466,7 +2466,7 @@
     back.appendChild(buildCardTraitGrid(doc, prominentGroups, traitSources, null, true));
     if (remainingGroups.length > 0) {
       var measurementsDetails = doc.createElement("details");
-      measurementsDetails.className = "card-details";
+      measurementsDetails.className = "card-details card-details-scroll";
       var measurementsSummary = doc.createElement("summary");
       measurementsSummary.textContent = "측정값 더 보기 (" + remainingGroups.length + ")";
       measurementsDetails.appendChild(measurementsSummary);
@@ -2560,7 +2560,7 @@
     var lineageItems = lineage && Array.isArray(lineage.items) ? lineage.items : [];
     if (lineageItems.length > 0) {
       var lineageDetails = doc.createElement("details");
-      lineageDetails.className = "card-details";
+      lineageDetails.className = "card-details card-details-scroll";
       var lineageSummary = doc.createElement("summary");
       lineageSummary.textContent = "분류 계통 보기";
       lineageDetails.appendChild(lineageSummary);
@@ -2614,6 +2614,7 @@
       var dialog = popupDialog(card);
       if (dialog) { dialog.scrollTop = 0; }
       front.scrollTop = 0; back.scrollTop = 0;
+      if (typeof card.resetFitScroll === "function") { card.resetFitScroll(); }
     }
     var flipAnimation = null;
     var flipTarget = null;
@@ -3212,6 +3213,11 @@
     function mobileFit() {
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
+    function scrollToggleOpen() {
+      var toggles = typeof card.querySelectorAll === "function" ? card.querySelectorAll(".card-details-scroll") : [];
+      for (var i = 0; i < toggles.length; i += 1) { if (toggles[i].open) { return true; } }
+      return false;
+    }
     function fitCard() {
       fitRaf = null;
       if (!fitActive || !dialog.open || dialog.isConnected === false) { return; }
@@ -3233,8 +3239,18 @@
       // subsequent observer callbacks progressively shrink or oscillate.
       var naturalHeight = fitSurface.offsetHeight;
       if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
-      var scale = Math.min(1, width / naturalWidth, height / naturalHeight);
+      // While "측정값 더 보기" or "분류 계통 보기" is open, keep the card at a
+      // readable size (fit the width only) and let the frame scroll vertically
+      // instead of shrinking the whole card to the frame height.
+      var scrolling = scrollToggleOpen();
+      var scale = Math.min(1, width / naturalWidth);
+      if (!scrolling) { scale = Math.min(scale, height / naturalHeight); }
       fitSurface.style.transform = "scale(" + scale + ")";
+      // A scaled surface keeps its unscaled layout height; trim the difference
+      // so the scroll range matches what is visible.
+      fitSurface.style.marginBottom = scrolling && scale < 1 ? "-" + (naturalHeight * (1 - scale)) + "px" : "";
+      fitFrame.setAttribute("data-fit-scroll", scrolling ? "true" : "false");
+      if (!scrolling && fitFrame.scrollTop) { fitFrame.scrollTop = 0; }
       fitFrame.setAttribute("data-fit-scale", String(scale));
       if (mobile && dialog.style && dialog.offsetWidth > 0) {
         var chrome = dialog.offsetWidth - width;
@@ -3258,6 +3274,7 @@
     function startFit() {
       stopFit();
       if (!dialog.open) { return; }
+      card.resetFitScroll();
       fitActive = true;
       if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
       if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
@@ -3268,6 +3285,8 @@
       scheduleFit();
     }
     card.requestFit = scheduleFit;
+    card.resetFitScroll = function () { if (fitFrame.scrollTop) { fitFrame.scrollTop = 0; } };
+    fitFrame.addEventListener("scroll", function () { clearDistributionTooltips(card); });
     wrapper.disposePopup = function () { stopFit(); if (dialog.open && dialog.close) { dialog.close(); } };
     var backdropPress = null;
     function isBackdrop(event) {
