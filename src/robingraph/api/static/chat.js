@@ -271,7 +271,7 @@
       if (!trait || typeof trait !== "object") {
         return;
       }
-      var key = JSON.stringify([trait.name, trait.value, trait.unit, trait.inferred]);
+      var key = JSON.stringify([trait.name, trait.value, trait.unit, trait.inferred, trait.source_scope_kind, trait.source_scope, trait.summary_statistic]);
       if (!Object.prototype.hasOwnProperty.call(index, key)) {
         index[key] = { trait: trait, sources: [] };
         groups.push(index[key]);
@@ -318,6 +318,8 @@
 
   var ALIGNMENT_METHOD_LABELS = {
     avibase_id_unique: "분류 개념 ID 일치",
+    author_avilist_column: "원저자의 AviList 대응 열·전체 종 목록·과 일치",
+    ebird_issf_report_as: "공식 eBird 아종군과 상위 종 연결",
     birdtree_birdlife_avibase_chain: "공개 분류 대응표와 개념 ID 일치",
     exact_name_legacy: "학명 일치, 개념 일치는 미확인",
   };
@@ -352,6 +354,9 @@
       text = source && target && !same
         ? "원자료 학명 " + source + "을(를) 현재 분류의 " + target + "와 같은 분류 개념으로 연결했습니다."
         : "원자료 학명" + (source ? " " + source : "") + "과 현재 분류가 같은 분류 개념으로 확인되었습니다.";
+    } else if (alignment.status === "reference_subgroup") {
+      text = "현재 종에 포함되는 아종군 " + (alignmentName(trait.source_scope) || source || "") +
+        "의 참고 자료입니다. 현재 종 전체를 대표하는 값이 아닙니다.";
     } else if (alignment.status === "needs_review") {
       text = "원자료" + (source ? " " + source : "") + "의 수치가 현재 분류" + (target ? "의 " + target : "") +
         "와 범위가 같은지 확인이 필요합니다. 개념 일치 검증이 끝나지 않았습니다.";
@@ -369,9 +374,36 @@
 
   function traitStudyMetadata(source) {
     var statistic = source.summary_statistic === "sample_mean" ? "연구 표본 평균" :
-      (source.summary_statistic === "mean" ? "종 평균" : null);
+      ({ mean: "종 평균", species_mean: "종 평균", species_estimate: "종 추정값",
+        literature_bounds_mean: "문헌 범위값 평균", subgroup_mean: "아종군 평균", subgroup_estimate: "아종군 추정값", subgroup_category: "아종군 분류값" }[source.summary_statistic] || null);
     return [statistic, typeof source.source_scope === "string" ? source.source_scope.trim() : null,
       Number.isInteger(source.sample_size) && source.sample_size > 0 ? "표본 " + source.sample_size + "개체" : null].filter(Boolean);
+  }
+
+  function appendTraitSourceMetadata(doc, sourceDetails, sourceTrait) {
+    if (typeof sourceTrait.source_note === "string" && sourceTrait.source_note.trim()) {
+      var sourceNote = doc.createElement("p");
+      sourceNote.className = "trait-source-note";
+      sourceNote.textContent = sourceTrait.source_note;
+      sourceDetails.appendChild(sourceNote);
+    }
+    if (sourceTrait.source_mass_bounds && typeof sourceTrait.source_mass_bounds === "object") {
+      var massLabels = { "Female MinMass": "암컷 최소", "Female MaxMass": "암컷 최대", "Male MinMass": "수컷 최소",
+        "Male MaxMass": "수컷 최대", "Unsexed MinMass": "성별 미구분 최소", "Unsexed MaxMass": "성별 미구분 최대" };
+      var bounds = Object.keys(massLabels).filter(function (key) {
+        return typeof sourceTrait.source_mass_bounds[key] === "number" && Number.isFinite(sourceTrait.source_mass_bounds[key]);
+      }).map(function (key) { return massLabels[key] + " " + sourceTrait.source_mass_bounds[key] + " g"; });
+      if (bounds.length) {
+        var massNote = doc.createElement("p"); massNote.className = "trait-mass-bounds";
+        massNote.textContent = "원문 체중 범위: " + bounds.join(" · "); sourceDetails.appendChild(massNote);
+      }
+    }
+    var mapping = sourceTrait.mapping_provenance;
+    if (mapping && typeof mapping.relationship_source_url === "string") {
+      var relationship = doc.createElement("p"); relationship.className = "trait-relationship-source";
+      relationship.appendChild(safeLink(doc, "아종군과 현재 종의 분류 연결 근거", mapping.relationship_source_url));
+      sourceDetails.appendChild(relationship);
+    }
   }
 
   /** Render one `.species-traits` grid of fact cards from grouped trait claims. */
@@ -402,6 +434,12 @@
       var alignmentSeen = {};
       group.sources.forEach(function (sourceTrait) {
         appendTaxonomyAlignment(doc, sourceDetails, sourceTrait, alignmentSeen);
+        if (sourceTrait.source_scope_kind === "subspecies_group") {
+          var scopedValue = doc.createElement("p");
+          scopedValue.className = "trait-subgroup-value";
+          scopedValue.textContent = sourceTrait.source_scope + ": " + cardTraitValue(sourceTrait);
+          sourceDetails.appendChild(scopedValue);
+        }
         if (!sourceTrait.citation && !sourceTrait.source_name) {
           return;
         }
@@ -414,6 +452,7 @@
           source.appendChild(licenseSuffix);
         }
         sourceDetails.appendChild(source);
+        appendTraitSourceMetadata(doc, sourceDetails, sourceTrait);
         var studyMetadata = traitStudyMetadata(sourceTrait);
         if (studyMetadata.length) {
           var study = doc.createElement("p");
@@ -431,6 +470,34 @@
 
   /** Card-only layout: keep the shared facts renderer and collect its citations. */
   var CARD_BASIC_LABELS = { body_mass: "체중", diet_category: "먹이 유형", habitat: "서식 환경", primary_lifestyle: "주 생활 방식" };
+
+  // Keep each subgroup's values in provenance; never select the first subgroup
+  // as the whole species' representative or average unrelated source samples.
+  function cardTraitGroups(traits) {
+    var groups = groupTraits(traits);
+    var result = [], scoped = {};
+    groups.forEach(function (group) {
+      var trait = group.trait;
+      if (trait.source_scope_kind !== "subspecies_group") { result.push(group); return; }
+      var primary = groups.find(function (other) { return other.trait.name === trait.name && other.trait.source_scope_kind !== "subspecies_group"; });
+      if (primary) { primary.sources = primary.sources.concat(group.sources); return; }
+      if (!scoped[trait.name]) {
+        scoped[trait.name] = { trait: Object.assign({}, trait), sources: [] };
+        result.push(scoped[trait.name]);
+      }
+      scoped[trait.name].sources = scoped[trait.name].sources.concat(group.sources);
+    });
+    Object.keys(scoped).forEach(function (name) {
+      var group = scoped[name];
+      var scopes = [];
+      group.sources.forEach(function (source) { if (scopes.indexOf(source.source_scope) < 0) { scopes.push(source.source_scope); } });
+      if (scopes.length > 1) {
+        group.trait.display = "아종군 " + scopes.length + "개 자료";
+        group.trait.value = null; group.trait.unit = null; group.trait.inferred = false;
+      }
+    });
+    return result;
+  }
 
   function cardTraitValue(trait) {
     var unit = trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
@@ -462,7 +529,7 @@
       var text = trait ? cardTraitValue(trait).trim() : "";
       if (!text || seenText[text]) { return; }
       seenText[text] = true;
-      shown.push({ name: name, label: typeof trait.label === "string" && trait.label.trim() ? trait.label : QUALITATIVE_LABELS[name], text: text });
+      shown.push({ name: name, scopeKind: trait.source_scope_kind, label: typeof trait.label === "string" && trait.label.trim() ? trait.label : QUALITATIVE_LABELS[name], text: text });
     });
     var box = doc.createElement("p");
     if (!shown.length) { box.className = "species-distribution-empty"; box.textContent = "기록된 자료 없음"; return box; }
@@ -470,7 +537,7 @@
     box.setAttribute("data-qualitative-fallback", shown.map(function (item) { return item.name; }).join(","));
     shown.forEach(function (item) {
       var line = doc.createElement("span"); line.className = "species-distribution-qualitative-value";
-      var label = item.name === "primary_lifestyle" ? "생활 방식" : item.label;
+      var label = item.name === "primary_lifestyle" ? "생활 방식" + (item.scopeKind === "subspecies_group" ? " · 아종군 자료" : "") : item.label;
       var value = item.name === "primary_lifestyle" ? item.text.split(/[·;；\n]/)[0].trim() : item.text;
       if (value !== item.text && /\(추정값\)$/.test(item.text)) { value += " (추정값)"; }
       line.textContent = label + " · " + value; box.appendChild(line);
@@ -772,7 +839,7 @@
     var traits = profile && Array.isArray(profile.traits) ? profile.traits : [];
     for (var i = 0; i < traits.length; i += 1) {
       var trait = traits[i];
-      if (!trait || trait.name !== "habitat" || typeof trait.value !== "string") { continue; }
+      if (!trait || trait.source_scope_kind === "subspecies_group" || trait.name !== "habitat" || typeof trait.value !== "string") { continue; }
       var key = trait.value.trim().toLowerCase().replace(/[\s-]+/g, "_");
       if (Object.prototype.hasOwnProperty.call(HABITAT_EMBLEMS, key)) {
         var known = HABITAT_EMBLEMS[key];
@@ -860,7 +927,7 @@
   function sourcedTraits(profile, name) {
     var traits = profile && Array.isArray(profile.traits) ? profile.traits : [];
     return traits.filter(function (trait) {
-      return trait && trait.name === name && typeof trait.source_name === "string" && trait.source_name.trim() &&
+      return trait && trait.source_scope_kind !== "subspecies_group" && trait.name === name && typeof trait.source_name === "string" && trait.source_name.trim() &&
         sanitizeUrl(trait.source_url);
     });
   }
@@ -1071,10 +1138,38 @@
   var REFERENCE_CATEGORIES = ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD"];
   var REFERENCE_ALIGNMENT_NOTE = "현재 분류 범위와 일치 여부 확인 필요";
 
+  function birdbaseReferenceInfo(ref, taxon) {
+    if (!ref || ref.evidence_kind !== "published_dataset_reference" ||
+        ref.reference_evidence_type !== "birdbase_iucn_2024" ||
+        ref.assessment_status !== "reference_only" || ref.taxonomy_alignment !== "unverified" ||
+        ref.independently_verified !== false || REFERENCE_CATEGORIES.indexOf(ref.category) < 0 ||
+        ref.source_id !== "birdbase-v2025.1" || ref.source_release !== "v2025.1" ||
+        ref.source_url !== "https://doi.org/10.6084/m9.figshare.27051040.v1" ||
+        ref.publication_url !== "https://www.nature.com/articles/s41597-025-05615-3" ||
+        ref.snapshot_sha256 !== "cccb01fe229c7b39156639e001098b29880fa1c91d294c17cb74a4a76381276b" ||
+        ref.mapping_method !== "exact_unique_birdbase_avilist_v1_2025" ||
+        ref.category_column !== "2024 IUCN Red List category" || ref.data_year !== 2024 ||
+        (ref.category_raw === "CR (PE)" || ref.category_raw === "CR (PEW)" ? "CR" : ref.category_raw) !== ref.category ||
+        ref.license_name !== "CC BY 4.0" || ref.license_url !== "https://creativecommons.org/licenses/by/4.0/" ||
+        ref.assessment_year != null || ref.sis_id != null || ref.assessment_id != null ||
+        ref.source_name !== "BIRDBASE · IUCN 2024 reference" ||
+        !Number.isInteger(ref.source_row) || ref.source_row < 3 || ref.source_locator !== "Data!row " + ref.source_row ||
+        typeof ref.taxon_id !== "string" || !/^avilist-taxon:v2025b:[1-9][0-9]*$/.test(ref.taxon_id) ||
+        typeof ref.scientific_name !== "string" || !ref.scientific_name.trim() ||
+        typeof ref.assessment_scientific_name !== "string" || !ref.assessment_scientific_name.trim()) { return null; }
+    if (taxon && ((taxon.scientific_name && taxon.scientific_name !== ref.scientific_name) ||
+        (taxon.taxon_id && taxon.taxon_id !== ref.taxon_id))) { return null; }
+    var label = CONSERVATION_CATEGORIES[ref.category].label;
+    return { category: ref.category, label: label, year: null, dataYear: 2024,
+      datasetReference: true, sourceUrl: ref.source_url, data: ref,
+      text: "자료에 기록된 평가: " + label + " (" + ref.category + ") · 2024 자료 기준 · " + REFERENCE_ALIGNMENT_NOTE };
+  }
+
   function referenceAssessmentInfo(conservation, taxon) {
     var data = conservation && typeof conservation === "object" ? conservation : null;
     var ref = data && data.reference_assessment && typeof data.reference_assessment === "object" ? data.reference_assessment : null;
     if (!ref || Array.isArray(ref)) { return null; }
+    if (ref.evidence_kind === "published_dataset_reference") { return birdbaseReferenceInfo(ref, taxon); }
     var text = function (value) { return typeof value === "string" && !!value.trim(); };
     if (REFERENCE_CATEGORIES.indexOf(ref.category) === -1 ||
         ref.assessment_status !== "reference_only" || ref.evidence_kind !== "red_list_checklist_reference" ||
@@ -1109,6 +1204,20 @@
     head.className = "species-reference-assessment";
     head.textContent = ref.text;
     parent.appendChild(head);
+    if (ref.datasetReference) {
+      var scope = doc.createElement("p"); scope.className = "species-note";
+      scope.textContent = "대상 학명: " + ref.data.scientific_name + " · 원자료 평가 학명: " + ref.data.assessment_scientific_name +
+        " · 2024는 자료 기준 연도이며 개별 평가 연도가 아닙니다. 현재 분류 범위와의 일치는 확정되지 않았습니다.";
+      parent.appendChild(scope);
+      var source = doc.createElement("p"); source.className = "species-note";
+      source.appendChild(safeLink(doc, ref.data.source_name, ref.sourceUrl));
+      var locator = doc.createElement("span");
+      locator.textContent = " · " + ref.data.source_locator + " · " + ref.data.category_column + " · 원문 등급 " + ref.data.category_raw + " · CC BY 4.0";
+      source.appendChild(locator); parent.appendChild(source);
+      var publication = doc.createElement("p"); publication.appendChild(safeLink(doc, "BIRDBASE 데이터 설명 논문", ref.data.publication_url));
+      parent.appendChild(publication);
+      return;
+    }
     var meta = doc.createElement("p");
     meta.className = "species-note";
     meta.textContent = "대상 학명: " + ref.data.scientific_name + " · " +
@@ -1197,7 +1306,8 @@
         tier: reference ? CONSERVATION_CATEGORIES[reference.category].tier : "unconfirmed",
         note: reference ? reference.text : UNLINKED_NE_NOTE,
         badgeText: reference ? "IUCN 적색목록 " + reference.label + " (" + reference.category + ")" +
-          (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준" : "평가 범위 확인 필요" });
+          (reference.datasetReference ? " · " + reference.dataYear + " 자료 기준 · BIRDBASE" :
+            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "평가 범위 확인 필요" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -1382,6 +1492,9 @@
           var trait = group.trait;
           var value = doc.createElement("p");
           value.textContent = trait.display + (trait.unit && trait.unit !== "percent" ? " " + trait.unit : "") + (trait.inferred ? " (추정값)" : "");
+          if (trait.source_scope_kind === "subspecies_group") { value.textContent += " · 아종군 자료 (" + trait.source_scope + ")"; }
+          if (trait.summary_statistic === "literature_bounds_mean") { value.textContent += " · 문헌 범위 평균"; }
+          if (trait.summary_statistic === "sample_mean") { value.textContent += " · 표본 평균"; }
           cell.appendChild(value);
           var details = doc.createElement("details");
           var summary = doc.createElement("summary"); summary.textContent = "출처"; details.appendChild(summary);
@@ -1390,6 +1503,9 @@
             var meta = doc.createElement("p");
             meta.textContent = [source.release, source.license_name].concat(traitStudyMetadata(source), [source.citation]).filter(Boolean).join(" · ");
             details.appendChild(meta);
+            appendTraitSourceMetadata(doc, details, source);
+            appendTaxonomyAlignment(doc, details, source, {});
+            appendTraitProvenance(doc, details, source);
           });
           cell.appendChild(details);
         });
@@ -2674,7 +2790,7 @@
 
     var dietInfo = dietIconInfo(profile);
     if (dietInfo.icons.length) { front.appendChild(buildDietIcons(doc, dietInfo)); }
-    var traitGroups = groupTraits(Array.isArray(profile.traits) ? profile.traits : []);
+    var traitGroups = cardTraitGroups(Array.isArray(profile.traits) ? profile.traits : []);
     var traitSources = sourceSection("species-trait-sources", "형질 · 측정 자료 출처");
     cardSources.appendChild(traitSources);
     var facts = doc.createElement("dl");

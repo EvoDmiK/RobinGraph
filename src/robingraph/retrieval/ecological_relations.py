@@ -60,7 +60,7 @@ def ecological_relations(repository, store, resolve, name):
     for trait in read_traits(repository, store, lineage):
         kind, value = trait['name'], trait['value']
         if (kind not in ('habitat', 'trophic_niche') or not isinstance(value, str)
-                or value not in VALUES or trait.get('inferred')
+                or value not in VALUES or trait.get('inferred') or trait.get('source_scope_kind') == 'subspecies_group'
                 or not _web_url(trait.get('source_url'))):
             continue
         key = (kind, value, trait['dataset_id'], trait['release'])

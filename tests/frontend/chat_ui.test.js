@@ -131,6 +131,8 @@ test("chat submission and health checks fetch same-origin /health and /v1/chat",
     "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
     "https://www.iucnredlist.org/species/", "https://creativecommons.org/licenses/by/4.0/",
     "https://avifauna.hkbws.org.hk/species/0260/033600",
+    "https://doi.org/10.6084/m9.figshare.27051040.v1",
+    "https://www.nature.com/articles/s41597-025-05615-3",
   ]);
   const absoluteUrls = Array.from(jsSource.matchAll(/"(https:\/\/[^"\n]+)"/g)).map(match => match[1]);
   assert.ok(absoluteUrls.every(url => provenanceUrls.has(url)), "absolute URL constants are limited to pinned provenance validation");
@@ -5810,4 +5812,126 @@ test("alignment notes also appear for distribution cards and carry no card-size 
   assert.equal(alignmentNotes(card).length, 1);
   assert.equal(distributionCharts(card).length, 1);
   assert.equal(collectAllNodes(cardPart(card, "species-distribution-pair")).some(n => n.className === "trait-taxonomy-alignment"), false, "the note lives in the source toggle, not the chart box");
+});
+
+test("subgroup traits keep scope in both card faces and never become species emblems", () => {
+  const profile = habitatProfile("Forest");
+  const subgroup = { name: "body_mass", label: "체중 · 아종군 자료", value: 14.4, display: "14.4", unit: "g",
+    source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
+    source_scope: "Parus cinereus [cinereus Group]", summary_statistic: "subgroup_mean",
+    taxonomy_alignment: { status: "reference_subgroup", source_scientific_name: "Parus cinereus", target_scientific_name: "Parus cinereus" } };
+  profile.traits = [subgroup, { ...subgroup, name: "habitat", label: "서식 환경 · 아종군 자료", value: "Forest", display: "숲", unit: null },
+    { ...subgroup, name: "diet_category", label: "먹이 유형 · 아종군 자료", value: "Invertivore", display: "무척추동물", unit: null }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
+  assert.match(collectedText(facts), /체중 · 아종군 자료/);
+  assert.match(collectedText(facts), /14\.4 g/);
+  assert.match(collectedText(card.sourceMaterial), /현재 종 전체를 대표하는 값이 아닙니다/);
+  assert.match(collectedText(card.sourceMaterial), /Parus cinereus \[cinereus Group\]: 14\.4 g/);
+  assert.equal(chat.habitatEmblemInfo(profile).known, false);
+  assert.equal(chat.dietIconInfo(profile).icons.length, 0);
+  assert.match(collectedText(chat.buildSpeciesComparison(svgCapableDoc(), profile, profile)), /아종군 자료 \(Parus cinereus/);
+});
+
+test("multiple subgroups retain every source without choosing or averaging a species value", () => {
+  const profile = habitatProfile("Forest");
+  const base = { name: "body_mass", label: "체중 · 아종군 자료", value: 10, display: "10", unit: "g",
+    source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group", summary_statistic: "subgroup_mean" };
+  profile.traits = [{ ...base, source_scope: "Group A" }, { ...base, source_scope: "Group B", value: 20, display: "20" }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
+  assert.match(collectedText(facts), /아종군 2개 자료/);
+  assert.doesNotMatch(collectedText(facts), /10 g|20 g|15 g/);
+  assert.match(collectedText(card.sourceMaterial), /Group A: 10 g/);
+  assert.match(collectedText(card.sourceMaterial), /Group B: 20 g/);
+  profile.traits.push({ ...base, label: "체중", source_scope_kind: undefined, value: 30, display: "30" });
+  const preferred = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(collectAllNodes(preferred).find(n => n.className === "species-quick-facts")), /30 g/);
+  assert.match(collectedText(preferred.sourceMaterial), /Group A: 10 g/);
+  assert.match(collectedText(preferred.sourceMaterial), /Group B: 20 g/);
+});
+
+test("author-inferred traits display their flag and original inference note without markup execution", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [{ name: "body_mass", label: "체중", value: 15, display: "15", unit: "g", inferred: true,
+    summary_statistic: "species_estimate", source_name: "AVONET", source_url: "https://example.org/avonet",
+    source_note: "저자 추정값; 참조 종: Parus major <script>bad()</script>" }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(card), /15 g \(추정값\)/);
+  const note = collectAllNodes(card.sourceMaterial).find(n => n.className === "trait-source-note");
+  assert.equal(note.textContent, profile.traits[0].source_note);
+  assert.equal(note.children.length, 0);
+  assert.match(collectedText(card.sourceMaterial), /종 추정값/);
+});
+
+const BIRDBASE_REFERENCE = {
+  evidence_kind: "published_dataset_reference", reference_evidence_type: "birdbase_iucn_2024",
+  assessment_status: "reference_only", taxonomy_alignment: "unverified", independently_verified: false,
+  category: "LC", category_raw: "LC", license_name: "CC BY 4.0", license_url: "https://creativecommons.org/licenses/by/4.0/", scientific_name: "Parus cinereus", assessment_scientific_name: "Parus cinereus",
+  taxon_id: "avilist-taxon:v2025b:23073", source_id: "birdbase-v2025.1", source_release: "v2025.1",
+  source_name: "BIRDBASE · IUCN 2024 reference", source_locator: "Data!row 3", source_row: 3,
+  source_url: "https://doi.org/10.6084/m9.figshare.27051040.v1",
+  publication_url: "https://www.nature.com/articles/s41597-025-05615-3",
+  snapshot_sha256: "cccb01fe229c7b39156639e001098b29880fa1c91d294c17cb74a4a76381276b",
+  mapping_method: "exact_unique_birdbase_avilist_v1_2025", category_column: "2024 IUCN Red List category", data_year: 2024,
+};
+
+test("published dataset conservation reference gives consistent grade colour and data year, never an invented assessment year", () => {
+  const taxon = { taxon_id: BIRDBASE_REFERENCE.taxon_id, scientific_name: BIRDBASE_REFERENCE.scientific_name };
+  const conservation = { ...PICA_ORIGINAL_SNAPSHOT, reference_assessment: BIRDBASE_REFERENCE };
+  const info = chat.conservationInfo(conservation, taxon);
+  assert.equal(info.tier, "lc");
+  assert.equal(info.verified, false);
+  assert.equal(info.badgeText, "IUCN 적색목록 관심대상 (LC) · 2024 자료 기준 · BIRDBASE");
+  assert.doesNotMatch(info.badgeText, /2024 평가/);
+  const profile = { ...habitatProfile("Forest"), taxon, conservation };
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(card.sourceMaterial), /2024는 자료 기준 연도이며 개별 평가 연도가 아닙니다/);
+  assert.match(collectedText(card.sourceMaterial), /Data!row 3/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /undefined/);
+});
+
+test("published dataset reference rejects changed identities, source pins, invented assessment dates and grades", () => {
+  const taxon = { taxon_id: BIRDBASE_REFERENCE.taxon_id, scientific_name: BIRDBASE_REFERENCE.scientific_name };
+  for (const change of [{ snapshot_sha256: "bad" }, { source_url: "https://example.org" }, { data_year: 2025 },
+    { assessment_year: 2024 }, { sis_id: "123" }, { assessment_id: "123" }, { category: "NE" },
+    { scientific_name: "Parus major" }, { taxon_id: "another" }, { independently_verified: true },
+    { taxonomy_alignment: "accepted" }, { category_raw: "EN" }, { source_row: 2 }, { source_locator: "bad" }, { license_name: "restricted" }, { category_column: "Other" }, { mapping_method: "exact_name" }]) {
+    assert.equal(chat.referenceAssessmentInfo({ reference_assessment: { ...BIRDBASE_REFERENCE, ...change } }, taxon), null, JSON.stringify(change));
+  }
+});
+
+test("literature mass retains the author's bounds average and all source range values", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [{ name: "body_mass", label: "체중 · 문헌 범위 평균", value: 16.55, display: "16.55", unit: "g",
+    summary_statistic: "literature_bounds_mean", source_name: "BIRDBASE", source_url: "https://example.org/birdbase",
+    source_mass_bounds: { "Unsexed MinMass": 11, "Unsexed MaxMass": 22.1, "Female MinMass": null } }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(card), /체중 · 문헌 범위 평균/);
+  assert.match(collectedText(card.sourceMaterial), /문헌 범위값 평균/);
+  assert.match(collectedText(card.sourceMaterial), /성별 미구분 최소 11 g · 성별 미구분 최대 22\.1 g/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /암컷 최소 null|종 평균/);
+});
+
+test("subgroup lifestyle fallback retains scope and links the explicit taxonomy relationship", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [{ name: "primary_lifestyle", label: "주 생활 방식 · 아종군 자료", value: "Terrestrial", display: "지상 생활",
+    source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
+    source_scope: "Parus cinereus [cinereus Group]", summary_statistic: "subgroup_category",
+    mapping_provenance: { relationship_source_url: "https://cornell.box.com/s/example" } }];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const fallback = collectAllNodes(card).find(n => n.className === "species-distribution-empty species-distribution-qualitative");
+  assert.match(collectedText(fallback), /생활 방식 · 아종군 자료 · 지상 생활/);
+  assert.ok(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === "https://cornell.box.com/s/example"));
+});
+
+test("comparison keeps visible literature statistic, original bounds and inference provenance", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [{ name: "body_mass", label: "체중 · 문헌 범위 평균", value: 16.55, display: "16.55", unit: "g",
+    summary_statistic: "literature_bounds_mean", source_name: "BIRDBASE", source_url: "https://example.org/birdbase",
+    source_note: "문헌 범위값이며 표본 평균이 아닙니다.", source_mass_bounds: { "Unsexed MinMass": 11, "Unsexed MaxMass": 22.1 } }];
+  const comparison = chat.buildSpeciesComparison(svgCapableDoc(), profile, profile);
+  assert.ok(collectAllNodes(comparison).some(n => n.tagName === "p" && n.textContent === "16.55 g · 문헌 범위 평균"));
+  assert.match(collectedText(comparison), /성별 미구분 최소 11 g · 성별 미구분 최대 22\.1 g/);
+  assert.match(collectedText(comparison), /문헌 범위값이며 표본 평균이 아닙니다/);
 });

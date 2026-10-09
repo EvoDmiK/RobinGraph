@@ -10,7 +10,7 @@ from urllib.parse import urlencode, urlsplit, unquote
 from urllib.request import Request, urlopen
 
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
-from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override, reference_checklist
+from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override, best_reference_assessment
 from robingraph.retrieval.reviewed_magpie import reviewed_magpie_traits, reviewed_magpie_notes
 
 class SpeciesNotFoundError(LookupError):
@@ -149,7 +149,7 @@ def read_conservation(repository, lineage):
 def attach_reference_assessment(lineage, snapshot):
     """Attach a reference-only assessment to an unlinked taxonomy NE, never as its grade."""
     try:
-        reference = reference_checklist(lineage, snapshot)
+        reference = best_reference_assessment(lineage, snapshot)
     except Exception:
         return
     if (not isinstance(reference, dict) or reference.get('category') not in CONSERVATION_LABELS
@@ -162,25 +162,31 @@ def species_summary(taxon, traits):
     """Brief Korean description using only attributed card fields."""
     fields = {}
     for trait in traits:
-        if not isinstance(trait, dict) or not trait.get('source_url') or not trait.get('source_name'):
+        if (not isinstance(trait, dict) or not trait.get('source_url') or not trait.get('source_name')
+                or trait.get('source_scope_kind') == 'subspecies_group'):
             continue
         name = trait.get('name')
         display = trait.get('display')
         if name in ('habitat', 'primary_lifestyle', 'diet_category', 'trophic_niche', 'body_mass') and isinstance(display, str) and display.strip():
             fields.setdefault(name, trait)
     sentences = []
-    environment = [f"{LABELS[key]}은 {fields[key]['display']}" for key in ('habitat', 'primary_lifestyle') if key in fields]
+    environment = [f"{LABELS[key]}은 {fields[key]['display']}" + (' (추정값)' if fields[key].get('inferred') else '') for key in ('habitat', 'primary_lifestyle') if key in fields]
     if environment:
         sentences.append('이며, '.join(environment) + '입니다.')
     diet = fields.get('diet_category') or fields.get('trophic_niche')
     if diet:
-        sentences.append(f"먹이 정보는 ‘{diet['display']}’입니다.")
+        sentences.append(f"먹이 정보는 ‘{diet['display']}’" + (' (추정값)' if diet.get('inferred') else '') + '입니다.')
     weight = fields.get('body_mass')
     if weight:
-        statistic = ('연구 표본 평균 ' if weight.get('summary_statistic') == 'sample_mean'
+        statistic = ('문헌 범위값 평균 ' if weight.get('summary_statistic') == 'literature_bounds_mean'
+                     else '연구 표본 평균 ' if weight.get('summary_statistic') == 'sample_mean'
                      else '평균 ' if weight.get('summary_statistic') == 'mean' else '')
         unit = f" {weight['unit']}" if weight.get('unit') else ''
-        sentences.append(f"{statistic}체중은 {weight['display']}{unit}입니다.")
+        sentences.append(f"{statistic}체중은 {weight['display']}{unit}" + (' (추정값)' if weight.get('inferred') else '') + '입니다.')
+    subgroups = sorted({t.get('source_scope') for t in traits if isinstance(t, dict)
+                        and t.get('source_scope_kind') == 'subspecies_group' and t.get('source_scope')})
+    if subgroups:
+        sentences.append('아종군 참고 자료(' + ' · '.join(subgroups) + ')가 있습니다. 현재 종 전체의 평균을 뜻하지 않습니다.')
     if not sentences:
         return '출처가 있는 서식 환경·먹이·생활 방식·체중 정보를 아직 확인하지 못했습니다.'
     name = taxon.get('korean_name') or taxon.get('english_name') or taxon.get('scientific_name')
@@ -249,7 +255,8 @@ def read_traits(repository, store, lineage):
                         'release':cursor.get('trait_release', context.release.release_key),
                         'license_name':license_name, 'source_name':context.dataset.name})
     if not sources:
-        return []
+        from .birdbase import birdbase_traits
+        return birdbase_traits(lineage, [], LABELS)
     rows = repository._run(TRAIT_QUERY, taxon_id=lineage.items[-1].taxon_id,
                            concept_set_id=lineage.concept_set_id,
                            taxonomy_release=lineage.taxonomy_release, sources=sources)
@@ -276,6 +283,12 @@ def read_traits(repository, store, lineage):
         exact_traits.append((trait, claim))
     from .trait_mapping import apply_trait_mapping
     traits = apply_trait_mapping(repository, store, lineage, contexts, exact_traits, LABELS, trait_display)
+    from .avonet_ebird import supplement_traits
+    traits = supplement_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
+    from .birdbase import birdbase_traits
+    traits = birdbase_traits(lineage, traits, LABELS)
+    from .avonet_subgroups import subgroup_traits
+    traits = subgroup_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
     from .reviewed_activity import reviewed_activity
     return reviewed_activity(lineage, traits)
 
@@ -382,16 +395,18 @@ def species_sections(taxon, traits, notes):
     """Small attributed sections shared by every species chat response."""
     fields = {}
     for trait in traits:
-        if isinstance(trait, dict) and trait.get('source_name') and trait.get('source_url') and trait.get('display'):
+        if (isinstance(trait, dict) and trait.get('source_name') and trait.get('source_url') and trait.get('display')
+                and trait.get('source_scope_kind') != 'subspecies_group'):
             fields.setdefault(trait.get('name'), trait)
     def fact(name):
         trait = fields.get(name)
         if trait is None:
             return None
         unit = f" {trait['unit']}" if trait.get('unit') else ''
-        prefix = ('연구 표본 평균 ' if trait.get('summary_statistic') == 'sample_mean'
+        prefix = ('문헌 범위값 평균 ' if trait.get('summary_statistic') == 'literature_bounds_mean'
+                  else '연구 표본 평균 ' if trait.get('summary_statistic') == 'sample_mean'
                   else '평균 ' if trait.get('summary_statistic') == 'mean' else '')
-        return {'text':f"{prefix}{LABELS[name]}: {trait['display']}{unit}",
+        return {'text':f"{prefix}{LABELS[name]}: {trait['display']}{unit}" + (' (추정값)' if trait.get('inferred') else ''),
                 **{key:trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'license_url', 'source_scope', 'citation')}}
     basic = [{'text':'학명: ' + taxon['scientific_name']}] if taxon.get('scientific_name') else []
     weight = fact('body_mass')
@@ -402,6 +417,19 @@ def species_sections(taxon, traits, notes):
     ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern', 'nocturnal') if (value := fact(name))]
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)
+    # List every bounded subgroup; never select the first one as the species value.
+    for trait in traits:
+        if not isinstance(trait, dict) or trait.get('source_scope_kind') != 'subspecies_group':
+            continue
+        name = trait.get('name')
+        destination = (basic if name == 'body_mass' else appearance if name in ('beak_length_culmen', 'wing_length', 'tail_length')
+                       else ecology if name in ('habitat', 'primary_lifestyle', 'trophic_niche') else None)
+        if destination is None:
+            continue
+        unit = f" {trait['unit']}" if trait.get('unit') else ''
+        inferred = ' (추정값)' if trait.get('inferred') else ''
+        destination.append({'text': f"{LABELS[name]} · 아종군 {trait['source_scope']}: {trait['display']}{unit}{inferred} (종 전체 값 아님)",
+                            **{key: trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'source_scope', 'citation')}})
     return [{'key':key, 'title':title, 'items':items, 'empty_text':empty}
             for key,title,items,empty in (
                 ('basic', '기본 정보', basic, '확인된 기본 정보가 없습니다.'),

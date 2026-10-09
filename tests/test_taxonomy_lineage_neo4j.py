@@ -64,7 +64,7 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
         self.repository._active_concept_set = Mock(return_value=(concept, "v2025b"))
         self.repository._active_korean_dataset_id = Mock(return_value=None)
         labels = sourced_korean_names()
-        self.assertEqual(665, len(labels))
+        self.assertEqual(850, len(labels))
         self.assertEqual("Parus cinereus", next(v["scientific_name"] for v in labels.values() if v["name"] == "박새"))
         for taxon_id, label in labels.items():
             with self.subTest(name=label["name"]):
