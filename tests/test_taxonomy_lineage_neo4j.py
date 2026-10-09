@@ -15,6 +15,26 @@ from robingraph.retrieval.taxonomy_lineage_neo4j import (
 
 
 class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
+    def test_requested_magpie_alias_selects_active_oriental_species_only(self):
+        from dataclasses import replace
+        from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
+        concept = 'rg:concept-set:avilist-v2025b'
+        self.repository._active_concept_set = Mock(return_value=(concept, 'v2025b'))
+        taxon = LineageTaxon('avilist-taxon:v2025b:20193', 'species', 'Pica serica', None)
+        lineage = TaxonomyLineage('Pica serica', 'AviList', 'v2025b', concept, (taxon,))
+        self.repository.lineage_for_scientific_name = Mock(return_value=lineage)
+        result = self.repository.lineage_for_korean_name(' 까치 ')
+        self.assertEqual('Pica serica', result.items[-1].scientific_name)
+        self.assertEqual('까치', result.query_name)
+        self.assertEqual('korean_name', result.matched_by)
+        self.repository.lineage_for_scientific_name.assert_called_once_with('Pica serica')
+        for invalid in (None, replace(lineage, taxonomy_release='new'),
+                        replace(lineage, concept_set_id='other'),
+                        replace(lineage, items=(replace(taxon, taxon_id='other'),)),
+                        replace(lineage, items=(replace(taxon, scientific_name='Pica pica'),))):
+            self.repository.lineage_for_scientific_name.return_value = invalid
+            self.assertIsNone(self.repository.lineage_for_korean_name('까치'))
+
     def test_reference_names_are_only_a_display_fallback(self) -> None:
         from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
         items = _parse_lineage_items([

@@ -88,15 +88,6 @@ def sourced_korean_names() -> dict:
 
 
 @cache
-def korean_display_names() -> dict:
-    """Keep requested display names separate from the source-checked file."""
-    return {**sourced_korean_names(), 'avilist-taxon:v2025b:20198': {
-        'scientific_name':'Pica pica', 'english_name':'Eurasian Magpie',
-        'name':'까치', 'status':'user-designated', 'source_url':None,
-    }}
-
-
-@cache
 def sourced_subspecies_names() -> dict:
     """Source-audited common-name facts, bound to exact AviList subspecies IDs."""
     data = json.loads(Path(__file__).with_name('subspecies_name_references.json').read_text(encoding='utf-8'))
@@ -128,13 +119,24 @@ def with_korean_display_name(taxon: dict) -> dict:
         return taxon
     if taxon.get("rank") != "species":
         return taxon
-    label = korean_display_names().get(taxon.get("taxon_id"))
+    display_english = None
+    for taxon_id, science, canonical, display in (
+            ('avilist-taxon:v2025b:20198', 'Pica pica', 'Eurasian Magpie', 'Eurasian magpie'),
+            ('avilist-taxon:v2025b:20193', 'Pica serica', 'Oriental Magpie', 'Oriental magpie')):
+        if (taxon.get('taxon_id') == taxon_id and taxon.get('scientific_name') == science
+                and taxon.get('english_name') in (canonical, display)):
+            display_english = display
+            taxon = {**taxon, 'english_name':canonical}
+            break
+    label = sourced_korean_names().get(taxon.get("taxon_id"))
     if (label and label["scientific_name"] == taxon.get("scientific_name")
             and label["english_name"] == taxon.get("english_name")):
-        return {**taxon, "korean_name": label["name"],
+        return {**taxon, "english_name": display_english or taxon.get('english_name'),
+                "korean_name": label["name"],
                 "korean_name_status": label["status"],
                 "korean_name_source_url": label["source_url"]}
-    return {**taxon, "korean_name": None, "korean_name_status": None,
+    return {**taxon, "english_name": display_english or taxon.get('english_name'),
+            "korean_name": None, "korean_name_status": None,
             "korean_name_source_url": None}
 
 
