@@ -1,0 +1,830 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "RobinGraph Conservation Data Audit",
+    "description": "공식 AviList v2025b와 실제 테스트 DB 읽기 전용 전수 대조: 적재 정합성과 평가 연결 불확실성 구분",
+    "generatedAt": "2026-10-09T06:22:41.083872+00:00",
+    "filters": [],
+    "cards": [],
+    "charts": [
+      {
+        "id": "grade-distribution",
+        "title": "AviList 원자료 코드별 종 수",
+        "dataset": "grades",
+        "sourceId": "reviewed-grades",
+        "type": "bar",
+        "valueFormat": "number",
+        "encodings": {
+          "x": {
+            "field": "category",
+            "type": "nominal",
+            "label": "원자료 코드"
+          },
+          "y": {
+            "field": "count",
+            "type": "quantitative",
+            "label": "종 수"
+          }
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "checks",
+        "title": "전수 대조 검사 결과",
+        "dataset": "checks",
+        "sourceId": "reviewed-checks",
+        "defaultSort": {
+          "field": "check",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "check",
+            "label": "검사",
+            "type": "text"
+          },
+          {
+            "field": "count",
+            "label": "건수",
+            "format": "number"
+          },
+          {
+            "field": "meaning",
+            "label": "해석",
+            "type": "text"
+          }
+        ]
+      },
+      {
+        "id": "grades",
+        "title": "원자료 코드별 분포",
+        "dataset": "grades",
+        "sourceId": "reviewed-grades",
+        "defaultSort": {
+          "field": "category",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "category",
+            "label": "AviList 코드",
+            "type": "text"
+          },
+          {
+            "field": "count",
+            "label": "종 수",
+            "format": "number"
+          },
+          {
+            "field": "share",
+            "label": "전체 종 중 비율",
+            "format": "percent"
+          }
+        ]
+      },
+      {
+        "id": "samples",
+        "title": "고정 사례 확인",
+        "dataset": "samples",
+        "sourceId": "reviewed-samples",
+        "defaultSort": {
+          "field": "name",
+          "direction": "asc"
+        },
+        "columns": [
+          {
+            "field": "name",
+            "label": "학명",
+            "type": "text"
+          },
+          {
+            "field": "category",
+            "label": "원자료 코드",
+            "type": "text"
+          },
+          {
+            "field": "link",
+            "label": "BirdLife 링크",
+            "type": "text"
+          },
+          {
+            "field": "identity",
+            "label": "출처 taxon ID",
+            "type": "text"
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "audit",
+        "label": "실제 테스트 DB 읽기 전용 전수 감사",
+        "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+        "query": {
+          "engine": "Neo4j",
+          "language": "cypher",
+          "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+          "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+          "executed_at": "2026-10-09T06:22:41.083872+00:00",
+          "tables_used": [
+            "Taxon:BirdTaxon",
+            "TaxonConceptSet",
+            "IN_CONCEPT_SET"
+          ],
+          "filters": {
+            "rank": "species",
+            "policy_status": "allowed",
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          },
+          "metric_definitions": {
+            "NE share": "category_counts.NE / rows",
+            "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+            "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+          },
+          "parameters": {
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          }
+        },
+        "notes": {
+          "script": "scripts/audit_conservation_quality.py",
+          "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+          "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+          "independent_iucn_assessment_check": false,
+          "visual_choice": "막대차트는 전체 11,131종의 스냅샷 코드 분포를 보여주고, 감사 차이와 정확한 값은 표로 확인한다. 11개 코드, 하나의 count 측정값, 단일 색과 명시적인 축을 사용한다. chart claim: LC가 가장 큰 스냅샷 코드 집단이나 최신 IUCN 평가 정확도를 의미하지 않는다.",
+          "structure_map": "Title → technical summary → scope/definitions → findings → methodology → limitations/robustness → next steps → further questions. 정의를 근거 앞에 배치해 분모와 비교 기준을 명확히 함."
+        }
+      },
+      {
+        "id": "workbook",
+        "label": "AviList v2025b 공식 extended workbook",
+        "url": "https://www.avilist.org/wp-content/uploads/2026/06/AviList-v2025b-10Jun2026-extended.xlsx",
+        "notes": {
+          "identity": "AviList-v2025b-10Jun2026-extended.xlsx",
+          "sha256": "2e1fd3374e23af732b04115b033dd9d97fc53ba275c312d02ef5d12cfb85c988",
+          "reviewed_cells": "How to use!B17; Pica serica row IUCN category / BirdLife URL",
+          "interpretation": "종 개념이 평가 자료와 일치하지 않을 때 NE 사용. Pica serica의 NE와 BirdLife URL 빈 값 확인. 최신 IUCN 독립평가로 취급하지 않음."
+        }
+      },
+      {
+        "id": "snapshot",
+        "label": "AviList v2025b 공식 JSON",
+        "url": "https://explore.avilist.org/data/avilist-2025b.json",
+        "notes": {
+          "identity": "avilist-2025b.json",
+          "sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+          "release": "v2025b"
+        }
+      },
+      {
+        "id": "reviewed-checks",
+        "label": "저장된 전수 감사 JSON: checks 검토 행",
+        "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+        "query": {
+          "engine": "SQLite in-memory",
+          "language": "sql",
+          "sql": "SELECT \"order\", \"check\", \"count\", \"meaning\" FROM main.checks",
+          "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+          "tables_used": [
+            "main.checks"
+          ],
+          "executed_at": "2026-10-09T06:22:41.083872+00:00"
+        },
+        "notes": {
+          "upstreamSourceId": "audit",
+          "material_source_query": {
+            "engine": "Neo4j",
+            "language": "cypher",
+            "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+            "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+            "executed_at": "2026-10-09T06:22:41.083872+00:00",
+            "tables_used": [
+              "Taxon:BirdTaxon",
+              "TaxonConceptSet",
+              "IN_CONCEPT_SET"
+            ],
+            "filters": {
+              "rank": "species",
+              "policy_status": "allowed",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            },
+            "metric_definitions": {
+              "NE share": "category_counts.NE / rows",
+              "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+              "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+            },
+            "parameters": {
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            }
+          },
+          "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+        }
+      },
+      {
+        "id": "reviewed-grades",
+        "label": "저장된 전수 감사 JSON: grades 검토 행",
+        "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+        "query": {
+          "engine": "SQLite in-memory",
+          "language": "sql",
+          "sql": "SELECT \"category\", \"count\", \"share\" FROM main.grades",
+          "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+          "tables_used": [
+            "main.grades"
+          ],
+          "executed_at": "2026-10-09T06:22:41.083872+00:00"
+        },
+        "notes": {
+          "upstreamSourceId": "audit",
+          "material_source_query": {
+            "engine": "Neo4j",
+            "language": "cypher",
+            "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+            "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+            "executed_at": "2026-10-09T06:22:41.083872+00:00",
+            "tables_used": [
+              "Taxon:BirdTaxon",
+              "TaxonConceptSet",
+              "IN_CONCEPT_SET"
+            ],
+            "filters": {
+              "rank": "species",
+              "policy_status": "allowed",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            },
+            "metric_definitions": {
+              "NE share": "category_counts.NE / rows",
+              "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+              "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+            },
+            "parameters": {
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            }
+          },
+          "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+        }
+      },
+      {
+        "id": "reviewed-samples",
+        "label": "저장된 전수 감사 JSON: samples 검토 행",
+        "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+        "query": {
+          "engine": "SQLite in-memory",
+          "language": "sql",
+          "sql": "SELECT \"name\", \"category\", \"link\", \"identity\" FROM main.samples",
+          "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+          "tables_used": [
+            "main.samples"
+          ],
+          "executed_at": "2026-10-09T06:22:41.083872+00:00"
+        },
+        "notes": {
+          "upstreamSourceId": "audit",
+          "material_source_query": {
+            "engine": "Neo4j",
+            "language": "cypher",
+            "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+            "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+            "executed_at": "2026-10-09T06:22:41.083872+00:00",
+            "tables_used": [
+              "Taxon:BirdTaxon",
+              "TaxonConceptSet",
+              "IN_CONCEPT_SET"
+            ],
+            "filters": {
+              "rank": "species",
+              "policy_status": "allowed",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            },
+            "metric_definitions": {
+              "NE share": "category_counts.NE / rows",
+              "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+              "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+            },
+            "parameters": {
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            }
+          },
+          "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+        }
+      },
+      {
+        "id": "implementation-tests",
+        "label": "origin/main 병합 후 실제 Python/frontend 검증 결과",
+        "notes": {
+          "source_identity": "2026-10-09 실제 테스트 실행 로그",
+          "python_total": 642,
+          "python_passed": 607,
+          "python_skipped": 35,
+          "python_failed": 0,
+          "frontend_total": 253,
+          "frontend_passed": 253,
+          "frontend_skipped": 0,
+          "frontend_failed": 0,
+          "scope": "실제 테스트 실행 요약. 감사 notebook이 테스트 스위트를 다시 실행하지 않는다. 배포 상태는 이 보고서 범위에서 다루지 않는다.",
+          "python_log": "conservation-python-integrated-test.log",
+          "frontend_log": "conservation-frontend-final-test.log",
+          "python_command": "PYTHONPATH=src python -m unittest discover -s tests",
+          "frontend_command": "node --test tests/frontend/*.test.js",
+          "command_note": "Python 명령의 interpreter 경로는 머신 경로를 노출하지 않도록 portable 형식으로 표시한다. 기록된 실제 실행 로그와 수치를 확인했다.",
+          "report_browser_qa": {
+            "status": "structural_only",
+            "attempt": "installed Chrome via CHROMIUM_EXECUTABLE_PATH",
+            "failure_code": "browser_environment_mismatch",
+            "missing_checks": [
+              "light/dark browser rendering",
+              "desktop/narrow viewports",
+              "source menu/dialog interaction"
+            ]
+          }
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# RobinGraph Conservation Data Audit"
+      },
+      {
+        "id": "summary",
+        "type": "markdown",
+        "body": "## 공식 스냅샷 적재는 일치하며, 평가 연결은 별도 확인이 필요하다\n\n**실제 테스트 DB의 조류 species 11,131개는 공식 AviList v2025b JSON과 전수 대조했을 때 누락·중복·학명/등급 불일치가 없었다.** 원자료의 LC 뒤 공백 1건은 저장 과정에서 정리되었으며 비교 스냅샷과 저장된 SHA256도 일치한다.\n\nNE 808개는 모두 BirdLife 링크가 비어 있다. 이 결과는 원자료를 정확히 적재했다는 근거이며, 개별 종의 최신 IUCN 평가를 독립 검증했다는 뜻은 아니다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "scope",
+        "type": "markdown",
+        "body": "## 분모는 활성 v2025b 개념집합의 조류 species다\n\n감사는 2026년 10월 9일 실제 테스트 DB를 읽기 전용으로 조회한 고정 시점의 결과다. 활성 정책, species 등급, AviList v2025b 개념집합과 릴리스가 일치하는 11,131행을 대상으로 했다. 비교 기준은 공식 JSON의 species 행 11,131개다.\n\n**NE 비율의 분모는 전체 11,131종이고 분자는 원자료 등급이 NE인 808종이다.** 비율은 7.259%이며 통계적 표본 추정이 아니다. 등급 코드는 AviList가 제공한 원자료 값으로 읽는다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "findings",
+        "type": "markdown",
+        "body": "## 누락과 내용 차이는 0건, 형식 정리는 1건이다\n\n아래 표는 실제 DB와 공식 스냅샷의 정합성을 정확한 건수로 보여준다. 0건은 해당 검사에서 차이를 찾지 못했다는 의미다. 검증 범위 밖의 생물학적 평가까지 확장하지 않는다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "checks-block",
+        "type": "table",
+        "tableId": "checks"
+      },
+      {
+        "id": "ne",
+        "type": "markdown",
+        "body": "## NE 808종은 평가 자료 연결 확인 대상으로 표시한다\n\nAviList NE를 그대로 IUCN의 실제 미평가 판정이라고 단정하면 자료 의미가 바뀐다. 공식 extended workbook의 사용 안내는 종 개념과 평가 자료가 일치하지 않는 경우의 NE 처리를 설명한다. 따라서 앱에서는 **평가 자료 연결 확인 필요(AviList NE)**로 안내하고 원자료 코드와 출처를 함께 보존하는 것이 타당하다. 까치의 LC를 근거 없이 강제로 붙이지 않는다.",
+        "sourceId": "workbook"
+      },
+      {
+        "id": "grade-reading",
+        "type": "markdown",
+        "body": "### 원자료 코드별 건수는 상태 확인과 추적을 위한 근거다\n\n아래 비율은 모두 11,131종을 분모로 한다. 보전 위험의 새 추정값이나 실제 IUCN 최신 평가의 재집계가 아니라 DB에 저장된 AviList 원자료 코드의 분포다. NE에는 연결 검토가 필요하며, 다른 코드의 링크 존재만으로 최신 평가가 검증되었다고 볼 수 없다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "grade-distribution-block",
+        "type": "chart",
+        "chartId": "grade-distribution"
+      },
+      {
+        "id": "grades-block",
+        "type": "table",
+        "tableId": "grades"
+      },
+      {
+        "id": "sample-reading",
+        "type": "markdown",
+        "body": "### 까치 사례는 출처 코드와 평가 연결 상태를 구분해야 한다\n\n샘플은 까치 2종, 청둥오리, 스픽스유리금강앵무로 고정했으며 전체 분포를 대표하는 확률 표본이 아니다. Pica serica와 Pica pica는 모두 NE이고 링크가 비어 있다. 다른 샘플의 링크는 평가 페이지 탐색 단서다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "samples-block",
+        "type": "table",
+        "tableId": "samples"
+      },
+      {
+        "id": "method",
+        "type": "markdown",
+        "body": "## 릴리스를 고정한 읽기 전용 전수 조회로 재현한다\n\n출처 릴리스와 개념집합을 명시적으로 고정하여 미래의 여러 릴리스가 섞이지 않게 했다. 각 DB 행의 sequence를 공식 JSON species 행에 연결한 후 학명과 등급을 비교했다. 원자료 앞뒤 공백을 제거한 내용 검사와 원문 형식 차이를 나눠 기록하고, 전체 행 수·중복·정책/식별자·BirdLife 링크·스냅샷 SHA256을 함께 검사했다.\n\n**검사 도구는 DB 데이터를 수정하지 않는다.** companion notebook은 저장된 감사 JSON을 읽어 건수, NE 분모와 비율, 차이 목록 및 체크섬 결과를 다시 계산한다. notebook 재실행은 DB 전수 조회 재실행과 구분한다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "implementation-validation",
+        "type": "markdown",
+        "body": "## 코드 검증은 전체 실행 결과와 건너뛴 범위를 나눠 기록한다\n\n최신 origin/main 병합 후 Python 테스트는 **전체 642개 중 607개 실행 통과, 35개 건너뛰기, 실패 0개**였다. frontend 테스트는 **253개 통과, 건너뛰기 0개, 실패 0개**였다. 건너뛴 Python 테스트를 실행 통과에 포함하지 않았다.\n\n이 결과는 구현의 회귀 검증이며, 공식 스냅샷과 실제 테스트 DB의 전수 대조 및 IUCN 독립 평가 확인과 구분한다. 테스트 실행 결과는 작업 조정자가 확인한 최신 실행 결과를 인용한다.\n\nHTML 패키징 도구로 설치된 Chrome의 브라우저 검증을 한 번 시도했으나 요청한 차트 추출 환경을 적용하지 못해 실패했다. 최종 산출물은 구조 검증만 통과했으며, 보고서의 light/dark·desktop/narrow 표시 및 출처 메뉴/대화상자는 브라우저에서 확인하지 못했다. semantic fallback과 원본 payload 일치는 구조 검증 범위다.",
+        "sourceId": "implementation-tests"
+      },
+      {
+        "id": "limits",
+        "type": "markdown",
+        "body": "## 적재 검증과 보전 평가 검증은 다른 근거다\n\n이 감사는 공식 스냅샷에 대한 저장 정합성 검사다. **IUCN/BirdLife의 개별 평가 페이지, 평가 연도, 평가 대상의 종 범위, 최신성, 링크의 실제 응답과 평가 내용은 독립 검증하지 않았다.** 따라서 독립 평가 검증 비율이나 최신 등급 정확도는 제시할 수 없다.\n\n종 개념 변경에 따른 평가 연결의 모호함은 NE 표시를 개선해 드러낼 수 있으나, 표시 개선만으로 연결을 해결하지는 못한다. 검사 대상은 테스트 DB의 활성 v2025b 종이며 운영 DB 전체나 다른 릴리스로 일반화하지 않는다.",
+        "sourceId": "audit"
+      },
+      {
+        "id": "next",
+        "type": "markdown",
+        "body": "## 검증 범위를 함께 전달하고 독립 평가 연결을 추가한다\n\n1. 원자료 식별자, 공식 URL, 릴리스 및 정책을 API 조회 조건과 출처 설명에 보존한다.\n2. 보전 정보에 스냅샷 근거 여부와 독립 검증 여부를 전달하고, 평가 연결 검토가 필요한 NE를 명확히 안내한다.\n3. 우선 까치 사례부터 실제 평가의 대상 종 범위·평가 연도·출처를 확인하고, 검증한 연결만 별도 기록한다.\n4. 릴리스 갱신 시 이 전수 감사를 다시 실행하여 누락·중복·차이·링크 공백과 체크섬을 비교한다.\n\nAPI/UI 개선 방향은 평가 등급의 근거를 보여주기 위한 것이다. 배포와 커밋은 이 읽기 전용 감사의 검증 범위가 아니며 완료 여부를 주장하지 않는다."
+      },
+      {
+        "id": "questions",
+        "type": "markdown",
+        "body": "## 실제 평가 연결을 확인하려면 어떤 근거가 더 필요한가\n\n- Pica serica와 Pica pica에 적용되는 현재 평가의 종 범위가 AviList v2025b의 종 범위와 같은가?\n- 평가 연도와 공식 식별자를 확인하고 유효한 연결을 지속적으로 갱신할 수 있는가?\n- 운영 DB에서도 같은 릴리스·정책 조건으로 동일한 감사가 통과하는가?\n\n이 질문은 공식 평가 자료의 내용 확인과 운영 환경의 별도 감사가 필요하다. 현재 스냅샷 검사 결과로 답을 추정하지 않는다."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-10-09T06:22:41.083872+00:00",
+    "status": "ready",
+    "datasets": {
+      "checks": [
+        {
+          "order": 1,
+          "check": "DB 조회 종 수",
+          "count": 11131,
+          "meaning": "공식 species 행 수와 같음"
+        },
+        {
+          "order": 2,
+          "check": "공식 species 행 수",
+          "count": 11131,
+          "meaning": "비교 기준"
+        },
+        {
+          "order": 3,
+          "check": "중복 taxon_id",
+          "count": 0,
+          "meaning": "중복 관측 없음"
+        },
+        {
+          "order": 4,
+          "check": "공식 원자료에 없는 DB 행",
+          "count": 0,
+          "meaning": "sequence 연결 확인"
+        },
+        {
+          "order": 5,
+          "check": "DB에 없는 공식 species",
+          "count": 0,
+          "meaning": "전수 적재 확인"
+        },
+        {
+          "order": 6,
+          "check": "공백 정리 후 종명/등급 차이",
+          "count": 0,
+          "meaning": "내용 일치"
+        },
+        {
+          "order": 7,
+          "check": "출처 식별자/등급 유효성 오류",
+          "count": 0,
+          "meaning": "검사 규칙 통과"
+        },
+        {
+          "order": 8,
+          "check": "원자료 공백 형식 차이",
+          "count": 1,
+          "meaning": "LC 뒤 공백 1건 정리"
+        },
+        {
+          "order": 9,
+          "check": "NE 중 BirdLife 링크 있음",
+          "count": 0,
+          "meaning": "평가 연결 확인 필요"
+        },
+        {
+          "order": 10,
+          "check": "NE 이외 등급 중 BirdLife 링크 없음",
+          "count": 0,
+          "meaning": "링크 존재는 평가 내용 독립검증과 다름"
+        }
+      ],
+      "grades": [
+        {
+          "category": "CR",
+          "count": 183,
+          "share": 0.01644057137723475
+        },
+        {
+          "category": "CR (PE)",
+          "count": 17,
+          "share": 0.0015272661935136107
+        },
+        {
+          "category": "CR (PEW)",
+          "count": 2,
+          "share": 0.0001796783757074836
+        },
+        {
+          "category": "DD",
+          "count": 35,
+          "share": 0.003144371574880963
+        },
+        {
+          "category": "EN",
+          "count": 356,
+          "share": 0.03198275087593208
+        },
+        {
+          "category": "EW",
+          "count": 5,
+          "share": 0.00044919593926870903
+        },
+        {
+          "category": "EX",
+          "count": 147,
+          "share": 0.013206360614500045
+        },
+        {
+          "category": "LC",
+          "count": 8027,
+          "share": 0.7211391609019855
+        },
+        {
+          "category": "NE",
+          "count": 808,
+          "share": 0.07259006378582337
+        },
+        {
+          "category": "NT",
+          "count": 909,
+          "share": 0.08166382175905129
+        },
+        {
+          "category": "VU",
+          "count": 642,
+          "share": 0.05767675860210224
+        }
+      ],
+      "samples": [
+        {
+          "name": "Cyanopsitta spixii",
+          "category": "EW",
+          "link": "있음",
+          "identity": "avilist-taxon:v2025b:11693"
+        },
+        {
+          "name": "Pica serica",
+          "category": "NE",
+          "link": "없음",
+          "identity": "avilist-taxon:v2025b:20193"
+        },
+        {
+          "name": "Pica pica",
+          "category": "NE",
+          "link": "없음",
+          "identity": "avilist-taxon:v2025b:20198"
+        },
+        {
+          "name": "Anas platyrhynchos",
+          "category": "LC",
+          "link": "있음",
+          "identity": "avilist-taxon:v2025b:544"
+        }
+      ]
+    },
+    "accessIssues": []
+  },
+  "sources": [
+    {
+      "id": "audit",
+      "label": "실제 테스트 DB 읽기 전용 전수 감사",
+      "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+      "query": {
+        "engine": "Neo4j",
+        "language": "cypher",
+        "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+        "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+        "executed_at": "2026-10-09T06:22:41.083872+00:00",
+        "tables_used": [
+          "Taxon:BirdTaxon",
+          "TaxonConceptSet",
+          "IN_CONCEPT_SET"
+        ],
+        "filters": {
+          "rank": "species",
+          "policy_status": "allowed",
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "taxonomy_release": "v2025b"
+        },
+        "metric_definitions": {
+          "NE share": "category_counts.NE / rows",
+          "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+          "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+        },
+        "parameters": {
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "taxonomy_release": "v2025b"
+        }
+      },
+      "notes": {
+        "script": "scripts/audit_conservation_quality.py",
+        "snapshot_uri": "https://explore.avilist.org/data/avilist-2025b.json",
+        "snapshot_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+        "independent_iucn_assessment_check": false,
+        "visual_choice": "막대차트는 전체 11,131종의 스냅샷 코드 분포를 보여주고, 감사 차이와 정확한 값은 표로 확인한다. 11개 코드, 하나의 count 측정값, 단일 색과 명시적인 축을 사용한다. chart claim: LC가 가장 큰 스냅샷 코드 집단이나 최신 IUCN 평가 정확도를 의미하지 않는다.",
+        "structure_map": "Title → technical summary → scope/definitions → findings → methodology → limitations/robustness → next steps → further questions. 정의를 근거 앞에 배치해 분모와 비교 기준을 명확히 함."
+      }
+    },
+    {
+      "id": "workbook",
+      "label": "AviList v2025b 공식 extended workbook",
+      "url": "https://www.avilist.org/wp-content/uploads/2026/06/AviList-v2025b-10Jun2026-extended.xlsx",
+      "notes": {
+        "identity": "AviList-v2025b-10Jun2026-extended.xlsx",
+        "sha256": "2e1fd3374e23af732b04115b033dd9d97fc53ba275c312d02ef5d12cfb85c988",
+        "reviewed_cells": "How to use!B17; Pica serica row IUCN category / BirdLife URL",
+        "interpretation": "종 개념이 평가 자료와 일치하지 않을 때 NE 사용. Pica serica의 NE와 BirdLife URL 빈 값 확인. 최신 IUCN 독립평가로 취급하지 않음."
+      }
+    },
+    {
+      "id": "snapshot",
+      "label": "AviList v2025b 공식 JSON",
+      "url": "https://explore.avilist.org/data/avilist-2025b.json",
+      "notes": {
+        "identity": "avilist-2025b.json",
+        "sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+        "release": "v2025b"
+      }
+    },
+    {
+      "id": "reviewed-checks",
+      "label": "저장된 전수 감사 JSON: checks 검토 행",
+      "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+      "query": {
+        "engine": "SQLite in-memory",
+        "language": "sql",
+        "sql": "SELECT \"order\", \"check\", \"count\", \"meaning\" FROM main.checks",
+        "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+        "tables_used": [
+          "main.checks"
+        ],
+        "executed_at": "2026-10-09T06:22:41.083872+00:00"
+      },
+      "notes": {
+        "upstreamSourceId": "audit",
+        "material_source_query": {
+          "engine": "Neo4j",
+          "language": "cypher",
+          "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+          "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+          "executed_at": "2026-10-09T06:22:41.083872+00:00",
+          "tables_used": [
+            "Taxon:BirdTaxon",
+            "TaxonConceptSet",
+            "IN_CONCEPT_SET"
+          ],
+          "filters": {
+            "rank": "species",
+            "policy_status": "allowed",
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          },
+          "metric_definitions": {
+            "NE share": "category_counts.NE / rows",
+            "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+            "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+          },
+          "parameters": {
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          }
+        },
+        "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+      }
+    },
+    {
+      "id": "reviewed-grades",
+      "label": "저장된 전수 감사 JSON: grades 검토 행",
+      "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+      "query": {
+        "engine": "SQLite in-memory",
+        "language": "sql",
+        "sql": "SELECT \"category\", \"count\", \"share\" FROM main.grades",
+        "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+        "tables_used": [
+          "main.grades"
+        ],
+        "executed_at": "2026-10-09T06:22:41.083872+00:00"
+      },
+      "notes": {
+        "upstreamSourceId": "audit",
+        "material_source_query": {
+          "engine": "Neo4j",
+          "language": "cypher",
+          "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+          "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+          "executed_at": "2026-10-09T06:22:41.083872+00:00",
+          "tables_used": [
+            "Taxon:BirdTaxon",
+            "TaxonConceptSet",
+            "IN_CONCEPT_SET"
+          ],
+          "filters": {
+            "rank": "species",
+            "policy_status": "allowed",
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          },
+          "metric_definitions": {
+            "NE share": "category_counts.NE / rows",
+            "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+            "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+          },
+          "parameters": {
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          }
+        },
+        "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+      }
+    },
+    {
+      "id": "reviewed-samples",
+      "label": "저장된 전수 감사 JSON: samples 검토 행",
+      "path": "docs/verification/assets/2026-10-09-conservation-quality.json",
+      "query": {
+        "engine": "SQLite in-memory",
+        "language": "sql",
+        "sql": "SELECT \"name\", \"category\", \"link\", \"identity\" FROM main.samples",
+        "description": "저장된 감사 JSON의 검토 행을 메모리 SQLite 표로 읽어 재선택. 이 SQL은 DB 전수 감사가 아니며 원 조회는 upstream audit source에 실제 Cypher로 보존한다.",
+        "tables_used": [
+          "main.samples"
+        ],
+        "executed_at": "2026-10-09T06:22:41.083872+00:00"
+      },
+      "notes": {
+        "upstreamSourceId": "audit",
+        "material_source_query": {
+          "engine": "Neo4j",
+          "language": "cypher",
+          "sql": "MATCH (t:Taxon:BirdTaxon {rank:'species', policy_status:'allowed'})\n      -[:IN_CONCEPT_SET]->(s:TaxonConceptSet {id:$concept_set_id, version:$taxonomy_release, policy_status:'allowed'})\nWHERE t.source_release=s.version AND t.dataset_id=s.dataset_id\nRETURN t.id AS taxon_id, t.source_taxon_id AS sequence,\n       t.scientific_name AS scientific_name, t.source_id AS source_id,\n       t.source_release AS source_release,\n       t.iucn_red_list_category_raw AS category_raw,\n       t.birdlife_url AS birdlife_url, s.snapshot_uri AS snapshot_uri,\n       s.snapshot_sha256 AS snapshot_sha256\nORDER BY taxon_id",
+          "description": "조류 species 활성 AviList v2025b 개념집합만 읽고 공식 JSON의 sequence/종명/등급 및 SHA256과 대조. 인증정보는 산출물에 기록하지 않는다.",
+          "executed_at": "2026-10-09T06:22:41.083872+00:00",
+          "tables_used": [
+            "Taxon:BirdTaxon",
+            "TaxonConceptSet",
+            "IN_CONCEPT_SET"
+          ],
+          "filters": {
+            "rank": "species",
+            "policy_status": "allowed",
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          },
+          "metric_definitions": {
+            "NE share": "category_counts.NE / rows",
+            "duplicates": "각 taxon_id의 관측 수에서 첫 관측을 제외한 수의 합",
+            "source_mismatches": "학명과 등급을 원자료 앞뒤 공백 제거 후 비교한 차이"
+          },
+          "parameters": {
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "taxonomy_release": "v2025b"
+          }
+        },
+        "transformation": "JSON 감사 결과 → 명시된 행 데이터 → 메모리 SQLite → SELECT. 데이터 값 변경 없음. HTML validator는 native table/chart source에 SQL을 요구하여 실제 실행한 SQL 재선택과 upstream Cypher를 함께 보존함."
+      }
+    },
+    {
+      "id": "implementation-tests",
+      "label": "origin/main 병합 후 실제 Python/frontend 검증 결과",
+      "notes": {
+        "source_identity": "2026-10-09 실제 테스트 실행 로그",
+        "python_total": 642,
+        "python_passed": 607,
+        "python_skipped": 35,
+        "python_failed": 0,
+        "frontend_total": 253,
+        "frontend_passed": 253,
+        "frontend_skipped": 0,
+        "frontend_failed": 0,
+        "scope": "실제 테스트 실행 요약. 감사 notebook이 테스트 스위트를 다시 실행하지 않는다. 배포 상태는 이 보고서 범위에서 다루지 않는다.",
+        "python_log": "conservation-python-integrated-test.log",
+        "frontend_log": "conservation-frontend-final-test.log",
+        "python_command": "PYTHONPATH=src python -m unittest discover -s tests",
+        "frontend_command": "node --test tests/frontend/*.test.js",
+        "command_note": "Python 명령의 interpreter 경로는 머신 경로를 노출하지 않도록 portable 형식으로 표시한다. 기록된 실제 실행 로그와 수치를 확인했다.",
+        "report_browser_qa": {
+          "status": "structural_only",
+          "attempt": "installed Chrome via CHROMIUM_EXECUTABLE_PATH",
+          "failure_code": "browser_environment_mismatch",
+          "missing_checks": [
+            "light/dark browser rendering",
+            "desktop/narrow viewports",
+            "source menu/dialog interaction"
+          ]
+        }
+      }
+    }
+  ]
+}
