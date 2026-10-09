@@ -364,6 +364,17 @@
   /** Card-only layout: keep the shared facts renderer and collect its citations. */
   var CARD_BASIC_LABELS = { body_mass: "체중", diet_category: "먹이 유형", habitat: "서식 환경", primary_lifestyle: "주 생활 방식" };
 
+  function cardTraitValue(trait) {
+    var unit = trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
+    var display = trait.display != null ? trait.display : "";
+    if (trait.name === "body_mass" && trait.unit === "g") {
+      var raw = trait.value != null ? trait.value : trait.display;
+      var amount = typeof raw === "number" ? raw : typeof raw === "string" && /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(raw.trim()) ? Number(raw.replace(/,/g, "")) : NaN;
+      if (Number.isFinite(amount) && amount >= 1000) { display = (amount / 1000).toFixed(2); unit = " kg"; }
+    }
+    return display + unit + (trait.inferred ? " (추정값)" : "");
+  }
+
   function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel, ensureLayout) {
     var grid = buildTraitGrid(doc, groups);
     var distributionNumbers = { diet_distribution: 0, foraging_strata_distribution: 0 };
@@ -378,6 +389,7 @@
     Array.prototype.slice.call(grid.children).forEach(function (traitCard, index) {
       var trait = groups[index].trait;
       var originalValue = traitCard.children[1].textContent;
+      if (trait.name === "body_mass") { traitCard.children[1].textContent = cardTraitValue(trait); }
       var originalLabel = traitCard.children[0].textContent;
       var compositionLabel = "";
       var distribution = Object.prototype.hasOwnProperty.call(distributionNumbers, trait.name);
@@ -513,9 +525,11 @@
       tooltip.hidden = false;
       chart.setAttribute("data-tooltip-visible", "true"); chart.setAttribute("data-active-component", entry.key);
       temporaryGuard(doc.defaultView, "blur"); temporaryGuard(doc.defaultView, "resize");
-      var dialog = chart.parentNode;
-      while (dialog && String(dialog.tagName).toLowerCase() !== "dialog") { dialog = dialog.parentNode; }
-      temporaryGuard(dialog, "scroll");
+      var scrollOwner = chart.parentNode;
+      while (scrollOwner) {
+        if (String(scrollOwner.tagName).toLowerCase() === "dialog" || /(?:^|\s)species-card-(?:front|back)(?:\s|$)/.test(scrollOwner.className || "")) { temporaryGuard(scrollOwner, "scroll"); }
+        scrollOwner = scrollOwner.parentNode;
+      }
     }
     function svgNode(tag) { return doc.createElementNS ? doc.createElementNS(SVG_NS, tag) : doc.createElement(tag); }
     function point(radius, percent) {
@@ -2033,9 +2047,11 @@
     var front = doc.createElement("section");
     front.className = "species-card-front";
     front.setAttribute("aria-label", "주요 특징");
+    front.tabIndex = 0;
     var back = doc.createElement("section");
     back.className = "species-card-back";
-    back.setAttribute("aria-label", "출처와 상세 정보");
+    back.setAttribute("aria-label", "상세 정보");
+    back.tabIndex = 0;
     back.hidden = true;
     var faces = doc.createElement("div");
     faces.className = "species-card-faces";
@@ -2393,8 +2409,7 @@
       var label = doc.createElement("dt");
       label.textContent = trait ? trait.label || CARD_BASIC_LABELS[name] : CARD_BASIC_LABELS[name];
       var value = doc.createElement("dd");
-      var unit = trait && trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
-      value.textContent = trait ? (trait.display != null ? trait.display : "") + unit + (trait.inferred ? " (추정값)" : "") : "자료 없음";
+      value.textContent = trait ? cardTraitValue(trait) : "자료 없음";
       facts.appendChild(label);
       facts.appendChild(value);
     });
@@ -2571,6 +2586,7 @@
       card.setAttribute("data-face", showBack ? "back" : "front");
       card.setAttribute("aria-label", speciesLabel(taxon) + " 도감 카드 · " + (showBack ? "뒷면 상세 정보" : "앞면 주요 특징") + " · 좌우 드래그 또는 Enter·Space로 뒤집기");
       if (card.parentNode) { card.parentNode.scrollTop = 0; }
+      front.scrollTop = 0; back.scrollTop = 0;
     }
     var flipAnimation = null;
     var flipTarget = null;
