@@ -362,7 +362,9 @@
   }
 
   /** Card-only layout: keep the shared facts renderer and collect its citations. */
-  function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel) {
+  var CARD_BASIC_LABELS = { body_mass: "체중", diet_category: "먹이 유형", habitat: "서식 환경", primary_lifestyle: "주 생활 방식" };
+
+  function buildCardTraitGrid(doc, groups, sourceTarget, scopeLabel, ensureLayout) {
     var grid = buildTraitGrid(doc, groups);
     var distributionNumbers = { diet_distribution: 0, foraging_strata_distribution: 0 };
     var pair = doc.createElement("div"); pair.className = "species-distribution-pair";
@@ -413,7 +415,16 @@
       }
       sourceTarget.appendChild(entry);
     });
-    if (distributionNumbers.diet_distribution || distributionNumbers.foraging_strata_distribution) {
+    if (ensureLayout) {
+      Object.keys(CARD_BASIC_LABELS).forEach(function (name) {
+        if (groups.some(function (group) { return group.trait.name === name; })) { return; }
+        var row = doc.createElement("div"); row.className = "trait-card species-trait-empty";
+        var label = doc.createElement("strong"); label.textContent = CARD_BASIC_LABELS[name];
+        var value = doc.createElement("span"); value.className = "trait-value"; value.textContent = "자료 없음";
+        row.appendChild(label); row.appendChild(value); grid.appendChild(row);
+      });
+    }
+    if (ensureLayout || distributionNumbers.diet_distribution || distributionNumbers.foraging_strata_distribution) {
       Object.keys(columns).forEach(function (name) {
         if (columns[name].children.length === 1) {
           var empty = doc.createElement("p"); empty.className = "species-distribution-empty";
@@ -2047,6 +2058,71 @@
       return section;
     }
     var dataNotes = sourceSection("species-data-notes", "자료 해석 안내");
+    var observationArea = doc.createElement("section");
+    observationArea.className = "species-observation-points";
+    var observationSourcesSlot = doc.createElement("div");
+    observationSourcesSlot.className = "species-observation-sources-slot";
+    cardSources.appendChild(observationSourcesSlot);
+    var observationSections = profile.sections;
+    var observationPending = !!profile.enrichment_pending;
+    var observationMessage = "";
+
+    function renderObservations() {
+      clearNode(observationArea); clearNode(observationSourcesSlot);
+      var heading = doc.createElement("h4"); heading.textContent = "관찰 포인트";
+      observationArea.appendChild(heading);
+      var selected = [];
+      var seenTexts = Object.create(null);
+      // Species-level notes cannot establish an individual subspecies' features.
+      if (taxon.rank !== "subspecies") {
+        ["appearance", "fun_facts"].forEach(function (key) {
+          (Array.isArray(observationSections) ? observationSections : []).forEach(function (section) {
+            if (!section || section.key !== key) { return; }
+            (Array.isArray(section.items) ? section.items : []).forEach(function (item) {
+              if (selected.length >= 2 || !item || typeof item.text !== "string" || !item.text.trim() ||
+                  typeof item.source_name !== "string" || !item.source_name.trim() || !sanitizeUrl(item.source_url)) { return; }
+              var text = item.text.trim();
+              if (/^(?:평균\s+)?(?:부리 길이\s*\(전체\)|접은 날개 길이|꼬리 길이)\s*:/.test(text) || seenTexts[text]) { return; }
+              seenTexts[text] = true; selected.push({ item: item, kind: key });
+            });
+          });
+        });
+      }
+      var state = selected.length ? "ready" : taxon.rank === "subspecies" ? "subspecies" : observationPending ? "pending" : "unavailable";
+      observationArea.setAttribute("data-observation-state", state);
+      if (!selected.length) {
+        var empty = doc.createElement("p"); empty.className = "species-observation-empty";
+        empty.textContent = state === "subspecies" ? "이 아종만의 관찰 특징은 아직 확인하지 못했습니다." : state === "pending"
+          ? "‘더 알아보기’에서 추가 자료를 확인하세요." : observationMessage || "출처가 확인된 관찰 자료가 아직 없습니다.";
+        observationArea.appendChild(empty);
+      } else {
+        var list = doc.createElement("ul"); list.className = "species-observation-list";
+        var sources = sourceSection("species-observation-sources", "관찰 포인트 근거");
+        selected.forEach(function (selection) {
+          var item = selection.item;
+          var li = doc.createElement("li");
+          if (selection.kind === "fun_facts") {
+            var kind = doc.createElement("span"); kind.className = "species-observation-kind"; kind.textContent = "알아두기"; li.appendChild(kind);
+          }
+          var text = doc.createElement("span"); text.textContent = item.text; li.appendChild(text); list.appendChild(li);
+          var entry = doc.createElement("section"); entry.className = "species-observation-source-entry";
+          var quote = doc.createElement("blockquote"); quote.textContent = item.text; entry.appendChild(quote);
+          entry.appendChild(safeLink(doc, item.source_name, item.source_url));
+          // Retain every supplied provenance field, including nested citation
+          // metadata, without turning raw text or URLs into executable markup.
+          var provenanceLabels = { license_name: "이용 조건", license_url: "이용 조건 주소", release: "자료 릴리스", source_release: "자료 릴리스", locator: "자료 위치", evidence_id: "근거 ID", citation: "인용 정보" };
+          Object.keys(item).forEach(function (key) {
+            if (["text", "source_name", "source_url"].indexOf(key) !== -1 || item[key] == null) { return; }
+            var meta = doc.createElement("p");
+            meta.textContent = (provenanceLabels[key] || key) + ": " + (typeof item[key] === "object" ? JSON.stringify(item[key]) : String(item[key]));
+            entry.appendChild(meta);
+          });
+          sources.appendChild(entry);
+        });
+        observationArea.appendChild(list); observationSourcesSlot.appendChild(sources);
+      }
+      card.refreshSources();
+    }
     if (taxon.rank === "subspecies") {
       var metadata = profile.subspecies_metadata;
       var metadataSection = metadata && metadata.section;
@@ -2134,7 +2210,7 @@
           retryStatus.textContent = "분류 자료가 바뀌어 사진을 갱신하지 않았습니다. 질문을 다시 보내주세요.";
           return;
         }
-        renderPhotos(fresh.images, fresh.photo_availability);
+        card.updateEnrichment(fresh);
       }).catch(function () {
         photoRetrying = false;
         button.disabled = false;
@@ -2285,10 +2361,23 @@
     if (profile.enrichment_pending) {
       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
     } else { renderPhotos(profile.images, profile.photo_availability); }
-    // Only update the photo slots; preserve the open popup and card face.
-    card.updateEnrichment = function (fresh) { renderPhotos(fresh.images, fresh.photo_availability); };
-    card.setEnrichmentMessage = function (message) {
+    // A photo-only update leaves notes intact; explicit empty sections clear
+    // both the visible notes and their detached provenance. Keep profile
+    // untouched here so deferred enrichment can compare initial sections.
+    card.updateEnrichment = function (fresh) {
+      renderPhotos(fresh.images, fresh.photo_availability);
+      if (Object.prototype.hasOwnProperty.call(fresh, "sections")) {
+        observationSections = fresh.sections; observationPending = !!fresh.enrichment_pending; observationMessage = "";
+        renderObservations();
+      }
+    };
+    card.setEnrichmentMessage = function (message, finished) {
       clearNode(photoArea); photoArea.appendChild(buildPhotoPlaceholder(message));
+      if (finished) {
+        observationPending = false;
+        observationMessage = "추가 관찰 자료를 확인하지 못했습니다. 질문을 다시 보내 확인하세요.";
+        renderObservations();
+      }
     };
 
     var dietInfo = dietIconInfo(profile);
@@ -2298,15 +2387,14 @@
     cardSources.appendChild(traitSources);
     var facts = doc.createElement("dl");
     facts.className = "species-quick-facts";
-    ["body_mass", "diet_category", "habitat", "primary_lifestyle"].forEach(function (name) {
+    Object.keys(CARD_BASIC_LABELS).forEach(function (name) {
       var group = traitGroups.find(function (item) { return item.trait.name === name; });
-      if (!group) { return; }
-      var trait = group.trait;
+      var trait = group && group.trait;
       var label = doc.createElement("dt");
-      label.textContent = trait.label || trait.name;
+      label.textContent = trait ? trait.label || CARD_BASIC_LABELS[name] : CARD_BASIC_LABELS[name];
       var value = doc.createElement("dd");
-      var unit = trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
-      value.textContent = (trait.display != null ? trait.display : "") + unit + (trait.inferred ? " (추정값)" : "");
+      var unit = trait && trait.unit && trait.unit !== "percent" ? " " + trait.unit : "";
+      value.textContent = trait ? (trait.display != null ? trait.display : "") + unit + (trait.inferred ? " (추정값)" : "") : "자료 없음";
       facts.appendChild(label);
       facts.appendChild(value);
     });
@@ -2344,32 +2432,25 @@
       noTraits.className = "species-note";
       noTraits.textContent = "조회된 형질(특징·먹이·서식 환경) 정보가 없습니다.";
       front.appendChild(noTraits);
-    } else {
-      // Diet/habitat facts and the single headline measurement (body mass)
-      // stay visible; every other body-measurement trait (beak/tarsus/wing/
-      // tail length, etc.) is real but secondary, so it collapses behind a
-      // <details> rather than turning the card into a wall of fact cards.
-      var prominentGroups = traitGroups.filter(function (group) {
-        return DIET_HABITAT_TRAIT_NAMES.indexOf(group.trait.name) !== -1 || PROMINENT_MEASUREMENT_NAMES.indexOf(group.trait.name) !== -1;
-      });
-      var remainingGroups = traitGroups.filter(function (group) {
-        return prominentGroups.indexOf(group) === -1;
-      });
-
-      if (prominentGroups.length > 0) {
-        back.appendChild(buildCardTraitGrid(doc, prominentGroups, traitSources));
-      }
-      if (remainingGroups.length > 0) {
-        var measurementsDetails = doc.createElement("details");
-        measurementsDetails.className = "card-details";
-        var measurementsSummary = doc.createElement("summary");
-        measurementsSummary.textContent = "측정값 더 보기 (" + remainingGroups.length + ")";
-        measurementsDetails.appendChild(measurementsSummary);
-        measurementsDetails.appendChild(buildCardTraitGrid(doc, remainingGroups, traitSources));
-        back.appendChild(measurementsDetails);
-      }
     }
-
+    // Keep basic rows and distribution places even when no data is recorded.
+    // Secondary measurements retain their existing optional details panel.
+    var prominentGroups = traitGroups.filter(function (group) {
+      return DIET_HABITAT_TRAIT_NAMES.indexOf(group.trait.name) !== -1 || PROMINENT_MEASUREMENT_NAMES.indexOf(group.trait.name) !== -1;
+    });
+    var remainingGroups = traitGroups.filter(function (group) {
+      return prominentGroups.indexOf(group) === -1;
+    });
+    back.appendChild(buildCardTraitGrid(doc, prominentGroups, traitSources, null, true));
+    if (remainingGroups.length > 0) {
+      var measurementsDetails = doc.createElement("details");
+      measurementsDetails.className = "card-details";
+      var measurementsSummary = doc.createElement("summary");
+      measurementsSummary.textContent = "측정값 더 보기 (" + remainingGroups.length + ")";
+      measurementsDetails.appendChild(measurementsSummary);
+      measurementsDetails.appendChild(buildCardTraitGrid(doc, remainingGroups, traitSources));
+      back.appendChild(measurementsDetails);
+    }
     if (traitSources.children.length === 1) { cardSources.removeChild(traitSources); }
     cardSources.appendChild(buildDietLegend(doc, dietInfo));
 
@@ -2395,6 +2476,8 @@
       warningNote.textContent = "자료 안내 " + profileWarnings.length + "건 · 뒷면에서 확인";
       front.appendChild(warningNote);
     }
+    front.appendChild(observationArea);
+    renderObservations();
 
     var conservationSection = sourceSection("species-conservation-sources", "멸종위기 등급 출처");
     var conservationStatus = doc.createElement("p");
@@ -3189,7 +3272,7 @@
         photoPending = false;
         profile.enrichment_pending = false;
         profile.photo_availability = { status: "provider_unavailable" };
-        options.card.setEnrichmentMessage("사진을 불러오지 못했습니다. 질문을 다시 보내 재시도하세요.");
+        options.card.setEnrichmentMessage("사진을 불러오지 못했습니다. 질문을 다시 보내 재시도하세요.", true);
         finish(profileStatus, error && error.message === "changed"
           ? "분류 자료가 바뀌어 사진·추가 설명을 표시하지 않았습니다. 질문을 다시 보내주세요."
           : "사진·추가 설명을 불러오지 못했습니다. 먼저 표시한 답변은 계속 확인할 수 있습니다.");
@@ -3218,7 +3301,7 @@
       if (photoPending) {
         profile.enrichment_pending = false;
         profile.photo_availability = { status: "cancelled" };
-        options.card.setEnrichmentMessage("사진 조회를 중단했습니다. 질문을 다시 보내 확인하세요.");
+        options.card.setEnrichmentMessage("사진 조회를 중단했습니다. 질문을 다시 보내 확인하세요.", true);
       }
       pendingStatuses.forEach(function (node) { node.textContent = "추가 자료 조회를 중단했습니다. 다시 확인하려면 질문을 보내주세요."; });
       pendingStatuses = [];
