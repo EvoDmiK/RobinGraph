@@ -136,3 +136,6 @@ Wikidata의 한국어 문자열 존재만으로 새 국명을 확정하지 않�
 Obsidian에는 상세 작업 기록과 세 원자료 검토 문서를 분리해 보존한다. 작업 기록은 `Work/RobinGraph/작업기록/2026-10-09-국명408-형질503-평가447-원자료복구`, 검토 문서는 `Work/RobinGraph/검토자료/`의 국명408·형질503·평가447 문서다. 각 인덱스에 연결한다. 기존 작업기록 인덱스에 남은 Git 충돌 표시는 양쪽 문서 링크를 모두 보존하여 제거했고, 곧 어긋날 수 있는 수동 문서 개수 표시는 없앴다.
 
 최종 기계 판독 증거는 `docs/verification/assets/2026-10-09-resolution-{test,prod}-{delta,badges,service-checks}.json`과 `2026-10-09-resolution-environment-parity.json`에 저장했다. 원래 요청한 모든 종의 처리 결과와 미해결 사유는 상세 ledger에 남아 있다.
+
+
+문서·검증 증거 커밋 `081f049`를 포함해 main에 fast-forward 병합했고 origin의 dev와 main push가 모두 성공했다. Obsidian 작업 기록과 원자료 검토 3개는 저장 후 다시 읽어 확인했다. 배포 런타임은 `f70c997`을 유지한다.
