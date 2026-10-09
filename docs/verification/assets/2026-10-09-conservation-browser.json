@@ -1,0 +1,32 @@
+{
+  "actualTestDeployment": true,
+  "actualApiProfiles": true,
+  "productionRenderer": true,
+  "syntheticProfileInsertion": true,
+  "checks": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "tier": "unconfirmed",
+      "badge": "평가 자료 연결 확인 필요 (AviList NE)",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tier": "unconfirmed",
+      "badge": "평가 자료 연결 확인 필요 (AviList NE)",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    }
+  ]
+}

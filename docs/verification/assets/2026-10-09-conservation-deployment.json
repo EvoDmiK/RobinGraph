@@ -1,0 +1,84 @@
+{
+  "source_commit": "6cb98546f676f0280a362a39e01824a01a618e7f",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "profiles": [
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "category": "LC",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Numenius arquata",
+      "category": "NT",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Antigone vipio",
+      "category": "VU",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Ciconia boyciana",
+      "category": "EN",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Calidris pygmaea",
+      "category": "CR",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Cyanopsitta spixii",
+      "category": "EW",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Raphus cucullatus",
+      "category": "EX",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Bathmocercus cerviniventris",
+      "category": "DD",
+      "assessment_status": "snapshot_only",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Aegithalos concinnus",
+      "category": "NE",
+      "assessment_status": "needs_review",
+      "independently_verified": false,
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Pica serica",
+      "category": "NE",
+      "assessment_status": "needs_review",
+      "independently_verified": false,
+      "http_status": 200
+    }
+  ],
+  "javascript_sha256": "fbf0171aa8b1142332b8af4eb39d79281671a45d3eee3bf026b28a547e64e6b9",
+  "stylesheet_sha256": "55466b124a234c21b3d64aa9b2680ceadf3ab89933136774abbab8df67e5b80a",
+  "deployed_static_files_match_commit": true
+}
