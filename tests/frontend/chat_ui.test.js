@@ -1522,11 +1522,17 @@ test("popup consumes each backdrop click once and clears pending presses on clos
 test("card front contains compact facts and keeps source material outside both reversible faces", () => {
   const profile = fakeProfilePayload().result.profile;
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
-  const front = card.children.find(node => node.className === "species-card-front");
-  const back = card.children.find(node => node.className === "species-card-back");
+  const front = collectAllNodes(card).find(node => node.className === "species-card-front");
+  const back = collectAllNodes(card).find(node => node.className === "species-card-back");
   const flip = card;
   assert.equal(back.hidden, true);
   assert.equal(front.hidden, false);
+  assert.equal(front.parentNode.className, "species-card-faces");
+  assert.equal(back.parentNode, front.parentNode);
+  assert.equal(front.inert, false);
+  assert.equal(back.inert, true);
+  assert.equal(front.getAttribute("aria-hidden"), "false");
+  assert.equal(back.getAttribute("aria-hidden"), "true");
   assert.ok(collectedText(front).includes("1083.3 g"));
   assert.equal(collectAllNodes(front).some(node => node.tagName === "a"), false);
   assert.equal(collectAllNodes(front).filter(node => node.tagName === "dt").length, 1);
@@ -1538,6 +1544,10 @@ test("card front contains compact facts and keeps source material outside both r
   assert.equal(back.hidden, false);
   assert.equal(front.hidden, true);
   assert.equal(flip.getAttribute("data-face"), "back");
+  assert.equal(front.inert, true);
+  assert.equal(back.inert, false);
+  assert.equal(front.getAttribute("aria-hidden"), "true");
+  assert.equal(back.getAttribute("aria-hidden"), "false");
   flip.dispatch("keydown", { key: "Enter", target: flip });
   assert.equal(front.hidden, false);
   assert.equal(back.hidden, true);
@@ -1550,8 +1560,8 @@ test("card front contains compact facts and keeps source material outside both r
 test("keyboard card flips at the edge, ignores repeated keys, and cancels stale transitions on reset", () => {
   const doc = { createElement: createFakeElement, defaultView: { matchMedia: () => ({matches:false}) } };
   const card = chat.buildSpeciesCard(doc, fakeProfilePayload().result.profile);
-  const front = card.children.find(node => node.className === "species-card-front");
-  const back = card.children.find(node => node.className === "species-card-back");
+  const front = collectAllNodes(card).find(node => node.className === "species-card-front");
+  const back = collectAllNodes(card).find(node => node.className === "species-card-back");
   const flip = card;
   const animations = [];
   card.animate = (frames, options) => {
@@ -1635,7 +1645,7 @@ test("answer consolidates every card source category without nested source toggl
   profile.conservation = { category: "CR", category_raw: "CR (PE)", ...VERIFIED_SOURCE };
   const fixture = await renderProfileMessage(profile);
   const card = fixture.card;
-  const back = card.children.find(n => n.className === "species-card-back");
+  const back = collectAllNodes(card).find(n => n.className === "species-card-back");
   const all = collectAllNodes(back);
   const sources = fixture.sources;
   assert.equal(sources.tagName, "details");
@@ -1675,7 +1685,7 @@ test("late photo enrichment updates the answer source panel while preserving its
   card.updateEnrichment(fresh);
   assert.equal(collectAllNodes(fixture.message).find(n => n.className === "species-answer-sources"), sources);
   assert.equal(sources.open, true);
-  assert.equal(card.children.find(n => n.className === "species-card-back").hidden, false);
+  assert.equal(collectAllNodes(card).find(n => n.className === "species-card-back").hidden, false);
   assert.equal(collectAllNodes(card.sourceMaterial).find(n => n.className === "species-photo-sources-slot"), slot);
   assert.equal(collectAllNodes(card.sourceMaterial).find(n => n.className === "species-trait-sources"), originalTraitSources);
   assert.match(collectedText(slot), /New photographer/);
@@ -1697,7 +1707,7 @@ test("subspecies answer sources retain separate parent-reference provenance and 
   profile.subspecies_metadata = { source_name: "AviList", source_url: "https://example.org/avilist", range_raw: "Reviewed range", section: { key: "subspecies_taxonomy", items: [{ text: "Taxonomy" }, { text: "Reviewed distribution", source_name: "Distribution review", source_url: "https://example.org/distribution" }] } };
   const fixture = await renderProfileMessage(profile);
   const card = fixture.card;
-  const back = card.children.find(n => n.className === "species-card-back");
+  const back = collectAllNodes(card).find(n => n.className === "species-card-back");
   const sources = fixture.sources;
   assert.equal(collectAllNodes(sources).filter(n => n.tagName === "details").length, 1);
   const metadata = collectAllNodes(sources).find(n => n.className === "card-details species-subspecies-sources");
@@ -2117,8 +2127,8 @@ test("card, dialog, and chat button carry the verified tier; sources and the abu
   assert.equal(badge.textContent, "IUCN 적색목록 위기 (EN)");
   assert.match(badge.getAttribute("title"), /실제로 보기 드문지/);
 
-  const front = card.children.find((node) => node.className === "species-card-front");
-  const back = card.children.find((node) => node.className === "species-card-back");
+  const front = collectAllNodes(card).find((node) => node.className === "species-card-front");
+  const back = collectAllNodes(card).find((node) => node.className === "species-card-back");
   assert.equal(collectAllNodes(front).some((node) => node.tagName === "a"), false, "front stays link-free");
   const sources = collectAllNodes(card.sourceMaterial).find((node) => node.className === "species-conservation-sources");
   assert.equal(sources.tagName, "section");
@@ -2802,13 +2812,13 @@ test("RG-008: card front and chat brief show accessible diet icons next to the h
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
   const heading = card.children.find((n) => n.className === "species-card-heading");
   assert.ok(heading.children.some((n) => n.className.startsWith("species-emblem habitat-wetland")), "habitat emblem retained");
-  const front = card.children.find((n) => n.className === "species-card-front");
+  const front = collectAllNodes(card).find((n) => n.className === "species-card-front");
   const icons = collectAllNodes(front).find((n) => n.className === "species-diet-icons");
   assert.equal(icons.getAttribute("aria-label"), "먹이 아이콘 · 먹이 구성 비율");
   assert.deepEqual(icons.children.map((n) => n.className), ["diet-icon diet-fish", "diet-icon diet-invertebrate", "diet-icon diet-vertebrate diet-parent"]);
   assert.deepEqual(icons.children.map((n) => n.getAttribute("title")), ["먹이: 물고기 70%", "먹이: 무척추동물 30%", "먹이: 척추동물 (상위 묶음 · 물고기 포함)"]);
   assert.equal(icons.children[0].children[0].getAttribute("aria-hidden"), "true");
-  const back = card.children.find((n) => n.className === "species-card-back");
+  const back = collectAllNodes(card).find((n) => n.className === "species-card-back");
   const legend = collectAllNodes(card.sourceMaterial).find((n) => n.className === "species-diet-legend");
   assert.ok(collectAllNodes(legend).some((n) => n.tagName === "a" && n.href === "https://example.org/avonet"));
   assert.ok(collectAllNodes(legend).some((n) => /서식지나 이름으로 먹이를 추정하지 않습니다/.test(n.textContent)));
@@ -2853,7 +2863,7 @@ test("RG-008: actual 왜가리 EltonTraits distribution shows 물고기, 척추�
 function photoProfile(overrides) {
   return Object.assign(fakeProfilePayload().result.profile, overrides || {});
 }
-const cardPart = (card, className) => card.children.find((n) => n.className === className);
+const cardPart = (card, className) => collectAllNodes(card).find((n) => n.className === className);
 
 test("RG-009: each no-photo status shows a generic placeholder with a fixed reason; facts and flip still work", () => {
   const expected = {
@@ -3039,7 +3049,7 @@ test("RG-008 fix: conflicting distribution records are never fused; the first va
   const legend = collectAllNodes(card.sourceMaterial).find((n) => n.className === "species-diet-legend");
   assert.match(legend.children[1].textContent, /서로 다른 자료의 비율을 더하지 않습니다/);
   assert.deepEqual(collectAllNodes(legend).filter((n) => n.tagName === "a").map((n) => n.href), ["https://example.org/avonet"]);
-  const back = card.children.find((n) => n.className === "species-card-back");
+  const back = collectAllNodes(card).find((n) => n.className === "species-card-back");
   assert.ok(collectAllNodes(card.sourceMaterial).some((n) => n.tagName === "a" && n.href === "https://example.org/other"), "the other record's source stays in the trait panel");
 });
 
@@ -3066,7 +3076,7 @@ function nightHeronProfile() {
 
 test("RG-006 follow-up: reviewed activity stays visible; the raw nocturnal=false claim is only collapsed provenance", () => {
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, nightHeronProfile());
-  const back = card.children.find((n) => n.className === "species-card-back");
+  const back = collectAllNodes(card).find((n) => n.className === "species-card-back");
   const traitCards = collectAllNodes(back).filter((n) => n.className === "trait-card");
   const activity = traitCards.find((n) => n.children[0].textContent === "활동 시간");
   assert.ok(activity, "activity_pattern is a prominent trait, not hidden under 측정값 더 보기");
@@ -4151,8 +4161,8 @@ function dragFixture(reduced, profile) {
     addEventListener(t, h, c) { (this.listeners[t] = this.listeners[t] || []).push({ h, c: !!c }); },
     removeEventListener(t, h, c) { this.listeners[t] = (this.listeners[t] || []).filter(x => !(x.h === h && x.c === !!c)); } };
   const card = chat.buildSpeciesCard(doc, profile || fakeProfilePayload().result.profile);
-  const front = card.children.find(n => n.className === "species-card-front");
-  const back = card.children.find(n => n.className === "species-card-back");
+  const front = collectAllNodes(card).find(n => n.className === "species-card-front");
+  const back = collectAllNodes(card).find(n => n.className === "species-card-back");
   const flip = card;
   card.style = {};
   card.getBoundingClientRect = () => ({ width: 300 });
