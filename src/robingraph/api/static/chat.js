@@ -2064,7 +2064,10 @@
     var cardSources = doc.createElement("div");
     cardSources.className = "species-profile-source-material";
     card.sourceMaterial = cardSources;
-    card.refreshSources = function () { if (card.onSourcesChanged) { card.onSourcesChanged(); } };
+    card.refreshSources = function () {
+      if (card.onSourcesChanged) { card.onSourcesChanged(); }
+      if (card.requestFit) { card.requestFit(); }
+    };
     function sourceSection(className, headingText) {
       var section = doc.createElement("section");
       section.className = className;
@@ -2585,7 +2588,8 @@
       back.setAttribute("aria-hidden", String(!showBack));
       card.setAttribute("data-face", showBack ? "back" : "front");
       card.setAttribute("aria-label", speciesLabel(taxon) + " 도감 카드 · " + (showBack ? "뒷면 상세 정보" : "앞면 주요 특징") + " · 좌우 드래그 또는 Enter·Space로 뒤집기");
-      if (card.parentNode) { card.parentNode.scrollTop = 0; }
+      var dialog = popupDialog(card);
+      if (dialog) { dialog.scrollTop = 0; }
       front.scrollTop = 0; back.scrollTop = 0;
     }
     var flipAnimation = null;
@@ -2724,7 +2728,7 @@
       var showBack = back.hidden;
       var view = doc.defaultView;
       var reducedMotion = view && view.matchMedia && view.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var target = card.parentNode && card.parentNode.tagName.toLowerCase() === "dialog" ? card.parentNode : card;
+      var target = popupDialog(card) || card;
       if (reducedMotion || typeof target.animate !== "function") { showFace(showBack); return; }
       flipTarget = target;
       flipping = true; card.setAttribute("aria-busy", "true");
@@ -2765,30 +2769,27 @@
     });
 
     // Drag-to-flip for the mouse and a primary single touch (pen unsupported).
-    // Both may start on non-interactive card text, whose selection is disabled
-    // by CSS. Mouse drags also include photos and decorative graphics. Touch
-    // photos, scrolling (touch-action: pan-y pinch-zoom), and active selections
-    // stay native. Controls, links and editable/draggable nodes are exempt for both.
+    // Photos, placeholders and decorative graphics share the card's swipe.
+    // Controls, charts and editable/draggable nodes keep their native actions.
     function isDragExempt(node, touch) {
       if (!node) { return true; }
       while (node && node !== card) {
         var tag = String(node.tagName || "").toLowerCase();
         if (tag === "a" || tag === "button" || tag === "summary" || tag === "input" || tag === "select" ||
             tag === "textarea" || tag === "label" || tag === "video" || tag === "audio") { return true; }
-        if (touch && (tag === "img" || tag === "picture" || tag === "canvas" || tag === "svg")) { return true; }
         if (node.isContentEditable) { return true; }
         var attr = function (name) { return node.getAttribute ? node.getAttribute(name) : null; };
         var editable = attr("contenteditable");
         if (editable !== null && editable !== "false") { return true; }
         if (attr("draggable") === "true" || attr("data-card-drag-exempt") === "true") { return true; }
         var role = attr("role");
-        if (role === "button" || role === "link" || role === "textbox" || (touch && role === "img")) { return true; }
+        if (role === "button" || role === "link" || role === "textbox") { return true; }
         node = node.parentNode;
       }
       return false;
     }
     function dragTarget() {
-      return card.parentNode && String(card.parentNode.tagName).toLowerCase() === "dialog" ? card.parentNode : card;
+      return popupDialog(card) || card;
     }
     function dragPose(angle, scale) {
       return "perspective(1100px) rotateY(" + angle + "deg) scale(" + scale + ")";
@@ -2948,7 +2949,7 @@
     }, true);
     card.addEventListener("dragstart", function (event) {
       // An image's native drag can start before the flip gesture reaches its slop.
-      if (drag && (drag.active || drag.kind === "mouse")) { event.preventDefault(); }
+      if (drag) { event.preventDefault(); }
     });
 
     card.appendChild(gloss);
@@ -3146,6 +3147,15 @@
     return brief;
   }
 
+  function popupDialog(node) {
+    var parent = node.parentNode;
+    while (parent) {
+      if (String(parent.tagName).toLowerCase() === "dialog") { return parent; }
+      parent = parent.parentNode;
+    }
+    return null;
+  }
+
   /** Native dialog supplies focus containment, Escape, and focus restoration. */
   function buildSpeciesPopup(doc, card, profile) {
     var wrapper = doc.createElement("div");
@@ -3169,8 +3179,67 @@
     close.textContent = "×";
     close.setAttribute("aria-label", "도감 카드 닫기");
     dialog.appendChild(close);
-    dialog.appendChild(card);
+    var fitFrame = doc.createElement("div"); fitFrame.className = "species-card-fit-frame";
+    var fitSurface = doc.createElement("div"); fitSurface.className = "species-card-fit-surface";
+    fitSurface.appendChild(card); fitFrame.appendChild(fitSurface); dialog.appendChild(fitFrame);
     wrapper.appendChild(dialog);
+    var view = doc.defaultView;
+    var fitActive = false, fitRaf = null, fitObserver = null;
+    function mobileFit() {
+      return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
+    }
+    function clearFit() {
+      if (fitSurface.style) { fitSurface.style.transform = ""; }
+      if (card.style) { card.style.minHeight = ""; }
+      fitFrame.setAttribute("data-fit-scale", "1");
+    }
+    function fitCard() {
+      fitRaf = null;
+      if (!fitActive || !dialog.open || dialog.isConnected === false) { return; }
+      // Keep a user's pinch enlargement intact. Refit when zoom returns to 1.
+      if (view.visualViewport && view.visualViewport.scale > 1.01) { return; }
+      if (!mobileFit()) { clearFit(); return; }
+      var width = fitFrame.clientWidth, height = fitFrame.clientHeight;
+      if (!(width > 0 && height > 0)) { return; }
+      var widthScale = Math.min(1, width / 420);
+      var minimum = Math.max(780, height / widthScale);
+      card.style.minHeight = minimum + "px";
+      // offset sizes are untransformed; measuring the scaled rect would make
+      // subsequent observer callbacks progressively shrink or oscillate.
+      var naturalWidth = fitSurface.offsetWidth, naturalHeight = fitSurface.offsetHeight;
+      if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
+      var scale = Math.min(1, width / naturalWidth, height / naturalHeight);
+      fitSurface.style.transform = "scale(" + scale + ")";
+      fitFrame.setAttribute("data-fit-scale", String(scale));
+    }
+    function scheduleFit() {
+      if (!fitActive || fitRaf !== null) { return; }
+      if (view && view.requestAnimationFrame) { fitRaf = view.requestAnimationFrame(fitCard); }
+      else { fitCard(); }
+    }
+    function stopFit() {
+      fitActive = false;
+      if (fitRaf !== null && view && view.cancelAnimationFrame) { view.cancelAnimationFrame(fitRaf); }
+      fitRaf = null;
+      if (fitObserver) { fitObserver.disconnect(); fitObserver = null; }
+      if (view && view.removeEventListener) { view.removeEventListener("resize", scheduleFit); }
+      if (view && view.visualViewport && view.visualViewport.removeEventListener) { view.visualViewport.removeEventListener("resize", scheduleFit); }
+      card.removeEventListener("load", scheduleFit, true); card.removeEventListener("toggle", scheduleFit, true);
+    }
+    function startFit() {
+      stopFit();
+      if (!dialog.open) { return; }
+      fitActive = true;
+      if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
+      if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
+      card.addEventListener("load", scheduleFit, true); card.addEventListener("toggle", scheduleFit, true);
+      if (view && typeof view.ResizeObserver === "function") {
+        fitObserver = new view.ResizeObserver(scheduleFit); fitObserver.observe(fitFrame); fitObserver.observe(card);
+      }
+      scheduleFit();
+    }
+    card.requestFit = scheduleFit;
+    wrapper.disposePopup = function () { stopFit(); if (dialog.open && dialog.close) { dialog.close(); } };
     var backdropPress = null;
     function isBackdrop(event) {
       // The dialog's padded interior is still part of the card, not backdrop.
@@ -3203,9 +3272,11 @@
       backdropPress = null;
       if (card.showFront) { card.showFront(); }
       dialog.showModal();
+      startFit();
     });
     close.addEventListener("click", function () { dialog.close(); });
     dialog.addEventListener("close", function () {
+      stopFit();
       backdropPress = null;
       if (card.showFront) { card.showFront(); }
     });
@@ -3846,6 +3917,11 @@
       cancelEnrichments(true);
       conversationGeneration += 1;
       messages.length = 0;
+      function disposePopups(node) {
+        if (node.disposePopup) { node.disposePopup(); }
+        Array.prototype.slice.call(node.children || []).forEach(disposePopups);
+      }
+      disposePopups(history);
       while (history.firstChild) {
         history.removeChild(history.firstChild);
       }

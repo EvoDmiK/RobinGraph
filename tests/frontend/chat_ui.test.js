@@ -4348,7 +4348,7 @@ test("mouse drags preserve controls, editable and draggable nodes, including nes
   assert.equal(attempt(g => { const img = createFakeElement("img"); img.parentNode = collectAllNodes(g.card).find(n => n.className === "species-photo-area"); return img; }), true, "non-interactive photo starts a mouse drag");
 });
 
-test("mouse drags include images and nested decorative graphics but touch keeps their native behavior", () => {
+test("mouse and touch drags include images, nested decorative graphics and photo placeholders", () => {
   const media = [
     { tag: "img" }, { tag: "picture", child: "img" }, { tag: "canvas" },
     { tag: "svg", child: "path" }, { tag: "div", role: "img", child: "span" },
@@ -4363,11 +4363,11 @@ test("mouse drags include images and nested decorative graphics but touch keeps 
       if (spec.child) { target = createFakeElement(spec.child); element.appendChild(target); }
       const event = touch ? f.tev : f.ev;
       f.card.dispatch("pointerdown", event(100, 50, { target }));
-      assert.equal(f.card.dispatch("dragstart", { target }).defaultPrevented, !touch,
-        "only a tracked mouse blocks native image dragging before the slop");
+      assert.equal(f.card.dispatch("dragstart", { target }).defaultPrevented, true,
+        "a tracked mouse or touch swipe blocks native image dragging before the slop");
       f.card.dispatch("pointermove", event(260, 50));
       f.card.dispatch("pointerup", event(260, 50));
-      assert.equal(f.back.hidden, touch, spec.tag + " mouse flips while touch is exempt");
+      assert.equal(f.back.hidden, false, spec.tag + " mouse and touch both flip");
       assert.equal(f.card.dispatch("dragstart", { target }).defaultPrevented, false,
         "outside a tracked gesture native dragging is untouched");
     }
@@ -4492,7 +4492,7 @@ test("pointercancel and lostpointercapture for another pointer or a bubbled chil
   assert.equal(f.card.getAttribute("data-dragging"), "false");
 });
 
-test("touch starts on non-interactive body text but not on controls, photos, editable or draggable nodes, nor over an active selection", () => {
+test("touch starts on non-interactive body text and photos but not controls, editable or draggable nodes, nor over an active selection", () => {
   const attempt = (pick, prep) => {
     const g = dragFixture(false);
     if (prep) { prep(g); }
@@ -4506,7 +4506,7 @@ test("touch starts on non-interactive body text but not on controls, photos, edi
   for (let i = 0; i < texts.length; i += 1) { assert.equal(attempt(g => textNodes(g.card)[i]), true, "body text #" + i + " allows touch swipe"); }
   const make = (tag, setup) => g => { const el = createFakeElement(tag); if (setup) { setup(el); } el.parentNode = g.card; return el; };
   [make("div", el => el.setAttribute("contenteditable", "true")), make("div", el => el.setAttribute("draggable", "true")),
-    make("img"), make("svg"), make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
+    make("input"), make("textarea"), make("select"), make("button"), make("a"), make("summary"),
     make("div", el => el.setAttribute("role", "button"))].forEach((pick, i) => assert.equal(attempt(pick), false, "touch exclusion #" + i));
   assert.equal(attempt(make("button")), false, "photo/retry buttons keep native tap");
   assert.equal(attempt(g => g.card, g => { g.win.selection.isCollapsed = false; g.win.selection.rangeCount = 1; }), false, "existing selection is respected and untouched");
@@ -4530,9 +4530,13 @@ test("pen and non-primary or non-left touch contacts are unsupported; mouse text
   assert.equal(m.card.getAttribute("data-dragging"), "false", "a touch during a mouse drag cancels it");
 });
 
-test("card retains native vertical pan and pinch without a dedicated swipe footer", () => {
+test("card retains desktop pan while fitted mobile cards allow pinch without native scrolling", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /\.species-card[^{]*\{ touch-action: pan-y pinch-zoom; \}/);
+  assert.match(css, /touch-action: pinch-zoom;/);
+  assert.match(css, /\.species-popup \.species-card \* \{ touch-action: pinch-zoom; \}/,
+    "photo scroll containers must not stop ancestor touch-action before the swipe policy");
+  assert.match(css, /\.species-popup \.species-photo-area \.species-media \{ overflow: hidden; scroll-snap-type: none; \}/);
   assert.doesNotMatch(css, /touch-action:\s*(none|manipulation)/);
   assert.doesNotMatch(css, /species-card-(footer|swipe-hint|drag-hint)/);
 });
@@ -4868,7 +4872,7 @@ test("observation retry refresh is gated by active taxon and release checks", as
   }
 });
 
-test("uniform card frames preserve scrolling and flex layout for the inactive front", () => {
+test("uniform card frames preserve desktop scrolling and flex layout for the inactive front", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /height: min\(844px, calc\(100dvh - 32px\)\)/);
   assert.match(css, /\.species-popup \.species-card \{ min-height: 100%; display: flex; flex-direction: column; \}/);
@@ -4938,7 +4942,7 @@ test("card reference weights and different sourced measurements stay separate an
   for (const raw of ["1024 g", "1200 g", "1500 g"]) assert.ok(collectedText(card.sourceMaterial).includes(raw), raw);
 });
 
-test("inner card scroll regions are keyboard accessible and reset on flips and reopen", () => {
+test("face focus preserves native keys and previous scroll offsets reset on flips and reopen", () => {
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile());
   const front = cardPart(card, "species-card-front"), back = cardPart(card, "species-card-back");
   assert.equal(front.tabIndex, 0); assert.equal(back.tabIndex, 0);
@@ -4951,4 +4955,83 @@ test("inner card scroll regions are keyboard accessible and reset on flips and r
   card.showFront();
   assert.equal(front.scrollTop, 0); assert.equal(back.scrollTop, 0);
   assert.equal(front.inert, false); assert.equal(back.inert, true);
+});
+
+function mobileFitFixture() {
+  const callbacks = new Map(), observers = [], handlers = {};
+  let next = 1, naturalHeight = 700, mobile = true;
+  const viewportHandlers = {};
+  const viewport = { scale: 1, addEventListener(t, fn) { (viewportHandlers[t] ||= []).push(fn); }, removeEventListener(t, fn) { viewportHandlers[t] = (viewportHandlers[t] || []).filter(h => h !== fn); } };
+  const win = { visualViewport: viewport, matchMedia: q => ({ matches: q.includes("prefers-reduced-motion") || mobile }),
+    requestAnimationFrame(fn) { const id = next++; callbacks.set(id, fn); return id; }, cancelAnimationFrame(id) { callbacks.delete(id); },
+    addEventListener(t, fn) { (handlers[t] ||= []).push(fn); }, removeEventListener(t, fn) { handlers[t] = (handlers[t] || []).filter(h => h !== fn); },
+    ResizeObserver: class { constructor(fn) { this.fn = fn; this.nodes = []; observers.push(this); } observe(node) { this.nodes.push(node); } disconnect() { this.nodes = []; } },
+  };
+  const doc = { createElement: createFakeElement, defaultView: win };
+  const card = chat.buildSpeciesCard(doc, photoProfile()); card.style = {};
+  const popup = chat.buildSpeciesPopup(doc, card, photoProfile()), dialog = popup.children[1];
+  const frame = cardPart(popup, "species-card-fit-frame"), surface = cardPart(popup, "species-card-fit-surface");
+  surface.style = {}; frame.clientWidth = 280; frame.clientHeight = 500; surface.offsetWidth = 420;
+  Object.defineProperty(surface, "offsetHeight", { get: () => Math.max(naturalHeight, parseFloat(card.style.minHeight) || 0) });
+  dialog.showModal = () => { dialog.open = true; }; dialog.close = () => { dialog.open = false; dialog.dispatch("close"); };
+  const flush = () => { const pending = [...callbacks.values()]; callbacks.clear(); pending.forEach(fn => fn()); };
+  return { card, popup, dialog, frame, surface, win, viewport, handlers, viewportHandlers, observers, callbacks, flush,
+    open() { popup.children[0].dispatch("click"); flush(); }, height(h) { naturalHeight = h; }, mobile(value) { mobile = value; } };
+}
+
+test("mobile fitting uses stable unscaled dimensions, refits updated content and leaves user pinch enlargement intact", () => {
+  const f = mobileFitFixture(); f.open();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 780));
+  const originalTransform = f.surface.style.transform;
+  f.observers.at(-1).fn(); f.flush();
+  assert.equal(f.surface.style.transform, originalTransform, "already scaled rects never feed back into scale calculation");
+  f.height(1200); f.card.updateEnrichment({ sections: [observationSection([observationItem("긴 후속 관찰")])] }); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  f.viewport.scale = 2; f.height(1800); f.viewportHandlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200), "pinch zoom is not counteracted");
+  f.viewport.scale = 1; f.viewportHandlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1800));
+  f.mobile(false); f.handlers.resize[0](); f.flush();
+  assert.equal(f.surface.style.transform, ""); assert.equal(f.card.style.minHeight, "", "desktop natural layout is restored");
+});
+
+test("fitting coalesces work and releases observers, RAF and viewport handlers on close, disposal and reopening", () => {
+  const f = mobileFitFixture(); f.open();
+  assert.equal(f.handlers.resize.length, 1); assert.equal(f.viewportHandlers.resize.length, 1);
+  assert.equal(f.card.listenerCount("load"), 1); assert.equal(f.card.listenerCount("toggle"), 1);
+  f.card.requestFit(); f.card.requestFit(); assert.equal(f.callbacks.size, 1);
+  f.dialog.close();
+  assert.equal(f.callbacks.size, 0); assert.equal(f.handlers.resize.length, 0); assert.equal(f.viewportHandlers.resize.length, 0);
+  assert.equal(f.card.listenerCount("load"), 0); assert.equal(f.card.listenerCount("toggle"), 0);
+  assert.ok(f.observers.every(observer => observer.nodes.length === 0));
+  f.card.requestFit(); assert.equal(f.callbacks.size, 0, "late photo/data updates cannot schedule closed fits");
+  f.height(1000); f.open(); assert.equal(f.frame.getAttribute("data-fit-scale"), "0.5");
+  assert.equal(f.handlers.resize.length, 1);
+  f.popup.disposePopup(); assert.equal(f.dialog.open, false); assert.equal(f.handlers.resize.length, 0);
+  assert.ok(f.observers.every(observer => observer.nodes.length === 0));
+});
+
+test("fit wrappers retain dialog drag and flip targets without overwriting the fit transform", () => {
+  const f = dragFixture(false), popup = chat.buildSpeciesPopup(f.doc, f.card, photoProfile());
+  const dialog = popup.children[1], surface = cardPart(popup, "species-card-fit-surface");
+  dialog.style = {}; dialog.getBoundingClientRect = () => ({ width: 300 }); surface.style = { transform: "scale(.7)" };
+  const photo = collectAllNodes(f.front).find(n => n.tagName === "img");
+  f.card.dispatch("pointerdown", f.tev(100, 50, { target: photo })); f.card.dispatch("pointermove", f.tev(260, 50));
+  assert.match(dialog.style.transform, /rotateY/); assert.equal(surface.style.transform, "scale(.7)");
+  assert.equal(f.card.style.transform, undefined);
+  f.card.dispatch("pointercancel", f.tev(260, 50));
+  assert.equal(dialog.style.transform, ""); assert.equal(surface.style.transform, "scale(.7)");
+  f.card.dispatch("keydown", { key: "Enter", target: f.card });
+  assert.equal(f.back.hidden, false, "keyboard flip still switches the wrapped card");
+});
+
+test("clearing a conversation disposes nested popup fitting resources before detaching history", async () => {
+  const fixture = await renderProfileMessage(photoProfile());
+  const entry = cardPart(fixture.message, "species-popup-entry");
+  let disposed = 0;
+  const original = entry.disposePopup;
+  entry.disposePopup = () => { disposed++; original(); };
+  fixture.dom.elementsById["clear-button"].dispatch("click");
+  assert.equal(disposed, 1);
+  assert.equal(messageRows(fixture.dom.elementsById.history).length, 0);
 });
