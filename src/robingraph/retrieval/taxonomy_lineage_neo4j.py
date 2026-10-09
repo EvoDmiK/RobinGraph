@@ -45,6 +45,7 @@ either one wrong is worse than reporting "not found".
 from __future__ import annotations
 
 from collections.abc import Callable
+from dataclasses import replace
 from typing import Any
 
 from neo4j import GraphDatabase
@@ -315,6 +316,19 @@ class Neo4jTaxonomyLineageRepository:
             raise ValueError("korean_name must not be blank")
 
         concept_set_id, taxonomy_release = self._active_concept_set()
+
+        # Explicit user-requested app alias; keep active taxonomy and identity guards.
+        if (cleaned == '까치' and taxonomy_release == 'v2025b'
+                and concept_set_id == 'rg:concept-set:avilist-v2025b'):
+            lineage = self.lineage_for_scientific_name('Pica serica')
+            if (lineage is None or not lineage.items
+                    or lineage.items[-1].taxon_id != 'avilist-taxon:v2025b:20193'
+                    or lineage.items[-1].rank != 'species'
+                    or lineage.items[-1].scientific_name != 'Pica serica'
+                    or lineage.taxonomy_release != taxonomy_release
+                    or lineage.concept_set_id != concept_set_id):
+                return None
+            return replace(lineage, query_name=cleaned, matched_by='korean_name')
 
         korean_dataset_id = self._korean_dataset_id()
         if korean_dataset_id is None:
