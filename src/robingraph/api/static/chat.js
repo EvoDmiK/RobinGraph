@@ -919,6 +919,39 @@
 
   // Source identity and URL/release completeness are separate from risk color.
   // These checks verify provenance fields, never a live IUCN assessment.
+  var PICA_SERICA_OVERRIDE_NOTE = "사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.";
+
+  function isPicaSericaManualOverride(data) {
+    var original = data.original_snapshot;
+    return data.evidence_kind === "manual_override" && data.assessment_status === "manual_override" &&
+      data.source_id === "robingraph-manual-pica-serica" && data.source_name === "RobinGraph 임시 보정" &&
+      data.source_release === "2026-10-09" && data.source_url === null &&
+      data.category === "LC" && data.category_raw === "LC" && data.label === "관심대상" &&
+      data.independently_verified === false && data.taxon_id === "avilist-taxon:v2025b:20193" &&
+      data.scientific_name === "Pica serica" && data.taxonomy_release === "v2025b" &&
+      data.concept_set_id === "rg:concept-set:avilist-v2025b" && data.taxonomy_category_raw === "NE" &&
+      data.quality_note === PICA_SERICA_OVERRIDE_NOTE && data.override_reason === PICA_SERICA_OVERRIDE_NOTE &&
+      !!original && typeof original === "object" && original.evidence_kind === "taxonomy_snapshot" &&
+      original.source_id === "avilist-v2025b" && original.source_release === "v2025b" &&
+      original.snapshot_sha256 === "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411" &&
+      original.category === "NE" && typeof original.category_raw === "string" && original.category_raw.trim() === "NE" &&
+      original.assessment_status === "needs_review" && original.independently_verified === false &&
+      conservationInfo(original).snapshot;
+  }
+
+  function appendManualOverrideEvidence(doc, parent, data) {
+    var reason = doc.createElement("p");
+    reason.textContent = data.override_reason;
+    parent.appendChild(reason);
+    var limitation = doc.createElement("p");
+    limitation.textContent = "앱 표시만 임시 보정한 값입니다. 공식 평가를 새로 확인한 결과가 아닙니다.";
+    parent.appendChild(limitation);
+    var original = doc.createElement("p");
+    original.textContent = "원자료: AviList NE · 릴리스 " + data.original_snapshot.source_release + " · 평가 자료 연결 확인 필요 · ";
+    original.appendChild(safeLink(doc, data.original_snapshot.source_name, data.original_snapshot.source_url));
+    parent.appendChild(original);
+  }
+
   function isLinkedRedListChecklist(data) {
     var digits = /^[1-9][0-9]*$/;
     return data.evidence_kind === "red_list_checklist" &&
@@ -943,8 +976,14 @@
       data.category_raw === data.category;
   }
 
-  function conservationInfo(conservation) {
+  function conservationInfo(conservation, taxon) {
     var data = conservation && typeof conservation === "object" ? conservation : {};
+    if (isPicaSericaManualOverride(data) && (arguments.length < 2 ||
+        (taxon && taxon.taxon_id === data.taxon_id && taxon.scientific_name === data.scientific_name && taxon.rank === "species"))) {
+      return { category: "LC", label: "관심대상", tier: "lc", verified: false, sourceVerified: false,
+        snapshot: false, checklist: false, manualOverride: true, note: PICA_SERICA_OVERRIDE_NOTE,
+        badgeText: "관심대상 (LC) · 임시 보정" };
+    }
     var checklist = isLinkedRedListChecklist(data);
     var url = sanitizeUrl(data.source_url), parsed = null;
     try { parsed = url ? new URL(url) : null; } catch (_) { /* unconfirmed */ }
@@ -954,7 +993,7 @@
       (!parsed.port || parsed.port === "443") && hosts.indexOf(parsed.hostname) !== -1 &&
       typeof data.source_name === "string" && data.source_name.trim() &&
       typeof data.source_release === "string" && data.source_release.trim());
-    if (data.evidence_kind === "red_list_checklist" && !checklist) { sourceVerified = false; }
+    if ((data.evidence_kind === "red_list_checklist" && !checklist) || data.evidence_kind === "manual_override") { sourceVerified = false; }
     var aviListHost = parsed && ["avilist.org", "www.avilist.org", "explore.avilist.org"].indexOf(parsed.hostname) !== -1;
     var snapshot = !!(sourceVerified && aviListHost &&
       ((data.evidence_kind === "taxonomy_snapshot" && data.source_id === "avilist-" + data.source_release) ||
@@ -964,7 +1003,7 @@
     var qualifierMatch = typeof raw === "string" ? /^CR\s*\((PEW?)\)$/.exec(raw) : null;
     if (typeof category === "string" && /^CR\s*\((PEW?)\)$/.test(category)) { category = "CR"; }
     var base = { category: null, label: "미확인", tier: "unconfirmed", verified: false,
-      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, badgeText: "멸종위기 등급 미확인" };
+      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "멸종위기 등급 미확인" };
     if ((data.evidence_kind && data.evidence_kind !== "taxonomy_snapshot" && !checklist) ||
         (data.evidence_kind === "taxonomy_snapshot" && !snapshot)) { return base; }
     if (!sourceVerified || typeof category !== "string" ||
@@ -2045,7 +2084,7 @@
     }
     var cardOptions = options || {};
     var taxon = profile.taxon;
-    var conservation = conservationInfo(profile.conservation);
+    var conservation = conservationInfo(profile.conservation, profile.taxon);
     var card = doc.createElement("div");
     card.className = "species-card risk-" + conservation.tier;
     card.setAttribute("data-conservation-tier", conservation.tier);
@@ -2090,7 +2129,7 @@
     var conservationBadge = doc.createElement("p");
     conservationBadge.className = "species-conservation-badge";
     conservationBadge.textContent = conservation.badgeText;
-    conservationBadge.setAttribute("title", CONSERVATION_NOTE);
+    conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
 
     var front = doc.createElement("section");
@@ -2558,13 +2597,15 @@
       sourcePrefix.textContent = "기준 자료: ";
       conservationSource.appendChild(sourcePrefix);
       conservationSource.appendChild(safeLink(doc, rawConservation.source_name,
-        rawConservation.evidence_kind === "red_list_checklist" && !conservation.checklist ? null : rawConservation.source_url));
+        (rawConservation.evidence_kind === "red_list_checklist" && !conservation.checklist) ||
+          rawConservation.evidence_kind === "manual_override" ? null : rawConservation.source_url));
       var releaseSuffix = doc.createElement("span");
       releaseSuffix.textContent = typeof rawConservation.source_release === "string" && rawConservation.source_release.trim()
         ? " · 릴리스 " + rawConservation.source_release.trim() + " 기준"
         : " · 릴리스 정보 없음";
       conservationSource.appendChild(releaseSuffix);
       conservationSection.appendChild(conservationSource);
+      if (conservation.manualOverride) { appendManualOverrideEvidence(doc, conservationSection, rawConservation); }
       var quality = doc.createElement("p");
       quality.className = "species-note";
       quality.textContent = conservation.checklist
@@ -2574,7 +2615,8 @@
           ? "연결 상태: 평가 대상의 종 범위를 확인해야 합니다. AviList NE를 실제 IUCN 미평가 판정으로 단정할 수 없습니다."
           : "검증 범위: 분류 자료에 기록된 등급과 출처·릴리스 확인. 평가 원문·평가 연도의 독립 검증은 완료되지 않았습니다.")
         : "검증 범위: 출처·자료 버전 확인. 최신 평가를 실시간으로 조회한 결과가 아닙니다.";
-      if (!conservation.sourceVerified) { quality.textContent = "출처 또는 자료 버전을 확인하지 못해 카드 색상을 중립으로 표시합니다."; }
+      if (conservation.manualOverride) { quality.textContent = "표시 기준: 사용자 요청에 따른 까치 한정 임시 LC 보정 · 독립 평가 검증 전"; }
+      else if (!conservation.sourceVerified) { quality.textContent = "출처 또는 자료 버전을 확인하지 못해 카드 색상을 중립으로 표시합니다."; }
       conservationSection.appendChild(quality);
       if (conservation.checklist) {
         var assessmentDetails = doc.createElement("p");
@@ -2625,7 +2667,7 @@
     }
     var conservationNote = doc.createElement("p");
     conservationNote.className = "species-note";
-    conservationNote.textContent = CONSERVATION_NOTE;
+    conservationNote.textContent = conservation.manualOverride ? PICA_SERICA_OVERRIDE_NOTE : CONSERVATION_NOTE;
     conservationSection.appendChild(conservationNote);
     cardSources.appendChild(conservationSection);
 
@@ -3193,7 +3235,7 @@
       answer.appendChild(block);
       if (showBrief && (section.key === "basic" || section.title === "기본 정보")) { answer.appendChild(buildSpeciesBrief(doc, profile)); }
     });
-    var answerConservation = conservationInfo(profile.conservation);
+    var answerConservation = conservationInfo(profile.conservation, profile.taxon);
     if (answerConservation.checklist) {
       var conservationData = profile.conservation;
       var conservationSourceKey = JSON.stringify([conservationData.source_url, conservationData.source_name,
@@ -3211,7 +3253,7 @@
     }
     if (showBrief) {
       var briefSources = dietIconInfo(profile).sources.concat((profile.traits || []).filter(function (trait) { return trait.name === "habitat"; }));
-      if (conservationInfo(profile.conservation).sourceVerified) { briefSources.push(profile.conservation); }
+      if (answerConservation.sourceVerified) { briefSources.push(profile.conservation); }
       briefSources.forEach(function (source) {
         var url = sanitizeUrl(source.source_url);
         var sourceKey = JSON.stringify([url, source.source_name, source.license_name, source.license_url]);
@@ -3220,12 +3262,15 @@
         }
       });
     }
-    if (sources.length) {
+    if (sources.length || answerConservation.manualOverride) {
       var details = doc.createElement("details");
       details.className = "species-answer-sources";
       var summary = doc.createElement("summary");
-      summary.textContent = "답변 출처 보기 (" + sources.length + ")";
+      summary.textContent = "답변 출처 보기 (" + (sources.length + (answerConservation.manualOverride ? 1 : 0)) + ")";
       details.appendChild(summary);
+      if (answerConservation.manualOverride) {
+        appendManualOverrideEvidence(doc, details, profile.conservation);
+      }
       sources.forEach(function (source) {
         var row = doc.createElement("p");
         row.appendChild(safeLink(doc, source.name, source.url));
@@ -3266,7 +3311,7 @@
 
   function buildSpeciesBrief(doc, profile) {
     var habitat = habitatEmblemInfo(profile);
-    var conservation = conservationInfo(profile && profile.conservation);
+    var conservation = conservationInfo(profile && profile.conservation, profile && profile.taxon);
     var brief = doc.createElement("p");
     brief.className = "species-chat-brief risk-" + conservation.tier;
     brief.appendChild(buildHabitatEmblem(doc, habitat));
@@ -3278,7 +3323,7 @@
     var badge = doc.createElement("span");
     badge.className = "species-conservation-badge";
     badge.textContent = conservation.badgeText;
-    badge.setAttribute("title", CONSERVATION_NOTE);
+    badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
     return brief;
   }

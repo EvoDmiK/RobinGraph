@@ -3,7 +3,7 @@ from dataclasses import asdict
 from urllib.parse import urlsplit
 
 from .species_profile import LABELS, VALUES, SpeciesNotFoundError, read_traits
-from .taxonomy_lineage import sourced_korean_names, with_korean_display_name
+from .taxonomy_lineage import korean_display_names, with_korean_display_name
 
 
 PEERS_QUERY = """
@@ -56,7 +56,7 @@ def ecological_relations(repository, store, resolve, name):
     target = lineage.items[-1]
     groups, seen = [], set()
     korean_reference_names = {taxon_id: {key: label[key] for key in ('name', 'scientific_name', 'english_name')}
-                              for taxon_id, label in sourced_korean_names().items()}
+                              for taxon_id, label in korean_display_names().items()}
     for trait in read_traits(repository, store, lineage):
         kind, value = trait['name'], trait['value']
         if (kind not in ('habitat', 'trophic_niche') or not isinstance(value, str)

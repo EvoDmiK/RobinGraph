@@ -4,7 +4,7 @@ from dataclasses import asdict
 from .ecological_relations import _web_url
 from .phylogenetic_relations import phylogenetic_relations, phylogeny_metadata
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
-from .taxonomy_lineage import sourced_korean_names, with_korean_display_name
+from .taxonomy_lineage import korean_display_names, with_korean_display_name
 
 WEIGHTS = {'phylogenetic_clade': 50, 'same_genus': 20, 'same_family': 10, 'same_habitat': 10, 'same_trophic_niche': 10}
 METHOD = 'taxonomy-phylogeny-ecology-v3'
@@ -158,7 +158,7 @@ def similar_species(repository, store, resolve, name):
     ranked.sort(key=lambda item:(-item[0], item[1]['scientific_name'], item[1]['taxon_id']))
     # Score the full active pool first. Only the checked-name candidates and
     # the three score leaders need a name projection to select three peers.
-    references = sourced_korean_names()
+    references = korean_display_names()
     name_ids = {candidate['taxon_id'] for _,candidate,_ in ranked
                 if candidate['taxon_id'] in references}
     name_ids.update(candidate['taxon_id'] for _,candidate,_ in ranked[:3])

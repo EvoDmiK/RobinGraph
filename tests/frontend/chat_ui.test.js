@@ -2123,6 +2123,87 @@ const LINKED_CHECKLIST = {
   license_name: "CC BY 4.0", license_url: "https://creativecommons.org/licenses/by/4.0/",
 };
 
+const PICA_ORIGINAL_SNAPSHOT = {
+  category: "NE", category_raw: "NE", label: "미평가", evidence_kind: "taxonomy_snapshot",
+  assessment_status: "needs_review", independently_verified: false, source_id: "avilist-v2025b",
+  source_name: "AviList global avian checklist", source_release: "v2025b",
+  source_url: "https://explore.avilist.org/data/avilist-2025b.json",
+  snapshot_sha256: "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  quality_note: "AviList 원자료의 NE는 평가 대상의 종 범위가 연결되지 않은 경우에도 사용됩니다.",
+};
+const PICA_OVERRIDE_REASON = "사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정했습니다. 원자료의 NE와 평가 종 범위 확인 필요 상태는 보존합니다.";
+const PICA_MANUAL_OVERRIDE = {
+  category: "LC", category_raw: "LC", label: "관심대상", evidence_kind: "manual_override",
+  assessment_status: "manual_override", independently_verified: false,
+  source_id: "robingraph-manual-pica-serica", source_name: "RobinGraph 임시 보정",
+  source_release: "2026-10-09", source_url: null, taxon_id: "avilist-taxon:v2025b:20193",
+  scientific_name: "Pica serica", taxonomy_release: "v2025b", concept_set_id: "rg:concept-set:avilist-v2025b",
+  taxonomy_category_raw: "NE", original_snapshot: PICA_ORIGINAL_SNAPSHOT,
+  quality_note: PICA_OVERRIDE_REASON, override_reason: PICA_OVERRIDE_REASON,
+};
+
+test("Pica serica manual LC override colors only that species and preserves the original NE evidence", () => {
+  const info = chat.conservationInfo(PICA_MANUAL_OVERRIDE);
+  assert.equal(info.tier, "lc");
+  assert.equal(info.manualOverride, true);
+  assert.equal(info.verified, false);
+  assert.equal(info.sourceVerified, false);
+  assert.equal(info.badgeText, "관심대상 (LC) · 임시 보정");
+  const profile = habitatProfile("Forest", PICA_MANUAL_OVERRIDE);
+  profile.taxon = { ...profile.taxon, taxon_id: PICA_MANUAL_OVERRIDE.taxon_id, scientific_name: "Pica serica", korean_name: "까치" };
+  profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
+  const originalBefore = JSON.stringify(PICA_ORIGINAL_SNAPSHOT);
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(card.className, /risk-lc/);
+  assert.match(collectedText(card), /관심대상 \(LC\) · 임시 보정/);
+  assert.doesNotMatch(collectedText(card), /IUCN 적색목록 관심대상/);
+  const sources = card.sourceMaterial;
+  assert.match(collectedText(sources), /사용자 요청으로 까치의 앱 표시 등급을 LC로 임시 보정/);
+  assert.match(collectedText(sources), /원자료: AviList NE/);
+  assert.match(collectedText(sources), /공식 평가를 새로 확인한 결과가 아닙니다/);
+  assert.doesNotMatch(collectedText(sources), /카드 색상을 중립으로/);
+  assert.equal(collectAllNodes(sources).some(n => n.href === PICA_ORIGINAL_SNAPSHOT.source_url), true);
+  assert.match(collectedText(chat.buildSpeciesBrief(svgCapableDoc(), profile)), /LC\) · 임시 보정/);
+  const popup = chat.buildSpeciesPopup(svgCapableDoc(), card, profile);
+  assert.match(popup.children[0].className, /risk-lc/);
+  for (const showBrief of [true, false]) {
+    const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief);
+    const answerSources = collectAllNodes(answer).find(n => n.className === "species-answer-sources");
+    assert.match(collectedText(answerSources), /사용자 요청/);
+    assert.match(collectedText(answerSources), /AviList NE/);
+    assert.equal(collectAllNodes(answerSources).some(n => n.href === PICA_ORIGINAL_SNAPSHOT.source_url), true);
+  }
+  assert.equal(JSON.stringify(PICA_ORIGINAL_SNAPSHOT), originalBefore);
+  const other = { ...profile, taxon: { ...profile.taxon, taxon_id: "another-species", scientific_name: "Pica pica" } };
+  assert.match(chat.buildSpeciesCard(svgCapableDoc(), other).className, /risk-unconfirmed/);
+  assert.match(chat.buildSpeciesBrief(svgCapableDoc(), other).className, /risk-unconfirmed/);
+  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "평가 자료 연결 확인 필요 (AviList NE)");
+});
+
+test("manual override fails closed for any incomplete or altered Pica contract", () => {
+  const changes = [
+    { evidence_kind: "taxonomy_snapshot" }, { assessment_status: "needs_review" }, { independently_verified: true },
+    { source_id: "robingraph-manual-other" }, { source_name: "IUCN Red List" }, { source_release: "2026-10-10" },
+    { source_url: "https://www.iucnredlist.org/species/1" }, { source_url: undefined },
+    { category: "EN", category_raw: "EN" }, { category_raw: "NE" }, { label: "LC" },
+    { taxon_id: "avilist-taxon:v2025b:1" }, { scientific_name: "Pica pica" }, { taxonomy_release: "v2025a" },
+    { concept_set_id: "rg:concept-set:other" }, { taxonomy_category_raw: "LC" },
+    { quality_note: "verified by IUCN" }, { override_reason: undefined }, { original_snapshot: null },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, category: "LC", category_raw: "LC" } },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, assessment_status: "independently_verified" } },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, source_url: "https://avilist.org.evil.test/data" } },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, source_id: "avilist-v2025a" } },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, snapshot_sha256: "0".repeat(64) } },
+    { original_snapshot: { ...PICA_ORIGINAL_SNAPSHOT, snapshot_sha256: undefined } },
+  ];
+  for (const change of changes) {
+    const info = chat.conservationInfo({ ...PICA_MANUAL_OVERRIDE, ...change });
+    assert.equal(info.tier, "unconfirmed", JSON.stringify(change));
+    assert.equal(info.manualOverride, false, JSON.stringify(change));
+    assert.equal(info.verified, false, JSON.stringify(change));
+  }
+});
+
 test("the pinned public IUCN checklist accepts eight categories without claiming live verification", () => {
   for (const category of ["LC", "NT", "VU", "EN", "CR", "EW", "EX", "DD"]) {
     const info = chat.conservationInfo({ ...LINKED_CHECKLIST, category, category_raw: category });
