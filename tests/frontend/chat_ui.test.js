@@ -478,7 +478,14 @@ test("index.html only references same-origin local assets, never a remote script
     assert.equal(reference.startsWith("//"), false, "asset reference must not be protocol-relative: " + reference);
   }
   assert.deepEqual(scriptSrcs, ["/static/chat.js"]);
-  assert.deepEqual(linkHrefs, ["/static/styles.css"]);
+  // Same-origin favicon links plus the stylesheet; nothing remote may be added here.
+  assert.deepEqual(linkHrefs, [
+    "/favicon.ico",
+    "/static/favicon-32.png",
+    "/static/favicon-192.png",
+    "/static/apple-touch-icon.png",
+    "/static/styles.css",
+  ]);
 });
 
 // ---------------------------------------------------------------------------
