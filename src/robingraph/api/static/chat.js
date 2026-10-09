@@ -2026,8 +2026,11 @@
     back.className = "species-card-back";
     back.setAttribute("aria-label", "출처와 상세 정보");
     back.hidden = true;
-    card.appendChild(front);
-    card.appendChild(back);
+    var faces = doc.createElement("div");
+    faces.className = "species-card-faces";
+    faces.appendChild(front);
+    faces.appendChild(back);
+    card.appendChild(faces);
     var backTitle = doc.createElement("h3");
     backTitle.textContent = "상세 정보";
     back.appendChild(backTitle);
@@ -2476,6 +2479,12 @@
       clearDistributionTooltips(card);
       back.hidden = !showBack;
       front.hidden = showBack;
+      // Both faces contribute to the shared grid height. Only the visible face
+      // may receive focus, pointer input or accessibility navigation.
+      front.inert = !!showBack;
+      back.inert = !showBack;
+      front.setAttribute("aria-hidden", String(!!showBack));
+      back.setAttribute("aria-hidden", String(!showBack));
       card.setAttribute("data-face", showBack ? "back" : "front");
       card.setAttribute("aria-label", speciesLabel(taxon) + " 도감 카드 · " + (showBack ? "뒷면 상세 정보" : "앞면 주요 특징") + " · 좌우 드래그 또는 Enter·Space로 뒤집기");
       if (card.parentNode) { card.parentNode.scrollTop = 0; }

@@ -798,7 +798,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 /* The front is a brief field-guide summary; the back retains full attribution. */
 .species-popup { width: min(460px, calc(100vw - 24px)); }
-.species-card-front[hidden], .species-card-back[hidden] { display: none; }
+.species-card-faces { display: grid; min-width: 0; }
+.species-card-faces > .species-card-front,
+.species-card-faces > .species-card-back { grid-area: 1 / 1; min-width: 0; }
+/* Reserve the taller face on both sides without exposing inactive controls. */
+.species-card-faces > [hidden] { display: block; visibility: hidden; pointer-events: none; }
 .species-popup .species-card-heading { padding-top: 30px; }
 .species-popup .species-title { font-size: clamp(1.5rem, 6vw, 2rem); }
 .species-popup .species-scientific-name { margin-bottom: 10px; }
