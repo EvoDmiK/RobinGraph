@@ -5006,7 +5006,7 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   const f = mobileFitFixture(); f.mobile(false);
   f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
   const toggle = { open: false };
-  f.card.querySelectorAll = (selector) => { assert.equal(selector, ".card-details-scroll"); return [toggle]; };
+  f.card.querySelectorAll = (selector) => { assert.equal(selector, ".card-details-scroll, .species-distribution-values"); return [toggle]; };
   f.open();
   f.height(950); f.card.dispatch("toggle"); f.flush();
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "other expanded content still fits the frame");
@@ -5049,6 +5049,7 @@ test("only the measurements and lineage toggles use scroll mode, and the CSS scr
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(source, /measurementsDetails\.className = "card-details card-details-scroll"/);
   assert.match(source, /lineageDetails\.className = "card-details card-details-scroll"/);
+  assert.match(source, /querySelectorAll\("\.card-details-scroll, \.species-distribution-values"\)/, "the chart 항목·비율 toggles scroll too");
   assert.ok((source.match(/card-details-scroll/g) || []).length >= 3, "two toggles plus the fit logic reference the marker");
   assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \{[^}]*overflow-y: auto;/);
   assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \.species-card \*[^{]*\{ touch-action: pan-y pinch-zoom; \}/);

@@ -3186,7 +3186,7 @@
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
     function scrollToggleOpen() {
-      var toggles = typeof card.querySelectorAll === "function" ? card.querySelectorAll(".card-details-scroll") : [];
+      var toggles = typeof card.querySelectorAll === "function" ? card.querySelectorAll(".card-details-scroll, .species-distribution-values") : [];
       for (var i = 0; i < toggles.length; i += 1) { if (toggles[i].open) { return true; } }
       return false;
     }
@@ -3211,7 +3211,7 @@
       // subsequent observer callbacks progressively shrink or oscillate.
       var naturalHeight = fitSurface.offsetHeight;
       if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
-      // While "측정값 더 보기" or "분류 계통 보기" is open, keep the card at a
+      // While "측정값 더 보기", "분류 계통 보기" or a chart's "항목·비율" is open, keep the card at a
       // readable size (fit the width only) and let the frame scroll vertically
       // instead of shrinking the whole card to the frame height.
       var scrolling = scrollToggleOpen();
