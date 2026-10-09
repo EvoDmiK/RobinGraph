@@ -167,6 +167,26 @@ class JevChatTest(unittest.TestCase):
         self.assertIsNone(extract_name("청둥오리 그리고 왜가리 아종 알려줘","subspecies"))
         self.assertIsNone(extract_name("그 새 아종 알려줘","subspecies"))
 
+    def test_english_names_are_bounded_candidates_without_a_partial_inventory(self):
+        names = ["Cinereous Tit", "Mallard", "Black-and-white Warbler", "Rüppell's Weaver",
+                 "Fülleborn's Longclaw", "Böhm's Flycatcher", "Güldenstädt's Redstart",
+                 "St. Lucia Warbler", "Mrs. Hume's Pheasant", "Woodwards' Batis",
+                 "D'Orbigny's Chat-Tyrant", "King of Saxony Bird-of-paradise", "Rio de Janeiro Antbird"]
+        for name in names:
+            for question in (name, name + "에 대해 알고 싶어", "Tell me about " + name):
+                with self.subTest(question=question):
+                    self.assertEqual(name, extract_name(question, "profile"))
+        for question in ("Mallard and Cinereous Tit에 대해 알고 싶어", "Mallard or Crow 소개",
+                         "Mallard, Crow에 대해 알고 싶어", "Tell me about Mallard/Crow",
+                         "Anas platyrhynchos and Parus cinereus", "그 새", "What bird is this"):
+            with self.subTest(question=question):
+                self.assertIsNone(extract_name(question, "profile"))
+        profile = Mock(return_value=PROFILE)
+        client = self.make("profile", species_profile_handler=profile)
+        result = client.post("/v1/chat", json={"question": "Cinereous Tit에 대해 알고 싶어"}).json()
+        self.assertEqual("answer", result["disposition"])
+        profile.assert_called_once_with("Cinereous Tit")
+
     def test_noisy_single_bird_requests_keep_the_model_topic_and_exact_name(self):
         question = "곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요"
         profile = Mock(return_value={**PROFILE, 'summary': '확인된 종 소개'})
