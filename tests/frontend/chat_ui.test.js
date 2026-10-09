@@ -1921,6 +1921,52 @@ test("diet and foraging use two paired columns with original Korean labels, perc
   for (const original of ["원래 먹이 표시", "원래 위치 표시", "꽃꿀 [nectar] 0%", "수관 [canopy] 0%", "수중 [below_water_surface] 30%", "CC BY 4.0"]) { assert.ok(collectedText(card.sourceMaterial).includes(original), original); }
 });
 
+test("the card face no longer prints the dataset label under the donut, only caveats, while the label stays in attributes", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile());
+  for (const chart of distributionCharts(card)) {
+    const note = cardPart(chart, "species-distribution-note");
+    assert.ok(/^자료 \d+$/.test(chart.getAttribute("data-source-label")), "provenance stays in data-source-label");
+    assert.match(chart.getAttribute("aria-label"), /자료 \d+/, "and in the accessible name");
+    assert.equal(note.hidden, true, "a complete chart shows no note at all");
+    assert.equal(note.textContent, "");
+  }
+  for (const [value, caveat] of [[{ fish: 50, seed: 50 }, null], [{ fish: 20, seed: 30 }, "미기록분 50%"]]) {
+    const partial = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile({ traits: [{ name: "diet_distribution", label: "먹이 구성", display: "x", ...DIET_SOURCE, value }] }));
+    const note = cardPart(distributionCharts(partial)[0], "species-distribution-note");
+    assert.doesNotMatch(note.textContent, /자료/);
+    if (caveat) { assert.equal(note.hidden, false); assert.equal(note.textContent, caveat); }
+  }
+});
+
+test("항목·비율 rows pair a swatch in the donut's color with the name and a right-aligned percent, muting zero rows", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile());
+  const chart = distributionCharts(card)[1];
+  const fills = Object.fromEntries(distributionSegments(chart).map(n => [n.getAttribute("data-component"), n.getAttribute("fill")]));
+  const rows = collectAllNodes(chart).filter(n => n.tagName === "li");
+  assert.ok(rows.length >= 4);
+  for (const row of rows) {
+    const parts = row.children.map(n => n.getAttribute("class") || n.className);
+    assert.deepEqual(parts, ["species-distribution-swatch", "species-distribution-name", "species-distribution-sep", "species-distribution-amount"]);
+    const component = row.getAttribute("data-component");
+    if (fills[component]) { assert.equal(row.children[0].children[0].getAttribute("fill"), fills[component], component + " swatch matches its donut sector"); }
+    assert.equal(row.children[0].getAttribute("aria-hidden"), "true");
+    assert.match(row.children[3].textContent, /%/);
+  }
+  const zero = rows.find(n => n.getAttribute("data-component") === "canopy");
+  assert.equal(zero.className, "species-distribution-zero");
+  assert.notEqual(rows.find(n => n.getAttribute("data-component") === "water").className, "species-distribution-zero");
+});
+
+test("항목·비율 CSS is a pill toggle with plain, divided rows and a hidden separator", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-distribution-values summary \{[^}]*border-radius: 999px;/);
+  assert.match(css, /\.species-distribution-values summary::-webkit-details-marker \{ display: none; \}/);
+  assert.match(css, /\.species-distribution-values ul \{[^}]*list-style: none;/);
+  assert.match(css, /\.species-distribution-sep \{ display: none; \}/);
+  assert.match(css, /\.species-distribution-amount \{[^}]*font-variant-numeric: tabular-nums;/);
+  assert.match(css, /\.species-distribution-note\[hidden\] \{ display: none; \}/);
+});
+
 test("a full single-component donut preserves the center hole and an incomplete donut explicitly labels its remainder", () => {
   for (const value of [{ fish: 100 }, { fish: 50, seed: 50 }, { fish: 12.5, seed: 37.5 }]) {
     const card = chat.buildSpeciesCard({ createElement: createFakeElement }, distributionProfile({ traits: [{ name: "diet_distribution", label: "먹이 구성", display: "원본", ...DIET_SOURCE, value }] }));
@@ -1955,7 +2001,7 @@ test("overfull, empty and non-object distributions use honest lists instead of n
     assert.ok(collectAllNodes(chart).some(n => n.className === "species-distribution-values"));
     assert.match(collectedText(chart), /비율 확인 필요/);
     assert.match(collectedText(card.sourceMaterial), /원래 표시 유지/);
-    if (value && value.ground === 70) { assert.match(collectedText(chart), /합계 120%/); assert.match(collectedText(chart), /수관 · 0%/); }
+    if (value && value.ground === 70) { assert.match(collectedText(chart), /합계 120%/); assert.match(collectedText(chart).replace(/\s+/g, " "), /수관 · 0%/); }
   }
 });
 
@@ -1990,7 +2036,7 @@ test("static distribution sectors expose mouse hover only while touch, click, fo
   assert.equal(tooltip.hidden, false); assert.equal(tooltip.textContent, "물고기 · 70%");
   segment.dispatch("pointerleave"); assert.equal(tooltip.hidden, true);
   segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 1 }); assert.equal(tooltip.hidden, true);
-  assert.match(collectedText(cardPart(chart, "species-distribution-values")), /물고기 · 70%.*꽃꿀 · 0%/s);
+  assert.match(collectedText(cardPart(chart, "species-distribution-values")).replace(/\s+/g, " "), /물고기 · 70%.*꽃꿀 · 0%/s);
 });
 
 test("distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset", () => {
