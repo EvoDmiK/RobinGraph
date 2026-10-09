@@ -1,0 +1,17 @@
+{
+  "commit": "198ebca821917258df5d8e4f8ed29b4a16f1fcfa",
+  "image": "robingraph-api:test-rg015noscroll-198ebca",
+  "release": "/home/kimdove/RobinGraph-rg015noscroll-198ebca",
+  "previous_image": "robingraph-api:test-rg015mobilefit-7627d51",
+  "running": true,
+  "health": "healthy",
+  "revision": "198ebca821917258df5d8e4f8ed29b4a16f1fcfa",
+  "api_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "archive_sha256": "823f9caa5a3ba33903d12ff12d034a6c4250a0e8b0b285697a79d8a06383f5e1",
+  "archive_manifest_verified": true
+}
