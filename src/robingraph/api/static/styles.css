@@ -1441,11 +1441,35 @@ body:has(.species-popup[open]) { overflow: hidden; }
   pointer-events: none;
 }
 .species-distribution-tooltip[hidden] { display: none; }
-.species-distribution-note { margin: 2px 0 5px; font-size: .64rem; color: #405635; text-align: center; overflow-wrap: anywhere; }
-.species-distribution-values { font-size: .67rem; }
-.species-distribution-values summary { min-height: 28px; padding: 4px 0; cursor: pointer; text-align: center; }
-.species-distribution-values ul { margin: 3px 0; padding-left: 14px; }
-.species-distribution-values li { margin: 3px 0; overflow-wrap: anywhere; }
+.species-distribution-note { margin: 4px 0 2px; font-size: .64rem; color: #405635; text-align: center; overflow-wrap: anywhere; }
+.species-distribution-note[hidden] { display: none; }
+/* 항목·비율: a pill toggle, then one row per component (swatch, name, right-aligned percent). */
+.species-distribution-values { margin-top: 6px; font-size: .72rem; }
+.species-distribution-values summary {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: fit-content; min-height: 28px; margin: 0 auto; padding: 3px 12px;
+  border: 1px solid #69844755; border-radius: 999px; background: #ffffff45;
+  color: #294932; font-weight: 650; cursor: pointer; list-style: none;
+}
+.species-distribution-values summary::-webkit-details-marker { display: none; }
+.species-distribution-values summary::after {
+  content: ""; width: 5px; height: 5px; margin-top: -3px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg);
+}
+.species-distribution-values[open] summary::after { margin-top: 3px; transform: rotate(-135deg); }
+.species-distribution-values summary:focus-visible { outline: 2px solid #244e2c; outline-offset: 2px; }
+@media (hover: hover) { .species-distribution-values summary:hover { background: #ffffff70; } }
+.species-distribution-values ul { margin: 8px 0 2px; padding: 0; list-style: none; border-top: 1px solid #69844744; }
+.species-distribution-values li {
+  display: flex; align-items: center; gap: 7px; margin: 0; padding: 4px 2px;
+  border-bottom: 1px solid #69844733; line-height: 1.35; overflow-wrap: anywhere;
+}
+.species-distribution-values li:last-child { border-bottom: 0; }
+.species-distribution-swatch { flex: none; width: 9px; height: 9px; }
+.species-distribution-name { flex: 1 1 auto; min-width: 0; }
+.species-distribution-sep { display: none; }
+.species-distribution-amount { flex: none; margin-left: auto; color: #294932; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.species-distribution-zero .species-distribution-name, .species-distribution-zero .species-distribution-amount { color: #4d6046; font-weight: 400; }
 .species-distribution-fallback, .species-distribution-empty {
   display: grid;
   place-items: center;

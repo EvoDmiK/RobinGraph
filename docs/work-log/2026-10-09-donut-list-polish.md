@@ -1,0 +1,64 @@
+# 도넛 차트 `항목·비율` 목록 다듬기와 `자료 N` 제거 — 2026-10-09
+
+## 요청 배경과 목표
+
+사용자가 뒷면 도넛 차트 아래 `항목·비율`에 나오는 내용을 조금 더 예쁘게 다듬고, 두 차트 모두 도넛 아래의 `자료 1`을 지워 달라고 요청했다(스크린샷 첨부).
+TEST에서 확인한 뒤 사용자의 지시로 네 변경(항목·비율 스크롤, TEST 파란 파비콘 코드, 프레임 두께, 항목·비율 목록 디자인)을 한꺼번에 PROD에 배포하고 `main`에 병합했다.
+
+## 변경 전 상태
+
+- 차트 아래에 `자료 1`(작은 글씨)이 있었고, `▼ 항목·비율`은 기본 삼각형 마커의 일반 summary, 목록은 불릿(•) 항목에 `라벨 · 40%` 형태의 한 줄 텍스트였다.
+- `자료 1`은 `buildDistributionChart()`의 `datasetLabel`이 `note` 문단의 앞부분에 들어간 것이다. 같은 문단에 `미기록분 N%`, `추정값`, `미분류 항목 포함` 같은 주의 문구도 이어 붙었다.
+
+## 변경 내용
+
+### `자료 N` 제거 (출처 정보는 유지)
+
+- 카드 면에는 더 이상 데이터셋 라벨을 쓰지 않고 **주의 문구만** 남긴다(`미기록분 N%`, `추정값`, `미분류 항목 포함`을 ` · `로 연결). 주의 문구가 없으면 note 요소를 숨겨(`hidden`) 여백도 생기지 않는다.
+- 출처 연결은 사라지지 않는다. 라벨은 차트의 `data-source-label` 속성, 접근성 이름(`aria-label`), 그리고 출처 토글의 `먹이 구성 · 자료 1` 항목에 그대로 있다.
+- note 요소 자체는 항상 만든다(숨김). 기존 테스트가 이 요소 위에서 시작하는 스와이프를 검증하기 때문이다.
+
+### `항목·비율` 디자인
+
+| 요소 | 변경 |
+|---|---|
+| 토글(`summary`) | 가운데 정렬된 알약(pill) 버튼: 얇은 테두리, 반투명 바탕, 직접 그린 쉐브론(열리면 위로). 기본 마커 제거. 키보드 포커스 링, 마우스 호버 배경 |
+| 목록 | 불릿 제거. 행마다 `색 점 · 이름 · 오른쪽 정렬 퍼센트`, 행 사이에 얇은 구분선, 위쪽에 한 줄 |
+| 색 점 | 도넛 조각과 같은 색(`componentColor()`로 팔레트를 하나로 공유). 작은 SVG 원이라 별도 인라인 스타일 없음 |
+| 퍼센트 | 굵게, 숫자 폭 고정(`tabular-nums`)해 세로로 가지런함 |
+| 0% 행 | 이름·숫자를 더 옅은 색(`#4d6046`)과 보통 굵기로 낮춤(투명도가 아니라 색이라 대비 유지) |
+| 글씨 | 0.67rem → 0.72rem |
+
+텍스트 추출 호환: 각 행은 `swatch / name / sep(" · ") / amount` 구조이고 `sep`은 CSS로 숨긴다. 그래서 DOM 텍스트는 여전히 `무척추동물 · 40%` 형태이고 화면에는 점·이름·퍼센트로 보인다.
+`비율 미확인`인 행은 퍼센트 칸에 `… · 비율 미확인`이 붙는 기존 문구를 유지한다.
+
+변경 파일: `src/robingraph/api/static/chat.js`, `src/robingraph/api/static/styles.css`, `tests/frontend/chat_ui.test.js`.
+
+## 테스트
+
+- 기존 2개 단정을 공백 정규화 후 비교하도록 수정(`수관 · 0%`, `물고기 · 70%.*꽃꿀 · 0%`). DOM 구조가 바뀌어 단어 사이 공백 수가 달라졌을 뿐 텍스트 의미는 같다.
+- 신규 3개: ① 완전한 차트는 note가 숨김·빈 문자열이고 `data-source-label`·`aria-label`에는 `자료 N`이 남음, 부분 차트는 `미기록분 50%`만 표시 ② 각 행이 swatch/name/sep/amount 구조이고 swatch 색이 같은 항목의 도넛 조각 `fill`과 같음, 0% 행만 `species-distribution-zero` ③ CSS에 pill summary, 마커 제거, 목록 스타일 제거, 구분자 숨김, `tabular-nums`, note `[hidden]` 규칙이 있음.
+
+## 검증 (실제 실행 결과)
+
+| 항목 | 결과 |
+|---|---|
+| 프런트엔드 `node --test tests/frontend/*.test.js` | 255개 통과, 실패 0(기존 252 + 신규 3). 모의 DOM |
+| Python 전체 | 644개 중 통과, 건너뜀 35(기존 DB 옵트인), 실패 0 |
+| 실제 Chrome(헤드리스, CDP), 로컬 서버가 TEST Neo4j를 읽음(외부 LLM·MLflow 비활성), 청둥오리 뒷면 | **PC 1280×900, 모바일 390×844 모두** 두 차트의 note가 `hidden`·`display: none`·빈 텍스트, 차트 영역에 `자료 1` 문자열 없음. `항목·비율` 펼침: summary `border-radius 999px`·`display: flex`·마커 없음, 행 `display: flex`·불릿 없음·퍼센트가 행 오른쪽 끝에서 2px, 구분자 `display: none`. 스크린샷으로 색 점이 도넛 색과 일치하고 0% 행이 옅게 보이며 두 열이 정렬됨을 확인 |
+| NAS TEST 배포 | 이미지 `robingraph-api:test-chartlook-e90ff85`, healthy, 재시작 0, OCI revision `e90ff85…`, `verify` ok(`deployment_target: test`), 서빙되는 `chat.js`·`styles.css`에 새 코드 확인 |
+
+## 배포·커밋 정보
+
+- 구현 커밋 `e90ff8535ba677cb52ea67f6e06e30af8d9d5ed3`(`dev-claude`). 릴리스 묶음 SHA-256 `8737d8ed3a3ee00c7721f32b66cd340fbc15f7f880e10b0fa613dbbd793e8a80`, NAS 일치·MANIFEST 불일치 0.
+- NAS 체크아웃 `~/RobinGraph-e90ff85`, TEST env는 직전 TEST env를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경.
+- PROD 배포: 네 변경을 담은 릴리스 `e90ff85`(`robingraph-api:prod-e90ff85`)로 PROD에 한꺼번에 배포했다. 16:00:02 시작, 16:00:10 종료. healthy, 재시작 0, OCI revision `e90ff85…`, `verify` ok(`deployment_target: prod`), `verify_api_deployment.py` `passed: true`. 컨테이너 안 HTTP로 서빙 자산 확인: `chat.js`(스크롤 선택자·프레임 추종·주의 문구), `styles.css`(스크롤 규칙·알약 토글), 아이콘은 PROD 기본(주황) 그대로(8,568 / 2,559 / 46,864 / 24,595바이트, TEST 변형과 다른 해시). `.env.nas.prod`는 직전 PROD env(`~/RobinGraph-5fb401e`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했고 Jev·Gemini 키는 그대로 이어졌다(컨테이너 환경에 3개 설정 확인).
+- 롤백: 직전 PROD 이미지 `robingraph-api:prod-5fb401e`가 NAS에 있다. `cd ~/RobinGraph-e90ff85 && ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-5fb401e`(실행하지 않음).
+- `main` 병합은 병합 커밋으로 반영했다. PROD 공개 도메인·실제 브라우저·휴대폰 확인은 하지 못했다(컨테이너 안 HTTP까지).
+
+## 남은 한계
+
+- 화면 확인은 로컬 서버를 대상으로 한 데스크톱 Chrome과 모바일 에뮬레이션이다. 실제 휴대폰·Safari·TEST 공개 주소에서는 보지 못했다.
+- 차트 하나에 근거 자료가 여러 개인 경우(`자료 1`, `자료 2` 두 차트가 같은 형질) 이제 카드 면에서는 어느 자료인지 보이지 않고 출처 토글에서만 확인된다. 출처가 둘 이상일 때 면에서 구분이 필요하면 다른 표시 방식을 정해야 한다.
+- 색 점은 도넛과 같은 팔레트지만 항목이 10개를 넘으면 색이 반복된다(기존 도넛과 동일).
+- 0% 행을 흐리게 한 것은 시각 강조의 차이일 뿐 데이터 의미를 바꾸지 않는다. 0% 행을 숨기는 옵션은 만들지 않았다.

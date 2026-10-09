@@ -1921,6 +1921,52 @@ test("diet and foraging use two paired columns with original Korean labels, perc
   for (const original of ["원래 먹이 표시", "원래 위치 표시", "꽃꿀 [nectar] 0%", "수관 [canopy] 0%", "수중 [below_water_surface] 30%", "CC BY 4.0"]) { assert.ok(collectedText(card.sourceMaterial).includes(original), original); }
 });
 
+test("the card face no longer prints the dataset label under the donut, only caveats, while the label stays in attributes", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile());
+  for (const chart of distributionCharts(card)) {
+    const note = cardPart(chart, "species-distribution-note");
+    assert.ok(/^자료 \d+$/.test(chart.getAttribute("data-source-label")), "provenance stays in data-source-label");
+    assert.match(chart.getAttribute("aria-label"), /자료 \d+/, "and in the accessible name");
+    assert.equal(note.hidden, true, "a complete chart shows no note at all");
+    assert.equal(note.textContent, "");
+  }
+  for (const [value, caveat] of [[{ fish: 50, seed: 50 }, null], [{ fish: 20, seed: 30 }, "미기록분 50%"]]) {
+    const partial = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile({ traits: [{ name: "diet_distribution", label: "먹이 구성", display: "x", ...DIET_SOURCE, value }] }));
+    const note = cardPart(distributionCharts(partial)[0], "species-distribution-note");
+    assert.doesNotMatch(note.textContent, /자료/);
+    if (caveat) { assert.equal(note.hidden, false); assert.equal(note.textContent, caveat); }
+  }
+});
+
+test("항목·비율 rows pair a swatch in the donut's color with the name and a right-aligned percent, muting zero rows", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), distributionProfile());
+  const chart = distributionCharts(card)[1];
+  const fills = Object.fromEntries(distributionSegments(chart).map(n => [n.getAttribute("data-component"), n.getAttribute("fill")]));
+  const rows = collectAllNodes(chart).filter(n => n.tagName === "li");
+  assert.ok(rows.length >= 4);
+  for (const row of rows) {
+    const parts = row.children.map(n => n.getAttribute("class") || n.className);
+    assert.deepEqual(parts, ["species-distribution-swatch", "species-distribution-name", "species-distribution-sep", "species-distribution-amount"]);
+    const component = row.getAttribute("data-component");
+    if (fills[component]) { assert.equal(row.children[0].children[0].getAttribute("fill"), fills[component], component + " swatch matches its donut sector"); }
+    assert.equal(row.children[0].getAttribute("aria-hidden"), "true");
+    assert.match(row.children[3].textContent, /%/);
+  }
+  const zero = rows.find(n => n.getAttribute("data-component") === "canopy");
+  assert.equal(zero.className, "species-distribution-zero");
+  assert.notEqual(rows.find(n => n.getAttribute("data-component") === "water").className, "species-distribution-zero");
+});
+
+test("항목·비율 CSS is a pill toggle with plain, divided rows and a hidden separator", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-distribution-values summary \{[^}]*border-radius: 999px;/);
+  assert.match(css, /\.species-distribution-values summary::-webkit-details-marker \{ display: none; \}/);
+  assert.match(css, /\.species-distribution-values ul \{[^}]*list-style: none;/);
+  assert.match(css, /\.species-distribution-sep \{ display: none; \}/);
+  assert.match(css, /\.species-distribution-amount \{[^}]*font-variant-numeric: tabular-nums;/);
+  assert.match(css, /\.species-distribution-note\[hidden\] \{ display: none; \}/);
+});
+
 test("a full single-component donut preserves the center hole and an incomplete donut explicitly labels its remainder", () => {
   for (const value of [{ fish: 100 }, { fish: 50, seed: 50 }, { fish: 12.5, seed: 37.5 }]) {
     const card = chat.buildSpeciesCard({ createElement: createFakeElement }, distributionProfile({ traits: [{ name: "diet_distribution", label: "먹이 구성", display: "원본", ...DIET_SOURCE, value }] }));
@@ -1955,7 +2001,7 @@ test("overfull, empty and non-object distributions use honest lists instead of n
     assert.ok(collectAllNodes(chart).some(n => n.className === "species-distribution-values"));
     assert.match(collectedText(chart), /비율 확인 필요/);
     assert.match(collectedText(card.sourceMaterial), /원래 표시 유지/);
-    if (value && value.ground === 70) { assert.match(collectedText(chart), /합계 120%/); assert.match(collectedText(chart), /수관 · 0%/); }
+    if (value && value.ground === 70) { assert.match(collectedText(chart), /합계 120%/); assert.match(collectedText(chart).replace(/\s+/g, " "), /수관 · 0%/); }
   }
 });
 
@@ -1990,7 +2036,7 @@ test("static distribution sectors expose mouse hover only while touch, click, fo
   assert.equal(tooltip.hidden, false); assert.equal(tooltip.textContent, "물고기 · 70%");
   segment.dispatch("pointerleave"); assert.equal(tooltip.hidden, true);
   segment.dispatch("pointerenter", { pointerType: "mouse", buttons: 1 }); assert.equal(tooltip.hidden, true);
-  assert.match(collectedText(cardPart(chart, "species-distribution-values")), /물고기 · 70%.*꽃꿀 · 0%/s);
+  assert.match(collectedText(cardPart(chart, "species-distribution-values")).replace(/\s+/g, " "), /물고기 · 70%.*꽃꿀 · 0%/s);
 });
 
 test("distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset", () => {
@@ -5038,7 +5084,7 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   const f = mobileFitFixture(); f.mobile(false);
   f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
   const toggle = { open: false };
-  f.card.querySelectorAll = (selector) => { assert.equal(selector, ".card-details-scroll"); return [toggle]; };
+  f.card.querySelectorAll = (selector) => { assert.equal(selector, ".card-details-scroll, .species-distribution-values"); return [toggle]; };
   f.open();
   f.height(950); f.card.dispatch("toggle"); f.flush();
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "other expanded content still fits the frame");
@@ -5081,13 +5127,14 @@ test("only the measurements and lineage toggles use scroll mode, and the CSS scr
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(source, /measurementsDetails\.className = "card-details card-details-scroll"/);
   assert.match(source, /lineageDetails\.className = "card-details card-details-scroll"/);
+  assert.match(source, /querySelectorAll\("\.card-details-scroll, \.species-distribution-values"\)/, "the chart 항목·비율 toggles scroll too");
   assert.ok((source.match(/card-details-scroll/g) || []).length >= 3, "two toggles plus the fit logic reference the marker");
   assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \{[^}]*overflow-y: auto;/);
   assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \.species-card \*[^{]*\{ touch-action: pan-y pinch-zoom; \}/);
   assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/, "the default frame still does not scroll");
 });
 
-test("mobile chrome follows the scaled card width using independent viewport space on every refit", () => {
+test("the dialog frame follows the scaled card width using independent viewport space on every refit", () => {
   const f = mobileFitFixture();
   f.dialog.style = {};
   // A landscape frame fits by height. Model CSS width restored by an empty
@@ -5103,7 +5150,14 @@ test("mobile chrome follows the scaled card width using independent viewport spa
   for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
   assert.equal(parseFloat(f.dialog.style.width), expected, "observer callbacks cannot progressively shrink the chrome");
   f.mobile(false); f.handlers.resize[0](); f.flush();
-  assert.equal(f.dialog.style.width, "", "returning to desktop restores its CSS width");
+  const desktopScale = Number(f.frame.getAttribute("data-fit-scale"));
+  assert.ok(desktopScale < 1);
+  assert.equal(parseFloat(f.dialog.style.width), 420 * desktopScale + 24,
+    "desktop frames follow the scaled card too, so the frame thickness never depends on the scale");
+  assert.equal(f.surface.style.width, "420px", "the measured width is pinned so a narrowed frame cannot shrink the card twice");
+  f.frame.clientHeight = 5000; f.handlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), "1");
+  assert.equal(parseFloat(f.dialog.style.width), 420 + 24, "an unscaled card keeps the same thin frame");
 });
 
 test("fitting coalesces work and releases observers, RAF and viewport handlers on close, disposal and reopening", () => {

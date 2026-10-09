@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import os
 import struct
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -91,6 +93,44 @@ class FaviconTest(unittest.TestCase):
             (root / "favicon.ico").write_bytes(b"")
             client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
             self.assertEqual(404, client.get("/favicon.ico").status_code)
+
+    def test_test_deployment_serves_distinct_blue_icons_under_the_same_urls(self) -> None:
+        for path, media_type in ICON_PATHS:
+            with self.subTest(path=path):
+                with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "prod"}):
+                    prod = self.client.get(path)
+                with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
+                    test = self.client.get(path)
+                self.assertEqual(200, test.status_code)
+                self.assertEqual(media_type, test.headers["content-type"])
+                self.assertNotEqual(prod.content, test.content, "TEST must not look like PROD")
+                if media_type == "image/png":
+                    width, height = struct.unpack(">II", test.content[16:24])
+                    self.assertEqual(width, struct.unpack(">II", prod.content[16:24])[0])
+                    self.assertEqual(width, height)
+
+    def test_other_targets_keep_the_default_icons(self) -> None:
+        with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
+            test = self.client.get("/static/favicon-32.png").content
+        for target in ("prod", "legacy"):
+            with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": target}):
+                self.assertNotEqual(test, self.client.get("/static/favicon-32.png").content)
+        with patch.dict(os.environ, clear=False):
+            os.environ.pop("ROBINGRAPH_DEPLOY_TARGET", None)
+            self.assertNotEqual(test, self.client.get("/static/favicon-32.png").content)
+
+    def test_variant_file_names_are_not_directly_served_and_a_missing_variant_falls_back(self) -> None:
+        for path in ("/static/favicon-32-test.png", "/static/favicon-test.ico", "/static/apple-touch-icon-test.png"):
+            with self.subTest(path=path):
+                self.assertEqual(404, self.client.get(path).status_code)
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "favicon.ico").write_bytes(b"\x00\x00\x01\x00default-icon")
+            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
+                response = client.get("/favicon.ico")
+            self.assertEqual(200, response.status_code)
+            self.assertTrue(response.content.endswith(b"default-icon"))
 
     def test_icons_are_included_in_package_data(self) -> None:
         pyproject = (Path(__file__).resolve().parents[1] / "pyproject.toml").read_text(encoding="utf-8")
