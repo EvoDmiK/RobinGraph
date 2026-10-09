@@ -2526,7 +2526,7 @@ test("reference-only assessment is shown on card, brief, answer and source toggl
   assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
   assert.ok(card.children.some((n) => n.className === "species-reference-assessment" && n.textContent === line));
   const badge = card.children.find((n) => n.className === "species-conservation-badge");
-  assert.equal(badge.textContent, "평가 범위 확인 필요");
+  assert.equal(badge.textContent, "관심대상 (LC) · 2024 평가 · 참고");
   const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
   assert.match(brief.className, /risk-unconfirmed/);
   assert.match(collectedText(brief), /참고 평가: 관심대상 \(LC\)/);
