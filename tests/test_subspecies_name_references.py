@@ -373,5 +373,5 @@ class DomesticNameTest(TestCase):
             names, excluded, _, _, _ = run([cand('dof-2019', 'Ardea cinerea monicae', label, 'Jouanin, 1963')])
             self.assertEqual({}, names)
             self.assertEqual('domestication_name_ambiguous',excluded[0]['reason'])
-        data=json.loads(ARTIFACT.read_text())
+        data=json.loads(ARTIFACT.read_text(encoding='utf-8'))
         self.assertFalse(any(e['scientific_name']=='Lonchura striata acuticauda' for e in data['names'].values()))
