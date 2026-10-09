@@ -3184,29 +3184,34 @@
     function mobileFit() {
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
-    function clearFit() {
-      if (fitSurface.style) { fitSurface.style.transform = ""; }
-      if (card.style) { card.style.minHeight = ""; }
-      fitFrame.setAttribute("data-fit-scale", "1");
-    }
     function fitCard() {
       fitRaf = null;
       if (!fitActive || !dialog.open || dialog.isConnected === false) { return; }
       // Keep a user's pinch enlargement intact. Refit when zoom returns to 1.
       if (view.visualViewport && view.visualViewport.scale > 1.01) { return; }
-      if (!mobileFit()) { clearFit(); return; }
+      // Measure from the CSS viewport width, not the previously narrowed
+      // chrome. Otherwise a height-fitted phone card would shrink on every
+      // observer callback. The final width is applied only after measuring.
+      if (dialog.style) { dialog.style.width = ""; }
       var width = fitFrame.clientWidth, height = fitFrame.clientHeight;
       if (!(width > 0 && height > 0)) { return; }
-      var widthScale = Math.min(1, width / 420);
-      var minimum = Math.max(780, height / widthScale);
+      var mobile = mobileFit();
+      var naturalWidth = fitSurface.offsetWidth;
+      if (!(naturalWidth > 0)) { return; }
+      var widthScale = Math.min(1, width / naturalWidth);
+      var minimum = mobile ? Math.max(780, height / widthScale) : height;
       card.style.minHeight = minimum + "px";
       // offset sizes are untransformed; measuring the scaled rect would make
       // subsequent observer callbacks progressively shrink or oscillate.
-      var naturalWidth = fitSurface.offsetWidth, naturalHeight = fitSurface.offsetHeight;
+      var naturalHeight = fitSurface.offsetHeight;
       if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
       var scale = Math.min(1, width / naturalWidth, height / naturalHeight);
       fitSurface.style.transform = "scale(" + scale + ")";
       fitFrame.setAttribute("data-fit-scale", String(scale));
+      if (mobile && dialog.style && dialog.offsetWidth > 0) {
+        var chrome = dialog.offsetWidth - width;
+        dialog.style.width = (naturalWidth * scale + chrome) + "px";
+      }
     }
     function scheduleFit() {
       if (!fitActive || fitRaf !== null) { return; }

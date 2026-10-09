@@ -4523,7 +4523,7 @@ test("card retains desktop pan while fitted mobile cards allow pinch without nat
   assert.match(css, /touch-action: pinch-zoom;/);
   assert.match(css, /\.species-popup \.species-card \* \{ touch-action: pinch-zoom; \}/,
     "photo scroll containers must not stop ancestor touch-action before the swipe policy");
-  assert.match(css, /\.species-popup \.species-photo-area \.species-media \{ overflow: hidden; scroll-snap-type: none; \}/);
+  assert.match(css, /\.species-popup \.species-photo-area \.species-media \{ overflow: clip; scroll-snap-type: none; \}/);
   assert.doesNotMatch(css, /touch-action:\s*(none|manipulation)/);
   assert.doesNotMatch(css, /species-card-(footer|swipe-hint|drag-hint)/);
 });
@@ -4859,14 +4859,14 @@ test("observation retry refresh is gated by active taxon and release checks", as
   }
 });
 
-test("uniform card frames preserve desktop scrolling and flex layout for the inactive front", () => {
+test("uniform card frames fit without popup scrolling and preserve the inactive front flex layout", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /height: min\(844px, calc\(100dvh - 32px\)\)/);
-  assert.match(css, /\.species-popup \.species-card \{ min-height: 100%; display: flex; flex-direction: column; \}/);
+  assert.match(css, /\.species-popup \.species-card \{ min-height: 0; display: flex; flex-direction: column; \}/);
   assert.match(css, /\.species-card-faces > \.species-card-front \{ display: flex; flex-direction: column; \}/);
   assert.ok(css.indexOf(".species-card-faces > .species-card-front { display: flex") > css.indexOf(".species-card-faces > [hidden] { display: block"));
   assert.match(css, /\.species-observation-points \{ margin-top: auto;/);
-  assert.match(css, /overflow: auto;/);
+  assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/);
 });
 
 test("failed or cancelled enrichment stops inviting a finished 더 알아보기 and preserves any sourced observations", () => {
@@ -4935,7 +4935,7 @@ test("face focus preserves native keys and previous scroll offsets reset on flip
   assert.equal(front.tabIndex, 0); assert.equal(back.tabIndex, 0);
   front.scrollTop = 250; back.scrollTop = 500;
   const space = card.dispatch("keydown", { key: " ", target: front });
-  assert.equal(space.defaultPrevented, false, "Space on the scroll region retains native scrolling");
+  assert.equal(space.defaultPrevented, false, "Space on a focused face retains its native keyboard behavior");
   card.dispatch("keydown", { key: "Enter", target: card });
   assert.equal(front.scrollTop, 0); assert.equal(back.scrollTop, 0);
   front.scrollTop = 100; back.scrollTop = 200;
@@ -4979,7 +4979,39 @@ test("mobile fitting uses stable unscaled dimensions, refits updated content and
   f.viewport.scale = 1; f.viewportHandlers.resize[0](); f.flush();
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1800));
   f.mobile(false); f.handlers.resize[0](); f.flush();
-  assert.equal(f.surface.style.transform, ""); assert.equal(f.card.style.minHeight, "", "desktop natural layout is restored");
+  assert.equal(f.surface.style.transform, "scale(" + (500 / 1800) + ")");
+  assert.equal(f.card.style.minHeight, "500px", "desktop also fits long content using its available frame height");
+});
+
+test("desktop fitting leaves fitting cards at natural size and scales expanded details without clipping", () => {
+  const f = mobileFitFixture(); f.mobile(false);
+  f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
+  f.open();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), "1");
+  assert.equal(f.card.style.minHeight, "820px");
+  f.height(950); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950));
+  f.height(700); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "collapsing details restores the natural scale");
+});
+
+test("mobile chrome follows the scaled card width using independent viewport space on every refit", () => {
+  const f = mobileFitFixture();
+  f.dialog.style = {};
+  // A landscape frame fits by height. Model CSS width restored by an empty
+  // inline width, including the actual frame change after narrowing chrome.
+  Object.defineProperty(f.dialog, "offsetWidth", { get: () => parseFloat(f.dialog.style.width) || 460 });
+  Object.defineProperty(f.frame, "clientWidth", { get: () => f.dialog.offsetWidth - 24 });
+  f.frame.clientHeight = 334;
+  f.open();
+  const expected = 420 * (334 / 780) + 24;
+  assert.equal(parseFloat(f.dialog.style.width), expected);
+  assert.equal(f.dialog.offsetWidth - 420 * Number(f.frame.getAttribute("data-fit-scale")), 24,
+    "the two side chrome gaps equal the top and bottom padding");
+  for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
+  assert.equal(parseFloat(f.dialog.style.width), expected, "observer callbacks cannot progressively shrink the chrome");
+  f.mobile(false); f.handlers.resize[0](); f.flush();
+  assert.equal(f.dialog.style.width, "", "returning to desktop restores its CSS width");
 });
 
 test("fitting coalesces work and releases observers, RAF and viewport handlers on close, disposal and reopening", () => {
