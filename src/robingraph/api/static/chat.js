@@ -2316,13 +2316,6 @@
     conservationBadge.textContent = conservation.badgeText;
     conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
-    var cardReference = referenceFor(conservation, profile);
-    if (cardReference) {
-      var cardReferenceLine = doc.createElement("p");
-      cardReferenceLine.className = "species-reference-assessment";
-      cardReferenceLine.textContent = cardReference.text;
-      card.appendChild(cardReferenceLine);
-    }
 
     var front = doc.createElement("section");
     front.className = "species-card-front";
@@ -3522,13 +3515,6 @@
     badge.textContent = conservation.badgeText;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
-    var briefReference = referenceFor(conservation, profile);
-    if (briefReference) {
-      var briefReferenceLine = doc.createElement("span");
-      briefReferenceLine.className = "species-reference-assessment";
-      briefReferenceLine.textContent = briefReference.text;
-      brief.appendChild(briefReferenceLine);
-    }
     return brief;
   }
 
