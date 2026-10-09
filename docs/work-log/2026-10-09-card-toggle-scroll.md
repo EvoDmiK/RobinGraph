@@ -1,9 +1,9 @@
-# 도감 카드 뒷면 토글을 열면 스크롤 — 2026-10-09
+# 도감 카드 뒷면 토글을 열면 스크롤(TEST·PROD 배포) — 2026-10-09
 
 ## 요청 배경과 목표
 
 사용자가 뒷면 스크린샷(집비둘기 카드, `측정값 더 보기 (7)` 열림)을 보내며, "측정값 더 보기"와 "분류 계통 보기" 토글을 열었을 때는
-카드가 스크롤되었으면 좋겠다고 요청했다. 범위는 코드와 TEST 배포·검증까지이며 PROD 배포와 `main` 병합은 하지 않았다.
+카드가 스크롤되었으면 좋겠다고 요청했다. TEST에서 확인한 뒤 사용자의 지시로 PROD 배포와 `main` 병합까지 진행했다.
 
 ## 원인
 
@@ -40,6 +40,9 @@
 | Python 전체 `unittest discover` | 641개 중 통과, 건너뜀 35(기존 DB 옵트인), 실패 0 |
 | 실제 Chrome(헤드리스, CDP) — 로컬 서버가 TEST Neo4j를 읽음, 외부 LLM·MLflow 비활성, 흰뺨검둥오리 카드, 토글 2개 모두 열고 측정 | **PC 1280×800**: 닫힘 scale 1·스크롤 없음(`overflow-y: clip`) → 열림 scale 1 유지·`scrollHeight 988 > clientHeight 744`·`overflow-y: auto`. 마우스 휠로 `scrollTop 244`(끝까지). 끝에서 카드 아래 테두리가 프레임 아래와 0px 차이로 정확히 닿음. 뒤집으면 `scrollTop 0`. 토글을 닫으면 다시 `clip`·`scrollTop 0`. 스크린샷으로 분류 계통 목록까지 잘리지 않음을 확인. **모바일 390×844(터치 에뮬레이션)**: scale 0.833(너비 기준) 유지, 터치 스와이프로 `scrollTop 17`(끝까지), 뒤집기·닫기 후 복귀 동일 |
 | NAS TEST 배포 | 이미지 `robingraph-api:test-cardscroll-5fb401e`, healthy, 재시작 0, OCI revision `5fb401e…`, `verify` ok(`deployment_target: test`). 서빙되는 `chat.js`에 `card-details-scroll` 3곳, CSS에 `data-fit-scroll` 규칙 확인 |
+| PROD 배포 | 같은 릴리스 묶음(`5fb401e`)으로 이미지 `robingraph-api:prod-5fb401e`. 15:30:33 시작, 15:30:41 종료. healthy, 재시작 0, OCI revision `5fb401e…`, `verify` ok(`deployment_target: prod`). `JEV_API_KEY`·`GEMINI_API_KEY`·`ROBINGRAPH_INTENT_ROUTER`가 컨테이너 환경에 설정됨을 이름으로 확인 |
+| PROD `verify_api_deployment.py` | `passed: true`, `contract_parity_ok` true |
+| PROD 서빙 자산 | `chat.js`에 `card-details-scroll` 3곳, CSS에 `data-fit-scroll` 규칙 확인 |
 
 변경 전의 수치는 실측하지 않았다. 예를 들어 PC 열림 상태의 이전 scale은 `min(1, 744/988)`≈0.75로 계산되는 값이며 실제 브라우저에서 재현하지 않았다.
 
@@ -47,7 +50,9 @@
 
 - 구현 커밋 `5fb401ebbe9963baa9e8fa56ba8da4ffbfb21bd2`(`dev-claude`). 릴리스 묶음 SHA-256 `fa949c6db69e7417d425f9e2af4ae05ce4ad6c7813baf83a345eaf2e19f44a04`, NAS 일치·MANIFEST 불일치 0.
 - NAS 체크아웃 `~/RobinGraph-5fb401e`. TEST env는 직전 TEST env(`~/RobinGraph-336d987/.env.nas.test`)를 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 변경했다.
-- **PROD 배포와 `main` 병합은 하지 않았다.** 사용자가 TEST를 확인한 뒤 결정한다. 현재 PROD는 `robingraph-api:prod-336d987`이다.
+- PROD: `~/RobinGraph-5fb401e/.env.nas.prod`는 직전 PROD env(`~/RobinGraph-336d987/.env.nas.prod`)를 NAS 안에서 복사해 이미지 태그와 `ROBINGRAPH_VCS_REF`만 바꿨다. PROD 이미지 `robingraph-api:prod-5fb401e`.
+- 롤백: 직전 PROD 이미지 `robingraph-api:prod-336d987`이 NAS에 있다. `cd ~/RobinGraph-5fb401e && ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-336d987`(실행하지 않음).
+- `main` 병합은 병합 커밋으로 반영했다.
 
 ## 남은 한계
 
@@ -55,4 +60,4 @@
 - 모바일은 에뮬레이션이다. 이 종은 카드 높이 여유가 커서 스크롤 범위가 17px뿐이었다. 내용이 더 긴 종이나 실제 휴대폰·Safari에서는 확인하지 못했다.
 - 다른 토글(출처 보기, 먹이 항목·비율)은 기존 축소 방식 그대로다. 같은 방식으로 바꾸려면 해당 `details`에 `card-details-scroll` 클래스를 붙이면 된다.
 - 스크롤바는 기존 디자인 방침대로 숨겼다. 스크롤할 수 있다는 시각 표시는 카드 하단이 잘려 보이는 것뿐이다.
-- 이 이후 `main`·PROD에 반영되지 않은 상태라 사용자 화면(PROD)에는 아직 변화가 없다.
+- PROD 공개 도메인과 실제 브라우저·휴대폰에서의 확인은 하지 못했다(PROD는 컨테이너 안 HTTP로 서빙 자산만 확인). 브라우저 캐시가 남아 있으면 강력 새로고침이 필요할 수 있다.
