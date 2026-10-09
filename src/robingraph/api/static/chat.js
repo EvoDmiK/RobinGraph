@@ -1270,7 +1270,7 @@
     var qualifierMatch = typeof raw === "string" ? /^CR\s*\((PEW?)\)$/.exec(raw) : null;
     if (typeof category === "string" && /^CR\s*\((PEW?)\)$/.test(category)) { category = "CR"; }
     var base = { category: null, label: "미확인", tier: "unconfirmed", verified: false,
-      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "멸종위기 등급 미확인" };
+      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "IUCN 적색목록 · 등급 정보 없음" };
     if ((data.evidence_kind && data.evidence_kind !== "taxonomy_snapshot" && !checklist) ||
         (data.evidence_kind === "taxonomy_snapshot" && !snapshot)) { return base; }
     if (snapshot && category == null && raw === "NE" && data.evidence_kind === "taxonomy_snapshot" &&
@@ -1288,7 +1288,7 @@
         note: reference ? reference.text : UNLINKED_NE_NOTE,
         badgeText: reference ? "IUCN 적색목록 " + reference.label + " (" + reference.category + ")" +
           (reference.datasetReference ? " · " + reference.dataYear + " 자료 기준 · BIRDBASE" :
-            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "" });
+            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "IUCN 적색목록 · 등급 정보 없음" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -2411,7 +2411,7 @@
     var conservationBadge = doc.createElement("p");
     conservationBadge.className = "species-conservation-badge";
     conservationBadge.textContent = conservation.badgeText;
-    conservationBadge.hidden = !conservation.badgeText || !conservation.category;
+    conservationBadge.hidden = false;
     conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
 
@@ -3669,7 +3669,7 @@
     var badge = doc.createElement("span");
     badge.className = "species-conservation-badge";
     badge.textContent = conservation.badgeText;
-    badge.hidden = !conservation.badgeText || !conservation.category;
+    badge.hidden = false;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
     return brief;
