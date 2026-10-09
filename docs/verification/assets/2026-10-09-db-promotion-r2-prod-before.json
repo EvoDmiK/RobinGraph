@@ -1,0 +1,625 @@
+{
+  "postgres": {
+    "database": "robingraph",
+    "schema": "ingest",
+    "schemas": [
+      "ingest",
+      "public"
+    ],
+    "tables": {
+      "_schema_migration": 4,
+      "ingest_state": 6,
+      "ingestion_run": 33,
+      "outbox_event": 0,
+      "quarantine_item": 2344,
+      "source_dataset": 13,
+      "source_record": 57625,
+      "source_release": 10
+    },
+    "hashes": {
+      "_schema_migration": "3ee1d1fa38f1582ede96135195497cbf7058739e7b53f39952f4f00e9f3efd1d",
+      "ingest_state": "b83550418eb8eca446d6c715c149aa5756fe3f2517311b3931eee29e823ecc3f",
+      "ingestion_run": "d485d1b02fcaa02368d4f6523621cc254714f9c120e00d1a28ba68988ef2f26f",
+      "outbox_event": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "quarantine_item": "1d0eab21e38d7685dae52f98114ec4133d0b90750a6114c58821500f5d691c7e",
+      "source_dataset": "89a81708da2e2e99176bf4eb43b47c7bd04f0b8970de9d96c70a4d216dacf344",
+      "source_record": "fdefde6967d29286bdfc541705973a6b6f7694c155818f391341920050fd4d3c",
+      "source_release": "f73aae6a6eee55d0ab551d3da361e049145f6ff4c6afc188513c4d5010542e29"
+    }
+  },
+  "neo4j": {
+    "database": "neo4j",
+    "nodes": 474998,
+    "relationships": 543637,
+    "labels": [
+      {
+        "label": "BirdNameUsage",
+        "count": 396
+      },
+      {
+        "label": "BirdTaxon",
+        "count": 33713
+      },
+      {
+        "label": "Chunk",
+        "count": 4
+      },
+      {
+        "label": "Document",
+        "count": 2
+      },
+      {
+        "label": "EvidenceUnit",
+        "count": 136213
+      },
+      {
+        "label": "ExternalIdentifier",
+        "count": 60796
+      },
+      {
+        "label": "ExternalTaxonConcept",
+        "count": 29
+      },
+      {
+        "label": "Fixture",
+        "count": 386
+      },
+      {
+        "label": "HybridSearchChunk",
+        "count": 4
+      },
+      {
+        "label": "HybridVectorChunk",
+        "count": 2
+      },
+      {
+        "label": "License",
+        "count": 1
+      },
+      {
+        "label": "MediaAsset",
+        "count": 36
+      },
+      {
+        "label": "Observation",
+        "count": 116
+      },
+      {
+        "label": "Place",
+        "count": 8
+      },
+      {
+        "label": "RobinGraph",
+        "count": 386
+      },
+      {
+        "label": "ScientificName",
+        "count": 33723
+      },
+      {
+        "label": "SourceDataset",
+        "count": 3
+      },
+      {
+        "label": "SourceRecord",
+        "count": 116
+      },
+      {
+        "label": "Taxon",
+        "count": 33694
+      },
+      {
+        "label": "TaxonConceptSet",
+        "count": 3
+      },
+      {
+        "label": "TaxonMappingCandidate",
+        "count": 3371
+      },
+      {
+        "label": "TaxonMappingClaim",
+        "count": 17648
+      },
+      {
+        "label": "TraitClaim",
+        "count": 174843
+      },
+      {
+        "label": "VernacularName",
+        "count": 13690
+      },
+      {
+        "label": "VernacularNameCandidate",
+        "count": 306
+      }
+    ],
+    "types": [
+      {
+        "type": "ASSERTS_ABOUT",
+        "count": 174843
+      },
+      {
+        "type": "FROM_CHUNK",
+        "count": 4
+      },
+      {
+        "type": "FROM_RECORD",
+        "count": 230
+      },
+      {
+        "type": "HAS_ACCEPTED_NAME",
+        "count": 33723
+      },
+      {
+        "type": "HAS_CHUNK",
+        "count": 4
+      },
+      {
+        "type": "HAS_EXTERNAL_IDENTIFIER",
+        "count": 60796
+      },
+      {
+        "type": "HAS_MAPPING_CLAIM",
+        "count": 17
+      },
+      {
+        "type": "HAS_MEDIA",
+        "count": 36
+      },
+      {
+        "type": "HAS_VERNACULAR_NAME",
+        "count": 13690
+      },
+      {
+        "type": "IDENTIFIED_AS",
+        "count": 16
+      },
+      {
+        "type": "IN_CONCEPT_SET",
+        "count": 33723
+      },
+      {
+        "type": "IN_DATASET",
+        "count": 116
+      },
+      {
+        "type": "LICENSED_UNDER",
+        "count": 3
+      },
+      {
+        "type": "NAME_RELATION",
+        "count": 47
+      },
+      {
+        "type": "OBSERVED_TAXON",
+        "count": 100
+      },
+      {
+        "type": "PARENT_OF",
+        "count": 33666
+      },
+      {
+        "type": "PROPOSES_TAXON",
+        "count": 17648
+      },
+      {
+        "type": "SUPPORTED_BY",
+        "count": 174859
+      },
+      {
+        "type": "WITHIN",
+        "count": 116
+      }
+    ],
+    "indexes": [
+      {
+        "name": "index_343aff4e",
+        "type": "LOOKUP",
+        "state": "ONLINE",
+        "labelsOrTypes": null,
+        "properties": null
+      },
+      {
+        "name": "index_f7700477",
+        "type": "LOOKUP",
+        "state": "ONLINE",
+        "labelsOrTypes": null,
+        "properties": null
+      },
+      {
+        "name": "robingraphFixtureChunkFulltext",
+        "type": "FULLTEXT",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "HybridSearchChunk"
+        ],
+        "properties": [
+          "text"
+        ]
+      },
+      {
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ]
+      },
+      {
+        "name": "robingraph_chunk_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Chunk"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_document_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Document"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_korean_vernacular_vernacularnamecandidate_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "VernacularNameCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_license_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "License"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_observation_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Observation"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_place_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Place"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_evidenceunit_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "EvidenceUnit"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_externalidentifier_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "ExternalIdentifier"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_scientificname_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "ScientificName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_name",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "source_release",
+          "rank",
+          "scientific_name"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonconceptset_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonConceptSet"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingcandidate_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonMappingCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingclaim_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonMappingClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_traitclaim_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TraitClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_vernacularname_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "VernacularName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_dataset_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "SourceDataset"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_record_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "SourceRecord"
+        ],
+        "properties": [
+          "id"
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "name": "robingraph_chunk_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Chunk"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_document_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Document"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_korean_vernacular_vernacularnamecandidate_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "VernacularNameCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_license_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "License"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_observation_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Observation"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_place_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Place"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_evidenceunit_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "EvidenceUnit"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_externalidentifier_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "ExternalIdentifier"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_scientificname_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "ScientificName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonconceptset_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonConceptSet"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingcandidate_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonMappingCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingclaim_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonMappingClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_traitclaim_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TraitClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_vernacularname_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "VernacularName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_dataset_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "SourceDataset"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_record_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "SourceRecord"
+        ],
+        "properties": [
+          "id"
+        ]
+      }
+    ]
+  }
+}
