@@ -5002,6 +5002,59 @@ test("desktop fitting leaves fitting cards at natural size and scales expanded d
   assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "collapsing details restores the natural scale");
 });
 
+test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a readable size and the frame scrolls instead of shrinking", () => {
+  const f = mobileFitFixture(); f.mobile(false);
+  f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
+  const toggle = { open: false };
+  f.card.querySelectorAll = (selector) => { assert.equal(selector, ".card-details-scroll"); return [toggle]; };
+  f.open();
+  f.height(950); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "other expanded content still fits the frame");
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+  toggle.open = true; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "an open scroll toggle is never shrunk to the frame height");
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
+  f.frame.scrollTop = 120;
+  toggle.open = false; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "closing restores the fitted card");
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+  assert.equal(f.frame.scrollTop, 0, "closing returns to the top");
+});
+
+test("scroll mode on a narrow frame fits the width only and trims the scaled layout height to the visible size", () => {
+  const f = mobileFitFixture(); // frame 280x500, surface 420 wide: width scale 2/3
+  const toggle = { open: true };
+  f.card.querySelectorAll = () => [toggle];
+  f.height(1200); f.open();
+  const scale = 280 / 420;
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(scale), "height does not shrink it further");
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
+  assert.ok(Math.abs(parseFloat(f.surface.style.marginBottom) + 1200 * (1 - scale)) < 1e-6,
+    "the scroll range equals the scaled height, not the unscaled one");
+  toggle.open = false; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  assert.equal(f.surface.style.marginBottom, "");
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+});
+
+test("flipping the card returns the scrolled frame to the top", () => {
+  const f = mobileFitFixture(); f.open();
+  f.frame.scrollTop = 80;
+  f.card.resetFitScroll();
+  assert.equal(f.frame.scrollTop, 0);
+});
+
+test("only the measurements and lineage toggles use scroll mode, and the CSS scrolls them without breaking touch swipe", () => {
+  const source = fs.readFileSync(path.join(STATIC_DIR, "chat.js"), "utf8");
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(source, /measurementsDetails\.className = "card-details card-details-scroll"/);
+  assert.match(source, /lineageDetails\.className = "card-details card-details-scroll"/);
+  assert.ok((source.match(/card-details-scroll/g) || []).length >= 3, "two toggles plus the fit logic reference the marker");
+  assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \{[^}]*overflow-y: auto;/);
+  assert.match(css, /\.species-card-fit-frame\[data-fit-scroll="true"\] \.species-card \*[^{]*\{ touch-action: pan-y pinch-zoom; \}/);
+  assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/, "the default frame still does not scroll");
+});
+
 test("mobile chrome follows the scaled card width using independent viewport space on every refit", () => {
   const f = mobileFitFixture();
   f.dialog.style = {};
