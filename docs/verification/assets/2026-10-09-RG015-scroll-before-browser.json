@@ -1,0 +1,1364 @@
+{
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "right": 870,
+          "bottom": 872
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "right": 858,
+          "bottom": 860
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": 12,
+          "bottom": 12
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1122,
+            "ch": 900,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          }
+        ],
+        "fit": "1"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 410,
+          "y": 28,
+          "width": 460,
+          "height": 844,
+          "right": 870,
+          "bottom": 872
+        },
+        "card": {
+          "x": 422,
+          "y": 40,
+          "width": 436,
+          "height": 820,
+          "right": 858,
+          "bottom": 860
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": 12,
+          "bottom": 12
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1122,
+            "ch": 900,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          }
+        ],
+        "fit": "1"
+      },
+      "back": {
+        "dialog": {
+          "x": 512.5432739257812,
+          "y": -31.980749130249023,
+          "width": 304.91314697265625,
+          "height": 969.1782836914062,
+          "right": 817.4564208984375,
+          "bottom": 937.1975345611572
+        },
+        "card": {
+          "x": 518.1773071289062,
+          "y": -13.794474601745605,
+          "width": 288.54388427734375,
+          "height": 932.59716796875,
+          "right": 806.72119140625,
+          "bottom": 918.8026933670044
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 5.634033203125,
+          "right": 10.7352294921875,
+          "top": 18.186274528503418,
+          "bottom": 18.394841194152832
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1122,
+            "ch": 900,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          }
+        ],
+        "fit": "1"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 409.48382568359375,
+          "y": 27.548418045043945,
+          "width": 460.63348388671875,
+          "height": 845.131103515625,
+          "right": 870.1173095703125,
+          "bottom": 872.679521560669
+        },
+        "card": {
+          "x": 421.5156555175781,
+          "y": 39.57709884643555,
+          "width": 436.6103210449219,
+          "height": 821.0618286132812,
+          "right": 858.1259765625,
+          "bottom": 860.6389274597168
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12.031829833984375,
+          "right": 11.9913330078125,
+          "top": 12.028680801391602,
+          "bottom": 12.040594100952148
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1122,
+            "ch": 900,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          }
+        ],
+        "fit": "1"
+      }
+    },
+    {
+      "width": 1280,
+      "height": 720,
+      "touch": false,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 410,
+          "y": 16,
+          "width": 460,
+          "height": 688,
+          "right": 870,
+          "bottom": 704
+        },
+        "card": {
+          "x": 422,
+          "y": 28,
+          "width": 436,
+          "height": 769.875,
+          "right": 858,
+          "bottom": 797.875
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": 12,
+          "bottom": -93.875
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1014,
+            "ch": 720,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "sh": 794,
+            "ch": 688,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 410,
+          "y": 16,
+          "width": 460,
+          "height": 688,
+          "right": 870,
+          "bottom": 704
+        },
+        "card": {
+          "x": 422,
+          "y": -78,
+          "width": 436,
+          "height": 769.875,
+          "right": 858,
+          "bottom": 691.875
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": -94,
+          "bottom": 12.125
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1014,
+            "ch": 720,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 106,
+            "left": 0,
+            "sh": 794,
+            "ch": 688,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "back": {
+        "dialog": {
+          "x": 513.4784545898438,
+          "y": -30.948123931884766,
+          "width": 302.17279052734375,
+          "height": 790.0211791992188,
+          "right": 815.6512451171875,
+          "bottom": 759.073055267334
+        },
+        "card": {
+          "x": 517.8427124023438,
+          "y": -13.693303108215332,
+          "width": 287.1090087890625,
+          "height": 873.6403198242188,
+          "right": 804.9517211914062,
+          "bottom": 859.9470167160034
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 4.3642578125,
+          "right": 10.69952392578125,
+          "top": 17.254820823669434,
+          "bottom": -100.87396144866943
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1014,
+            "ch": 720,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "sh": 794,
+            "ch": 688,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 409.7252197265625,
+          "y": 15.800664901733398,
+          "width": 460.320556640625,
+          "height": 688.5299072265625,
+          "right": 870.0457763671875,
+          "bottom": 704.3305721282959
+        },
+        "card": {
+          "x": 421.7132568359375,
+          "y": -78.26382446289062,
+          "width": 436.33740234375,
+          "height": 770.447998046875,
+          "right": 858.0506591796875,
+          "bottom": 692.1841735839844
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 11.988037109375,
+          "right": 11.9951171875,
+          "top": -94.06448936462402,
+          "bottom": 12.146398544311523
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1014,
+            "ch": 720,
+            "sw": 1280,
+            "cw": 1280,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 106,
+            "left": 0,
+            "sh": 794,
+            "ch": 688,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      }
+    },
+    {
+      "width": 1440,
+      "height": 1080,
+      "touch": false,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 490,
+          "y": 118,
+          "width": 460,
+          "height": 844,
+          "right": 950,
+          "bottom": 962
+        },
+        "card": {
+          "x": 502,
+          "y": 130,
+          "width": 436,
+          "height": 835.0625,
+          "right": 938,
+          "bottom": 965.0625
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": 12,
+          "bottom": -3.0625
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1230,
+            "ch": 1080,
+            "sw": 1440,
+            "cw": 1440,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "sh": 859,
+            "ch": 844,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 490,
+          "y": 118,
+          "width": 460,
+          "height": 844,
+          "right": 950,
+          "bottom": 962
+        },
+        "card": {
+          "x": 502,
+          "y": 115,
+          "width": 436,
+          "height": 835.0625,
+          "right": 938,
+          "bottom": 950.0625
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12,
+          "right": 12,
+          "top": -3,
+          "bottom": 11.9375
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1230,
+            "ch": 1080,
+            "sw": 1440,
+            "cw": 1440,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 15,
+            "left": 0,
+            "sh": 859,
+            "ch": 844,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "back": {
+        "dialog": {
+          "x": 551.4915161132812,
+          "y": 72.91725158691406,
+          "width": 384.0130615234375,
+          "height": 938.7128295898438,
+          "right": 935.5045776367188,
+          "bottom": 1011.6300811767578
+        },
+        "card": {
+          "x": 559.1077880859375,
+          "y": 89.33553314208984,
+          "width": 363.84429931640625,
+          "height": 922.1528930664062,
+          "right": 922.9520874023438,
+          "bottom": 1011.4884262084961
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 7.61627197265625,
+          "right": 12.552490234375,
+          "top": 16.41828155517578,
+          "bottom": 0.14165496826171875
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1230,
+            "ch": 1080,
+            "sw": 1440,
+            "cw": 1440,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 0,
+            "left": 0,
+            "sh": 859,
+            "ch": 844,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 489.70263671875,
+          "y": 117.74030303955078,
+          "width": 460.36541748046875,
+          "height": 844.6506958007812,
+          "right": 950.0680541992188,
+          "bottom": 962.390998840332
+        },
+        "card": {
+          "x": 501.7166748046875,
+          "y": 114.74561309814453,
+          "width": 436.35638427734375,
+          "height": 835.6845703125,
+          "right": 938.0730590820312,
+          "bottom": 950.4301834106445
+        },
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "right": 0,
+          "bottom": 0
+        },
+        "gaps": {
+          "left": 12.0140380859375,
+          "right": 11.9949951171875,
+          "top": -2.99468994140625,
+          "bottom": 11.9608154296875
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1230,
+            "ch": 1080,
+            "sw": 1440,
+            "cw": 1440,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIALOG",
+            "class": "species-popup risk-lc",
+            "top": 15,
+            "left": 0,
+            "sh": 859,
+            "ch": 844,
+            "sw": 460,
+            "cw": 460,
+            "overflow": "auto"
+          }
+        ],
+        "fit": "1"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "right": 378,
+          "bottom": 828
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "right": 370,
+          "bottom": 819.9895629882812
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "right": 370,
+          "bottom": 820
+        },
+        "gaps": {
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8.01043701171875
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1096,
+            "ch": 844,
+            "sw": 390,
+            "cw": 390,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 955,
+            "ch": 796,
+            "sw": 385,
+            "cw": 350,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.8333333333333334"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 366,
+          "height": 812,
+          "right": 378,
+          "bottom": 828
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 795.9895629882812,
+          "right": 370,
+          "bottom": 819.9895629882812
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 350,
+          "height": 796,
+          "right": 370,
+          "bottom": 820
+        },
+        "gaps": {
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8.01043701171875
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1096,
+            "ch": 844,
+            "sw": 390,
+            "cw": 390,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 955,
+            "ch": 796,
+            "sw": 385,
+            "cw": 350,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.8333333333333334"
+      },
+      "back": {
+        "dialog": {
+          "x": 89.67349243164062,
+          "y": -25.59909439086914,
+          "width": 242.60641479492188,
+          "height": 898.39453125,
+          "right": 332.2799072265625,
+          "bottom": 872.7954368591309
+        },
+        "card": {
+          "x": 93.63865661621094,
+          "y": -14.103860855102539,
+          "width": 231.98155212402344,
+          "height": 875.2432861328125,
+          "right": 325.6202087402344,
+          "bottom": 861.13942527771
+        },
+        "frame": {
+          "x": 93.6385269165039,
+          "y": -14.103860855102539,
+          "width": 231.981689453125,
+          "height": 875.2545776367188,
+          "right": 325.6202163696289,
+          "bottom": 861.1507167816162
+        },
+        "gaps": {
+          "left": 3.9651641845703125,
+          "right": 6.659698486328125,
+          "top": 11.495233535766602,
+          "bottom": 11.656011581420898
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1096,
+            "ch": 844,
+            "sw": 390,
+            "cw": 390,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 955,
+            "ch": 796,
+            "sw": 385,
+            "cw": 350,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.8333333333333334"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 11.762313842773438,
+          "y": 15.780856132507324,
+          "width": 366.33038330078125,
+          "height": 812.5425415039062,
+          "right": 378.0926971435547,
+          "bottom": 828.3233976364136
+        },
+        "card": {
+          "x": 19.772953033447266,
+          "y": 23.790809631347656,
+          "width": 350.3215026855469,
+          "height": 796.5076293945312,
+          "right": 370.09445571899414,
+          "bottom": 820.2984390258789
+        },
+        "frame": {
+          "x": 19.772953033447266,
+          "y": 23.790809631347656,
+          "width": 350.3215026855469,
+          "height": 796.51806640625,
+          "right": 370.09445571899414,
+          "bottom": 820.3088760375977
+        },
+        "gaps": {
+          "left": 8.010639190673828,
+          "right": 7.998241424560547,
+          "top": 8.009953498840332,
+          "bottom": 8.024958610534668
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 0,
+            "left": 0,
+            "sh": 1096,
+            "ch": 844,
+            "sw": 390,
+            "cw": 390,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 955,
+            "ch": 796,
+            "sw": 385,
+            "cw": 350,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.8333333333333334"
+      }
+    },
+    {
+      "width": 375,
+      "height": 667,
+      "touch": true,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "right": 363,
+          "bottom": 651
+        },
+        "card": {
+          "x": 20.846145629882812,
+          "y": 24,
+          "width": 333.3077392578125,
+          "height": 619,
+          "right": 354.1538848876953,
+          "bottom": 643
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "right": 355,
+          "bottom": 643
+        },
+        "gaps": {
+          "left": 8.846145629882812,
+          "right": 8.846115112304688,
+          "top": 8,
+          "bottom": 8
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 11,
+            "left": 0,
+            "sh": 1007,
+            "ch": 667,
+            "sw": 375,
+            "cw": 375,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 619,
+            "sw": 378,
+            "cw": 335,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.7935897435897435"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 351,
+          "height": 635,
+          "right": 363,
+          "bottom": 651
+        },
+        "card": {
+          "x": 20.846145629882812,
+          "y": 24,
+          "width": 333.3077392578125,
+          "height": 619,
+          "right": 354.1538848876953,
+          "bottom": 643
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 335,
+          "height": 619,
+          "right": 355,
+          "bottom": 643
+        },
+        "gaps": {
+          "left": 8.846145629882812,
+          "right": 8.846115112304688,
+          "top": 8,
+          "bottom": 8
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 11,
+            "left": 0,
+            "sh": 1007,
+            "ch": 667,
+            "sw": 375,
+            "cw": 375,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 619,
+            "sw": 378,
+            "cw": 335,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.7935897435897435"
+      },
+      "back": {
+        "dialog": {
+          "x": 55.523223876953125,
+          "y": -6.611522674560547,
+          "width": 291.1143493652344,
+          "height": 684.3689575195312,
+          "right": 346.6375732421875,
+          "bottom": 677.7574348449707
+        },
+        "card": {
+          "x": 61.54642868041992,
+          "y": 3.567234516143799,
+          "width": 276.4151916503906,
+          "height": 663.7909545898438,
+          "right": 337.96162033081055,
+          "bottom": 667.3581891059875
+        },
+        "frame": {
+          "x": 60.976463317871094,
+          "y": 3.423771858215332,
+          "width": 277.7991943359375,
+          "height": 664.1083984375,
+          "right": 338.7756576538086,
+          "bottom": 667.5321702957153
+        },
+        "gaps": {
+          "left": 6.023204803466797,
+          "right": 8.675952911376953,
+          "top": 10.178757190704346,
+          "bottom": 10.399245738983154
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 11,
+            "left": 0,
+            "sh": 1007,
+            "ch": 667,
+            "sw": 375,
+            "cw": 375,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 619,
+            "sw": 378,
+            "cw": 335,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.7935897435897435"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 11.795315742492676,
+          "y": 15.842961311340332,
+          "width": 351.2759704589844,
+          "height": 635.4141845703125,
+          "right": 363.07128620147705,
+          "bottom": 651.2571458816528
+        },
+        "card": {
+          "x": 20.652687072753906,
+          "y": 23.85158348083496,
+          "width": 333.5743713378906,
+          "height": 619.3919067382812,
+          "right": 354.22705841064453,
+          "bottom": 643.2434902191162
+        },
+        "frame": {
+          "x": 19.805700302124023,
+          "y": 23.85125732421875,
+          "width": 335.26708984375,
+          "height": 619.3930053710938,
+          "right": 355.072790145874,
+          "bottom": 643.2442626953125
+        },
+        "gaps": {
+          "left": 8.85737133026123,
+          "right": 8.84422779083252,
+          "top": 8.008622169494629,
+          "bottom": 8.013655662536621
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 11,
+            "left": 0,
+            "sh": 1007,
+            "ch": 667,
+            "sw": 375,
+            "cw": 375,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 619,
+            "sw": 378,
+            "cw": 335,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.7935897435897435"
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "touch": true,
+      "mock": true,
+      "front": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "right": 308,
+          "bottom": 552
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "right": 300,
+          "bottom": 544
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "right": 300,
+          "bottom": 544
+        },
+        "gaps": {
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 346,
+            "left": 0,
+            "sh": 958,
+            "ch": 568,
+            "sw": 320,
+            "cw": 320,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 520,
+            "sw": 350,
+            "cw": 280,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.6666666666666666"
+      },
+      "frontWheel": {
+        "dialog": {
+          "x": 12,
+          "y": 16,
+          "width": 296,
+          "height": 536,
+          "right": 308,
+          "bottom": 552
+        },
+        "card": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "right": 300,
+          "bottom": 544
+        },
+        "frame": {
+          "x": 20,
+          "y": 24,
+          "width": 280,
+          "height": 520,
+          "right": 300,
+          "bottom": 544
+        },
+        "gaps": {
+          "left": 8,
+          "right": 8,
+          "top": 8,
+          "bottom": 8
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 346,
+            "left": 0,
+            "sh": 958,
+            "ch": 568,
+            "sw": 320,
+            "cw": 320,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 520,
+            "sw": 350,
+            "cw": 280,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.6666666666666666"
+      },
+      "back": {
+        "dialog": {
+          "x": 73.72135162353516,
+          "y": -2.013223886489868,
+          "width": 192.90411376953125,
+          "height": 577.332275390625,
+          "right": 266.6254653930664,
+          "bottom": 575.3190515041351
+        },
+        "card": {
+          "x": 77.8752212524414,
+          "y": 8.144927024841309,
+          "width": 182.47738647460938,
+          "height": 556.7308349609375,
+          "right": 260.3526077270508,
+          "bottom": 564.8757619857788
+        },
+        "frame": {
+          "x": 77.8752212524414,
+          "y": 8.144927024841309,
+          "width": 182.47738647460938,
+          "height": 556.7308349609375,
+          "right": 260.3526077270508,
+          "bottom": 564.8757619857788
+        },
+        "gaps": {
+          "left": 4.15386962890625,
+          "right": 6.272857666015625,
+          "top": 10.158150911331177,
+          "bottom": 10.443289518356323
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 346,
+            "left": 0,
+            "sh": 958,
+            "ch": 568,
+            "sw": 320,
+            "cw": 320,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 520,
+            "sw": 350,
+            "cw": 280,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.6666666666666666"
+      },
+      "backWheel": {
+        "dialog": {
+          "x": 11.715394973754883,
+          "y": 15.797030448913574,
+          "width": 296.4040222167969,
+          "height": 536.552734375,
+          "right": 308.11941719055176,
+          "bottom": 552.3497648239136
+        },
+        "card": {
+          "x": 19.731782913208008,
+          "y": 23.80914878845215,
+          "width": 280.38861083984375,
+          "height": 520.5205688476562,
+          "right": 300.12039375305176,
+          "bottom": 544.3297176361084
+        },
+        "frame": {
+          "x": 19.731782913208008,
+          "y": 23.80914878845215,
+          "width": 280.38861083984375,
+          "height": 520.5205688476562,
+          "right": 300.12039375305176,
+          "bottom": 544.3297176361084
+        },
+        "gaps": {
+          "left": 8.016387939453125,
+          "right": 7.9990234375,
+          "top": 8.012118339538574,
+          "bottom": 8.020047187805176
+        },
+        "scroll": [
+          {
+            "tag": "HTML",
+            "class": "",
+            "top": 346,
+            "left": 0,
+            "sh": 958,
+            "ch": 568,
+            "sw": 320,
+            "cw": 320,
+            "overflow": "visible"
+          },
+          {
+            "tag": "DIV",
+            "class": "species-card-fit-frame",
+            "top": 0,
+            "left": 0,
+            "sh": 780,
+            "ch": 520,
+            "sw": 350,
+            "cw": 280,
+            "overflow": "hidden"
+          }
+        ],
+        "fit": "0.6666666666666666"
+      }
+    }
+  ]
+}
