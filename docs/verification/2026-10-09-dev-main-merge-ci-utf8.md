@@ -63,4 +63,4 @@ CI7개 성공을 확인한 뒤 기존 main worktree에서 `git merge --ff-only o
 
 이번 작업에서 NAS 배포·DB/환경파일 변경은 수행하지 않았다. 알려진 NAS TEST 제품 소스는 직전 `3e639ce51d9c247a244a2451adcb2a2e9da60a67`이며 이번 추가 소스 변경은 테스트 인코딩3줄뿐이다. main 푸시의 Docker CI 빌드를 실제 NAS 배포로 기록하지 않는다. PROD 배포도 하지 않았다.
 
-Windows는 GitHub runner에서 실제 검증했으며 로컬 물리 Windows 장비는 사용하지 않았다. pinned 원본 자료 부재·선택 의존성/전용 DB가 필요한 조건부 검증의 건너뜀은 표에 그대로 남긴다. RG-015 최종 완료, 신규 대기 RG-014·RG-017, 최후순위 보류 RG-002·RG-010·RG-011·RG-012 상태는 유지한다.
+Windows는 GitHub runner에서 실제 검증했으며 로컬 물리 Windows 장비는 사용하지 않았다. pinned 원본 자료 부재·선택 의존성/전용 DB가 필요한 조건부 검증의 건너뜀은 표에 그대로 남긴다. RG-405 최종 완료, 신규 대기 RG-202·RG-406, 최후순위 보류 RG-102·RG-503·RG-504·RG-505 상태는 유지한다.

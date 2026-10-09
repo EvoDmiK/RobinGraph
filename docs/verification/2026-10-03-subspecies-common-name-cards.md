@@ -7,7 +7,7 @@ tags: [robingraph, subspecies, common-names, graph, verification]
 
 # 그래프 검색 기반 아종·통칭 카드
 
-요청한 아종·통칭 카드 연결을 구현하고 NAS TEST에 배포했다. RG-005~RG-009와는 독립적으로 기록하며, 다른 백로그 항목의 완료 상태를 이 결과만으로 변경하지 않는다.
+요청한 아종·통칭 카드 연결을 구현하고 NAS TEST에 배포했다. RG-401~RG-404·RG-502와는 독립적으로 기록하며, 다른 백로그 항목의 완료 상태를 이 결과만으로 변경하지 않는다.
 
 ## 구현
 
@@ -44,4 +44,4 @@ NAS TEST에는 기존 n8n AviList 분류 수집으로 아종 19,879개와 부모
 
 상세 정책: [아종 카드](../subspecies-cards.md). 분류 자료: [AviList v2025b](https://www.avilist.org/checklist/v2025b/).
 
-Obsidian MCP 연결 복구 후 작업 기록 업로드 및 백로그 RG-004의 후속 결과 반영 완료. 이전의 RG-003 하위 구조 오기와 RG-005~RG-009 미착수 표기도 검증 기록에 맞게 정정했다.
+Obsidian MCP 연결 복구 후 작업 기록 업로드 및 백로그 RG-501의 후속 결과 반영 완료. 이전의 RG-201 하위 구조 오기와 RG-401~RG-404·RG-502 미착수 표기도 검증 기록에 맞게 정정했다.

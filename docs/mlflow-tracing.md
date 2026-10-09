@@ -213,11 +213,11 @@ Claude가 구현하고 agy(Antigravity)가 독립 검토했다. TEST는 기존 N
 
 모델 버전·finish reason은 SDK 응답 본문에서 제공될 수 있지만, 네이티브 스팬에 수동 경로의 `llm.model_version`·`llm.finish_reason` 속성이 자동 추가된다고 보장하지 않는다. Jina 서비스의 토큰 사용량, 모델 비용, 벡터 검색 시간은 이번 실제 결과에서 확인되지 않았다. Jina 입력은 원문 대신 작업 종류·건수·문자 수를, 출력은 벡터 개수·차원을 기록한다. 자동 로깅의 원문 길이 정책은 수동 스팬의 절삭 정책과 다르다.
 
-[MLflow TEST Traces](https://mlflow.dove-nest.com/#/experiments/33/traces)의 저장 데이터는 실제 MLflow API로 검증했다. 로컬 GUI 접근이 `cgWindowNotFound`로 실패해 **Traces 화면의 시각 확인은 미완료**다. 해당 화면 확인 후 백로그 RG-001의 최종 완료 체크를 할 수 있다.
+[MLflow TEST Traces](https://mlflow.dove-nest.com/#/experiments/33/traces)의 저장 데이터는 실제 MLflow API로 검증했다. 로컬 GUI 접근이 `cgWindowNotFound`로 실패해 **Traces 화면의 시각 확인은 미완료**다. 해당 화면 확인 후 백로그 RG-601의 최종 완료 체크를 할 수 있다.
 
 ---
 
-## 응답 결과·미응답 사유 트레이스 태그 (RG-016)
+## 응답 결과·미응답 사유 트레이스 태그 (RG-602)
 
 Span attribute는 MLflow UI/`search_traces`에서 검색되지 않으므로, 응답이 만들어지는 지점에서 구조화한 값을 **trace-level tag**로 기록합니다. 한국어 답변 문장에서 사유를 역추정하지 않고, `app.py`의 각 `ChatResponse` 생성 직전에 `_why(reason, stage)`로 기록한 값만 사용합니다.
 
