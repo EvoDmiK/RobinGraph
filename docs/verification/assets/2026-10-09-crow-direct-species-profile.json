@@ -1,0 +1,96 @@
+[
+  {
+    "environment": "test",
+    "base": "https://robingraph-test.dove-nest.com",
+    "actual_http": true,
+    "profile_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "rank": "species",
+      "scientific_name": "Corvus corone",
+      "authority": "Linnaeus, C, 1758",
+      "korean_name": "까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Carrion Crow"
+    },
+    "relations": {
+      "query_name": "까마귀",
+      "summary": "이 종에 대해 검토·등록된 통칭 또는 가축형 관계가 없습니다.",
+      "is_search_term": false,
+      "taxonomy_source": "AviList",
+      "taxonomy_release": "v2025b",
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "relations": []
+    },
+    "large_billed_profile_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20296",
+      "rank": "species",
+      "scientific_name": "Corvus macrorhynchos",
+      "authority": "Wagler, JG, 1827",
+      "korean_name": "큰부리까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Large-billed Crow"
+    },
+    "chat_kind": "profile",
+    "chat_disposition": "answer",
+    "chat_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "rank": "species",
+      "scientific_name": "Corvus corone",
+      "authority": "Linnaeus, C, 1758",
+      "korean_name": "까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Carrion Crow"
+    },
+    "chat_warnings": []
+  },
+  {
+    "environment": "prod",
+    "base": "https://robingraph.dove-nest.com",
+    "actual_http": true,
+    "profile_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "rank": "species",
+      "scientific_name": "Corvus corone",
+      "authority": "Linnaeus, C, 1758",
+      "korean_name": "까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Carrion Crow"
+    },
+    "relations": {
+      "query_name": "까마귀",
+      "summary": "이 종에 대해 검토·등록된 통칭 또는 가축형 관계가 없습니다.",
+      "is_search_term": false,
+      "taxonomy_source": "AviList",
+      "taxonomy_release": "v2025b",
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "relations": []
+    },
+    "large_billed_profile_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20296",
+      "rank": "species",
+      "scientific_name": "Corvus macrorhynchos",
+      "authority": "Wagler, JG, 1827",
+      "korean_name": "큰부리까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Large-billed Crow"
+    },
+    "chat_kind": "profile",
+    "chat_disposition": "answer",
+    "chat_taxon": {
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "rank": "species",
+      "scientific_name": "Corvus corone",
+      "authority": "Linnaeus, C, 1758",
+      "korean_name": "까마귀",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Carrion Crow"
+    },
+    "chat_warnings": []
+  }
+]
