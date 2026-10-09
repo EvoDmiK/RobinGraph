@@ -2184,7 +2184,7 @@ test("Pica serica manual LC override colors only that species and preserves the 
   const other = { ...profile, taxon: { ...profile.taxon, taxon_id: "another-species", scientific_name: "Pica pica" } };
   assert.match(chat.buildSpeciesCard(svgCapableDoc(), other).className, /risk-unconfirmed/);
   assert.match(chat.buildSpeciesBrief(svgCapableDoc(), other).className, /risk-unconfirmed/);
-  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "");
+  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "IUCN 적색목록 · 등급 정보 없음");
 });
 
 test("manual override fails closed for any incomplete or altered Pica contract", () => {
@@ -2397,7 +2397,7 @@ test("conservationInfo trusts only exact category codes with a source; DD/NE/unk
     const info = chat.conservationInfo(input);
     assert.equal(info.tier, "unconfirmed", JSON.stringify(input));
     assert.equal(info.category, null);
-    assert.equal(info.badgeText, "멸종위기 등급 미확인");
+    assert.equal(info.badgeText, "IUCN 적색목록 · 등급 정보 없음");
   }
 });
 
@@ -2408,7 +2408,7 @@ test("snapshot NE preserves raw provenance without claiming IUCN Not Evaluated",
   assert.equal(info.sourceVerified, true);
   assert.equal(info.verified, false);
   assert.equal(info.tier, "unconfirmed");
-  assert.equal(info.badgeText, "");
+  assert.equal(info.badgeText, "IUCN 적색목록 · 등급 정보 없음");
   const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", ne));
   assert.doesNotMatch(collectedText(card), /IUCN 적색목록 미평가/);
   assert.match(collectedText(card.sourceMaterial), /실제 IUCN 미평가 판정으로 단정할 수 없습니다/);
@@ -2447,13 +2447,13 @@ test("unlinked taxonomy NE reads as unresolved on every shared surface, for any 
     assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
     assert.equal(card.getAttribute("data-conservation-tier"), "unconfirmed");
     const badge = card.children.find((node) => node.className === "species-conservation-badge");
-    assert.equal(badge.textContent, "");
+    assert.equal(badge.textContent, "IUCN 적색목록 · 등급 정보 없음");
     assert.match(badge.getAttribute("title"), /실제 IUCN 미평가 판정이 아니며/);
     assert.doesNotMatch(badge.getAttribute("title"), /카드 색상은 이 등급만/);
     const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
     assert.match(brief.className, /risk-unconfirmed/);
     assert.doesNotMatch(collectedText(brief), /평가 범위 확인 필요/);
-    assert.equal(badge.hidden, true);
+    assert.equal(badge.hidden, false);
     for (const showBrief of [false, true]) {
       const text = collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief));
       assert.doesNotMatch(text, /IUCN 적색목록 미평가|\(NE\) · |관심대상 \(LC\)/);
@@ -2465,7 +2465,7 @@ test("unlinked taxonomy NE reads as unresolved on every shared surface, for any 
 test("effective category null with raw NE and a valid needs_review snapshot is the same unresolved state; other nulls stay unconfirmed", () => {
   const nullNe = { ...UNLINKED_NE, category: null, taxonomy_category_raw: "NE" };
   const info = chat.conservationInfo(nullNe);
-  assert.deepEqual([info.state, info.tier, info.verified, info.badgeText], ["link-unresolved", "unconfirmed", false, ""]);
+  assert.deepEqual([info.state, info.tier, info.verified, info.badgeText], ["link-unresolved", "unconfirmed", false, "IUCN 적색목록 · 등급 정보 없음"]);
   const profile = referenceProfile(REFERENCE_ASSESSMENT);
   profile.conservation = { ...nullNe, reference_assessment: REFERENCE_ASSESSMENT };
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
@@ -5983,7 +5983,7 @@ test("empty bounded sections do not create empty toggles", () => {
 });
 
 
-test("review metadata stays in answer sources while absent grades have no visible badge", () => {
+test("review metadata stays in sources while the IUCN badge remains visible without inventing a grade", () => {
   const p = habitatProfile("Forest", UNLINKED_NE);
   p.sections = [{ key: "appearance", title: "외관 특징", items: [{ text: "머리가 검고 뺨은 흽니다.", source_name: "백과", source_url: "https://example.org/wiki", source_note: "문서 식별 확인; 분류 범위는 독립 검증하지 않았습니다." }] }];
   p.note_evidence = p.sections[0].items;
@@ -5993,6 +5993,6 @@ test("review metadata stays in answer sources while absent grades have no visibl
   assert.doesNotMatch(answer.children.filter(n => n !== source).map(collectedText).join(" "), /분류 범위|평가 범위 확인 필요|출처 범위별 설명/);
   assert.match(collectedText(answer), /머리가 검고 뺨은 흽니다/);
   const badge = collectAllNodes(chat.buildSpeciesBrief(svgCapableDoc(), p)).find(n => n.className === "species-conservation-badge");
-  assert.equal(badge.hidden, true);
-  assert.equal(badge.textContent, "");
+  assert.equal(badge.hidden, false);
+  assert.equal(badge.textContent, "IUCN 적색목록 · 등급 정보 없음");
 });
