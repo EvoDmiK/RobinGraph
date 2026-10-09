@@ -67,7 +67,7 @@ class RangeReviewTest(unittest.TestCase):
     def test_build_rejects_changed_source(self):
         spec=importlib.util.spec_from_file_location('build_ranges',Path(__file__).resolve().parents[1]/'scripts/build_subspecies_ranges.py')
         module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-        reviews=json.loads((Path(__file__).resolve().parents[1]/'data/review/subspecies-range-ko.json').read_text())
+        reviews=json.loads((Path(__file__).resolve().parents[1]/'data/review/subspecies-range-ko.json').read_text(encoding='utf-8'))
         with self.assertRaisesRegex(ValueError,'Snapshot changed'):
             module.build(b'[]',reviews)
 

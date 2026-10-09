@@ -53,7 +53,7 @@ class KoreanDisplayNamesTest(TestCase):
             row = self.row_for(science)
             self.assertEqual(expected, with_korean_display_name(row)['korean_name'])
             self.assertTrue(labels[row['taxon_id']]['taxonomy_crosswalk_source_url'])
-        snapshot = json.loads(Path(lineage_module.__file__).with_name('species_ko_names.json').read_text())
+        snapshot = json.loads(Path(lineage_module.__file__).with_name('species_ko_names.json').read_text(encoding='utf-8'))
         self.assertEqual(598, snapshot['source_species_count'])
         self.assertEqual({'Anas carolinensis', 'Saxicola stejnegeri'},
                          {v['scientific_name'] for v in snapshot['unmatched_source_species']})
