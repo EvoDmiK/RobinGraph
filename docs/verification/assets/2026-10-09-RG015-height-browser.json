@@ -1,0 +1,1492 @@
+{
+  "passed": true,
+  "environment": "Actual deployed NAS TEST API/DB/JS/CSS without interception",
+  "physical_device": false,
+  "simulated_ui_update": true,
+  "results": [
+    {
+      "width": 1280,
+      "height": 900,
+      "touch": false,
+      "reduced_motion": false,
+      "baseline": {
+        "front": {
+          "dialog": {
+            "x": 410,
+            "y": 28.1875,
+            "width": 460,
+            "height": 843.625
+          },
+          "card": {
+            "x": 422,
+            "y": 40.1875,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 844,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 410,
+            "y": 28.1875,
+            "width": 460,
+            "height": 843.625
+          },
+          "card": {
+            "x": 422,
+            "y": 40.1875,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 844,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "expanded": {
+        "front": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 868
+          },
+          "card": {
+            "x": 422,
+            "y": 28,
+            "width": 436,
+            "height": 1068.546875
+          },
+          "front": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 886.5625
+          },
+          "back": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 886.5625
+          },
+          "scrollHeight": 1093,
+          "clientHeight": 868,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 868
+          },
+          "card": {
+            "x": 422,
+            "y": 28,
+            "width": 436,
+            "height": 1068.546875
+          },
+          "front": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 886.5625
+          },
+          "back": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 886.5625
+          },
+          "scrollHeight": 1093,
+          "clientHeight": 868,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "resized": {
+        "front": {
+          "dialog": {
+            "x": 430,
+            "y": 16,
+            "width": 460,
+            "height": 788
+          },
+          "card": {
+            "x": 442,
+            "y": 28,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 463,
+            "y": 188.984375,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 463,
+            "y": 188.984375,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 788,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 430,
+            "y": 16,
+            "width": 460,
+            "height": 788
+          },
+          "card": {
+            "x": 442,
+            "y": 28,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 463,
+            "y": 188.984375,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 463,
+            "y": 188.984375,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 788,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "simulated_long_photo_message": {
+        "front": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 868
+          },
+          "card": {
+            "x": 422,
+            "y": 28,
+            "width": 436,
+            "height": 1584.9375
+          },
+          "front": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 1402.953125
+          },
+          "back": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 1402.953125
+          },
+          "scrollHeight": 1609,
+          "clientHeight": 868,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 410,
+            "y": 16,
+            "width": 460,
+            "height": 868
+          },
+          "card": {
+            "x": 422,
+            "y": 28,
+            "width": 436,
+            "height": 1584.9375
+          },
+          "front": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 1402.953125
+          },
+          "back": {
+            "x": 443,
+            "y": 188.984375,
+            "width": 394,
+            "height": 1402.953125
+          },
+          "scrollHeight": 1609,
+          "clientHeight": 868,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "restored": {
+        "front": {
+          "dialog": {
+            "x": 410,
+            "y": 28.1875,
+            "width": 460,
+            "height": 843.625
+          },
+          "card": {
+            "x": 422,
+            "y": 40.1875,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 844,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 410,
+            "y": 28.1875,
+            "width": 460,
+            "height": 843.625
+          },
+          "card": {
+            "x": 422,
+            "y": 40.1875,
+            "width": 436,
+            "height": 819.625
+          },
+          "front": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "back": {
+            "x": 443,
+            "y": 201.171875,
+            "width": 394,
+            "height": 637.640625
+          },
+          "scrollHeight": 844,
+          "clientHeight": 844,
+          "scrollWidth": 460,
+          "clientWidth": 460,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "inactive_focus_blocked": true,
+      "body_drag_flips": true,
+      "page_errors": [],
+      "server": {
+        "files": {
+          "chat.js": "7d9234497a4cafbfd0f34773d18210d965d5c9e1e57df8533fb4ed620865efc6",
+          "styles.css": "d437760548de7956c5a223835731b674bd9f481d0604e056f9a0fa9866a247e6"
+        },
+        "health": {
+          "status": "ok",
+          "mode": "neo4j",
+          "taxonomy_release": "fixture-avlist-2025",
+          "deployment_target": "test"
+        }
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": false,
+      "baseline": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "expanded": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1006.796875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "scrollHeight": 1023,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1006.796875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "scrollHeight": 1023,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "resized": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 406,
+            "height": 732
+          },
+          "card": {
+            "x": 24,
+            "y": 28,
+            "width": 382,
+            "height": 765.875
+          },
+          "front": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "scrollHeight": 790,
+          "clientHeight": 732,
+          "scrollWidth": 406,
+          "clientWidth": 406,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 406,
+            "height": 732
+          },
+          "card": {
+            "x": 24,
+            "y": 28,
+            "width": 382,
+            "height": 765.875
+          },
+          "front": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "scrollHeight": 790,
+          "clientHeight": 732,
+          "scrollWidth": 406,
+          "clientWidth": 406,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "simulated_long_photo_message": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1837.765625
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "scrollHeight": 1854,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1837.765625
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "scrollHeight": 1854,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "restored": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "inactive_focus_blocked": true,
+      "body_drag_flips": true,
+      "page_errors": [],
+      "server": {
+        "files": {
+          "chat.js": "7d9234497a4cafbfd0f34773d18210d965d5c9e1e57df8533fb4ed620865efc6",
+          "styles.css": "d437760548de7956c5a223835731b674bd9f481d0604e056f9a0fa9866a247e6"
+        },
+        "health": {
+          "status": "ok",
+          "mode": "neo4j",
+          "taxonomy_release": "fixture-avlist-2025",
+          "deployment_target": "test"
+        }
+      }
+    },
+    {
+      "width": 320,
+      "height": 640,
+      "touch": true,
+      "reduced_motion": false,
+      "baseline": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 16,
+            "width": 280,
+            "height": 756.875
+          },
+          "front": {
+            "x": 37,
+            "y": 168.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 168.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "scrollHeight": 773,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 756.875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "scrollHeight": 773,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "expanded": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 1023.28125
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 853.296875
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 853.296875
+          },
+          "scrollHeight": 1039,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 1023.28125
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 853.296875
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 853.296875
+          },
+          "scrollHeight": 1039,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "resized": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 336,
+            "height": 528
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 320,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 286,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 286,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 528,
+          "scrollWidth": 336,
+          "clientWidth": 336,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 336,
+            "height": 528
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 320,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 286,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 286,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 528,
+          "scrollWidth": 336,
+          "clientWidth": 336,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "simulated_long_photo_message": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 2251.203125
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 2081.21875
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 2081.21875
+          },
+          "scrollHeight": 2267,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 2251.203125
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 2081.21875
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 2081.21875
+          },
+          "scrollHeight": 2267,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "restored": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 756.875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "scrollHeight": 773,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 296,
+            "height": 608
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 280,
+            "height": 756.875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 246,
+            "height": 586.890625
+          },
+          "scrollHeight": 773,
+          "clientHeight": 608,
+          "scrollWidth": 296,
+          "clientWidth": 296,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "inactive_focus_blocked": true,
+      "body_drag_flips": true,
+      "page_errors": [],
+      "server": {
+        "files": {
+          "chat.js": "7d9234497a4cafbfd0f34773d18210d965d5c9e1e57df8533fb4ed620865efc6",
+          "styles.css": "d437760548de7956c5a223835731b674bd9f481d0604e056f9a0fa9866a247e6"
+        },
+        "health": {
+          "status": "ok",
+          "mode": "neo4j",
+          "taxonomy_release": "fixture-avlist-2025",
+          "deployment_target": "test"
+        }
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "touch": true,
+      "reduced_motion": true,
+      "baseline": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "expanded": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1006.796875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "scrollHeight": 1023,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1006.796875
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 836.8125
+          },
+          "scrollHeight": 1023,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "resized": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 406,
+            "height": 732
+          },
+          "card": {
+            "x": 24,
+            "y": 28,
+            "width": 382,
+            "height": 765.875
+          },
+          "front": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "scrollHeight": 790,
+          "clientHeight": 732,
+          "scrollWidth": 406,
+          "clientWidth": 406,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 406,
+            "height": 732
+          },
+          "card": {
+            "x": 24,
+            "y": 28,
+            "width": 382,
+            "height": 765.875
+          },
+          "front": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 45,
+            "y": 184.984375,
+            "width": 340,
+            "height": 587.890625
+          },
+          "scrollHeight": 790,
+          "clientHeight": 732,
+          "scrollWidth": 406,
+          "clientWidth": 406,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "simulated_long_photo_message": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1837.765625
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "scrollHeight": 1854,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 16,
+            "width": 366,
+            "height": 812
+          },
+          "card": {
+            "x": 20,
+            "y": 24,
+            "width": 350,
+            "height": 1837.765625
+          },
+          "front": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "back": {
+            "x": 37,
+            "y": 176.984375,
+            "width": 316,
+            "height": 1667.78125
+          },
+          "scrollHeight": 1854,
+          "clientHeight": 812,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "restored": {
+        "front": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": false,
+          "backInert": true,
+          "frontVisibility": "visible",
+          "backVisibility": "hidden"
+        },
+        "back": {
+          "dialog": {
+            "x": 12,
+            "y": 35.0625,
+            "width": 366,
+            "height": 773.875
+          },
+          "card": {
+            "x": 20,
+            "y": 43.0625,
+            "width": 350,
+            "height": 757.875
+          },
+          "front": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "back": {
+            "x": 37,
+            "y": 196.046875,
+            "width": 316,
+            "height": 587.890625
+          },
+          "scrollHeight": 774,
+          "clientHeight": 774,
+          "scrollWidth": 366,
+          "clientWidth": 366,
+          "frontInert": true,
+          "backInert": false,
+          "frontVisibility": "hidden",
+          "backVisibility": "visible"
+        }
+      },
+      "inactive_focus_blocked": true,
+      "body_drag_flips": true,
+      "page_errors": [],
+      "server": {
+        "files": {
+          "chat.js": "7d9234497a4cafbfd0f34773d18210d965d5c9e1e57df8533fb4ed620865efc6",
+          "styles.css": "d437760548de7956c5a223835731b674bd9f481d0604e056f9a0fa9866a247e6"
+        },
+        "health": {
+          "status": "ok",
+          "mode": "neo4j",
+          "taxonomy_release": "fixture-avlist-2025",
+          "deployment_target": "test"
+        }
+      }
+    }
+  ]
+}
