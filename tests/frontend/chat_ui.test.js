@@ -1533,7 +1533,7 @@ test("card front contains compact facts and keeps source material outside both r
   assert.equal(back.inert, true);
   assert.equal(front.getAttribute("aria-hidden"), "false");
   assert.equal(back.getAttribute("aria-hidden"), "true");
-  assert.ok(collectedText(front).includes("1083.3 g"));
+  assert.ok(collectedText(front).includes("1.08 kg"));
   assert.equal(collectAllNodes(front).some(node => node.tagName === "a"), false);
   assert.equal(collectAllNodes(front).filter(node => node.tagName === "dt").length, 4);
   assert.ok(collectedText(card.sourceMaterial).includes("Some Credit"));
@@ -1667,7 +1667,7 @@ test("answer consolidates every card source category without nested source toggl
   const sourceNodes = new Set(collectAllNodes(sources));
   const visibleText = all.filter(n => !sourceNodes.has(n)).map(n => n.textContent || "").join(" ");
   assert.ok(visibleText.includes(profile.warnings[0]), "active data warnings remain in the main back");
-  assert.ok(visibleText.includes("1100 g (추정값)"), "inferred facts remain visibly qualified");
+  assert.ok(visibleText.includes("1.10 kg (추정값)"), "inferred facts remain visibly qualified");
   assert.equal(visibleText.includes(profile.vegetation_note), false);
 });
 
@@ -2000,6 +2000,7 @@ test("distribution hover, focus, tap and keys expose raw percentages without sta
 test("distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset", () => {
   const exits = {
     scroll: (f, dialog) => dialog.dispatch("scroll"),
+    faceScroll: f => cardPart(f.card, "species-card-back").dispatch("scroll"),
     blur: f => f.win.listeners.blur.slice().forEach(handler => handler()),
     resize: f => f.win.listeners.resize.slice().forEach(handler => handler()),
     cancel: (f, dialog, chart) => chart.dispatch("pointercancel"),
@@ -2020,12 +2021,14 @@ test("distribution tooltip temporary guards clear on scroll, blur, resize, cance
     assert.equal(tooltip.hidden, false);
     assert.equal(f.win.listeners.blur.length, 1, name + ": repeated activation adds no duplicate guards");
     assert.equal(dialog.listenerCount("scroll"), 1);
+    assert.equal(cardPart(f.card, "species-card-back").listenerCount("scroll"), 1);
     exit(f, dialog, chart, popup);
     assert.equal(tooltip.hidden, true, name);
     assert.equal(chart.getAttribute("data-tooltip-visible"), "false", name);
     assert.equal(f.win.listeners.blur.length, 0, name);
     assert.equal(f.win.listeners.resize.length, 0, name);
     assert.equal(dialog.listenerCount("scroll"), 0, name);
+    assert.equal(cardPart(f.card, "species-card-back").listenerCount("scroll"), 0, name);
   }
 });
 
@@ -2887,7 +2890,7 @@ test("RG-009: each no-photo status shows a generic placeholder with a fixed reas
     assert.ok(nodes.some((n) => n.className === "species-photo-reason" && n.textContent === message));
     assert.equal(nodes.some((n) => n.tagName === "img" || n.tagName === "figure"), false, "never another species' photo");
     assert.equal(collectedText(card).includes("server text"), false, "server message is not echoed");
-    assert.ok(collectedText(front).includes("1083.3 g"), "facts preserved without photos");
+    assert.ok(collectedText(front).includes("1.08 kg"), "facts preserved without photos");
     assert.equal(nodes.some((n) => n.tagName === "a"), false);
     const flip = card;
     flip.dispatch("keydown", { key: "Enter", target: flip });
@@ -4890,4 +4893,62 @@ test("failed or cancelled enrichment stops inviting a finished 더 알아보기 
       assert.doesNotMatch(collectedText(observationPart(card)), /더 알아보기/);
     }
   }
+});
+
+test("card weights use kg at 1000g while preserving small, zero, unknown and already-kg values and inference", () => {
+  const cases = [
+    [{ value: 1024, display: "1,024", unit: "g" }, "1.02 kg"],
+    [{ value: 1000, display: "1000", unit: "g", inferred: true }, "1.00 kg (추정값)"],
+    [{ value: 382, display: "382", unit: "g" }, "382 g"],
+    [{ value: 0, display: "0", unit: "g" }, "0 g"],
+    [{ value: null, display: "1,024", unit: "g" }, "1.02 kg"],
+    [{ value: "1,024.5", display: "1,024.5", unit: "g" }, "1.02 kg"],
+    [{ value: 2048, display: "1,024", unit: "g" }, "2.05 kg"],
+    [{ value: "invalid", display: "미확인", unit: "g" }, "미확인 g"],
+    [{ value: null, display: null, unit: "g" }, " g"],
+    [{ value: null, display: "1,02", unit: "g" }, "1,02 g"],
+    [{ value: 1.024, display: "1.024", unit: "kg" }, "1.024 kg"],
+    [{ value: 2000, display: "2000", unit: "mg" }, "2000 mg"],
+  ];
+  for (const [changes, expected] of cases) {
+    const trait = { ...photoProfile().traits[0], ...changes };
+    const original = JSON.stringify(trait);
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile({ traits: [trait] }));
+    assert.equal(cardPart(card, "species-quick-facts").children[1].textContent, expected);
+    const back = cardPart(card, "species-card-back");
+    const weightRow = collectAllNodes(back).find(n => n.className === "trait-card" && n.children[0].textContent === trait.label);
+    assert.equal(weightRow.children[1].textContent, expected);
+    const raw = (trait.display != null ? trait.display : "") + " " + trait.unit + (trait.inferred ? " (추정값)" : "");
+    assert.ok(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "h5" && n.textContent.endsWith(raw)), "provenance retains the original recorded display and unit");
+    assert.equal(JSON.stringify(trait), original);
+  }
+});
+
+test("card reference weights and different sourced measurements stay separate and retain raw g evidence", () => {
+  const profile = photoProfile({ traits: [
+    { ...photoProfile().traits[0], value: 1024, display: "1024" },
+    { ...photoProfile().traits[0], value: 1200, display: "1200", source_name: "Independent dataset", citation: "Independent dataset", source_url: "https://example.org/weight2" },
+  ] });
+  profile.taxon = { ...profile.taxon, rank: "subspecies" };
+  profile.reference_traits = [{ ...profile.traits[0], value: 1500, display: "1500", reference_scope: "species", reference_taxon: profile.taxon }];
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const back = cardPart(card, "species-card-back");
+  assert.match(collectedText(back), /1\.02 kg/); assert.match(collectedText(back), /1\.20 kg/);
+  assert.match(collectedText(cardPart(card, "card-details species-reference")), /1\.50 kg/);
+  for (const raw of ["1024 g", "1200 g", "1500 g"]) assert.ok(collectedText(card.sourceMaterial).includes(raw), raw);
+});
+
+test("inner card scroll regions are keyboard accessible and reset on flips and reopen", () => {
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, photoProfile());
+  const front = cardPart(card, "species-card-front"), back = cardPart(card, "species-card-back");
+  assert.equal(front.tabIndex, 0); assert.equal(back.tabIndex, 0);
+  front.scrollTop = 250; back.scrollTop = 500;
+  const space = card.dispatch("keydown", { key: " ", target: front });
+  assert.equal(space.defaultPrevented, false, "Space on the scroll region retains native scrolling");
+  card.dispatch("keydown", { key: "Enter", target: card });
+  assert.equal(front.scrollTop, 0); assert.equal(back.scrollTop, 0);
+  front.scrollTop = 100; back.scrollTop = 200;
+  card.showFront();
+  assert.equal(front.scrollTop, 0); assert.equal(back.scrollTop, 0);
+  assert.equal(front.inert, false); assert.equal(back.inert, true);
 });
