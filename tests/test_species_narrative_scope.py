@@ -1,7 +1,8 @@
 """All scoped taxa use the same narrative contract; no live LLM calls."""
 import unittest
 from robingraph.retrieval.avonet_subgroups import subgroup_index
-from robingraph.retrieval.species_profile import species_sections, species_summary
+from robingraph.retrieval.species_profile import species_sections, species_summary, create_species_flow
+from tests.test_avonet_ebird import lineage
 
 
 class NarrativeScopeTests(unittest.TestCase):
@@ -33,7 +34,7 @@ class NarrativeScopeTests(unittest.TestCase):
         self.assertEqual(len(sections[1]['items']), 1)
         self.assertEqual(sections[3]['items'], [])
 
-    def test_subgroup_preserves_every_field_and_provenance(self):
+    def test_subgroup_reference_never_appears_in_species_sections(self):
         values = [{'name': 'body_mass', 'display': str(value), 'unit': 'g', 'source_scope': scope,
                    'source_scope_kind': 'subspecies_group', 'summary_statistic': 'subgroup_mean',
                    'source_name': 'AVONET', 'source_url': 'https://example.org/source',
@@ -43,12 +44,27 @@ class NarrativeScopeTests(unittest.TestCase):
         sections = species_sections({'scientific_name': 'Bird species'}, values, {})
         self.assertNotIn('12', species_summary({}, values))
         self.assertTrue(all(len(s['items']) == (1 if s['key'] == 'basic' else 0) for s in sections[:4]))
-        refs = sections[-1]['items']
-        self.assertEqual(len(refs), 2)
-        for actual, original in zip(refs, values):
-            for key, value in original.items():
-                self.assertEqual(actual[key], value)
-        self.assertEqual(refs[0]['text'], '체중: 12 g')
+        self.assertEqual(len(sections), 4)
+
+    def test_all_356_species_profiles_reject_injected_subgroup_traits(self):
+        for entries in subgroup_index().values():
+            entry = entries[0]
+            with self.subTest(species=entry['target_name']):
+                target = lineage(entry)
+                primary = {'name': 'habitat', 'display': '숲', 'source_name': 'Species source',
+                           'source_url': 'https://example.org/species'}
+                scoped = [{'name': 'body_mass', 'display': '9999', 'unit': 'g',
+                           'source_name': 'Subgroup source', 'source_url': 'https://example.org/subgroup',
+                           'source_scope_kind': 'subspecies_group', 'source_scope': e['subgroup_name']}
+                          for e in entries]
+                flow = create_species_flow(lambda _: target, lambda _: [primary, *scoped],
+                                           photos=lambda _: [], include_enrichment=False)
+                profile = flow.invoke('query')
+                self.assertEqual(profile['traits'], [primary])
+                self.assertNotIn('9999', profile['summary'])
+                self.assertFalse(any(s['key'] == 'subspecies_groups' for s in profile['sections']))
+                self.assertFalse(any(item.get('source_scope_kind') == 'subspecies_group'
+                                     for section in profile['sections'] for item in section['items']))
 
     def test_species_diet_only_once_and_metadata_kept(self):
         values = [{'name': name, 'display': '잡식', 'source_name': 'Dataset', 'source_url': 'https://example.org',

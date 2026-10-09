@@ -283,8 +283,6 @@ def read_traits(repository, store, lineage):
     traits = supplement_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
     from .birdbase import birdbase_traits
     traits = birdbase_traits(lineage, traits, LABELS)
-    from .avonet_subgroups import subgroup_traits
-    traits = subgroup_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
     from .reviewed_activity import reviewed_activity
     return reviewed_activity(lineage, traits)
 
@@ -458,19 +456,6 @@ def species_sections(taxon, traits, notes):
     bounded_categories = {item['category'] for item in bounded_notes}
     sections = [section for section in sections
                 if section['items'] or section['key'] not in bounded_categories]
-    subgroup_items = []
-    for trait in traits:
-        if (not isinstance(trait, dict) or trait.get('source_scope_kind') != 'subspecies_group'
-                or not trait.get('source_name') or not trait.get('source_url') or not trait.get('display')):
-            continue
-        name = trait.get('name')
-        unit = f" {trait['unit']}" if trait.get('unit') else ''
-        subgroup_items.append({**trait, 'text': f"{LABELS.get(name, trait.get('label', name))}: {trait['display']}{unit}"
-                               + (' (추정값)' if trait.get('inferred') else '')})
-    if subgroup_items:
-        sections.append({'key': 'subspecies_groups', 'title': '아종군별 자료', 'collapsed': True,
-                         'description': '각 아종군에서 확인한 자료입니다. 현재 종 전체의 평균이나 공통 특징을 뜻하지 않습니다.',
-                         'items': subgroup_items})
     if bounded_notes:
         sections.append({'key': 'source_scope_notes', 'title': '출처 범위별 설명', 'collapsed': True,
                          'description': '이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.',
@@ -547,12 +532,16 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         if taxon['rank']=='subspecies':
             from .taxonomy_lineage import with_korean_display_name
             taxon = with_korean_display_name(taxon)
+        profile_traits = state['traits']['traits']
+        if taxon['rank'] == 'species':
+            profile_traits = [trait for trait in profile_traits
+                              if trait.get('source_scope_kind') != 'subspecies_group']
         result = {'taxon':taxon, 'lineage':asdict(lineage),
-                'traits':state['traits']['traits'], 'images':state['media']['images'],
+                'traits':profile_traits, 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
                 'conservation':state['conservation']['conservation'],
-                'summary':species_summary(taxon, state['traits']['traits']),
-                'sections':species_sections(taxon, state['traits']['traits'], state['notes']['notes']),
+                'summary':species_summary(taxon, profile_traits),
+                'sections':species_sections(taxon, profile_traits, state['notes']['notes']),
                 'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'],
                 'vegetation_note':'구체적인 식물·식생 목록은 아직 수집되지 않았습니다.'}
         if taxon['rank']=='subspecies':

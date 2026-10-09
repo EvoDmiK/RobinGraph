@@ -5832,7 +5832,7 @@ test("alignment notes also appear for distribution cards and carry no card-size 
   assert.equal(collectAllNodes(cardPart(card, "species-distribution-pair")).some(n => n.className === "trait-taxonomy-alignment"), false, "the note lives in the source toggle, not the chart box");
 });
 
-test("subgroup traits keep scope in both card faces and never become species emblems", () => {
+test("subgroup values cannot enter species cards, sources, comparison or emblems", () => {
   const profile = habitatProfile("Forest");
   const subgroup = { name: "body_mass", label: "체중 · 아종군 자료", value: 14.4, display: "14.4", unit: "g",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
@@ -5842,31 +5842,29 @@ test("subgroup traits keep scope in both card faces and never become species emb
     { ...subgroup, name: "diet_category", label: "먹이 유형 · 아종군 자료", value: "Invertivore", display: "무척추동물", unit: null }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
-  assert.match(collectedText(facts), /체중 · 아종군 자료/);
-  assert.match(collectedText(facts), /14\.4 g/);
-  assert.match(collectedText(card.sourceMaterial), /현재 종 전체를 대표하는 값이 아닙니다/);
-  assert.match(collectedText(card.sourceMaterial), /Parus cinereus \[cinereus Group\]: 14\.4 g/);
+  assert.doesNotMatch(collectedText(facts), /아종군|14\.4/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /아종군|14\.4/);
   assert.equal(chat.habitatEmblemInfo(profile).known, false);
   assert.equal(chat.dietIconInfo(profile).icons.length, 0);
-  assert.match(collectedText(chat.buildSpeciesComparison(svgCapableDoc(), profile, profile)), /아종군 자료 \(Parus cinereus/);
+  assert.doesNotMatch(collectedText(chat.buildSpeciesComparison(svgCapableDoc(), profile, profile)), /아종군|14\.4/);
 });
 
-test("multiple subgroups retain every source without choosing or averaging a species value", () => {
+test("multiple subgroup sources never fill or join species trait values", () => {
   const profile = habitatProfile("Forest");
   const base = { name: "body_mass", label: "체중 · 아종군 자료", value: 10, display: "10", unit: "g",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group", summary_statistic: "subgroup_mean" };
   profile.traits = [{ ...base, source_scope: "Group A" }, { ...base, source_scope: "Group B", value: 20, display: "20" }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
-  assert.match(collectedText(facts), /아종군 2개 자료/);
+  assert.doesNotMatch(collectedText(facts), /아종군/);
   assert.doesNotMatch(collectedText(facts), /10 g|20 g|15 g/);
-  assert.match(collectedText(card.sourceMaterial), /Group A: 10 g/);
-  assert.match(collectedText(card.sourceMaterial), /Group B: 20 g/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /Group A: 10 g/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /Group B: 20 g/);
   profile.traits.push({ ...base, label: "체중", source_scope_kind: undefined, value: 30, display: "30" });
   const preferred = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.match(collectedText(collectAllNodes(preferred).find(n => n.className === "species-quick-facts")), /30 g/);
-  assert.match(collectedText(preferred.sourceMaterial), /Group A: 10 g/);
-  assert.match(collectedText(preferred.sourceMaterial), /Group B: 20 g/);
+  assert.doesNotMatch(collectedText(preferred.sourceMaterial), /Group A: 10 g/);
+  assert.doesNotMatch(collectedText(preferred.sourceMaterial), /Group B: 20 g/);
 });
 
 test("author-inferred traits display their flag and original inference note without markup execution", () => {
@@ -5931,7 +5929,7 @@ test("literature mass retains the author's bounds average and all source range v
   assert.doesNotMatch(collectedText(card.sourceMaterial), /암컷 최소 null|종 평균/);
 });
 
-test("subgroup lifestyle fallback retains scope and links the explicit taxonomy relationship", () => {
+test("subgroup lifestyle is not used as a species fallback", () => {
   const profile = habitatProfile("Forest");
   profile.traits = [{ name: "primary_lifestyle", label: "주 생활 방식 · 아종군 자료", value: "Terrestrial", display: "지상 생활",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
@@ -5939,8 +5937,8 @@ test("subgroup lifestyle fallback retains scope and links the explicit taxonomy 
     mapping_provenance: { relationship_source_url: "https://cornell.box.com/s/example" } }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const fallback = collectAllNodes(card).find(n => n.className === "species-distribution-empty species-distribution-qualitative");
-  assert.match(collectedText(fallback), /생활 방식 · 아종군 자료 · 지상 생활/);
-  assert.ok(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === "https://cornell.box.com/s/example"));
+  assert.doesNotMatch(collectedText(card), /아종군|지상 생활/);
+  assert.equal(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === "https://cornell.box.com/s/example"), false);
 });
 
 test("comparison keeps visible literature statistic, original bounds and inference provenance", () => {
@@ -5954,7 +5952,7 @@ test("comparison keeps visible literature statistic, original bounds and inferen
   assert.match(collectedText(comparison), /문헌 범위값이며 표본 평균이 아닙니다/);
 });
 
-test("bounded source sections stay collapsed, preserve all groups, and retain attributed sources", () => {
+test("legacy subgroup sections are rejected while scoped prose stays attributed", () => {
   const item = (scope, n) => ({ text: "측정값 " + n + ": 12 mm", source_scope: scope,
     source_scope_kind: "subspecies_group", source_name: "AVONET", source_url: "https://example.org/avonet" });
   const profile = photoProfile({ sections: [
@@ -5966,13 +5964,13 @@ test("bounded source sections stay collapsed, preserve all groups, and retain at
   ] });
   const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile);
   const bounded = answer.children.filter(n => n.className.includes("species-bounded-data"));
-  assert.equal(bounded.length, 2);
+  assert.equal(bounded.length, 1);
   assert.ok(bounded.every(n => n.tagName === "details" && !n.open));
-  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "li").length, 7, "no arbitrary truncation of subgroup evidence");
-  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "h5").length, 2);
+  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "li").length, 1);
+  assert.equal(collectAllNodes(bounded[0]).filter(n => n.tagName === "h5").length, 1);
   assert.doesNotMatch(answer.children.filter(n => n.className === "species-answer-section").map(collectedText).join(" "), /측정값|출처에서 설명/);
   const sources = answer.children.find(n => n.className === "species-answer-sources");
-  assert.match(collectedText(sources), /AVONET/);
+  assert.doesNotMatch(collectedText(sources), /AVONET/);
   assert.match(collectedText(sources), /원문/);
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.doesNotMatch(collectedText(observationPart(card)), /측정값|출처에서 설명/);
