@@ -42,7 +42,7 @@ TEST 서버에만 올라가 있던 데이터를 PROD DB로 옮긴다. 사용자�
    `neo4j-admin database dump neo4j`를 실행한 뒤 컨테이너를 다시 시작했다. 덤프 크기
    104,719,306 바이트, SHA-256 `1a7833d5…e285`.
 2. **PROD Neo4j 백업**: NAS `neo4j`를 중지하고 임시 컨테이너로 덤프했다.
-   `…/neo4j/backups/prod-pre-migration-20261009.dump`(92,939,227 바이트)로 보관한다.
+   NAS `/volume3/Birds-Nest/backups/robingraph-deploy/neo4j-migration-20261009/prod-pre-migration-20261009.dump`(92,939,227 바이트)로 보관한다. 처음에는 `…/neo4j/backups/`에 두었다가 같은 날 이 위치로 옮겼다.
    첫 시도는 백업 폴더 쓰기 권한 때문에 덤프가 생성되지 않았고(PROD는 즉시 재시작),
    폴더를 `chmod 777`로 열어 재시도해 성공했다.
 3. **덤프 전송**: `scp`가 실패(`Connection closed`)해 `ssh … "cat > file" < dump`로 전송했다.
@@ -91,8 +91,7 @@ RDB 이전은 규모가 커졌을 때 검색 경로 포함 별도 작업으로 �
 - 배포·커밋 정보: 코드 배포나 git 커밋은 없다. 이 문서는 아직 커밋하지 않았다.
 - 브라우저에서의 실제 채팅·관찰 조회 스모크 테스트는 하지 않았다(`verify`는 health와 분류 계통까지만 확인).
 - 롤백 수단: `prod-pre-migration-20261009.dump`로 Neo4j만 복구할 수 있다. 이관 전 PG `ingest`는 빈 상태라 따로 백업하지 않았다.
-- 정리 필요: NAS `backups/`가 `chmod 777`이고 `backups/incoming/neo4j.dump`(TEST 덤프)가 남아 있다.
-  작업 머신의 scratchpad에도 TEST 덤프와 SQL 덤프가 있다.
+- 정리 완료(후속 작업): 임시 `chmod 777` 폴더와 TEST 덤프는 `/volume3/Birds-Nest/backups/robingraph-deploy/neo4j-migration-20261009/`(`test-dump-20261009.dump`)로 옮기고 빈 `neo4j/backups/`는 제거했다. 상세는 NAS 임시 파일 이동 기록 참조.
 - 보안: 작업 중 `.env` 마스킹 패턴이 `NEO4J_PASSWORD`를 놓쳐 TEST Neo4j 비밀번호가 대화 기록에 노출됐다.
   이 값은 NAS 로그인 비밀번호와 같으므로 교체를 권고했다. 이 문서에는 인증 정보를 적지 않았다.
 - 같은 이관을 반복할 수 있는 스크립트는 만들지 않았다.

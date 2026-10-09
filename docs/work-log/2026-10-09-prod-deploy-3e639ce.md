@@ -72,7 +72,7 @@
   그대로여서 NPM 라우팅이 유지될 것으로 보지만 공개 도메인으로 직접 열어 보지는 않았다.
 - **브라우저 화면 검증 안 함**: 모바일·PC 카드 화면을 PROD 주소로 열어 확인하지 않았다.
 - **짧은 중단**: 컨테이너 recreate 구간에 PROD API가 잠시 응답하지 않았다(수 초, 정확히 측정하지 않음).
-- **NAS 정리 대상**: 홈에 `robingraph-nas-release-3e639ce….tar.gz`와 `~/RobinGraph-3e639ce`가 남아 있다.
+- **NAS 정리**: `robingraph-nas-release-3e639ce….tar.gz`와 `~/RobinGraph-3e639ce`는 같은 날 `/volume3/Birds-Nest/backups/robingraph-deploy/releases/`, `/volume3/Birds-Nest/backups/robingraph-deploy/checkouts/RobinGraph-3e639ce`로 옮겼다.
   이전 PROD 체크아웃 `~/RobinGraph-rg001-20261002`와 이미지 `robingraph-api:prod-local`은 롤백용으로 보존한다.
 
 ## 롤백
@@ -81,7 +81,7 @@
 `rollback`은 빌드·`down`·volume 삭제 없이 컨테이너만 교체하고 healthcheck를 기다린다.
 
 ```sh
-cd ~/RobinGraph-3e639ce
+cd ~/RobinGraph-3e639ce   # 옮겨진 뒤 경로: /volume3/Birds-Nest/backups/robingraph-deploy/checkouts/RobinGraph-3e639ce
 ROBINGRAPH_DEPLOY_TARGET=prod sh scripts/deploy_nas.sh rollback robingraph-api:prod-local
 ```
 
