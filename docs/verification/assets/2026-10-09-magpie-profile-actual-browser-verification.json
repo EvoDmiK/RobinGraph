@@ -1,0 +1,45 @@
+{
+  "actual_chat_api": true,
+  "response_mocking": false,
+  "synthetic_profile_insertion": false,
+  "checks": [
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "http_status": 200,
+      "actual_question": "까치에 대해 알고 싶어",
+      "scientific_name": "Pica serica",
+      "trait_count": 4,
+      "all_sections_have_items": true,
+      "badge": "관심대상 (LC)",
+      "tier": "lc",
+      "fits": true,
+      "study_label": true,
+      "source_attribution": true,
+      "removed_wording": true,
+      "keyboard_flip": "back",
+      "page_errors": []
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "http_status": 200,
+      "actual_question": "까치에 대해 알고 싶어",
+      "scientific_name": "Pica serica",
+      "trait_count": 4,
+      "all_sections_have_items": true,
+      "badge": "관심대상 (LC)",
+      "tier": "lc",
+      "fits": true,
+      "study_label": true,
+      "source_attribution": true,
+      "removed_wording": true,
+      "keyboard_flip": "back",
+      "page_errors": []
+    }
+  ]
+}
