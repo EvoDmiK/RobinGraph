@@ -5351,8 +5351,26 @@ test("uniform card frames fit without popup scrolling and preserve the inactive 
   assert.match(css, /\.species-popup \.species-card \{ min-height: 0; display: flex; flex-direction: column; \}/);
   assert.match(css, /\.species-card-faces > \.species-card-front \{ display: flex; flex-direction: column; \}/);
   assert.ok(css.indexOf(".species-card-faces > .species-card-front { display: flex") > css.indexOf(".species-card-faces > [hidden] { display: block"));
-  assert.match(css, /\.species-observation-points \{ margin-top: auto;/);
+  assert.match(css, /\.species-observation-points \{ margin-top: 0; padding-top: 12px; border-top: 1px solid/);
   assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/);
+});
+
+test("the front photo slot absorbs spare height on every viewport so no blank sits above 관찰 포인트", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  const phoneBlock = css.indexOf("@media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {");
+  assert.ok(phoneBlock > 0);
+  for (const rule of [
+    ".species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 1 0 auto; max-height: min(480px, 56dvh); }",
+    ".species-popup .species-photo-area .species-media figure img { position: absolute; inset: 0;",
+    ".species-popup .species-photo-area .species-photo-placeholder { flex: 1 0 auto; }",
+  ]) {
+    const at = css.indexOf(rule);
+    assert.ok(at > 0 && at < phoneBlock, "global, not phone-only: " + rule);
+  }
+  assert.match(css, /\.species-photo-area \{[^}]*flex: 1 0 auto; max-height: min\(480px, 56dvh\); \}/, "growth is capped on the photo area, so any extra height ends up below the observations");
+  assert.doesNotMatch(css, /\.species-observation-points \{ margin-top: auto/, "observations are no longer pushed to the bottom");
+  assert.match(css, /\.species-observation-points \{[^}]*border-top: 1px solid #69844744;/, "divider under the last basic fact");
+  assert.match(css, /@media[^{]*\{[\s\S]*\.species-popup \.species-observation-points \{ margin-top: 0; border-top: 0; \}/, "phones keep a single divider");
 });
 
 test("failed or cancelled enrichment stops inviting a finished 더 알아보기 and preserves any sourced observations", () => {
