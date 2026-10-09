@@ -2,10 +2,10 @@
 created: 2026-10-05
 project: RobinGraph
 type: work-log
-tags: [robingraph, RG-003, natural-language, graph, verification]
+tags: [robingraph, RG-201, natural-language, graph, verification]
 ---
 
-# RG-003 — 자연어 질문에 맞춘 그래프 답변
+# RG-201 — 자연어 질문에 맞춘 그래프 답변
 
 사용자의 요청은 ‘왜가리는 무엇을 먹고 사니?’, ‘청둥오리와 비슷한 종은 어떤게 있니?’ 같은 질문에 맞춰 그래프를 조회하고 응답하는 기능이다. 이전에 생태 탐색 버튼 추가로 범위를 좁혀 완료 처리했던 해석을 정정했다. 기존 버튼과 관계 조회는 보조 경로로 유지하고 질문별 직접 답변을 추가했다.
 
@@ -45,6 +45,6 @@ tags: [robingraph, RG-003, natural-language, graph, verification]
 - 릴리스 경로: `/home/kimdove/RobinGraph-natural-4a30e12`
 - 아카이브 SHA-256: `b59e03f2541903c3be625b8fa09c7c809ace0913a63749892da91ec3ff41442c`, NAS와 일치·내부 manifest 검증
 - 서비스 health 정상. PROD·원자료 DB 변경 없음.
-- README·채팅 UI 정책·질문 정책·Obsidian 기록 및 백로그의 RG-003 범위를 정정한다.
+- README·채팅 UI 정책·질문 정책·Obsidian 기록 및 백로그의 RG-201 범위를 정정한다.
 
 정책: [자연어 질문 처리](../species-questions.md). 이전 버튼 작업은 [생태 관계 탐색 기록](2026-10-05-RG003-ecological-relations.md)에 있으며, 이를 요청 전체의 완료로 해석했던 부분을 이번 기록으로 정정한다.
