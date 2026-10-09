@@ -474,29 +474,10 @@
   // Keep each subgroup's values in provenance; never select the first subgroup
   // as the whole species' representative or average unrelated source samples.
   function cardTraitGroups(traits) {
-    var groups = groupTraits(traits);
-    var result = [], scoped = {};
-    groups.forEach(function (group) {
-      var trait = group.trait;
-      if (trait.source_scope_kind !== "subspecies_group") { result.push(group); return; }
-      var primary = groups.find(function (other) { return other.trait.name === trait.name && other.trait.source_scope_kind !== "subspecies_group"; });
-      if (primary) { primary.sources = primary.sources.concat(group.sources); return; }
-      if (!scoped[trait.name]) {
-        scoped[trait.name] = { trait: Object.assign({}, trait), sources: [] };
-        result.push(scoped[trait.name]);
-      }
-      scoped[trait.name].sources = scoped[trait.name].sources.concat(group.sources);
-    });
-    Object.keys(scoped).forEach(function (name) {
-      var group = scoped[name];
-      var scopes = [];
-      group.sources.forEach(function (source) { if (scopes.indexOf(source.source_scope) < 0) { scopes.push(source.source_scope); } });
-      if (scopes.length > 1) {
-        group.trait.display = "아종군 " + scopes.length + "개 자료";
-        group.trait.value = null; group.trait.unit = null; group.trait.inferred = false;
-      }
-    });
-    return result;
+    // A species card must never substitute a subordinate group's values.
+    return groupTraits(traits.filter(function (trait) {
+      return trait && trait.source_scope_kind !== "subspecies_group";
+    }));
   }
 
   function cardTraitValue(trait) {
@@ -1485,7 +1466,7 @@
       [left, right].forEach(function (profile) {
         var cell = doc.createElement("td");
         var traits = (Array.isArray(profile.traits) ? profile.traits : []).filter(function (trait) {
-          return trait && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
+          return trait && trait.source_scope_kind !== "subspecies_group" && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
         });
         if (!traits.length) { cell.textContent = "확인된 자료 없음"; }
         groupTraits(traits).forEach(function (group) {
@@ -3504,7 +3485,7 @@
     var sources = [];
     var seen = {};
     profile.sections.forEach(function (section) {
-      if (!section || typeof section.title !== "string") { return; }
+      if (!section || section.key === "subspecies_groups" || typeof section.title !== "string") { return; }
       if (profile.enrichment_pending && (!Array.isArray(section.items) || !section.items.some(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
       }))) { return; }

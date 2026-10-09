@@ -53,10 +53,7 @@ class AvonetSubgroupsTests(TestCase):
         sections = species_sections({'scientific_name': 'Dicrurus sharpei'}, values, {})
         basic = next(s for s in sections if s['key'] == 'basic')['items']
         self.assertEqual(len(basic), 1)
-        reference = next(s for s in sections if s['key'] == 'subspecies_groups')
-        self.assertEqual(sum(item['name'] == 'body_mass' for item in reference['items']), 2)
-        self.assertTrue(reference['collapsed'])
-        self.assertEqual(len(reference['items']), len(values))
+        self.assertFalse(any(s['key'] == 'subspecies_groups' for s in sections))
 
     def test_existing_primary_fields_win_for_every_subgroup(self):
         existing = {'name': 'body_mass', 'value': 22.0, 'inferred': False}
