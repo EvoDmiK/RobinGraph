@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/robingraph-logo.png" alt="꼬까울새와 지식 그래프로 표현한 RobinGraph 로고" width="480">
+</p>
+
 # RobinGraph
 
 RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 프로젝트**입니다. 궁금한 새의 이름과 특징을 알아보는 데서 출발해, 어떤 환경에서 살아가는지, 다른 새와는 어떤 관계인지까지 살펴볼 수 있도록 만들고 있습니다.
