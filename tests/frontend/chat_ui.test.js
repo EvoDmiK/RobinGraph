@@ -5485,3 +5485,161 @@ test("button, link and summary taps remain native while horizontal drags and sna
     }
   }
 });
+
+// ---- Qualitative stand-in for distributions without percentages + taxonomy alignment provenance ----
+const QUALITATIVE_TRAITS = [
+  { name: "diet_category", label: "먹이 유형", display: "잡식", ...DIET_SOURCE },
+  { name: "trophic_niche", label: "먹이 생태 범주", display: "Omnivore", ...DIET_SOURCE },
+  { name: "primary_lifestyle", label: "주 생활 방식", display: "Terrestrial", ...DIET_SOURCE },
+];
+const qualitativeProfile = (traits, scientificName) => {
+  const profile = fakeProfilePayload({ traits }).result.profile;
+  if (scientificName) { profile.taxon = { ...profile.taxon, scientific_name: scientificName }; }
+  return profile;
+};
+const distributionColumn = (card, kind) => cardPart(card, "species-distribution-pair").children.find(n => n.getAttribute("data-distribution-kind") === kind);
+const qualitativeBox = column => collectAllNodes(column).find(n => /species-distribution-qualitative/.test(n.className || ""));
+const percentNodes = node => collectAllNodes(node).filter(n => n.getAttribute("data-percent") !== null || n.className === "species-distribution-chart");
+
+test("without any percentages or qualitative category both places state the data is genuinely missing", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([{ name: "habitat", label: "서식 환경", display: "습지", ...DIET_SOURCE }]));
+  for (const kind of ["diet_distribution", "foraging_strata_distribution"]) {
+    const column = distributionColumn(card, kind);
+    const empty = collectAllNodes(column).filter(n => n.className === "species-distribution-empty");
+    assert.equal(empty.length, 1, kind);
+    assert.equal(empty[0].textContent, "기록된 자료 없음");
+    assert.equal(qualitativeBox(column), undefined);
+  }
+});
+
+test("diet and foraging fall back to sourced categories with a '비율 자료 없음' qualifier, for any species, without fake percentages", () => {
+  for (const name of ["Pica serica", "Anas platyrhynchos", "Hypsipetes amaurotis"]) {
+    const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile(QUALITATIVE_TRAITS, name));
+    const pair = cardPart(card, "species-distribution-pair");
+    assert.equal(pair.children.length, 2, "two-column layout is kept");
+    const diet = qualitativeBox(distributionColumn(card, "diet_distribution"));
+    const foraging = qualitativeBox(distributionColumn(card, "foraging_strata_distribution"));
+    assert.match(diet.className, /^species-distribution-empty /, "same box class as the empty state keeps the size");
+    assert.equal(diet.getAttribute("data-qualitative-fallback"), "diet_category,trophic_niche");
+    assert.equal(foraging.getAttribute("data-qualitative-fallback"), "primary_lifestyle");
+    assert.match(collectedText(diet), /먹이 유형 · 잡식/);
+    assert.match(collectedText(diet), /먹이 생태 범주 · Omnivore/);
+    assert.match(collectedText(diet), /비율 자료 없음/);
+    assert.match(collectedText(foraging), /주 생활 방식 · Terrestrial/);
+    assert.match(collectedText(foraging), /비율 자료 없음/);
+    assert.match(collectedText(foraging), /먹이 찾는 층을 뜻하지 않음/);
+    assert.doesNotMatch(collectedText(foraging), /지면|하층|중상층|수관|공중|ground|understory|canopy/, "no foraging level is inferred from a lifestyle");
+    assert.equal(percentNodes(pair).length, 0);
+    assert.equal(collectAllNodes(pair).some(n => n.tagName === "svg" || n.tagName === "path"), false);
+  }
+});
+
+test("a lifestyle alone does not stand in for diet, and a diet category alone does not stand in for foraging", () => {
+  const lifestyleOnly = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([QUALITATIVE_TRAITS[2]]));
+  assert.equal(qualitativeBox(distributionColumn(lifestyleOnly, "diet_distribution")), undefined);
+  assert.equal(collectedText(distributionColumn(lifestyleOnly, "diet_distribution")).includes("기록된 자료 없음"), true);
+  assert.ok(qualitativeBox(distributionColumn(lifestyleOnly, "foraging_strata_distribution")));
+  const dietOnly = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([QUALITATIVE_TRAITS[0]]));
+  assert.ok(qualitativeBox(distributionColumn(dietOnly, "diet_distribution")));
+  assert.equal(qualitativeBox(distributionColumn(dietOnly, "foraging_strata_distribution")), undefined);
+  assert.equal(collectedText(distributionColumn(dietOnly, "foraging_strata_distribution")).includes("기록된 자료 없음"), true);
+});
+
+test("mixed: a column with real percentages keeps its donut while the other shows the qualitative fallback", () => {
+  const diet = { name: "diet_distribution", label: "먹이 구성", display: "원본", ...DIET_SOURCE, value: { fish: 70, seed: 30 } };
+  const foraging = { name: "foraging_strata_distribution", label: "먹이 활동 위치", display: "원본 위치", ...DIET_SOURCE, value: { ground: 40, water: 60 } };
+  const dietChart = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([diet, QUALITATIVE_TRAITS[2]]));
+  assert.equal(distributionCharts(distributionColumn(dietChart, "diet_distribution")).length, 1);
+  assert.equal(qualitativeBox(distributionColumn(dietChart, "diet_distribution")), undefined);
+  assert.ok(qualitativeBox(distributionColumn(dietChart, "foraging_strata_distribution")));
+  assert.equal(distributionCharts(distributionColumn(dietChart, "foraging_strata_distribution")).length, 0);
+  const foragingChart = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([foraging, QUALITATIVE_TRAITS[0]]));
+  assert.equal(distributionCharts(distributionColumn(foragingChart, "foraging_strata_distribution")).length, 1);
+  assert.ok(qualitativeBox(distributionColumn(foragingChart, "diet_distribution")));
+  assert.equal(qualitativeBox(distributionColumn(foragingChart, "foraging_strata_distribution")), undefined);
+});
+
+test("the fallback adds no source entry or link: category sources stay listed once", () => {
+  const traits = QUALITATIVE_TRAITS;
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile(traits));
+  const entries = collectAllNodes(card.sourceMaterial).filter(n => n.className === "species-trait-source-entry");
+  assert.equal(entries.length, traits.length, "one source entry per category, none for the fallback boxes");
+  assert.equal(collectAllNodes(card.sourceMaterial).filter(n => n.tagName === "a" && n.href === DIET_SOURCE.source_url).length, traits.length);
+  const pair = cardPart(card, "species-distribution-pair");
+  assert.equal(collectAllNodes(pair).some(n => n.tagName === "a" || n.tagName === "details"), false, "passive boxes: no links, no toggles");
+  const plain = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile(traits.map(t => ({ ...t, name: t.name }))));
+  assert.equal(collectAllNodes(plain.sourceMaterial).filter(n => n.className === "species-trait-source-entry").length, entries.length);
+});
+
+test("fallback text is inserted as text, never as markup", () => {
+  const hostile = "<img src=x onerror=alert(1)>";
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([
+    { name: "diet_category", label: hostile, display: hostile, ...DIET_SOURCE },
+    { name: "primary_lifestyle", label: "주 생활 방식", display: "<script>x</script>", ...DIET_SOURCE },
+  ]));
+  const pair = cardPart(card, "species-distribution-pair");
+  assert.equal(collectAllNodes(pair).some(n => n.tagName === "img" || n.tagName === "script"), false);
+  assert.ok(collectedText(pair).includes(hostile), "shown literally");
+  assert.ok(collectedText(pair).includes("<script>x</script>"));
+});
+
+test("the qualitative box keeps the empty-state size and adds no scroll or drag area", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../../src/robingraph/api/static/styles.css"), "utf8");
+  const rule = css.match(/\.species-distribution-empty\.species-distribution-qualitative\s*\{[^}]*\}/)[0];
+  assert.match(rule, /height:\s*100px/);
+  assert.match(rule, /overflow:\s*hidden/);
+  assert.doesNotMatch(css.slice(css.indexOf("Qualitative stand-in")), /overflow(-[xy])?:\s*(auto|scroll)|touch-action|cursor:\s*(grab|move)|user-select:\s*none/);
+});
+
+function alignedTrait(alignment, extra) {
+  return { name: "diet_category", label: "먹이 유형", display: "잡식", ...DIET_SOURCE, taxonomy_alignment: alignment, ...extra };
+}
+const alignmentNotes = card => collectAllNodes(card.sourceMaterial).filter(n => n.className === "trait-taxonomy-alignment");
+
+test("source toggle explains an accepted old-name mapping without overclaiming", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([alignedTrait({
+    status: "accepted", method: "birdtree_birdlife_avibase_chain", source_scientific_name: "Ixos amaurotis", target_scientific_name: "Hypsipetes amaurotis", reason: null })]));
+  const [note] = alignmentNotes(card);
+  assert.equal(note.getAttribute("data-alignment-status"), "accepted");
+  assert.match(note.textContent, /Ixos amaurotis.*Hypsipetes amaurotis.*같은 분류 개념으로 연결/);
+  assert.match(note.textContent, /공개 분류 대응표와 개념 ID 일치/);
+  assert.doesNotMatch(note.textContent, /Avibase|BirdTree|BirdLife/, "no implementation terms on the card");
+  assert.doesNotMatch(note.textContent, /분할|병합|split/);
+});
+
+test("source toggle states needs_review as undecided and never asserts a pre-split source", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([alignedTrait({
+    status: "needs_review", method: "exact_name_legacy", source_scientific_name: "Pica pica", target_scientific_name: "Pica pica", reason: "exact_name_concept_id_mismatch" })]));
+  const [note] = alignmentNotes(card);
+  assert.equal(note.getAttribute("data-alignment-status"), "needs_review");
+  assert.match(note.textContent, /수치가 현재 분류.*와 범위가 같은지 확인이 필요합니다/);
+  assert.match(note.textContent, /개념 일치 검증이 끝나지 않았습니다/);
+  assert.match(note.textContent, /개념 ID가 달라/);
+  assert.doesNotMatch(note.textContent, /분류 개정 전|단정|분할|병합|split|Avibase|BirdTree|BirdLife/);
+});
+
+test("alignment rendering ignores unknown statuses, never echoes unknown codes or markup, and deduplicates identical notes", () => {
+  const hostile = "<img src=x onerror=alert(1)>";
+  const unknown = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([alignedTrait({ status: "approved", source_scientific_name: "A b", target_scientific_name: "C d" })]));
+  assert.equal(alignmentNotes(unknown).length, 0);
+  const malformed = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([alignedTrait("accepted"), alignedTrait(["accepted"], { display: "다른 값" }), alignedTrait(null, { display: "또 다른 값" })]));
+  assert.equal(alignmentNotes(malformed).length, 0);
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([
+    alignedTrait({ status: "needs_review", method: hostile, source_scientific_name: hostile, target_scientific_name: "Real name", reason: hostile }),
+    alignedTrait({ status: "needs_review", method: hostile, source_scientific_name: hostile, target_scientific_name: "Real name", reason: hostile }, { source_name: "Other", source_url: "https://example.org/other" }),
+  ]));
+  const notes = alignmentNotes(card);
+  assert.equal(notes.length, 1, "identical notes from several sources of one fact appear once");
+  assert.ok(notes[0].textContent.includes(hostile), "the name is shown literally as text");
+  assert.equal(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "img"), false);
+  assert.equal(notes[0].textContent.includes("(근거:"), false, "unknown method code is not echoed");
+});
+
+test("alignment notes also appear for distribution cards and carry no card-size change", () => {
+  const diet = { name: "diet_distribution", label: "먹이 구성", display: "원본", ...DIET_SOURCE, value: { fish: 100 },
+    taxonomy_alignment: { status: "accepted", method: "avibase_id_unique", source_scientific_name: "Casmerodius albus", target_scientific_name: "Ardea alba" } };
+  const card = chat.buildSpeciesCard(svgCapableDoc(), qualitativeProfile([diet]));
+  assert.equal(alignmentNotes(card).length, 1);
+  assert.equal(distributionCharts(card).length, 1);
+  assert.equal(collectAllNodes(cardPart(card, "species-distribution-pair")).some(n => n.className === "trait-taxonomy-alignment"), false, "the note lives in the source toggle, not the chart box");
+});

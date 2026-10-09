@@ -1485,3 +1485,25 @@ body:has(.species-popup[open]) { overflow: hidden; }
   text-align: center;
   overflow-wrap: anywhere;
 }
+/* Qualitative stand-in for a distribution without percentages: same box size as the empty state. */
+.species-distribution-empty.species-distribution-qualitative {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  height: 100px;
+  overflow: hidden;
+  line-height: 1.25;
+}
+.species-distribution-qualitative-value {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  max-width: 100%;
+  overflow: hidden;
+  color: #294932;
+  font-weight: 700;
+}
+.species-distribution-qualitative-note { color: #4d6046; font-size: .64rem; font-weight: 400; }
+.trait-taxonomy-alignment { margin: 2px 0; font-size: .7rem; line-height: 1.4; overflow-wrap: anywhere; }

@@ -1,0 +1,92 @@
+{
+  "analysis_metadata": {
+    "created_at": "2026-10-09T17:33:00+09:00",
+    "environment": "RobinGraph dev-3 offline reproducibility script",
+    "source_files": {
+      "avilist_path": "/private/tmp/rg010-avilist.json",
+      "avilist_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+      "iucn_archive_path": "/private/tmp/gbif-iucn-quality-review-2026-1.zip",
+      "iucn_archive_sha256": "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d"
+    }
+  },
+  "baseline_species_counts": {
+    "total_active_species": 11131,
+    "mapped_species": 7507,
+    "total_excluded": 3624,
+    "exclusion_categories": {
+      "authority_mismatch": 2286,
+      "avilist_ne_requires_concept_review": 808,
+      "scientific_name_mismatch": 474,
+      "assessment_identity_or_citation_mismatch": 56
+    }
+  },
+  "authority_mismatch_analysis": {
+    "total_count": 2286,
+    "explanation": "Scientific name and BirdLife SIS ID match 100%, but author strings differ",
+    "surname_comparison_executed": false,
+    "surname_verification_disclaimer": "This script did NOT evaluate author surname equality. Flag grouping below is strictly based on punctuation and year heuristics.",
+    "independent_feature_occurrences": {
+      "multi_author": 1011,
+      "year_diff": 693,
+      "dots_in_iucn": 120,
+      "parenthesis_diff": 371
+    },
+    "hierarchical_waterfall_decomposition": {
+      "description": "Waterfall order: multi_author -> year_diff -> paren_diff -> dots_iucn -> other",
+      "counts": {
+        "multi_author": 1011,
+        "year_diff": 588,
+        "dots_iucn": 73,
+        "paren_diff": 286,
+        "other_orthography": 328
+      },
+      "sum": 2286
+    },
+    "mutually_exclusive_combination_decomposition": {
+      "description": "Exact disjoint subsets accounting for all overlaps",
+      "counts": {
+        "multi_author": 823,
+        "year_diff": 554,
+        "other_orthography": 328,
+        "paren_diff": 282,
+        "multi_author+year_diff": 96,
+        "dots_iucn": 73,
+        "multi_author+paren_diff": 44,
+        "multi_author+dots_iucn": 37,
+        "year_diff+paren_diff": 32,
+        "multi_author+year_diff+paren_diff": 7,
+        "paren_diff+dots_iucn": 4,
+        "year_diff+dots_iucn": 2,
+        "multi_author+year_diff+dots_iucn": 2,
+        "multi_author+paren_diff+dots_iucn": 2
+      },
+      "sum": 2286
+    },
+    "heuristic_flag_grouping": {
+      "no_detected_year_or_parenthesis_flag": {
+        "count": 933,
+        "categories_included": [
+          "multi_author (pure: 823)",
+          "dots_iucn (pure: 73)",
+          "multi_author+dots_iucn (37)"
+        ],
+        "character": "Observation only: no year or parenthesis differences detected by heuristics. Surname agreement NOT verified."
+      },
+      "detected_year_parenthesis_or_other_flags": {
+        "count": 1353,
+        "character": "Flagged for year difference (693 total), basionym parenthesis (371 total), or other orthography (328)."
+      }
+    }
+  },
+  "overall_candidate_landscape": {
+    "current_verified_linked": 7507,
+    "unlinked_groups_observed": {
+      "authority_mismatch_unlinked": 2286,
+      "scientific_name_mismatch_unlinked": 474,
+      "assessment_identity_or_citation_mismatch_unlinked": 56,
+      "avilist_ne_concept_non_match_unlinked": 808,
+      "total_unlinked": 3624
+    },
+    "cautionary_note": "All unlinked groups require independent syntactic and semantic verification before any mapping activation."
+  }
+}

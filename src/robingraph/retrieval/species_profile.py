@@ -209,6 +209,7 @@ def trait_display(name, value):
 
 def read_traits(repository, store, lineage):
     sources = []
+    contexts = {}
     for pipeline, license_name in [('reference-taxonomy-traits','CC0 1.0'), ('reference-avonet','CC BY 4.0')]:
         context = store.active_release_context(pipeline)
         if context is None:
@@ -217,6 +218,7 @@ def read_traits(repository, store, lineage):
         concept = cursor.get('concept_set_id', cursor.get('taxonomy_concept_set_id'))
         if concept != lineage.concept_set_id or cursor.get('taxonomy_release') != lineage.taxonomy_release:
             continue
+        contexts[pipeline] = context
         sources.append({'dataset_id':context.dataset.id,
                         'release':cursor.get('trait_release', context.release.release_key),
                         'license_name':license_name, 'source_name':context.dataset.name})
@@ -225,7 +227,7 @@ def read_traits(repository, store, lineage):
     rows = repository._run(TRAIT_QUERY, taxon_id=lineage.items[-1].taxon_id,
                            concept_set_id=lineage.concept_set_id,
                            taxonomy_release=lineage.taxonomy_release, sources=sources)
-    traits = []
+    exact_traits = []
     for row in rows:
         claim = row['claim']
         name = claim.get('trait_name')
@@ -240,10 +242,14 @@ def read_traits(repository, store, lineage):
         if value is None:
             continue
         display = trait_display(name, value)
-        traits.append({'name':name, 'label':LABELS[name], 'value':value, 'display':display,
+        trait = {'name':name, 'label':LABELS[name], 'value':value, 'display':display,
                        'unit':claim.get('unit'), 'inferred':bool(claim.get('inferred')),
                        'summary_statistic':claim.get('summary_statistic'),
-                       'source_url':row['source_url'], 'citation':row['citation'], **source})
+                       'source_note':claim.get('source_note'), 'certainty':claim.get('certainty'),
+                       'source_url':row['source_url'], 'citation':row['citation'], **source}
+        exact_traits.append((trait, claim))
+    from .trait_mapping import apply_trait_mapping
+    traits = apply_trait_mapping(repository, store, lineage, contexts, exact_traits, LABELS, trait_display)
     from .reviewed_activity import reviewed_activity
     return reviewed_activity(lineage, traits)
 
