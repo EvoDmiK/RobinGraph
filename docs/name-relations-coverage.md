@@ -1,8 +1,8 @@
 # 통칭·가축형 관계 확대 조사
 
-2026-10-09: 33개 이름 엔티티, 70개 검색어, 46개 관계, 36개 대상 종. 모든 관계에 출처와 구분 설명을 기록했다.
+2026-10-09: 32개 이름 엔티티, 69개 검색어, 45개 관계, 35개 대상 종. 모든 관계에 출처와 구분 설명을 기록했다.
 
-2026-10-09 사용자 요청으로 `까마귀 → 큰부리까마귀` 관계를 제거했다. `까마귀 → Corvus corone`과 큰부리까마귀의 정식 국명은 유지한다.
+2026-10-09 사용자 요청으로 `까마귀 → 큰부리까마귀` 관계를 제거했다. 이어서 `까마귀 → Corvus corone`도 통칭 목록에서 제거했다. 까마귀는 Corvus corone의 종 이름으로 직접 조회하며 큰부리까마귀의 정식 국명은 유지한다.
 
 여러 종을 뜻하는 통칭은 일부 확인 후보를 제공한다. 가축형 또는 품종의 관련 야생종 안내가 가축형의 체중·사진·보전 등급을 뜻하지 않는다. 품종→가축 닭→야생 기원 관계는 편집적으로 연결한 것이며 별도 종 지위를 부여하지 않는다.
 
@@ -10,7 +10,6 @@
 |---|---|---|---|
 | 비둘기 / 비둘기, 도시비둘기 | 통칭·별칭 | Columba livia | [Cornell Lab: Rock Pigeon](https://www.allaboutbirds.org/guide/Rock_Pigeon/overview) |
 | 집비둘기 / 집비둘기, Columba livia domestica | 가축형·품종 | Columba livia | [Cornell Lab: Rock Pigeon](https://www.allaboutbirds.org/guide/Rock_Pigeon/overview) |
-| 까마귀 / 까마귀 | 통칭·별칭 | Corvus corone | [국립생물자원관: 겨울철 조류 동시 센서스 2015–2016](https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf) |
 | 닭 / 닭, 집닭, Gallus gallus domesticus | 가축형·품종 | Gallus gallus | [Wang et al. (2020): 863 genomes reveal the origin and domestication of chicken](https://www.nature.com/articles/s41422-020-0349-y) |
 | 집오리 / 집오리, 가축오리, 사육오리 | 가축형·품종 | Anas platyrhynchos | [FAO: Domestic ducks](https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en) |
 | 집오리 / 집오리, 가축오리, 사육오리 | 가축형·품종 | Cairina moschata | [FAO: Domestic ducks](https://www.fao.org/poultry-production-products/production/poultry-species/ducks/en) |

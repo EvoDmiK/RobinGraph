@@ -44,24 +44,6 @@
       ]
     },
     {
-      "id": "crow-corone",
-      "entity_id": "crow-common",
-      "name": "까마귀",
-      "entity_kind": "common_name",
-      "relation_type": "common_usage",
-      "scientific_name": "Corvus corone",
-      "search_terms": [
-        "까마귀"
-      ],
-      "note": "국내 자료의 까마귀(Corvus corone)를 후보로 안내합니다. 활성 AviList에 연결된 한국어 이름은 별도로 표시하며, 지역·자료의 이름 사용 차이를 구분합니다.",
-      "sources": [
-        {
-          "title": "국립생물자원관: 겨울철 조류 동시 센서스 2015–2016",
-          "url": "https://www.nibr.go.kr/aiibook/catImage/12/2015-2016.pdf"
-        }
-      ]
-    },
-    {
       "id": "chicken-red-junglefowl",
       "entity_id": "chicken-domestic",
       "name": "닭",

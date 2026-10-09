@@ -35,6 +35,25 @@ class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
             self.repository.lineage_for_scientific_name.return_value = invalid
             self.assertIsNone(self.repository.lineage_for_korean_name('까치'))
 
+    def test_crow_is_a_direct_species_name_and_rejects_large_billed_crow(self):
+        from dataclasses import replace
+        from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
+        from robingraph.retrieval.name_relations import reviewed_search_terms
+        concept = 'rg:concept-set:avilist-v2025b'
+        self.repository._active_concept_set = Mock(return_value=(concept, 'v2025b'))
+        taxon = LineageTaxon('avilist-taxon:v2025b:20280', 'species', 'Corvus corone', None)
+        lineage = TaxonomyLineage('Corvus corone', 'AviList', 'v2025b', concept, (taxon,))
+        self.repository.lineage_for_scientific_name = Mock(return_value=lineage)
+        result = self.repository.lineage_for_korean_name(' 까마귀 ')
+        self.assertEqual('Corvus corone', result.items[-1].scientific_name)
+        self.assertEqual('korean_name', result.matched_by)
+        self.assertNotIn('까마귀', reviewed_search_terms())
+        for invalid in (None, replace(lineage, taxonomy_release='new'),
+                        replace(lineage, items=(replace(taxon, scientific_name='Corvus macrorhynchos'),)),
+                        replace(lineage, items=(replace(taxon, taxon_id='other'),))):
+            self.repository.lineage_for_scientific_name.return_value = invalid
+            self.assertIsNone(self.repository.lineage_for_korean_name('까마귀'))
+
     def test_reference_names_are_only_a_display_fallback(self) -> None:
         from robingraph.retrieval.taxonomy_lineage_neo4j import _parse_lineage_items
         items = _parse_lineage_items([
