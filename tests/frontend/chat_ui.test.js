@@ -4323,7 +4323,7 @@ test("mouse drags preserve controls, editable and draggable nodes, including nes
       return inner;
     }), false, "nested text within exclusion #" + i);
   });
-  const surfaceNames = ["species-card-front", "species-card-back", "species-card-footer", "species-card-heading", "species-photo-area"];
+  const surfaceNames = ["species-card-front", "species-card-back", "species-card-heading", "species-photo-area"];
   assert.equal(attempt(g => g.card), true, "card padding/background starts a drag");
   for (const name of surfaceNames) {
     assert.equal(attempt(g => collectAllNodes(g.card).find(n => n.className === name)), true, name + " blank surface starts a drag");
@@ -4357,15 +4357,12 @@ test("mouse drags include images and nested decorative graphics but touch keeps 
   }
 });
 
-test("drag hint is a decorative, fine-pointer-only line without backend jargon", () => {
+test("card omits the removed front summary and gesture footer while retaining keyboard guidance", () => {
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, fakeProfilePayload().result.profile);
-  const hint = collectAllNodes(card).find(n => n.className === "species-card-drag-hint");
-  assert.ok(hint);
-  assert.equal(hint.getAttribute("aria-hidden"), "true");
-  assert.match(hint.textContent, /사진·글씨·빈 곳.*끌어/);
-  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
-  assert.match(css, /\.species-card-drag-hint \{ display: none; \}/);
-  assert.match(css, /hover: hover\) and \(pointer: fine\)[\s\S]*species-card-drag-hint \{ display: block/);
+  const nodes = collectAllNodes(card);
+  assert.equal(nodes.some(n => ["species-card-footer", "species-card-drag-hint", "species-card-swipe-hint"].includes(n.className)), false);
+  assert.equal(collectedText(card).includes("수치는 종 평균 · 자료 출처는 답변 출처 보기"), false);
+  assert.match(card.getAttribute("aria-label"), /좌우 드래그 또는 Enter·Space/);
 });
 
 const docListenerCount = f => Object.values(f.doc.listeners).reduce((n, l) => n + l.length, 0);
@@ -4516,21 +4513,11 @@ test("pen and non-primary or non-left touch contacts are unsupported; mouse text
   assert.equal(m.card.getAttribute("data-dragging"), "false", "a touch during a mouse drag cancels it");
 });
 
-test("styles declare touch-action pan-y pinch-zoom up front and a coarse-pointer Korean swipe surface of at least 44px", () => {
+test("card retains native vertical pan and pinch without a dedicated swipe footer", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /\.species-card[^{]*\{ touch-action: pan-y pinch-zoom; \}/);
   assert.doesNotMatch(css, /touch-action:\s*(none|manipulation)/);
-  const coarse = css.match(/@media \(pointer: coarse\) \{[\s\S]*?\n\}/)[0];
-  assert.match(coarse, /species-card-swipe-hint[\s\S]*display: flex/);
-  assert.match(coarse, /width: 100%/);
-  assert.match(coarse, /min-height: 44px/);
-  assert.match(css, /\.species-card-swipe-hint \{ display: none; \}/);
-  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, fakeProfilePayload().result.profile);
-  const hint = collectAllNodes(card).find(n => n.className === "species-card-swipe-hint");
-  assert.ok(hint);
-  assert.equal(hint.getAttribute("aria-hidden"), "true");
-  assert.match(hint.textContent, /좌우로 밀어/);
-  assert.equal(collectAllNodes(hint).length, 1, "noninteractive");
+  assert.doesNotMatch(css, /species-card-(footer|swipe-hint|drag-hint)/);
 });
 
 test("touch swipe on reduced motion flips without rotation", () => {
