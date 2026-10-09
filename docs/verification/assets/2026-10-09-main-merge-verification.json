@@ -1,0 +1,147 @@
+{
+  "main_before": "834ddd28c12bda819209be3cda715076d773ffce",
+  "dev_before_ci_fix": "b4049cb8cff8cb26622c3d834f9fe21dba2779ba",
+  "merged_source": "969f332e4a5c48cda9aecaac06360fbd54c7595c",
+  "merge_method": "fast-forward",
+  "conflicts": 0,
+  "commits_integrated_before_record": 110,
+  "branches_after_source_merge": {
+    "refs/heads/dev": "969f332e4a5c48cda9aecaac06360fbd54c7595c",
+    "refs/heads/main": "969f332e4a5c48cda9aecaac06360fbd54c7595c"
+  },
+  "ci": {
+    "run_id": 37877644541,
+    "head_sha": "969f332e4a5c48cda9aecaac06360fbd54c7595c",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "PostgreSQL ingest integration",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786726"
+      },
+      {
+        "name": "Fixture (windows-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786934"
+      },
+      {
+        "name": "NAS Docker image",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786943"
+      },
+      {
+        "name": "Fixture (ubuntu-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786952"
+      },
+      {
+        "name": "Frontend contract (node --test)",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786955"
+      },
+      {
+        "name": "Neo4j integration",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649786978"
+      },
+      {
+        "name": "Fixture (macos-latest)",
+        "conclusion": "success",
+        "url": "https://github.com/EvoDmiK/RobinGraph/actions/runs/37877644541/job/113649787022"
+      }
+    ]
+  },
+  "ci_summary_lines": [
+    [
+      "PostgreSQL ingest integration",
+      "Run live PostgreSQL transaction and outbox tests",
+      "Ran 9 tests in 0.796s"
+    ],
+    [
+      "Fixture (windows-latest)",
+      "Unit and reproducibility tests",
+      "Ran 633 tests in 28.600s"
+    ],
+    [
+      "Fixture (windows-latest)",
+      "Unit and reproducibility tests",
+      "OK (skipped=46)"
+    ],
+    [
+      "Fixture (ubuntu-latest)",
+      "Unit and reproducibility tests",
+      "Ran 633 tests in 8.301s"
+    ],
+    [
+      "Fixture (ubuntu-latest)",
+      "Unit and reproducibility tests",
+      "OK (skipped=46)"
+    ],
+    [
+      "Frontend contract (node --test)",
+      "Run frontend contract tests",
+      "# tests 245"
+    ],
+    [
+      "Frontend contract (node --test)",
+      "Run frontend contract tests",
+      "# pass 245"
+    ],
+    [
+      "Frontend contract (node --test)",
+      "Run frontend contract tests",
+      "# fail 0"
+    ],
+    [
+      "Frontend contract (node --test)",
+      "Run frontend contract tests",
+      "# skipped 0"
+    ],
+    [
+      "Neo4j integration",
+      "Unit and live Neo4j tests",
+      "Ran 633 tests in 25.430s"
+    ],
+    [
+      "Neo4j integration",
+      "Unit and live Neo4j tests",
+      "OK (skipped=23)"
+    ],
+    [
+      "Fixture (macos-latest)",
+      "Unit and reproducibility tests",
+      "Ran 633 tests in 18.040s"
+    ],
+    [
+      "Fixture (macos-latest)",
+      "Unit and reproducibility tests",
+      "OK (skipped=46)"
+    ]
+  ],
+  "local_python": {
+    "version": "3.14.5",
+    "run": 633,
+    "passed": 598,
+    "skipped": 35,
+    "failure": 0,
+    "error": 0,
+    "live_db": false
+  },
+  "targeted_local": {
+    "run": 36,
+    "passed": 34,
+    "skipped": 2,
+    "failure": 0,
+    "error": 0
+  },
+  "cp1252_simulated": {
+    "run": 36,
+    "passed": 34,
+    "skipped": 2,
+    "failure": 0,
+    "error": 0
+  },
+  "nas_deployed_this_task": false,
+  "known_test_runtime_source": "3e639ce51d9c247a244a2451adcb2a2e9da60a67"
+}
