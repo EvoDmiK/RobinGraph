@@ -186,6 +186,12 @@ class JevChatTest(unittest.TestCase):
         result = client.post("/v1/chat", json={"question": "Cinereous Tit에 대해 알고 싶어"}).json()
         self.assertEqual("answer", result["disposition"])
         profile.assert_called_once_with("Cinereous Tit")
+        from robingraph.retrieval.species_profile import SpeciesNotFoundError
+        profile = Mock(side_effect=SpeciesNotFoundError("Invented Bird"))
+        client = self.make("profile", species_profile_handler=profile)
+        result = client.post("/v1/chat", json={"question": "Invented Bird에 대해 알고 싶어"}).json()
+        self.assertNotEqual("answer", result["disposition"])
+        profile.assert_called_once_with("Invented Bird")
 
     def test_noisy_single_bird_requests_keep_the_model_topic_and_exact_name(self):
         question = "곤줄박이에 대해서 설명 해줄레이요 구르트 아줌마 요구르트 주세요"

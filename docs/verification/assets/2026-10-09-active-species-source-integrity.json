@@ -1,0 +1,157 @@
+{
+  "mode": "live_test_read_only",
+  "checked_at": "2026-10-09T10:42:07.187083+00:00",
+  "taxonomy": {
+    "source_species": 11131,
+    "source_species_rows": 11131,
+    "graph_species_rows": 11131,
+    "postgres_species_rows": 11131,
+    "source_duplicate_sequences": {},
+    "source_duplicate_names": {},
+    "graph_duplicate_ids": {},
+    "graph_duplicate_sequences": {},
+    "graph_duplicate_names": {},
+    "postgres_duplicate_names": {},
+    "source_not_in_graph_sequences": [],
+    "graph_not_in_source_sequences": [],
+    "source_not_in_postgres_names": [],
+    "postgres_not_in_source_names": [],
+    "name_mismatches": [],
+    "inactive_or_disallowed_taxa": []
+  },
+  "source_snapshots": {
+    "elton": {
+      "sha256": "97216eb1797da077169ebb1ebea275db293b09fc62f8bb8911f9beb98c50d321",
+      "url": "https://ndownloader.figshare.com/files/5631081",
+      "source_rows": 9995,
+      "valid_rows": 9993,
+      "encoding": "cp1252",
+      "invalid_rows": [
+        {
+          "source_taxon_id": null,
+          "scientific_name": null,
+          "reason": "missing_source_identity"
+        },
+        {
+          "source_taxon_id": null,
+          "scientific_name": null,
+          "reason": "missing_source_identity"
+        }
+      ]
+    },
+    "avonet": {
+      "sha256": "eb645e83dddb40f1654a3e8d721998dbca76eff540231b7b809267c1e96f8d3e",
+      "url": "https://ndownloader.figshare.com/files/34480856",
+      "sheet": "AVONET1_BirdLife",
+      "source_rows": 11009
+    }
+  },
+  "quarantine": [
+    {
+      "stage": "resolve",
+      "reason": "exact_name_not_found",
+      "count": 2241
+    }
+  ],
+  "reader_errors": [],
+  "traits": {
+    "elton": {
+      "source_profile_rows": 9993,
+      "exact_unique_mapped_profiles": 7752,
+      "postgres_missing_source_record_ids": [],
+      "candidate_profile_value_issues": [],
+      "value_mismatches": [],
+      "coverage_by_trait": {
+        "body_mass": {
+          "readable": 7752,
+          "source_absent_exact_current_name": 3379
+        },
+        "diet_category": {
+          "readable": 7752,
+          "source_absent_exact_current_name": 3379
+        },
+        "diet_distribution": {
+          "readable": 7752,
+          "source_absent_exact_current_name": 3379
+        },
+        "foraging_strata_distribution": {
+          "readable": 7752,
+          "source_absent_exact_current_name": 3379
+        },
+        "nocturnal": {
+          "readable": 7750,
+          "source_absent_exact_current_name": 3379,
+          "preserved_in_reviewed_trait": 2
+        },
+        "pelagic_specialist": {
+          "reader_trait_not_supported": 7752,
+          "source_absent_exact_current_name": 3379
+        }
+      }
+    },
+    "avonet": {
+      "source_profile_rows": 11009,
+      "exact_unique_mapped_profiles": 9879,
+      "postgres_missing_source_record_ids": [],
+      "candidate_profile_value_issues": [],
+      "value_mismatches": [],
+      "coverage_by_trait": {
+        "beak_depth": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "beak_length_culmen": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "beak_length_nares": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "beak_width": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "body_mass": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "habitat": {
+          "readable": 9796,
+          "source_absent_exact_current_name": 1252,
+          "source_field_absent": 83
+        },
+        "habitat_density_category": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "primary_lifestyle": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "tail_length": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "tarsus_length": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        },
+        "trophic_level": {
+          "readable": 9875,
+          "source_absent_exact_current_name": 1252,
+          "source_field_absent": 4
+        },
+        "trophic_niche": {
+          "readable": 9870,
+          "source_absent_exact_current_name": 1252,
+          "source_field_absent": 9
+        },
+        "wing_length": {
+          "readable": 9879,
+          "source_absent_exact_current_name": 1252
+        }
+      }
+    }
+  }
+}
