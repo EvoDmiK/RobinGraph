@@ -1,0 +1,14 @@
+{
+  "base": "https://robingraph.dove-nest.com",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "prod"
+  },
+  "crow_targets": [
+    "Corvus corone"
+  ],
+  "large_billed_crow_relations": [],
+  "favicon_sha256": "b4afe5856133d9f8be4b1e1e09a18c79b0aa0abdada41e6e36ae0297dfd8ac19"
+}
