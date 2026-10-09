@@ -385,15 +385,6 @@ def licensed_images(scientific_name, rank="species"):
     return _licensed_images(scientific_name, int(time.time() // 3600), rank)
 
 
-@lru_cache(maxsize=1)
-def _bounded_encyclopedia_species():
-    # This is independent of which fallback fields were needed for a response.
-    # The pinned relationship artifact establishes subordinate scopes, not that
-    # an encyclopedia article covers the full current AviList concept.
-    from .avonet_subgroups import subgroup_index
-    return frozenset(entry['target_name'] for entries in subgroup_index().values() for entry in entries)
-
-
 def species_sections(taxon, traits, notes):
     """Species facts and explicitly bounded reference facts, never conflated."""
     fields = {}
@@ -420,9 +411,8 @@ def species_sections(taxon, traits, notes):
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)
 
-    bounded_notes, fun_facts = [], []
+    fun_facts = []
     seen_notes = {}
-    bounded_species = taxon.get('scientific_name') in _bounded_encyclopedia_species()
     for category, destination in (('appearance', appearance), ('fun_facts', fun_facts)):
         for item in notes.get(category, []):
             if not isinstance(item, dict) or not isinstance(item.get('text'), str) or not item['text'].strip():
@@ -434,17 +424,14 @@ def species_sections(taxon, traits, notes):
             if key in seen_notes:
                 continue
             seen_notes[key] = item
-            is_encyclopedia = item.get('source_scope_kind') == 'encyclopedia_taxon' or item.get('source_name', '').startswith('Wikipedia')
             alignment = item.get('taxonomy_alignment') or {}
             bounded = item.get('source_scope_kind') == 'subspecies_group' or alignment.get('status') == 'unverified'
-            if bounded or (bounded_species and is_encyclopedia):
-                item.update({'category': category,
-                             'category_title': '외관 특징' if category == 'appearance' else '재미있는 사실',
-                             'source_scope': item.get('source_scope') or item.get('source_scientific_name') or taxon.get('scientific_name'),
-                             'taxonomy_alignment': {**alignment, 'status': 'unverified'}})
-                bounded_notes.append(item)
-            else:
-                destination.append(item)
+            if bounded:
+                scope = item.get('source_scope')
+                if not isinstance(scope, str) or not scope.strip():
+                    continue  # Retained in profile.note_evidence, never an unbounded fact.
+                item['text'] = f"{scope.strip()}: {item['text']}"
+            destination.append(item)
 
     sections = [{'key': key, 'title': title, 'items': items, 'empty_text': empty}
                 for key, title, items, empty in (
@@ -453,13 +440,6 @@ def species_sections(taxon, traits, notes):
                     ('ecology', '생활과 먹이', ecology, '서식 환경과 먹이 자료를 아직 확인하지 못했습니다.'),
                     ('fun_facts', '재미있는 사실', fun_facts, '출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다.'),
                 )]
-    bounded_categories = {item['category'] for item in bounded_notes}
-    sections = [section for section in sections
-                if section['items'] or section['key'] not in bounded_categories]
-    if bounded_notes:
-        sections.append({'key': 'source_scope_notes', 'title': '출처 범위별 설명', 'collapsed': True,
-                         'description': '이 설명은 출처가 다룬 분류 범위의 특징입니다. 현재 종 전체의 공통 특징으로 단정하지 않습니다.',
-                         'items': bounded_notes})
     return sections
 
 
@@ -540,6 +520,8 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
                 'traits':profile_traits, 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
                 'conservation':state['conservation']['conservation'],
+                'note_evidence':[dict(item) for category in ('appearance', 'fun_facts')
+                                 for item in state['notes']['notes'].get(category, []) if isinstance(item, dict)],
                 'summary':species_summary(taxon, profile_traits),
                 'sections':species_sections(taxon, profile_traits, state['notes']['notes']),
                 'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'],

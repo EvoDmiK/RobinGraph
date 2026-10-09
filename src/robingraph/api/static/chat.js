@@ -1288,7 +1288,7 @@
         note: reference ? reference.text : UNLINKED_NE_NOTE,
         badgeText: reference ? "IUCN 적색목록 " + reference.label + " (" + reference.category + ")" +
           (reference.datasetReference ? " · " + reference.dataYear + " 자료 기준 · BIRDBASE" :
-            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "평가 범위 확인 필요" });
+            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -2411,6 +2411,7 @@
     var conservationBadge = doc.createElement("p");
     conservationBadge.className = "species-conservation-badge";
     conservationBadge.textContent = conservation.badgeText;
+    conservationBadge.hidden = !conservation.badgeText || !conservation.category;
     conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
 
@@ -2871,7 +2872,7 @@
 
     var conservationSection = sourceSection("species-conservation-sources", "멸종위기 등급 출처");
     var conservationStatus = doc.createElement("p");
-    conservationStatus.textContent = conservation.badgeText;
+    conservationStatus.textContent = conservation.badgeText || "연결된 보전 등급 자료가 없습니다.";
     conservationSection.appendChild(conservationStatus);
     var rawConservation = profile.conservation && typeof profile.conservation === "object" ? profile.conservation : null;
     if (rawConservation && typeof rawConservation.source_name === "string") {
@@ -3484,12 +3485,23 @@
     answer.appendChild(heading);
     var sources = [];
     var seen = {};
-    profile.sections.forEach(function (section) {
+    var displaySections = profile.sections.filter(function (section) { return section && section.key !== "source_scope_notes"; }).map(function (section) {
+      return Object.assign({}, section, { items: Array.isArray(section.items) ? section.items.slice() : [] });
+    });
+    profile.sections.filter(function (section) { return section && section.key === "source_scope_notes"; }).forEach(function (section) {
+      (section.items || []).forEach(function (item) {
+        var key = item.category === "fun_facts" ? "fun_facts" : "appearance";
+        var target = displaySections.find(function (existing) { return existing.key === key; });
+        if (!target) { target = { key: key, title: key === "appearance" ? "외관 특징" : "재미있는 사실", items: [] }; displaySections.push(target); }
+        target.items.push(item);
+      });
+    });
+    displaySections.forEach(function (section) {
       if (!section || section.key === "subspecies_groups" || typeof section.title !== "string") { return; }
       if (profile.enrichment_pending && (!Array.isArray(section.items) || !section.items.some(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
       }))) { return; }
-      var bounded = section.key === "subspecies_groups" || section.key === "source_scope_notes";
+      var bounded = false;
       var items = Array.isArray(section.items) ? section.items.filter(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
       }) : [];
@@ -3576,6 +3588,21 @@
         }
       });
     }
+    var evidence = (Array.isArray(profile.note_evidence) ? profile.note_evidence : []).concat(
+      profile.sections.reduce(function (items, section) { return items.concat(section && section.key !== "subspecies_groups" && Array.isArray(section.items) ? section.items : []); }, []));
+    var sourceNotes = [];
+    evidence.forEach(function (item) {
+      if (!item || typeof item !== "object") { return; }
+      if (typeof item.source_note === "string" && item.source_note.trim()) {
+        var text = (item.source_name ? item.source_name + ": " : "") + item.source_note;
+        if (sourceNotes.indexOf(text) < 0) { sourceNotes.push(text); }
+      }
+      var url = sanitizeUrl(item.source_url);
+      var sourceKey = JSON.stringify([url, item.source_name, item.license_name, item.license_url]);
+      if (url && typeof item.source_name === "string" && !seen[sourceKey]) {
+        seen[sourceKey] = true; sources.push({ name: item.source_name, url: url, license: item.license_name, licenseUrl: sanitizeUrl(item.license_url) });
+      }
+    });
     var answerReference = referenceFor(answerConservation, profile);
     if (sources.length || answerConservation.manualOverride || answerReference) {
       var details = doc.createElement("details");
@@ -3583,6 +3610,9 @@
       var summary = doc.createElement("summary");
       summary.textContent = "답변 출처 보기 (" + (sources.length + (answerConservation.manualOverride ? 1 : 0) + (answerReference ? 1 : 0)) + ")";
       details.appendChild(summary);
+      sourceNotes.forEach(function (text) {
+        var note = doc.createElement("p"); note.className = "species-source-note"; note.textContent = text; details.appendChild(note);
+      });
       if (answerConservation.manualOverride) {
         appendManualOverrideEvidence(doc, details, profile.conservation);
       }
@@ -3639,6 +3669,7 @@
     var badge = doc.createElement("span");
     badge.className = "species-conservation-badge";
     badge.textContent = conservation.badgeText;
+    badge.hidden = !conservation.badgeText || !conservation.category;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
     return brief;
@@ -3861,7 +3892,7 @@
               JSON.stringify(candidate.items || []) === JSON.stringify(initial.items || []);
           });
         });
-        var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections });
+        var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections, note_evidence: fresh.note_evidence });
         if (explanation) {
           var extraSources = Array.prototype.slice.call(explanation.children).find(function (child) { return child.className === "species-answer-sources"; });
           if (extraSources && options.onSources) { explanation.removeChild(extraSources); options.onSources(extraSources); }
