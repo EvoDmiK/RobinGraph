@@ -48,7 +48,7 @@ def main():
     parser.add_argument('--rows',type=Path)
     args=parser.parse_args()
     if args.rows:
-        rows=json.loads(args.rows.read_text());mode='saved read-only DB rows replay; not a live DB/API test'
+        rows=json.loads(args.rows.read_text(encoding="utf-8"));mode='saved read-only DB rows replay; not a live DB/API test'
     else:
         from robingraph.graph.settings import Neo4jSettings
         from robingraph.retrieval.taxonomy_lineage_neo4j import Neo4jTaxonomyLineageRepository

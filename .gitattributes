@@ -7,3 +7,6 @@ data/eval/** text eol=lf
 *.sh text eol=lf
 .python-version text eol=lf
 uv.lock text eol=lf
+
+# Reviewed conservation artifacts are verified byte-for-byte on every platform.
+src/robingraph/retrieval/reviewed_conservation_references.json text eol=lf
