@@ -1,0 +1,20 @@
+{
+  "container": "/robingraph-api-test",
+  "status": "running",
+  "health": "healthy",
+  "image": "robingraph-api:test-rg015observation-4048778",
+  "revision": "4048778ace88f2f05da5eccb98a48829e30bbe5e",
+  "api_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "commit": "4048778ace88f2f05da5eccb98a48829e30bbe5e",
+  "release": "/home/kimdove/RobinGraph-rg015observation-4048778",
+  "previous_image": "robingraph-api:test-rg015height-f63cbc0",
+  "archive_sha256": "5b282e920c9d889788bfeb7e63e22d2125820a40ca4cbea5776d2cadc8d8c8be",
+  "deploy_exit": 0,
+  "verify_exit": 0,
+  "archive_and_manifest_verified": true
+}
