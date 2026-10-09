@@ -2466,10 +2466,10 @@ test("effective category null with raw NE and a valid needs_review snapshot is t
   const profile = referenceProfile(REFERENCE_ASSESSMENT);
   profile.conservation = { ...nullNe, reference_assessment: REFERENCE_ASSESSMENT };
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
-  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.equal(card.className, "species-card risk-lc");
   assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\)/);
   assert.match(collectedText(card.sourceMaterial), /명명자: BirdLife International/);
-  assert.doesNotMatch(collectedText(card), /미평가|IUCN 적색목록/);
+  assert.doesNotMatch(collectedText(card), /미평가/);
   for (const bad of [{ assessment_status: "snapshot_only" }, { assessment_status: undefined }, { category_raw: "LC" }, { category_raw: "DD" },
     { independently_verified: true }, { evidence_kind: "unconfirmed" }, { source_id: "avilist-v1" }, { source_url: "https://evil.test/x" }]) {
     const other = chat.conservationInfo({ ...nullNe, ...bad });
@@ -2518,17 +2518,17 @@ function referenceProfile(ref, name) {
   return profile;
 }
 
-test("reference-only assessment is shown on card, brief, answer and source toggle while the card stays unresolved", () => {
+test("reference-only assessment is shown on card, brief, answer and source toggle with grade colour while alignment stays unresolved", () => {
   const profile = referenceProfile(REFERENCE_ASSESSMENT);
   const line = "참고 평가: 관심대상 (LC) · 2024 · 현재 분류 범위와 일치 여부 확인 필요";
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
-  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.equal(card.className, "species-card risk-lc");
   assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
   assert.ok(card.children.some((n) => n.className === "species-reference-assessment" && n.textContent === line));
   const badge = card.children.find((n) => n.className === "species-conservation-badge");
-  assert.equal(badge.textContent, "관심대상 (LC) · 2024 평가 · 참고");
+  assert.equal(badge.textContent, "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준");
   const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
-  assert.match(brief.className, /risk-unconfirmed/);
+  assert.match(brief.className, /risk-lc/);
   assert.match(collectedText(brief), /참고 평가: 관심대상 \(LC\)/);
   const src = collectedText(card.sourceMaterial);
   assert.match(src, /참고 평가: 관심대상 \(LC\)/);
@@ -2541,9 +2541,9 @@ test("reference-only assessment is shown on card, brief, answer and source toggl
   for (const showBrief of [false, true]) {
     const text = collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief));
     assert.match(text, /참고 평가: 관심대상 \(LC\)/);
-    assert.doesNotMatch(text, /IUCN 적색목록 (미평가|관심대상)/);
+    assert.doesNotMatch(text, /IUCN 적색목록 미평가/);
   }
-  assert.doesNotMatch(collectedText(card), /미평가 \(NE\)|IUCN 적색목록/);
+  assert.doesNotMatch(collectedText(card), /미평가 \(NE\)/);
   const noYear = chat.referenceAssessmentInfo({ ...UNLINKED_NE, reference_assessment: { ...REFERENCE_ASSESSMENT, assessment_year: undefined } });
   assert.equal(noYear.text, "참고 평가: 관심대상 (LC) · 현재 분류 범위와 일치 여부 확인 필요");
 });
@@ -2553,10 +2553,22 @@ test("actual Corvus macrorhynchos backend payload renders as reference beside an
   if (!fs.existsSync(file)) { return; }
   const profile = JSON.parse(fs.readFileSync(file, "utf8"));
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
-  assert.equal(card.className, "species-card risk-unconfirmed");
+  assert.equal(card.className, "species-card risk-lc");
   assert.match(collectedText(card), /참고 평가: 관심대상 \(LC\) · 2024 · 현재 분류 범위와 일치 여부 확인 필요/);
-  assert.doesNotMatch(collectedText(card), /IUCN 적색목록|미평가/);
+  assert.doesNotMatch(collectedText(card), /미평가/);
   assert.match(collectedText(card.sourceMaterial), /동일 학명·명명자 기준의 전 세계 공개 평가/);
+});
+
+test("validated reference colours follow every source grade without asserting taxon alignment", () => {
+  for (const [category, tier] of [["LC", "lc"], ["NT", "nt"], ["VU", "vu"], ["EN", "en"], ["CR", "cr"], ["EW", "ew"], ["EX", "ex"]]) {
+    const profile = referenceProfile({ ...REFERENCE_ASSESSMENT, category });
+    const info = chat.conservationInfo(profile.conservation, profile.taxon);
+    assert.equal(info.tier, tier);
+    assert.equal(info.verified, false);
+    assert.equal(info.state, "link-unresolved");
+    assert.match(info.badgeText, new RegExp("\\(" + category + "\\)"));
+    assert.match(collectedText(chat.buildSpeciesCard(svgCapableDoc(), profile)), /현재 분류 범위와 일치 여부 확인 필요/);
+  }
 });
 
 test("malformed or mismatched reference assessments are ignored and never colour the card", () => {
