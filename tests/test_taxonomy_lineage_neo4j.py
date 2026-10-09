@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.retrieval.taxonomy_lineage_neo4j import (
@@ -15,6 +15,43 @@ from robingraph.retrieval.taxonomy_lineage_neo4j import (
 
 
 class Neo4jTaxonomyLineageRepositoryTest(unittest.TestCase):
+    def test_all_sourced_species_names_resolve_exact_active_identity(self):
+        from dataclasses import replace
+        from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon, sourced_korean_names
+        concept = "rg:concept-set:avilist-v2025b"
+        self.repository._active_concept_set = Mock(return_value=(concept, "v2025b"))
+        self.repository._active_korean_dataset_id = Mock(return_value=None)
+        labels = sourced_korean_names()
+        self.assertEqual(646, len(labels))
+        self.assertEqual("Parus cinereus", next(v["scientific_name"] for v in labels.values() if v["name"] == "박새"))
+        for taxon_id, label in labels.items():
+            with self.subTest(name=label["name"]):
+                taxon = LineageTaxon(taxon_id, "species", label["scientific_name"], None)
+                lineage = TaxonomyLineage(taxon.scientific_name, "AviList", "v2025b", concept, (taxon,))
+                self.repository.lineage_for_scientific_name = Mock(return_value=lineage)
+                result = self.repository.lineage_for_korean_name(label["name"])
+                self.assertEqual(taxon, result.items[-1])
+                self.assertEqual(label["name"], result.query_name)
+                self.assertEqual("korean_name", result.matched_by)
+                self.repository.lineage_for_scientific_name.assert_called_once_with(taxon.scientific_name)
+                for invalid in (replace(taxon, taxon_id="other"), replace(taxon, rank="subspecies")):
+                    self.repository.lineage_for_scientific_name.return_value = replace(lineage, items=(invalid,))
+                    self.assertIsNone(self.repository.lineage_for_korean_name(label["name"]))
+
+    def test_sourced_lookup_rejects_duplicate_names_and_other_releases(self):
+        from robingraph.retrieval.taxonomy_lineage import sourced_korean_names
+        label = next(v for v in sourced_korean_names().values() if v["name"] == "박새")
+        self.repository._active_concept_set = Mock(return_value=("rg:concept-set:avilist-v2025b", "v2025b"))
+        self.repository.lineage_for_scientific_name = Mock()
+        with patch("robingraph.retrieval.taxonomy_lineage_neo4j.sourced_korean_names", return_value={"a": label, "b": label}):
+            self.assertIsNone(self.repository.lineage_for_korean_name("박새"))
+        self.repository.lineage_for_scientific_name.assert_not_called()
+        self.repository._active_korean_dataset_id = Mock(return_value=None)
+        for context in [("rg:concept-set:avilist-v2025b", "v2026"), ("other", "v2025b")]:
+            self.repository._active_concept_set.return_value = context
+            self.assertIsNone(self.repository.lineage_for_korean_name("박새"))
+        self.repository.lineage_for_scientific_name.assert_not_called()
+
     def test_requested_magpie_alias_selects_active_oriental_species_only(self):
         from dataclasses import replace
         from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon

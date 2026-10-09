@@ -1159,7 +1159,7 @@
         (taxon && taxon.taxon_id === data.taxon_id && taxon.scientific_name === data.scientific_name && taxon.rank === "species"))) {
       return { category: "LC", label: "관심대상", tier: "lc", verified: false, sourceVerified: false,
         snapshot: false, checklist: false, manualOverride: true, note: PICA_SERICA_OVERRIDE_NOTE,
-        badgeText: "관심대상 (LC)" };
+        badgeText: "IUCN 적색목록 관심대상 (LC) · 홍콩 조류학회 자료 기준" };
     }
     var checklist = isLinkedRedListChecklist(data);
     var url = sanitizeUrl(data.source_url), parsed = null;

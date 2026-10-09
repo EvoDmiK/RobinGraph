@@ -2149,7 +2149,7 @@ test("Pica serica manual LC override colors only that species and preserves the 
   assert.equal(info.manualOverride, true);
   assert.equal(info.verified, false);
   assert.equal(info.sourceVerified, false);
-  assert.equal(info.badgeText, "관심대상 (LC)");
+  assert.equal(info.badgeText, "IUCN 적색목록 관심대상 (LC) · 홍콩 조류학회 자료 기준");
   const profile = habitatProfile("Forest", PICA_MANUAL_OVERRIDE);
   profile.taxon = { ...profile.taxon, taxon_id: PICA_MANUAL_OVERRIDE.taxon_id, scientific_name: "Pica serica", korean_name: "까치" };
   profile.sections = [{ key: "basic", title: "기본 정보", items: [] }];
@@ -2157,7 +2157,7 @@ test("Pica serica manual LC override colors only that species and preserves the 
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.match(card.className, /risk-lc/);
   assert.match(collectedText(card), /관심대상 \(LC\)/);
-  assert.doesNotMatch(collectedText(card), /IUCN 적색목록 관심대상/);
+  assert.match(collectedText(card), /IUCN 적색목록 관심대상/);
   const sources = card.sourceMaterial;
   assert.match(collectedText(sources), /까치의 앱 표시 등급은 LC입니다/);
   assert.match(collectedText(sources), /원자료: AviList NE/);
