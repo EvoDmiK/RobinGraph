@@ -1,0 +1,62 @@
+{
+  "test": [
+    {
+      "name": "박새",
+      "science": "Parus cinereus",
+      "kind": "profile",
+      "badge": "평가 범위 확인 필요",
+      "status": 200
+    },
+    {
+      "name": "꼬까직박구리",
+      "science": "Monticola gularis",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "status": 200
+    },
+    {
+      "name": "까치",
+      "science": "Pica serica",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 홍콩 조류학회 자료 기준",
+      "status": 200
+    },
+    {
+      "name": "까마귀",
+      "science": "Corvus corone",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "status": 200
+    }
+  ],
+  "prod": [
+    {
+      "name": "박새",
+      "science": "Parus cinereus",
+      "kind": "profile",
+      "badge": "평가 범위 확인 필요",
+      "status": 200
+    },
+    {
+      "name": "꼬까직박구리",
+      "science": "Monticola gularis",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "status": 200
+    },
+    {
+      "name": "까치",
+      "science": "Pica serica",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 홍콩 조류학회 자료 기준",
+      "status": 200
+    },
+    {
+      "name": "까마귀",
+      "science": "Corvus corone",
+      "kind": "profile",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준",
+      "status": 200
+    }
+  ]
+}
