@@ -3199,6 +3199,7 @@
       // chrome. Otherwise a height-fitted phone card would shrink on every
       // observer callback. The final width is applied only after measuring.
       if (dialog.style) { dialog.style.width = ""; }
+      if (fitSurface.style) { fitSurface.style.width = ""; }
       var width = fitFrame.clientWidth, height = fitFrame.clientHeight;
       if (!(width > 0 && height > 0)) { return; }
       var mobile = mobileFit();
@@ -3224,9 +3225,12 @@
       fitFrame.setAttribute("data-fit-scroll", scrolling ? "true" : "false");
       if (!scrolling && fitFrame.scrollTop) { fitFrame.scrollTop = 0; }
       fitFrame.setAttribute("data-fit-scale", String(scale));
-      if (mobile && dialog.style && dialog.offsetWidth > 0) {
+      // The silver frame follows the scaled card on every viewport so its thickness never depends on the scale.
+      if (dialog.style && dialog.offsetWidth > 0) {
         var chrome = dialog.offsetWidth - width;
         dialog.style.width = (naturalWidth * scale + chrome) + "px";
+        // Pin the measured width: a surface that follows its frame would be shrunk twice.
+        if (fitSurface.style) { fitSurface.style.width = naturalWidth + "px"; }
       }
     }
     function scheduleFit() {

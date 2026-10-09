@@ -5056,7 +5056,7 @@ test("only the measurements and lineage toggles use scroll mode, and the CSS scr
   assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/, "the default frame still does not scroll");
 });
 
-test("mobile chrome follows the scaled card width using independent viewport space on every refit", () => {
+test("the dialog frame follows the scaled card width using independent viewport space on every refit", () => {
   const f = mobileFitFixture();
   f.dialog.style = {};
   // A landscape frame fits by height. Model CSS width restored by an empty
@@ -5072,7 +5072,14 @@ test("mobile chrome follows the scaled card width using independent viewport spa
   for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
   assert.equal(parseFloat(f.dialog.style.width), expected, "observer callbacks cannot progressively shrink the chrome");
   f.mobile(false); f.handlers.resize[0](); f.flush();
-  assert.equal(f.dialog.style.width, "", "returning to desktop restores its CSS width");
+  const desktopScale = Number(f.frame.getAttribute("data-fit-scale"));
+  assert.ok(desktopScale < 1);
+  assert.equal(parseFloat(f.dialog.style.width), 420 * desktopScale + 24,
+    "desktop frames follow the scaled card too, so the frame thickness never depends on the scale");
+  assert.equal(f.surface.style.width, "420px", "the measured width is pinned so a narrowed frame cannot shrink the card twice");
+  f.frame.clientHeight = 5000; f.handlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), "1");
+  assert.equal(parseFloat(f.dialog.style.width), 420 + 24, "an unscaled card keeps the same thin frame");
 });
 
 test("fitting coalesces work and releases observers, RAF and viewport handlers on close, disposal and reopening", () => {
