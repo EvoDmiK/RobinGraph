@@ -642,6 +642,12 @@ function createFakeElement(tagName) {
     addEventListener(type, handler) {
       (listeners[type] = listeners[type] || []).push(handler);
     },
+    removeEventListener(type, handler) {
+      listeners[type] = (listeners[type] || []).filter(item => item !== handler);
+    },
+    listenerCount(type) {
+      return (listeners[type] || []).length;
+    },
     // Synchronously invokes every listener registered for `type` with
     // `eventLike`, auto-attaching a real preventDefault()/defaultPrevented
     // pair if the caller didn't supply one -- this is what lets a test drive
@@ -1824,14 +1830,14 @@ test("deferred photos and additional explanation feed the same open source panel
   assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === "https://example.org/shared").length, 1);
 });
 
-test("diet composition preserves separate vertebrate percentages while icon policy still aggregates them", () => {
+test("donut composition preserves separate vertebrate percentages while icon policy still aggregates them", () => {
   const trait = { name: "diet_distribution", label: "먹이 구성", display: "원래 한글 구성", inferred: true, ...DIET_SOURCE, value: { fish: 10, endotherm_vertebrate: 20, ectotherm_vertebrate: 30, unknown_vertebrate: 40 } };
   const profile = dietProfile([trait]);
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
-  const composition = collectAllNodes(card).find(n => n.className === "species-diet-composition");
+  const composition = collectAllNodes(card).find(n => n.className === "species-distribution-chart");
   const rows = collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null);
   assert.deepEqual(rows.map(n => [n.getAttribute("data-component"), n.getAttribute("data-percent")]), [["fish", "10"], ["endotherm_vertebrate", "20"], ["ectotherm_vertebrate", "30"], ["unknown_vertebrate", "40"]]);
-  assert.deepEqual(collectAllNodes(composition).filter(n => n.className === "diet-component-fill").map(n => n.getAttribute("style")), ["width: 10%", "width: 20%", "width: 30%", "width: 40%"]);
+  assert.deepEqual(collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null).map(n => n.getAttribute("data-start-percent")), ["0", "10", "30", "60"]);
   assert.match(collectedText(composition), /온혈 척추동물/); assert.match(collectedText(composition), /변온 척추동물/); assert.match(collectedText(composition), /추정값/);
   assert.match(collectedText(card.sourceMaterial), /원래 한글 구성/);
   assert.ok(chat.dietIconInfo(profile).icons.some(icon => icon.key === "vertebrate" && /90%/.test(icon.text)));
@@ -1843,30 +1849,169 @@ test("diet composition keeps datasets separate and never scales incomplete total
     { name: "diet_distribution", label: "먹이 구성", display: "자료 B", ...DIET_SOURCE, source_name: "Other dataset", source_url: "https://example.org/other", value: { fish: 20, seed: 30 } },
   ]);
   const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
-  const compositions = collectAllNodes(card).filter(n => n.className === "species-diet-composition");
+  const compositions = collectAllNodes(card).filter(n => n.className === "species-distribution-chart");
   assert.equal(compositions.length, 2);
   assert.deepEqual(compositions.map(n => n.getAttribute("data-source-label")), ["자료 1", "자료 2"]);
   assert.doesNotMatch(collectedText(card), /Other dataset|AVONET/);
-  assert.match(collectedText(compositions[1]), /합계 50%/);
-  assert.deepEqual(collectAllNodes(compositions[1]).filter(n => n.className === "diet-component-fill").map(n => n.getAttribute("style")), ["width: 20%", "width: 30%"]);
-  assert.ok(collectAllNodes(compositions[0]).some(n => n.getAttribute("data-component") === "nectar" && n.getAttribute("data-percent") === "0"));
+  assert.match(collectedText(compositions[1]), /미기록분 50%/);
+  assert.deepEqual(collectAllNodes(compositions[1]).filter(n => n.getAttribute("data-percent") !== null).map(n => [n.getAttribute("data-component"), n.getAttribute("data-percent")]), [["fish", "20"], ["seed", "30"], ["unrecorded", "50"]]);
+  assert.ok(collectAllNodes(compositions[0]).some(n => n.getAttribute("data-component") === "nectar" && n.getAttribute("data-raw-percent") === "0"));
   assert.match(collectedText(card.sourceMaterial), /자료 A/); assert.match(collectedText(card.sourceMaterial), /자료 B/);
   assert.match(collectedText(card.sourceMaterial), /먹이 구성 · 자료 1/); assert.match(collectedText(card.sourceMaterial), /먹이 구성 · 자료 2/);
 });
 
-test("invalid diet values never become bars and unknown keys remain explicitly labelled", () => {
+test("invalid diet values never become donut sectors and unknown keys remain explicitly labelled", () => {
   for (const values of [{ fish: 120, seed: -10, nectar: "50", fruit: NaN, carrion: true }, { fish: 25, mystery: 25 }]) {
     const card = chat.buildSpeciesCard({ createElement: createFakeElement }, dietProfile([{ name: "diet_distribution", label: "먹이 구성", display: "원본 설명", ...DIET_SOURCE, value: values }]));
-    const composition = collectAllNodes(card).find(n => n.className === "species-diet-composition");
+    const composition = collectAllNodes(card).find(n => n.className === "species-distribution-chart");
     if (values.mystery) {
       assert.match(collectedText(composition), /미분류 항목 \(mystery\)/);
-      assert.match(collectedText(composition), /합계 50%/);
-      assert.deepEqual(collectAllNodes(composition).filter(n => n.className === "diet-component-fill").map(n => n.getAttribute("style")), ["width: 25%", "width: 25%"]);
+      assert.match(collectedText(composition), /미기록분 50%/);
+      assert.deepEqual(collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null).map(n => n.getAttribute("data-percent")), ["25", "25", "50"]);
     } else {
       assert.equal(collectAllNodes(composition).some(n => n.getAttribute("data-percent") !== null || n.className === "diet-component-fill"), false);
-      assert.match(collectedText(composition), /전체 구성을 확정할 수 없습니다/);
+      assert.match(collectedText(composition), /비율 확인 필요/);
       assert.doesNotMatch(collectedText(composition), /합계 100%/);
     }
+  }
+});
+
+function distributionProfile(overrides) {
+  return fakeProfilePayload({ traits: [
+    { name: "diet_distribution", label: "먹이 구성", display: "원래 먹이 표시", ...DIET_SOURCE, value: { fish: 70, seed: 30, nectar: 0 } },
+    { name: "foraging_strata_distribution", label: "먹이 활동 위치", display: "원래 위치 표시", ...DIET_SOURCE, value: { ground: 10, water: 60, below_water_surface: 30, canopy: 0 } },
+  ], ...overrides }).result.profile;
+}
+const distributionCharts = card => collectAllNodes(card).filter(n => n.className === "species-distribution-chart");
+const distributionSegments = chart => collectAllNodes(chart).filter(n => n.tagName === "path" && n.getAttribute("data-percent") !== null);
+
+test("diet and foraging use two paired columns with original Korean labels, percentages and source values", () => {
+  const profile = distributionProfile();
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  const pair = collectAllNodes(card).find(n => n.className === "species-distribution-pair");
+  assert.equal(pair.children.length, 2);
+  assert.deepEqual(pair.children.map(n => n.getAttribute("data-distribution-kind")), ["diet_distribution", "foraging_strata_distribution"]);
+  const charts = distributionCharts(card);
+  assert.equal(charts.length, 2);
+  assert.deepEqual(charts.map(n => n.getAttribute("data-trait")), ["diet_distribution", "foraging_strata_distribution"]);
+  assert.deepEqual(distributionSegments(charts[1]).map(n => [n.getAttribute("data-component"), n.getAttribute("data-percent"), n.getAttribute("data-start-percent")]), [["ground", "10", "0"], ["water", "60", "10"], ["below_water_surface", "30", "70"]]);
+  assert.match(collectedText(charts[1]), /지면/); assert.match(collectedText(charts[1]), /수중/);
+  assert.ok(collectAllNodes(charts[1]).some(n => n.tagName === "li" && n.getAttribute("data-component") === "canopy" && n.getAttribute("data-raw-percent") === "0"));
+  for (const original of ["원래 먹이 표시", "원래 위치 표시", "꽃꿀 [nectar] 0%", "수관 [canopy] 0%", "수중 [below_water_surface] 30%", "CC BY 4.0"]) { assert.ok(collectedText(card.sourceMaterial).includes(original), original); }
+});
+
+test("a full single-component donut preserves the center hole and an incomplete donut explicitly labels its remainder", () => {
+  for (const value of [{ fish: 100 }, { fish: 50, seed: 50 }, { fish: 12.5, seed: 37.5 }]) {
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, distributionProfile({ traits: [{ name: "diet_distribution", label: "먹이 구성", display: "원본", ...DIET_SOURCE, value }] }));
+    const chart = distributionCharts(card)[0];
+    assert.equal(chart.getAttribute("data-chart-state"), "ready");
+    const segments = distributionSegments(chart);
+    assert.equal(segments.reduce((sum, segment) => sum + Number(segment.getAttribute("data-percent")), 0), 100);
+    for (const segment of segments) {
+      assert.match(segment.getAttribute("d"), /^M .* A 50 50 .* L .* A 31 31 .* Z$/);
+      assert.doesNotMatch(segment.getAttribute("d"), /NaN|Infinity/);
+    }
+    if (value.fish === 100) {
+      assert.equal(segments.length, 1);
+      assert.equal((segments[0].getAttribute("d").match(/A 50 50/g) || []).length, 2);
+      assert.equal((segments[0].getAttribute("d").match(/A 31 31/g) || []).length, 2);
+    }
+    if (value.fish === 12.5) {
+      assert.equal(segments[2].getAttribute("data-component"), "unrecorded");
+      assert.equal(segments[2].getAttribute("data-percent"), "50");
+      segments[2].dispatch("mouseenter");
+      assert.match(collectedText(chart), /미기록분 · 50%/);
+    }
+  }
+});
+
+test("overfull, empty and non-object distributions use honest lists instead of normalized donut sectors", () => {
+  for (const value of [{ ground: 70, water: 50, canopy: 0 }, {}, null, "unknown", { water: "60", ground: -10, canopy: Infinity }]) {
+    const card = chat.buildSpeciesCard({ createElement: createFakeElement }, distributionProfile({ traits: [{ name: "foraging_strata_distribution", label: "먹이 활동 위치", display: "원래 표시 유지", ...DIET_SOURCE, value }] }));
+    const chart = distributionCharts(card)[0];
+    assert.equal(chart.getAttribute("data-chart-state"), "unconfirmed");
+    assert.equal(distributionSegments(chart).length, 0);
+    assert.ok(collectAllNodes(chart).some(n => n.className === "species-distribution-values"));
+    assert.match(collectedText(chart), /비율 확인 필요/);
+    assert.match(collectedText(card.sourceMaterial), /원래 표시 유지/);
+    if (value && value.ground === 70) { assert.match(collectedText(chart), /합계 120%/); assert.match(collectedText(chart), /수관 · 0%/); }
+  }
+});
+
+test("unknown component tooltip text is inert and parent-scope charts stay clearly labelled as references", () => {
+  const profile = distributionProfile();
+  profile.taxon.rank = "subspecies";
+  profile.traits = [];
+  profile.reference_traits = [{ ...distributionProfile().traits[0], inferred: true, reference_scope: "species", reference_taxon: { scientific_name: "Anas platyrhynchos", rank: "species" }, value: { "<script>bad()</script>": 40, fish: 60 } }];
+  const card = chat.buildSpeciesCard({ createElement: createFakeElement }, profile);
+  const chart = distributionCharts(card)[0];
+  assert.match(chart.getAttribute("aria-label"), /종 수준 참고.*Anas platyrhynchos.*추정값/);
+  const unknown = distributionSegments(chart)[0]; unknown.dispatch("focus");
+  const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
+  assert.equal(tooltip.hidden, false);
+  assert.match(tooltip.textContent, /미분류 항목 \(<script>bad\(\)<\/script>\) · 40% · 추정값/);
+  assert.equal(collectAllNodes(card).some(n => n.tagName === "script"), false);
+  assert.match(collectedText(card.sourceMaterial), /종 수준 참고.*Anas platyrhynchos/);
+});
+
+test("distribution hover, focus, tap and keys expose raw percentages without starting a card drag", () => {
+  for (const touch of [false, true]) {
+    const f = dragFixture(true, distributionProfile());
+    f.card.dispatch("keydown", { key: "Enter", target: f.card });
+    const chart = distributionCharts(f.card)[0];
+    const segment = distributionSegments(chart)[0];
+    const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
+    segment.dispatch("mouseenter"); assert.equal(tooltip.hidden, false); assert.equal(tooltip.textContent, "물고기 · 70%");
+    segment.dispatch("mouseleave"); assert.equal(tooltip.hidden, true);
+    segment.dispatch("focus"); assert.equal(tooltip.hidden, false);
+    assert.equal(segment.getAttribute("aria-describedby"), tooltip.id);
+    assert.equal(segment.getAttribute("tabindex"), "0");
+    const event = (touch ? f.tev : f.ev)(100, 50, { target: segment });
+    segment.dispatch("pointerdown", event); chart.dispatch("pointerdown", event); f.card.dispatch("pointerdown", event);
+    assert.equal(event.defaultPrevented, false, "native chart scrolling stays available");
+    f.card.dispatch("pointermove", (touch ? f.tev : f.ev)(260, 50, { target: segment }));
+    f.card.dispatch("pointerup", (touch ? f.tev : f.ev)(260, 50, { target: segment }));
+    assert.equal(f.card.getAttribute("data-face"), "back"); assert.equal(f.card.getAttribute("data-dragging"), null);
+    assert.equal(segment.dispatch("keydown", { key: " ", target: segment }).defaultPrevented, true);
+    f.card.dispatch("keydown", { key: " ", target: segment });
+    assert.equal(f.card.getAttribute("data-face"), "back", "the segment's key must not flip its parent card");
+    segment.dispatch("keydown", { key: "Escape", target: segment }); assert.equal(tooltip.hidden, true);
+    f.card.dispatch("pointerdown", (touch ? f.tev : f.ev)(100, 50));
+    f.card.dispatch("pointermove", (touch ? f.tev : f.ev)(260, 50));
+    f.card.dispatch("pointerup", (touch ? f.tev : f.ev)(260, 50));
+    assert.equal(f.card.getAttribute("data-face"), "front", "the surrounding card still flips after chart interaction");
+  }
+});
+
+test("distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset", () => {
+  const exits = {
+    scroll: (f, dialog) => dialog.dispatch("scroll"),
+    blur: f => f.win.listeners.blur.slice().forEach(handler => handler()),
+    resize: f => f.win.listeners.resize.slice().forEach(handler => handler()),
+    cancel: (f, dialog, chart) => chart.dispatch("pointercancel"),
+    outside: (f, dialog) => dialog.dispatch("pointerdown", { target: dialog, pointerId: 1, button: 0, clientX: 20, clientY: 20 }),
+    reopen: (f, dialog, chart, popup) => popup.children[0].dispatch("click"),
+    close: (f, dialog) => dialog.dispatch("close"),
+    reset: f => f.card.showFront(),
+  };
+  for (const [name, exit] of Object.entries(exits)) {
+    const f = dragFixture(true, distributionProfile());
+    const popup = chat.buildSpeciesPopup(f.doc, f.card, distributionProfile());
+    const dialog = popup.children[1]; dialog.showModal = () => {};
+    dialog.getBoundingClientRect = () => ({ left: 100, top: 100, right: 500, bottom: 700 });
+    f.card.dispatch("keydown", { key: "Enter", target: f.card });
+    const chart = distributionCharts(f.card)[0]; const segment = distributionSegments(chart)[0];
+    segment.dispatch("focus"); segment.dispatch("mouseenter");
+    const tooltip = collectAllNodes(chart).find(n => n.className === "species-distribution-tooltip");
+    assert.equal(tooltip.hidden, false);
+    assert.equal(f.win.listeners.blur.length, 1, name + ": repeated activation adds no duplicate guards");
+    assert.equal(dialog.listenerCount("scroll"), 1);
+    exit(f, dialog, chart, popup);
+    assert.equal(tooltip.hidden, true, name);
+    assert.equal(chart.getAttribute("data-tooltip-visible"), "false", name);
+    assert.equal(f.win.listeners.blur.length, 0, name);
+    assert.equal(f.win.listeners.resize.length, 0, name);
+    assert.equal(dialog.listenerCount("scroll"), 0, name);
   }
 });
 
@@ -3997,7 +4142,7 @@ test("direct TOP3 answers show the structured scoring criteria once with the lon
   assert.deepEqual(collectAllNodes(answer).filter(n => n.className === "comparison-peer-rank").map(n => n.textContent), ["추천 1", "추천 2", "추천 3"]);
 });
 
-function dragFixture(reduced) {
+function dragFixture(reduced, profile) {
   const win = { listeners: {}, matchMedia: () => ({ matches: !!reduced }),
     addEventListener(t, h) { (this.listeners[t] = this.listeners[t] || []).push(h); },
     removeEventListener(t, h) { this.listeners[t] = (this.listeners[t] || []).filter(x => x !== h); },
@@ -4005,7 +4150,7 @@ function dragFixture(reduced) {
   const doc = { createElement: createFakeElement, defaultView: win, listeners: {},
     addEventListener(t, h, c) { (this.listeners[t] = this.listeners[t] || []).push({ h, c: !!c }); },
     removeEventListener(t, h, c) { this.listeners[t] = (this.listeners[t] || []).filter(x => !(x.h === h && x.c === !!c)); } };
-  const card = chat.buildSpeciesCard(doc, fakeProfilePayload().result.profile);
+  const card = chat.buildSpeciesCard(doc, profile || fakeProfilePayload().result.profile);
   const front = card.children.find(n => n.className === "species-card-front");
   const back = card.children.find(n => n.className === "species-card-back");
   const flip = card;

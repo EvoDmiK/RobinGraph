@@ -1324,19 +1324,79 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 /* The card surface supplies the keyboard equivalent of a horizontal swipe. */
 .species-card[tabindex]:focus-visible { outline: 3px solid #264f32; outline-offset: -3px; }
-.species-popup .trait-card-diet-composition > .trait-value {
+/* Two independently sourced distributions share one compact row, including phones. */
+.species-distribution-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-column: 1 / -1;
+  align-items: start;
+  gap: 8px;
+  margin-top: 8px;
+}
+.species-distribution-column { min-width: 0; }
+.species-distribution-column > h4 { margin: 0 0 4px; font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
+.species-popup .species-card-back .species-distribution-column .trait-card {
+  display: block;
+  min-width: 0;
+  padding: 4px 0;
+  border: 0;
+}
+.species-popup .species-card-back .species-distribution-column .trait-card > strong {
+  display: none;
+}
+.species-popup .species-card-back .species-distribution-column .trait-value {
+  display: block;
+  width: 100%;
+  max-width: none;
   text-align: left;
+  font-size: .72rem;
   font-weight: 400;
 }
-.species-diet-composition { min-width: 0; margin: 3px 0; }
-.species-diet-components { display: grid; gap: 7px; }
-.species-diet-component { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3px 8px; min-width: 0; }
-.diet-component-name { overflow-wrap: anywhere; font-size: .76rem; }
-.diet-component-percent { font-size: .76rem; white-space: normal; text-align: right; }
-.diet-component-track { grid-column: 1 / -1; height: 5px; overflow: hidden; border-radius: 99px; background: #47622e25; }
-.diet-component-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #67954d, #365f40); }
-.species-diet-zero-items { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
-.species-diet-zero-items .diet-component-zero { display: inline-flex; align-items: baseline; gap: 3px; padding: 2px 5px; border-radius: 5px; background: #ffffed66; }
-.species-diet-zero-items .diet-component-name, .species-diet-zero-items .diet-component-percent { font-size: .65rem; font-weight: 400; }
-.species-diet-composition-note { margin: 6px 0 0; color: #405635; font-size: .68rem; font-weight: 400; text-align: left; }
+.species-distribution-chart { position: relative; min-width: 0; cursor: default; }
+.species-distribution-svg { display: block; width: min(120px, 100%); height: auto; margin: 0 auto; overflow: visible; }
+.species-distribution-segment { cursor: pointer; stroke: #ffffed88; stroke-width: .5; }
+.species-distribution-segment:hover, .species-distribution-segment:focus-visible { outline: none; stroke: #193c2e; stroke-width: 1.5; filter: brightness(1.1); }
+.species-distribution-total { fill: #294932; font-size: 15px; font-weight: 750; }
+.species-distribution-total-label { fill: #405635; font-size: 8px; }
+.species-distribution-tooltip {
+  position: absolute;
+  z-index: 8;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: 100%;
+  padding: 6px 7px;
+  border: 1px solid #405635;
+  border-radius: 7px;
+  background: #f8fbeef5;
+  box-shadow: 0 3px 10px #18351f33;
+  color: #213c29;
+  font-size: .7rem;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+.species-distribution-tooltip[hidden] { display: none; }
+.species-distribution-note { margin: 2px 0 5px; font-size: .64rem; color: #405635; text-align: center; overflow-wrap: anywhere; }
+.species-distribution-values { font-size: .67rem; }
+.species-distribution-values summary { min-height: 28px; padding: 4px 0; cursor: pointer; text-align: center; }
+.species-distribution-values ul { margin: 3px 0; padding-left: 14px; }
+.species-distribution-values li { margin: 3px 0; overflow-wrap: anywhere; }
+.species-distribution-fallback, .species-distribution-empty {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: min(120px, 100%);
+  min-height: 100px;
+  margin: 0 auto;
+  padding: 8px;
+  border: 1px dashed #82966b;
+  border-radius: 10px;
+  color: #405635;
+  font-size: .7rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
