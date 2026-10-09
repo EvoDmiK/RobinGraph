@@ -918,8 +918,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-quick-facts { font-size: .82rem; }
 }
 
-/* On phones the frame stays inside the visible viewport; each face scrolls
-   within that frame rather than pushing the card border or close button out. */
+.species-card-fit-frame, .species-card-fit-surface { display: contents; }
+/* On phones the complete card fits proportionally inside a stable viewport
+   frame. Neither face scrolls; the full-size explanation remains in the chat. */
 @media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {
   .species-popup {
     box-sizing: border-box;
@@ -931,28 +932,33 @@ body:has(.species-popup[open]) { overflow: hidden; }
   }
   .species-popup .species-card {
     box-sizing: border-box;
-    height: 100%;
-    min-height: 0;
-    max-height: 100%;
-    overflow: hidden;
+    width: 100%;
+    height: auto;
+    min-height: 780px;
+    max-height: none;
+    overflow: visible;
+    touch-action: pinch-zoom;
   }
+  /* Photo frames are scroll containers too; their touch policy must be
+     explicit so the browser cannot consume a card swipe as native panning. */
+  .species-popup .species-card * { touch-action: pinch-zoom; }
+  .species-popup .species-photo-area .species-media { overflow: hidden; scroll-snap-type: none; }
+  .species-card-fit-frame { display: flex; width: 100%; height: 100%; align-items: flex-start; justify-content: center; overflow: hidden; }
+  .species-card-fit-surface { display: block; width: 420px; flex-shrink: 0; transform-origin: top center; }
   .species-popup-close { position: absolute; top: 8px; right: 8px; margin: 0; z-index: 5; }
   .species-popup .species-card-heading,
   .species-popup .species-scientific-name,
   .species-popup .species-parent,
   .species-popup .species-conservation-badge { flex-shrink: 0; }
   .species-popup .species-card-faces {
-    min-height: 0;
-    grid-template-rows: minmax(0, 1fr);
-    overflow: hidden;
+    min-height: auto;
+    grid-template-rows: auto;
+    overflow: visible;
   }
   .species-popup .species-card-faces > .species-card-front,
   .species-popup .species-card-faces > .species-card-back {
-    min-height: 0;
-    overflow: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    min-height: auto;
+    overflow: visible;
   }
   .species-popup .species-card-faces > section::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .species-popup .species-card-front > * { flex-shrink: 0; }
