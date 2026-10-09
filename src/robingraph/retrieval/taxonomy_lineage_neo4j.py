@@ -51,7 +51,7 @@ from typing import Any
 from neo4j import GraphDatabase
 
 from ..graph.settings import Neo4jSettings
-from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, reference_korean_names, with_korean_display_name
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage, reference_korean_names, sourced_korean_names, with_korean_display_name
 
 # Legacy fallback for direct library callers. The deployed ``serve-neo4j``
 # path always supplies PostgreSQL active context and never executes this query.
@@ -317,15 +317,16 @@ class Neo4jTaxonomyLineageRepository:
 
         concept_set_id, taxonomy_release = self._active_concept_set()
 
-        # Explicit reviewed species lookups; keep active taxonomy and identity guards.
-        # 까마귀 is the sourced Korean species name for Corvus corone, not a common-name group.
-        reviewed_species = {
-            '까치': ('Pica serica', 'avilist-taxon:v2025b:20193'),
-            '까마귀': ('Corvus corone', 'avilist-taxon:v2025b:20280'),
-        }
-        if (cleaned in reviewed_species and taxonomy_release == 'v2025b'
-                and concept_set_id == 'rg:concept-set:avilist-v2025b'):
-            scientific_name, taxon_id = reviewed_species[cleaned]
+        # Reuse the source-checked display-name inventory for exact species lookup.
+        # Never choose arbitrarily if a future inventory contains duplicate names.
+        candidates = [(taxon_id, label) for taxon_id, label in sourced_korean_names().items()
+                      if label.get("name") == cleaned and label.get("status") == "source-reference"]
+        if (candidates and taxonomy_release == "v2025b"
+                and concept_set_id == "rg:concept-set:avilist-v2025b"):
+            if len(candidates) != 1:
+                return None
+            taxon_id, label = candidates[0]
+            scientific_name = label["scientific_name"]
             lineage = self.lineage_for_scientific_name(scientific_name)
             if (lineage is None or not lineage.items
                     or lineage.items[-1].taxon_id != taxon_id
