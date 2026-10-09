@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 
-ARTIFACT_SHA256 = '9a753a26d0da68b5044bfe6565984428b07951e54dc7d6fc83ccb615f3c3801e'
+ARTIFACT_SHA256 = 'b89b8af498c815caff814a96fde568041e21987946e33679cd869d06d2c58939'
 TAXONOMY_SHA256 = '3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411'
 CORNELL_URL = 'https://www.birds.cornell.edu/clementschecklist/updates-and-corrections-october-2024/'
 
@@ -54,12 +54,26 @@ def valid_record(record):
         return (record.get('mapping_method') == 'reviewed_exact_source_name'
                 and record['source_scientific_name'] == record['scientific_name'])
     excerpt = record.get('taxonomic_evidence_excerpt')
-    return (record.get('taxonomy_alignment') == 'partial_scope'
-            and record.get('mapping_method') == 'documented_related_concept'
-            and record.get('taxonomic_evidence_url') == CORNELL_URL
-            and record.get('taxonomic_evidence_release') == 'Clements-2024'
-            and isinstance(excerpt, str) and bool(excerpt.strip())
-            and record.get('taxonomic_evidence_sha256') == sha256(excerpt.encode()).hexdigest())
+    if (record.get('taxonomy_alignment') != 'partial_scope'
+            or record.get('mapping_method') != 'documented_related_concept'
+            or not isinstance(excerpt, str) or not excerpt.strip()
+            or record.get('taxonomic_evidence_sha256') != sha256(excerpt.encode()).hexdigest()):
+        return False
+    provider = record.get('taxonomic_evidence_kind', 'cornell_taxonomy_update')
+    if provider == 'cornell_taxonomy_update':
+        return (record.get('taxonomic_evidence_url') == CORNELL_URL
+                and record.get('taxonomic_evidence_release') == 'Clements-2024')
+    if provider == 'itis_synonym_report':
+        return (bool(re.fullmatch(r'https://itis\.gov/servlet/SingleRpt/SingleRpt\?search_topic=TSN&search_value=[1-9][0-9]*',
+                                  record.get('taxonomic_evidence_url', '')))
+                and record.get('taxonomic_evidence_release') == 'ITIS-IOC-15.1-2025')
+    if provider == 'avilist_taxonomy_decision':
+        return (record.get('taxonomic_evidence_url') == 'https://explore.avilist.org/data/avilist-2025b.json'
+                and record.get('taxonomic_evidence_release') == 'v2025b'
+                and record.get('taxonomic_evidence_snapshot_sha256') == TAXONOMY_SHA256
+                and record.get('taxonomic_evidence_locator') == record['taxon_id'] + ':taxonomy_decision_text')
+    return False
+
 
 
 @lru_cache(maxsize=1)

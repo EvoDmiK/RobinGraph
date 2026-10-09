@@ -70,7 +70,7 @@ class ReviewedReferenceTest(unittest.TestCase):
 
     def test_all_reviewed_records_resolve_without_promoting_primary_grade(self):
         records = r.reviewed_index()
-        self.assertGreaterEqual(len(records), 6)
+        self.assertGreaterEqual(len(records), 9)
         for record in records.values():
             with self.subTest(name=record['scientific_name']):
                 lineage = replace(self.lineage, items=(LineageTaxon(record['taxon_id'], 'species',
@@ -88,6 +88,30 @@ class ReviewedReferenceTest(unittest.TestCase):
         pipit = records['avilist-taxon:v2025b:30040']
         self.assertIsNone(pipit['assessment_scientific_name'])
         self.assertEqual(pipit['citation_scientific_name'], 'Anthus rubescens')
+
+    def test_related_evidence_providers_reject_unapproved_hosts_and_pins(self):
+        records = r.reviewed_index()
+        for identity in ('avilist-taxon:v2025b:5408', 'avilist-taxon:v2025b:5358'):
+            record = deepcopy(records[identity])
+            record['taxonomic_evidence_url'] = 'https://example.org/claim'
+            record['record_sha256'] = r.record_digest(record)
+            self.assertFalse(r.valid_record(record))
+        for identity, keys in (
+            ('avilist-taxon:v2025b:5408', ('taxonomic_evidence_release', 'taxonomic_evidence_sha256')),
+            ('avilist-taxon:v2025b:5358', ('taxonomic_evidence_release', 'taxonomic_evidence_sha256',
+                                         'taxonomic_evidence_snapshot_sha256', 'taxonomic_evidence_locator')),
+            ('avilist-taxon:v2025b:20751', ('taxonomic_evidence_release', 'taxonomic_evidence_sha256')),
+        ):
+            for key in keys:
+                for value in (None, 'invalid'):
+                    with self.subTest(identity=identity, key=key, value=value):
+                        record = deepcopy(records[identity])
+                        if value is None:
+                            record.pop(key)
+                        else:
+                            record[key] = value
+                        record['record_sha256'] = r.record_digest(record)
+                        self.assertFalse(r.valid_record(record))
 
     def test_existing_reference_priority_is_unchanged(self):
         for official, dataset, expected in [({'a':1},{'b':2},{'a':1}), (None,{'b':2},{'b':2})]:
