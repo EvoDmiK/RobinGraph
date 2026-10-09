@@ -1,0 +1,314 @@
+{
+  "environment": "prod",
+  "revision": "f70c99792ffa1c3c8268e6643c8125e68c9070ad",
+  "http_mode": "actual GET /v1/taxa/profile",
+  "http": [
+    {
+      "taxon_id": "avilist-taxon:v2025b:20751",
+      "scientific_name": "Parus cinereus",
+      "query": "박새",
+      "korean": "박새",
+      "actual_id": "avilist-taxon:v2025b:20751",
+      "actual_scientific_name": "Parus cinereus",
+      "actual_korean": "박새",
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20193",
+      "scientific_name": "Pica serica",
+      "query": "까치",
+      "korean": "까치",
+      "actual_id": "avilist-taxon:v2025b:20193",
+      "actual_scientific_name": "Pica serica",
+      "actual_korean": "까치",
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "scientific_name": "Corvus corone",
+      "query": "까마귀",
+      "korean": "까마귀",
+      "actual_id": "avilist-taxon:v2025b:20280",
+      "actual_scientific_name": "Corvus corone",
+      "actual_korean": "까마귀",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20296",
+      "scientific_name": "Corvus macrorhynchos",
+      "query": "큰부리까마귀",
+      "korean": "큰부리까마귀",
+      "actual_id": "avilist-taxon:v2025b:20296",
+      "actual_scientific_name": "Corvus macrorhynchos",
+      "actual_korean": "큰부리까마귀",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:30640",
+      "scientific_name": "Carduelis carduelis",
+      "query": "오색방울새",
+      "korean": "오색방울새",
+      "actual_id": "avilist-taxon:v2025b:30640",
+      "actual_scientific_name": "Carduelis carduelis",
+      "actual_korean": "오색방울새",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:12184",
+      "scientific_name": "Melopsittacus undulatus",
+      "query": "사랑앵무",
+      "korean": "사랑앵무",
+      "actual_id": "avilist-taxon:v2025b:12184",
+      "actual_scientific_name": "Melopsittacus undulatus",
+      "actual_korean": "사랑앵무",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:27905",
+      "scientific_name": "Phoenicurus schisticeps",
+      "query": "흰목딱새",
+      "korean": "흰목딱새",
+      "actual_id": "avilist-taxon:v2025b:27905",
+      "actual_scientific_name": "Phoenicurus schisticeps",
+      "actual_korean": "흰목딱새",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:28888",
+      "scientific_name": "Urocynchramus pylzowi",
+      "query": "프르제발스키되새",
+      "korean": "프르제발스키되새",
+      "actual_id": "avilist-taxon:v2025b:28888",
+      "actual_scientific_name": "Urocynchramus pylzowi",
+      "actual_korean": "프르제발스키되새",
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:22346",
+      "scientific_name": "Acrocephalus astrolabii",
+      "query": "Acrocephalus astrolabii",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:22346",
+      "actual_scientific_name": "Acrocephalus astrolabii",
+      "actual_korean": null,
+      "trait_count": 1,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:22336",
+      "scientific_name": "Acrocephalus musae",
+      "query": "Acrocephalus musae",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:22336",
+      "actual_scientific_name": "Acrocephalus musae",
+      "actual_korean": null,
+      "trait_count": 2,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:28565",
+      "scientific_name": "Aethopyga tibolii",
+      "query": "Aethopyga tibolii",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:28565",
+      "actual_scientific_name": "Aethopyga tibolii",
+      "actual_korean": null,
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:16565",
+      "scientific_name": "Ailuroedus geislerorum",
+      "query": "Ailuroedus geislerorum",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:16565",
+      "actual_scientific_name": "Ailuroedus geislerorum",
+      "actual_korean": null,
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:6129",
+      "scientific_name": "Aerodramus amelis",
+      "query": "Aerodramus amelis",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:6129",
+      "actual_scientific_name": "Aerodramus amelis",
+      "actual_korean": null,
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:21450",
+      "scientific_name": "Alaudala cheleensis",
+      "query": "Alaudala cheleensis",
+      "has_traits": true,
+      "actual_id": "avilist-taxon:v2025b:21450",
+      "actual_scientific_name": "Alaudala cheleensis",
+      "actual_korean": "북방쇠종다리",
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:12046",
+      "scientific_name": "Cyanoramphus malherbi",
+      "query": "Cyanoramphus malherbi",
+      "reference_category": "CR",
+      "actual_id": "avilist-taxon:v2025b:12046",
+      "actual_scientific_name": "Cyanoramphus malherbi",
+      "actual_korean": null,
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:26650",
+      "scientific_name": "Cichlopsis leucogenys",
+      "query": "Cichlopsis leucogenys",
+      "reference_category": "EN",
+      "actual_id": "avilist-taxon:v2025b:26650",
+      "actual_scientific_name": "Cichlopsis leucogenys",
+      "actual_korean": null,
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:24310",
+      "scientific_name": "Zosterops conspicillatus",
+      "query": "Zosterops conspicillatus",
+      "reference_category": "EX",
+      "actual_id": "avilist-taxon:v2025b:24310",
+      "actual_scientific_name": "Zosterops conspicillatus",
+      "actual_korean": null,
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:10108",
+      "scientific_name": "Aulacorhynchus prasinus",
+      "query": "Aulacorhynchus prasinus",
+      "reference_category": "LC",
+      "actual_id": "avilist-taxon:v2025b:10108",
+      "actual_scientific_name": "Aulacorhynchus prasinus",
+      "actual_korean": null,
+      "trait_count": 18,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:10435",
+      "scientific_name": "Chrysophlegma mentale",
+      "query": "Chrysophlegma mentale",
+      "reference_category": "NT",
+      "actual_id": "avilist-taxon:v2025b:10435",
+      "actual_scientific_name": "Chrysophlegma mentale",
+      "actual_korean": null,
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:11779",
+      "scientific_name": "Psittacara chloropterus",
+      "query": "Psittacara chloropterus",
+      "reference_category": "VU",
+      "actual_id": "avilist-taxon:v2025b:11779",
+      "actual_scientific_name": "Psittacara chloropterus",
+      "actual_korean": null,
+      "trait_count": 14,
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "browser_mode": "actual Chrome POST /v1/chat; explicit profile intent",
+  "browser": [
+    {
+      "name": "박새",
+      "science": "Parus cinereus",
+      "width": 390,
+      "height": 844,
+      "badge": "평가 범위 확인 필요",
+      "card_rect": {
+        "x": 20,
+        "y": 24,
+        "width": 350,
+        "height": 795.9895629882812
+      },
+      "status": 200,
+      "intent": "profile",
+      "kind": "profile"
+    },
+    {
+      "name": "까치",
+      "science": "Pica serica",
+      "width": 1280,
+      "height": 900,
+      "badge": "IUCN 적색목록 관심대상 (LC) · 홍콩 조류학회 자료 기준",
+      "card_rect": {
+        "x": 422,
+        "y": 40,
+        "width": 436,
+        "height": 820
+      },
+      "status": 200,
+      "intent": "profile",
+      "kind": "profile"
+    },
+    {
+      "name": "오색방울새",
+      "science": "Carduelis carduelis",
+      "width": 390,
+      "height": 844,
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2019 평가 · 공개 평가목록 기준",
+      "card_rect": {
+        "x": 20,
+        "y": 24,
+        "width": 350,
+        "height": 795.9895629882812
+      },
+      "status": 200,
+      "intent": "profile",
+      "kind": "profile"
+    },
+    {
+      "name": "Cnemoscopus rubrirostris",
+      "science": "Cnemoscopus rubrirostris",
+      "width": 1280,
+      "height": 900,
+      "badge": "IUCN 적색목록 관심대상 (LC) · 2024 자료 기준 · BIRDBASE",
+      "card_rect": {
+        "x": 426.6825866699219,
+        "y": 40,
+        "width": 426.6347961425781,
+        "height": 820.1528930664062
+      },
+      "status": 200,
+      "intent": "profile",
+      "kind": "profile"
+    }
+  ]
+}

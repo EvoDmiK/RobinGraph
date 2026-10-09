@@ -22,6 +22,18 @@ BIRDLIFE_PDF = 'https://forums.birdlife.org/wp-content/uploads/2026/02/Red_List_
 BIRDLIFE_SHA256 = '051d899372dfb9eccdcca68bdd5b64699019fec9fb540d99650d78679c81195a'
 
 
+def compatible_higher_taxonomy(avilist_row, source_row):
+    """Nominal author/epithet collisions require matching order AND family.
+
+    This is an audit discovery filter, not concept-equivalence evidence. Exact
+    names and explicitly mentioned source names remain direct source evidence.
+    """
+    def normalized(value):
+        return value.strip().casefold() if isinstance(value, str) else ''
+    return all(normalized(left) and normalized(left) == normalized(right)
+               for left, right in ((avilist_row[2], source_row[5]), (avilist_row[3], source_row[6])))
+
+
 def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
     """Inspect every original needs_review/no-reference species, not a sample.
 
@@ -61,6 +73,14 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
         note = row[12] or ''
         plain = re.sub(r'<[^>]+>', '', note)
         candidates = {}
+        rejected_nominal = {}
+
+        def add_nominal(candidate, route):
+            if compatible_higher_taxonomy(row, candidate):
+                candidates.setdefault(candidate[0], [candidate, set()])[1].add(route)
+            else:
+                rejected_nominal.setdefault(candidate[0], [candidate, set()])[1].add(route)
+
         for candidate in by_name[name]:
             candidates.setdefault(candidate[0], [candidate, set()])[1].add('exact_scientific_name')
         # Official decision mentions are scope evidence, never a crosswalk.
@@ -79,7 +99,7 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
         for parent in decision_taxa.values():
             for candidate in by_epithet[parent[5].split()[1]]:
                 if builder._reference_authority_match(parent[6].strip('() '), candidate[9].strip('() ')):
-                    candidates.setdefault(candidate[0], [candidate, set()])[1].add('official_decision_nominal_name_chain_candidate')
+                    add_nominal(candidate, 'official_decision_nominal_name_chain_candidate')
         parts = name.split()
         for candidate in by_epithet[parts[1]]:
             if ' '.join((candidate[7], candidate[8])) == name:
@@ -87,12 +107,15 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
             # Parentheses may differ after a genus change. That is permitted only
             # in candidate discovery; neither reference nor primary assignment.
             if builder._reference_authority_match(authority.strip('() '), candidate[9].strip('() ')):
-                candidates.setdefault(candidate[0], [candidate, set()])[1].add('same_epithet_author_year_different_genus_candidate')
+                add_nominal(candidate, 'same_epithet_author_year_different_genus_candidate')
         records = []
         for candidate, routes in candidates.values():
             reference = audit.reference_record(candidate, by_dist[candidate[0]], row, routes,
                                                ids[candidate[0]], names[' '.join((candidate[7], candidate[8]))])
             reference['reference_authority_match_method'] = builder._reference_authority_match(authority, candidate[9])
+            reference['source_order'], reference['source_family'] = candidate[5], candidate[6]
+            reference['target_order'], reference['target_family'] = row[2], row[3]
+            reference['higher_taxonomy_matches'] = compatible_higher_taxonomy(row, candidate)
             identity = builder._reference_assessment_identity(' '.join((candidate[7], candidate[8])), candidate[9],
                                                              candidate[14], candidate[15], candidate[0])
             reference['reference_assessment_identity_method'] = identity[1] if identity else None
@@ -141,6 +164,10 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
                            independently_verified=False, concept_alignment='unverified',
                            candidate_count=len(records), candidates=sorted(records, key=lambda r:r['sis_id'])))
         item = ledger[-1]
+        item['excluded_nominal_collisions'] = [dict(sis_id=c[0], scientific_name=' '.join((c[7], c[8])),
+            source_order=c[5], source_family=c[6], target_order=row[2], target_family=row[3],
+            rejected_routes=sorted(routes), reason='nominal_chain_order_or_family_mismatch',
+            assign_grade_to_target=False) for c, routes in sorted(rejected_nominal.values(), key=lambda item:item[0][0])]
         if birdbase is not None:
             source_record = birdbase['entries'].get(taxon_id)
             if (not source_record or source_record['scientific_name'] != name
@@ -166,6 +193,7 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
                 method=dict(all_rows_processed=True, primary_grade_inheritance=False,
                             authenticated_api_access=False, live_assessment_originals_reviewed=0,
                             evidence='pinned official AviList decisions and public IUCN GBIF archive',
+                            nominal_candidate_filter='Nonempty exact order AND family match (case-insensitive); exact names and explicitly mentioned source names remain direct evidence. Never concept-equivalence proof.',
                             candidate_routes=['exact_scientific_name', 'mentioned_in_official_taxonomy_decision',
                                               'official_decision_nominal_name_chain_candidate',
                                               'same_epithet_author_year_different_genus_candidate']),
@@ -174,6 +202,7 @@ def classify_subset(runtime, avilist_bytes, source_bytes, index, birdbase=None):
                             candidate_issues=dict(sorted(Counter(c['review_issue'] for r in ledger for c in r['candidates']).items())),
                             taxonomy_relations=dict(sorted(Counter(v for r in ledger for v in r['taxonomy_relations']).items())),
                             without_taxonomy_decision=sum(not r['taxonomy_decision_text'] for r in ledger),
+                            excluded_nominal_collisions=sum(len(r['excluded_nominal_collisions']) for r in ledger),
                             primary_grades_assigned=0), species=ledger)
     if birdbase is not None:
         result['birdbase_source'] = birdbase['source']

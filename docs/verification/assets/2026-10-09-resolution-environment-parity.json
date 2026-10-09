@@ -1,0 +1,13 @@
+{
+  "revision": "f70c99792ffa1c3c8268e6643c8125e68c9070ad",
+  "species_count": 11131,
+  "test_prod_species_equal": true,
+  "korean_queries": 850,
+  "test_prod_korean_queries_equal": true,
+  "test_errors": [],
+  "prod_errors": [],
+  "runtime_sha256": {
+    "test": "be470afc09d007541027ff4ae5f3878c1186b975d580a4f1253c02280a2cdd6f",
+    "prod": "962fba7fe5866038ddb1f461b4d8ba97b0a7e3d28b9010c181480a4ea54323c6"
+  }
+}
