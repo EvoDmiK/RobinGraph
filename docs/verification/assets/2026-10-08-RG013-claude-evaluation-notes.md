@@ -1,4 +1,4 @@
-# RG-013 intent evaluation set — report
+# RG-301 intent evaluation set — report
 
 ## What was produced
 - `tests/fixtures/jev_intent_eval.json`: object `{version, labels, cases[]}`. 120 unique questions (case-insensitive unique), ids `jev-001..120`.

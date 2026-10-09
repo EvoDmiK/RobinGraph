@@ -102,7 +102,7 @@ uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 �
 | Gemini | `GEMINI_API_KEY`, `ROBINGRAPH_GEMINI_MODEL` | 문헌 근거 답변 생성·추가 종 설명 등 설정된 생성 경로 |
 | MLflow | `ROBINGRAPH_MLFLOW_TRACING=true`, `MLFLOW_TRACKING_URI`, `MLFLOW_EXPERIMENT_NAME` | 선택적 추적. 별도 MLflow 서버 필요 |
 
-`auto`는 Jev 키가 있으면 Jev를 선택하고, 없으면 기존 규칙·임베딩 경로를 사용합니다. `ROBINGRAPH_INTENT_ROUTER=semantic`은 임베딩 경로를 선택합니다. 모든 질문에서 Jev를 호출하는 것은 아닙니다. Jev·라우팅 상세 설정은 [.env.example](.env.example), [Jev 라우팅](docs/jev-intent-routing.md), [RG-013 검증 기록](docs/verification/2026-10-08-RG013-jev-intent-routing.md)에 있습니다.
+`auto`는 Jev 키가 있으면 Jev를 선택하고, 없으면 기존 규칙·임베딩 경로를 사용합니다. `ROBINGRAPH_INTENT_ROUTER=semantic`은 임베딩 경로를 선택합니다. 모든 질문에서 Jev를 호출하는 것은 아닙니다. Jev·라우팅 상세 설정은 [.env.example](.env.example), [Jev 라우팅](docs/jev-intent-routing.md), [RG-301 검증 기록](docs/verification/2026-10-08-RG013-jev-intent-routing.md)에 있습니다.
 
 Gemini SDK/autolog와 MLflow 추적을 사용할 때는 추가 의존성을 설치합니다. Gemini의 기본 REST 생성 경로는 SDK 없이도 동작합니다.
 
@@ -120,7 +120,7 @@ MLflow Traces의 태그 필터로 다음을 조회할 수 있습니다.
 | `failure_stage` | `routing`, `name_resolution`, `retrieval`, `generation` |
 | `selected_intent`, `route_method` | 선택한 질문 의도·라우팅 방식 |
 
-예를 들어 태그 필터에서 `response_reason`을 `taxon_not_found`로 지정하면 종을 찾지 못한 응답을 구분합니다. SDK 검색 식은 `tags.response_reason = 'taxon_not_found'`입니다. 추적용 `error`는 기술 실패를 나타내며 HTTP 응답의 `disposition` 계약과 구분합니다. [MLflow 설정](docs/mlflow-tracing.md)과 [RG-016 실제 저장·검색 검증](docs/verification/2026-10-08-rg015-rg016-trace-tags-drag.md)을 참고합니다.
+예를 들어 태그 필터에서 `response_reason`을 `taxon_not_found`로 지정하면 종을 찾지 못한 응답을 구분합니다. SDK 검색 식은 `tags.response_reason = 'taxon_not_found'`입니다. 추적용 `error`는 기술 실패를 나타내며 HTTP 응답의 `disposition` 계약과 구분합니다. [MLflow 설정](docs/mlflow-tracing.md)과 [RG-602 실제 저장·검색 검증](docs/verification/2026-10-08-rg015-rg016-trace-tags-drag.md)을 참고합니다.
 
 ## 구조와 API
 
@@ -207,7 +207,7 @@ GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/
 | 수집·배포 | [n8n 수집 런북](docs/n8n/README.md) · [PostgreSQL 수집 관리](docs/postgres-ingest-control-plane.md) · [NAS 배포](docs/nas-deployment.md) |
 | 개발·기록 | [개발환경·테스트](docs/development.md) · [평가](docs/evaluation.md) · [작업 이력](docs/work-log/) · [검증·배포 기록](docs/verification/) |
 
-설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-013 Jev 의도 분석, RG-015 카드 조작·반응형 화면, RG-016 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
+설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-301 Jev 의도 분석, RG-405 카드 조작·반응형 화면, RG-602 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
 
 ## 기여자
 
