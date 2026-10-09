@@ -44,6 +44,28 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 - **화면 맞춤**: 앞·뒷면 높이를 같게 유지하고 화면 크기에 맞춰 카드 전체를 축소합니다. 카드 내부 스크롤을 없애고 모바일 테두리 간격을 맞췄습니다. 사진이나 자료가 없어도 같은 카드 형식을 유지합니다.
 - **표현과 조작**: 서식 환경별 문양, 기록된 IUCN 등급별 색상, 회전 각도를 따라 움직이는 유광 반사를 적용합니다. 글씨 드래그 선택을 막고, 움직임 줄이기 설정과 모바일 핀치 확대를 고려합니다. 사진 이전·다음 버튼은 일반 클릭으로 사용할 수 있습니다.
 
+#### IUCN 등급별 카드 색
+
+카드는 종에 **기록된 IUCN 적색목록 등급**에 따라 색이 달라집니다. 위험도가 높을수록 프레임이 희귀 카드처럼 화려해집니다(일반 → 은색 → 금색 → 포일 → 홀로그램). 글씨는 모든 등급에서 밝은 카드 바탕 위의 어두운 색을 유지합니다. 아래 색은 대표값이며, 프레임과 카드 바탕은 실제로는 그라데이션입니다.
+
+| 등급 | 한국어 표기 | 프레임(바깥 테두리) | 카드 바탕 | 등급 배지·목록 버튼 포인트 |
+|---|---|---|---|---|
+| 🟩 LC | 관심대상 | 은색 `#959a95` | 연두색 `#8fbb5c` → `#def19a` | 연두 `#e3f2c4` / 테두리 `#7f9c55` |
+| 🟦 NT | 준위협 | 청회색 은색 `#8fa7b2` | 민트 `#8fc7b0` → `#d8f1e6` | 민트 `#d3efe3` / 테두리 `#4f8a75` |
+| 🟨 VU | 취약 | 금색 `#c9a13b` | 노랑 `#e8c86a` → `#fbf0c4` | 연노랑 `#fbeab0` / 테두리 `#a17a14` |
+| 🟧 EN | 위기 | 주황 `#c4622c`, 사선 줄무늬 포일 | 주황 `#f2a774` → `#fde4cf` | 연주황 `#fdd9bd` / 테두리 `#a24a17` |
+| 🟥 CR | 위급 | 분홍·자홍 홀로그램 `#c2185b` (움직임) | 분홍 `#f3a0b8` → `#fde3ea` | 연분홍 `#fcd3df` / 테두리 `#9c1046` |
+| 🟪 EW | 야생절멸 | 보라 홀로그램 `#5e35b1` (움직임) | 라벤더 `#c5b0ee` → `#efe7fd` | 연보라 `#e4d8fa` / 테두리 `#4a2d91` |
+| ⬛ EX | 절멸 | 검정 홀로그램 `#1b1b1b` (움직임) | 회보라 `#b9b6c4` → `#ecebf1` | 검정 `#2a2a30`, 글씨 `#f4f2ff` |
+| ⬜ DD·NE·기록 없음 | 정보부족·미평가·미확인 | 밝은 회색 `#b5b8b3` | 회녹색 `#d9ddd3` → `#eef0ea` | 연회색 `#f1f2ee` |
+
+- LC만 은색 프레임에 기본 연두 카드를 그대로 씁니다. 나머지 등급은 카드 바탕도 등급 색으로 바뀝니다.
+- CR·EW·EX 프레임은 천천히 움직이는 포일 효과를 쓰고, 운영체제의 움직임 줄이기 설정이 켜져 있으면 멈춥니다.
+- 등급 코드가 정확히 알려진 값이고 **출처 이름이 함께 기록된 경우에만** 등급 색을 씁니다. DD·NE이거나, 등급이 없거나, 인식할 수 없는 값이거나, 출처 이름이 없으면 "멸종위기 등급 미확인"으로 보고 회색 카드를 씁니다.
+- 원자료의 `CR (PE)`(절멸 가능성)·`CR (PEW)`(야생절멸 가능성)는 CR 색을 쓰고 배지에 해당 문구를 덧붙입니다.
+- 색은 기록된 등급의 시각 표시일 뿐이며 지역 개체수 판단이 아닙니다.
+- 등급 → 색 클래스 매핑은 `src/robingraph/api/static/chat.js`의 IUCN 표(한국어 표기 포함), 색은 `src/robingraph/api/static/styles.css`의 `risk-*` 규칙에 있습니다. 이 표의 색은 2026-10-09 기준 CSS에서 옮긴 것입니다.
+
 ### 관계 탐색·비교·검색
 
 - **비교 후보 TOP 3**: 전체 활성 종에서 계통 50%·분류 30%·서식 환경 10%·먹이 생태 10%로 점수를 계산합니다. **검증 국명이 있는 후보를 먼저 선정하고, 그 안에서 점수순**으로 추천합니다. 부족한 수는 영어 이름 후보로 채웁니다. 계통 자료가 없으면 가용 분류·생태 점수를 재환산하며, 점수는 실제 진화 거리나 유전 유사도가 아닙니다.
@@ -106,7 +128,7 @@ uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 �
 | Gemini | `GEMINI_API_KEY`, `ROBINGRAPH_GEMINI_MODEL` | 문헌 근거 답변 생성·추가 종 설명 등 설정된 생성 경로 |
 | MLflow | `ROBINGRAPH_MLFLOW_TRACING=true`, `MLFLOW_TRACKING_URI`, `MLFLOW_EXPERIMENT_NAME` | 선택적 추적. 별도 MLflow 서버 필요 |
 
-`auto`는 Jev 키가 있으면 Jev를 선택하고, 없으면 기존 규칙·임베딩 경로를 사용합니다. `ROBINGRAPH_INTENT_ROUTER=semantic`은 임베딩 경로를 선택합니다. 모든 질문에서 Jev를 호출하는 것은 아닙니다. Jev·라우팅 상세 설정은 [.env.example](.env.example), [Jev 라우팅](docs/jev-intent-routing.md), [RG-013 검증 기록](docs/verification/2026-10-08-RG013-jev-intent-routing.md)에 있습니다.
+`auto`는 Jev 키가 있으면 Jev를 선택하고, 없으면 기존 규칙·임베딩 경로를 사용합니다. `ROBINGRAPH_INTENT_ROUTER=semantic`은 임베딩 경로를 선택합니다. 모든 질문에서 Jev를 호출하는 것은 아닙니다. Jev·라우팅 상세 설정은 [.env.example](.env.example), [Jev 라우팅](docs/jev-intent-routing.md), [RG-301 검증 기록](docs/verification/2026-10-08-RG013-jev-intent-routing.md)에 있습니다.
 
 Gemini SDK/autolog와 MLflow 추적을 사용할 때는 추가 의존성을 설치합니다. Gemini의 기본 REST 생성 경로는 SDK 없이도 동작합니다.
 
@@ -124,7 +146,7 @@ MLflow Traces의 태그 필터로 다음을 조회할 수 있습니다.
 | `failure_stage` | `routing`, `name_resolution`, `retrieval`, `generation` |
 | `selected_intent`, `route_method` | 선택한 질문 의도·라우팅 방식 |
 
-예를 들어 태그 필터에서 `response_reason`을 `taxon_not_found`로 지정하면 종을 찾지 못한 응답을 구분합니다. SDK 검색 식은 `tags.response_reason = 'taxon_not_found'`입니다. 추적용 `error`는 기술 실패를 나타내며 HTTP 응답의 `disposition` 계약과 구분합니다. [MLflow 설정](docs/mlflow-tracing.md)과 [RG-016 실제 저장·검색 검증](docs/verification/2026-10-08-rg015-rg016-trace-tags-drag.md)을 참고합니다.
+예를 들어 태그 필터에서 `response_reason`을 `taxon_not_found`로 지정하면 종을 찾지 못한 응답을 구분합니다. SDK 검색 식은 `tags.response_reason = 'taxon_not_found'`입니다. 추적용 `error`는 기술 실패를 나타내며 HTTP 응답의 `disposition` 계약과 구분합니다. [MLflow 설정](docs/mlflow-tracing.md)과 [RG-602 실제 저장·검색 검증](docs/verification/2026-10-08-rg015-rg016-trace-tags-drag.md)을 참고합니다.
 
 ## 구조와 API
 
@@ -211,7 +233,7 @@ GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/
 | 수집·배포 | [n8n 수집 런북](docs/n8n/README.md) · [PostgreSQL 수집 관리](docs/postgres-ingest-control-plane.md) · [NAS 배포](docs/nas-deployment.md) |
 | 개발·기록 | [개발환경·테스트](docs/development.md) · [평가](docs/evaluation.md) · [작업 이력](docs/work-log/) · [검증·배포 기록](docs/verification/) |
 
-설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-013 Jev 의도 분석, RG-015 카드 조작·반응형 화면, RG-016 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
+설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-301 Jev 의도 분석, RG-405 카드 조작·반응형 화면, RG-602 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
 
 ## 기여자
 

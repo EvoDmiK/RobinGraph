@@ -366,6 +366,14 @@ _CHAT_ASSET_MEDIA_TYPES = {
     "birds.html": "text/html; charset=utf-8",
     "birds.js": "application/javascript",
 }
+# Branding icons are optional: a missing icon is a plain 404 and never turns the
+# chat UI into "unavailable". They live in the same static directory.
+_ICON_ASSET_MEDIA_TYPES = {
+    "favicon.ico": "image/x-icon",
+    "favicon-32.png": "image/png",
+    "favicon-192.png": "image/png",
+    "apple-touch-icon.png": "image/png",
+}
 
 
 def _read_chat_asset_bundle(asset_root: Path, asset_names: tuple[str, ...] = _REQUIRED_CHAT_ASSETS) -> dict[str, bytes] | None:
@@ -965,8 +973,21 @@ def create_app(
             return unavailable_chat_ui()
         return _chat_asset_response(assets, "index.html")
 
+    def icon_asset(name: str) -> Response:
+        assets = _read_chat_asset_bundle(asset_root, (name,))
+        if assets is None:
+            raise HTTPException(status_code=404, detail="Not Found")
+        return Response(assets[name], media_type=_ICON_ASSET_MEDIA_TYPES[name],
+                        headers={"Cache-Control": "public, max-age=3600"})
+
+    @app.get("/favicon.ico", include_in_schema=False, response_model=None)
+    def favicon() -> Response:
+        return icon_asset("favicon.ico")
+
     @app.get("/static/{asset_path:path}", include_in_schema=False, response_model=None)
     def static_asset(asset_path: str) -> Response | PlainTextResponse:
+        if asset_path in _ICON_ASSET_MEDIA_TYPES:
+            return icon_asset(asset_path)
         names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
         assets = _read_chat_asset_bundle(asset_root, names)
         if assets is None:
