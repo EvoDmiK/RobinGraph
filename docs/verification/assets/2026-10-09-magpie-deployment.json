@@ -1,0 +1,59 @@
+{
+  "source_commit": "22ff90b05636a6259fcebabeaa9f46de91a39d6e",
+  "actual_api": true,
+  "profiles": [
+    {
+      "scientific_name": "Pica serica",
+      "korean_name": "까치",
+      "english_name": "Oriental magpie",
+      "category": "LC",
+      "evidence_kind": "manual_override",
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Pica pica",
+      "korean_name": null,
+      "english_name": "Eurasian magpie",
+      "category": "NE",
+      "evidence_kind": "taxonomy_snapshot",
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Aegithalos concinnus",
+      "korean_name": null,
+      "english_name": "Black-throated Bushtit",
+      "category": "NE",
+      "evidence_kind": "taxonomy_snapshot",
+      "http_status": 200
+    },
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "korean_name": "청둥오리",
+      "english_name": "Mallard",
+      "category": "LC",
+      "evidence_kind": "red_list_checklist",
+      "http_status": 200
+    }
+  ],
+  "deployed_javascript_matches": true,
+  "javascript_sha256": "3da31ccbeed7978a87a910eed08c3227abc083b571e0819c9d3c7b4115b1b514",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "korean_lookup": {
+    "query": "까치",
+    "scientific_name": "Pica serica",
+    "category": "LC",
+    "http_status": 200
+  },
+  "explicit_profile_chat_lookup": {
+    "question": "까치",
+    "scientific_name": "Pica serica",
+    "english_name": "Oriental magpie",
+    "category": "LC",
+    "http_status": 200
+  }
+}

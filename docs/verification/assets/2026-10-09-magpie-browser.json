@@ -1,0 +1,86 @@
+{
+  "actualTestDeployment": true,
+  "actualApiProfiles": true,
+  "productionRenderer": true,
+  "syntheticProfileInsertion": true,
+  "checks": [
+    {
+      "species": "Pica_serica",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "tier": "lc",
+      "badge": "관심대상 (LC) · 임시 보정",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "species": "Pica_pica",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "tier": "unconfirmed",
+      "badge": "평가 자료 연결 확인 필요 (AviList NE)",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "species": "Anas_platyrhynchos",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 공개 평가목록 기준",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "species": "Pica_serica",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tier": "lc",
+      "badge": "관심대상 (LC) · 임시 보정",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "species": "Pica_pica",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tier": "unconfirmed",
+      "badge": "평가 자료 연결 확인 필요 (AviList NE)",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    },
+    {
+      "species": "Anas_platyrhynchos",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "tier": "lc",
+      "badge": "IUCN 적색목록 관심대상 (LC) · 공개 평가목록 기준",
+      "fits": true,
+      "keyboardFlip": "back",
+      "sourceExplanation": true,
+      "pageErrors": []
+    }
+  ]
+}
