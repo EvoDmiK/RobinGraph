@@ -1,0 +1,46 @@
+{
+  "ingest_state": {
+    "test_only": 0,
+    "prod_only": 0,
+    "shared": 6,
+    "shared_different": 1,
+    "changed_fields": {
+      "last_successful_run_id": 1,
+      "updated_at": 1
+    }
+  },
+  "ingestion_run": {
+    "test_only": 1,
+    "prod_only": 1,
+    "shared": 34,
+    "shared_different": 0,
+    "changed_fields": {}
+  },
+  "source_dataset": {
+    "test_only": 0,
+    "prod_only": 0,
+    "shared": 15,
+    "shared_different": 1,
+    "changed_fields": {
+      "created_at": 1,
+      "updated_at": 1
+    }
+  },
+  "source_record": {
+    "test_only": 0,
+    "prod_only": 0,
+    "shared": 57716,
+    "shared_different": 45,
+    "changed_fields": {}
+  },
+  "source_release": {
+    "test_only": 0,
+    "prod_only": 0,
+    "shared": 12,
+    "shared_different": 1,
+    "changed_fields": {
+      "retrieved_at": 1,
+      "created_at": 1
+    }
+  }
+}

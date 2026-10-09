@@ -1,0 +1,340 @@
+{
+  "database": "robingraph",
+  "role": "robingraph_app",
+  "schema_owner": "robingraph_app",
+  "objects": [
+    {
+      "name": "_schema_migration",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "ingest_state",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "ingestion_run",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "outbox_event",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "outbox_event_id_seq",
+      "kind": "S",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "quarantine_item",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "quarantine_item_id_seq",
+      "kind": "S",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "source_dataset",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "source_record",
+      "kind": "r",
+      "owner": "robingraph_app"
+    },
+    {
+      "name": "source_release",
+      "kind": "r",
+      "owner": "robingraph_app"
+    }
+  ],
+  "sequences": [
+    {
+      "name": "outbox_event_id_seq",
+      "last_value": 2928,
+      "is_called": true
+    },
+    {
+      "name": "quarantine_item_id_seq",
+      "last_value": 2662,
+      "is_called": true
+    }
+  ],
+  "constraints": [
+    {
+      "table": "_schema_migration",
+      "name": "_schema_migration_name_key",
+      "type": "u",
+      "validated": true
+    },
+    {
+      "table": "_schema_migration",
+      "name": "_schema_migration_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "ingest_state",
+      "name": "ingest_state_active_release_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "ingest_state",
+      "name": "ingest_state_last_successful_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "ingest_state",
+      "name": "ingest_state_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "ingest_state",
+      "name": "ingest_state_version_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_check1",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_config_sha256_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_source_release_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "ingestion_run",
+      "name": "ingestion_run_status_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_attempts_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_claim_token_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_event_key_key",
+      "type": "u",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_ingestion_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "outbox_event",
+      "name": "outbox_event_terminal_state_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_first_seen_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_ingestion_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_last_seen_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_resolution_status_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_severity_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "quarantine_item",
+      "name": "quarantine_item_stage_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_dataset",
+      "name": "source_dataset_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "source_dataset",
+      "name": "source_dataset_policy_status_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_dataset",
+      "name": "source_dataset_release_strategy_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_ingestion_run_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_license_policy_status_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_raw_sha256_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_source_release_id_external_id_record_version_key",
+      "type": "u",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_source_release_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "source_record",
+      "name": "source_record_supersedes_record_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "source_release",
+      "name": "source_release_content_sha256_check",
+      "type": "c",
+      "validated": true
+    },
+    {
+      "table": "source_release",
+      "name": "source_release_dataset_id_fkey",
+      "type": "f",
+      "validated": true
+    },
+    {
+      "table": "source_release",
+      "name": "source_release_dataset_id_release_key_key",
+      "type": "u",
+      "validated": true
+    },
+    {
+      "table": "source_release",
+      "name": "source_release_pkey",
+      "type": "p",
+      "validated": true
+    },
+    {
+      "table": "source_release",
+      "name": "source_release_status_check",
+      "type": "c",
+      "validated": true
+    }
+  ],
+  "run_statuses": [
+    {
+      "status": "failed",
+      "count": 22
+    },
+    {
+      "status": "succeeded",
+      "count": 14
+    }
+  ],
+  "passed": true
+}

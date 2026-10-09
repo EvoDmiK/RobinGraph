@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "checks": {
+    "sequences_equal_test": true,
+    "all_constraints_validated": true,
+    "production_app_role_owns_schema_tables_sequences": true,
+    "no_active_ingestions": true
+  },
+  "constraints": 43,
+  "foreign_keys": 11,
+  "sequences": [
+    {
+      "name": "outbox_event_id_seq",
+      "last_value": 2928,
+      "is_called": true
+    },
+    {
+      "name": "quarantine_item_id_seq",
+      "last_value": 2662,
+      "is_called": true
+    }
+  ],
+  "run_statuses": [
+    {
+      "status": "failed",
+      "count": 22
+    },
+    {
+      "status": "succeeded",
+      "count": 14
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "sha256": {
+    "prod": {
+      "styles.css": "e1ac11fe342c6959a605c5182306ef6ba990030e8aacc5378f031cdb9db8f9a1",
+      "chat.js": "ed25611f02e0d79e79429c6e94b6912592472dde4e98ffd00d39f6e4387b4d79"
+    },
+    "test": {
+      "styles.css": "e1ac11fe342c6959a605c5182306ef6ba990030e8aacc5378f031cdb9db8f9a1",
+      "chat.js": "ed25611f02e0d79e79429c6e94b6912592472dde4e98ffd00d39f6e4387b4d79"
+    },
+    "local": {
+      "styles.css": "e1ac11fe342c6959a605c5182306ef6ba990030e8aacc5378f031cdb9db8f9a1",
+      "chat.js": "ed25611f02e0d79e79429c6e94b6912592472dde4e98ffd00d39f6e4387b4d79"
+    }
+  }
+}

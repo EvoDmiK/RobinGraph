@@ -1,0 +1,820 @@
+{
+  "at_utc": "2026-10-09T13:42:17.904456+00:00",
+  "postgres": {
+    "database": "robingraph",
+    "schema": "ingest",
+    "schemas": [
+      "ingest",
+      "public"
+    ],
+    "tables": {
+      "_schema_migration": 4,
+      "ingest_state": 6,
+      "ingestion_run": 35,
+      "outbox_event": 0,
+      "quarantine_item": 2344,
+      "source_dataset": 15,
+      "source_record": 57716,
+      "source_release": 12
+    },
+    "hashes": {
+      "_schema_migration": "3ee1d1fa38f1582ede96135195497cbf7058739e7b53f39952f4f00e9f3efd1d",
+      "ingest_state": "da149ebfff9987022a72eb0a85c18f10a7e4fd82eaf69aa40175e8caa5d4cd86",
+      "ingestion_run": "a42f4012f22e0547d29bd01bfd3aad5dbb8b0bdcd6a854aebdf6a940a6f855b2",
+      "outbox_event": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "quarantine_item": "1d0eab21e38d7685dae52f98114ec4133d0b90750a6114c58821500f5d691c7e",
+      "source_dataset": "c8b533c534876ea3800008eb0e88419ae38e9f30255b5be1460907a3250fb8ff",
+      "source_record": "f36d8661cf41576e9da6c5f6e6b7db3440a5dc2fcbc44bf3ab2a7a929051c389",
+      "source_release": "44fb7a52f94497da8edf160d72c17499c3e016006127b30f6f341c1087fbb133"
+    },
+    "running_ingestions": 0
+  },
+  "neo4j": {
+    "database": "neo4j",
+    "nodes": 475063,
+    "relationships": 543728,
+    "labels": [
+      {
+        "label": "BirdNameUsage",
+        "count": 461
+      },
+      {
+        "label": "BirdTaxon",
+        "count": 33713
+      },
+      {
+        "label": "Chunk",
+        "count": 4
+      },
+      {
+        "label": "Document",
+        "count": 2
+      },
+      {
+        "label": "EvidenceUnit",
+        "count": 136213
+      },
+      {
+        "label": "ExternalIdentifier",
+        "count": 60796
+      },
+      {
+        "label": "ExternalTaxonConcept",
+        "count": 29
+      },
+      {
+        "label": "Fixture",
+        "count": 386
+      },
+      {
+        "label": "HybridSearchChunk",
+        "count": 4
+      },
+      {
+        "label": "HybridVectorChunk",
+        "count": 2
+      },
+      {
+        "label": "License",
+        "count": 1
+      },
+      {
+        "label": "MediaAsset",
+        "count": 36
+      },
+      {
+        "label": "Observation",
+        "count": 116
+      },
+      {
+        "label": "Place",
+        "count": 8
+      },
+      {
+        "label": "RobinGraph",
+        "count": 386
+      },
+      {
+        "label": "ScientificName",
+        "count": 33723
+      },
+      {
+        "label": "SourceDataset",
+        "count": 3
+      },
+      {
+        "label": "SourceRecord",
+        "count": 116
+      },
+      {
+        "label": "Taxon",
+        "count": 33694
+      },
+      {
+        "label": "TaxonConceptSet",
+        "count": 3
+      },
+      {
+        "label": "TaxonMappingCandidate",
+        "count": 3371
+      },
+      {
+        "label": "TaxonMappingClaim",
+        "count": 17648
+      },
+      {
+        "label": "TraitClaim",
+        "count": 174843
+      },
+      {
+        "label": "VernacularName",
+        "count": 13690
+      },
+      {
+        "label": "VernacularNameCandidate",
+        "count": 306
+      }
+    ],
+    "types": [
+      {
+        "type": "ASSERTS_ABOUT",
+        "count": 174843
+      },
+      {
+        "type": "FROM_CHUNK",
+        "count": 4
+      },
+      {
+        "type": "FROM_RECORD",
+        "count": 230
+      },
+      {
+        "type": "HAS_ACCEPTED_NAME",
+        "count": 33723
+      },
+      {
+        "type": "HAS_CHUNK",
+        "count": 4
+      },
+      {
+        "type": "HAS_EXTERNAL_IDENTIFIER",
+        "count": 60796
+      },
+      {
+        "type": "HAS_MAPPING_CLAIM",
+        "count": 17
+      },
+      {
+        "type": "HAS_MEDIA",
+        "count": 36
+      },
+      {
+        "type": "HAS_VERNACULAR_NAME",
+        "count": 13690
+      },
+      {
+        "type": "IDENTIFIED_AS",
+        "count": 16
+      },
+      {
+        "type": "IN_CONCEPT_SET",
+        "count": 33723
+      },
+      {
+        "type": "IN_DATASET",
+        "count": 116
+      },
+      {
+        "type": "LICENSED_UNDER",
+        "count": 3
+      },
+      {
+        "type": "NAME_RELATION",
+        "count": 138
+      },
+      {
+        "type": "OBSERVED_TAXON",
+        "count": 100
+      },
+      {
+        "type": "PARENT_OF",
+        "count": 33666
+      },
+      {
+        "type": "PROPOSES_TAXON",
+        "count": 17648
+      },
+      {
+        "type": "SUPPORTED_BY",
+        "count": 174859
+      },
+      {
+        "type": "WITHIN",
+        "count": 116
+      }
+    ],
+    "indexes": [
+      {
+        "name": "index_343aff4e",
+        "type": "LOOKUP",
+        "state": "ONLINE",
+        "labelsOrTypes": null,
+        "properties": null
+      },
+      {
+        "name": "index_f7700477",
+        "type": "LOOKUP",
+        "state": "ONLINE",
+        "labelsOrTypes": null,
+        "properties": null
+      },
+      {
+        "name": "robingraphFixtureChunkFulltext",
+        "type": "FULLTEXT",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "HybridSearchChunk"
+        ],
+        "properties": [
+          "text"
+        ]
+      },
+      {
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ]
+      },
+      {
+        "name": "robingraph_chunk_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Chunk"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_document_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Document"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_korean_vernacular_vernacularnamecandidate_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "VernacularNameCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_license_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "License"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_observation_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Observation"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_place_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Place"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_evidenceunit_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "EvidenceUnit"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_externalidentifier_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "ExternalIdentifier"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_scientificname_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "ScientificName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_name",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "source_release",
+          "rank",
+          "scientific_name"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonconceptset_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonConceptSet"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingcandidate_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonMappingCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingclaim_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TaxonMappingClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_traitclaim_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "TraitClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_vernacularname_id",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "VernacularName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_dataset_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "SourceDataset"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_record_id_unique",
+        "type": "RANGE",
+        "state": "ONLINE",
+        "labelsOrTypes": [
+          "SourceRecord"
+        ],
+        "properties": [
+          "id"
+        ]
+      }
+    ],
+    "constraints": [
+      {
+        "name": "robingraph_chunk_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Chunk"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_document_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Document"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_korean_vernacular_vernacularnamecandidate_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "VernacularNameCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_license_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "License"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_observation_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Observation"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_place_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Place"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_evidenceunit_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "EvidenceUnit"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_externalidentifier_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "ExternalIdentifier"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_scientificname_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "ScientificName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxon_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "Taxon"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonconceptset_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonConceptSet"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingcandidate_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonMappingCandidate"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_taxonmappingclaim_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TaxonMappingClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_traitclaim_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "TraitClaim"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_reference_vernacularname_id",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "VernacularName"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_dataset_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "SourceDataset"
+        ],
+        "properties": [
+          "id"
+        ]
+      },
+      {
+        "name": "robingraph_source_record_id_unique",
+        "type": "NODE_PROPERTY_UNIQUENESS",
+        "labelsOrTypes": [
+          "SourceRecord"
+        ],
+        "properties": [
+          "id"
+        ]
+      }
+    ],
+    "node_content": {
+      "BirdNameUsage": {
+        "count": 461,
+        "sha256": "35ada0c8a13bc669d598b5f953b47c12adf553bae52f3036a76b8dc0783ad77c"
+      },
+      "BirdTaxon|ExternalTaxonConcept": {
+        "count": 29,
+        "sha256": "053ecf62cba3323bdadc3f5355bbeed2eef057d323d6279b96d46eeb6611ca3e"
+      },
+      "BirdTaxon|Taxon": {
+        "count": 33684,
+        "sha256": "20b3d875401a8265fbe2414f157d79be3d4cadbf3b1d45ec55cda738209c4968"
+      },
+      "Chunk|Fixture|HybridSearchChunk|HybridVectorChunk|RobinGraph": {
+        "count": 2,
+        "sha256": "a5d0ac20ee406ddd118a546038f73f3f33a9a1db375728964cfcd79744818ce9"
+      },
+      "Chunk|Fixture|HybridSearchChunk|RobinGraph": {
+        "count": 2,
+        "sha256": "aeb66b22d3ac812edb1009ccdbf9bf95a3b5908859cd2612829581f0ec384b00"
+      },
+      "Document|Fixture|RobinGraph": {
+        "count": 2,
+        "sha256": "2730ab5225dc59762934fa6996dcac24f25408fb852cb0e04983a99f1e9aad59"
+      },
+      "EvidenceUnit": {
+        "count": 136099,
+        "sha256": "7000516b306f3549b4f25b9febcd92a7885e0a30e3a4b5fea96e31efc7f9b8bd"
+      },
+      "EvidenceUnit|Fixture|RobinGraph": {
+        "count": 114,
+        "sha256": "9bcc31edd04a2a3e6addeb05458f9d121357ef87537acc1a741bfccb08eca72d"
+      },
+      "ExternalIdentifier": {
+        "count": 60796,
+        "sha256": "b82c221e80b0a21688fe032875637bce223b8cca97b76892a23deb7664d9a8aa"
+      },
+      "Fixture|License|RobinGraph": {
+        "count": 1,
+        "sha256": "1d48a3c8880287122bb7b999764fe5983dca9f3fb1378862937c726a93e3fd91"
+      },
+      "Fixture|Observation|RobinGraph": {
+        "count": 100,
+        "sha256": "0fc820d7824be420c25d10d453a1166a9c0306e5d9476c4b505e86d205a5e1b3"
+      },
+      "Fixture|Place|RobinGraph": {
+        "count": 5,
+        "sha256": "044c8602b5f84dbb63882d8a0ccc8e444fb8f24e9c55c18d663ab207e098cc23"
+      },
+      "Fixture|RobinGraph|ScientificName": {
+        "count": 10,
+        "sha256": "ccd685c658a79820f3623a17e153d98c2809fb2b3943f4d154fbd4533d543a9e"
+      },
+      "Fixture|RobinGraph|SourceDataset": {
+        "count": 3,
+        "sha256": "f35afaf5c5d34480e555d0d132e14a960f1924897eebfd5a50518df28ffba624"
+      },
+      "Fixture|RobinGraph|SourceRecord": {
+        "count": 116,
+        "sha256": "837137f04c3acc742ed2067d3c9f904ece5bd2d7f0b8914fe02f8e167abfb9f5"
+      },
+      "Fixture|RobinGraph|Taxon": {
+        "count": 10,
+        "sha256": "4124a87c6aec35241bb86db6157225c34edb94370f365e85593eda8c1e52b5b6"
+      },
+      "Fixture|RobinGraph|TaxonConceptSet": {
+        "count": 1,
+        "sha256": "0078e996ba8d7e8985efd2f9b421a98e474c114cc9803afb69eb8edf8b22fbb1"
+      },
+      "Fixture|RobinGraph|VernacularName": {
+        "count": 20,
+        "sha256": "dea429faa0e084d73d57c03eedf72a1b0554a532c313d5c41a7aa8815bca4dbf"
+      },
+      "MediaAsset": {
+        "count": 36,
+        "sha256": "51ec8cbac18ecda3859ba8fb60d60310787e4933713221e50162c2412dec8e7f"
+      },
+      "Observation": {
+        "count": 16,
+        "sha256": "be55a89e73fc62edda9d39fdf850c792e919d71f576267bf12a8d8f4fc240971"
+      },
+      "Place": {
+        "count": 3,
+        "sha256": "84f01a079764662f3b93a011e24430ccab9e212af0d4bf9ed2a1b611a44203dd"
+      },
+      "ScientificName": {
+        "count": 33713,
+        "sha256": "72099b085d6386e227560b9c7fd33bae8f091602eb49cbca6a659d7b8357c080"
+      },
+      "TaxonConceptSet": {
+        "count": 2,
+        "sha256": "ad1108293c37616de748e535c963e92b4af6d427db6cc92fba65b1508ea4773d"
+      },
+      "TaxonMappingCandidate": {
+        "count": 3371,
+        "sha256": "001d7639840115a0655f99576f9792a3f2bd44c45543ec2e8dc14c62afbe0807"
+      },
+      "TaxonMappingClaim": {
+        "count": 17648,
+        "sha256": "5c0a40800340900d5720bdbe786eefb238b0eadb9328de5a12e793e8a1849066"
+      },
+      "TraitClaim": {
+        "count": 174843,
+        "sha256": "f08d8a2ddbfb6e4f19ec601e274bc06873db7ce288c1f9e649f4ba7e2a6b7f38"
+      },
+      "VernacularName": {
+        "count": 13670,
+        "sha256": "d01bef807778f72103bf237aec2115eb2ef4ed54b14bb032976858bbae814f3b"
+      },
+      "VernacularNameCandidate": {
+        "count": 306,
+        "sha256": "7a5e91ee1f285804d6fb2b6cec808e6f5f0366afaca6d99b478bce5c1923d662"
+      }
+    },
+    "relationship_content": {
+      "ASSERTS_ABOUT": {
+        "count": 174843,
+        "sha256": "3e27f3ec387f98f261494a682d096e766ae6c624c82d042a1558196fdf278450"
+      },
+      "FROM_CHUNK": {
+        "count": 4,
+        "sha256": "8b4fad3127f730e5202dd72b9649cea75016a0bb63bf0a7dacfff255775267d4"
+      },
+      "FROM_RECORD": {
+        "count": 230,
+        "sha256": "b6d92036b690dc8c6f6a7cb20261a3f8e5fac5ef5bf0091ff59dda7a32118bfd"
+      },
+      "HAS_ACCEPTED_NAME": {
+        "count": 33723,
+        "sha256": "1d01d8614a287315ef7675cf41656b68f59e61dbde4e12745cbb5813462a1f3f"
+      },
+      "HAS_CHUNK": {
+        "count": 4,
+        "sha256": "7ffdb420507028ae1a889825afd2eb43b08ae27b20c789683925e06b917b8763"
+      },
+      "HAS_EXTERNAL_IDENTIFIER": {
+        "count": 60796,
+        "sha256": "943325160e48e5b853570fefb9438baa9675dbec1552707d68db0c223a567257"
+      },
+      "HAS_MAPPING_CLAIM": {
+        "count": 17,
+        "sha256": "e4b7ff3da40af7b49927ae741f55248a4a663f9ada72f75fa1120bfcfff17f3f"
+      },
+      "HAS_MEDIA": {
+        "count": 36,
+        "sha256": "c5adf17c1ec571886e80dcd2fd5afa366551e7e1e72b41c6005eb37bded68cab"
+      },
+      "HAS_VERNACULAR_NAME": {
+        "count": 13690,
+        "sha256": "92bd62cd2918fdaab43755660f2df929c0ceefc47bb7beb31d863e7ff2e9c3d4"
+      },
+      "IDENTIFIED_AS": {
+        "count": 16,
+        "sha256": "3357babb89f338e2456626cfa1394495c0bb5dbfeed21013a6b76e5e81d97d76"
+      },
+      "IN_CONCEPT_SET": {
+        "count": 33723,
+        "sha256": "f32f4b804974638df759d61e89cdaf47fc1b8a44712ce9fc528621546a9e31c4"
+      },
+      "IN_DATASET": {
+        "count": 116,
+        "sha256": "5d2dc05d748ffa0107bba0d402aa0940f1048232477dd8781cadc03cc27d163f"
+      },
+      "LICENSED_UNDER": {
+        "count": 3,
+        "sha256": "797467a2e2550c105f6187b0e486a5552daf5479cb2c06fc9f06bc87a9f5ba74"
+      },
+      "NAME_RELATION": {
+        "count": 138,
+        "sha256": "357130b8beab9b427ea7234827e450767fccd2ddd3dc95d2244a43001960a071"
+      },
+      "OBSERVED_TAXON": {
+        "count": 100,
+        "sha256": "1555b83c3b16c9fcc7c9b4812f4c1218181a313a9c8ba1344769681c906a5978"
+      },
+      "PARENT_OF": {
+        "count": 33666,
+        "sha256": "fff570691ab126ef7f11f49790d98b8e954f243d311c3b4bc57925ab01477592"
+      },
+      "PROPOSES_TAXON": {
+        "count": 17648,
+        "sha256": "34314fe26d4dc1efca4fdfa3fe43ff1ff3e383ccd31b43bbc47de44d27099c9d"
+      },
+      "SUPPORTED_BY": {
+        "count": 174859,
+        "sha256": "540c7a699e113bb16288fd9a2ced38e4ff07d63517fde3a937d4e5e09e5fdf59"
+      },
+      "WITHIN": {
+        "count": 116,
+        "sha256": "4b3092039319c4be6a8f003321dcceab429505f14658dc8ae60cd198968f574b"
+      }
+    }
+  },
+  "method": "canonical properties plus labels and directed endpoint properties; sorted per-row SHA256 digests by node label set / relationship type; PG sorted row_to_json full rows"
+}
