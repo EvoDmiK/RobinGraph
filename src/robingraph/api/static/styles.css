@@ -1036,6 +1036,17 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-answer h3 { margin: 0 0 14px; color: #244d38; font-size: 1.15rem; }
 .species-answer-names { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25em .6em; overflow-wrap: anywhere; }
 .species-answer-english-name { min-width: 0; max-width: 100%; color: #52664e; font-size: .72em; font-weight: 400; overflow-wrap: anywhere; }
+.species-popup-entry[data-photo-preview] { float: right; width: 148px; max-width: 38%; margin: 14px 0 12px 18px; }
+.species-popup-entry[data-photo-preview] > .species-popup-trigger { width: 100%; margin: 0; padding: 5px; border-width: 1px; border-radius: 14px; }
+.species-answer-photo { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 10px; background: #e1ebce; }
+.species-answer-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.species-answer-photo-placeholder { padding: 8px; color: #52664e; font-size: .75rem; line-height: 1.4; font-weight: 400; }
+.species-answer-photo-caption { display: block; padding: 6px 0 2px; font-size: .75rem; }
+.message-answer:has(> .species-popup-entry[data-photo-preview]) > .species-answer > .species-chat-brief { clear: both; }
+@media (max-width: 600px) {
+  .species-popup-entry[data-photo-preview] { width: 104px; margin-left: 10px; }
+  .species-answer-photo-caption { font-size: .65rem; }
+}
 .species-answer-section { margin: 12px 0; }
 .species-answer-section h4 { margin: 0 0 4px; color: #244d38; font-size: .95rem; }
 .species-answer-section ul { margin: 0; padding-left: 1.25rem; }

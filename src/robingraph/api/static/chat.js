@@ -2806,6 +2806,7 @@
     // untouched here so deferred enrichment can compare initial sections.
     card.updateEnrichment = function (fresh) {
       renderPhotos(fresh.images, fresh.photo_availability);
+      if (card.onPhotoPreviewChanged) { card.onPhotoPreviewChanged(fresh); }
       if (Object.prototype.hasOwnProperty.call(fresh, "sections")) {
         observationSections = fresh.sections; observationPending = !!fresh.enrichment_pending; observationMessage = "";
         renderObservations();
@@ -3745,7 +3746,7 @@
   }
 
   /** Native dialog supplies focus containment, Escape, and focus restoration. */
-  function buildSpeciesPopup(doc, card, profile) {
+  function buildSpeciesPopup(doc, card, profile, options) {
     var wrapper = doc.createElement("div");
     wrapper.className = "species-popup-entry";
     var opener = doc.createElement("button");
@@ -3757,6 +3758,44 @@
     opener.textContent = name + " · 도감 카드 보기 ↗";
     opener.setAttribute("aria-haspopup", "dialog");
     wrapper.appendChild(opener);
+    if (options && options.preview) {
+      wrapper.setAttribute("data-photo-preview", "true");
+      opener.setAttribute("aria-label", name + " 도감 카드 보기");
+      function updatePreview(fresh) {
+        while (opener.firstChild) { opener.removeChild(opener.firstChild); }
+        opener.textContent = "";
+        var frame = doc.createElement("span");
+        frame.className = "species-answer-photo";
+        var placeholder = doc.createElement("span");
+        placeholder.className = "species-answer-photo-placeholder";
+        placeholder.textContent = fresh.enrichment_pending ? "사진 준비 전" : "대표 사진 없음";
+        var photo = (Array.isArray(fresh.images) ? fresh.images : []).slice(0, 6).find(function (candidate) {
+          return candidate && sanitizeImageUrl(candidate.image_url);
+        });
+        if (photo) {
+          var image = doc.createElement("img");
+          image.src = sanitizeImageUrl(photo.image_url);
+          image.alt = "";
+          image.loading = "eager";
+          image.referrerPolicy = "no-referrer";
+          placeholder.textContent = "사진 불러오는 중";
+          image.addEventListener("load", function () { placeholder.hidden = true; });
+          image.addEventListener("error", function () {
+            image.hidden = true; placeholder.hidden = false;
+            placeholder.textContent = "사진을 불러오지 못했어요";
+          });
+          frame.appendChild(image);
+        }
+        frame.appendChild(placeholder);
+        opener.appendChild(frame);
+        var caption = doc.createElement("span");
+        caption.className = "species-answer-photo-caption";
+        caption.textContent = "도감 카드 보기 ↗";
+        opener.appendChild(caption);
+      }
+      updatePreview(profile);
+      card.onPhotoPreviewChanged = updatePreview;
+    }
 
     var dialog = doc.createElement("dialog");
     dialog.className = "species-popup risk-" + tier;
@@ -4277,7 +4316,9 @@
         if (speciesCard) {
           if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
           answerSources = combineCardSources(doc, speciesCard, answerSources);
-          item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
+          var speciesPopup = buildSpeciesPopup(doc, speciesCard, result.profile, { preview: !targeted && !!structured });
+          if (!targeted && structured) { item.insertBefore(speciesPopup, structured); }
+          else { item.appendChild(speciesPopup); }
           var extra = doc.createElement("details"); extra.className = "species-extra-info";
           var extraTitle = doc.createElement("summary"); extraTitle.textContent = "더 알아보기"; extra.appendChild(extraTitle);
           if (result.profile.taxon.rank !== "subspecies") {
