@@ -1547,12 +1547,14 @@
     var note = doc.createElement("p"); note.className = "species-note";
     note.textContent = "자료별 범주와 측정 기준이 다를 수 있습니다. 자료가 없는 항목은 차이로 판단하지 않습니다.";
     panel.appendChild(note);
+    var cardActions = doc.createElement("div"); cardActions.className = "species-comparison-card-actions";
     if (options.bothCards) {
       var leftCard = buildSpeciesCard(doc, left, cardOptions);
-      if (leftCard) { panel.appendChild(buildSpeciesPopup(doc, leftCard, left)); combineCardSources(doc, leftCard, comparisonSources); }
+      if (leftCard) { cardActions.appendChild(buildSpeciesPopup(doc, leftCard, left)); combineCardSources(doc, leftCard, comparisonSources); }
     }
     var card = buildSpeciesCard(doc, right, cardOptions);
-    if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); combineCardSources(doc, card, comparisonSources); }
+    if (card) { cardActions.appendChild(buildSpeciesPopup(doc, card, right)); combineCardSources(doc, card, comparisonSources); }
+    if (cardActions.children.length) { panel.appendChild(cardActions); }
     panel.appendChild(buildRelatedExplorer(doc, right, options.fetcher, options.explorer));
     panel.appendChild(buildEcologicalExplorer(doc, right, options.fetcher, options.explorer));
     panel.appendChild(comparisonSources);

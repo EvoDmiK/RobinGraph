@@ -1256,6 +1256,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-related h3 { font-size: 1rem; margin: .8rem 0 .4rem; }
 .species-related p { overflow-wrap: anywhere; }
 .species-comparison { margin-top: 1rem; }
+.species-comparison-card-actions { display: flex; gap: 12px; margin-top: .8rem; }
+.species-comparison-card-actions > .species-popup-entry { flex: 1; min-width: 0; }
+.species-comparison-card-actions > .species-popup-entry > .species-popup-trigger { width: 100%; height: 100%; margin: 0; padding: .7rem .5rem; overflow-wrap: anywhere; }
 .species-comparison-table { max-width: 100%; overflow-x: auto; }
 .species-comparison-table:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .species-comparison table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .85rem; }
