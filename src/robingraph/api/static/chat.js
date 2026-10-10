@@ -3762,6 +3762,7 @@
     wrapper.appendChild(dialog);
     var view = doc.defaultView;
     var fitActive = false, fitRaf = null, fitObserver = null;
+    var collapsedFitHeight = 0;
     function mobileFit() {
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
@@ -3792,12 +3793,14 @@
       // subsequent observer callbacks progressively shrink or oscillate.
       var naturalHeight = fitSurface.offsetHeight;
       if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
-      // While "측정값 더 보기", "분류 계통 보기" or a chart's "항목·비율" is open, keep the card at a
-      // readable size (fit the width only) and let the frame scroll vertically
-      // instead of shrinking the whole card to the frame height.
+      // Expanded details add scrollable content, not a new zoom level. Keep
+      // the closed card's height as the fitting reference so opening a toggle
+      // cannot enlarge its text, width or silver frame. Refit that reference
+      // to the current viewport on resize; never measure a transformed rect.
       var scrolling = scrollToggleOpen();
-      var scale = Math.min(1, width / naturalWidth);
-      if (!scrolling) { scale = Math.min(scale, height / naturalHeight); }
+      if (!scrolling) { collapsedFitHeight = naturalHeight; }
+      var fitHeight = scrolling && collapsedFitHeight > 0 ? Math.max(minimum, collapsedFitHeight) : naturalHeight;
+      var scale = Math.min(1, width / naturalWidth, height / fitHeight);
       fitSurface.style.transform = "scale(" + scale + ")";
       // A scaled surface keeps its unscaled layout height; trim the difference
       // so the scroll range matches what is visible.
@@ -3831,6 +3834,7 @@
       stopFit();
       if (!dialog.open) { return; }
       card.resetFitScroll();
+      collapsedFitHeight = 0;
       fitActive = true;
       if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
       if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
