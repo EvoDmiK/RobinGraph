@@ -1,0 +1,183 @@
+{
+  "passed": true,
+  "mode": "actual TEST API Mallard profile with local JS/CSS; long/english-only/unverified variants are modified fixtures",
+  "cases": 16,
+  "checks": [
+    {
+      "width": 320,
+      "variant": "real",
+      "heading": "청둥오리\nMallard",
+      "english": "Mallard",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 320,
+      "variant": "long",
+      "heading": "청둥오리\n<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "english": "<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 320,
+      "variant": "english-only",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 320,
+      "variant": "unverified",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 390,
+      "variant": "real",
+      "heading": "청둥오리\nMallard",
+      "english": "Mallard",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 390,
+      "variant": "long",
+      "heading": "청둥오리\n<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "english": "<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 390,
+      "variant": "english-only",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 390,
+      "variant": "unverified",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 768,
+      "variant": "real",
+      "heading": "청둥오리\nMallard",
+      "english": "Mallard",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 768,
+      "variant": "long",
+      "heading": "청둥오리\n<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "english": "<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 768,
+      "variant": "english-only",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 768,
+      "variant": "unverified",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 1280,
+      "variant": "real",
+      "heading": "청둥오리\nMallard",
+      "english": "Mallard",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 1280,
+      "variant": "long",
+      "heading": "청둥오리\n<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "english": "<img src=x onerror=alert(1)> Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name Long common bird name",
+      "lang": "en",
+      "headingFont": 18.4,
+      "englishFont": 13.248,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 1280,
+      "variant": "english-only",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    },
+    {
+      "width": 1280,
+      "variant": "unverified",
+      "heading": "Mallard",
+      "english": null,
+      "lang": null,
+      "headingFont": 18.4,
+      "englishFont": null,
+      "overflow": false,
+      "imagesInHeading": 0
+    }
+  ]
+}

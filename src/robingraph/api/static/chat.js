@@ -3530,7 +3530,18 @@
     var answer = doc.createElement("div");
     answer.className = "species-answer";
     var heading = doc.createElement("h3");
+    heading.className = "species-answer-names";
     heading.textContent = speciesLabel(profile.taxon);
+    var taxon = profile.taxon || {};
+    var koreanName = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" ? taxon.korean_name.trim() : "";
+    var englishName = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
+    if (koreanName && englishName && koreanName !== englishName) {
+      var englishLabel = doc.createElement("small");
+      englishLabel.className = "species-answer-english-name";
+      englishLabel.setAttribute("lang", "en");
+      englishLabel.textContent = englishName;
+      heading.appendChild(englishLabel);
+    }
     answer.appendChild(heading);
     var sources = [];
     var seen = {};

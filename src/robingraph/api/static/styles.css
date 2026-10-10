@@ -1034,6 +1034,8 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-photo-sources { margin: 12px 0; font-size: .82rem; }
 .species-answer { margin: 14px 0; line-height: 1.65; }
 .species-answer h3 { margin: 0 0 14px; color: #244d38; font-size: 1.15rem; }
+.species-answer-names { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25em .6em; overflow-wrap: anywhere; }
+.species-answer-english-name { min-width: 0; max-width: 100%; color: #52664e; font-size: .72em; font-weight: 400; overflow-wrap: anywhere; }
 .species-answer-section { margin: 12px 0; }
 .species-answer-section h4 { margin: 0 0 4px; color: #244d38; font-size: .95rem; }
 .species-answer-section ul { margin: 0; padding-left: 1.25rem; }
