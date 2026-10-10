@@ -1267,6 +1267,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-comparison td p { margin: .3rem 0; }
 .species-comparison details { font-size: .75rem; }
 .species-comparison caption { text-align: left; margin-bottom: .5rem; }
+.species-comparison-version, .species-comparison-relation { font-size: .8rem; color: var(--color-muted); margin: .5rem 0; }
+.comparison-peer.species-comparison-selection[data-ranked="true"] { margin: .8rem 0 .4rem; }
+.species-comparison > .species-answer-sources { margin-top: .7rem; }
 .species-related h3, .species-comparison h3 { color: var(--color-text); }
 .species-name-relations { margin-top: .75rem; border-top: 1px solid var(--color-answer-border); padding-top: .65rem; }
 .species-name-relations > button, .name-relation-choose { width: 100%; margin: .25rem 0; padding: .55rem; border: 1px solid var(--color-answer-border); border-radius: .6rem; background: var(--color-surface); color: var(--color-text); text-align: left; cursor: pointer; }

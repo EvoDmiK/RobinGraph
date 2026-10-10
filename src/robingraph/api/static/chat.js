@@ -1518,6 +1518,7 @@
           return trait && trait.source_scope_kind !== "subspecies_group" && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
         });
         if (!traits.length) { cell.textContent = "확인된 자료 없음"; }
+        var shownValues = Object.create(null);
         groupTraits(traits).forEach(function (group) {
           var trait = group.trait;
           var value = doc.createElement("p");
@@ -1525,9 +1526,10 @@
           if (trait.source_scope_kind === "subspecies_group") { value.textContent += " · 아종군 자료 (" + trait.source_scope + ")"; }
           if (trait.summary_statistic === "literature_bounds_mean") { value.textContent += " · 문헌 범위 평균"; }
           if (trait.summary_statistic === "sample_mean") { value.textContent += " · 표본 평균"; }
-          cell.appendChild(value);
+          if (!shownValues[value.textContent]) { cell.appendChild(value); shownValues[value.textContent] = true; }
           var details = doc.createElement("details");
           var summary = doc.createElement("summary"); summary.textContent = "출처"; details.appendChild(summary);
+          var context = doc.createElement("h4"); context.textContent = speciesLabel(profile.taxon) + " · " + field[1] + " · " + value.textContent; details.appendChild(context);
           group.sources.forEach(function (source) {
             details.appendChild(safeLink(doc, source.source_name, source.source_url));
             var meta = doc.createElement("p");
@@ -1537,7 +1539,7 @@
             appendTaxonomyAlignment(doc, details, source, {});
             appendTraitProvenance(doc, details, source);
           });
-          cell.appendChild(details);
+          comparisonSources.addSourceMaterial(details);
         });
         row.appendChild(cell);
       });
@@ -1723,12 +1725,22 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 분류군: " + (group.ancestor ? (group.ancestor.korean_name || group.ancestor.scientific_name) : "확인 불가") + " (" + (RANK_LABELS[group.rank] || group.rank) + ")";
-        if (group.rank === "similarity") { relation.textContent = similarityLabel(peer, priority); panel.appendChild(buildSimilarityEvidence(doc, peer)); var scoreNote = doc.createElement("p"); scoreNote.textContent = "계통·분류·생태의 가중 점수입니다. 계통 자료가 없으면 분류·생태만 100점으로 환산합니다. 진화 거리나 유전 유사도의 측정값은 아닙니다."; panel.appendChild(scoreNote); }
-        panel.appendChild(relation);
+        var sourceFooter = Array.prototype.slice.call(panel.children).find(function (child) { return child.className === "species-answer-sources"; });
+        if (group.rank === "similarity") {
+          var selection = buildComparisonPeer(doc, peer, true, priority);
+          selection.row.className += " species-comparison-selection";
+          selection.row.removeChild(selection.button);
+          panel.insertBefore(selection.row, sourceFooter);
+          var evidence = buildSimilarityEvidence(doc, peer);
+          var evidenceTitle = doc.createElement("h4"); evidenceTitle.textContent = "비교 후보 근거와 출처";
+          evidence.insertBefore(evidenceTitle, evidence.children[1] || null);
+          var scoreNote = doc.createElement("p"); scoreNote.textContent = "계통·분류·생태의 가중 점수입니다. 계통 자료가 없으면 분류·생태만 100점으로 환산합니다. 진화 거리나 유전 유사도의 측정값은 아닙니다.";
+          evidence.appendChild(scoreNote); sourceFooter.addSourceMaterial(evidence);
+        } else { panel.insertBefore(relation, sourceFooter); }
         var version = doc.createElement("p");
         version.className = "species-comparison-version";
         version.textContent = "분류 기준: " + [profile.lineage.taxonomy_source, profile.lineage.taxonomy_release].filter(Boolean).join(" · ");
-        panel.appendChild(version);
+        panel.insertBefore(version, sourceFooter);
         if (onComparison) {
           onComparison(panel, { left: profile, right: other, group: group });
           status.textContent = speciesLabel(profile.taxon) + "와(과) " + peerName + " 비교를 새 답변으로 추가했습니다.";
@@ -1870,14 +1882,15 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 생태 범주: " + group.display;
-        panel.appendChild(buildEcologicalSource(doc, group.source));
-        panel.appendChild(buildEcologicalSource(doc, peer.evidence));
-        panel.appendChild(relation);
-        var ecologicalNote = doc.createElement("p"); ecologicalNote.className = "species-note"; ecologicalNote.textContent = ECOLOGICAL_NOTE; panel.appendChild(ecologicalNote);
+        var sourceFooter = Array.prototype.slice.call(panel.children).find(function (child) { return child.className === "species-answer-sources"; });
+        sourceFooter.addSourceMaterial(buildEcologicalSource(doc, group.source));
+        sourceFooter.addSourceMaterial(buildEcologicalSource(doc, peer.evidence));
+        panel.insertBefore(relation, sourceFooter);
+        var ecologicalNote = doc.createElement("p"); ecologicalNote.className = "species-note"; ecologicalNote.textContent = ECOLOGICAL_NOTE; panel.insertBefore(ecologicalNote, sourceFooter);
         var version = doc.createElement("p");
         version.className = "species-comparison-version";
         version.textContent = "분류 기준: " + [profile.lineage.taxonomy_source, profile.lineage.taxonomy_release].filter(Boolean).join(" · ");
-        panel.appendChild(version);
+        panel.insertBefore(version, sourceFooter);
         if (onComparison) {
           onComparison(panel, { left: profile, right: other, group: group });
           status.textContent = speciesLabel(profile.taxon) + "와(과) " + peerName + " 비교를 새 답변으로 추가했습니다.";

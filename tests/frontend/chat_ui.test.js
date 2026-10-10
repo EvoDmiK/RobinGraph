@@ -4042,7 +4042,8 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(rows.length, 3);
   assert.equal(rows[1], answer);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-comparison"), false);
-  assert.match(collectedText(rows[2]), /가중 점수 90점/);
+  assert.equal(collectAllNodes(rows[2]).find(n => n.className === "comparison-peer-score").textContent, "90점");
+  assert.equal(collectAllNodes(rows[2]).find(n => n.className === "comparison-peer-basis").textContent, "가중 점수");
   assert.equal(collectAllNodes(rows[2]).filter(n => n.tagName === "dialog").length, 2);
 });
 
@@ -4095,7 +4096,8 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
   const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.getAttribute("aria-label") || ""));
   button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
-  assert.match(collectedText(bubbles[0]), /가중 점수 90점/);
+  assert.equal(collectAllNodes(bubbles[0]).find(n => n.className === "comparison-peer-score").textContent, "90점");
+  assert.equal(collectAllNodes(bubbles[0]).find(n => n.className === "comparison-peer-basis").textContent, "가중 점수");
   assert.match(collectedText(bubbles[0]), /비교 후보 근거와 출처/);
   assert.match(collectedText(bubbles[0]), /진화 거리나 유전 유사도/);
   assert.equal(collectAllNodes(bubbles[0]).filter(n => n.tagName === "dialog").length, 2);
@@ -4495,7 +4497,9 @@ test("direct ranked questions render exactly one unfolded TOP3 card set and comp
   await settleEventPath();
   assert.equal(messageRows(dom.elementsById.history).length, 3);
   assert.equal(messageRows(dom.elementsById.history)[1], answer);
-  assert.match(collectedText(messageRows(dom.elementsById.history)[2]), /분류·생태 대체 점수\(계통 자료 부족\) 66.67점/);
+  const selected = messageRows(dom.elementsById.history)[2];
+  assert.equal(collectAllNodes(selected).find(n => n.className === "comparison-peer-score").textContent, "66.67점");
+  assert.equal(collectAllNodes(selected).find(n => n.className === "comparison-peer-basis").textContent, "분류·생태 대체 점수(계통 자료 부족)");
 });
 
 for (const mismatch of ["concept_set_id", "taxonomy_release", "taxon_id"]) {
@@ -6136,5 +6140,25 @@ test("every approved expert record renders through the shared path and rejects u
     assert.equal(info.tier,ref.category.toLowerCase(),ref.scientific_name);
     assert.match(info.badgeText,/홍콩조류관찰회 자료 기준/);
     assert.equal(chat.referenceAssessmentInfo({reference_assessment:{...ref,unreviewed_source:"https://example.org"}},taxon),null);
+  }
+});
+
+
+test("comparison shows equal display values once while keeping all attributed raw claims in one footer", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [
+    { name: "body_mass", value: 570, display: "570", unit: "g", source_name: "Study A", source_url: "https://example.org/study-a" },
+    { name: "body_mass", value: "570", display: "570", unit: "g", source_name: "Study B", source_url: "https://example.org/study-b" },
+    { name: "body_mass", value: 571, display: "571", unit: "g", source_name: "Study C", source_url: "https://example.org/study-c" },
+    { name: "body_mass", value: 570, display: "570", unit: "g", summary_statistic: "sample_mean", source_name: "Sample", source_url: "https://example.org/sample" },
+  ];
+  const panel = chat.buildSpeciesComparison(svgCapableDoc(), profile, profile);
+  const table = collectAllNodes(panel).find(n => n.tagName === "tbody");
+  const cell = table.children[table.children.length - 1].children[1];
+  assert.deepEqual(cell.children.map(n => n.textContent), ["570 g", "571 g", "570 g · 표본 평균"]);
+  assert.equal(collectAllNodes(cell).some(n => n.tagName === "details" || n.tagName === "a"), false);
+  const sources = panel.children.find(n => n.className === "species-answer-sources");
+  for (const url of ["study-a", "study-b", "study-c", "sample"]) {
+    assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === "https://example.org/" + url).length, 1);
   }
 });
