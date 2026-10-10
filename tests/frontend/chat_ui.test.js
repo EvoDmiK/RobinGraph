@@ -3955,7 +3955,7 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   for (const name of ["Reviewed profile", "Appearance source", "Ecology source", "Fun facts source", "IUCN Red List", "API evidence"]) {
     assert.ok(collectedText(sources).includes(name), "footer retains " + name);
   }
-  assert.deepEqual(explanation.children.map(n => n.className), ["", "species-answer-section", "species-chat-brief risk-lc", "species-answer-section", "species-answer-section", "species-answer-section"]);
+  assert.deepEqual(explanation.children.map(n => n.className), ["species-answer-names", "species-answer-section", "species-chat-brief risk-lc", "species-answer-section", "species-answer-section", "species-answer-section"]);
   assert.equal(explanation.children.at(-1).children[0].textContent, "재미있는 사실");
   assert.equal(explanation.children.some(n => n.className === "species-answer-sources"), false);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false, "folded exploration never fetches");
