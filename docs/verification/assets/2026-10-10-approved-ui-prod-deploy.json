@@ -1,0 +1,11 @@
+{
+  "productionImage": "sha256:db6b08852216ac26f4c99fd6a21b01dc85c43efe3ea9ca6faec9f7c880d892e4",
+  "productionTag": "robingraph-api:prod-approved-ui-0681747",
+  "startedAt": "2026-10-10T06:07:33.413088244Z",
+  "health": "healthy",
+  "testUnchanged": true,
+  "productionSettingsPreserved": true,
+  "previousTag": "robingraph-api:prod-food-ui-2ee9318",
+  "previousImage": "sha256:c32be224b61c44b2cd2425f69fcf765e3d065182a9b892f2b0540bccf70b8226",
+  "releaseRoot": "/home/kimdove/RobinGraph-approved-ui-e7ad221"
+}
