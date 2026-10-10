@@ -3763,6 +3763,7 @@
     var view = doc.defaultView;
     var fitActive = false, fitRaf = null, fitObserver = null;
     var collapsedFitHeight = 0;
+    var materialMeasureKey = "", materialCanvasHeight = 0;
     function mobileFit() {
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
@@ -3800,6 +3801,29 @@
       var scrolling = scrollToggleOpen();
       if (!scrolling) { collapsedFitHeight = naturalHeight; }
       var fitHeight = scrolling && collapsedFitHeight > 0 ? Math.max(minimum, collapsedFitHeight) : naturalHeight;
+      // Percentage gradients otherwise stretch/recenter when details add
+      // height, producing a tiny apparent sheen movement despite zero rotation.
+      if (typeof card.style.setProperty === "function") {
+        card.style.setProperty("--species-card-material-height", fitHeight + "px");
+        // Give the material its own stable paint surface large enough for all
+        // details. A changing raster surface can shift gradient pixels even
+        // when background-size is fixed. Measure without touching live toggles.
+        var materialKey = naturalWidth + ":" + fitHeight;
+        if (materialKey !== materialMeasureKey) {
+          materialMeasureKey = materialKey;
+          materialCanvasHeight = fitHeight;
+          if (typeof card.cloneNode === "function") {
+            var materialMeasure = card.cloneNode(true);
+            materialMeasure.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;transform:none;width:" + naturalWidth + "px;min-height:" + minimum + "px";
+            var materialDetails = materialMeasure.querySelectorAll("details");
+            for (var m = 0; m < materialDetails.length; m += 1) { materialDetails[m].open = true; }
+            fitSurface.appendChild(materialMeasure);
+            materialCanvasHeight = Math.max(fitHeight, materialMeasure.offsetHeight);
+            fitSurface.removeChild(materialMeasure);
+          }
+        }
+        card.style.setProperty("--species-card-material-canvas-height", materialCanvasHeight + "px");
+      }
       var scale = Math.min(1, width / naturalWidth, height / fitHeight);
       fitSurface.style.transform = "scale(" + scale + ")";
       // A scaled surface keeps its unscaled layout height; trim the difference

@@ -5460,7 +5460,7 @@ function mobileFitFixture() {
     ResizeObserver: class { constructor(fn) { this.fn = fn; this.nodes = []; observers.push(this); } observe(node) { this.nodes.push(node); } disconnect() { this.nodes = []; } },
   };
   const doc = { createElement: createFakeElement, defaultView: win };
-  const card = chat.buildSpeciesCard(doc, photoProfile()); card.style = {};
+  const card = chat.buildSpeciesCard(doc, photoProfile()); card.style = { setProperty(name, value) { this[name] = value; } };
   const popup = chat.buildSpeciesPopup(doc, card, photoProfile()), dialog = popup.children[1];
   const frame = cardPart(popup, "species-card-fit-frame"), surface = cardPart(popup, "species-card-fit-surface");
   surface.style = {}; frame.clientWidth = 280; frame.clientHeight = 500; surface.offsetWidth = 420;
@@ -5540,9 +5540,12 @@ test("expanded details remain stable across observers, nested toggles and viewpo
   const f = mobileFitFixture(), toggles = [{ open: false }, { open: false }];
   f.card.querySelectorAll = () => toggles;
   f.height(1200); f.open();
+  assert.equal(f.card.style["--species-card-material-height"], "1200px");
   toggles[0].open = true; f.height(2000); f.card.dispatch("toggle"); f.flush();
   for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  assert.equal(f.card.style["--species-card-material-height"], "1200px", "material does not stretch with expanded content");
+  assert.equal(f.card.style["--species-card-material-canvas-height"], "1200px", "material paint surface stays fixed");
   toggles[1].open = true; f.height(2400); f.card.dispatch("toggle"); f.flush();
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
   f.frame.scrollTop = 100; toggles[0].open = false; f.card.dispatch("toggle"); f.flush();
@@ -5552,6 +5555,14 @@ test("expanded details remain stable across observers, nested toggles and viewpo
   toggles[1].open = false; f.height(1200); f.card.dispatch("toggle"); f.flush();
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
   assert.equal(f.frame.scrollTop, 0);
+});
+
+test("all popup palettes anchor their material height independently of flip sheen", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\] \{\s*background-size: 100% var\(--species-card-material-height, 100%\);/);
+  assert.ok(css.indexOf('.species-card[data-conservation-tier]') > css.indexOf('.species-card.risk-ex'), "palette shorthands cannot reset the fixed material size");
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\]::before \{[^}]*pointer-events: none;[^}]*contain: paint;[^}]*transform: translateZ\(0\);/);
+  assert.match(css, /\.species-card-gloss \{[^}]*background-size: 300% 100%;/);
 });
 
 test("flipping the card returns the scrolled frame to the top", () => {

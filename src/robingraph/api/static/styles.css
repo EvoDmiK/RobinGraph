@@ -1201,6 +1201,25 @@ body:has(.species-popup[open]) { overflow: hidden; }
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
 }
+/* Anchor every card palette's material to its collapsed size. Detail content
+   may grow, but must not stretch the texture/light field behind existing rows.
+   The separate rotation-driven gloss and animated rare-tier frame remain intact. */
+.species-popup .species-card[data-conservation-tier] {
+  background-size: 100% var(--species-card-material-height, 100%);
+  isolation: isolate;
+}
+.species-popup .species-card[data-conservation-tier]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: var(--species-card-material-canvas-height, 100%);
+  background: inherit;
+  background-size: 100% var(--species-card-material-height, 100%);
+  z-index: -1;
+  pointer-events: none;
+  contain: paint;
+  transform: translateZ(0);
+}
 @media (prefers-reduced-motion: reduce) {
   .species-popup.risk-cr, .species-popup.risk-ew, .species-popup.risk-ex { animation: none; }
 }
