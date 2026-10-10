@@ -3908,7 +3908,8 @@ test("targeted diet answer renders supplied distribution as diet icons and keeps
   const fixture = await renderProfileMessage(profile, { result: payload.result });
   const targeted = fixture.message.children.find(n => n.className === "species-question-answer");
   const list = collectAllNodes(targeted).find(n => /species-diet-icons/.test(n.className || ""));
-  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["먹이: 무척추동물 40%", "먹이: 씨앗 35.5%", "먹이: 기타 식물 24.5%"]);
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["무척추동물", "씨앗", "기타 식물"]);
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "question-answer-diet-share").map(n => n.textContent), ["40%", "35.5%", "24.5%"]);
   assert.equal(collectAllNodes(targeted).some(n => n.className === "question-answer-facts"), false);
   assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0);
   assert.equal(collectAllNodes(fixture.sources).filter(n => n.tagName === "a" && n.href === source.source_url).length, 1);
