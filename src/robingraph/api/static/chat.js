@@ -3498,8 +3498,15 @@
       // Diet facts carry the sourced trait itself, so the existing icon/percent display reads the supplied value, never the prose.
       var diet = questionAnswer.topic === "diet" ? dietIconInfo({ traits: items }) : null;
       if (diet && diet.icons.length) {
+        diet.icons.forEach(function (icon) { icon.text = icon.label + (icon.detail ? " · " + icon.detail : ""); });
         var dietList = buildDietIcons(doc, diet);
         dietList.className += " question-answer-diet";
+        diet.icons.forEach(function (icon, index) {
+          if (icon.percent == null) { return; }
+          var share = doc.createElement("strong"); share.className = "question-answer-diet-share";
+          share.textContent = Math.round(icon.percent * 10) / 10 + "%";
+          dietList.children[index].appendChild(share);
+        });
         section.appendChild(dietList);
       } else {
         var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
