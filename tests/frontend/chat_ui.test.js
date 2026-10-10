@@ -5560,6 +5560,7 @@ test("expanded details remain stable across observers, nested toggles and viewpo
 test("all popup palettes anchor their material height independently of flip sheen", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\] \{\s*background-size: 100% var\(--species-card-material-height, 100%\);/);
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\] \{[^}]*overflow: clip;/);
   assert.ok(css.indexOf('.species-card[data-conservation-tier]') > css.indexOf('.species-card.risk-ex'), "palette shorthands cannot reset the fixed material size");
   assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\]::before \{[^}]*pointer-events: none;[^}]*contain: paint;[^}]*transform: translateZ\(0\);/);
   assert.match(css, /\.species-card-gloss \{[^}]*background-size: 300% 100%;/);

@@ -13,7 +13,7 @@
 ## 구현과 변경 전후
 
 - `src/robingraph/api/static/chat.js`: 앞선 확대 수정의 닫힌 카드 기준 `fitHeight`를 소재 기준 높이로 CSS 변수에 전달한다. 숨긴 복제 카드에서 모든 details를 열어 최대 콘텐츠 높이를 측정하고, 너비·기준 높이가 같은 동안 캐시한다. 실제 카드의 토글·스크롤·이벤트 상태는 바꾸지 않는다. 측정 복제본은 즉시 제거한다.
-- `src/robingraph/api/static/styles.css`: 모든 카드 등급에 공통 소재 `::before` 레이어를 만든다. 소재 tile 높이와 레이어 높이를 고정하고, isolation·paint containment·별도 합성 레이어로 토글에 따른 재래스터화 영향을 줄인다. 최대 콘텐츠 높이까지 소재를 표시하며 pointer-events none으로 드래그나 토글 클릭을 가로막지 않는다.
+- `src/robingraph/api/static/styles.css`: 모든 카드 등급에 공통 소재 `::before` 레이어를 만든다. 전체 상세 높이로 소재 레이어를 고정하고 해당 면 전체에 배경을 한 번 그린다. 카드의 overflow clip으로 레이어가 추가 스크롤 공간을 만들지 않도록 하고, isolation·paint containment·별도 합성 레이어로 토글에 따른 재래스터화 영향을 줄인다. 최대 콘텐츠 높이까지 소재를 표시하며 pointer-events none으로 드래그나 토글 클릭을 가로막지 않는다.
 - `tests/frontend/chat_ui.test.js`: 토글 높이가 늘어도 소재 기준/paint surface 높이가 유지되는 검사 및 공통 팔레트 CSS 경로 검사를 추가했다.
 - `docs/verification/assets/2026-10-10-card-material-stability.cjs`: 실제 원앙 API 프로필에서 팔레트 검사용 grade fixture를 파생해 PC/모바일의 배경 픽셀과 반사광 동작을 비교한다. PNG 필터를 복원한 실제 픽셀을 비교하며 단순 압축 파일/필터 scanline 비교를 사용하지 않는다.
 
@@ -23,7 +23,7 @@
 
 - `node --test tests/frontend/*.test.js`: 298 통과, 실패 0, 건너뜀 0. Node의 DOM 모의 검사이며 실제 DB/API 검사로 표현하지 않는다.
 - Chrome 소재 검사: 실제 TEST 원앙 프로필을 새로 조회하고 로컬 JS/CSS만 interception. 9 팔레트(LC/NT/VU/EN/CR/EW/EX/DD/미확인) × PC 1280×900·모바일 390×640 = 18 사례 통과, 실패 0, 건너뜀 0. grade를 바꾼 사례는 UI fixture이며 해당 종의 실제 평가 검증이 아니다.
-- 소재 픽셀은 대부분 완전히 동일했다. 가장 큰 남은 차이는 채널 최대 1/255, 평균 약 0.000162/255다. 합성/반올림의 미세한 차이를 허용하기 위해 최대 1/255 및 평균 0.01/255 미만 기준을 사용했다. 완전한 bit-identical 결과라고 과장하지 않는다. 토글 전후 정지 반사광 opacity 0 유지; 실제 PC 드래그 중 반사광 활성화 및 손을 뗀 뒤 0 복귀 통과.
+- 최종 소재 픽셀은 18개 사례 모두 완전히 동일했다(최대·평균 차이 0). 앞선 tile 고정 실험에서는 채널 최대 1/255, 평균 약 0.000162/255가 남았지만, 최종 구현은 전체 고정 면에 배경을 한 번 그린다. 합성/반올림의 미세한 차이를 허용하기 위해 최대 1/255 및 평균 0.01/255 미만 기준을 사용했다. 허용 오차 기준과 실제 측정치 0을 구분한다. 소재 canvas 높이 유지 및 레이어가 실제 카드보다 긴 빈 스크롤 영역을 만들지 않는 검사도 통과했다. 토글 전후 정지 반사광 opacity 0 유지; 실제 PC 드래그 중 반사광 활성화 및 손을 뗀 뒤 0 복귀 통과.
 - 확대 수정 회귀: TEST에서 이전에 실제 조회한 원앙·청둥오리·까치 프로필을 캐시 재사용하고 로컬 JS/CSS를 적용했다. 3종 × 6 PC/모바일/가로 뷰포트 = 18 사례, 실제 summary 클릭 60개 토글 검사 통과. 배율·너비 유지, 열린 내용 맨 아래 접근, 여러 토글 동시 열림, resize 및 닫힘 후 scrollTop 0 복귀를 확인했다. native PC 휠/모바일 CDP pan은 이전 도구의 동일 기준으로 실행했다. 결과 JSON에서 개별 실행 여부를 확인할 수 있다.
 - 재현/로컬/회귀 JSON은 `docs/verification/assets/2026-10-10-card-material-{before,local,toggle-local}.json`에 저장했다. 스크린샷·API 임시 파일은 `/tmp/rg-material-*`에 있으며 저장소에 PNG를 추가하지 않았다.
 - JS 문법 검사, git diff check 통과. `graphify update .` 실행 완료. SQL parser dependency 부재 등 기존 graphify 경고는 앱 오류와 구분한다.
@@ -37,3 +37,9 @@ Obsidian `Work/RobinGraph/작업기록/2026-10-10-카드소재-토글반사무�
 ## 한계와 후속
 
 모바일은 Chrome 에뮬레이션이며 실제 iPhone/Android 또는 Safari 실행 검증이 아니다. 토글을 열면 정보를 읽기 위한 내부 스크롤은 앞선 수정대로 유지한다. 소재 안정화 검사는 카드 렌더러를 직접 실행한 검사이며 질문 의도 분석 전체의 검사가 아니다. 보전 등급 데이터·체중 중복 등의 데이터/UI 문제는 별도 작업이며 이번에 변경하지 않았다.
+
+## 첫 TEST 배포 후 시각 검토와 후속 수정
+
+첫 구현 `a7f5e63e8df3efede882e00546e22c8688df02de`를 TEST 이미지 `robingraph-api:test-material-a7f5e63`로 배포했다. 기본 픽셀·배율 검사는 통과했으나, 실제 모바일 스크린샷을 열어 고정 소재 레이어가 긴 빈 스크롤 공간을 만드는 문제와 반복 tile 경계를 발견했다. 이 버전을 최종 완료로 안내하지 않았다.
+
+후속으로 공통 카드에 `overflow: clip`을 적용해 소재가 카드 안에서만 표시되게 했고, 반복 tile 대신 고정 최대 면 전체에 배경을 그려 경계를 없앴다. 브라우저 도구에 소재 canvas 높이 유지와 `scrollHeight <= max(clientHeight, 실제 카드 높이) + 3px` 검사를 추가했다. 이 검사 없이 픽셀 비교만으로 스크롤 영역 정상 여부를 판단할 수 없다는 점을 기록한다. 후속 로컬 소재 18사례·배율 회귀 18사례 및 Node 298 검사를 재실행해 통과했고, 모바일 펼친 화면을 직접 열어 빈 공간 제거를 확인했다. 이 후속 수정까지 TEST에 다시 배포한 최종 정보는 아래 추가한다.
