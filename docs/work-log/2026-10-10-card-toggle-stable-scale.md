@@ -80,3 +80,27 @@ Obsidian `Work/RobinGraph/작업기록/2026-10-10-카드뒷면-토글배율유�
 - 상세를 열면 내용을 읽기 위한 내부 스크롤은 유지한다. 이번 요청은 토글에 따른 갑작스러운 카드 확대를 제거하는 것이다.
 - 같은 뷰포트에서 토글만 여닫는 동안 배율을 유지한다. 창 resize, 기본 상태에서 실제 새 내용이 추가되는 경우에는 화면 맞춤을 재계산한다.
 - 스크린샷의 원앙 체중 중복은 이 배율 오류와 별개의 항목 표시 문제다. 이번 작업에서 중복 체중/종 데이터/보전 등급은 변경하지 않았다.
+
+## 최종 NAS TEST 배포와 실제 서버 검증
+
+위 SSH 대기 기록은 구현 커밋 시점의 상태다. 이후 사용자가 SSH 개방을 알렸고, 연결 성공 후 TEST 배포와 사후 검증을 완료했다. **현재 수정본은 NAS TEST에 반영되어 있으며 Production은 그대로 유지했다.**
+
+- 구현 커밋: `05ebc61bcd957759224a4a935a3b1e1a131056b9`, `dev` 커밋·`origin/dev` push 완료.
+- 공개 TEST: https://robingraph-test.dove-nest.com/chat
+- TEST 이미지: `robingraph-api:test-toggle-05ebc61`, 실제 ID `sha256:0af687cdb42b6333b31630e4b6a4c33ef50b2fed8922bbce72ddb475626cd1f7`, OCI revision은 구현 커밋과 일치.
+- NAS 릴리스: `/home/kimdove/RobinGraph-toggle-05ebc61`. archive SHA-256 `5a30a69cf990c54e2a88efbfd6c428b054d17d318cf53f7f083076b9126697c5`, NAS 해시 확인 후 추출했다.
+- 기존 TEST `.env.nas.test`를 복사하고 TEST 이미지 태그만 변경했다. PG 대상 `robingraph_test`를 명시적으로 검사했고 `ROBINGRAPH_DEPLOY_TARGET=test`로 실행했다. 기존 TEST의 Neo4j 연결·자격 증명은 유지했다.
+- 표준 `deploy_nas.sh preflight`, `build`, `deploy`, `verify` 성공. `deploy` 안의 재빌드는 캐시를 사용했다. Docker health healthy, 재시작 0, 시작 시각 `2026-10-10T02:20:43.462990104Z`(한국 시간 11:20:43).
+- 최초 scp 전송은 `Connection closed`로 실패했다. SSH stdin 전송으로 대체해 archive 검증 후 진행했다. 잘못된 파일로 앱을 교체하지 않았다.
+- 운영 이미지 `robingraph-api:prod-card-photo-a2c8bcc`, ID `sha256:6d98571a254d1e686f11fc8a4b197da87b2b40ee449c9746a33ce9141d32ede2`, 시작 시각 `2026-10-09T13:53:00.901732645Z`, healthy·재시작 0으로 배포 전후 동일했다. 운영 앱 재시작·DB 마이그레이션은 수행하지 않았다.
+
+배포 후에는 **TEST API에서 세 종 프로필을 새로 조회하고 실제 TEST JS/CSS**로 검증했다. 로컬 파일 interception이나 이전 운영 프로필 캐시를 사용하지 않았다.
+
+- PC·모바일·모바일 가로 포함 같은 18사례와 60개 토글 검사: 모두 통과, 실패 0, 건너뜀 0.
+- 열기·닫기 배율 및 너비 유지, 확대 없이 전체 내용 끝까지 접근, 여러 토글 동시 열림과 resize, 마지막 닫힘 후 scrollTop 0 복귀를 확인했다.
+- 첫 토글에서 실제 입력 검증: PC 휠 6사례와 모바일 CDP 세로 터치 10사례, 합계 16사례에서 scrollTop 증가 및 뒷면 유지가 통과했다. 나머지 2사례는 내용 전체가 이미 화면에 들어와 스크롤이 필요하지 않아 입력 검사를 실행하지 않았다. 사례 전체를 건너뛴 것이 아니며 배율·토글·끝 접근 검사는 모두 실행했다.
+- page error 0. TEST가 제공하는 JS/CSS SHA-256이 로컬 구현 파일과 완전히 일치했다. 결과는 `…-deployed.json`, `…-asset-hashes.json`에 저장했다.
+- 배포 후 스크린샷/실제 프로필: `/tmp/rg-toggle-test-live/`. 스크린샷에는 세로 입력 후 자연스럽게 내려간 상태도 포함되므로 제목이 안 보이는 사진만으로 확대 여부를 판단하지 않는다. 확대 여부는 닫힌 상태와 열린 직후 배율·너비 실측으로 판별했다.
+- 추가 native 입력 검증 도구 변경 뒤 `node --check` 통과. AST 그래프도 다시 갱신했다(5,029 노드·10,506 연결). 앱 코드/배율 계산을 추가 변경하지 않았으므로 Node 전체를 중복 실행하지 않았다.
+
+이 최종 결과를 저장소와 Obsidian에 같은 본문으로 반영하고 문서 커밋/push한다. Production 반영은 별도 사용자 승인 후 수행한다.

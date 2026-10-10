@@ -29,13 +29,26 @@ const {chromium}=require('playwright'),fs=require('fs'),path=require('path'),ass
         await toggle.locator('summary').click();await page.waitForTimeout(200);const expanded=await geometry();
         const enlarged=expanded.scale>baseline.scale+1e-6;
         if(!repro){assert.ok(Math.abs(expanded.scale-baseline.scale)<1e-6,'scale unchanged: '+label);assert.ok(Math.abs(expanded.width-baseline.width)<1,'width unchanged');assert.equal(expanded.scrolling,'true');assert.ok(expanded.x>=-1&&expanded.y>=-1&&expanded.x+expanded.width<=width+1&&expanded.y+expanded.height<=height+1);}
+        let nativeScroll=null;
+        if(i===0&&!repro&&expanded.scrollHeight>expanded.clientHeight+5){
+          await page.evaluate(()=>{document.querySelector('dialog[open] .species-card-fit-frame').scrollTop=0;});
+          const bounds=await page.locator('dialog[open] .species-card-fit-frame').boundingBox();
+          const x=bounds.x+bounds.width/2,y=bounds.y+bounds.height*.75;
+          if(mobile){
+            const session=await context.newCDPSession(page);await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});
+            for(let step=1;step<=10;step++)await session.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y:y-bounds.height*.45*step/10,id:1}]});
+            await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await session.detach();
+          }else{await page.mouse.move(x,y);await page.mouse.wheel(0,200);}
+          await page.waitForTimeout(250);nativeScroll=await geometry();assert.ok(nativeScroll.scrollTop>0,'native vertical input scrolls expanded content');
+          assert.equal(await card.locator('.species-card-back').evaluate(e=>e.hidden),false,'vertical scroll does not flip');
+        }
         if(i===0)await page.screenshot({path:path.join(out,name.replace(/ /g,'-')+'-'+width+'x'+height+'-expanded.png')});
         // Reach the actual end of expanded content (frame hides only scrollbar).
         await page.evaluate(()=>{const f=document.querySelector('dialog[open] .species-card-fit-frame');f.scrollTop=f.scrollHeight;});await page.waitForTimeout(100);const bottom=await geometry();
         if(!repro)assert.ok(Math.abs(bottom.scrollTop-(bottom.scrollHeight-bottom.clientHeight))<=2,'expanded content reachable');
         await toggle.evaluate(el=>{el.open=false;});await page.waitForTimeout(200);const collapsed=await geometry();
         if(!repro){assert.ok(Math.abs(collapsed.scale-baseline.scale)<1e-6);assert.equal(collapsed.scrollTop,0);assert.equal(collapsed.scrolling,'false');}
-        records.push({label,expanded,bottom,collapsed,enlarged});
+        records.push({label,expanded,nativeScroll,bottom,collapsed,enlarged});
       }
       if(!repro&&await toggles.count()>1){
         await toggles.nth(0).evaluate(e=>{e.open=true;});await toggles.nth(1).evaluate(e=>{e.open=true;});await page.waitForTimeout(200);
