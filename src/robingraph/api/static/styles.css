@@ -1282,6 +1282,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 /* RG-008 feeding-ecology icons: one chip per sourced food component. */
 .species-diet-icons { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 8px 0; padding: 0; list-style: none; }
+.species-diet-icons.question-answer-diet { flex-direction: column; align-items: flex-start; gap: 6px; margin: 10px 0; }
+.question-answer-diet .diet-icon { padding: 4px 12px 4px 4px; font-size: .88rem; }
+.question-answer-diet .diet-icon-symbol { flex-basis: 26px; width: 26px; height: 26px; }
+.question-answer-diet .diet-icon-symbol svg { width: 18px; height: 18px; }
 .species-chat-brief .species-diet-icons { margin: 0; }
 .diet-icon { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 8px 2px 3px; border: 1px solid var(--diet, #4f5b66); border-radius: 999px; background: #fffdf8; font-size: .75rem; line-height: 1.3; color: var(--diet, #4f5b66); }
 .diet-icon-symbol { display: inline-grid; place-items: center; flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%; background: var(--diet, #4f5b66); }

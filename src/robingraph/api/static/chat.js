@@ -3494,15 +3494,23 @@
     var rankedExplorer = options && options.rankedExplorer;
     if (!rankedExplorer) {
       var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
-      var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
-      (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
-        if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
-        var item = doc.createElement("li");
-        var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
-        if (typeof fact.source_name === "string" && fact.source_name.trim()) { item.appendChild(safeLink(doc, " · " + fact.source_name, fact.source_url)); }
-        facts.appendChild(item);
-      });
-      if (facts.children.length) { section.appendChild(facts); }
+      var items = Array.isArray(questionAnswer.items) ? questionAnswer.items : [];
+      // Diet facts carry the sourced trait itself, so the existing icon/percent display reads the supplied value, never the prose.
+      var diet = questionAnswer.topic === "diet" ? dietIconInfo({ traits: items }) : null;
+      if (diet && diet.icons.length) {
+        var dietList = buildDietIcons(doc, diet);
+        dietList.className += " question-answer-diet";
+        section.appendChild(dietList);
+      } else {
+        var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
+        items.forEach(function (fact) {
+          if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
+          var item = doc.createElement("li");
+          var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
+          facts.appendChild(item);
+        });
+        if (facts.children.length) { section.appendChild(facts); }
+      }
     } else { section.appendChild(rankedExplorer); }
     var context = questionAnswer.name_context;
     if (isNameRelationsPayload(context)) {
@@ -4324,13 +4332,11 @@
           if (result.profile.taxon.rank !== "subspecies") {
             var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
             var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
-            if (targeted && questionAnswer.relations) {
-              var directOptions = questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null;
-              if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
-            } else if (!targeted && result.similar_species) {
-              relatedOptions.initialData = result.similar_species;
-            }
-            if (!targeted) { relatedOptions.endpoint = "/v1/taxa/similar"; }
+            var directOptions = targeted && questionAnswer.relations
+              ? (questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null) : null;
+            if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
+            else if (result.similar_species) { relatedOptions.initialData = result.similar_species; }
+            if (directOptions !== relatedOptions) { relatedOptions.endpoint = "/v1/taxa/similar"; }
             var relatedSlot = result.profile.enrichment_pending && !targeted ? doc.createElement("div") : null;
             if (relatedSlot) { relatedSlot.className = "species-related-slot"; extra.appendChild(relatedSlot); }
             else if (!directRanked) {
