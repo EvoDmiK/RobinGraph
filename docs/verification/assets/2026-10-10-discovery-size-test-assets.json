@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "assets": [
+    {
+      "file": "chat.js",
+      "sha256": "090e7eeab712f5672fef78b29a8d6bf7d30bf6ebfec38d7085c846ef3417abe0"
+    },
+    {
+      "file": "styles.css",
+      "sha256": "1dff4fb1c72026d440acb073150d8838a071454dde4ea1b9eab5dd865a5da3f2"
+    }
+  ],
+  "actual_chat": {
+    "disposition": "answer",
+    "kind": "profile",
+    "taxon": {
+      "taxon_id": "avilist-taxon:v2025b:544",
+      "rank": "species",
+      "scientific_name": "Anas platyrhynchos",
+      "authority": "Linnaeus, C, 1758",
+      "korean_name": "청둥오리",
+      "korean_name_status": "source-reference",
+      "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+      "english_name": "Mallard"
+    }
+  }
+}
