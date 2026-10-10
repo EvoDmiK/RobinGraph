@@ -1,0 +1,3024 @@
+{
+  "passed": true,
+  "mode": "deployed JS/CSS with actual API profiles",
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "cases": 18,
+  "checks": [
+    {
+      "name": "Aix galericulata",
+      "width": 1280,
+      "height": 900,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.9182530795072789,
+        "width": 424.34375,
+        "height": 844,
+        "x": 427.828125,
+        "y": 28,
+        "scrollTop": 0,
+        "scrollHeight": 820,
+        "clientHeight": 820,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 188,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 188,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 940,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 120,
+            "scrollHeight": 940,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 1002,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 182,
+            "scrollHeight": 1002,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 846,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 26,
+            "scrollHeight": 846,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 1280,
+      "height": 900,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.9182530795072789,
+        "width": 424.34375,
+        "height": 844,
+        "x": 427.828125,
+        "y": 28,
+        "scrollTop": 0,
+        "scrollHeight": 820,
+        "clientHeight": 820,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 188,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 188,
+            "scrollHeight": 1008,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 940,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 120,
+            "scrollHeight": 940,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 1002,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 182,
+            "scrollHeight": 1002,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 846,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 26,
+            "scrollHeight": 846,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 1280,
+      "height": 900,
+      "mobile": false,
+      "baseline": {
+        "scale": 1,
+        "width": 460,
+        "height": 844,
+        "x": 410,
+        "y": 28,
+        "scrollTop": 0,
+        "scrollHeight": 820,
+        "clientHeight": 820,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 910,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 90,
+            "scrollHeight": 910,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 90,
+            "scrollHeight": 910,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 1280,
+      "height": 700,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.7211646136618141,
+        "width": 338.421875,
+        "height": 668,
+        "x": 470.78125,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 644,
+        "clientHeight": 644,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 148,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 148,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 739,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 95,
+            "scrollHeight": 739,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 787,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 143,
+            "scrollHeight": 787,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 664,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 20,
+            "scrollHeight": 664,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 1280,
+      "height": 700,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.7211646136618141,
+        "width": 338.421875,
+        "height": 668,
+        "x": 470.78125,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 644,
+        "clientHeight": 644,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 148,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 148,
+            "scrollHeight": 792,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 739,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 95,
+            "scrollHeight": 739,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 787,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 143,
+            "scrollHeight": 787,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 664,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 20,
+            "scrollHeight": 664,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7211646136618141,
+            "width": 338.421875,
+            "height": 668,
+            "x": 470.78125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 1280,
+      "height": 700,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.7931034482758621,
+        "width": 369.78125,
+        "height": 668,
+        "x": 455.109375,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 644,
+        "clientHeight": 644,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 722,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 78,
+            "scrollHeight": 722,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 78,
+            "scrollHeight": 722,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7931034482758621,
+            "width": 369.78125,
+            "height": 668,
+            "x": 455.109375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 644,
+            "clientHeight": 644,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.8333333333333334,
+        "width": 366,
+        "height": 812,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 796,
+        "clientHeight": 796,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 109,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 109,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 843,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 47,
+            "scrollHeight": 843,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 899,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 103,
+            "scrollHeight": 899,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.8333333333333334,
+        "width": 366,
+        "height": 812,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 796,
+        "clientHeight": 796,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 109,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 109,
+            "scrollHeight": 905,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 843,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 47,
+            "scrollHeight": 843,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 899,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 103,
+            "scrollHeight": 899,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 390,
+      "height": 844,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.8333333333333334,
+        "width": 366,
+        "height": 812,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 796,
+        "clientHeight": 796,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 812,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 796,
+            "clientHeight": 796,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 390,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.729064039408867,
+        "width": 322.203125,
+        "height": 608,
+        "x": 33.890625,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 186,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 186,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 725,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 133,
+            "scrollHeight": 725,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 774,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 182,
+            "scrollHeight": 774,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 650,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 58,
+            "scrollHeight": 650,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 390,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.729064039408867,
+        "width": 322.203125,
+        "height": 608,
+        "x": 33.890625,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 186,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 186,
+            "scrollHeight": 778,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 725,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 133,
+            "scrollHeight": 725,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 774,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 182,
+            "scrollHeight": 774,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 650,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 58,
+            "scrollHeight": 650,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 390,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.7589743589743589,
+        "width": 334.765625,
+        "height": 608,
+        "x": 27.609375,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 668,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 76,
+            "scrollHeight": 668,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 76,
+            "scrollHeight": 668,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.7589743589743589,
+            "width": 334.765625,
+            "height": 608,
+            "x": 27.609375,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 320,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.6666666666666666,
+        "width": 296,
+        "height": 608,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 120,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 120,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 663,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 71,
+            "scrollHeight": 663,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 708,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 116,
+            "scrollHeight": 708,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 594,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 2,
+            "scrollHeight": 594,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 320,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.6666666666666666,
+        "width": 296,
+        "height": 608,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 120,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 120,
+            "scrollHeight": 712,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 663,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 71,
+            "scrollHeight": 663,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 708,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 116,
+            "scrollHeight": 708,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 594,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 2,
+            "scrollHeight": 594,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 320,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.6666666666666666,
+        "width": 296,
+        "height": 608,
+        "x": 12,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.6666666666666666,
+            "width": 296,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 844,
+      "height": 390,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.40931372549019607,
+        "width": 195.90625,
+        "height": 358,
+        "x": 324.046875,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 334,
+        "clientHeight": 334,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 105,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 105,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 409,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 75,
+            "scrollHeight": 409,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 436,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 102,
+            "scrollHeight": 436,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 366,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 32,
+            "scrollHeight": 366,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "width": 844,
+      "height": 390,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.40931372549019607,
+        "width": 195.90625,
+        "height": 358,
+        "x": 324.046875,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 334,
+        "clientHeight": 334,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 105,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 105,
+            "scrollHeight": 439,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 409,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 75,
+            "scrollHeight": 409,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 436,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 102,
+            "scrollHeight": 436,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 366,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 32,
+            "scrollHeight": 366,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.40931372549019607,
+            "width": 195.90625,
+            "height": 358,
+            "x": 324.046875,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Pica serica",
+      "width": 844,
+      "height": 390,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.4282051282051282,
+        "width": 203.84375,
+        "height": 358,
+        "x": 320.078125,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 334,
+        "clientHeight": 334,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 379,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 45,
+            "scrollHeight": 379,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 45,
+            "scrollHeight": 379,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "nativeScroll": null,
+          "bottom": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.4282051282051282,
+            "width": 203.84375,
+            "height": 358,
+            "x": 320.078125,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 334,
+            "clientHeight": 334,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": false
+        }
+      ],
+      "pageErrors": []
+    }
+  ],
+  "toggle_checks": 60,
+  "native_scroll_cases": 16
+}
