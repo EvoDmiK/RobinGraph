@@ -1,0 +1,163 @@
+{
+  "passed": true,
+  "mode": "real cached TEST profiles; comparison rendered by public helper with test assets",
+  "cases": 8,
+  "checks": [
+    {
+      "width": 320,
+      "bothCards": true,
+      "boxes": [
+        {
+          "x": 35.59375,
+          "y": 849.640625,
+          "width": 118.40625,
+          "height": 56.375,
+          "right": 154
+        },
+        {
+          "x": 166,
+          "y": 849.640625,
+          "width": 118.40625,
+          "height": 56.375,
+          "right": 284.40625
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "bothCards": false,
+      "boxes": [
+        {
+          "x": 35.59375,
+          "y": 849.640625,
+          "width": 248.8125,
+          "height": 40.375,
+          "right": 284.40625
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "bothCards": true,
+      "boxes": [
+        {
+          "x": 35.59375,
+          "y": 816.0625,
+          "width": 153.40625,
+          "height": 56.375,
+          "right": 189
+        },
+        {
+          "x": 201,
+          "y": 816.0625,
+          "width": 153.40625,
+          "height": 56.375,
+          "right": 354.40625
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "bothCards": false,
+      "boxes": [
+        {
+          "x": 35.59375,
+          "y": 816.0625,
+          "width": 318.8125,
+          "height": 40.375,
+          "right": 354.40625
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "bothCards": true,
+      "boxes": [
+        {
+          "x": 50,
+          "y": 745.890625,
+          "width": 328,
+          "height": 40.375,
+          "right": 378
+        },
+        {
+          "x": 390,
+          "y": 745.890625,
+          "width": 328,
+          "height": 40.375,
+          "right": 718
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "bothCards": false,
+      "boxes": [
+        {
+          "x": 50,
+          "y": 745.890625,
+          "width": 668,
+          "height": 40.375,
+          "right": 718
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "bothCards": true,
+      "boxes": [
+        {
+          "x": 306,
+          "y": 756.9375,
+          "width": 328,
+          "height": 40.375,
+          "right": 634
+        },
+        {
+          "x": 646,
+          "y": 756.9375,
+          "width": 328,
+          "height": 40.375,
+          "right": 974
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "bothCards": false,
+      "boxes": [
+        {
+          "x": 306,
+          "y": 756.9375,
+          "width": 668,
+          "height": 40.375,
+          "right": 974
+        }
+      ],
+      "keyboardBothCards": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    }
+  ]
+}
