@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "base": "https://robingraph-test.dove-nest.com",
+  "cases": 6,
+  "checks": [
+    {
+      "width": 390,
+      "question": "청둥오리는 뭐 먹고 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "question": "까치는 뭐 먹고 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "question": "원앙은 어디서 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "question": "청둥오리는 뭐 먹고 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "question": "까치는 뭐 먹고 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "question": "원앙은 어디서 살아?",
+      "actualChat": true,
+      "keyboardSimilarRequest": 200,
+      "renderedCandidates": true,
+      "groups": 1,
+      "pageErrors": []
+    }
+  ]
+}
