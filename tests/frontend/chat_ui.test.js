@@ -22,6 +22,29 @@ const chat = require(path.join(STATIC_DIR, "chat.js"));
 const jsSource = fs.readFileSync(path.join(STATIC_DIR, "chat.js"), "utf8");
 const htmlSource = fs.readFileSync(path.join(STATIC_DIR, "index.html"), "utf8");
 
+test("answer photo preview follows deferred card photos and preserves its dialog button on missing or failed images", () => {
+  const profile = fakeProfilePayload().result.profile;
+  profile.images = [];
+  profile.enrichment_pending = true;
+  const doc = { createElement: createFakeElement };
+  const card = chat.buildSpeciesCard(doc, profile);
+  const popup = chat.buildSpeciesPopup(doc, card, profile, { preview: true });
+  const opener = popup.children[0];
+  assert.equal(opener.getAttribute("aria-haspopup"), "dialog");
+  assert.match(collectedText(opener), /사진 준비 전/);
+  const photo = { image_url: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg", source_url: "https://commons.wikimedia.org/wiki/File:Example.jpg", license_name: "CC BY-SA 4.0" };
+  card.updateEnrichment({ images: [{ image_url: "javascript:alert(1)" }, photo] });
+  const image = collectAllNodes(opener).find(n => n.tagName === "img");
+  assert.equal(image.src, photo.image_url);
+  image.dispatch("error");
+  assert.equal(image.hidden, true);
+  assert.match(collectedText(opener), /사진을 불러오지 못했어요/);
+  card.updateEnrichment({ images: [] });
+  assert.equal(collectAllNodes(opener).some(n => n.tagName === "img"), false);
+  assert.match(collectedText(opener), /대표 사진 없음/);
+  assert.equal(popup.children[0], opener);
+});
+
 test("unverified translations fall back to English in cards, explanations and comparisons", () => {
   const profile = fakeProfilePayload().result.profile;
   profile.taxon.korean_name = "에메랄드턱벌새";
@@ -695,6 +718,15 @@ function createFakeElement(tagName) {
     appendChild(child) {
       if (child.parentNode) child.parentNode.removeChild(child);
       this.children.push(child);
+      child.parentNode = this;
+      return child;
+    },
+    insertBefore(child, reference) {
+      if (!reference) return this.appendChild(child);
+      if (child.parentNode) child.parentNode.removeChild(child);
+      const index = this.children.indexOf(reference);
+      if (index < 0) throw new Error("Reference is not a child");
+      this.children.splice(index, 0, child);
       child.parentNode = this;
       return child;
     },
@@ -3959,7 +3991,7 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(explanation.children.at(-1).children[0].textContent, "재미있는 사실");
   assert.equal(explanation.children.some(n => n.className === "species-answer-sources"), false);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false, "folded exploration never fetches");
-  assert.ok(answer.children.indexOf(explanation) < answer.children.findIndex(n => n.className === "species-popup-entry"));
+  assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(explanation));
   assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(extra));
   assert.equal(explorer.parentNode, extra);
   explorer.children[0].dispatch("click"); await tick();
