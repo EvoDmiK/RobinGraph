@@ -2805,7 +2805,7 @@ test("related explorer can retry outages and refuses stale relationship response
   assert.equal(collectAllNodes(explorer).filter(n => n.tagName === "h3").length, 0);
 });
 
-test("related exploration stays in the explanation and comparison, outside every species card", async () => {
+test("related exploration stays in the explanation and is omitted from comparisons and cards", async () => {
   const payload = fakeProfilePayload();
   payload.result.profile.sections = [{title:"기본 정보",items:[{text:"청둥오리"}]}];
   const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? {mode:"fixture"} : payload)));
@@ -2820,7 +2820,7 @@ test("related exploration stays in the explanation and comparison, outside every
   assert.equal(cards.length, 1);
   assert.equal(collectAllNodes(cards[0]).some(n => n.className === "species-related"), false);
   const comparison = chat.buildSpeciesComparison({createElement:createFakeElement}, payload.result.profile, payload.result.profile);
-  assert.equal(comparison.children.filter(n => n.className === "species-related").length, 1);
+  assert.equal(comparison.children.filter(n => n.className === "species-related").length, 0);
   for (const card of collectAllNodes(comparison).filter(n => n.className.startsWith("species-card risk-"))) {
     assert.equal(collectAllNodes(card).some(n => n.className === "species-related"), false);
   }
@@ -3254,12 +3254,12 @@ test("RG-005: comparison bubbles render hostile trait text inert and drop unsafe
   assert.equal(table.getAttribute("tabindex"), "0", "the wide table can be scrolled by keyboard on narrow screens");
 });
 
-test("RG-005: a comparison opened from inside a comparison bubble also becomes its own bubble", async () => {
+test("comparison bubbles end with cards and sources without nested explorers", async () => {
   const ctx = await rg005Start((name) => Promise.resolve(jsonResponse(rg005Peer(name === "Anas acuta" ? "p1" : "p2", name, name === "Anas acuta" ? "고방오리" : "쇠오리"))));
   ctx.peerButton("고방오리").dispatch("click");
   await tick();
   const nested = collectAllNodes(ctx.bubbles()[0]).find((n) => n.className === "species-related");
-  assert.ok(nested);
+  assert.equal(nested, undefined);
   const cards = collectAllNodes(ctx.bubbles()[0]).filter((n) => (n.className || "").startsWith("species-card risk-"));
   for (const card of cards) {
     assert.equal(collectAllNodes(card).some((n) => n.className === "species-related"), false, "explorers stay outside cards");
@@ -3818,7 +3818,7 @@ test("ecological explorer is lazy, sourced and separate; comparisons create inde
   assert.equal(bubbles.length, 2);
   assert.deepEqual(bubbles.map(b => b.info.right.taxon.taxon_id), ["peer1", "peer2"]);
   assert.equal(collectAllNodes(explorer).some(n => n.className === "species-comparison"), false);
-  assert.ok(bubbles.every(b => collectAllNodes(b.panel).some(n => n.className === "species-ecological-related")));
+  assert.ok(bubbles.every(b => !collectAllNodes(b.panel).some(n => n.className === "species-ecological-related")));
   assert.match(collectedText(bubbles[0].panel), /공유 생태 범주: 습지/);
   assert.equal(collectAllNodes(chat.buildSpeciesCard({ createElement: createFakeElement }, left)).some(n => n.className === "species-ecological-related"), false);
 });
@@ -4042,8 +4042,8 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(rows.length, 3);
   assert.equal(rows[1], answer);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-comparison"), false);
-  assert.equal(collectAllNodes(rows[2]).find(n => n.className === "comparison-peer-score").textContent, "90점");
-  assert.equal(collectAllNodes(rows[2]).find(n => n.className === "comparison-peer-basis").textContent, "가중 점수");
+  assert.equal(collectAllNodes(rows[2]).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(rows[2]).includes("가중 점수 90점"));
   assert.equal(collectAllNodes(rows[2]).filter(n => n.tagName === "dialog").length, 2);
 });
 
@@ -4096,8 +4096,8 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
   const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.getAttribute("aria-label") || ""));
   button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
-  assert.equal(collectAllNodes(bubbles[0]).find(n => n.className === "comparison-peer-score").textContent, "90점");
-  assert.equal(collectAllNodes(bubbles[0]).find(n => n.className === "comparison-peer-basis").textContent, "가중 점수");
+  assert.equal(collectAllNodes(bubbles[0]).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(bubbles[0]).includes("가중 점수 90점"));
   assert.match(collectedText(bubbles[0]), /비교 후보 근거와 출처/);
   assert.match(collectedText(bubbles[0]), /진화 거리나 유전 유사도/);
   assert.equal(collectAllNodes(bubbles[0]).filter(n => n.tagName === "dialog").length, 2);
@@ -4498,8 +4498,8 @@ test("direct ranked questions render exactly one unfolded TOP3 card set and comp
   assert.equal(messageRows(dom.elementsById.history).length, 3);
   assert.equal(messageRows(dom.elementsById.history)[1], answer);
   const selected = messageRows(dom.elementsById.history)[2];
-  assert.equal(collectAllNodes(selected).find(n => n.className === "comparison-peer-score").textContent, "66.67점");
-  assert.equal(collectAllNodes(selected).find(n => n.className === "comparison-peer-basis").textContent, "분류·생태 대체 점수(계통 자료 부족)");
+  assert.equal(collectAllNodes(selected).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(selected).includes("분류·생태 대체 점수(계통 자료 부족) 66.67점"));
 });
 
 for (const mismatch of ["concept_set_id", "taxonomy_release", "taxon_id"]) {
@@ -6161,4 +6161,27 @@ test("comparison shows equal display values once while keeping all attributed ra
   for (const url of ["study-a", "study-b", "study-c", "sample"]) {
     assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === "https://example.org/" + url).length, 1);
   }
+});
+
+test("comparison uses card mass units and compact citations retain evidence behind closed details", () => {
+  const left = habitatProfile("Forest");
+  const right = habitatProfile("Forest");
+  left.traits = [{ name:"body_mass", value:843.42, display:"843.42", unit:"g", ...DIET_SOURCE }];
+  right.traits = [{ name:"body_mass", value:1156, display:"1156", unit:"g", ...DIET_SOURCE, release:"raw-record-123" }];
+  const panel = chat.buildSpeciesComparison(svgCapableDoc(), left, right, {bothCards:true});
+  const rows = collectAllNodes(panel).find(n => n.tagName === "tbody").children;
+  assert.equal(rows.at(-1).children[1].children[0].textContent, "843.42 g");
+  assert.equal(rows.at(-1).children[2].children[0].textContent, "1.16 kg");
+  assert.equal(panel.children.at(-2).className, "species-comparison-card-actions");
+  const sources = panel.children.at(-1);
+  assert.equal(sources.className, "species-answer-sources");
+  assert.equal(sources.open, undefined);
+  const entries = sources.children.filter(n => n.className === "comparison-source-entry");
+  assert.ok(entries.length > 0);
+  assert.ok(entries.some(n => n.children.some(c => c.tagName === "a" && c.textContent === "AVONET")));
+  const metadata = collectAllNodes(sources).filter(n => n.className === "comparison-source-metadata");
+  assert.ok(metadata.length > 0);
+  assert.ok(metadata.every(n => !n.open && n.children[0].textContent === "자료 상세 정보"));
+  assert.match(collectedText(sources), /raw-record-123/);
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === DIET_SOURCE.source_url).length, 1);
 });

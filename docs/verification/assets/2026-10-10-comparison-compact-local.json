@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "mode": "actual TEST chat and profile API; local assets",
+  "cases": 2,
+  "checks": [
+    {
+      "width": 390,
+      "actualChatAndPeerSelection": true,
+      "uniqueVisibleValues": [
+        [
+          "잡식"
+        ],
+        [
+          "초식"
+        ],
+        [
+          "수생 초식"
+        ],
+        [
+          "수생 초식"
+        ],
+        [
+          "습지"
+        ],
+        [
+          "습지"
+        ],
+        [
+          "수생"
+        ],
+        [
+          "수생"
+        ],
+        [
+          "843.42 g"
+        ],
+        [
+          "1.16 kg"
+        ]
+      ],
+      "oneSourcesFooter": true,
+      "compactSources": true,
+      "kgFormatting": true,
+      "noPageErrors": true
+    },
+    {
+      "width": 1280,
+      "actualChatAndPeerSelection": true,
+      "uniqueVisibleValues": [
+        [
+          "잡식"
+        ],
+        [
+          "초식"
+        ],
+        [
+          "수생 초식"
+        ],
+        [
+          "수생 초식"
+        ],
+        [
+          "습지"
+        ],
+        [
+          "습지"
+        ],
+        [
+          "수생"
+        ],
+        [
+          "수생"
+        ],
+        [
+          "843.42 g"
+        ],
+        [
+          "1.16 kg"
+        ]
+      ],
+      "oneSourcesFooter": true,
+      "compactSources": true,
+      "kgFormatting": true,
+      "noPageErrors": true
+    }
+  ]
+}
