@@ -3892,10 +3892,41 @@ test("targeted diet answer appears first with sources and keeps the card without
   assert.ok(targeted);
   assert.equal(targeted.children[0].textContent, "무엇을 먹나요?");
   assert.match(collectedText(targeted), /씨앗과 무척추동물/);
-  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 1);
+  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0, "provenance lives only in 답변 출처 보기");
   assert.equal(collectAllNodes(targeted).some(n => n.tagName === "script"), false);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-answer"), false);
   assert.ok(collectAllNodes(answer).some(n => n.className === "species-popup-trigger risk-unconfirmed" || /^species-popup-trigger /.test(n.className || "")));
+});
+
+test("targeted diet answer renders supplied distribution as diet icons and keeps provenance only in the sources panel", async () => {
+  const profile = fakeProfilePayload().result.profile;
+  const source = { source_name: "AVONET", source_url: "https://example.org/avonet", license_name: "CC BY 4.0" };
+  const value = { invertebrate: 40, seed: 35.5, other_plant: 24.5, mystery: 99 };
+  const items = Object.entries({ invertebrate: 40, seed: 35.5, other_plant: 24.5 }).map(([key, amount]) =>
+    ({ name: "diet_distribution", value, ...source, text: key + " " + amount + "% (자료의 먹이 구성비)" }));
+  const payload = fakeProfilePayload({ ...profile }); payload.result.question_answer = { topic: "diet", title: "청둥오리 · 먹이와 식성", text: "자료의 먹이", items };
+  const fixture = await renderProfileMessage(profile, { result: payload.result });
+  const targeted = fixture.message.children.find(n => n.className === "species-question-answer");
+  const list = collectAllNodes(targeted).find(n => /species-diet-icons/.test(n.className || ""));
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["먹이: 무척추동물 40%", "먹이: 씨앗 35.5%", "먹이: 기타 식물 24.5%"]);
+  assert.equal(collectAllNodes(targeted).some(n => n.className === "question-answer-facts"), false);
+  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0);
+  assert.equal(collectAllNodes(fixture.sources).filter(n => n.tagName === "a" && n.href === source.source_url).length, 1);
+});
+
+test("targeted answers share the ordinary 더 알아보기 builders, endpoint and deferred behavior", async () => {
+  const profile = fakeProfilePayload().result.profile;
+  const payload = fakeProfilePayload({ ...profile }); payload.result.question_answer = { topic: "diet", title: "먹이", text: "먹이 정보", items: [] };
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리는 뭐 먹고 살아?";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const extra = answer.children.find(n => n.className === "species-extra-info");
+  assert.deepEqual(extra.children.slice(1).map(n => n.className).filter(c => c !== "species-related-slot"), ["species-related", "species-ecological-related", "species-subspecies", "species-name-relations"]);
+  const related = collectAllNodes(extra).find(n => n.className === "species-related");
+  assert.equal(related.children[0].textContent, "근연 관계 우선 3종 살펴보기");
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/") && !c.url.startsWith("/v1/taxa/profile")), false, "no exploration request before click");
 });
 
 test("direct ecological answer displays peers without another lookup and comparison creates a separate answer", async () => {
