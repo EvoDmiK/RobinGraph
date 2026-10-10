@@ -1,0 +1,632 @@
+{
+  "passed": true,
+  "mode": "local",
+  "cases": 16,
+  "method": "Previously captured actual TEST chat payloads replayed; browser renders local assets",
+  "checks": [
+    {
+      "width": 320,
+      "variant": "diet",
+      "geometry": [
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "magpie",
+      "geometry": [
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "habitat",
+      "geometry": [
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "profile",
+      "geometry": [
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 248.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "diet",
+      "geometry": [
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "magpie",
+      "geometry": [
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "habitat",
+      "geometry": [
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "profile",
+      "geometry": [
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 318.8125,
+          "height": 64,
+          "font": "14.4px",
+          "line": "20.16px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "diet",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "magpie",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "habitat",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "profile",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "diet",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "magpie",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "habitat",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "profile",
+      "geometry": [
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        },
+        {
+          "width": 668,
+          "height": 52,
+          "font": "15.2px",
+          "line": "21.28px",
+          "padding": "10.4px 12px",
+          "overflow": false
+        }
+      ],
+      "pageErrors": []
+    }
+  ]
+}
