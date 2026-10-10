@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "method": "Actual deployed TEST assets with replayed profile and mock discovery response; closed/open/closed arrow and aria state check",
+  "checks": [
+    {
+      "width": 390,
+      "state": "false",
+      "noArrow": true
+    },
+    {
+      "width": 390,
+      "state": "true",
+      "noArrow": true
+    },
+    {
+      "width": 390,
+      "state": "false",
+      "noArrow": true
+    },
+    {
+      "width": 1280,
+      "state": "false",
+      "noArrow": true
+    },
+    {
+      "width": 1280,
+      "state": "true",
+      "noArrow": true
+    },
+    {
+      "width": 1280,
+      "state": "false",
+      "noArrow": true
+    }
+  ]
+}
