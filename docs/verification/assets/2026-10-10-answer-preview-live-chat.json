@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "cases": 4,
+  "checks": [
+    {
+      "base_url": "https://robingraph-test.dove-nest.com",
+      "width": 390,
+      "actualChat": true,
+      "actualDeferredPhotoLoaded": true,
+      "cardOpened": true,
+      "cardClosed": true,
+      "pageErrors": []
+    },
+    {
+      "base_url": "https://robingraph-test.dove-nest.com",
+      "width": 1280,
+      "actualChat": true,
+      "actualDeferredPhotoLoaded": true,
+      "cardOpened": true,
+      "cardClosed": true,
+      "pageErrors": []
+    },
+    {
+      "base_url": "https://robingraph.dove-nest.com",
+      "width": 390,
+      "actualChat": true,
+      "actualDeferredPhotoLoaded": true,
+      "cardOpened": true,
+      "cardClosed": true,
+      "pageErrors": []
+    },
+    {
+      "base_url": "https://robingraph.dove-nest.com",
+      "width": 1280,
+      "actualChat": true,
+      "actualDeferredPhotoLoaded": true,
+      "cardOpened": true,
+      "cardClosed": true,
+      "pageErrors": []
+    }
+  ]
+}
