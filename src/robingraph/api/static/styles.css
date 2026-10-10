@@ -1578,3 +1578,20 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-bounded-group h5 { margin: 0 0 4px; font-size: .85rem; overflow-wrap: anywhere; }
 
 .species-conservation-badge[hidden] { display: none !important; }
+
+/* Comparison sources show readable citations before their detailed evidence. */
+.species-comparison .species-answer-sources .comparison-source-entry {
+  padding: 12px 14px; margin: 10px 0; border: 1px solid var(--color-border);
+  border-radius: 12px; background: var(--color-surface); min-width: 0;
+}
+.species-comparison .comparison-source-entry h3,
+.species-comparison .comparison-source-entry h4 { margin: 0 0 8px; font-size: .85rem; }
+.species-comparison .comparison-source-entry > a,
+.species-comparison .comparison-source-entry > span {
+  display: block; margin: 6px 0; color: var(--color-accent); font-size: .8rem;
+  text-decoration: none; overflow-wrap: anywhere; line-height: 1.5;
+}
+.species-comparison .comparison-source-entry > a:hover { text-decoration: underline; }
+.species-comparison .comparison-source-metadata { margin-top: 8px; }
+.species-comparison .comparison-source-metadata > summary { font-size: .75rem; color: var(--color-muted); cursor: pointer; }
+.species-comparison .comparison-source-metadata p { font-size: .75rem; line-height: 1.6; overflow-wrap: anywhere; }
