@@ -5500,7 +5500,7 @@ test("desktop fitting leaves fitting cards at natural size and scales expanded d
   assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "collapsing details restores the natural scale");
 });
 
-test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a readable size and the frame scrolls instead of shrinking", () => {
+test("opening details preserves the closed fit scale while additional content scrolls", () => {
   const f = mobileFitFixture(); f.mobile(false);
   f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
   const toggle = { open: false };
@@ -5510,7 +5510,7 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "other expanded content still fits the frame");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
   toggle.open = true; f.card.dispatch("toggle"); f.flush();
-  assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "an open scroll toggle is never shrunk to the frame height");
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "an open toggle cannot enlarge the fitted card");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
   f.frame.scrollTop = 120;
   toggle.open = false; f.card.dispatch("toggle"); f.flush();
@@ -5519,13 +5519,14 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   assert.equal(f.frame.scrollTop, 0, "closing returns to the top");
 });
 
-test("scroll mode on a narrow frame fits the width only and trims the scaled layout height to the visible size", () => {
+test("mobile details keep the collapsed scale and trim the expanded scroll range", () => {
   const f = mobileFitFixture(); // frame 280x500, surface 420 wide: width scale 2/3
-  const toggle = { open: true };
+  const toggle = { open: false };
   f.card.querySelectorAll = () => [toggle];
-  f.height(1200); f.open();
-  const scale = 280 / 420;
-  assert.equal(f.frame.getAttribute("data-fit-scale"), String(scale), "height does not shrink it further");
+  f.open();
+  const scale = 500 / 780;
+  f.height(1200); toggle.open = true; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(scale), "expanded height and width-only fitting cannot change scale");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
   assert.ok(Math.abs(parseFloat(f.surface.style.marginBottom) + 1200 * (1 - scale)) < 1e-6,
     "the scroll range equals the scaled height, not the unscaled one");
@@ -5533,6 +5534,24 @@ test("scroll mode on a narrow frame fits the width only and trims the scaled lay
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
   assert.equal(f.surface.style.marginBottom, "");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+});
+
+test("expanded details remain stable across observers, nested toggles and viewport resizing", () => {
+  const f = mobileFitFixture(), toggles = [{ open: false }, { open: false }];
+  f.card.querySelectorAll = () => toggles;
+  f.height(1200); f.open();
+  toggles[0].open = true; f.height(2000); f.card.dispatch("toggle"); f.flush();
+  for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  toggles[1].open = true; f.height(2400); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  f.frame.scrollTop = 100; toggles[0].open = false; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.scrollTop, 100, "closing one of several toggles retains scrolling");
+  f.frame.clientHeight = 350; f.handlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(350 / 1200));
+  toggles[1].open = false; f.height(1200); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+  assert.equal(f.frame.scrollTop, 0);
 });
 
 test("flipping the card returns the scrolled frame to the top", () => {

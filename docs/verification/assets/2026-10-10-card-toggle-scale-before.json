@@ -1,0 +1,370 @@
+{
+  "passed": true,
+  "mode": "before-fix reproduction",
+  "base_url": "https://robingraph.dove-nest.com",
+  "cases": 2,
+  "checks": [
+    {
+      "name": "Aix galericulata",
+      "width": 1280,
+      "height": 900,
+      "mobile": false,
+      "baseline": {
+        "scale": 0.9182530795072789,
+        "width": 424.34375,
+        "height": 844,
+        "x": 427.828125,
+        "y": 28,
+        "scrollTop": 0,
+        "scrollHeight": 820,
+        "clientHeight": 820,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 1098,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 278,
+            "scrollHeight": 1098,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 73,
+            "scrollHeight": 1024,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 204,
+            "scrollHeight": 1024,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 73,
+            "scrollHeight": 1091,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 271,
+            "scrollHeight": 1091,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 73,
+            "scrollHeight": 921,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 1,
+            "width": 460,
+            "height": 844,
+            "x": 410,
+            "y": 28,
+            "scrollTop": 101,
+            "scrollHeight": 921,
+            "clientHeight": 820,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.9182530795072789,
+            "width": 424.34375,
+            "height": 844,
+            "x": 427.828125,
+            "y": 28,
+            "scrollTop": 0,
+            "scrollHeight": 820,
+            "clientHeight": 820,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "Aix galericulata",
+      "width": 390,
+      "height": 640,
+      "mobile": true,
+      "baseline": {
+        "scale": 0.729064039408867,
+        "width": 322.203125,
+        "height": 608,
+        "x": 33.890625,
+        "y": 16,
+        "scrollTop": 0,
+        "scrollHeight": 592,
+        "clientHeight": 592,
+        "scrolling": "false",
+        "titleFont": "16px"
+      },
+      "toggles": [
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 890,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 298,
+            "scrollHeight": 890,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "항목·비율",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 85,
+            "scrollHeight": 828,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 236,
+            "scrollHeight": 828,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "측정값 더 보기 (7)",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 85,
+            "scrollHeight": 884,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 292,
+            "scrollHeight": 884,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        },
+        {
+          "label": "분류 계통 보기",
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 85,
+            "scrollHeight": 743,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "bottom": {
+            "scale": 0.8333333333333334,
+            "width": 366,
+            "height": 608,
+            "x": 12,
+            "y": 16,
+            "scrollTop": 151,
+            "scrollHeight": 743,
+            "clientHeight": 592,
+            "scrolling": "true",
+            "titleFont": "16px"
+          },
+          "collapsed": {
+            "scale": 0.729064039408867,
+            "width": 322.203125,
+            "height": 608,
+            "x": 33.890625,
+            "y": 16,
+            "scrollTop": 0,
+            "scrollHeight": 592,
+            "clientHeight": 592,
+            "scrolling": "false",
+            "titleFont": "16px"
+          },
+          "enlarged": true
+        }
+      ],
+      "pageErrors": []
+    }
+  ]
+}
