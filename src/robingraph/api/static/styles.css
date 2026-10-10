@@ -1207,6 +1207,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-popup .species-card[data-conservation-tier] {
   background-size: 100% var(--species-card-material-height, 100%);
   isolation: isolate;
+  overflow: clip;
 }
 .species-popup .species-card[data-conservation-tier]::before {
   content: "";
@@ -1214,7 +1215,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
   inset: 0;
   height: var(--species-card-material-canvas-height, 100%);
   background: inherit;
-  background-size: 100% var(--species-card-material-height, 100%);
+  background-size: 100% 100%;
   z-index: -1;
   pointer-events: none;
   contain: paint;
