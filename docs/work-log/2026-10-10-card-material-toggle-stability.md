@@ -69,3 +69,26 @@ Obsidian `Work/RobinGraph/작업기록/2026-10-10-카드소재-토글반사무�
 ### 검증 프로세스 정리
 
 최종 두 브라우저 검사는 모든 assertion 실행과 `passed: true` 결과 파일 작성까지 완료했다. 이후 Chrome 자식 프로세스는 사라졌지만 Node 검증 프로세스가 종료 대기에 남아, 해당 두 PID만 SIGTERM으로 정리했다. 검증 assertion 실패와 구분하며, 정상 프로세스 exit 0까지 확인한 실행으로 표현하지 않는다. 앱·NAS 컨테이너는 종료하지 않았다.
+
+## 사용자 승인 후 Production 배포 — 2026-10-10
+
+사용자가 “운영서버에도 배포해줘”라고 승인하여 TEST 검증 완료 이미지의 운영 승격을 수행했다. 위의 TEST 전용 및 운영 승인 대기 기록은 해당 시점의 상태이며, 이번 절부터 실제 운영 반영 결과다.
+
+- 운영 URL: https://robingraph.dove-nest.com/chat
+- 기존 운영 이미지 `robingraph-api:prod-card-photo-a2c8bcc`의 존재를 확인하고 보존했다. 새 릴리스 디렉터리는 `/home/kimdove/RobinGraph-prod-material-3ac07e2`다.
+- NAS에 이미 전송된 구현 archive의 SHA-256 `fa00c125f8c98153f31a3ed4586be6ca77db1970615e5cf1713a24ca2cb7543f`를 다시 검증하고 새 운영 릴리스에 추출했다. 소스 revision은 `3ac07e2dedf3d3f69d99ae2b9ba76b2f4406bcc2`다.
+- 기존 운영 `.env.nas.prod`를 복사하고 이미지 태그만 변경했다. PG 대상 `robingraph`를 확인하고 `ROBINGRAPH_DEPLOY_TARGET=prod`로 preflight를 통과했다. 자격 증명은 문서와 로그에 출력하지 않았다.
+- TEST의 실제 이미지 ID를 먼저 검사한 뒤 같은 이미지를 `docker tag`로 `robingraph-api:prod-material-3ac07e2`에 승격했다. `docker compose … up -d --no-build api`로 운영 API만 교체했다. 검증 이미지의 재빌드나 의존성 변경은 없었다. 실행/health 실패 시 기존 이미지로 복구하는 경로를 준비했으며 정상 배포되어 사용하지 않았다.
+- 운영 이미지 ID `sha256:48e0e1114825b92be81dd870ae36910792addb8dbe51e3e0947b58c602eb9edc`는 TEST와 완전히 동일하다. 운영 컨테이너 healthy·재시작 0, 시작 시각 `2026-10-10T03:04:25.659943274Z`(한국 시간 12:04:25). 표준 verify가 `deployment_target: prod`를 확인했다.
+- TEST의 이미지·시작 시각 `2026-10-10T02:53:56.57792025Z`·healthy 상태는 유지됐다. DB 마이그레이션·자료 수집·n8n 수정은 수행하지 않았다.
+
+### 운영 브라우저 검증 결과와 검사 도구 보완
+
+- 운영 API에서 실제 원앙·청둥오리·까치 프로필을 새로 조회하고 운영 JS/CSS로 PC/모바일/가로 18사례, 실제 summary 토글 60개 검사를 실행했다. 배율·너비 유지, 다중 토글·resize, 전체 내용 끝 접근, 닫힘 후 무스크롤 복귀 통과, page error 0. native PC 휠/모바일 CDP pan 16사례 실행, 내용 전체가 이미 들어오는 2사례에서는 불필요한 입력 검사를 실행하지 않았다.
+- 운영 API 원앙 프로필 기반 9 grade 팔레트 fixture × 2크기 소재 검사 18사례도 통과했다. 최종 비교의 배경 픽셀은 모두 동일(평균·최대 차이 0)이고 소재 canvas 고정·빈 스크롤 영역 없음·드래그 반사광 활성화/복귀를 확인했다. grade fixture는 종별 평가 데이터 검사가 아니다.
+- 첫 운영 소재 실행은 EN PC 사례에서 채널 평균 차이 0.03194/255·최대 1/255로 사전 평균 기준을 초과하여 실패했다. 배포를 완료라고 안내하기 전에 조사했다. 스크린샷마다 텍스트 숨김 CSS를 넣고 제거하는 검사 자체가 gradient를 재합성할 수 있어 이를 검사 변수로 판단하고, 숨김 mask를 두 스크린샷 사이에 계속 유지하도록 도구만 보완했다. 앱 이미지는 변경하지 않았고 허용 오차도 완화하지 않았다. 같은 조건으로 전체 18사례를 다시 실행해 평균·최대 0을 확인했다. 실패 실행은 `/tmp/rg-material-production`, 최종 실행은 `/tmp/rg-material-production-persistent-mask`로 구분해 보존했다.
+- Production JS/CSS SHA-256은 검증한 저장소 파일과 일치했다. 실제 운영 모바일 펼친 스크린샷도 직접 열어 하단 빈 공간과 반복 경계가 없음을 확인했다.
+- 최종 결과: `docs/verification/assets/2026-10-10-card-material-production.json`, `…-toggle-production.json`, `…-production-asset-hashes.json`.
+- 이전 TEST 실행 뒤 Node 종료 대기와 달리 이번 운영 검사는 임시 검증 래퍼에 전체 Promise 완료 뒤 process exit 0을 지정했다. assertion이나 브라우저 검사 흐름은 유지했고 두 도구 모두 정상 exit 0으로 완료했다. 임시 파일 `/tmp/rg-prod-{material-stability,toggle-scale}.cjs`를 사용했다.
+- 앱 소스 변경이 없으므로 Node 298 검사를 불필요하게 반복하지 않았다. 검사 도구 문법·diff 검사 및 graphify AST 갱신을 실행했다. 실제 휴대폰·Safari 검증은 이번에도 수행하지 않았다.
+- 이 운영 배포 절까지 저장소와 Obsidian에 같은 내용으로 갱신하고 dev 문서/검사 도구 커밋을 push한다. 앱 revision 및 실제 운영 이미지는 검증한 `3ac07e2`를 유지한다.

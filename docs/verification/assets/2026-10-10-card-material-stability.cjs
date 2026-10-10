@@ -16,16 +16,19 @@ function pngPixels(file){const b=fs.readFileSync(file),parts=[],w=b.readUInt32BE
   await page.evaluate(p=>{const h=document.createElement('div');document.body.append(h);const c=RobinGraphChat.buildSpeciesCard(document,p);h.append(RobinGraphChat.buildSpeciesPopup(document,c,p));h.querySelector('button').click();},p);
   const card=page.locator('dialog[open] .species-card');await card.press('Enter');await page.waitForTimeout(1000);
   const tier=await card.getAttribute('data-conservation-tier');assert.equal(tier,['DD','unknown'].includes(grade)?'unconfirmed':grade.toLowerCase());
+  // Keep the mask mounted across both captures: per-screenshot insertion
+  // itself recomposites gradients and can introduce channel rounding noise.
+  const materialMask=await page.addStyleTag({content:'.species-card > * {visibility:hidden!important}'});
   const sample=async label=>{
    const state=await card.evaluate(c=>{const g=c.querySelector('.species-card-gloss'),s=getComputedStyle(c),r=c.getBoundingClientRect(),f=c.closest('.species-card-fit-frame');return{materialHeight:c.style.getPropertyValue('--species-card-material-height'),backgroundSize:s.backgroundSize,height:r.height,width:r.width,scrollHeight:f.scrollHeight,clientHeight:f.clientHeight,canvasHeight:c.style.getPropertyValue("--species-card-material-canvas-height"),scale:f.dataset.fitScale,scrollTop:f.scrollTop,glossOpacity:getComputedStyle(g).opacity,glossAnimations:g.getAnimations().length};});
-   const r=await card.boundingBox(),file=path.join(out,grade+'-'+width+'-'+label+'.png');await page.screenshot({path:file,clip:{x:r.x+12,y:r.y+50,width:r.width-24,height:120},style:'.species-card > * {visibility:hidden!important}'});return {state,file};
+   const r=await card.boundingBox(),file=path.join(out,grade+'-'+width+'-'+label+'.png');await page.screenshot({path:file,clip:{x:r.x+12,y:r.y+50,width:r.width-24,height:120}});return {state,file};
   };
   const closed=await sample('closed');await card.locator('.card-details-scroll').first().evaluate(e=>{e.open=true;});await page.waitForTimeout(250);const opened=await sample('opened');
   const a=pngPixels(closed.file),openedPixels=pngPixels(opened.file);assert.equal(a.length,openedPixels.length);let maxDelta=0,totalDelta=0;for(let i=0;i<a.length;i++){const d=Math.abs(a[i]-openedPixels[i]);maxDelta=Math.max(maxDelta,d);totalDelta+=d;}const meanDelta=totalDelta/a.length,pixelsEqual=a.equals(openedPixels),materialStable=maxDelta<=1&&meanDelta<0.01;
   assert.equal(closed.state.glossOpacity,'0');assert.equal(opened.state.glossOpacity,'0');assert.equal(opened.state.glossAnimations,0);
   if(repro)assert.equal(pixelsEqual,false,'reproduce static material movement');
   else{assert.equal(opened.state.materialHeight,closed.state.materialHeight);assert.equal(opened.state.backgroundSize,closed.state.backgroundSize);assert.equal(opened.state.scale,closed.state.scale);assert.equal(opened.state.canvasHeight,closed.state.canvasHeight);assert.ok(opened.state.scrollHeight<=Math.max(opened.state.height,opened.state.clientHeight)+3,"material layer must not add blank scrolling space");assert.ok(materialStable,'stable material raster: '+grade+' '+width);}
-  await card.locator('.card-details-scroll').first().evaluate(e=>{e.open=false;});await page.waitForTimeout(250);
+  await materialMask.evaluate(e=>e.remove());await card.locator('.card-details-scroll').first().evaluate(e=>{e.open=false;});await page.waitForTimeout(250);
   let dragGloss=null;
   if(!repro&&grade==='LC'&&!mobile){const r=await card.boundingBox();await page.mouse.move(r.x+r.width*.4,r.y+100);await page.mouse.down();await page.mouse.move(r.x+r.width*.4+40,r.y+100,{steps:5});dragGloss=await card.locator('.species-card-gloss').evaluate(g=>getComputedStyle(g).opacity);assert.ok(Number(dragGloss)>0,'flip sheen retained');await page.mouse.up();await page.waitForTimeout(350);assert.equal(await card.locator('.species-card-gloss').evaluate(g=>getComputedStyle(g).opacity),'0');}
   checks.push({grade,tier,width,height,mobile,closed:closed.state,opened:opened.state,pixelsEqual,materialStable,maxDelta,meanDelta,dragGloss});console.log(grade,width,materialStable,maxDelta,meanDelta);await ctx.close();
