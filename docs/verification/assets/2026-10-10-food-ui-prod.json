@@ -1,0 +1,264 @@
+{
+  "passed": true,
+  "mode": "actual TEST response replayed with deployed prod assets",
+  "base": "https://robingraph.dove-nest.com",
+  "cases": 16,
+  "checks": [
+    {
+      "width": 320,
+      "variant": "diet",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "무척추동물",
+        "씨앗",
+        "기타 식물",
+        "척추동물",
+        "물고기"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "magpie",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "잡식"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "habitat",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "variant": "profile",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "diet",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "무척추동물",
+        "씨앗",
+        "기타 식물",
+        "척추동물",
+        "물고기"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "magpie",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "잡식"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "habitat",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "variant": "profile",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "diet",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "무척추동물",
+        "씨앗",
+        "기타 식물",
+        "척추동물",
+        "물고기"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "magpie",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "잡식"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "habitat",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 768,
+      "variant": "profile",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "diet",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "무척추동물",
+        "씨앗",
+        "기타 식물",
+        "척추동물",
+        "물고기"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "magpie",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [
+        "잡식"
+      ],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "habitat",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    },
+    {
+      "width": 1280,
+      "variant": "profile",
+      "buttons": [
+        "근연 관계 우선 3종 살펴보기",
+        "같은 서식 환경·먹이 생태의 새 살펴보기",
+        "이 종의 아종 살펴보기",
+        "통칭·가축형 관계 알아보기"
+      ],
+      "labels": [],
+      "noDiscoveryRequestsBeforeClick": true,
+      "noHorizontalOverflow": true,
+      "pageErrors": []
+    }
+  ]
+}
