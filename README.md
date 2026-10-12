@@ -46,6 +46,7 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 <p align='center'>
  <img src="docs/assets/birds-card-front.png" alt="카드 앞면" width="45%" height=85%>
  <img src="docs/assets/birds-card-rear.png" alt="카드 뒷면" width="45%" height=80%>
+ <video src="docs/assets/turn-bird-card.mp4", alt="카드 돌리기">
 </p>
 - <b>앞면</b>: 사진, 체중, 먹이 유형, 서식 환경, 주 생활 방식과 관찰 포인트를 표시합니다. 체중은 1,000g 이상이면 kg로 표시합니다.
 - <b>뒷면</b>: 상세 특성과 먹이 구성·먹이 활동 위치 도넛 차트를 나란히 표시합니다. PC에서 차트 영역에 마우스를 올리면 항목과 비율이 뜹니다. 차트 클릭·탭으로 선택하지 않습니다.
