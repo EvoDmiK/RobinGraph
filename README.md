@@ -4,7 +4,7 @@
 
 # RobinGraph
 <p align='center'>
- <img src="docs/assets/homescreen.png" alt="카드 앞면" width="720" height=560>
+ <img src="docs/assets/homescreen.png" alt="카드 앞면" width="%">
 </p>
 
 RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 프로젝트**입니다. 궁금한 새의 이름과 특징을 알아보는 데서 출발해, 어떤 환경에서 살아가는지, 다른 새와는 어떤 관계인지까지 살펴볼 수 있도록 만들고 있습니다.
@@ -32,11 +32,11 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 ## 현재 제공 기능
 <p align='center'>
- <img src="docs/assets/about-birds.png" alt="카드 앞면" width="720" height=560>
+ <img src="docs/assets/about-birds.png" alt="새에 관한 질문">
 </p>
 - <b>한국어 자연어 질문<b/>: 일반 소개, 먹이, 서식 환경, 활동 시간, 외관, 아종, 분류, 관찰 기록, 문헌 근거를 구분합니다. 명확한 규칙으로 처리할 수 있는 질문을 먼저 해석하고, 설정에 따라 Jev System1 의도 분석 또는 임베딩 기반 라우터를 사용합니다. 낮은 확신도나 모호한 이름은 추가 확인으로 처리합니다.
 <p align='center'>
- <img src="docs/assets/about-taxonomy.png" alt="카드 앞면" width="720" height=640>
+ <img src="docs/assets/about-taxonomy.png" alt="분류체계 질문">
 </p>
 - <b>종 설명과 선택적 관계 탐색<b/>: 기본 정보·외관·생활과 먹이·재미있는 사실과 가용 사진을 첫 설명에 제공합니다. `더 알아보기`에서 아종·통칭/가축형·생태 관계 등 탐색 항목을 선택하면 후속 조회합니다. 일반 소개에서 비교 후보를 항상 자동 조회하지 않습니다.
 - <b>출처와 자료 부족 표시<b/>: 확인된 자료로 답변하고, 자료가 없는 내용은 추측하지 않습니다. 카드의 사진·라이선스·형질 출처와 자료 기준은 설명창의 `답변 출처 보기`에 중복을 줄여 모읍니다.
@@ -44,8 +44,8 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 ### PC·모바일 도감 카드
 <p align='center'>
- <img src="docs/assets/birds-card-front.png" alt="카드 앞면" width="360" height=480>
- <img src="docs/assets/birds-card-rear.png" alt="카드 뒷면" width="360" height=480>
+ <img src="docs/assets/birds-card-front.png" alt="카드 앞면" width="45%" height=85%>
+ <img src="docs/assets/birds-card-rear.png" alt="카드 뒷면" width="45%" height=80%>
 </p>
 - <b>앞면</b>: 사진, 체중, 먹이 유형, 서식 환경, 주 생활 방식과 관찰 포인트를 표시합니다. 체중은 1,000g 이상이면 kg로 표시합니다.
 - <b>뒷면</b>: 상세 특성과 먹이 구성·먹이 활동 위치 도넛 차트를 나란히 표시합니다. PC에서 차트 영역에 마우스를 올리면 항목과 비율이 뜹니다. 차트 클릭·탭으로 선택하지 않습니다.
@@ -89,8 +89,8 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 ### 관계 탐색·비교·검색
 <p align='center'>
- <img src="docs/assets/closely-related-spieces-top3.png" alt="근연종 검색" width="720" height=560>
- <img src="docs/assets/compare-two-birds.png" alt="비교 페이지" width="720" height=560>
+ <img src="docs/assets/closely-related-spieces-top3.png" alt="근연종 검색">
+ <img src="docs/assets/compare-two-birds.png" alt="비교 페이지">
 </p>
 - **비교 후보 TOP 3**: 전체 활성 종에서 계통 50%·분류 30%·서식 환경 10%·먹이 생태 10%로 점수를 계산합니다. **검증 국명이 있는 후보를 먼저 선정하고, 그 안에서 점수순**으로 추천합니다. 부족한 수는 영어 이름 후보로 채웁니다. 계통 자료가 없으면 가용 분류·생태 점수를 재환산하며, 점수는 실제 진화 거리나 유전 유사도가 아닙니다.
 - **분류·생태 관계**: 같은 속·과 또는 서식 환경·먹이 생태 범주를 공유하는 새를 탐색합니다. 비교 결과는 원래 설명을 유지한 별도 말풍선에 표시하고, 추천 점수·근거와 분류 계보는 구조화된 화면으로 제공합니다.
