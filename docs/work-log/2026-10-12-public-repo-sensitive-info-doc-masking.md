@@ -44,7 +44,7 @@
 - `scripts/`, `tests/`, `compose.nas.yml`, `n8n/*.json`: 처음에는 코드 기본값 제거까지 수정했다. 사용자가 범위를 문서로 좁혀 `git checkout`으로 되돌렸다.
   - 이후 "git 이력 재작성" 단계에서 NAS SSH 기본값(`scripts/audit_trait_coverage.py`), n8n credential ID(`scripts/generate_n8n_*.py`, `n8n/*.json`), MLflow 도메인(`tests/test_mlflow_configuration.py`)은 placeholder로 치환됐다.
   - **Discord guild/channel ID 기본값**(`compose.nas.yml`, `scripts/deploy_n8n_*.py`)은 운영 n8n 배포 동작에 영향을 주므로 지금도 남아 있다.
-- 공개 서비스 도메인(`robingraph.dove-nest.com`, `robingraph-test.dove-nest.com`, `aviary.dove-nest.com`)은 외부에 공개된 접속 주소라 유지했다.
+- 공개 서비스 도메인(`robingraph.dove-nest.com`, `robingraph-test.dove-nest.com`)은 외부에 공개된 접속 주소라 유지했다.
 - n8n credential 이름(`Neo4j`, `Nesty API 키` 등)은 이름일 뿐 비밀값이 아니라 유지했다.
 - git 히스토리: 사용자 승인 후 재작성했다. 아래 "git 이력 재작성" 절을 본다.
 

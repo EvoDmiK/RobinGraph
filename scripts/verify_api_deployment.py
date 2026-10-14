@@ -56,7 +56,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
-DEFAULT_BASE_URL = "https://aviary.dove-nest.com"
+DEFAULT_BASE_URL = "https://robingraph.dove-nest.com"
 DEFAULT_LINEAGE_NAME = "청둥오리"
 DEFAULT_EXPECTED_SCIENTIFIC_NAME = "Anas platyrhynchos"
 DEFAULT_EXPECTED_KOREAN_NAME_STATUS = "source-reference"
@@ -73,7 +73,7 @@ def default_fetcher(url: str, timeout: float) -> tuple[int, bytes]:
     # NPM's "Block Common Exploits" preset (or an equivalent WAF rule) 403s
     # the stdlib's default `Python-urllib/x.y` User-Agent on this domain even
     # though the same GET succeeds from curl or a browser -- confirmed live
-    # against https://aviary.dove-nest.com on 2026-09-12. Send an
+    # against the public API on 2026-09-12. Send an
     # identifiable, non-default one so this verifier does not report a false
     # "backend unreachable" against a perfectly healthy deployment.
     request = Request(

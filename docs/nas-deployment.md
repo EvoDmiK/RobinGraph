@@ -256,7 +256,7 @@ docker exec robingraph-api python -c "import urllib.request; print(urllib.reques
 
 | 항목 | 값 |
 |---|---|
-| Domain Names | `aviary.dove-nest.com` |
+| Domain Names | `robingraph.dove-nest.com` |
 | Scheme | `http` |
 | Forward Hostname / IP | `robingraph-api` |
 | Forward Port | `8000` |
@@ -270,10 +270,10 @@ SSL 탭에서는 기존 Dove Nest 서비스와 같은 인증서 방식을 사용
 
 배포 확인 주소:
 
-- `https://aviary.dove-nest.com/` 또는 `/chat` (한국어 테스트 UI)
-- `https://aviary.dove-nest.com/health`
-- `https://aviary.dove-nest.com/docs`
-- `https://aviary.dove-nest.com/openapi.json`
+- `https://robingraph.dove-nest.com/` 또는 `/chat` (한국어 채팅 UI)
+- `https://robingraph.dove-nest.com/health`
+- `https://robingraph.dove-nest.com/docs`
+- `https://robingraph.dove-nest.com/openapi.json`
 
 채팅 UI는 API와 같은 origin에서 제공되며 브라우저에 자격 증명을 넣지 않는다.
 다만 이 첫 버전에는 계정·인증이 없으므로 외부 공개 여부는 별도 제품 결정이다.
@@ -304,7 +304,7 @@ sh scripts/deploy_nas.sh verify
 조회한다. fixture 모드에서는 운영 관찰 endpoint가 HTTP 503을 반환한다.
 
 ```sh
-curl "https://aviary.dove-nest.com/v1/observations?place=Seoul&observed_from=2026-09-01&limit=25"
+curl "https://robingraph.dove-nest.com/v1/observations?place=Seoul&observed_from=2026-09-01&limit=25"
 ```
 
 운영 endpoint는 taxon key(`taxon_key`), 학명·원본 일반명(`scientific_name`),
@@ -485,7 +485,7 @@ build`로 다시 만들고 원하는 불변 태그를 붙인 뒤 위 명령을 �
 uv run --locked python scripts/verify_api_deployment.py
 ```
 
-기본 대상은 `https://aviary.dove-nest.com`이다. 다른 환경을 검증하려면
+기본 대상은 `https://robingraph.dove-nest.com`이다. 다른 환경을 검증하려면
 `--base-url`(또는 `ROBINGRAPH_PUBLIC_API_URL` 환경변수)을 바꾼다. 확인 대상
 이름은 `--lineage-name`으로 바꿀 수 있고(기본값 `청둥오리`), 그 이름이
 실제로 해석돼야 하는 학명과 상태는 각각 `--expected-scientific-name`(기본

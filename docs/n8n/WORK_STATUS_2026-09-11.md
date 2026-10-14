@@ -25,7 +25,7 @@
   `Anas platyrhynchos` 역조회 결과를 반환함을 확인했다 — 위 상태 줄의
   "라이브 검증 아직 없음"은 이 시점부터 더 이상 사실이 아니다.
 - 같은 확인 중 별도 문제를 발견했다: 공개 도메인
-  `https://aviary.dove-nest.com`의 `/openapi.json`과 실제 `/v1/taxa/lineage`
+  공개 API의 `/openapi.json`과 실제 `/v1/taxa/lineage`
   응답 모두 `korean_name_status` 필드가 없다 — NAS가 이 필드를 추가하기
   이전 이미지를 그대로 서비스 중이라는 뜻이며, 이 workflow 자체의 결함이
   아니라 이미지 재배포가 필요한 상태다. 이를 자동으로 잡아내는 읽기 전용

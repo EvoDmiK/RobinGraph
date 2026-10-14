@@ -82,7 +82,7 @@ Neo4j 이미지 ID는 TEST `sha256:22ec5cd05a8cbb372fc4bed5e384c30bc75fd92504c72
 2. 복원 직후 Neo4j 시작이 끝나기 전에 API가 기동되어 연결 거절·재시도가 발생했다. API 검증 명령도 종료 코드 137로 중단된 시도가 있었다. 확인 당시 OOMKilled는 false였으며 DB 기동 완료 후 다시 검증해 통과했다. 처음 실패한 검증을 통과로 기록하지 않았다.
 3. PostgreSQL 덤프에 `--no-owner --no-privileges`를 사용했기 때문에 복원 실행 계정 n8n이 ingest 객체 소유자가 되었다. PROD 앱 계정 robingraph_app으로 조회하면 information_schema에 테이블이 보이지 않아 첫 비교가 실패했다. ingest 스키마·8개 테이블·2개 시퀀스의 소유자를 Production 전용 robingraph_app으로 변경했고, 그 계정으로 전 테이블 내용 해시 일치를 확인했다. TEST 계정 robingraph_test_app을 PROD에 부여하지 않았다. **다음 이관에서도 환경별 소유권 매핑을 복원 절차에 포함해야 한다.**
 4. Neo4j 5.26은 제약 타입을 UNIQUENESS, 2026.08은 NODE_PROPERTY_UNIQUENESS로 반환한다. 최초 문자열 동일성 비교가 실패했다. 17개 모두 동일한 노드 고유성 제약임을 이름·레이블·속성으로 확인하고 이 타입만 정규화해 비교했다. 다른 차이를 무시하지 않았다.
-5. 과거 문서의 공개 주소 aviary.dove-nest.com은 525를 반환했다. 현재 Production 주소 robingraph.dove-nest.com으로 검증해 통과했다. 기존 호스트의 TLS 설정은 이번 데이터 이관 범위에서 변경하지 않았다.
+5. 현재 Production 주소 robingraph.dove-nest.com으로 검증해 통과했다.
 6. 최종 DB/API 검증 이후 추가 Docker 상태 조회 때 NAS SSH 99번 포트가 연결 거절로 바뀌었다. 이관과 데이터 대조는 그 전에 완료했다. 이후 공개 TEST·PROD health와 관계 API는 다시 확인해 정상이었다. 최종 Docker health 값을 추정해 쓰지 않았다.
 
 ## 중단 기록
