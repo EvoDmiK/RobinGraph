@@ -8,7 +8,7 @@
 > shadow 검증용이며, production workflow 재배포·실행은 별도 승인 전까지 하지
 > 않는다.
 
-> **오프라인 구현·테스트 완료 / 라이브 검증 완료(2026-09-12), NAS 이미지 재배포 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 오프라인 체크포인트를 마무리했고, 2026-09-12에 canonical workflow `Hmjfi1zAIOKR5YE5` 생성과 임시 webhook 복사본을 통한 실제 실행(execution `18066`, Wikidata 948건 → write 846/candidate 102, `load_ok=true`/`finalize_ok=true`), 그리고 운영 API `GET /v1/taxa/lineage?name=청둥오리`의 실제 `200` 응답까지 라이브로 확인했다. 다만 같은 확인 과정에서 공개 `aviary.dove-nest.com`이 이 필드(`korean_name_status`)를 추가하기 이전의 NAS 이미지를 여전히 서비스 중임을 발견했다 — 아래 "현재 검증 상태"와 [NAS 배포 런북 §8](../nas-deployment.md)의 재배포·재검증 절차를 따른다. 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md)과 [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
+> **오프라인 구현·테스트 완료 / 라이브 검증 완료(2026-09-12), NAS 이미지 재배포 대기.** 2026-09-11에 별도 worktree(`EvoDmiK/finish-korean-vernacular`)에서 오프라인 체크포인트를 마무리했고, 2026-09-12에 canonical workflow `Hmjfi1zAIOKR5YE5` 생성과 임시 webhook 복사본을 통한 실제 실행(execution `18066`, Wikidata 948건 → write 846/candidate 102, `load_ok=true`/`finalize_ok=true`), 그리고 운영 API `GET /v1/taxa/lineage?name=청둥오리`의 실제 `200` 응답까지 라이브로 확인했다. 다만 같은 확인 과정에서 공개 공개 API 호스트이 이 필드(`korean_name_status`)를 추가하기 이전의 NAS 이미지를 여전히 서비스 중임을 발견했다 — 아래 "현재 검증 상태"와 [NAS 배포 런북 §8](../nas-deployment.md)의 재배포·재검증 절차를 따른다. 자세한 내용은 [현재 작업 상태와 남은 검증](WORK_STATUS_2026-09-11.md)과 [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
 
 ## 배경
 
@@ -309,7 +309,7 @@ NAS/Neo4j에서만 이 workflow를 실행한다.
   `Anas platyrhynchos` 역조회 결과를 반환함을 확인했다. 자세한 실행 기록은
   [2026-09-12 작업 기록](../work-log/2026-09-12.md) 참고.
 - **같은 라이브 검증에서 새로 발견한 문제(이 workflow 자체의 결함이
-  아니라 NAS 이미지 버전 skew)**: 공개 `https://aviary.dove-nest.com`의
+  아니라 NAS 이미지 버전 skew)**: 공개 공개 API의
   `/openapi.json`과 실제 `/v1/taxa/lineage` 응답 모두 이 문서 위쪽에서
   설명한 `korean_name_status` 필드가 **아예 없다** — NAS가 이 필드를 추가한
   커밋 이전 이미지를 그대로 서비스 중이기 때문이다. `GET /health`의

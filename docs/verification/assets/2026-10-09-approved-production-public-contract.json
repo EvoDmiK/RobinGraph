@@ -1,0 +1,37 @@
+{
+  "base_url": "https://robingraph.dove-nest.com",
+  "lineage_name": "대륙검은지빠귀",
+  "expected_scientific_name": "Turdus mandarinus",
+  "expected_korean_name_status": "source-reference",
+  "health": {
+    "path": "/health",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "openapi": {
+    "path": "/openapi.json",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "lineage": {
+    "path": "/v1/taxa/lineage?name=%EB%8C%80%EB%A5%99%EA%B2%80%EC%9D%80%EC%A7%80%EB%B9%A0%EA%B7%80",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "process_taxonomy_release": "fixture-avlist-2025",
+  "lineage_taxonomy_release": "v2025b",
+  "structural_errors": [],
+  "schema_drift": [],
+  "response_drift": [],
+  "canary_issues": [],
+  "notes": [
+    "health.taxonomy_release is the fixture-corpus process release used by /v1/answers and /v1/search, not the AviList reference-taxonomy release served by /v1/taxa/lineage -- the two are unrelated data areas.",
+    "health reports process release 'fixture-avlist-2025'; lineage reports AviList release 'v2025b'. A difference between these two values is expected and is not a defect by itself."
+  ],
+  "backend_reachable": true,
+  "contract_parity_ok": true,
+  "passed": true
+}

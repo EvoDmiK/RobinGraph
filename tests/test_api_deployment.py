@@ -328,7 +328,7 @@ class VerifyDeploymentBackendFailureTest(unittest.TestCase):
 class VerifyDeploymentCliTest(unittest.TestCase):
     def test_parse_args_defaults_to_the_public_domain(self) -> None:
         args = parse_args([])
-        self.assertEqual(args.base_url, "https://aviary.dove-nest.com")
+        self.assertEqual(args.base_url, "https://robingraph.dove-nest.com")
         self.assertEqual(args.lineage_name, "청둥오리")
         self.assertEqual(args.expected_scientific_name, "Anas platyrhynchos")
         self.assertEqual(args.expected_korean_name_status, "source-reference")

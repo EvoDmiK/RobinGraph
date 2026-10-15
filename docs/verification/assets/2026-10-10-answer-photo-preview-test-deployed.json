@@ -1,0 +1,287 @@
+{
+  "passed": true,
+  "mode": "deployed assets and actual API profile; chat response replayed; none/unsafe/broken/pending are controlled variants",
+  "cases": 20,
+  "checks": [
+    {
+      "width": 320,
+      "variant": "real",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 284.40625,
+        "previewBottom": 378.28125,
+        "headingRight": 179.859375,
+        "briefTop": 476.984375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 320,
+      "variant": "none",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 284.40625,
+        "previewBottom": 378.28125,
+        "headingRight": 179.859375,
+        "briefTop": 476.984375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 320,
+      "variant": "unsafe",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 284.40625,
+        "previewBottom": 378.28125,
+        "headingRight": 179.859375,
+        "briefTop": 476.984375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 320,
+      "variant": "broken",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 284.40625,
+        "previewBottom": 378.28125,
+        "headingRight": 179.859375,
+        "briefTop": 476.984375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 320,
+      "variant": "pending",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 284.40625,
+        "previewBottom": 378.28125,
+        "headingRight": 179.859375,
+        "briefTop": 476.984375,
+        "placeholder": "사진 준비 전"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 390,
+      "variant": "real",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 354.40625,
+        "previewBottom": 385.375,
+        "headingRight": 240.40625,
+        "briefTop": 450.59375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 390,
+      "variant": "none",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 354.40625,
+        "previewBottom": 385.375,
+        "headingRight": 240.40625,
+        "briefTop": 450.59375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 390,
+      "variant": "unsafe",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 354.40625,
+        "previewBottom": 385.375,
+        "headingRight": 240.40625,
+        "briefTop": 450.59375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 390,
+      "variant": "broken",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 354.40625,
+        "previewBottom": 385.375,
+        "headingRight": 240.40625,
+        "briefTop": 450.59375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 390,
+      "variant": "pending",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 354.40625,
+        "previewBottom": 385.375,
+        "headingRight": 240.40625,
+        "briefTop": 450.59375,
+        "placeholder": "사진 준비 전"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 768,
+      "variant": "real",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 718,
+        "previewBottom": 371.59375,
+        "headingRight": 552,
+        "briefTop": 400.8125,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 768,
+      "variant": "none",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 718,
+        "previewBottom": 371.59375,
+        "headingRight": 552,
+        "briefTop": 400.8125,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 768,
+      "variant": "unsafe",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 718,
+        "previewBottom": 371.59375,
+        "headingRight": 552,
+        "briefTop": 400.8125,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 768,
+      "variant": "broken",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 718,
+        "previewBottom": 371.59375,
+        "headingRight": 552,
+        "briefTop": 400.8125,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 768,
+      "variant": "pending",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 718,
+        "previewBottom": 371.59375,
+        "headingRight": 552,
+        "briefTop": 400.8125,
+        "placeholder": "사진 준비 전"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 1280,
+      "variant": "real",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 974,
+        "previewBottom": 382.640625,
+        "headingRight": 808,
+        "briefTop": 411.859375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 1280,
+      "variant": "none",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 974,
+        "previewBottom": 382.640625,
+        "headingRight": 808,
+        "briefTop": 411.859375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 1280,
+      "variant": "unsafe",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 974,
+        "previewBottom": 382.640625,
+        "headingRight": 808,
+        "briefTop": 411.859375,
+        "placeholder": "대표 사진 없음"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 1280,
+      "variant": "broken",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 974,
+        "previewBottom": 382.640625,
+        "headingRight": 808,
+        "briefTop": 411.859375,
+        "placeholder": "사진 불러오는 중"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    },
+    {
+      "width": 1280,
+      "variant": "pending",
+      "geometry": {
+        "overflow": false,
+        "previewRight": 974,
+        "previewBottom": 382.640625,
+        "headingRight": 808,
+        "briefTop": 411.859375,
+        "placeholder": "사진 준비 전"
+      },
+      "keyboardOpen": true,
+      "closeFocusRestored": true
+    }
+  ]
+}

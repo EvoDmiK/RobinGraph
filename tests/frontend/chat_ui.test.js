@@ -22,6 +22,29 @@ const chat = require(path.join(STATIC_DIR, "chat.js"));
 const jsSource = fs.readFileSync(path.join(STATIC_DIR, "chat.js"), "utf8");
 const htmlSource = fs.readFileSync(path.join(STATIC_DIR, "index.html"), "utf8");
 
+test("answer photo preview follows deferred card photos and preserves its dialog button on missing or failed images", () => {
+  const profile = fakeProfilePayload().result.profile;
+  profile.images = [];
+  profile.enrichment_pending = true;
+  const doc = { createElement: createFakeElement };
+  const card = chat.buildSpeciesCard(doc, profile);
+  const popup = chat.buildSpeciesPopup(doc, card, profile, { preview: true });
+  const opener = popup.children[0];
+  assert.equal(opener.getAttribute("aria-haspopup"), "dialog");
+  assert.match(collectedText(opener), /사진 준비 전/);
+  const photo = { image_url: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg", source_url: "https://commons.wikimedia.org/wiki/File:Example.jpg", license_name: "CC BY-SA 4.0" };
+  card.updateEnrichment({ images: [{ image_url: "javascript:alert(1)" }, photo] });
+  const image = collectAllNodes(opener).find(n => n.tagName === "img");
+  assert.equal(image.src, photo.image_url);
+  image.dispatch("error");
+  assert.equal(image.hidden, true);
+  assert.match(collectedText(opener), /사진을 불러오지 못했어요/);
+  card.updateEnrichment({ images: [] });
+  assert.equal(collectAllNodes(opener).some(n => n.tagName === "img"), false);
+  assert.match(collectedText(opener), /대표 사진 없음/);
+  assert.equal(popup.children[0], opener);
+});
+
 test("unverified translations fall back to English in cards, explanations and comparisons", () => {
   const profile = fakeProfilePayload().result.profile;
   profile.taxon.korean_name = "에메랄드턱벌새";
@@ -134,6 +157,12 @@ test("chat submission and health checks fetch same-origin /health and /v1/chat",
     "https://doi.org/10.6084/m9.figshare.27051040.v1",
     "https://www.nature.com/articles/s41597-025-05615-3",
   ]);
+  const approvedRecords = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records;
+  for (const record of approvedRecords) {
+    for (const key of ["source_url", "taxonomic_evidence_url"]) {
+      if (record[key]) provenanceUrls.add(record[key]);
+    }
+  }
   const absoluteUrls = Array.from(jsSource.matchAll(/"(https:\/\/[^"\n]+)"/g)).map(match => match[1]);
   assert.ok(absoluteUrls.every(url => provenanceUrls.has(url)), "absolute URL constants are limited to pinned provenance validation");
   assert.equal(jsSource.includes("http://"), false, "no absolute/remote URL literal is allowed in chat.js");
@@ -689,6 +718,15 @@ function createFakeElement(tagName) {
     appendChild(child) {
       if (child.parentNode) child.parentNode.removeChild(child);
       this.children.push(child);
+      child.parentNode = this;
+      return child;
+    },
+    insertBefore(child, reference) {
+      if (!reference) return this.appendChild(child);
+      if (child.parentNode) child.parentNode.removeChild(child);
+      const index = this.children.indexOf(reference);
+      if (index < 0) throw new Error("Reference is not a child");
+      this.children.splice(index, 0, child);
       child.parentNode = this;
       return child;
     },
@@ -2184,7 +2222,7 @@ test("Pica serica manual LC override colors only that species and preserves the 
   const other = { ...profile, taxon: { ...profile.taxon, taxon_id: "another-species", scientific_name: "Pica pica" } };
   assert.match(chat.buildSpeciesCard(svgCapableDoc(), other).className, /risk-unconfirmed/);
   assert.match(chat.buildSpeciesBrief(svgCapableDoc(), other).className, /risk-unconfirmed/);
-  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "평가 범위 확인 필요");
+  assert.equal(chat.conservationInfo(PICA_ORIGINAL_SNAPSHOT).badgeText, "IUCN 적색목록 · 등급 정보 없음");
 });
 
 test("manual override fails closed for any incomplete or altered Pica contract", () => {
@@ -2397,7 +2435,7 @@ test("conservationInfo trusts only exact category codes with a source; DD/NE/unk
     const info = chat.conservationInfo(input);
     assert.equal(info.tier, "unconfirmed", JSON.stringify(input));
     assert.equal(info.category, null);
-    assert.equal(info.badgeText, "멸종위기 등급 미확인");
+    assert.equal(info.badgeText, "IUCN 적색목록 · 등급 정보 없음");
   }
 });
 
@@ -2408,7 +2446,7 @@ test("snapshot NE preserves raw provenance without claiming IUCN Not Evaluated",
   assert.equal(info.sourceVerified, true);
   assert.equal(info.verified, false);
   assert.equal(info.tier, "unconfirmed");
-  assert.equal(info.badgeText, "평가 범위 확인 필요");
+  assert.equal(info.badgeText, "IUCN 적색목록 · 등급 정보 없음");
   const card = chat.buildSpeciesCard(svgCapableDoc(), habitatProfile("Forest", ne));
   assert.doesNotMatch(collectedText(card), /IUCN 적색목록 미평가/);
   assert.match(collectedText(card.sourceMaterial), /실제 IUCN 미평가 판정으로 단정할 수 없습니다/);
@@ -2447,12 +2485,13 @@ test("unlinked taxonomy NE reads as unresolved on every shared surface, for any 
     assert.equal(card.getAttribute("data-conservation-state"), "link-unresolved");
     assert.equal(card.getAttribute("data-conservation-tier"), "unconfirmed");
     const badge = card.children.find((node) => node.className === "species-conservation-badge");
-    assert.equal(badge.textContent, "평가 범위 확인 필요");
+    assert.equal(badge.textContent, "IUCN 적색목록 · 등급 정보 없음");
     assert.match(badge.getAttribute("title"), /실제 IUCN 미평가 판정이 아니며/);
     assert.doesNotMatch(badge.getAttribute("title"), /카드 색상은 이 등급만/);
     const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
     assert.match(brief.className, /risk-unconfirmed/);
-    assert.match(collectedText(brief), /평가 범위 확인 필요/);
+    assert.doesNotMatch(collectedText(brief), /평가 범위 확인 필요/);
+    assert.equal(badge.hidden, false);
     for (const showBrief of [false, true]) {
       const text = collectedText(chat.buildSpeciesAnswer(svgCapableDoc(), profile, showBrief));
       assert.doesNotMatch(text, /IUCN 적색목록 미평가|\(NE\) · |관심대상 \(LC\)/);
@@ -2464,7 +2503,7 @@ test("unlinked taxonomy NE reads as unresolved on every shared surface, for any 
 test("effective category null with raw NE and a valid needs_review snapshot is the same unresolved state; other nulls stay unconfirmed", () => {
   const nullNe = { ...UNLINKED_NE, category: null, taxonomy_category_raw: "NE" };
   const info = chat.conservationInfo(nullNe);
-  assert.deepEqual([info.state, info.tier, info.verified, info.badgeText], ["link-unresolved", "unconfirmed", false, "평가 범위 확인 필요"]);
+  assert.deepEqual([info.state, info.tier, info.verified, info.badgeText], ["link-unresolved", "unconfirmed", false, "IUCN 적색목록 · 등급 정보 없음"]);
   const profile = referenceProfile(REFERENCE_ASSESSMENT);
   profile.conservation = { ...nullNe, reference_assessment: REFERENCE_ASSESSMENT };
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
@@ -2766,7 +2805,7 @@ test("related explorer can retry outages and refuses stale relationship response
   assert.equal(collectAllNodes(explorer).filter(n => n.tagName === "h3").length, 0);
 });
 
-test("related exploration stays in the explanation and comparison, outside every species card", async () => {
+test("related exploration stays in the explanation and is omitted from comparisons and cards", async () => {
   const payload = fakeProfilePayload();
   payload.result.profile.sections = [{title:"기본 정보",items:[{text:"청둥오리"}]}];
   const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? {mode:"fixture"} : payload)));
@@ -2781,7 +2820,7 @@ test("related exploration stays in the explanation and comparison, outside every
   assert.equal(cards.length, 1);
   assert.equal(collectAllNodes(cards[0]).some(n => n.className === "species-related"), false);
   const comparison = chat.buildSpeciesComparison({createElement:createFakeElement}, payload.result.profile, payload.result.profile);
-  assert.equal(comparison.children.filter(n => n.className === "species-related").length, 1);
+  assert.equal(comparison.children.filter(n => n.className === "species-related").length, 0);
   for (const card of collectAllNodes(comparison).filter(n => n.className.startsWith("species-card risk-"))) {
     assert.equal(collectAllNodes(card).some(n => n.className === "species-related"), false);
   }
@@ -3215,12 +3254,12 @@ test("RG-005: comparison bubbles render hostile trait text inert and drop unsafe
   assert.equal(table.getAttribute("tabindex"), "0", "the wide table can be scrolled by keyboard on narrow screens");
 });
 
-test("RG-005: a comparison opened from inside a comparison bubble also becomes its own bubble", async () => {
+test("comparison bubbles end with cards and sources without nested explorers", async () => {
   const ctx = await rg005Start((name) => Promise.resolve(jsonResponse(rg005Peer(name === "Anas acuta" ? "p1" : "p2", name, name === "Anas acuta" ? "고방오리" : "쇠오리"))));
   ctx.peerButton("고방오리").dispatch("click");
   await tick();
   const nested = collectAllNodes(ctx.bubbles()[0]).find((n) => n.className === "species-related");
-  assert.ok(nested);
+  assert.equal(nested, undefined);
   const cards = collectAllNodes(ctx.bubbles()[0]).filter((n) => (n.className || "").startsWith("species-card risk-"));
   for (const card of cards) {
     assert.equal(collectAllNodes(card).some((n) => n.className === "species-related"), false, "explorers stay outside cards");
@@ -3779,7 +3818,7 @@ test("ecological explorer is lazy, sourced and separate; comparisons create inde
   assert.equal(bubbles.length, 2);
   assert.deepEqual(bubbles.map(b => b.info.right.taxon.taxon_id), ["peer1", "peer2"]);
   assert.equal(collectAllNodes(explorer).some(n => n.className === "species-comparison"), false);
-  assert.ok(bubbles.every(b => collectAllNodes(b.panel).some(n => n.className === "species-ecological-related")));
+  assert.ok(bubbles.every(b => !collectAllNodes(b.panel).some(n => n.className === "species-ecological-related")));
   assert.match(collectedText(bubbles[0].panel), /공유 생태 범주: 습지/);
   assert.equal(collectAllNodes(chat.buildSpeciesCard({ createElement: createFakeElement }, left)).some(n => n.className === "species-ecological-related"), false);
 });
@@ -3853,10 +3892,42 @@ test("targeted diet answer appears first with sources and keeps the card without
   assert.ok(targeted);
   assert.equal(targeted.children[0].textContent, "무엇을 먹나요?");
   assert.match(collectedText(targeted), /씨앗과 무척추동물/);
-  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 1);
+  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0, "provenance lives only in 답변 출처 보기");
   assert.equal(collectAllNodes(targeted).some(n => n.tagName === "script"), false);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-answer"), false);
   assert.ok(collectAllNodes(answer).some(n => n.className === "species-popup-trigger risk-unconfirmed" || /^species-popup-trigger /.test(n.className || "")));
+});
+
+test("targeted diet answer renders supplied distribution as diet icons and keeps provenance only in the sources panel", async () => {
+  const profile = fakeProfilePayload().result.profile;
+  const source = { source_name: "AVONET", source_url: "https://example.org/avonet", license_name: "CC BY 4.0" };
+  const value = { invertebrate: 40, seed: 35.5, other_plant: 24.5, mystery: 99 };
+  const items = Object.entries({ invertebrate: 40, seed: 35.5, other_plant: 24.5 }).map(([key, amount]) =>
+    ({ name: "diet_distribution", value, ...source, text: key + " " + amount + "% (자료의 먹이 구성비)" }));
+  const payload = fakeProfilePayload({ ...profile }); payload.result.question_answer = { topic: "diet", title: "청둥오리 · 먹이와 식성", text: "자료의 먹이", items };
+  const fixture = await renderProfileMessage(profile, { result: payload.result });
+  const targeted = fixture.message.children.find(n => n.className === "species-question-answer");
+  const list = collectAllNodes(targeted).find(n => /species-diet-icons/.test(n.className || ""));
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["무척추동물", "씨앗", "기타 식물"]);
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "question-answer-diet-share").map(n => n.textContent), ["40%", "35.5%", "24.5%"]);
+  assert.equal(collectAllNodes(targeted).some(n => n.className === "question-answer-facts"), false);
+  assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0);
+  assert.equal(collectAllNodes(fixture.sources).filter(n => n.tagName === "a" && n.href === source.source_url).length, 1);
+});
+
+test("targeted answers share the ordinary 더 알아보기 builders, endpoint and deferred behavior", async () => {
+  const profile = fakeProfilePayload().result.profile;
+  const payload = fakeProfilePayload({ ...profile }); payload.result.question_answer = { topic: "diet", title: "먹이", text: "먹이 정보", items: [] };
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "청둥오리는 뭐 먹고 살아?";
+  pressKey(dom, {}); await settleEventPath();
+  const answer = messageRows(dom.elementsById.history)[1];
+  const extra = answer.children.find(n => n.className === "species-extra-info");
+  assert.deepEqual(extra.children.slice(1).map(n => n.className).filter(c => c !== "species-related-slot"), ["species-related", "species-ecological-related", "species-subspecies", "species-name-relations"]);
+  const related = collectAllNodes(extra).find(n => n.className === "species-related");
+  assert.equal(related.children[0].textContent, "근연 관계 우선 3종 살펴보기");
+  assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/") && !c.url.startsWith("/v1/taxa/profile")), false, "no exploration request before click");
 });
 
 test("direct ecological answer displays peers without another lookup and comparison creates a separate answer", async () => {
@@ -3948,11 +4019,11 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   for (const name of ["Reviewed profile", "Appearance source", "Ecology source", "Fun facts source", "IUCN Red List", "API evidence"]) {
     assert.ok(collectedText(sources).includes(name), "footer retains " + name);
   }
-  assert.deepEqual(explanation.children.map(n => n.className), ["", "species-answer-section", "species-chat-brief risk-lc", "species-answer-section", "species-answer-section", "species-answer-section"]);
+  assert.deepEqual(explanation.children.map(n => n.className), ["species-answer-names", "species-answer-section", "species-chat-brief risk-lc", "species-answer-section", "species-answer-section", "species-answer-section"]);
   assert.equal(explanation.children.at(-1).children[0].textContent, "재미있는 사실");
   assert.equal(explanation.children.some(n => n.className === "species-answer-sources"), false);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/")), false, "folded exploration never fetches");
-  assert.ok(answer.children.indexOf(explanation) < answer.children.findIndex(n => n.className === "species-popup-entry"));
+  assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(explanation));
   assert.ok(answer.children.findIndex(n => n.className === "species-popup-entry") < answer.children.indexOf(extra));
   assert.equal(explorer.parentNode, extra);
   explorer.children[0].dispatch("click"); await tick();
@@ -3971,7 +4042,8 @@ test("ordinary introduction follows the reference layout with folded TOP3, extra
   assert.equal(rows.length, 3);
   assert.equal(rows[1], answer);
   assert.equal(collectAllNodes(answer).some(n => n.className === "species-comparison"), false);
-  assert.match(collectedText(rows[2]), /가중 점수 90점/);
+  assert.equal(collectAllNodes(rows[2]).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(rows[2]).includes("가중 점수 90점"));
   assert.equal(collectAllNodes(rows[2]).filter(n => n.tagName === "dialog").length, 2);
 });
 
@@ -4024,7 +4096,8 @@ test("ranked comparison preserves similarity reasons in a new bubble and rejects
   const button = collectAllNodes(explorer).find(n => n.tagName === "button" && /^1위/.test(n.getAttribute("aria-label") || ""));
   button.dispatch("click"); await tick();
   assert.equal(bubbles.length, 1);
-  assert.match(collectedText(bubbles[0]), /가중 점수 90점/);
+  assert.equal(collectAllNodes(bubbles[0]).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(bubbles[0]).includes("가중 점수 90점"));
   assert.match(collectedText(bubbles[0]), /비교 후보 근거와 출처/);
   assert.match(collectedText(bubbles[0]), /진화 거리나 유전 유사도/);
   assert.equal(collectAllNodes(bubbles[0]).filter(n => n.tagName === "dialog").length, 2);
@@ -4424,7 +4497,9 @@ test("direct ranked questions render exactly one unfolded TOP3 card set and comp
   await settleEventPath();
   assert.equal(messageRows(dom.elementsById.history).length, 3);
   assert.equal(messageRows(dom.elementsById.history)[1], answer);
-  assert.match(collectedText(messageRows(dom.elementsById.history)[2]), /분류·생태 대체 점수\(계통 자료 부족\) 66.67점/);
+  const selected = messageRows(dom.elementsById.history)[2];
+  assert.equal(collectAllNodes(selected).some(n => n.className === "comparison-peer-score"), false);
+  assert.ok(collectedText(selected).includes("분류·생태 대체 점수(계통 자료 부족) 66.67점"));
 });
 
 for (const mismatch of ["concept_set_id", "taxonomy_release", "taxon_id"]) {
@@ -5355,22 +5430,16 @@ test("uniform card frames fit without popup scrolling and preserve the inactive 
   assert.match(css, /\.species-card-fit-frame \{[^}]*overflow: clip;/);
 });
 
-test("the front photo slot absorbs spare height on every viewport so no blank sits above 관찰 포인트", () => {
+test("desktop photos use one generous aspect ratio and phones retain their tall fitted slot", () => {
   const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
   const phoneBlock = css.indexOf("@media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {");
-  assert.ok(phoneBlock > 0);
-  for (const rule of [
-    ".species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 1 0 auto; max-height: min(480px, 56dvh); }",
-    ".species-popup .species-photo-area .species-media figure img { position: absolute; inset: 0;",
-    ".species-popup .species-photo-area .species-photo-placeholder { flex: 1 0 auto; }",
-  ]) {
-    const at = css.indexOf(rule);
-    assert.ok(at > 0 && at < phoneBlock, "global, not phone-only: " + rule);
-  }
-  assert.match(css, /\.species-photo-area \{[^}]*flex: 1 0 auto; max-height: min\(480px, 56dvh\); \}/, "growth is capped on the photo area, so any extra height ends up below the observations");
-  assert.doesNotMatch(css, /\.species-observation-points \{ margin-top: auto/, "observations are no longer pushed to the bottom");
-  assert.match(css, /\.species-observation-points \{[^}]*border-top: 1px solid #69844744;/, "divider under the last basic fact");
-  assert.match(css, /@media[^{]*\{[\s\S]*\.species-popup \.species-observation-points \{ margin-top: 0; border-top: 0; \}/, "phones keep a single divider");
+  const desktop = css.slice(0, phoneBlock), phone = css.slice(phoneBlock);
+  assert.match(desktop, /\.species-popup \.species-card-front \.species-photo-area \{[^}]*flex: 0 0 auto; min-height: 0;/);
+  assert.match(desktop, /\.species-photo-area \.species-media figure \{[^}]*aspect-ratio: 7 \/ 6;/);
+  assert.match(desktop, /figure img \{ position: absolute; inset: 0;[^}]*object-fit: cover;/);
+  assert.match(phone, /\.species-card-front \.species-photo-area \{ flex: 1 0 auto; max-height: min\(480px, 56dvh\);/);
+  assert.match(phone, /\.species-photo-area \.species-media figure \{ aspect-ratio: auto;/);
+  assert.doesNotMatch(css, /\.species-observation-points \{ margin-top: auto/);
 });
 
 test("failed or cancelled enrichment stops inviting a finished 더 알아보기 and preserves any sourced observations", () => {
@@ -5459,7 +5528,7 @@ function mobileFitFixture() {
     ResizeObserver: class { constructor(fn) { this.fn = fn; this.nodes = []; observers.push(this); } observe(node) { this.nodes.push(node); } disconnect() { this.nodes = []; } },
   };
   const doc = { createElement: createFakeElement, defaultView: win };
-  const card = chat.buildSpeciesCard(doc, photoProfile()); card.style = {};
+  const card = chat.buildSpeciesCard(doc, photoProfile()); card.style = { setProperty(name, value) { this[name] = value; } };
   const popup = chat.buildSpeciesPopup(doc, card, photoProfile()), dialog = popup.children[1];
   const frame = cardPart(popup, "species-card-fit-frame"), surface = cardPart(popup, "species-card-fit-surface");
   surface.style = {}; frame.clientWidth = 280; frame.clientHeight = 500; surface.offsetWidth = 420;
@@ -5499,7 +5568,7 @@ test("desktop fitting leaves fitting cards at natural size and scales expanded d
   assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "collapsing details restores the natural scale");
 });
 
-test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a readable size and the frame scrolls instead of shrinking", () => {
+test("opening details preserves the closed fit scale while additional content scrolls", () => {
   const f = mobileFitFixture(); f.mobile(false);
   f.frame.clientWidth = 436; f.surface.offsetWidth = 436; f.frame.clientHeight = 820;
   const toggle = { open: false };
@@ -5509,7 +5578,7 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "other expanded content still fits the frame");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
   toggle.open = true; f.card.dispatch("toggle"); f.flush();
-  assert.equal(f.frame.getAttribute("data-fit-scale"), "1", "an open scroll toggle is never shrunk to the frame height");
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(820 / 950), "an open toggle cannot enlarge the fitted card");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
   f.frame.scrollTop = 120;
   toggle.open = false; f.card.dispatch("toggle"); f.flush();
@@ -5518,13 +5587,14 @@ test("while 측정값 더 보기 / 분류 계통 보기 is open the card keeps a
   assert.equal(f.frame.scrollTop, 0, "closing returns to the top");
 });
 
-test("scroll mode on a narrow frame fits the width only and trims the scaled layout height to the visible size", () => {
+test("mobile details keep the collapsed scale and trim the expanded scroll range", () => {
   const f = mobileFitFixture(); // frame 280x500, surface 420 wide: width scale 2/3
-  const toggle = { open: true };
+  const toggle = { open: false };
   f.card.querySelectorAll = () => [toggle];
-  f.height(1200); f.open();
-  const scale = 280 / 420;
-  assert.equal(f.frame.getAttribute("data-fit-scale"), String(scale), "height does not shrink it further");
+  f.open();
+  const scale = 500 / 780;
+  f.height(1200); toggle.open = true; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(scale), "expanded height and width-only fitting cannot change scale");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "true");
   assert.ok(Math.abs(parseFloat(f.surface.style.marginBottom) + 1200 * (1 - scale)) < 1e-6,
     "the scroll range equals the scaled height, not the unscaled one");
@@ -5532,6 +5602,36 @@ test("scroll mode on a narrow frame fits the width only and trims the scaled lay
   assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
   assert.equal(f.surface.style.marginBottom, "");
   assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+});
+
+test("expanded details remain stable across observers, nested toggles and viewport resizing", () => {
+  const f = mobileFitFixture(), toggles = [{ open: false }, { open: false }];
+  f.card.querySelectorAll = () => toggles;
+  f.height(1200); f.open();
+  assert.equal(f.card.style["--species-card-material-height"], "1200px");
+  toggles[0].open = true; f.height(2000); f.card.dispatch("toggle"); f.flush();
+  for (let i = 0; i < 4; i++) { f.observers.at(-1).fn(); f.flush(); }
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  assert.equal(f.card.style["--species-card-material-height"], "1200px", "material does not stretch with expanded content");
+  assert.equal(f.card.style["--species-card-material-canvas-height"], "1200px", "material paint surface stays fixed");
+  toggles[1].open = true; f.height(2400); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(500 / 1200));
+  f.frame.scrollTop = 100; toggles[0].open = false; f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.scrollTop, 100, "closing one of several toggles retains scrolling");
+  f.frame.clientHeight = 350; f.handlers.resize[0](); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scale"), String(350 / 1200));
+  toggles[1].open = false; f.height(1200); f.card.dispatch("toggle"); f.flush();
+  assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+  assert.equal(f.frame.scrollTop, 0);
+});
+
+test("all popup palettes anchor their material height independently of flip sheen", () => {
+  const css = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\] \{\s*background-size: 100% var\(--species-card-material-height, 100%\);/);
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\] \{[^}]*overflow: clip;/);
+  assert.ok(css.indexOf('.species-card[data-conservation-tier]') > css.indexOf('.species-card.risk-ex'), "palette shorthands cannot reset the fixed material size");
+  assert.match(css, /\.species-popup \.species-card\[data-conservation-tier\]::before \{[^}]*pointer-events: none;[^}]*contain: paint;[^}]*transform: translateZ\(0\);/);
+  assert.match(css, /\.species-card-gloss \{[^}]*background-size: 300% 100%;/);
 });
 
 test("flipping the card returns the scrolled frame to the top", () => {
@@ -5832,7 +5932,7 @@ test("alignment notes also appear for distribution cards and carry no card-size 
   assert.equal(collectAllNodes(cardPart(card, "species-distribution-pair")).some(n => n.className === "trait-taxonomy-alignment"), false, "the note lives in the source toggle, not the chart box");
 });
 
-test("subgroup traits keep scope in both card faces and never become species emblems", () => {
+test("subgroup values cannot enter species cards, sources, comparison or emblems", () => {
   const profile = habitatProfile("Forest");
   const subgroup = { name: "body_mass", label: "체중 · 아종군 자료", value: 14.4, display: "14.4", unit: "g",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
@@ -5842,31 +5942,29 @@ test("subgroup traits keep scope in both card faces and never become species emb
     { ...subgroup, name: "diet_category", label: "먹이 유형 · 아종군 자료", value: "Invertivore", display: "무척추동물", unit: null }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
-  assert.match(collectedText(facts), /체중 · 아종군 자료/);
-  assert.match(collectedText(facts), /14\.4 g/);
-  assert.match(collectedText(card.sourceMaterial), /현재 종 전체를 대표하는 값이 아닙니다/);
-  assert.match(collectedText(card.sourceMaterial), /Parus cinereus \[cinereus Group\]: 14\.4 g/);
+  assert.doesNotMatch(collectedText(facts), /아종군|14\.4/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /아종군|14\.4/);
   assert.equal(chat.habitatEmblemInfo(profile).known, false);
   assert.equal(chat.dietIconInfo(profile).icons.length, 0);
-  assert.match(collectedText(chat.buildSpeciesComparison(svgCapableDoc(), profile, profile)), /아종군 자료 \(Parus cinereus/);
+  assert.doesNotMatch(collectedText(chat.buildSpeciesComparison(svgCapableDoc(), profile, profile)), /아종군|14\.4/);
 });
 
-test("multiple subgroups retain every source without choosing or averaging a species value", () => {
+test("multiple subgroup sources never fill or join species trait values", () => {
   const profile = habitatProfile("Forest");
   const base = { name: "body_mass", label: "체중 · 아종군 자료", value: 10, display: "10", unit: "g",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group", summary_statistic: "subgroup_mean" };
   profile.traits = [{ ...base, source_scope: "Group A" }, { ...base, source_scope: "Group B", value: 20, display: "20" }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const facts = collectAllNodes(card).find(n => n.className === "species-quick-facts");
-  assert.match(collectedText(facts), /아종군 2개 자료/);
+  assert.doesNotMatch(collectedText(facts), /아종군/);
   assert.doesNotMatch(collectedText(facts), /10 g|20 g|15 g/);
-  assert.match(collectedText(card.sourceMaterial), /Group A: 10 g/);
-  assert.match(collectedText(card.sourceMaterial), /Group B: 20 g/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /Group A: 10 g/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /Group B: 20 g/);
   profile.traits.push({ ...base, label: "체중", source_scope_kind: undefined, value: 30, display: "30" });
   const preferred = chat.buildSpeciesCard(svgCapableDoc(), profile);
   assert.match(collectedText(collectAllNodes(preferred).find(n => n.className === "species-quick-facts")), /30 g/);
-  assert.match(collectedText(preferred.sourceMaterial), /Group A: 10 g/);
-  assert.match(collectedText(preferred.sourceMaterial), /Group B: 20 g/);
+  assert.doesNotMatch(collectedText(preferred.sourceMaterial), /Group A: 10 g/);
+  assert.doesNotMatch(collectedText(preferred.sourceMaterial), /Group B: 20 g/);
 });
 
 test("author-inferred traits display their flag and original inference note without markup execution", () => {
@@ -5931,7 +6029,7 @@ test("literature mass retains the author's bounds average and all source range v
   assert.doesNotMatch(collectedText(card.sourceMaterial), /암컷 최소 null|종 평균/);
 });
 
-test("subgroup lifestyle fallback retains scope and links the explicit taxonomy relationship", () => {
+test("subgroup lifestyle is not used as a species fallback", () => {
   const profile = habitatProfile("Forest");
   profile.traits = [{ name: "primary_lifestyle", label: "주 생활 방식 · 아종군 자료", value: "Terrestrial", display: "지상 생활",
     source_name: "AVONET", source_url: "https://example.org/avonet", source_scope_kind: "subspecies_group",
@@ -5939,8 +6037,8 @@ test("subgroup lifestyle fallback retains scope and links the explicit taxonomy 
     mapping_provenance: { relationship_source_url: "https://cornell.box.com/s/example" } }];
   const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
   const fallback = collectAllNodes(card).find(n => n.className === "species-distribution-empty species-distribution-qualitative");
-  assert.match(collectedText(fallback), /생활 방식 · 아종군 자료 · 지상 생활/);
-  assert.ok(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === "https://cornell.box.com/s/example"));
+  assert.doesNotMatch(collectedText(card), /아종군|지상 생활/);
+  assert.equal(collectAllNodes(card.sourceMaterial).some(n => n.tagName === "a" && n.href === "https://cornell.box.com/s/example"), false);
 });
 
 test("comparison keeps visible literature statistic, original bounds and inference provenance", () => {
@@ -5952,4 +6050,138 @@ test("comparison keeps visible literature statistic, original bounds and inferen
   assert.ok(collectAllNodes(comparison).some(n => n.tagName === "p" && n.textContent === "16.55 g · 문헌 범위 평균"));
   assert.match(collectedText(comparison), /성별 미구분 최소 11 g · 성별 미구분 최대 22\.1 g/);
   assert.match(collectedText(comparison), /문헌 범위값이며 표본 평균이 아닙니다/);
+});
+
+test("legacy subgroup sections are rejected while scoped prose stays attributed", () => {
+  const item = (scope, n) => ({ text: "측정값 " + n + ": 12 mm", source_scope: scope,
+    source_scope_kind: "subspecies_group", source_name: "AVONET", source_url: "https://example.org/avonet" });
+  const profile = photoProfile({ sections: [
+    ...["basic", "appearance", "ecology", "fun_facts"].map(key => ({ key, title: key, items: [{ text: "종 본문 " + key }] })),
+    { key: "subspecies_groups", title: "아종군별 자료", description: "종 전체를 대표하는 값이 아닙니다.",
+      items: [...Array.from({ length: 6 }, (_, n) => item("Group A", n)), item("Group B", 7)] },
+    { key: "source_scope_notes", title: "출처 범위의 참고 설명", description: "현재 분류와 범위를 대조해야 합니다.",
+      items: [{ text: "출처에서 설명한 흰 뺨", source_scope: "원문 범위", source_name: "원문", source_url: "https://example.org/note" }] }
+  ] });
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile);
+  const bounded = answer.children.filter(n => n.className.includes("species-bounded-data"));
+  assert.equal(bounded.length, 0);
+  assert.match(collectedText(answer), /appearance/);
+  assert.match(collectedText(answer), /출처에서 설명한 흰 뺨/);
+  assert.doesNotMatch(collectedText(answer), /측정값|출처 범위의 참고 설명/);
+  const sources = answer.children.find(n => n.className === "species-answer-sources");
+  assert.match(collectedText(sources), /원문/);
+
+});
+
+test("empty bounded sections do not create empty toggles", () => {
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), photoProfile({ sections: [
+    { key: "basic", title: "기본 정보", items: [{ text: "학명" }] },
+    { key: "subspecies_groups", title: "아종군별 자료", items: [] }
+  ] }));
+  assert.equal(collectAllNodes(answer).filter(n => n.className?.includes("species-bounded-data")).length, 0);
+});
+
+
+test("review metadata stays in sources while the IUCN badge remains visible without inventing a grade", () => {
+  const p = habitatProfile("Forest", UNLINKED_NE);
+  p.sections = [{ key: "appearance", title: "외관 특징", items: [{ text: "머리가 검고 뺨은 흽니다.", source_name: "백과", source_url: "https://example.org/wiki", source_note: "문서 식별 확인; 분류 범위는 독립 검증하지 않았습니다." }] }];
+  p.note_evidence = p.sections[0].items;
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), p, true);
+  const source = answer.children.find(n => n.className === "species-answer-sources");
+  assert.match(collectedText(source), /분류 범위는 독립 검증/);
+  assert.doesNotMatch(answer.children.filter(n => n !== source).map(collectedText).join(" "), /분류 범위|평가 범위 확인 필요|출처 범위별 설명/);
+  assert.match(collectedText(answer), /머리가 검고 뺨은 흽니다/);
+  const badge = collectAllNodes(chat.buildSpeciesBrief(svgCapableDoc(), p)).find(n => n.className === "species-conservation-badge");
+  assert.equal(badge.hidden, false);
+  assert.equal(badge.textContent, "IUCN 적색목록 · 등급 정보 없음");
+});
+
+const EXPERT_REFERENCE = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records[0];
+test("reviewed expert grades show in card and answer with scope and real source dates retained only in sources", () => {
+  const taxon = { taxon_id: EXPERT_REFERENCE.taxon_id, scientific_name: EXPERT_REFERENCE.scientific_name, rank: "species" };
+  const conservation = { ...PICA_ORIGINAL_SNAPSHOT, reference_assessment: EXPERT_REFERENCE };
+  const info = chat.conservationInfo(conservation, taxon);
+  assert.equal(info.tier, "lc");
+  assert.equal(info.verified, false);
+  assert.equal(info.badgeText, "IUCN 적색목록 관심대상 (LC) · 홍콩조류관찰회 자료 기준");
+  assert.doesNotMatch(info.badgeText, /2024 평가|등급 정보 없음/);
+  const profile = { ...habitatProfile("Forest"), taxon, conservation };
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.match(collectedText(card.sourceMaterial), /자료 갱신일은 IUCN 평가일이 아닙니다/);
+  assert.match(collectedText(card.sourceMaterial), /Parus major/);
+  assert.doesNotMatch(collectedText(card.sourceMaterial), /undefined/);
+});
+test("expert references cannot colour another taxon or accept invented assessment identities", () => {
+  const taxon = { taxon_id: EXPERT_REFERENCE.taxon_id, scientific_name: EXPERT_REFERENCE.scientific_name };
+  for (const change of [{ scientific_name: "Parus major" }, { taxon_id: "another" }, { source_url: "https://example.org" },
+    { source_release: "2026" }, { assessment_year: 2024 }, { assessment_id: "123" }, { sis_id: "123" },
+    { category_raw: "EN" }, { category: "NE" }, { independently_verified: true }, { taxonomy_alignment: "accepted" },
+    { source_scope_note: "" }, { record_sha256: "bad" }, { snapshot_sha256: "bad" }]) {
+    assert.equal(chat.referenceAssessmentInfo({ reference_assessment: { ...EXPERT_REFERENCE, ...change } }, taxon), null, JSON.stringify(change));
+  }
+  assert.equal(chat.referenceAssessmentInfo({reference_assessment: EXPERT_REFERENCE}), null);
+});
+
+test("expert manifest rejects coordinated grade changes and fabricated scope/date even with original hashes", () => {
+  const taxon = {taxon_id:EXPERT_REFERENCE.taxon_id, scientific_name:EXPERT_REFERENCE.scientific_name};
+  for (const change of [ {category:"EN", category_raw:"EN"},
+    {taxonomy_alignment:"exact_source_name", source_scientific_name:"Other bird"},
+    {source_updated_at:"2024-99-99", source_release:"2024-99-99"}]) {
+    assert.equal(chat.referenceAssessmentInfo({reference_assessment:{...EXPERT_REFERENCE,...change}},taxon),null);
+  }
+});
+
+test("every approved expert record renders through the shared path and rejects unapproved extra evidence", () => {
+  const records = JSON.parse(fs.readFileSync(path.join(STATIC_DIR, "..", "..", "retrieval", "reviewed_conservation_references.json"), "utf8")).records;
+  for (const ref of records) {
+    const taxon = {taxon_id:ref.taxon_id, scientific_name:ref.scientific_name, rank:"species"};
+    const evidence = {...PICA_ORIGINAL_SNAPSHOT, reference_assessment:ref};
+    const info = chat.conservationInfo(evidence,taxon);
+    assert.equal(info.tier,ref.category.toLowerCase(),ref.scientific_name);
+    assert.match(info.badgeText,/홍콩조류관찰회 자료 기준/);
+    assert.equal(chat.referenceAssessmentInfo({reference_assessment:{...ref,unreviewed_source:"https://example.org"}},taxon),null);
+  }
+});
+
+
+test("comparison shows equal display values once while keeping all attributed raw claims in one footer", () => {
+  const profile = habitatProfile("Forest");
+  profile.traits = [
+    { name: "body_mass", value: 570, display: "570", unit: "g", source_name: "Study A", source_url: "https://example.org/study-a" },
+    { name: "body_mass", value: "570", display: "570", unit: "g", source_name: "Study B", source_url: "https://example.org/study-b" },
+    { name: "body_mass", value: 571, display: "571", unit: "g", source_name: "Study C", source_url: "https://example.org/study-c" },
+    { name: "body_mass", value: 570, display: "570", unit: "g", summary_statistic: "sample_mean", source_name: "Sample", source_url: "https://example.org/sample" },
+  ];
+  const panel = chat.buildSpeciesComparison(svgCapableDoc(), profile, profile);
+  const table = collectAllNodes(panel).find(n => n.tagName === "tbody");
+  const cell = table.children[table.children.length - 1].children[1];
+  assert.deepEqual(cell.children.map(n => n.textContent), ["570 g", "571 g", "570 g · 표본 평균"]);
+  assert.equal(collectAllNodes(cell).some(n => n.tagName === "details" || n.tagName === "a"), false);
+  const sources = panel.children.find(n => n.className === "species-answer-sources");
+  for (const url of ["study-a", "study-b", "study-c", "sample"]) {
+    assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === "https://example.org/" + url).length, 1);
+  }
+});
+
+test("comparison uses card mass units and compact citations retain evidence behind closed details", () => {
+  const left = habitatProfile("Forest");
+  const right = habitatProfile("Forest");
+  left.traits = [{ name:"body_mass", value:843.42, display:"843.42", unit:"g", ...DIET_SOURCE }];
+  right.traits = [{ name:"body_mass", value:1156, display:"1156", unit:"g", ...DIET_SOURCE, release:"raw-record-123" }];
+  const panel = chat.buildSpeciesComparison(svgCapableDoc(), left, right, {bothCards:true});
+  const rows = collectAllNodes(panel).find(n => n.tagName === "tbody").children;
+  assert.equal(rows.at(-1).children[1].children[0].textContent, "843.42 g");
+  assert.equal(rows.at(-1).children[2].children[0].textContent, "1.16 kg");
+  assert.equal(panel.children.at(-2).className, "species-comparison-card-actions");
+  const sources = panel.children.at(-1);
+  assert.equal(sources.className, "species-answer-sources");
+  assert.equal(sources.open, undefined);
+  const entries = sources.children.filter(n => n.className === "comparison-source-entry");
+  assert.ok(entries.length > 0);
+  assert.ok(entries.some(n => n.children.some(c => c.tagName === "a" && c.textContent === "AVONET")));
+  const metadata = collectAllNodes(sources).filter(n => n.className === "comparison-source-metadata");
+  assert.ok(metadata.length > 0);
+  assert.ok(metadata.every(n => !n.open && n.children[0].textContent === "자료 상세 정보"));
+  assert.match(collectedText(sources), /raw-record-123/);
+  assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === DIET_SOURCE.source_url).length, 1);
 });

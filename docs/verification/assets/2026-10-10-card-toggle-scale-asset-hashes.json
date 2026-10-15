@@ -1,0 +1,17 @@
+{
+  "test_matches_local": true,
+  "local": {
+    "chat.js": "697089ad4a056cfe66fc3b726b30f5041c0eb224d03f92feb20ce38f14270aca",
+    "styles.css": "a278bcef252a6471071db8538ae214639329e7028f702f2172e76eacf699834a"
+  },
+  "public": {
+    "https://robingraph-test.dove-nest.com": {
+      "chat.js": "697089ad4a056cfe66fc3b726b30f5041c0eb224d03f92feb20ce38f14270aca",
+      "styles.css": "a278bcef252a6471071db8538ae214639329e7028f702f2172e76eacf699834a"
+    },
+    "https://robingraph.dove-nest.com": {
+      "chat.js": "ed25611f02e0d79e79429c6e94b6912592472dde4e98ffd00d39f6e4387b4d79",
+      "styles.css": "e1ac11fe342c6959a605c5182306ef6ba990030e8aacc5378f031cdb9db8f9a1"
+    }
+  }
+}

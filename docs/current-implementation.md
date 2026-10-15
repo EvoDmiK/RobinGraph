@@ -8,7 +8,7 @@ Hermes 관련 문구와 테스트 수치는 당시의 구현 기록이다.
 
 최신 추가(2026-09-12): NAS 공개 API의 배포 버전이 실제로 이 checkout의 API
 계약과 일치하는지 확인하는 읽기 전용 검증기 `scripts/verify_api_deployment.py`를
-추가했다. 라이브 확인 과정에서 `https://aviary.dove-nest.com`이
+추가했다. 라이브 확인 과정에서 공개 API이
 `LineageTaxonResponse.korean_name_status` 필드가 없는 오래된 이미지를 서비스
 중임을 발견했다. 또한 §1의 `GET /health`가 반환하는 `taxonomy_release`는
 아래(§1, §12)에서 설명하는 fixture corpus의 릴리스일 뿐이며, AviList

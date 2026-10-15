@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": {
+    "seven_table_hashes_match_test": true,
+    "seven_table_counts_match_test": true,
+    "run_exact_union": true,
+    "run_count_36": true,
+    "preserved_production_only_runs": true,
+    "neo4j_count_and_structure_unchanged": true,
+    "neo4j_constraints_unchanged": true
+  },
+  "run_counts": {
+    "test_before": 35,
+    "prod_before": 35,
+    "shared_identical": 34,
+    "test_only": 1,
+    "prod_only": 1,
+    "prod_after": 36
+  },
+  "method": "7 full row hashes; ingestion_run exact primary-key plus per-field/full-row-hash union; post graph counts/structure, pre full graph content equal"
+}

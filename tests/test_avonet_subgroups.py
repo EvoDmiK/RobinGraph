@@ -49,10 +49,11 @@ class AvonetSubgroupsTests(TestCase):
         self.assertEqual({t['source_scope'] for t in masses}, {'Dicrurus sharpei sharpei', 'Dicrurus sharpei occidentalis'})
         summary = species_summary({'scientific_name': 'Dicrurus sharpei'}, values)
         self.assertNotIn('체중은', summary)
-        self.assertIn('종 전체의 평균을 뜻하지 않습니다', summary)
+        self.assertNotIn('아종군', summary)
         sections = species_sections({'scientific_name': 'Dicrurus sharpei'}, values, {})
         basic = next(s for s in sections if s['key'] == 'basic')['items']
-        self.assertEqual(sum('아종군' in item['text'] for item in basic), 2)
+        self.assertEqual(len(basic), 1)
+        self.assertFalse(any(s['key'] == 'subspecies_groups' for s in sections))
 
     def test_existing_primary_fields_win_for_every_subgroup(self):
         existing = {'name': 'body_mass', 'value': 22.0, 'inferred': False}

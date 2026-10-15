@@ -825,14 +825,12 @@ body:has(.species-popup[open]) { overflow: hidden; }
   aspect-ratio: 16 / 10;
   max-height: min(240px, 28dvh);
 }
-/* The image slot, rather than an auto margin above observations, consumes the
-   front's spare space on every viewport, so no blank band sits between the basic
-   facts and 관찰 포인트. Absolute images cannot inflate the natural card height
-   and feed a percentage-height/fit measurement cycle. Growth is capped; beyond
-   the cap any remainder sits below the observations, not above them. */
-.species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 1 0 auto; max-height: min(480px, 56dvh); }
-.species-popup .species-photo-area .species-media { flex: 1 1 0; min-height: 0; }
-.species-popup .species-photo-area .species-media figure { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
+/* Give every species the same generous photo proportions. Diet chips, photo
+   controls and the opposite face no longer consume the image's spare height.
+   The popup fitter scales the complete card to the viewport without scrolling. */
+.species-popup .species-card-front .species-photo-area { display: flex; flex-direction: column; flex: 0 0 auto; min-height: 0; }
+.species-popup .species-photo-area .species-media { flex: 0 0 auto; min-height: 0; }
+.species-popup .species-photo-area .species-media figure { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; aspect-ratio: 7 / 6; }
 .species-popup .species-photo-area .species-media figure img { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; max-height: none; aspect-ratio: auto; object-fit: cover; }
 .species-popup .species-photo-area .species-photo-placeholder { flex: 1 0 auto; }
 .species-quick-facts {
@@ -933,7 +931,7 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 .species-card-fit-frame { display: flex; width: 100%; height: 100%; align-items: flex-start; justify-content: center; overflow: clip; }
 .species-card-fit-surface { display: block; width: 100%; flex-shrink: 0; transform-origin: top center; }
-/* While 측정값 더 보기 / 분류 계통 보기 is open the card keeps a readable size and
+/* While a details toggle is open the card keeps its fitted scale and
    the frame scrolls vertically; touch keeps vertical pan next to the swipe-to-flip. */
 .species-card-fit-frame[data-fit-scroll="true"] { overflow-x: clip; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; }
 .species-card-fit-frame[data-fit-scroll="true"]::-webkit-scrollbar { display: none; width: 0; height: 0; }
@@ -983,6 +981,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .species-popup .species-card-front > * { flex-shrink: 0; }
   .species-popup .species-photo-area,
   .species-popup .species-photo-placeholder { min-height: min(240px, 30dvh); }
+  /* Phones retain their tall photo slot while the whole card fits the screen. */
+  .species-popup .species-card-front .species-photo-area { flex: 1 0 auto; max-height: min(480px, 56dvh); }
+  .species-popup .species-photo-area .species-media { flex: 1 1 0; }
+  .species-popup .species-photo-area .species-media figure { aspect-ratio: auto; }
   .species-popup .species-photo-area .species-media img { max-height: min(240px, 30dvh); }
   .species-popup .species-quick-facts { font-size: .95rem; }
   .species-popup .species-quick-facts dt,
@@ -1032,6 +1034,19 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-photo-sources { margin: 12px 0; font-size: .82rem; }
 .species-answer { margin: 14px 0; line-height: 1.65; }
 .species-answer h3 { margin: 0 0 14px; color: #244d38; font-size: 1.15rem; }
+.species-answer-names { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25em .6em; overflow-wrap: anywhere; }
+.species-answer-english-name { min-width: 0; max-width: 100%; color: #52664e; font-size: .72em; font-weight: 400; overflow-wrap: anywhere; }
+.species-popup-entry[data-photo-preview] { float: right; width: 148px; max-width: 38%; margin: 14px 0 12px 18px; }
+.species-popup-entry[data-photo-preview] > .species-popup-trigger { width: 100%; margin: 0; padding: 5px; border-width: 1px; border-radius: 14px; }
+.species-answer-photo { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 10px; background: #e1ebce; }
+.species-answer-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.species-answer-photo-placeholder { padding: 8px; color: #52664e; font-size: .75rem; line-height: 1.4; font-weight: 400; }
+.species-answer-photo-caption { display: block; padding: 6px 0 2px; font-size: .75rem; }
+.message-answer:has(> .species-popup-entry[data-photo-preview]) > .species-answer > .species-chat-brief { clear: both; }
+@media (max-width: 600px) {
+  .species-popup-entry[data-photo-preview] { width: 104px; margin-left: 10px; }
+  .species-answer-photo-caption { font-size: .65rem; }
+}
 .species-answer-section { margin: 12px 0; }
 .species-answer-section h4 { margin: 0 0 4px; color: #244d38; font-size: .95rem; }
 .species-answer-section ul { margin: 0; padding-left: 1.25rem; }
@@ -1043,8 +1058,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-extra-info { margin-top: .8rem; padding-top: .65rem; border-top: 1px solid var(--color-answer-border); }
 .species-extra-info > summary { cursor: pointer; color: var(--color-text); font-weight: 600; }
 .species-extra-info > summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
-.species-related > button[aria-expanded]::before { content: "▸ "; }
-.species-related > button[aria-expanded="true"]::before { content: "▾ "; }
 .species-popup-entry > .species-popup-trigger { display: block; margin-inline: auto; }
 .species-answer > .species-chat-brief { padding-bottom: .7rem; border-bottom: 1px solid var(--color-answer-border); }
 .species-answer > .species-chat-brief .species-diet-icons { order: 1; flex-basis: 100%; }
@@ -1199,6 +1212,26 @@ body:has(.species-popup[open]) { overflow: hidden; }
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
 }
+/* Anchor every card palette's material to its collapsed size. Detail content
+   may grow, but must not stretch the texture/light field behind existing rows.
+   The separate rotation-driven gloss and animated rare-tier frame remain intact. */
+.species-popup .species-card[data-conservation-tier] {
+  background-size: 100% var(--species-card-material-height, 100%);
+  isolation: isolate;
+  overflow: clip;
+}
+.species-popup .species-card[data-conservation-tier]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: var(--species-card-material-canvas-height, 100%);
+  background: inherit;
+  background-size: 100% 100%;
+  z-index: -1;
+  pointer-events: none;
+  contain: paint;
+  transform: translateZ(0);
+}
 @media (prefers-reduced-motion: reduce) {
   .species-popup.risk-cr, .species-popup.risk-ew, .species-popup.risk-ex { animation: none; }
 }
@@ -1221,6 +1254,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-related h3 { font-size: 1rem; margin: .8rem 0 .4rem; }
 .species-related p { overflow-wrap: anywhere; }
 .species-comparison { margin-top: 1rem; }
+.species-comparison-card-actions { display: flex; gap: 12px; margin-top: .8rem; }
+.species-comparison-card-actions > .species-popup-entry { flex: 1; min-width: 0; }
+.species-comparison-card-actions > .species-popup-entry > .species-popup-trigger { width: 100%; height: 100%; margin: 0; padding: .7rem .5rem; overflow-wrap: anywhere; }
 .species-comparison-table { max-width: 100%; overflow-x: auto; }
 .species-comparison-table:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .species-comparison table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .85rem; }
@@ -1229,6 +1265,9 @@ body:has(.species-popup[open]) { overflow: hidden; }
 .species-comparison td p { margin: .3rem 0; }
 .species-comparison details { font-size: .75rem; }
 .species-comparison caption { text-align: left; margin-bottom: .5rem; }
+.species-comparison-version, .species-comparison-relation { font-size: .8rem; color: var(--color-muted); margin: .5rem 0; }
+.comparison-peer.species-comparison-selection[data-ranked="true"] { margin: .8rem 0 .4rem; }
+.species-comparison > .species-answer-sources { margin-top: .7rem; }
 .species-related h3, .species-comparison h3 { color: var(--color-text); }
 .species-name-relations { margin-top: .75rem; border-top: 1px solid var(--color-answer-border); padding-top: .65rem; }
 .species-name-relations > button, .name-relation-choose { width: 100%; margin: .25rem 0; padding: .55rem; border: 1px solid var(--color-answer-border); border-radius: .6rem; background: var(--color-surface); color: var(--color-text); text-align: left; cursor: pointer; }
@@ -1247,6 +1286,12 @@ body:has(.species-popup[open]) { overflow: hidden; }
 
 /* RG-008 feeding-ecology icons: one chip per sourced food component. */
 .species-diet-icons { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 8px 0; padding: 0; list-style: none; }
+.species-diet-icons.question-answer-diet { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 8px; margin: 14px 0; }
+.question-answer-diet .diet-icon { padding: 10px 12px; gap: 8px; border-radius: 12px; font-size: .88rem; }
+.question-answer-diet .diet-icon-label { flex: 1; }
+.question-answer-diet-share { flex-shrink: 0; font-size: 1.05em; font-variant-numeric: tabular-nums; }
+.question-answer-diet .diet-icon-symbol { flex-basis: 26px; width: 26px; height: 26px; }
+.question-answer-diet .diet-icon-symbol svg { width: 18px; height: 18px; }
 .species-chat-brief .species-diet-icons { margin: 0; }
 .diet-icon { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 8px 2px 3px; border: 1px solid var(--diet, #4f5b66); border-radius: 999px; background: #fffdf8; font-size: .75rem; line-height: 1.3; color: var(--diet, #4f5b66); }
 .diet-icon-symbol { display: inline-grid; place-items: center; flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%; background: var(--diet, #4f5b66); }
@@ -1405,10 +1450,11 @@ body:has(.species-popup[open]) { overflow: hidden; }
   gap: 8px;
   margin-top: 8px;
 }
-.species-distribution-column { min-width: 0; }
-.species-distribution-column > h4 { margin: 0 0 4px; font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
+.species-distribution-column { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.species-distribution-column > h4 { width: 100%; margin: 0 0 4px; font-size: .76rem; text-align: center; overflow-wrap: anywhere; }
 .species-popup .species-card-back .species-distribution-column .trait-card {
   display: block;
+  width: 100%;
   min-width: 0;
   padding: 4px 0;
   border: 0;
@@ -1521,3 +1567,56 @@ body:has(.species-popup[open]) { overflow: hidden; }
 }
 .species-distribution-qualitative-note { color: #4d6046; font-size: .64rem; font-weight: 400; }
 .trait-taxonomy-alignment { margin: 2px 0; font-size: .7rem; line-height: 1.4; overflow-wrap: anywhere; }
+
+/* Bounded source material stays accessible without interrupting the species description. */
+.species-bounded-data { border: 1px solid #88aa9066; border-radius: 12px; padding: 10px 14px; }
+.species-bounded-data > summary { cursor: pointer; color: #244d38; font-weight: 650; }
+.species-bounded-description { color: #586b5c; font-size: .85rem; margin: 8px 0; }
+.species-bounded-group { margin: 10px 0; }
+.species-bounded-group h5 { margin: 0 0 4px; font-size: .85rem; overflow-wrap: anywhere; }
+
+.species-conservation-badge[hidden] { display: none !important; }
+
+/* Comparison sources show readable citations before their detailed evidence. */
+.species-comparison .species-answer-sources .comparison-source-entry {
+  padding: 12px 14px; margin: 10px 0; border: 1px solid var(--color-border);
+  border-radius: 12px; background: var(--color-surface); min-width: 0;
+}
+.species-comparison .comparison-source-entry h3,
+.species-comparison .comparison-source-entry h4 { margin: 0 0 8px; font-size: .85rem; }
+.species-comparison .comparison-source-entry > a,
+.species-comparison .comparison-source-entry > span {
+  display: block; margin: 6px 0; color: var(--color-accent); font-size: .8rem;
+  text-decoration: none; overflow-wrap: anywhere; line-height: 1.5;
+}
+.species-comparison .comparison-source-entry > a:hover { text-decoration: underline; }
+.species-comparison .comparison-source-metadata { margin-top: 8px; }
+.species-comparison .comparison-source-metadata > summary { font-size: .75rem; color: var(--color-muted); cursor: pointer; }
+.species-comparison .comparison-source-metadata p { font-size: .75rem; line-height: 1.6; overflow-wrap: anywhere; }
+
+/* Use the same typography and dimensions for all discovery entry buttons. */
+.species-related > button,
+.species-ecological-related > button,
+.species-subspecies > button,
+.species-name-relations > button {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3.25rem;
+  margin: .25rem 0;
+  padding: .65rem .75rem;
+  font: inherit;
+  font-size: .95rem;
+  line-height: 1.4;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+@media (max-width: 420px) {
+  .species-related > button,
+  .species-ecological-related > button,
+  .species-subspecies > button,
+  .species-name-relations > button {
+    min-height: 4rem;
+    font-size: .9rem;
+  }
+}

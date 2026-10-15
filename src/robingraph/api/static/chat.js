@@ -474,29 +474,10 @@
   // Keep each subgroup's values in provenance; never select the first subgroup
   // as the whole species' representative or average unrelated source samples.
   function cardTraitGroups(traits) {
-    var groups = groupTraits(traits);
-    var result = [], scoped = {};
-    groups.forEach(function (group) {
-      var trait = group.trait;
-      if (trait.source_scope_kind !== "subspecies_group") { result.push(group); return; }
-      var primary = groups.find(function (other) { return other.trait.name === trait.name && other.trait.source_scope_kind !== "subspecies_group"; });
-      if (primary) { primary.sources = primary.sources.concat(group.sources); return; }
-      if (!scoped[trait.name]) {
-        scoped[trait.name] = { trait: Object.assign({}, trait), sources: [] };
-        result.push(scoped[trait.name]);
-      }
-      scoped[trait.name].sources = scoped[trait.name].sources.concat(group.sources);
-    });
-    Object.keys(scoped).forEach(function (name) {
-      var group = scoped[name];
-      var scopes = [];
-      group.sources.forEach(function (source) { if (scopes.indexOf(source.source_scope) < 0) { scopes.push(source.source_scope); } });
-      if (scopes.length > 1) {
-        group.trait.display = "아종군 " + scopes.length + "개 자료";
-        group.trait.value = null; group.trait.unit = null; group.trait.inferred = false;
-      }
-    });
-    return result;
+    // A species card must never substitute a subordinate group's values.
+    return groupTraits(traits.filter(function (trait) {
+      return trait && trait.source_scope_kind !== "subspecies_group";
+    }));
   }
 
   function cardTraitValue(trait) {
@@ -1165,10 +1146,44 @@
       text: "자료에 기록된 평가: " + label + " (" + ref.category + ") · 2024 자료 기준 · " + REFERENCE_ALIGNMENT_NOTE };
   }
 
+  // Expert accounts are cited references, never independent current assessments.
+  // Identity and source scope remain visible in answer sources, including renamed taxa.
+  // BEGIN GENERATED REVIEWED CONSERVATION MANIFEST
+  var REVIEWED_CONSERVATION_MANIFEST = {"avilist-taxon:v2025b:20751":{"assessment_scientific_name":"Parus major","assessment_status":"reference_only","assessment_year":null,"authority":"Vieillot, LJP, 1818","category":"LC","category_raw":"LC","citation":"Carey·Leven (2023), HKBWS.","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"documented_related_concept","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Parus minor의 LC를 과거 Parus major에 포함된 평가로 설명합니다. Cornell 2024 분류 개정에서 Parus minor는 현재 Parus cinereus에 포함됩니다. 현재 Parus cinereus 전체의 독립된 신규 평가를 뜻하지 않습니다.","record_sha256":"c1188b5ac76f866b8936c1a7144ec7276744a8ac3f81feda1cfecf680396d814","reference_evidence_type":"hkbws_species_account","scientific_name":"Parus cinereus","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"0b298c2dc5091e89b5bf2b5acff395182a4903b2aed0760777ccfaeb900eee56","source_excerpt":"IUCN: Least Concern. Population trend increasing. Included with Great Tit P. major.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Parus minor의 LC를 과거 Parus major에 포함된 평가로 설명합니다. Cornell 2024 분류 개정에서 Parus minor는 현재 Parus cinereus에 포함됩니다. 현재 Parus cinereus 전체의 독립된 신규 평가를 뜻하지 않습니다.","source_release":"2024-01-10","source_scientific_name":"Parus minor","source_scope_note":"홍콩조류관찰회는 Parus minor의 LC를 과거 Parus major에 포함된 평가로 설명합니다. Cornell 2024 분류 개정에서 Parus minor는 현재 Parus cinereus에 포함됩니다. 현재 Parus cinereus 전체의 독립된 신규 평가를 뜻하지 않습니다.","source_updated_at":"2024-01-10","source_url":"https://avifauna.hkbws.org.hk/species/0270/034800","taxon_id":"avilist-taxon:v2025b:20751","taxonomic_evidence_excerpt":"Asian Tit Parus cinereus subsumes Japanese Tit Parus minor","taxonomic_evidence_release":"Clements-2024","taxonomic_evidence_sha256":"1a08fdf65dbdfa0fa5e22e7f514e5cceebb0ba8c8979ae83f49d06c5f7d59f54","taxonomic_evidence_url":"https://www.birds.cornell.edu/clementschecklist/updates-and-corrections-october-2024/","taxonomy_alignment":"partial_scope","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:24831":{"assessment_scientific_name":"Alcippe morrisonia","assessment_status":"reference_only","assessment_year":null,"authority":"David, A, 1874","category":"LC","category_raw":"LC","citation":"Leven·Pang·Carey (2024), HKBWS.","citation_year":2024,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Alcippe hueti를 Grey-cheeked Fulvetta Alcippe morrisonia에 포함하여 LC로 평가한 자료를 인용합니다. 현재 AviList Alcippe hueti만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","record_sha256":"b70eec92d870fb21e5c9f6cdf53f6d574efded7bf05948ec8517c6b19210f1c6","reference_evidence_type":"hkbws_species_account","scientific_name":"Alcippe hueti","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"3e9d7f414d0fcbc803633cfeab9fb52f6a063a1fbf28ec3b2451ad1f0fc7d495","source_excerpt":"part of Grey-cheeked Fulvetta Alcippe morrisonia, which is assessed as of Least Concern with population trend unknown.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Alcippe hueti를 Grey-cheeked Fulvetta Alcippe morrisonia에 포함하여 LC로 평가한 자료를 인용합니다. 현재 AviList Alcippe hueti만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_release":"2024-07-25","source_scientific_name":"Alcippe hueti","source_scope_note":"홍콩조류관찰회는 Alcippe hueti를 Grey-cheeked Fulvetta Alcippe morrisonia에 포함하여 LC로 평가한 자료를 인용합니다. 현재 AviList Alcippe hueti만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_updated_at":"2024-07-25","source_url":"https://avifauna.hkbws.org.hk/species/0360/043800","taxon_id":"avilist-taxon:v2025b:24831","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:28780":{"assessment_name_basis":"not_identified_by_source","assessment_scientific_name":null,"assessment_status":"reference_only","assessment_year":null,"authority":"Lesson, RP, 1827","category":"LC","category_raw":"LC","citation":"Carey (2023), HKBWS.","citation_scientific_name":"Cinnyris jugularis","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회 현재 페이지 제목은 Cinnyris ornatus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Cinnyris jugularis가, 본문에는 C. j. rhizophorae가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","record_sha256":"8459e8d01c9fd26f901a8ba9bf39f68a30f7e842a88d6b6a69fc81c0456e792a","reference_evidence_type":"hkbws_species_account","scientific_name":"Cinnyris ornatus","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"b2643b37e56861e89b3eff807151d7bec2db03a41e2969454bfbd5382c7de66d","source_excerpt":"IUCN: Least Concern. Population trend stable.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회 현재 페이지 제목은 Cinnyris ornatus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Cinnyris jugularis가, 본문에는 C. j. rhizophorae가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_release":"2025-06-16","source_scientific_name":"Cinnyris ornatus","source_scope_note":"홍콩조류관찰회 현재 페이지 제목은 Cinnyris ornatus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Cinnyris jugularis가, 본문에는 C. j. rhizophorae가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_updated_at":"2025-06-16","source_url":"https://avifauna.hkbws.org.hk/species/0420/052300","taxon_id":"avilist-taxon:v2025b:28780","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:30040":{"assessment_name_basis":"not_identified_by_source","assessment_scientific_name":null,"assessment_status":"reference_only","assessment_year":null,"authority":"Temminck, CJ; Schlegel, H, 1847","category":"LC","category_raw":"LC","citation":"Carey·Pang (2023), HKBWS.","citation_scientific_name":"Anthus rubescens","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회 현재 페이지 제목은 Anthus japonicus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Anthus rubescens가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","record_sha256":"2ffef1a7acec85c31ee47ea518db9543b1183106ec8c01f071af59f414e716f4","reference_evidence_type":"hkbws_species_account","scientific_name":"Anthus japonicus","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"a54a95b841981c0f8ba22ce38eaf885faf3190db2857317f5cb3e92733b216ce","source_excerpt":"IUCN: Least Concern. Population trend decreasing.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회 현재 페이지 제목은 Anthus japonicus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Anthus rubescens가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_release":"2025-03-04","source_scientific_name":"Anthus japonicus","source_scope_note":"홍콩조류관찰회 현재 페이지 제목은 Anthus japonicus이며 LC로 표시합니다. 권장 인용에는 이전 이름 Anthus rubescens가 남아 있어 과거 평가 범위와 현재 종 범위가 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_updated_at":"2025-03-04","source_url":"https://avifauna.hkbws.org.hk/species/0440/054600","taxon_id":"avilist-taxon:v2025b:30040","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:344":{"assessment_scientific_name":"Anser fabalis","assessment_status":"reference_only","assessment_year":null,"authority":"Gould, J, 1852","category":"LC","category_raw":"LC","citation":"Carey (2023), HKBWS.","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Anser serrirostris의 LC를 Anser fabalis와 하나의 종으로 취급한 평가로 설명합니다. 현재 AviList Anser serrirostris만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","record_sha256":"f199b76537ff0137093e89486020ecaf5ab33d6ed8044bf91730fdcf3d82ac3d","reference_evidence_type":"hkbws_species_account","scientific_name":"Anser serrirostris","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"774810d556fffb8f1d9e7c85fa2c729c650ca97becee4bc6fe8e358923d7ca0e","source_excerpt":"IUCN (treats A. fabalis and A. serrirostris as single species): Least Concern. Population trend decreasing.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Anser serrirostris의 LC를 Anser fabalis와 하나의 종으로 취급한 평가로 설명합니다. 현재 AviList Anser serrirostris만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_release":"2025-06-04","source_scientific_name":"Anser serrirostris","source_scope_note":"홍콩조류관찰회는 Anser serrirostris의 LC를 Anser fabalis와 하나의 종으로 취급한 평가로 설명합니다. 현재 AviList Anser serrirostris만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_updated_at":"2025-06-04","source_url":"https://avifauna.hkbws.org.hk/species/0010/000400","taxon_id":"avilist-taxon:v2025b:344","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:4592":{"assessment_scientific_name":"Larus canus brachyrhynchus","assessment_status":"reference_only","assessment_year":null,"authority":"Richardson, J, 1831","category":"LC","category_raw":"LC","citation":"Carey (2023), HKBWS.","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Larus brachyrhynchus의 LC를 Larus canus brachyrhynchus라는 분류명으로 표기한 평가에 연결합니다. 현재 AviList Larus brachyrhynchus만을 대상으로 한 독립된 신규 평가임을 뜻하지 않습니다.","record_sha256":"e18930789e8050e902b7d7a96b102ab8705c62d0e3f2a8ee4be8088ed5cf40ac","reference_evidence_type":"hkbws_species_account","scientific_name":"Larus brachyrhynchus","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"62ac1544fbd59a2054cb4b37dc98842bb17feee45276ba199cc16ce631b22fb3","source_excerpt":"IUCN: Least Concern (Larus canus brachyrhynchus). Population trend unknown.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Larus brachyrhynchus의 LC를 Larus canus brachyrhynchus라는 분류명으로 표기한 평가에 연결합니다. 현재 AviList Larus brachyrhynchus만을 대상으로 한 독립된 신규 평가임을 뜻하지 않습니다.","source_release":"2024-01-14","source_scientific_name":"Larus brachyrhynchus","source_scope_note":"홍콩조류관찰회는 Larus brachyrhynchus의 LC를 Larus canus brachyrhynchus라는 분류명으로 표기한 평가에 연결합니다. 현재 AviList Larus brachyrhynchus만을 대상으로 한 독립된 신규 평가임을 뜻하지 않습니다.","source_updated_at":"2024-01-14","source_url":"https://avifauna.hkbws.org.hk/species/0110/017100","taxon_id":"avilist-taxon:v2025b:4592","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:4610":{"assessment_scientific_name":"Larus smithsonianus","assessment_status":"reference_only","assessment_year":null,"authority":"Sushkin, PP, 1925","category":"LC","category_raw":"LC","citation":"Carey·Pang (2025), HKBWS.","citation_year":2025,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"reviewed_exact_source_name","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Larus mongolicus의 LC를 Arctic Herring Gull Larus smithsonianus로 취급한 평가로 설명합니다. 현재 AviList Larus mongolicus만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","record_sha256":"846f4800f3c91f4736f0df1bc95d8a0dca8b13c1022c6d47b5f4bd065ae8a824","reference_evidence_type":"hkbws_species_account","scientific_name":"Larus mongolicus","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"b0abba60b9e949501b0a84f7e90644c79f499881e12bc6cdc10bd0fdcbc10898","source_excerpt":"IUCN: Least Concern. Population trend stable (treated as Arctic Herring Gull Larus smithsonianus).","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Larus mongolicus의 LC를 Arctic Herring Gull Larus smithsonianus로 취급한 평가로 설명합니다. 현재 AviList Larus mongolicus만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_release":"2025-12-03","source_scientific_name":"Larus mongolicus","source_scope_note":"홍콩조류관찰회는 Larus mongolicus의 LC를 Arctic Herring Gull Larus smithsonianus로 취급한 평가로 설명합니다. 현재 AviList Larus mongolicus만을 대상으로 한 독립 평가임을 뜻하지 않습니다.","source_updated_at":"2025-12-03","source_url":"https://avifauna.hkbws.org.hk/species/0110/017510","taxon_id":"avilist-taxon:v2025b:4610","taxonomy_alignment":"exact_source_name","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:5358":{"assessment_name_basis":"not_identified_by_source","assessment_scientific_name":null,"assessment_status":"reference_only","assessment_year":null,"authority":"(Afzelius, A, 1804)","category":"LC","category_raw":"LC","citation":"Carey·Pang (2023), HKBWS.","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"documented_related_concept","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 과거의 넓은 Butorides striata 범위에 LC를 표시합니다. AviList v2025b는 해당 복합군을 네 종으로 구분하고 구세계 집단을 Butorides atricapilla로 다룹니다. 원문의 구세계·남미 포함 범위와 현재 종만의 독립 평가를 동일시하지 않습니다.","record_sha256":"56686644a3449a16d1f7d59dcb5f12ff7efdd15a2a673d45493a7bb85c79b197","reference_evidence_type":"hkbws_species_account","scientific_name":"Butorides atricapilla","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"a54a95b841981c0f8ba22ce38eaf885faf3190db2857317f5cb3e92733b216ce","source_excerpt":"IUCN: Least Concern. Population trend decreasing.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 과거의 넓은 Butorides striata 범위에 LC를 표시합니다. AviList v2025b는 해당 복합군을 네 종으로 구분하고 구세계 집단을 Butorides atricapilla로 다룹니다. 원문의 구세계·남미 포함 범위와 현재 종만의 독립 평가를 동일시하지 않습니다.","source_release":"2024-01-13","source_scientific_name":"Butorides striata","source_scope_note":"홍콩조류관찰회는 과거의 넓은 Butorides striata 범위에 LC를 표시합니다. AviList v2025b는 해당 복합군을 네 종으로 구분하고 구세계 집단을 Butorides atricapilla로 다룹니다. 원문의 구세계·남미 포함 범위와 현재 종만의 독립 평가를 동일시하지 않습니다.","source_updated_at":"2024-01-13","source_url":"https://avifauna.hkbws.org.hk/species/0170/022800","taxon_id":"avilist-taxon:v2025b:5358","taxonomic_evidence_excerpt":"a polytypic Old World B. atricapilla group","taxonomic_evidence_excerpt_format":"html_tags_removed","taxonomic_evidence_kind":"avilist_taxonomy_decision","taxonomic_evidence_locator":"avilist-taxon:v2025b:5358:taxonomy_decision_text","taxonomic_evidence_release":"v2025b","taxonomic_evidence_sha256":"751e4c01b78c31b499df3549c0f5e776b13e762e4788adc0a391b7d43247ad4e","taxonomic_evidence_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411","taxonomic_evidence_url":"https://explore.avilist.org/data/avilist-2025b.json","taxonomy_alignment":"partial_scope","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"},"avilist-taxon:v2025b:5408":{"assessment_name_basis":"not_identified_by_source","assessment_scientific_name":null,"assessment_status":"reference_only","assessment_year":null,"authority":"(Boddaert, P, 1783)","category":"LC","category_raw":"LC","citation":"Carey·Young·Pang (2023), HKBWS.","citation_year":2023,"concept_set_id":"rg:concept-set:avilist-v2025b","evidence_kind":"reviewed_expert_reference","independently_verified":false,"license_name":"All rights reserved; factual reference and short quotation","license_url":null,"mapping_method":"documented_related_concept","publisher":"Hong Kong Bird Watching Society","quality_note":"홍콩조류관찰회는 Bubulcus coromandus에 LC를 표시하며 ITIS는 이를 Ardea coromanda의 동의어로 연결합니다. 원문에는 과거 Bubulcus ibis의 전 세계 분포 설명이 남아 있어 평가 범위를 현재 종과 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","record_sha256":"ce518302b762db5a18d48bf32a59445520ea672f2f9ee9c34f12f016cf127dc3","reference_evidence_type":"hkbws_species_account","scientific_name":"Ardea coromanda","snapshot_kind":"reviewed_source_excerpt","snapshot_sha256":"56b2cfd4608d5655e922e4f98919eb8022ce11c4ac997562c1296df7f72e7f34","source_excerpt":"IUCN: Least Concern. Population trend increasing.","source_id":"hkbws-avifauna","source_name":"Hong Kong Bird Watching Society · The Avifauna of Hong Kong","source_note":"홍콩조류관찰회는 Bubulcus coromandus에 LC를 표시하며 ITIS는 이를 Ardea coromanda의 동의어로 연결합니다. 원문에는 과거 Bubulcus ibis의 전 세계 분포 설명이 남아 있어 평가 범위를 현재 종과 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_release":"2024-01-13","source_scientific_name":"Bubulcus coromandus","source_scope_note":"홍콩조류관찰회는 Bubulcus coromandus에 LC를 표시하며 ITIS는 이를 Ardea coromanda의 동의어로 연결합니다. 원문에는 과거 Bubulcus ibis의 전 세계 분포 설명이 남아 있어 평가 범위를 현재 종과 같다고 단정하지 않습니다. 현재 종의 독립된 신규 평가임을 뜻하지 않습니다.","source_updated_at":"2024-01-13","source_url":"https://avifauna.hkbws.org.hk/species/0170/023000","taxon_id":"avilist-taxon:v2025b:5408","taxonomic_evidence_excerpt":"Synonym(s): Bubulcus coromandus","taxonomic_evidence_kind":"itis_synonym_report","taxonomic_evidence_release":"ITIS-IOC-15.1-2025","taxonomic_evidence_sha256":"3238147a68d0702830a296c6b7a3c7b98d4299cc33f1d36544bddc4d733bc2ce","taxonomic_evidence_url":"https://itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=1244987","taxonomy_alignment":"partial_scope","taxonomy_category_raw":"NE","taxonomy_release":"v2025b","taxonomy_snapshot_sha256":"3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411"}};
+  // END GENERATED REVIEWED CONSERVATION MANIFEST
+
+  function expertReferenceInfo(ref, taxon) {
+    var approved = ref && REVIEWED_CONSERVATION_MANIFEST[ref.taxon_id];
+    if (!approved || Object.keys(ref).some(function (key) { return key !== "label" && !Object.prototype.hasOwnProperty.call(approved, key); }) ||
+        !Object.keys(approved).every(function (key) {
+      return JSON.stringify(ref[key]) === JSON.stringify(approved[key]);
+    })) { return null; }
+    var text = function (value) { return typeof value === "string" && !!value.trim(); };
+    if (!ref || ref.evidence_kind !== "reviewed_expert_reference" ||
+        ref.reference_evidence_type !== "hkbws_species_account" ||
+        ref.assessment_status !== "reference_only" || ref.independently_verified !== false ||
+        ["partial_scope", "exact_source_name"].indexOf(ref.taxonomy_alignment) < 0 ||
+        REFERENCE_CATEGORIES.indexOf(ref.category) < 0 || ref.category_raw !== ref.category ||
+        ref.source_id !== "hkbws-avifauna" ||
+        ref.source_name !== "Hong Kong Bird Watching Society · The Avifauna of Hong Kong" ||
+        !/^https:\/\/avifauna\.hkbws\.org\.hk\/species\/[0-9]+\/[0-9]+$/.test(ref.source_url || "") ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(ref.source_updated_at || "") || ref.source_release !== ref.source_updated_at ||
+        !/^[a-f0-9]{64}$/.test(ref.snapshot_sha256 || "") || !/^[a-f0-9]{64}$/.test(ref.record_sha256 || "") ||
+        ref.assessment_year != null || ref.sis_id != null || ref.assessment_id != null ||
+        !text(ref.source_scope_note) || !text(ref.source_scientific_name) || !text(ref.scientific_name) ||
+        !/^avilist-taxon:v2025b:[1-9][0-9]*$/.test(ref.taxon_id || "")) { return null; }
+    if (!taxon || taxon.taxon_id !== ref.taxon_id || taxon.scientific_name !== ref.scientific_name) { return null; }
+    var label = CONSERVATION_CATEGORIES[ref.category].label;
+    return { category: ref.category, label: label, year: null, expertReference: true,
+      sourceUrl: ref.source_url, data: ref,
+      text: "홍콩조류관찰회 자료의 보전 등급: " + label + " (" + ref.category + ")" };
+  }
+
   function referenceAssessmentInfo(conservation, taxon) {
     var data = conservation && typeof conservation === "object" ? conservation : null;
     var ref = data && data.reference_assessment && typeof data.reference_assessment === "object" ? data.reference_assessment : null;
     if (!ref || Array.isArray(ref)) { return null; }
+    if (ref.evidence_kind === "reviewed_expert_reference") { return expertReferenceInfo(ref, taxon); }
     if (ref.evidence_kind === "published_dataset_reference") { return birdbaseReferenceInfo(ref, taxon); }
     var text = function (value) { return typeof value === "string" && !!value.trim(); };
     if (REFERENCE_CATEGORIES.indexOf(ref.category) === -1 ||
@@ -1204,6 +1219,21 @@
     head.className = "species-reference-assessment";
     head.textContent = ref.text;
     parent.appendChild(head);
+    if (ref.expertReference) {
+      var account = doc.createElement("p");
+      account.appendChild(safeLink(doc, ref.data.source_name, ref.sourceUrl));
+      parent.appendChild(account);
+      var scope = doc.createElement("p");
+      scope.textContent = "자료 갱신일: " + ref.data.source_updated_at + " · 원자료 학명: " + ref.data.source_scientific_name +
+        " · 자료 갱신일은 IUCN 평가일이 아닙니다. " + ref.data.source_scope_note;
+      parent.appendChild(scope);
+      if (ref.data.taxonomic_evidence_url) {
+        var taxonomy = doc.createElement("p");
+        taxonomy.appendChild(safeLink(doc, "분류 변경 근거", ref.data.taxonomic_evidence_url));
+        parent.appendChild(taxonomy);
+      }
+      return;
+    }
     if (ref.datasetReference) {
       var scope = doc.createElement("p"); scope.className = "species-note";
       scope.textContent = "대상 학명: " + ref.data.scientific_name + " · 원자료 평가 학명: " + ref.data.assessment_scientific_name +
@@ -1289,7 +1319,7 @@
     var qualifierMatch = typeof raw === "string" ? /^CR\s*\((PEW?)\)$/.exec(raw) : null;
     if (typeof category === "string" && /^CR\s*\((PEW?)\)$/.test(category)) { category = "CR"; }
     var base = { category: null, label: "미확인", tier: "unconfirmed", verified: false,
-      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "멸종위기 등급 미확인" };
+      sourceVerified: sourceVerified, snapshot: snapshot, checklist: checklist, manualOverride: false, badgeText: "IUCN 적색목록 · 등급 정보 없음" };
     if ((data.evidence_kind && data.evidence_kind !== "taxonomy_snapshot" && !checklist) ||
         (data.evidence_kind === "taxonomy_snapshot" && !snapshot)) { return base; }
     if (snapshot && category == null && raw === "NE" && data.evidence_kind === "taxonomy_snapshot" &&
@@ -1306,8 +1336,8 @@
         tier: reference ? CONSERVATION_CATEGORIES[reference.category].tier : "unconfirmed",
         note: reference ? reference.text : UNLINKED_NE_NOTE,
         badgeText: reference ? "IUCN 적색목록 " + reference.label + " (" + reference.category + ")" +
-          (reference.datasetReference ? " · " + reference.dataYear + " 자료 기준 · BIRDBASE" :
-            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "평가 범위 확인 필요" });
+          (reference.expertReference ? " · 홍콩조류관찰회 자료 기준" : reference.datasetReference ? " · " + reference.dataYear + " 자료 기준 · BIRDBASE" :
+            (reference.year == null ? "" : " · " + reference.year + " 평가") + " · 공개 평가목록 기준") : "IUCN 적색목록 · 등급 정보 없음" });
     }
     var known = CONSERVATION_CATEGORIES[category];
     var qualifier = category === "CR" && qualifierMatch ?
@@ -1337,7 +1367,7 @@
   }
 
   /** Keep source materials intact so async refreshes can re-elect unique links. */
-  function buildCombinedAnswerSources(doc, initialMaterial) {
+  function buildCombinedAnswerSources(doc, initialMaterial, compact) {
     var panel = doc.createElement("details");
     panel.className = "species-answer-sources";
     var summary = doc.createElement("summary");
@@ -1396,10 +1426,25 @@
       var urls = Object.create(null);
       var rows = Object.create(null);
       materials.forEach(function (material) {
+        var entry = null;
+        var metadata = null;
+        function startEntry(heading) {
+          entry = doc.createElement("section"); entry.className = "comparison-source-entry";
+          if (heading) { entry.appendChild(heading); }
+          metadata = doc.createElement("details"); metadata.className = "comparison-source-metadata";
+          var label = doc.createElement("summary"); label.textContent = "자료 상세 정보";
+          metadata.appendChild(label); entry.appendChild(metadata); panel.appendChild(entry);
+        }
         Array.prototype.slice.call(material.children || []).forEach(function (child) {
           if (String(child.tagName).toLowerCase() === "summary") { return; }
           var clone = copy(child, urls, rows);
-          if (clone) { panel.appendChild(clone); }
+          if (!clone) { return; }
+          if (!compact) { panel.appendChild(clone); return; }
+          var tag = String(clone.tagName).toLowerCase();
+          if (tag === "h3" || tag === "h4") { startEntry(clone); return; }
+          if (!entry) { var fallbackHeading = doc.createElement("h4"); fallbackHeading.textContent = "추가 자료"; startEntry(fallbackHeading); }
+          if (tag === "a" || tag === "span") { entry.insertBefore(clone, metadata); }
+          else { metadata.appendChild(clone); }
         });
       });
       summary.textContent = "답변 출처 보기 (" + Object.keys(urls).length + ")";
@@ -1447,14 +1492,14 @@
   /**
    * Two-species comparison: target names, sourced traits (only claims with a
    * safe source URL and named source), and a popup card for each species.
-   * `options` is threaded into the nested related explorer so a follow-up
-   * comparison opened from inside this panel also becomes its own bubble.
+   * Comparisons end with card actions and a consolidated source footer;
+   * further exploration stays in the original species answer.
    */
   function buildSpeciesComparison(doc, left, right, options) {
     options = options || {};
     var comparisonCallback = options.explorer && options.explorer.onComparison;
     if (comparisonCallback && typeof comparisonCallback.beforeComparison === "function") { comparisonCallback.beforeComparison(); }
-    var comparisonSources = buildCombinedAnswerSources(doc);
+    var comparisonSources = buildCombinedAnswerSources(doc, null, true);
     var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive };
     var panel = doc.createElement("section");
     panel.className = "species-comparison";
@@ -1485,19 +1530,21 @@
       [left, right].forEach(function (profile) {
         var cell = doc.createElement("td");
         var traits = (Array.isArray(profile.traits) ? profile.traits : []).filter(function (trait) {
-          return trait && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
+          return trait && trait.source_scope_kind !== "subspecies_group" && trait.name === field[0] && trait.display != null && sanitizeUrl(trait.source_url) && trait.source_name;
         });
         if (!traits.length) { cell.textContent = "확인된 자료 없음"; }
+        var shownValues = Object.create(null);
         groupTraits(traits).forEach(function (group) {
           var trait = group.trait;
           var value = doc.createElement("p");
-          value.textContent = trait.display + (trait.unit && trait.unit !== "percent" ? " " + trait.unit : "") + (trait.inferred ? " (추정값)" : "");
+          value.textContent = cardTraitValue(trait);
           if (trait.source_scope_kind === "subspecies_group") { value.textContent += " · 아종군 자료 (" + trait.source_scope + ")"; }
           if (trait.summary_statistic === "literature_bounds_mean") { value.textContent += " · 문헌 범위 평균"; }
           if (trait.summary_statistic === "sample_mean") { value.textContent += " · 표본 평균"; }
-          cell.appendChild(value);
+          if (!shownValues[value.textContent]) { cell.appendChild(value); shownValues[value.textContent] = true; }
           var details = doc.createElement("details");
           var summary = doc.createElement("summary"); summary.textContent = "출처"; details.appendChild(summary);
+          var context = doc.createElement("h4"); context.textContent = speciesLabel(profile.taxon) + " · " + field[1] + " · " + value.textContent; details.appendChild(context);
           group.sources.forEach(function (source) {
             details.appendChild(safeLink(doc, source.source_name, source.source_url));
             var meta = doc.createElement("p");
@@ -1507,7 +1554,7 @@
             appendTaxonomyAlignment(doc, details, source, {});
             appendTraitProvenance(doc, details, source);
           });
-          cell.appendChild(details);
+          comparisonSources.addSourceMaterial(details);
         });
         row.appendChild(cell);
       });
@@ -1517,14 +1564,14 @@
     var note = doc.createElement("p"); note.className = "species-note";
     note.textContent = "자료별 범주와 측정 기준이 다를 수 있습니다. 자료가 없는 항목은 차이로 판단하지 않습니다.";
     panel.appendChild(note);
+    var cardActions = doc.createElement("div"); cardActions.className = "species-comparison-card-actions";
     if (options.bothCards) {
       var leftCard = buildSpeciesCard(doc, left, cardOptions);
-      if (leftCard) { panel.appendChild(buildSpeciesPopup(doc, leftCard, left)); combineCardSources(doc, leftCard, comparisonSources); }
+      if (leftCard) { cardActions.appendChild(buildSpeciesPopup(doc, leftCard, left)); combineCardSources(doc, leftCard, comparisonSources); }
     }
     var card = buildSpeciesCard(doc, right, cardOptions);
-    if (card) { panel.appendChild(buildSpeciesPopup(doc, card, right)); combineCardSources(doc, card, comparisonSources); }
-    panel.appendChild(buildRelatedExplorer(doc, right, options.fetcher, options.explorer));
-    panel.appendChild(buildEcologicalExplorer(doc, right, options.fetcher, options.explorer));
+    if (card) { cardActions.appendChild(buildSpeciesPopup(doc, card, right)); combineCardSources(doc, card, comparisonSources); }
+    if (cardActions.children.length) { panel.appendChild(cardActions); }
     panel.appendChild(comparisonSources);
     return panel;
   }
@@ -1691,12 +1738,19 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 분류군: " + (group.ancestor ? (group.ancestor.korean_name || group.ancestor.scientific_name) : "확인 불가") + " (" + (RANK_LABELS[group.rank] || group.rank) + ")";
-        if (group.rank === "similarity") { relation.textContent = similarityLabel(peer, priority); panel.appendChild(buildSimilarityEvidence(doc, peer)); var scoreNote = doc.createElement("p"); scoreNote.textContent = "계통·분류·생태의 가중 점수입니다. 계통 자료가 없으면 분류·생태만 100점으로 환산합니다. 진화 거리나 유전 유사도의 측정값은 아닙니다."; panel.appendChild(scoreNote); }
-        panel.appendChild(relation);
+        var sourceFooter = Array.prototype.slice.call(panel.children).find(function (child) { return child.className === "species-answer-sources"; });
+        if (group.rank === "similarity") {
+          var evidence = buildSimilarityEvidence(doc, peer);
+          var evidenceTitle = doc.createElement("h4"); evidenceTitle.textContent = "비교 후보 근거와 출처";
+          evidence.insertBefore(evidenceTitle, evidence.children[1] || null);
+          var selectedScore = doc.createElement("p"); selectedScore.textContent = similarityLabel(peer, priority); evidence.appendChild(selectedScore);
+          var scoreNote = doc.createElement("p"); scoreNote.textContent = "계통·분류·생태의 가중 점수입니다. 계통 자료가 없으면 분류·생태만 100점으로 환산합니다. 진화 거리나 유전 유사도의 측정값은 아닙니다.";
+          evidence.appendChild(scoreNote); sourceFooter.addSourceMaterial(evidence);
+        } else { var relationship = doc.createElement("section"); relationship.appendChild(relation); sourceFooter.addSourceMaterial(relationship); }
         var version = doc.createElement("p");
         version.className = "species-comparison-version";
         version.textContent = "분류 기준: " + [profile.lineage.taxonomy_source, profile.lineage.taxonomy_release].filter(Boolean).join(" · ");
-        panel.appendChild(version);
+        var classification = doc.createElement("section"); classification.appendChild(version); sourceFooter.addSourceMaterial(classification);
         if (onComparison) {
           onComparison(panel, { left: profile, right: other, group: group });
           status.textContent = speciesLabel(profile.taxon) + "와(과) " + peerName + " 비교를 새 답변으로 추가했습니다.";
@@ -1838,14 +1892,15 @@
         var relation = doc.createElement("p");
         relation.className = "species-comparison-relation";
         relation.textContent = "공유 생태 범주: " + group.display;
-        panel.appendChild(buildEcologicalSource(doc, group.source));
-        panel.appendChild(buildEcologicalSource(doc, peer.evidence));
-        panel.appendChild(relation);
-        var ecologicalNote = doc.createElement("p"); ecologicalNote.className = "species-note"; ecologicalNote.textContent = ECOLOGICAL_NOTE; panel.appendChild(ecologicalNote);
+        var sourceFooter = Array.prototype.slice.call(panel.children).find(function (child) { return child.className === "species-answer-sources"; });
+        sourceFooter.addSourceMaterial(buildEcologicalSource(doc, group.source));
+        sourceFooter.addSourceMaterial(buildEcologicalSource(doc, peer.evidence));
+        var ecologicalContext = doc.createElement("section"); ecologicalContext.appendChild(relation);
+        var ecologicalNote = doc.createElement("p"); ecologicalNote.className = "species-note"; ecologicalNote.textContent = ECOLOGICAL_NOTE; ecologicalContext.appendChild(ecologicalNote);
         var version = doc.createElement("p");
         version.className = "species-comparison-version";
         version.textContent = "분류 기준: " + [profile.lineage.taxonomy_source, profile.lineage.taxonomy_release].filter(Boolean).join(" · ");
-        panel.appendChild(version);
+        ecologicalContext.appendChild(version); sourceFooter.addSourceMaterial(ecologicalContext);
         if (onComparison) {
           onComparison(panel, { left: profile, right: other, group: group });
           status.textContent = speciesLabel(profile.taxon) + "와(과) " + peerName + " 비교를 새 답변으로 추가했습니다.";
@@ -2430,6 +2485,7 @@
     var conservationBadge = doc.createElement("p");
     conservationBadge.className = "species-conservation-badge";
     conservationBadge.textContent = conservation.badgeText;
+    conservationBadge.hidden = false;
     conservationBadge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     card.appendChild(conservationBadge);
 
@@ -2487,7 +2543,8 @@
           (Array.isArray(observationSections) ? observationSections : []).forEach(function (section) {
             if (!section || section.key !== key) { return; }
             (Array.isArray(section.items) ? section.items : []).forEach(function (item) {
-              if (selected.length >= 2 || !item || typeof item.text !== "string" || !item.text.trim() ||
+              if (selected.length >= 2 || !item || item.source_scope_kind === "subspecies_group" ||
+                  item.taxonomy_alignment === "unverified" || typeof item.text !== "string" || !item.text.trim() ||
                   typeof item.source_name !== "string" || !item.source_name.trim() || !sanitizeUrl(item.source_url)) { return; }
               var text = item.text.trim();
               if (/^(?:평균\s+)?(?:부리 길이\s*\(전체\)|접은 날개 길이|꼬리 길이)\s*:/.test(text) || seenTexts[text]) { return; }
@@ -2774,6 +2831,7 @@
     // untouched here so deferred enrichment can compare initial sections.
     card.updateEnrichment = function (fresh) {
       renderPhotos(fresh.images, fresh.photo_availability);
+      if (card.onPhotoPreviewChanged) { card.onPhotoPreviewChanged(fresh); }
       if (Object.prototype.hasOwnProperty.call(fresh, "sections")) {
         observationSections = fresh.sections; observationPending = !!fresh.enrichment_pending; observationMessage = "";
         renderObservations();
@@ -2889,7 +2947,7 @@
 
     var conservationSection = sourceSection("species-conservation-sources", "멸종위기 등급 출처");
     var conservationStatus = doc.createElement("p");
-    conservationStatus.textContent = conservation.badgeText;
+    conservationStatus.textContent = conservation.badgeText || "연결된 보전 등급 자료가 없습니다.";
     conservationSection.appendChild(conservationStatus);
     var rawConservation = profile.conservation && typeof profile.conservation === "object" ? profile.conservation : null;
     if (rawConservation && typeof rawConservation.source_name === "string") {
@@ -3461,15 +3519,30 @@
     var rankedExplorer = options && options.rankedExplorer;
     if (!rankedExplorer) {
       var text = doc.createElement("p"); text.textContent = typeof questionAnswer.text === "string" ? questionAnswer.text : ""; section.appendChild(text);
-      var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
-      (Array.isArray(questionAnswer.items) ? questionAnswer.items : []).forEach(function (fact) {
-        if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
-        var item = doc.createElement("li");
-        var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
-        if (typeof fact.source_name === "string" && fact.source_name.trim()) { item.appendChild(safeLink(doc, " · " + fact.source_name, fact.source_url)); }
-        facts.appendChild(item);
-      });
-      if (facts.children.length) { section.appendChild(facts); }
+      var items = Array.isArray(questionAnswer.items) ? questionAnswer.items : [];
+      // Diet facts carry the sourced trait itself, so the existing icon/percent display reads the supplied value, never the prose.
+      var diet = questionAnswer.topic === "diet" ? dietIconInfo({ traits: items }) : null;
+      if (diet && diet.icons.length) {
+        diet.icons.forEach(function (icon) { icon.text = icon.label + (icon.detail ? " · " + icon.detail : ""); });
+        var dietList = buildDietIcons(doc, diet);
+        dietList.className += " question-answer-diet";
+        diet.icons.forEach(function (icon, index) {
+          if (icon.percent == null) { return; }
+          var share = doc.createElement("strong"); share.className = "question-answer-diet-share";
+          share.textContent = Math.round(icon.percent * 10) / 10 + "%";
+          dietList.children[index].appendChild(share);
+        });
+        section.appendChild(dietList);
+      } else {
+        var facts = doc.createElement("ul"); facts.className = "question-answer-facts";
+        items.forEach(function (fact) {
+          if (!fact || typeof fact.text !== "string" || !fact.text.trim()) { return; }
+          var item = doc.createElement("li");
+          var value = doc.createElement("span"); value.textContent = fact.text; item.appendChild(value);
+          facts.appendChild(item);
+        });
+        if (facts.children.length) { section.appendChild(facts); }
+      }
     } else { section.appendChild(rankedExplorer); }
     var context = questionAnswer.name_context;
     if (isNameRelationsPayload(context)) {
@@ -3498,38 +3571,88 @@
     var answer = doc.createElement("div");
     answer.className = "species-answer";
     var heading = doc.createElement("h3");
+    heading.className = "species-answer-names";
     heading.textContent = speciesLabel(profile.taxon);
+    var taxon = profile.taxon || {};
+    var koreanName = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" ? taxon.korean_name.trim() : "";
+    var englishName = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
+    if (koreanName && englishName && koreanName !== englishName) {
+      var englishLabel = doc.createElement("small");
+      englishLabel.className = "species-answer-english-name";
+      englishLabel.setAttribute("lang", "en");
+      englishLabel.textContent = englishName;
+      heading.appendChild(englishLabel);
+    }
     answer.appendChild(heading);
     var sources = [];
     var seen = {};
-    profile.sections.slice(0, 4).forEach(function (section) {
-      if (!section || typeof section.title !== "string") { return; }
+    var displaySections = profile.sections.filter(function (section) { return section && section.key !== "source_scope_notes"; }).map(function (section) {
+      return Object.assign({}, section, { items: Array.isArray(section.items) ? section.items.slice() : [] });
+    });
+    profile.sections.filter(function (section) { return section && section.key === "source_scope_notes"; }).forEach(function (section) {
+      (section.items || []).forEach(function (item) {
+        var key = item.category === "fun_facts" ? "fun_facts" : "appearance";
+        var target = displaySections.find(function (existing) { return existing.key === key; });
+        if (!target) { target = { key: key, title: key === "appearance" ? "외관 특징" : "재미있는 사실", items: [] }; displaySections.push(target); }
+        target.items.push(item);
+      });
+    });
+    displaySections.forEach(function (section) {
+      if (!section || section.key === "subspecies_groups" || typeof section.title !== "string") { return; }
       if (profile.enrichment_pending && (!Array.isArray(section.items) || !section.items.some(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
       }))) { return; }
-      var block = doc.createElement("section");
-      block.className = "species-answer-section";
-      var title = doc.createElement("h4");
-      title.textContent = section.title;
-      block.appendChild(title);
+      var bounded = false;
       var items = Array.isArray(section.items) ? section.items.filter(function (item) {
         return item && typeof item.text === "string" && item.text.trim();
-      }).slice(0, section.key === "appearance" ? 5 : 4) : [];
+      }) : [];
+      if (bounded && !items.length) { return; }
+      if (!bounded) { items = items.slice(0, section.key === "appearance" ? 5 : 4); }
+      var block = doc.createElement(bounded ? "details" : "section");
+      block.className = bounded ? "species-answer-section species-bounded-data" : "species-answer-section";
+      var title = doc.createElement(bounded ? "summary" : "h4");
+      title.textContent = section.title;
+      block.appendChild(title);
+      if (bounded && typeof section.description === "string" && section.description.trim()) {
+        var description = doc.createElement("p");
+        description.className = "species-bounded-description";
+        description.textContent = section.description;
+        block.appendChild(description);
+      }
       if (items.length) {
         var list = doc.createElement("ul");
+        var scopeLists = Object.create(null);
         items.forEach(function (item) {
+          var targetList = list;
+          if (bounded && typeof item.source_scope === "string" && item.source_scope.trim()) {
+            var scope = item.source_scope.trim();
+            if (!scopeLists[scope]) {
+              var group = doc.createElement("section");
+              group.className = "species-bounded-group";
+              var groupTitle = doc.createElement("h5");
+              groupTitle.textContent = scope;
+              group.appendChild(groupTitle);
+              scopeLists[scope] = doc.createElement("ul");
+              group.appendChild(scopeLists[scope]);
+              block.appendChild(group);
+            }
+            targetList = scopeLists[scope];
+          }
           var li = doc.createElement("li");
           li.textContent = item.text;
-          list.appendChild(li);
-          var url = sanitizeUrl(item.source_url);
-          var sourceKey = JSON.stringify([url, item.source_name, item.license_name, item.license_url]);
-          if (url && typeof item.source_name === "string" && !seen[sourceKey]) {
-            seen[sourceKey] = true;
-            sources.push({ name:item.source_name, url:url, license:item.license_name,
-              licenseUrl:sanitizeUrl(item.license_url) });
-          }
+          targetList.appendChild(li);
+          [item].concat(Array.isArray(item.additional_sources) ? item.additional_sources : []).forEach(function (source) {
+            if (!source || typeof source !== "object") { return; }
+            var url = sanitizeUrl(source.source_url);
+            var sourceKey = JSON.stringify([url, source.source_name, source.license_name, source.license_url]);
+            if (url && typeof source.source_name === "string" && !seen[sourceKey]) {
+              seen[sourceKey] = true;
+              sources.push({ name:source.source_name, url:url, license:source.license_name,
+                licenseUrl:sanitizeUrl(source.license_url) });
+            }
+          });
         });
-        block.appendChild(list);
+        if (list.children.length) { block.appendChild(list); }
       } else {
         var empty = doc.createElement("p");
         empty.className = "species-answer-empty";
@@ -3566,6 +3689,21 @@
         }
       });
     }
+    var evidence = (Array.isArray(profile.note_evidence) ? profile.note_evidence : []).concat(
+      profile.sections.reduce(function (items, section) { return items.concat(section && section.key !== "subspecies_groups" && Array.isArray(section.items) ? section.items : []); }, []));
+    var sourceNotes = [];
+    evidence.forEach(function (item) {
+      if (!item || typeof item !== "object") { return; }
+      if (typeof item.source_note === "string" && item.source_note.trim()) {
+        var text = (item.source_name ? item.source_name + ": " : "") + item.source_note;
+        if (sourceNotes.indexOf(text) < 0) { sourceNotes.push(text); }
+      }
+      var url = sanitizeUrl(item.source_url);
+      var sourceKey = JSON.stringify([url, item.source_name, item.license_name, item.license_url]);
+      if (url && typeof item.source_name === "string" && !seen[sourceKey]) {
+        seen[sourceKey] = true; sources.push({ name: item.source_name, url: url, license: item.license_name, licenseUrl: sanitizeUrl(item.license_url) });
+      }
+    });
     var answerReference = referenceFor(answerConservation, profile);
     if (sources.length || answerConservation.manualOverride || answerReference) {
       var details = doc.createElement("details");
@@ -3573,6 +3711,9 @@
       var summary = doc.createElement("summary");
       summary.textContent = "답변 출처 보기 (" + (sources.length + (answerConservation.manualOverride ? 1 : 0) + (answerReference ? 1 : 0)) + ")";
       details.appendChild(summary);
+      sourceNotes.forEach(function (text) {
+        var note = doc.createElement("p"); note.className = "species-source-note"; note.textContent = text; details.appendChild(note);
+      });
       if (answerConservation.manualOverride) {
         appendManualOverrideEvidence(doc, details, profile.conservation);
       }
@@ -3629,6 +3770,7 @@
     var badge = doc.createElement("span");
     badge.className = "species-conservation-badge";
     badge.textContent = conservation.badgeText;
+    badge.hidden = false;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
     return brief;
@@ -3644,7 +3786,7 @@
   }
 
   /** Native dialog supplies focus containment, Escape, and focus restoration. */
-  function buildSpeciesPopup(doc, card, profile) {
+  function buildSpeciesPopup(doc, card, profile, options) {
     var wrapper = doc.createElement("div");
     wrapper.className = "species-popup-entry";
     var opener = doc.createElement("button");
@@ -3656,6 +3798,44 @@
     opener.textContent = name + " · 도감 카드 보기 ↗";
     opener.setAttribute("aria-haspopup", "dialog");
     wrapper.appendChild(opener);
+    if (options && options.preview) {
+      wrapper.setAttribute("data-photo-preview", "true");
+      opener.setAttribute("aria-label", name + " 도감 카드 보기");
+      function updatePreview(fresh) {
+        while (opener.firstChild) { opener.removeChild(opener.firstChild); }
+        opener.textContent = "";
+        var frame = doc.createElement("span");
+        frame.className = "species-answer-photo";
+        var placeholder = doc.createElement("span");
+        placeholder.className = "species-answer-photo-placeholder";
+        placeholder.textContent = fresh.enrichment_pending ? "사진 준비 전" : "대표 사진 없음";
+        var photo = (Array.isArray(fresh.images) ? fresh.images : []).slice(0, 6).find(function (candidate) {
+          return candidate && sanitizeImageUrl(candidate.image_url);
+        });
+        if (photo) {
+          var image = doc.createElement("img");
+          image.src = sanitizeImageUrl(photo.image_url);
+          image.alt = "";
+          image.loading = "eager";
+          image.referrerPolicy = "no-referrer";
+          placeholder.textContent = "사진 불러오는 중";
+          image.addEventListener("load", function () { placeholder.hidden = true; });
+          image.addEventListener("error", function () {
+            image.hidden = true; placeholder.hidden = false;
+            placeholder.textContent = "사진을 불러오지 못했어요";
+          });
+          frame.appendChild(image);
+        }
+        frame.appendChild(placeholder);
+        opener.appendChild(frame);
+        var caption = doc.createElement("span");
+        caption.className = "species-answer-photo-caption";
+        caption.textContent = "도감 카드 보기 ↗";
+        opener.appendChild(caption);
+      }
+      updatePreview(profile);
+      card.onPhotoPreviewChanged = updatePreview;
+    }
 
     var dialog = doc.createElement("dialog");
     dialog.className = "species-popup risk-" + tier;
@@ -3672,6 +3852,8 @@
     wrapper.appendChild(dialog);
     var view = doc.defaultView;
     var fitActive = false, fitRaf = null, fitObserver = null;
+    var collapsedFitHeight = 0;
+    var materialMeasureKey = "", materialCanvasHeight = 0;
     function mobileFit() {
       return view && view.matchMedia && view.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)").matches;
     }
@@ -3702,12 +3884,37 @@
       // subsequent observer callbacks progressively shrink or oscillate.
       var naturalHeight = fitSurface.offsetHeight;
       if (!(naturalWidth > 0 && naturalHeight > 0)) { return; }
-      // While "측정값 더 보기", "분류 계통 보기" or a chart's "항목·비율" is open, keep the card at a
-      // readable size (fit the width only) and let the frame scroll vertically
-      // instead of shrinking the whole card to the frame height.
+      // Expanded details add scrollable content, not a new zoom level. Keep
+      // the closed card's height as the fitting reference so opening a toggle
+      // cannot enlarge its text, width or silver frame. Refit that reference
+      // to the current viewport on resize; never measure a transformed rect.
       var scrolling = scrollToggleOpen();
-      var scale = Math.min(1, width / naturalWidth);
-      if (!scrolling) { scale = Math.min(scale, height / naturalHeight); }
+      if (!scrolling) { collapsedFitHeight = naturalHeight; }
+      var fitHeight = scrolling && collapsedFitHeight > 0 ? Math.max(minimum, collapsedFitHeight) : naturalHeight;
+      // Percentage gradients otherwise stretch/recenter when details add
+      // height, producing a tiny apparent sheen movement despite zero rotation.
+      if (typeof card.style.setProperty === "function") {
+        card.style.setProperty("--species-card-material-height", fitHeight + "px");
+        // Give the material its own stable paint surface large enough for all
+        // details. A changing raster surface can shift gradient pixels even
+        // when background-size is fixed. Measure without touching live toggles.
+        var materialKey = naturalWidth + ":" + fitHeight;
+        if (materialKey !== materialMeasureKey) {
+          materialMeasureKey = materialKey;
+          materialCanvasHeight = fitHeight;
+          if (typeof card.cloneNode === "function") {
+            var materialMeasure = card.cloneNode(true);
+            materialMeasure.style.cssText = "position:absolute;visibility:hidden;pointer-events:none;transform:none;width:" + naturalWidth + "px;min-height:" + minimum + "px";
+            var materialDetails = materialMeasure.querySelectorAll("details");
+            for (var m = 0; m < materialDetails.length; m += 1) { materialDetails[m].open = true; }
+            fitSurface.appendChild(materialMeasure);
+            materialCanvasHeight = Math.max(fitHeight, materialMeasure.offsetHeight);
+            fitSurface.removeChild(materialMeasure);
+          }
+        }
+        card.style.setProperty("--species-card-material-canvas-height", materialCanvasHeight + "px");
+      }
+      var scale = Math.min(1, width / naturalWidth, height / fitHeight);
       fitSurface.style.transform = "scale(" + scale + ")";
       // A scaled surface keeps its unscaled layout height; trim the difference
       // so the scroll range matches what is visible.
@@ -3741,6 +3948,7 @@
       stopFit();
       if (!dialog.open) { return; }
       card.resetFitScroll();
+      collapsedFitHeight = 0;
       fitActive = true;
       if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
       if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
@@ -3851,7 +4059,7 @@
               JSON.stringify(candidate.items || []) === JSON.stringify(initial.items || []);
           });
         });
-        var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections });
+        var explanation = buildSpeciesAnswer(doc, { taxon: fresh.taxon, sections: additionalSections, note_evidence: fresh.note_evidence });
         if (explanation) {
           var extraSources = Array.prototype.slice.call(explanation.children).find(function (child) { return child.className === "species-answer-sources"; });
           if (extraSources && options.onSources) { explanation.removeChild(extraSources); options.onSources(extraSources); }
@@ -4148,19 +4356,19 @@
         if (speciesCard) {
           if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
           answerSources = combineCardSources(doc, speciesCard, answerSources);
-          item.appendChild(buildSpeciesPopup(doc, speciesCard, result.profile));
+          var speciesPopup = buildSpeciesPopup(doc, speciesCard, result.profile, { preview: !targeted && !!structured });
+          if (!targeted && structured) { item.insertBefore(speciesPopup, structured); }
+          else { item.appendChild(speciesPopup); }
           var extra = doc.createElement("details"); extra.className = "species-extra-info";
           var extraTitle = doc.createElement("summary"); extraTitle.textContent = "더 알아보기"; extra.appendChild(extraTitle);
           if (result.profile.taxon.rank !== "subspecies") {
             var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
             var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
-            if (targeted && questionAnswer.relations) {
-              var directOptions = questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null;
-              if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
-            } else if (!targeted && result.similar_species) {
-              relatedOptions.initialData = result.similar_species;
-            }
-            if (!targeted) { relatedOptions.endpoint = "/v1/taxa/similar"; }
+            var directOptions = targeted && questionAnswer.relations
+              ? (questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null) : null;
+            if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
+            else if (result.similar_species) { relatedOptions.initialData = result.similar_species; }
+            if (directOptions !== relatedOptions) { relatedOptions.endpoint = "/v1/taxa/similar"; }
             var relatedSlot = result.profile.enrichment_pending && !targeted ? doc.createElement("div") : null;
             if (relatedSlot) { relatedSlot.className = "species-related-slot"; extra.appendChild(relatedSlot); }
             else if (!directRanked) {

@@ -1,0 +1,26 @@
+{
+  "method": "all reader payloads through frontend conservationInfo; no browser DOM",
+  "species_count": 11131,
+  "processed": 11131,
+  "grade_counts": {
+    "NT": 926,
+    "LC": 8502,
+    "CR": 206,
+    "VU": 653,
+    "EN": 360,
+    "DD": 35,
+    "EX": 148,
+    "EW": 5
+  },
+  "tier_counts": {
+    "nt": 926,
+    "lc": 8502,
+    "cr": 206,
+    "vu": 653,
+    "en": 360,
+    "unconfirmed": 331,
+    "ex": 148,
+    "ew": 5
+  },
+  "failures": []
+}

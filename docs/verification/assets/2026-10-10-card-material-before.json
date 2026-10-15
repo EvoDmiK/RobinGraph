@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "base_url": "https://robingraph-test.dove-nest.com",
+  "mode": "before-fix reproduction",
+  "method": "Actual TEST before-fix LC material crops, decoded PNG pixels compared, text masked; normal motion enabled",
+  "cases": 2,
+  "checks": [
+    {
+      "grade": "LC",
+      "tier": "lc",
+      "width": 1280,
+      "height": 900,
+      "mobile": false,
+      "closed": {
+        "materialHeight": "",
+        "backgroundSize": "auto, auto, auto",
+        "height": 820.1515502929688,
+        "width": 384.4301452636719,
+        "scale": "0.8817204301075269",
+        "scrollTop": 0,
+        "glossOpacity": "0",
+        "glossAnimations": 0
+      },
+      "opened": {
+        "materialHeight": "",
+        "backgroundSize": "auto, auto, auto",
+        "height": 918.2980346679688,
+        "width": 384.4301452636719,
+        "scale": "0.8817204301075269",
+        "scrollTop": 0,
+        "glossOpacity": "0",
+        "glossAnimations": 0
+      },
+      "pixelsEqual": false,
+      "dragGloss": null,
+      "maxDelta": 16,
+      "meanDelta": 3.6936805555555554
+    },
+    {
+      "grade": "LC",
+      "tier": "lc",
+      "width": 390,
+      "height": 640,
+      "mobile": true,
+      "closed": {
+        "materialHeight": "",
+        "backgroundSize": "auto, auto, auto",
+        "height": 592,
+        "width": 318.76922607421875,
+        "scale": "0.7589743589743589",
+        "scrollTop": 0,
+        "glossOpacity": "0",
+        "glossAnimations": 0
+      },
+      "opened": {
+        "materialHeight": "",
+        "backgroundSize": "auto, auto, auto",
+        "height": 767.6907348632812,
+        "width": 318.76922607421875,
+        "scale": "0.7589743589743589",
+        "scrollTop": 0,
+        "glossOpacity": "0",
+        "glossAnimations": 0
+      },
+      "pixelsEqual": false,
+      "dragGloss": null,
+      "maxDelta": 21,
+      "meanDelta": 7.892356386999245
+    }
+  ]
+}

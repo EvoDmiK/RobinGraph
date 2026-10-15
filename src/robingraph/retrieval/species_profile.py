@@ -183,10 +183,6 @@ def species_summary(taxon, traits):
                      else '평균 ' if weight.get('summary_statistic') == 'mean' else '')
         unit = f" {weight['unit']}" if weight.get('unit') else ''
         sentences.append(f"{statistic}체중은 {weight['display']}{unit}" + (' (추정값)' if weight.get('inferred') else '') + '입니다.')
-    subgroups = sorted({t.get('source_scope') for t in traits if isinstance(t, dict)
-                        and t.get('source_scope_kind') == 'subspecies_group' and t.get('source_scope')})
-    if subgroups:
-        sentences.append('아종군 참고 자료(' + ' · '.join(subgroups) + ')가 있습니다. 현재 종 전체의 평균을 뜻하지 않습니다.')
     if not sentences:
         return '출처가 있는 서식 환경·먹이·생활 방식·체중 정보를 아직 확인하지 못했습니다.'
     name = taxon.get('korean_name') or taxon.get('english_name') or taxon.get('scientific_name')
@@ -287,8 +283,6 @@ def read_traits(repository, store, lineage):
     traits = supplement_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
     from .birdbase import birdbase_traits
     traits = birdbase_traits(lineage, traits, LABELS)
-    from .avonet_subgroups import subgroup_traits
-    traits = subgroup_traits(lineage, traits, contexts.get('reference-avonet'), LABELS, trait_display)
     from .reviewed_activity import reviewed_activity
     return reviewed_activity(lineage, traits)
 
@@ -392,12 +386,13 @@ def licensed_images(scientific_name, rank="species"):
 
 
 def species_sections(taxon, traits, notes):
-    """Small attributed sections shared by every species chat response."""
+    """Species facts and explicitly bounded reference facts, never conflated."""
     fields = {}
     for trait in traits:
         if (isinstance(trait, dict) and trait.get('source_name') and trait.get('source_url') and trait.get('display')
                 and trait.get('source_scope_kind') != 'subspecies_group'):
             fields.setdefault(trait.get('name'), trait)
+
     def fact(name):
         trait = fields.get(name)
         if trait is None:
@@ -406,37 +401,46 @@ def species_sections(taxon, traits, notes):
         prefix = ('문헌 범위값 평균 ' if trait.get('summary_statistic') == 'literature_bounds_mean'
                   else '연구 표본 평균 ' if trait.get('summary_statistic') == 'sample_mean'
                   else '평균 ' if trait.get('summary_statistic') == 'mean' else '')
-        return {'text':f"{prefix}{LABELS[name]}: {trait['display']}{unit}" + (' (추정값)' if trait.get('inferred') else ''),
-                **{key:trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'license_url', 'source_scope', 'citation')}}
-    basic = [{'text':'학명: ' + taxon['scientific_name']}] if taxon.get('scientific_name') else []
-    weight = fact('body_mass')
-    if weight:
+        return {**trait, 'text': f"{prefix}{LABELS[name]}: {trait['display']}{unit}" + (' (추정값)' if trait.get('inferred') else '')}
+
+    basic = [{'text': '학명: ' + taxon['scientific_name']}] if taxon.get('scientific_name') else []
+    if weight := fact('body_mass'):
         basic.append(weight)
     appearance = [value for name in ('beak_length_culmen', 'wing_length', 'tail_length') if (value := fact(name))]
-    appearance.extend(notes.get('appearance', []))
     ecology = [value for name in ('habitat', 'primary_lifestyle', 'diet_category', 'activity_pattern', 'nocturnal') if (value := fact(name))]
     if 'diet_category' not in fields and (diet := fact('trophic_niche')):
         ecology.append(diet)
-    # List every bounded subgroup; never select the first one as the species value.
-    for trait in traits:
-        if not isinstance(trait, dict) or trait.get('source_scope_kind') != 'subspecies_group':
-            continue
-        name = trait.get('name')
-        destination = (basic if name == 'body_mass' else appearance if name in ('beak_length_culmen', 'wing_length', 'tail_length')
-                       else ecology if name in ('habitat', 'primary_lifestyle', 'trophic_niche') else None)
-        if destination is None:
-            continue
-        unit = f" {trait['unit']}" if trait.get('unit') else ''
-        inferred = ' (추정값)' if trait.get('inferred') else ''
-        destination.append({'text': f"{LABELS[name]} · 아종군 {trait['source_scope']}: {trait['display']}{unit}{inferred} (종 전체 값 아님)",
-                            **{key: trait.get(key) for key in ('source_name', 'source_url', 'license_name', 'source_scope', 'citation')}})
-    return [{'key':key, 'title':title, 'items':items, 'empty_text':empty}
-            for key,title,items,empty in (
-                ('basic', '기본 정보', basic, '확인된 기본 정보가 없습니다.'),
-                ('appearance', '외관 특징', appearance, '깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다.'),
-                ('ecology', '생활과 먹이', ecology, '서식 환경과 먹이 자료를 아직 확인하지 못했습니다.'),
-                ('fun_facts', '재미있는 사실', notes.get('fun_facts', []), '출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다.'),
-            )]
+
+    fun_facts = []
+    seen_notes = {}
+    for category, destination in (('appearance', appearance), ('fun_facts', fun_facts)):
+        for item in notes.get(category, []):
+            if not isinstance(item, dict) or not isinstance(item.get('text'), str) or not item['text'].strip():
+                continue
+            item = dict(item)
+            key = (' '.join(item['text'].split()).rstrip('.。'), item.get('source_url'),
+                   item.get('source_scope'), item.get('source_scope_kind'))
+            # Collapse only identical evidence; different scopes/sources stay intact.
+            if key in seen_notes:
+                continue
+            seen_notes[key] = item
+            alignment = item.get('taxonomy_alignment') or {}
+            bounded = item.get('source_scope_kind') == 'subspecies_group' or alignment.get('status') == 'unverified'
+            if bounded:
+                scope = item.get('source_scope')
+                if not isinstance(scope, str) or not scope.strip():
+                    continue  # Retained in profile.note_evidence, never an unbounded fact.
+                item['text'] = f"{scope.strip()}: {item['text']}"
+            destination.append(item)
+
+    sections = [{'key': key, 'title': title, 'items': items, 'empty_text': empty}
+                for key, title, items, empty in (
+                    ('basic', '기본 정보', basic, '확인된 기본 정보가 없습니다.'),
+                    ('appearance', '외관 특징', appearance, '깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다.'),
+                    ('ecology', '생활과 먹이', ecology, '서식 환경과 먹이 자료를 아직 확인하지 못했습니다.'),
+                    ('fun_facts', '재미있는 사실', fun_facts, '출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다.'),
+                )]
+    return sections
 
 
 def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True):
@@ -508,12 +512,18 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         if taxon['rank']=='subspecies':
             from .taxonomy_lineage import with_korean_display_name
             taxon = with_korean_display_name(taxon)
+        profile_traits = state['traits']['traits']
+        if taxon['rank'] == 'species':
+            profile_traits = [trait for trait in profile_traits
+                              if trait.get('source_scope_kind') != 'subspecies_group']
         result = {'taxon':taxon, 'lineage':asdict(lineage),
-                'traits':state['traits']['traits'], 'images':state['media']['images'],
+                'traits':profile_traits, 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
                 'conservation':state['conservation']['conservation'],
-                'summary':species_summary(taxon, state['traits']['traits']),
-                'sections':species_sections(taxon, state['traits']['traits'], state['notes']['notes']),
+                'note_evidence':[dict(item) for category in ('appearance', 'fun_facts')
+                                 for item in state['notes']['notes'].get(category, []) if isinstance(item, dict)],
+                'summary':species_summary(taxon, profile_traits),
+                'sections':species_sections(taxon, profile_traits, state['notes']['notes']),
                 'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'],
                 'vegetation_note':'구체적인 식물·식생 목록은 아직 수집되지 않았습니다.'}
         if taxon['rank']=='subspecies':
