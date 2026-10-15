@@ -1,0 +1,151 @@
+[
+  {
+    "name": "related",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "similar",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "ecological-related",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "subspecies",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "name-relations",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "profile",
+    "status": "passed",
+    "http": 200,
+    "warnings": [],
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "lineage Korean",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "lineage scientific",
+    "status": "passed",
+    "http": 200,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "observations filtered",
+    "status": "passed",
+    "http": 200,
+    "returned": 1,
+    "warnings": [
+      "Coordinates for generalized observations are withheld"
+    ],
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "chat observations explicit",
+    "status": "passed",
+    "http": 200,
+    "kind": "observations",
+    "disposition": "answer",
+    "warnings": [
+      "일반화된 관찰 기록의 좌표는 공개하지 않습니다."
+    ],
+    "channels": [],
+    "generated_answer": true
+  },
+  {
+    "name": "document search fulltext",
+    "status": "passed",
+    "http": 200,
+    "returned": 0,
+    "warnings": [],
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "document search hybrid",
+    "status": "passed",
+    "http": 200,
+    "returned": 2,
+    "warnings": [],
+    "channels": [
+      "vector"
+    ],
+    "generated_answer": false
+  },
+  {
+    "name": "evidence generation explicit",
+    "status": "passed",
+    "http": 200,
+    "kind": "evidence",
+    "disposition": "abstain",
+    "warnings": [
+      "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+    ],
+    "channels": [],
+    "generated_answer": true
+  },
+  {
+    "name": "unknown taxon",
+    "status": "passed",
+    "http": 404,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "missing lineage parameter",
+    "status": "passed",
+    "http": 422,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "empty question rejected",
+    "status": "passed",
+    "http": 422,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "inverted date range rejected",
+    "status": "passed",
+    "http": 422,
+    "channels": [],
+    "generated_answer": false
+  },
+  {
+    "name": "fixture grounded answer",
+    "status": "passed",
+    "http": 200,
+    "disposition": "answer",
+    "warnings": [],
+    "channels": [],
+    "generated_answer": true
+  }
+]

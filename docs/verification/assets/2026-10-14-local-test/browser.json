@@ -1,0 +1,447 @@
+{
+  "base": "http://127.0.0.1:8000",
+  "response_mocking": false,
+  "checks": [
+    {
+      "name": "initial layout 1280",
+      "status": "passed",
+      "evidence": {
+        "viewport": 1280,
+        "scroll": 1280,
+        "overflow": false
+      }
+    },
+    {
+      "name": "profile chat 1280",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "intent": "profile",
+        "route": "deterministic",
+        "taxon": "Anas platyrhynchos"
+      }
+    },
+    {
+      "name": "card open flip close 1280",
+      "status": "passed",
+      "evidence": {
+        "x": 438.6936950683594,
+        "y": 40,
+        "width": 402.6125793457031,
+        "height": 819.6681518554688
+      }
+    },
+    {
+      "name": "source disclosure 1280",
+      "status": "passed",
+      "evidence": {
+        "source_links": 27
+      }
+    },
+    {
+      "name": "discovery and comparison 1280",
+      "status": "passed",
+      "evidence": {
+        "card_buttons": 2,
+        "layout": {
+          "viewport": 1280,
+          "scroll": 1280,
+          "overflow": false
+        }
+      }
+    },
+    {
+      "name": "ecology discovery 1280",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "taxon",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "groups",
+          "note"
+        ]
+      }
+    },
+    {
+      "name": "subspecies discovery 1280",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "parent_species",
+          "subspecies",
+          "taxonomy_release",
+          "concept_set_id",
+          "has_more",
+          "source_url",
+          "source_name"
+        ]
+      }
+    },
+    {
+      "name": "common names discovery 1280",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "query_name",
+          "summary",
+          "is_search_term",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "relations"
+        ]
+      }
+    },
+    {
+      "name": "clear conversation 1280",
+      "status": "passed",
+      "evidence": {
+        "cleared": true
+      }
+    },
+    {
+      "name": "initial layout 390",
+      "status": "passed",
+      "evidence": {
+        "viewport": 390,
+        "scroll": 390,
+        "overflow": false
+      }
+    },
+    {
+      "name": "profile chat 390",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "intent": "profile",
+        "route": "deterministic",
+        "taxon": "Anas platyrhynchos"
+      }
+    },
+    {
+      "name": "card open flip close 390",
+      "status": "passed",
+      "evidence": {
+        "x": 20,
+        "y": 24,
+        "width": 350,
+        "height": 795.9895629882812
+      }
+    },
+    {
+      "name": "source disclosure 390",
+      "status": "passed",
+      "evidence": {
+        "source_links": 27
+      }
+    },
+    {
+      "name": "discovery and comparison 390",
+      "status": "passed",
+      "evidence": {
+        "card_buttons": 2,
+        "layout": {
+          "viewport": 390,
+          "scroll": 390,
+          "overflow": false
+        }
+      }
+    },
+    {
+      "name": "ecology discovery 390",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "taxon",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "groups",
+          "note"
+        ]
+      }
+    },
+    {
+      "name": "subspecies discovery 390",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "parent_species",
+          "subspecies",
+          "taxonomy_release",
+          "concept_set_id",
+          "has_more",
+          "source_url",
+          "source_name"
+        ]
+      }
+    },
+    {
+      "name": "common names discovery 390",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "query_name",
+          "summary",
+          "is_search_term",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "relations"
+        ]
+      }
+    },
+    {
+      "name": "clear conversation 390",
+      "status": "passed",
+      "evidence": {
+        "cleared": true
+      }
+    },
+    {
+      "name": "initial layout 320",
+      "status": "passed",
+      "evidence": {
+        "viewport": 320,
+        "scroll": 320,
+        "overflow": false
+      }
+    },
+    {
+      "name": "profile chat 320",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "intent": "profile",
+        "route": "deterministic",
+        "taxon": "Anas platyrhynchos"
+      }
+    },
+    {
+      "name": "card open flip close 320",
+      "status": "passed",
+      "evidence": {
+        "x": 20,
+        "y": 24,
+        "width": 280,
+        "height": 520
+      }
+    },
+    {
+      "name": "source disclosure 320",
+      "status": "passed",
+      "evidence": {
+        "source_links": 27
+      }
+    },
+    {
+      "name": "discovery and comparison 320",
+      "status": "passed",
+      "evidence": {
+        "card_buttons": 2,
+        "layout": {
+          "viewport": 320,
+          "scroll": 320,
+          "overflow": false
+        }
+      }
+    },
+    {
+      "name": "ecology discovery 320",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "taxon",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "groups",
+          "note"
+        ]
+      }
+    },
+    {
+      "name": "subspecies discovery 320",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "parent_species",
+          "subspecies",
+          "taxonomy_release",
+          "concept_set_id",
+          "has_more",
+          "source_url",
+          "source_name"
+        ]
+      }
+    },
+    {
+      "name": "common names discovery 320",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "payload_keys": [
+          "query_name",
+          "summary",
+          "is_search_term",
+          "taxonomy_source",
+          "taxonomy_release",
+          "concept_set_id",
+          "relations"
+        ]
+      }
+    },
+    {
+      "name": "clear conversation 320",
+      "status": "passed",
+      "evidence": {
+        "cleared": true
+      }
+    },
+    {
+      "name": "chat route: taxonomy",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "taxonomy",
+        "route": "deterministic",
+        "result_kind": "taxonomy",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: diet",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "profile",
+        "route": "deterministic",
+        "result_kind": "profile",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: habitat",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "profile",
+        "route": "deterministic",
+        "result_kind": "profile",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: activity",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "profile",
+        "route": "deterministic",
+        "result_kind": "profile",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: subspecies intent",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "profile",
+        "route": "jev",
+        "result_kind": "profile",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: related intent",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "profile",
+        "route": "deterministic",
+        "result_kind": "profile",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: observations",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "clarify",
+        "intent": "observations",
+        "route": "jev",
+        "result_kind": "observations",
+        "warnings": [
+          "필터 없는 전체 관찰 기록 조회는 실행하지 않았습니다."
+        ]
+      }
+    },
+    {
+      "name": "chat route: evidence",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "answer",
+        "intent": "evidence",
+        "route": "jev",
+        "result_kind": "evidence",
+        "warnings": []
+      }
+    },
+    {
+      "name": "chat route: unknown species",
+      "status": "passed",
+      "evidence": {
+        "status": 200,
+        "disposition": "clarify",
+        "intent": null,
+        "route": "jev",
+        "result_kind": "clarify",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ]
+      }
+    },
+    {
+      "name": "birds dedicated page",
+      "status": "passed",
+      "evidence": {
+        "status": 200
+      }
+    },
+    {
+      "name": "page JavaScript errors",
+      "status": "passed",
+      "evidence": {
+        "errors": 0
+      }
+    },
+    {
+      "name": "same origin HTTP server errors",
+      "status": "passed",
+      "evidence": {
+        "errors": 0
+      }
+    }
+  ],
+  "page_errors": [],
+  "http_errors": []
+}

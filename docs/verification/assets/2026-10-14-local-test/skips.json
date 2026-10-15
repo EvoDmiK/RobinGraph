@@ -1,0 +1,13 @@
+{
+  "'Actual pinned input files unavailable; no substitute for integration evidence'": 1,
+  "'Opt in to run against disposable Neo4j'": 1,
+  "'Opt in to run the Korean vernacular Cypher contract against Neo4j'": 1,
+  "'Opt in to run the n8n Cypher contract against Neo4j'": 1,
+  "'Dedicated graph/control-plane databases required'": 1,
+  "'Set ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1 (with NEO4J_URI/USERNAME/PASSWORD/DATABASE) to run against a real Neo4j server.'": 19,
+  "'Set ROBINGRAPH_POSTGRES_INTEGRATION_TESTS=1 with the dedicated test DB environment to run.'": 9,
+  "'Set ROBINGRAPH_NEO4J_INTEGRATION_TESTS=1 for isolated real Neo4j ordering tests'": 1,
+  "'pinned AviList file not available'": 1,
+  "'pinned source files not available'": 1,
+  "'set ROBINGRAPH_TRAIT_RAW_DIR to the pinned source directory'": 2
+}

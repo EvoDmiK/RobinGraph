@@ -1,0 +1,124 @@
+[
+  {
+    "name": "chip sends real profile 1280",
+    "status": "passed",
+    "evidence": {
+      "status": 200
+    }
+  },
+  {
+    "name": "photo and gesture 1280",
+    "status": "passed",
+    "evidence": {
+      "images": [
+        {
+          "loaded": true,
+          "width": 960
+        },
+        {
+          "loaded": false,
+          "width": 960
+        }
+      ],
+      "gesture": "mouse drag"
+    }
+  },
+  {
+    "name": "Shift Enter multiline 1280",
+    "status": "passed",
+    "evidence": {
+      "newline": true
+    }
+  },
+  {
+    "name": "Enter sends 1280",
+    "status": "passed",
+    "evidence": {
+      "taxon": "Pica serica"
+    }
+  },
+  {
+    "name": "advanced taxonomy filter 1280",
+    "status": "passed",
+    "evidence": {
+      "kind": "taxonomy"
+    }
+  },
+  {
+    "name": "chip sends real profile 390",
+    "status": "passed",
+    "evidence": {
+      "status": 200
+    }
+  },
+  {
+    "name": "photo and gesture 390",
+    "status": "passed",
+    "evidence": {
+      "images": [
+        {
+          "loaded": true,
+          "width": 960
+        },
+        {
+          "loaded": false,
+          "width": 960
+        }
+      ],
+      "gesture": "CDP touch swipe"
+    }
+  },
+  {
+    "name": "Shift Enter multiline 390",
+    "status": "passed",
+    "evidence": {
+      "newline": true
+    }
+  },
+  {
+    "name": "Enter sends 390",
+    "status": "passed",
+    "evidence": {
+      "taxon": "Pica serica"
+    }
+  },
+  {
+    "name": "advanced taxonomy filter 390",
+    "status": "passed",
+    "evidence": {
+      "kind": "taxonomy"
+    }
+  },
+  {
+    "name": "positive fulltext retrieval",
+    "status": "passed",
+    "evidence": {
+      "results": 4,
+      "channels": [
+        [
+          "fulltext"
+        ],
+        [
+          "fulltext"
+        ],
+        [
+          "fulltext"
+        ],
+        [
+          "fulltext"
+        ]
+      ]
+    }
+  },
+  {
+    "name": "Gemini grounded generation",
+    "status": "passed",
+    "evidence": {
+      "retrieved": 3,
+      "generated_cited_answer": true,
+      "warnings": [
+        "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+      ]
+    }
+  }
+]

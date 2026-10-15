@@ -1,0 +1,50 @@
+{
+  "source_commit": "ec9112903169f9abe9438660f04539c2292a1201",
+  "base_url": "http://127.0.0.1:8000",
+  "production_changed": false,
+  "transport": "temporary loopback LAN relays; current env file preserved",
+  "backend_clean": {
+    "run": 825,
+    "pass": 787,
+    "fail": 0,
+    "skip": 38
+  },
+  "frontend": {
+    "run": 303,
+    "pass": 303,
+    "fail": 0,
+    "skip": 0
+  },
+  "real_db_compatible_integration": {
+    "run": 20,
+    "pass": 20,
+    "fail": 0,
+    "skip": 0
+  },
+  "browser_main": {
+    "run": 39,
+    "pass": 39,
+    "fail": 0
+  },
+  "browser_extended_and_generation": {
+    "run": 12,
+    "pass": 12,
+    "fail": 0
+  },
+  "api": {
+    "run": 18,
+    "pass": 18,
+    "fail": 0
+  },
+  "browser_response_mocking": false,
+  "page_js_errors": 0,
+  "same_origin_server_5xx": 0,
+  "initial_full_integration_attempt": {
+    "run": 816,
+    "fail": 1,
+    "error": 2,
+    "skip": 6,
+    "reason": "Existing vector index dimension mismatch and unit-test environment contamination"
+  },
+  "remaining": "Direct Docker LAN connectivity; destructive disposable-DB tests; pinned raw input tests; physical mobile and Safari"
+}

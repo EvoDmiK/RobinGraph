@@ -90,6 +90,21 @@ TEST는 robingraph-test Compose 프로젝트와 robingraph-api-test 컨테이너
 
 ## 5. 실행 후 검증
 
+### 현재 Mac의 로컬 TEST
+
+로컬 TEST는 `.env.nas.test`와 저장소의 `compose.local-test.yml`을 사용한다. 포트는 `127.0.0.1:8000`이며 프로젝트와 컨테이너는 항상 TEST로 고정된다.
+
+```sh
+sh scripts/deploy_local_test.sh deploy
+sh scripts/deploy_local_test.sh verify
+```
+
+`deploy`는 최신 코드의 이미지를 빌드하고 실행한다. 이미지가 이미 있으면 `start`로 빌드 없이 시작할 수 있다. `status`와 `stop`도 지원한다. 이 명령은 원본 TEST DB 주소를 사용하므로 컨테이너에서 직접 DB에 연결할 수 있어야 한다.
+
+2026-10-14 현재 이 Mac의 OrbStack 로그인 시 자동 시작을 활성화했고 TEST의 Docker 재시작 정책은 `unless-stopped`다. 재부팅 뒤 사용자 로그인과 OrbStack 시작 후, 명시적으로 중지하지 않은 컨테이너는 다시 실행하도록 설정했다. 실제 Mac 재부팅 검증은 수행하지 않았다.
+
+2026-10-14 후속 점검에서 사용자 OrbStack 재시작 후 Neo4j·PostgreSQL·Jina에 컨테이너 직접 TCP 연결이 모두 성공했다. 위 `start`로 원본 .env.nas.test와 저장소의 로컬 포트 설정을 적용했고, 임시 중계 프로세스를 종료했다. 실제 API 18개 검사와 Chromium 프로필 채팅을 통과했다. 현재 TEST는 /tmp 중계나 Compose override에 의존하지 않는다. macOS 권한 토글이 실제 원인이었는지는 확인하지 않았으며 실제 Mac 재부팅 검증은 별도다.
+
 /health의 status=ok와 mode를 확인한다. NAS에서는 deployment_target이 선택한 환경과 같은지도 확인한다. health의 taxonomy_release만으로 활성 AviList나 종 자료 준비를 판정하지 않는다.
 
 ```sh

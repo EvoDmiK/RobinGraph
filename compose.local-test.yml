@@ -1,0 +1,5 @@
+# Use with compose.nas.yml and scripts/deploy_local_test.sh.
+services:
+  api:
+    ports:
+      - "127.0.0.1:8000:8000"

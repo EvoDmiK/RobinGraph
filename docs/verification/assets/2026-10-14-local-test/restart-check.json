@@ -1,0 +1,23 @@
+{
+  "direct_tcp": {
+    "Neo4j": true,
+    "PostgreSQL": true,
+    "Jina": true
+  },
+  "original_runtime_env_matches": true,
+  "relay_stopped": true,
+  "api": {
+    "run": 18,
+    "passed": 18,
+    "failed": 0
+  },
+  "browser": {
+    "profile_chat_http": 200,
+    "taxon": "Anas platyrhynchos",
+    "chromium": true
+  },
+  "app_start_at_login": true,
+  "restart_policy": "unless-stopped",
+  "mac_reboot_tested": false,
+  "production_changed": false
+}
