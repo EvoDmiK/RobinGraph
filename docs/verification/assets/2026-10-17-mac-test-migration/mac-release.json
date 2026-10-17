@@ -1,0 +1,21 @@
+{
+  "source_files_verified": 101,
+  "container": "5bbabf4ee079f0f4d3c1ecf5fbb9a9aad0fe4ed0197af20f06a8e67da8c0fc67",
+  "image": "robingraph-api:test-mac-8ffeb7734750",
+  "image_id": "sha256:564d2428d0cde4860fad4443fe8a8ab02faa84441c97e679287d6baf7e2261b4",
+  "architecture": "arm64",
+  "restart_policy": "unless-stopped",
+  "ports": {
+    "8000/tcp": [
+      {
+        "HostIp": "192.168.219.97",
+        "HostPort": "8000"
+      },
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "8000"
+      }
+    ]
+  },
+  "started_at": "2026-10-17T10:05:49.580159644Z"
+}

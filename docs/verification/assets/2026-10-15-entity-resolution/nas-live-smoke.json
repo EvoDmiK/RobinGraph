@@ -1,0 +1,231 @@
+{
+  "passed": true,
+  "mode": "actual TEST graph and Jina, no route mocks",
+  "records": [
+    {
+      "question": "흰뺨검둥오리에 대해 알고 싶어",
+      "elapsed_seconds": 1.756,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "authority": "Swinhoe, R, 1866",
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Eastern Spot-billed Duck"
+      },
+      "topic": null
+    },
+    {
+      "question": "흰뺨 검둥 오리에 대해 알고 싶어",
+      "elapsed_seconds": 0.719,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "흰뺨 검둥 오리",
+        "status": "matched",
+        "method": "graph_normalized",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "authority": "Swinhoe, R, 1866",
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Eastern Spot-billed Duck"
+      },
+      "topic": null
+    },
+    {
+      "question": "흰뺨검둥오려에 대해 알고 싶어",
+      "elapsed_seconds": 28.341,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "흰뺨검둥오려",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:540",
+            "scientific_name": "Anas zonorhyncha",
+            "display_name": "흰뺨검둥오리",
+            "score": 0.3549,
+            "question": "Anas zonorhyncha에 대해 알고 싶어"
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:415",
+            "scientific_name": "Melanitta perspicillata",
+            "display_name": "흰이마검둥오리",
+            "score": 0.2716,
+            "question": "Melanitta perspicillata에 대해 알고 싶어"
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:4162",
+            "scientific_name": "Calidris temminckii",
+            "display_name": "흰꼬리좀도요",
+            "score": 0.2653,
+            "question": "Calidris temminckii에 대해 알고 싶어"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "Anas zonorhyncha에 대해 알고 싶어",
+      "elapsed_seconds": 0.432,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "Anas zonorhyncha",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "authority": "Swinhoe, R, 1866",
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Eastern Spot-billed Duck"
+      },
+      "topic": null
+    },
+    {
+      "question": "흰뺨검둥오려는 뭘 먹어?",
+      "elapsed_seconds": 0.988,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "흰뺨검둥오려",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:540",
+            "scientific_name": "Anas zonorhyncha",
+            "display_name": "흰뺨검둥오리",
+            "score": 0.3549,
+            "question": "Anas zonorhyncha는 뭘 먹어?"
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:415",
+            "scientific_name": "Melanitta perspicillata",
+            "display_name": "흰이마검둥오리",
+            "score": 0.2716,
+            "question": "Melanitta perspicillata는 뭘 먹어?"
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:4162",
+            "scientific_name": "Calidris temminckii",
+            "display_name": "흰꼬리좀도요",
+            "score": 0.2653,
+            "question": "Calidris temminckii는 뭘 먹어?"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "Anas zonorhyncha는 뭘 먹어?",
+      "elapsed_seconds": 0.276,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "Anas zonorhyncha",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:540",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "authority": "Swinhoe, R, 1866",
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Eastern Spot-billed Duck"
+      },
+      "topic": "diet"
+    },
+    {
+      "question": "우주선에 대해 알고 싶어",
+      "elapsed_seconds": 0.883,
+      "disposition": "abstain",
+      "resolution": {
+        "mention": "우주선",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "까치에 대해 알려줘",
+      "elapsed_seconds": 0.593,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "까치",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Pica serica",
+        "taxon_id": "avilist-taxon:v2025b:20193",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:20193",
+        "rank": "species",
+        "scientific_name": "Pica serica",
+        "authority": "Gould, J, 1845",
+        "korean_name": "까치",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Oriental magpie"
+      },
+      "topic": null
+    }
+  ]
+}

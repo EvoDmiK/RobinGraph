@@ -234,6 +234,14 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         semantic_router = SemanticRouter(embedding_client)
     except EmbeddingConfigurationError:
         pass
+    from .retrieval.taxon_name_resolution import TaxonNameResolver
+    from .retrieval.taxon_name_vectors_neo4j import Neo4jTaxonNameVectorRepository
+    name_vectors = Neo4jTaxonNameVectorRepository(settings)
+    name_resolver = TaxonNameResolver(
+        resolve_species, lineage_repository.reviewed_name_candidates,
+        embedding_client=embedding_client, active_context=active_taxonomy_context,
+        candidate_search=name_vectors.search,
+    )
     from .api.jev_router import configured_jev_router
     jev_router = configured_jev_router()
     # Gemini answer generation is opt-in: only a configured API key wires it
@@ -272,6 +280,14 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
         include_enrichment=False,
     )
+    from .retrieval.species_scope import with_species_scope
+
+    def annotated_profile(flow, name):
+        profile = flow.invoke(name)
+        context = profile.get("lineage") or {}
+        return {**profile, "taxon": with_species_scope(profile.get("taxon") or {}, "all",
+                context.get("concept_set_id"), context.get("taxonomy_release"))}
+
     try:
         app = create_app(
             repository,
@@ -285,16 +301,18 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             korean_lineage_handler=create_neo4j_korean_lineage_handler(lineage_repository),
             semantic_router=semantic_router,
             jev_router=jev_router,
-            species_profile_handler=species_flow.invoke,
-            species_basic_profile_handler=basic_species_flow.invoke,
-            related_species_handler=lambda name: related_species(lineage_repository, resolve_species, name),
-            similar_species_handler=lambda name: similar_species(lineage_repository, ingest_store, resolve_species, name),
-            ecological_relations_handler=lambda name: ecological_relations(lineage_repository, ingest_store, resolve_species, name),
+            species_profile_handler=lambda name: annotated_profile(species_flow, name),
+            species_basic_profile_handler=lambda name: annotated_profile(basic_species_flow, name),
+            taxon_name_resolution_handler=name_resolver.resolve,
+            related_species_handler=lambda name, species_scope="all": related_species(lineage_repository, resolve_species, name, species_scope),
+            similar_species_handler=lambda name, species_scope="all": similar_species(lineage_repository, ingest_store, resolve_species, name, species_scope),
+            ecological_relations_handler=lambda name, species_scope="all": ecological_relations(lineage_repository, ingest_store, resolve_species, name, species_scope),
             name_relations_handler=name_relations_repository.for_name,
             subspecies_handler=lambda name: subspecies_for(lineage_repository,resolve_species,name),
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:
+        name_vectors.close()
         lineage_repository.close()
         operational_repository.close()
         repository.close()

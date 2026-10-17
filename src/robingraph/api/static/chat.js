@@ -183,9 +183,51 @@
     return Number.isInteger(number) && number >= 1 && number <= 10 ? number : 10;
   }
 
+  var SPECIES_SCOPES = ["all", "korea", "outside", "unknown"];
+  var DISTRIBUTION_STATUS_LABELS = {
+    korea: "국내 기록·분포 확인",
+    outside: "국외 분포 검토",
+    unknown: "미확인",
+  };
+  var DISTRIBUTION_STATUS_NOTES = {
+    korea: "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다.",
+    outside: "국외 분포 검토: 검토한 출처의 정상 분포가 한국 밖입니다. 우연한 도래나 사육 기록이 없다는 뜻은 아닙니다.",
+    unknown: "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다.",
+  };
+  var SPECIES_SCOPE_NOTES = {
+    all: "전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.",
+    korea: "대한민국을 기준으로 출처의 Korea·Korean Peninsula 표기도 포함하며, 북한만 명시한 근거는 제외합니다. 한국어 이름을 우선하며 계절·미조 기록을 포함하므로 텃새·현재 서식을 뜻하지 않습니다.",
+    outside: "현재 일부 종의 정상 분포만 검토했으며 미확인 종은 포함하지 않습니다. 영어 이름을 우선하고 없으면 검증 국명·학명을 표시합니다. 우연한 도래나 사육 기록의 부재를 뜻하지 않습니다.",
+    unknown: "한국 분포 근거를 아직 확인하지 못한 종을 표시하며 한국어 이름을 우선합니다. 국외 분포로 판정된 것이 아닙니다.",
+  };
+
+  function normalizeSpeciesScope(value) {
+    return typeof value === "string" && SPECIES_SCOPES.indexOf(value) !== -1 ? value : "all";
+  }
+
+  function distributionInfo(distribution) {
+    if (!distribution || typeof distribution !== "object") { return null; }
+    var status = distribution.status;
+    if (!Object.prototype.hasOwnProperty.call(DISTRIBUTION_STATUS_LABELS, status)) { return null; }
+    var evidence = (Array.isArray(distribution.evidence) ? distribution.evidence : []).filter(function (item) {
+      return item && typeof item === "object" && Boolean(sanitizeUrl(item.source_url));
+    });
+    return {
+      status: status,
+      label: DISTRIBUTION_STATUS_LABELS[status],
+      note: DISTRIBUTION_STATUS_NOTES[status],
+      basis: typeof distribution.basis === "string" ? distribution.basis : "",
+      evidence: evidence,
+    };
+  }
+
   /** Build the exact typed body accepted by POST /v1/chat. */
-  function buildChatPayload(question, intent, values) {
+  function buildChatPayload(question, intent, values, speciesScope) {
     var payload = { question: question, intent: intent };
+    var scope = normalizeSpeciesScope(speciesScope || (values && values.species_scope));
+    if (scope !== "all") {
+      payload.species_scope = scope;
+    }
     values = values || {};
     if (intent === "profile") {
       var profileName = typeof values.name === "string" ? values.name.trim() : "";
@@ -1500,7 +1542,7 @@
     var comparisonCallback = options.explorer && options.explorer.onComparison;
     if (comparisonCallback && typeof comparisonCallback.beforeComparison === "function") { comparisonCallback.beforeComparison(); }
     var comparisonSources = buildCombinedAnswerSources(doc, null, true);
-    var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive };
+    var cardOptions = { fetcher: options.fetcher, isActive: options.explorer && options.explorer.isActive, speciesScope: options.speciesScope };
     var panel = doc.createElement("section");
     panel.className = "species-comparison";
     var heading = doc.createElement("h3");
@@ -1577,7 +1619,13 @@
   }
 
   function speciesLabel(taxon) {
-    return taxon && ((taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.display_label || taxon.scientific_name) || "새";
+    if (!taxon || typeof taxon !== "object") { return "새"; }
+    var korean = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" && taxon.korean_name.trim() ? taxon.korean_name.trim() : "";
+    var display = typeof taxon.display_name === "string" && taxon.display_name.trim() ? taxon.display_name.trim() : "";
+    if (display && (taxon.korean_name_status !== "machine-translated" || display !== taxon.korean_name)) {
+      return display;
+    }
+    return korean || taxon.english_name || taxon.display_label || taxon.scientific_name || "새";
   }
 
   /**
@@ -1607,9 +1655,12 @@
     });
     return details;
   }
+  function isNameWeightedPriority(priority) {
+    return priority === "korean_name_then_weighted_score" || priority === "english_name_then_weighted_score";
+  }
   function similarityLabel(peer, priority) {
     var score = typeof peer.similarity_score === "number" && Number.isFinite(peer.similarity_score) && peer.similarity_score >= 0 && peer.similarity_score <= 100 ? peer.similarity_score : null;
-    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? (priority === "korean_name_then_weighted_score" ? "추천 " + peer.similarity_rank : peer.similarity_rank + "위") + " · " : "") + speciesLabel(peer) + (score !== null ? (peer.score_basis === "taxonomy_ecology_fallback" ? " · 분류·생태 대체 점수(계통 자료 부족) " : " · 가중 점수 ") + score + "점" : "");
+    return (Number.isInteger(peer.similarity_rank) && peer.similarity_rank >= 1 && peer.similarity_rank <= 3 ? (isNameWeightedPriority(priority) ? "추천 " + peer.similarity_rank : peer.similarity_rank + "위") + " · " : "") + speciesLabel(peer) + (score !== null ? (peer.score_basis === "taxonomy_ecology_fallback" ? " · 분류·생태 대체 점수(계통 자료 부족) " : " · 가중 점수 ") + score + "점" : "");
   }
 
   function buildComparisonPeer(doc, peer, ranked, priority) {
@@ -1621,7 +1672,7 @@
     if (ranked) {
       row.setAttribute("data-ranked", "true");
       var rank = doc.createElement("span"); rank.className = "comparison-peer-rank";
-      rank.textContent = priority === "korean_name_then_weighted_score" ? "추천 " + peer.similarity_rank : peer.similarity_rank + "위"; row.appendChild(rank);
+      rank.textContent = isNameWeightedPriority(priority) ? "추천 " + peer.similarity_rank : peer.similarity_rank + "위"; row.appendChild(rank);
       var score = doc.createElement("span"); score.className = "comparison-peer-score";
       score.textContent = peer.similarity_score + "점";
       score.setAttribute("aria-label", "비교 후보 " + similarityLabel(peer, priority)); row.appendChild(score);
@@ -1657,6 +1708,9 @@
     if (supported && ranking.priority === "korean_name_then_weighted_score") {
       var priority = doc.createElement("p"); priority.className = "similarity-priority";
       priority.textContent = "한국어 이름 우선 · 점수순"; section.appendChild(priority);
+    } else if (supported && ranking.priority === "english_name_then_weighted_score") {
+      var enPriority = doc.createElement("p"); enPriority.className = "similarity-priority";
+      enPriority.textContent = "영어 이름 우선 · 점수순"; section.appendChild(enPriority);
     }
     if (!valid) {
       var fallback = doc.createElement("p"); fallback.className = "species-note";
@@ -1680,6 +1734,8 @@
     details.appendChild(caveat);
     if (ranking.priority === "korean_name_then_weighted_score") {
       var policy = doc.createElement("p"); policy.textContent = "검증표에 한국어 이름이 있는 후보를 먼저 표시하고, 같은 표시 조건 안에서 점수순으로 정렬합니다. 한국어 이름의 유무로 과학적 근연 순위를 추정하지 않습니다."; details.appendChild(policy);
+    } else if (ranking.priority === "english_name_then_weighted_score") {
+      var enPolicy = doc.createElement("p"); enPolicy.textContent = "원자료에 영어 이름이 있는 후보를 먼저 표시하고, 같은 표시 조건 안에서 점수순으로 정렬합니다. 영어 이름의 유무로 과학적 근연 순위를 추정하지 않습니다."; details.appendChild(enPolicy);
     }
     if (typeof data.note === "string" && data.note.trim()) { var note = doc.createElement("p"); note.textContent = data.note; details.appendChild(note); }
     section.appendChild(details); return section;
@@ -1689,6 +1745,7 @@
     options = options || {};
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
     var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
+    var speciesScope = normalizeSpeciesScope(options.speciesScope);
     var section = doc.createElement("section"); section.className = "species-related";
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 관련 새 탐색");
     var open = doc.createElement("button"); open.type = "button";
@@ -1706,7 +1763,8 @@
     function fetchJson(path, name) {
       var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
       if (!transport) { return Promise.reject(new Error("unavailable")); }
-      return transport(path + "?name=" + encodeURIComponent(name), {credentials:"omit", signal:typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(path === "/v1/taxa/profile" ? 60000 : 30000) : undefined}).then(function (response) {
+      var query = "?name=" + encodeURIComponent(name) + (speciesScope !== "all" ? "&species_scope=" + encodeURIComponent(speciesScope) : "");
+      return transport(path + query, {credentials:"omit", signal:typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(path === "/v1/taxa/profile" ? 60000 : 30000) : undefined}).then(function (response) {
         if (!response.ok) { throw new Error("unavailable"); } return response.json();
       });
     }
@@ -1732,7 +1790,7 @@
         if (!other || !other.taxon || other.taxon.taxon_id !== peer.taxon_id || !other.lineage || !matchesRelease(other.lineage)) { throw new Error("changed"); }
         if (!settle()) { return; }
         var panel = buildSpeciesComparison(doc, profile, other, {
-          fetcher: fetcher, bothCards: !!onComparison,
+          fetcher: fetcher, bothCards: !!onComparison, speciesScope: speciesScope,
           explorer: { onComparison: onComparison, isActive: active },
         });
         var relation = doc.createElement("p");
@@ -1846,6 +1904,7 @@
     options = options || {};
     var active = typeof options.isActive === "function" ? options.isActive : function () { return true; };
     var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
+    var speciesScope = normalizeSpeciesScope(options.speciesScope);
     var section = doc.createElement("section"); section.className = "species-ecological-related";
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 생태 범주 탐색");
     var open = doc.createElement("button"); open.type = "button";
@@ -1860,7 +1919,8 @@
     function fetchJson(path, name) {
       var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
       if (!transport) { return Promise.reject(new Error("unavailable")); }
-      return transport(path + "?name=" + encodeURIComponent(name), {credentials:"omit", signal:typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(path === "/v1/taxa/profile" ? 60000 : 30000) : undefined}).then(function (response) {
+      var query = "?name=" + encodeURIComponent(name) + (speciesScope !== "all" ? "&species_scope=" + encodeURIComponent(speciesScope) : "");
+      return transport(path + query, {credentials:"omit", signal:typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(path === "/v1/taxa/profile" ? 60000 : 30000) : undefined}).then(function (response) {
         if (!response.ok) { throw new Error("unavailable"); } return response.json();
       });
     }
@@ -1886,7 +1946,7 @@
         if (!other || !other.taxon || other.taxon.rank !== "species" || other.taxon.taxon_id !== peer.taxon_id || !other.lineage || !matchesRelease(other.lineage)) { throw new Error("changed"); }
         if (!settle()) { return; }
         var panel = buildSpeciesComparison(doc, profile, other, {
-          fetcher: fetcher, bothCards: !!onComparison,
+          fetcher: fetcher, bothCards: !!onComparison, speciesScope: speciesScope,
           explorer: { onComparison: onComparison, isActive: active },
         });
         var relation = doc.createElement("p");
@@ -1971,15 +2031,17 @@
    * A non-2xx rejects with an Error carrying `status` so callers can pick a
    * fixed, honest message; a missing transport rejects with status 0.
    */
-  function fetchTaxaJson(doc, fetcher, path, name, timeoutMs) {
+  function fetchTaxaJson(doc, fetcher, path, name, timeoutMs, speciesScope) {
     var transport = fetcher || (doc.defaultView && typeof doc.defaultView.fetch === "function" && doc.defaultView.fetch.bind(doc.defaultView));
     if (!transport) {
       var missing = new Error("unavailable"); missing.status = 0;
       return Promise.reject(missing);
     }
+    var scope = normalizeSpeciesScope(speciesScope);
+    var query = "?name=" + encodeURIComponent(name) + (scope !== "all" ? "&species_scope=" + encodeURIComponent(scope) : "");
     var signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined;
     return Promise.resolve().then(function () {
-      return transport(path + "?name=" + encodeURIComponent(name), { method: "GET", credentials: "omit", signal: signal });
+      return transport(path + query, { method: "GET", credentials: "omit", signal: signal });
     }).then(function (response) {
       if (!response || !response.ok) {
         var failure = new Error("unavailable"); failure.status = response ? response.status : 0;
@@ -2035,7 +2097,7 @@
    * lets the chat page drop responses that settle after 대화 지우기.
    * Returns null for a malformed payload.
    */
-  function buildNameRelations(doc, relationships, fetcher, isActive, onComparison) {
+  function buildNameRelations(doc, relationships, fetcher, isActive, onComparison, speciesScope) {
     if (!isNameRelationsPayload(relationships)) { return null; }
     var data = relationships;
     var active = typeof isActive === "function" ? isActive : function () { return true; };
@@ -2117,7 +2179,7 @@
         section.setAttribute("aria-busy", "false");
         return active();
       }
-      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (profile) {
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000, speciesScope).then(function (profile) {
         if (!settle()) { return; }
         var sameTaxon = profile && profile.taxon && (taxon.taxon_id ? profile.taxon.taxon_id === taxon.taxon_id : profile.taxon.scientific_name === taxon.scientific_name);
         var sameRelease = !data.concept_set_id || (profile && profile.lineage && profile.lineage.concept_set_id === data.concept_set_id && profile.lineage.taxonomy_release === data.taxonomy_release);
@@ -2142,11 +2204,11 @@
           text.textContent = profile.summary;
           selection.appendChild(text);
         }
-        var card = buildSpeciesCard(doc, profile, { fetcher: fetcher, isActive: active });
+        var card = buildSpeciesCard(doc, profile, { fetcher: fetcher, isActive: active, speciesScope: speciesScope });
         if (card) {
-          if (profile.lineage && profile.taxon.rank !== "subspecies") { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active })); selection.appendChild(buildEcologicalExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active })); }
-          if (profile.taxon.rank !== "subspecies") { selection.appendChild(buildSubspeciesExplorer(doc, profile, fetcher, active)); }
-          else { selection.appendChild(buildParentSpeciesExplorer(doc, profile, fetcher, active)); }
+          if (profile.lineage && profile.taxon.rank !== "subspecies") { selection.appendChild(buildRelatedExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active, speciesScope: speciesScope })); selection.appendChild(buildEcologicalExplorer(doc, profile, fetcher, { onComparison: onComparison, isActive: active, speciesScope: speciesScope })); }
+          if (profile.taxon.rank !== "subspecies") { selection.appendChild(buildSubspeciesExplorer(doc, profile, fetcher, active, null, speciesScope)); }
+          else { selection.appendChild(buildParentSpeciesExplorer(doc, profile, fetcher, active, speciesScope)); }
           selection.appendChild(buildSpeciesBrief(doc, profile));
           appendProfilePopup(doc, selection, card, profile, explanation);
         }
@@ -2236,7 +2298,7 @@
    * by collapsing and expanding again, and repeated clicks while a request
    * is in flight never start a second one.
    */
-  function buildParentSpeciesExplorer(doc, profile, fetcher, isActive) {
+  function buildParentSpeciesExplorer(doc, profile, fetcher, isActive, speciesScope) {
     var section = doc.createElement("section");
     section.className = "species-parent-explorer";
     var parent = profile.parent_species && profile.parent_species.taxon;
@@ -2251,7 +2313,7 @@
     button.addEventListener("click", function () {
       if (pending) { return; }
       pending = true;
-      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", parent.scientific_name, 60000).then(function (other) {
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", parent.scientific_name, 60000, speciesScope).then(function (other) {
         pending = false;
         if (typeof isActive === "function" && !isActive()) { return; }
         if (!other.taxon || other.taxon.taxon_id !== parent.taxon_id || !other.lineage || !profile.lineage || other.lineage.concept_set_id !== profile.lineage.concept_set_id || other.lineage.taxonomy_release !== profile.lineage.taxonomy_release) { throw new Error("changed"); }
@@ -2259,13 +2321,13 @@
         var answer = buildSpeciesAnswer(doc, other);
         if (answer) { content.appendChild(answer); }
         content.appendChild(buildSpeciesBrief(doc, other));
-        appendProfilePopup(doc, content, buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: isActive }), other, answer);
+        appendProfilePopup(doc, content, buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: isActive, speciesScope: speciesScope }), other, answer);
       }).catch(function () { pending = false; if (typeof isActive !== "function" || isActive()) { content.textContent = "상위 종 자료를 확인하지 못했습니다. 다시 눌러 재시도하세요."; } });
     });
     return section;
   }
 
-  function buildSubspeciesExplorer(doc, profile, fetcher, isActive, initialData) {
+  function buildSubspeciesExplorer(doc, profile, fetcher, isActive, initialData, speciesScope) {
     var active = typeof isActive === "function" ? isActive : function () { return true; };
     var section = doc.createElement("section");
     section.className = "species-subspecies";
@@ -2297,7 +2359,7 @@
       status.hidden = false;
       button.setAttribute("aria-expanded", "true");
       status.textContent = "아종 목록을 불러오는 중입니다.";
-      var dataRequest = initialData ? Promise.resolve(initialData) : fetchTaxaJson(doc, fetcher, "/v1/taxa/subspecies", profile.taxon.scientific_name, 30000);
+      var dataRequest = initialData ? Promise.resolve(initialData) : fetchTaxaJson(doc, fetcher, "/v1/taxa/subspecies", profile.taxon.scientific_name, 30000, speciesScope);
       initialData = null;
       dataRequest.then(function (data) {
         pending = false;
@@ -2340,13 +2402,13 @@
           choice.addEventListener("click", function () {
             var current = ++generation;
             status.textContent = "아종 자료를 불러오는 중입니다.";
-            fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (other) {
+            fetchTaxaJson(doc, fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000, speciesScope).then(function (other) {
               if (!active() || current !== generation) { return; }
               if (!other.taxon || other.taxon.rank !== "subspecies" || other.taxon.taxon_id !== taxon.taxon_id || !other.lineage || !matches(other.lineage)) { throw new Error("changed"); }
               while (selected.firstChild) { selected.removeChild(selected.firstChild); }
               var answer = buildSpeciesAnswer(doc, other);
               if (answer) { selected.appendChild(answer); }
-              var card = buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: active });
+              var card = buildSpeciesCard(doc, other, { fetcher: fetcher, isActive: active, speciesScope: speciesScope });
               selected.appendChild(buildSpeciesBrief(doc, other));
               appendProfilePopup(doc, selected, card, other, answer);
               status.textContent = "선택한 아종의 자료를 불러왔습니다.";
@@ -2362,7 +2424,7 @@
     return section;
   }
 
-  function buildNameRelationsExplorer(doc, profile, fetcher, isActive) {
+  function buildNameRelationsExplorer(doc, profile, fetcher, isActive, speciesScope) {
     var active = typeof isActive === "function" ? isActive : function () { return true; };
     var section = doc.createElement("section");
     section.className = "species-name-relations";
@@ -2387,7 +2449,7 @@
       if (content.hidden || state !== "idle") { return; }
       state = "loading";
       status.textContent = "통칭·가축형 관계를 조회하는 중입니다.";
-      fetchTaxaJson(doc, fetcher, "/v1/taxa/name-relations", profile.taxon.scientific_name, 30000).then(function (data) {
+      fetchTaxaJson(doc, fetcher, "/v1/taxa/name-relations", profile.taxon.scientific_name, 30000, speciesScope).then(function (data) {
         if (!isNameRelationsPayload(data)) {
           var unsupported = new Error("unsupported"); unsupported.unsupported = true;
           throw unsupported;
@@ -2397,7 +2459,7 @@
         }
         if (!active()) { return; }
         while (results.firstChild) { results.removeChild(results.firstChild); }
-        results.appendChild(buildNameRelations(doc, data, fetcher, active));
+        results.appendChild(buildNameRelations(doc, data, fetcher, active, null, speciesScope));
         state = "loaded";
         status.textContent = data.relations.length ? "통칭·가축형 관계를 불러왔습니다." : "출처가 확인된 통칭·가축형 관계가 없습니다.";
       }).catch(function (error) {
@@ -2449,7 +2511,8 @@
     title.className = "species-title";
     var koreanTitle = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" ? taxon.korean_name.trim() : "";
     var englishTitle = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
-    title.textContent = koreanTitle || englishTitle || speciesLabel(taxon);
+    var primaryTitle = speciesLabel(taxon);
+    title.textContent = primaryTitle;
     var heading = doc.createElement("div");
     heading.className = "species-card-heading";
     var category = doc.createElement("span");
@@ -2459,10 +2522,11 @@
     var names = doc.createElement("div");
     names.className = "species-card-names";
     names.appendChild(title);
-    if (koreanTitle && englishTitle && koreanTitle !== englishTitle) {
+    var secondaryTitle = primaryTitle === englishTitle ? koreanTitle : englishTitle;
+    if (secondaryTitle && secondaryTitle !== primaryTitle) {
       var englishName = doc.createElement("small");
       englishName.className = "species-english-name";
-      englishName.textContent = englishTitle;
+      englishName.textContent = secondaryTitle;
       names.appendChild(englishName);
     }
     heading.appendChild(names);
@@ -2663,7 +2727,7 @@
       button.disabled = true;
       retryStatus.textContent = "사진 정보를 다시 조회하는 중입니다.";
       var guard = typeof cardOptions.isActive === "function" ? cardOptions.isActive : function () { return true; };
-      fetchTaxaJson(doc, cardOptions.fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000).then(function (fresh) {
+      fetchTaxaJson(doc, cardOptions.fetcher, "/v1/taxa/profile", taxon.scientific_name, 60000, cardOptions.speciesScope).then(function (fresh) {
         photoRetrying = false;
         button.disabled = false;
         if (!guard()) { return; }
@@ -3068,6 +3132,39 @@
       lineageDetails.appendChild(lineageList);
       back.appendChild(lineageDetails);
       cardSources.appendChild(lineageSources);
+    }
+    var dist = distributionInfo(taxon.distribution);
+    if (dist) {
+      card.setAttribute("data-distribution-status", dist.status);
+      var distBlock = doc.createElement("section");
+      distBlock.className = "species-distribution-info status-" + dist.status;
+      var distTitle = doc.createElement("h4");
+      distTitle.textContent = "분포 판정: " + dist.label;
+      distBlock.appendChild(distTitle);
+      var distNote = doc.createElement("p");
+      distNote.className = "species-note";
+      distNote.textContent = dist.note;
+      distBlock.appendChild(distNote);
+      back.appendChild(distBlock);
+
+      var distSources = sourceSection("species-distribution-sources", "분포 범위 · 출처");
+      var distStatusLine = doc.createElement("p");
+      distStatusLine.textContent = dist.label + " · " + dist.note;
+      distSources.appendChild(distStatusLine);
+      dist.evidence.forEach(function (ev, idx) {
+        var evRow = doc.createElement("p");
+        evRow.className = "species-distribution-evidence";
+        var evTitle = typeof ev.source_title === "string" && ev.source_title.trim() ? ev.source_title.trim() : "분포 출처 " + (idx + 1);
+        evRow.appendChild(safeLink(doc, evTitle, ev.source_url));
+        var metaParts = [ev.category, ev.source_text].filter(function (v) { return typeof v === "string" && v.trim(); });
+        if (metaParts.length) {
+          var evMeta = doc.createElement("span");
+          evMeta.textContent = " · " + metaParts.join(" · ");
+          evRow.appendChild(evMeta);
+        }
+        distSources.appendChild(evRow);
+      });
+      cardSources.appendChild(distSources);
     }
     if (dataNotes.children.length > 1) { cardSources.appendChild(dataNotes); }
 
@@ -3576,11 +3673,12 @@
     var taxon = profile.taxon || {};
     var koreanName = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string" ? taxon.korean_name.trim() : "";
     var englishName = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
-    if (koreanName && englishName && koreanName !== englishName) {
+    var secondaryName = heading.textContent === englishName ? koreanName : englishName;
+    if (secondaryName && secondaryName !== heading.textContent) {
       var englishLabel = doc.createElement("small");
       englishLabel.className = "species-answer-english-name";
-      englishLabel.setAttribute("lang", "en");
-      englishLabel.textContent = englishName;
+      if (secondaryName === englishName) { englishLabel.setAttribute("lang", "en"); }
+      englishLabel.textContent = secondaryName;
       heading.appendChild(englishLabel);
     }
     answer.appendChild(heading);
@@ -3704,8 +3802,22 @@
         seen[sourceKey] = true; sources.push({ name: item.source_name, url: url, license: item.license_name, licenseUrl: sanitizeUrl(item.license_url) });
       }
     });
+    var answerDistribution = distributionInfo(taxon.distribution);
+    if (answerDistribution) {
+      var distNoteText = "분포 판정 (" + answerDistribution.label + "): " + answerDistribution.note;
+      if (sourceNotes.indexOf(distNoteText) < 0) { sourceNotes.push(distNoteText); }
+      answerDistribution.evidence.forEach(function (ev, idx) {
+        var url = sanitizeUrl(ev.source_url);
+        var name = typeof ev.source_title === "string" && ev.source_title.trim() ? ev.source_title.trim() : "분포 출처 " + (idx + 1);
+        var sourceKey = JSON.stringify([url, name, null, null]);
+        if (url && !seen[sourceKey]) {
+          seen[sourceKey] = true;
+          sources.push({ name: name, url: url });
+        }
+      });
+    }
     var answerReference = referenceFor(answerConservation, profile);
-    if (sources.length || answerConservation.manualOverride || answerReference) {
+    if (sources.length || answerConservation.manualOverride || answerReference || (answerDistribution && sourceNotes.length)) {
       var details = doc.createElement("details");
       details.className = "species-answer-sources";
       var summary = doc.createElement("summary");
@@ -3773,7 +3885,86 @@
     badge.hidden = false;
     badge.setAttribute("title", conservation.note || CONSERVATION_NOTE);
     brief.appendChild(badge);
+    var dist = distributionInfo(profile && profile.taxon && profile.taxon.distribution);
+    if (dist) {
+      var distBadge = doc.createElement("span");
+      distBadge.className = "species-distribution-badge status-" + dist.status;
+      distBadge.textContent = dist.label;
+      distBadge.setAttribute("title", dist.note);
+      brief.appendChild(distBadge);
+    }
     return brief;
+  }
+
+  function buildEntityCandidates(doc, entityResolution, onSubmit) {
+    if (!entityResolution || typeof entityResolution !== "object") {
+      return null;
+    }
+    if (entityResolution.status !== "candidates") {
+      return null;
+    }
+    if (!Array.isArray(entityResolution.candidates)) {
+      return null;
+    }
+    var rawList = entityResolution.candidates;
+    var valid = [];
+    for (var i = 0; i < rawList.length; i += 1) {
+      var item = rawList[i];
+      if (item && typeof item === "object") {
+        var question = typeof item.question === "string" ? item.question.trim() : "";
+        var displayName = typeof item.display_name === "string" ? item.display_name.trim() : "";
+        var scientificName = typeof item.scientific_name === "string" ? item.scientific_name.trim() : "";
+        if (question && scientificName) {
+          valid.push({
+            question: question,
+            displayName: displayName,
+            scientificName: scientificName,
+          });
+        }
+      }
+    }
+    if (valid.length === 0) {
+      return null;
+    }
+    var slice = valid.slice(0, 3);
+    var container = doc.createElement("section");
+    container.className = "entity-resolution-candidates";
+    container.setAttribute("role", "group");
+    container.setAttribute("aria-label", "추천 새 이름 후보");
+
+    var hint = doc.createElement("p");
+    hint.className = "entity-candidates-hint";
+    var mention = typeof entityResolution.mention === "string" ? entityResolution.mention.trim() : "";
+    hint.textContent = mention
+      ? "‘" + mention + "’와 비슷한 이름의 추천 후보입니다. 찾으시는 새를 선택해 주세요."
+      : "비슷한 이름의 추천 후보입니다. 찾으시는 새를 선택해 주세요.";
+    container.appendChild(hint);
+
+    var buttonList = doc.createElement("div");
+    buttonList.className = "entity-candidate-buttons";
+
+    slice.forEach(function (candidate) {
+      var btn = doc.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("type", "button");
+      btn.className = "entity-candidate-button";
+      var label = candidate.displayName;
+      if (candidate.scientificName && candidate.scientificName !== candidate.displayName) {
+        label = label ? label + " (" + candidate.scientificName + ")" : candidate.scientificName;
+      }
+      btn.textContent = label;
+      btn.setAttribute("aria-label", label + " 선택하여 질문하기");
+      btn.setAttribute("data-question", candidate.question);
+      btn.addEventListener("click", function () {
+        if (typeof onSubmit === "function") {
+          onSubmit(candidate.question, candidate.scientificName, candidate.displayName);
+        }
+      });
+      buttonList.appendChild(btn);
+    });
+
+    container.appendChild(buttonList);
+    return container;
   }
 
   function popupDialog(node) {
@@ -4043,7 +4234,7 @@
       started = true; loadButton.disabled = true;
       options.card.setEnrichmentMessage("사진을 불러오는 중입니다.");
       var profileStatus = status("사진·추가 설명을 불러오는 중입니다.");
-      fetchTaxaJson(doc, options.fetcher, "/v1/taxa/profile", profile.taxon.scientific_name, 60000).then(function (fresh) {
+      fetchTaxaJson(doc, options.fetcher, "/v1/taxa/profile", profile.taxon.scientific_name, 60000, options.speciesScope).then(function (fresh) {
         if (!current()) { return; }
         if (!matches(fresh, fresh && fresh.lineage)) { throw new Error("changed"); }
         options.card.updateEnrichment(fresh);
@@ -4088,7 +4279,7 @@
       });
       if (options.onSimilar) {
         var similarStatus = status("비슷한 새 추천을 불러오는 중입니다.");
-        fetchTaxaJson(doc, options.fetcher, "/v1/taxa/similar", profile.taxon.scientific_name, 30000).then(function (data) {
+        fetchTaxaJson(doc, options.fetcher, "/v1/taxa/similar", profile.taxon.scientific_name, 30000, options.speciesScope).then(function (data) {
           if (!current()) { return; }
           if (!matches(data, data)) { throw new Error("changed"); }
           options.onSimilar(data);
@@ -4139,6 +4330,14 @@
     // one-time snapshot of their children at init time is enough -- nothing
     // adds or removes chips afterward.
     var chipButtons = promptChips ? Array.prototype.slice.call(promptChips.children) : [];
+    var scopeRadios = ["all", "korea", "outside", "unknown"].map(function (key) {
+      return doc.getElementById("species-scope-" + key);
+    }).filter(Boolean);
+    var scopeNote = doc.getElementById("species-scope-note");
+    var activeSpeciesScope = "all";
+    scopeRadios.forEach(function (radio) {
+      if (radio.checked) { activeSpeciesScope = normalizeSpeciesScope(radio.value); }
+    });
 
     // Page-session only: this plain JS array is wiped on reload or clear.
     var messages = [];
@@ -4146,10 +4345,33 @@
     // key events.  A settled request may restore focus only once composition
     // has finished, so an IME confirmation is never interrupted.
     var isComposing = false;
-    // Bumped by 대화 지우기 so lazy lookups that settle after a clear never
-    // write into (or announce status for) the discarded conversation.
+    // Bumped by 대화 지우기 or species_scope change so lazy lookups that settle
+    // afterward never write into (or announce status for) the discarded scope/turn.
     var conversationGeneration = 0;
+    var requestGeneration = 0;
     var enrichmentSections = [];
+    var activeChat = null;
+    var activeLookups = [];
+
+    function requestController() {
+      var Constructor = win.AbortController || (typeof AbortController !== "undefined" ? AbortController : null);
+      return Constructor ? new Constructor() : null;
+    }
+
+    function abortRequests() {
+      if (activeChat) { activeChat.abort(); activeChat = null; }
+      activeLookups.forEach(function (controller) { controller.abort(); });
+      activeLookups = [];
+    }
+
+    function currentSpeciesScope() {
+      for (var i = 0; i < scopeRadios.length; i += 1) {
+        if (scopeRadios[i].checked) {
+          return normalizeSpeciesScope(scopeRadios[i].value);
+        }
+      }
+      return activeSpeciesScope;
+    }
 
     function cancelEnrichments(includeNotStarted) {
       enrichmentSections = enrichmentSections.filter(function (section) { return !section.cancelEnrichment(includeNotStarted === true); });
@@ -4162,7 +4384,28 @@
     }
 
     function taxaFetch(url, options) {
-      return win.fetch(url, options);
+      var generation = conversationGeneration;
+      var controller = requestController();
+      var scope = currentSpeciesScope();
+      options = Object.assign({}, options || {});
+      if (scope !== "all" && url.indexOf("species_scope=") === -1) {
+        url += (url.indexOf("?") === -1 ? "?" : "&") + "species_scope=" + encodeURIComponent(scope);
+      }
+      if (controller) {
+        var timeoutSignal = options.signal;
+        if (timeoutSignal && timeoutSignal.aborted) { controller.abort(); }
+        else if (timeoutSignal && timeoutSignal.addEventListener) {
+          timeoutSignal.addEventListener("abort", function () { controller.abort(); }, {once: true});
+        }
+        options.signal = controller.signal;
+        activeLookups.push(controller);
+      }
+      function settled() { activeLookups = activeLookups.filter(function (item) { return item !== controller; }); }
+      return win.fetch(url, options).then(function (response) {
+        settled();
+        if (generation !== conversationGeneration) { throw new Error("scope changed"); }
+        return response;
+      }, function (error) { settled(); throw error; });
     }
 
     function setStatus(text) {
@@ -4261,6 +4504,7 @@
     }
 
     function appendAnswerMessage(answer) {
+      var scope = currentSpeciesScope();
       var item = doc.createElement("div");
       item.className = "message message-answer";
 
@@ -4279,7 +4523,7 @@
       var directRanked = questionAnswer && questionAnswer.topic === "related" && ranking && ranking.limit === 3 &&
         ["taxonomy-ecology-v1", "taxonomy-phylogeny-ecology-v2", "taxonomy-phylogeny-ecology-v3"].indexOf(ranking.method) !== -1;
       var rankedExplorer = directRanked ? buildRelatedExplorer(doc, answer.result.profile, taxaFetch, {
-        initialData: questionAnswer.relations, inline: true, onComparison: appendComparisonMessage, isActive: conversationGuard(),
+        initialData: questionAnswer.relations, inline: true, onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope,
       }) : null;
       var targeted = buildQuestionAnswer(doc, questionAnswer, { rankedExplorer: rankedExplorer });
       var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile, true) : null);
@@ -4315,7 +4559,7 @@
         item.appendChild(text);
       }
       if (answer.result && answer.result.kind === "name_relations") {
-        var nameRelations = buildNameRelations(doc, answer.result.relationships, taxaFetch, conversationGuard(), appendComparisonMessage);
+        var nameRelations = buildNameRelations(doc, answer.result.relationships, taxaFetch, conversationGuard(), appendComparisonMessage, scope);
         if (nameRelations) {
           item.appendChild(nameRelations);
         } else {
@@ -4324,6 +4568,26 @@
           malformed.textContent = "이름 관계 자료의 형식을 확인할 수 없어 표시하지 않았습니다.";
           item.appendChild(malformed);
         }
+      }
+
+      var candidatesActive = conversationGuard();
+      var entityCandidates = buildEntityCandidates(doc, answer.entity_resolution, function (question, scientificName, displayName) {
+        if (!candidatesActive() || input.disabled || form.getAttribute("aria-busy") === "true") {
+          return;
+        }
+        var displayQuestion = displayName
+          ? question.replace(scientificName, function () { return displayName; })
+          : question;
+        appendUserMessage(displayQuestion);
+        input.value = "";
+        // Confirmation owns its name; stale advanced filters must not redirect it.
+        var confirmPayload = { question: question, intent: "profile", filters: { kind: "profile", name: scientificName } };
+        var confirmScope = currentSpeciesScope();
+        if (confirmScope !== "all") { confirmPayload.species_scope = confirmScope; }
+        submitQuestion(question, confirmPayload);
+      });
+      if (entityCandidates) {
+        item.appendChild(entityCandidates);
       }
 
       var result = answer && answer.result;
@@ -4352,7 +4616,7 @@
       }
 
       if (result && result.kind === "profile") {
-        var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard() });
+        var speciesCard = buildSpeciesCard(doc, result.profile, { fetcher: taxaFetch, isActive: conversationGuard(), speciesScope: scope });
         if (speciesCard) {
           if (!targeted && !structured) { item.appendChild(buildSpeciesBrief(doc, result.profile)); }
           answerSources = combineCardSources(doc, speciesCard, answerSources);
@@ -4362,8 +4626,8 @@
           var extra = doc.createElement("details"); extra.className = "species-extra-info";
           var extraTitle = doc.createElement("summary"); extraTitle.textContent = "더 알아보기"; extra.appendChild(extraTitle);
           if (result.profile.taxon.rank !== "subspecies") {
-            var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
-            var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard() };
+            var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope };
+            var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope };
             var directOptions = targeted && questionAnswer.relations
               ? (questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null) : null;
             if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
@@ -4381,20 +4645,20 @@
             else { extra.appendChild(ecological); }
           }
           if (result.profile.taxon.rank !== "subspecies") {
-            var subspeciesExplorer = buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard(), result.subspecies);
+            var subspeciesExplorer = buildSubspeciesExplorer(doc, result.profile, taxaFetch, conversationGuard(), result.subspecies, scope);
             if (targeted && questionAnswer.topic === "subspecies") { item.appendChild(subspeciesExplorer); }
             else { extra.appendChild(subspeciesExplorer); }
           }
-          else { extra.appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard())); }
-          extra.appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard()));
+          else { extra.appendChild(buildParentSpeciesExplorer(doc, result.profile, taxaFetch, conversationGuard(), scope)); }
+          extra.appendChild(buildNameRelationsExplorer(doc, result.profile, taxaFetch, conversationGuard(), scope));
           item.appendChild(extra);
           if (result.profile.enrichment_pending) {
             var deferred = buildDeferredEnrichment(doc, result.profile, {
-              fetcher: taxaFetch, isActive: conversationGuard(), card: speciesCard,
+              fetcher: taxaFetch, isActive: conversationGuard(), card: speciesCard, speciesScope: scope,
               onSources: function (material) { answerSources.addSourceMaterial(material); },
               onSimilar: relatedSlot ? function (data) {
                 relatedSlot.appendChild(buildRelatedExplorer(doc, result.profile, taxaFetch, {
-                  initialData: data, onComparison: appendComparisonMessage, isActive: conversationGuard(),
+                  initialData: data, onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope,
                 }));
               } : null,
             });
@@ -4544,17 +4808,23 @@
         });
     }
 
-    function submitQuestion(question) {
+    function submitQuestion(question, payloadOverride) {
+      var submitGen = ++requestGeneration;
+      var scopeGen = conversationGeneration;
+      var submittedScope = currentSpeciesScope();
       cancelEnrichments();
       setBusy(true);
       setStatus("답변을 불러오는 중입니다…");
+      var controller = requestController();
+      activeChat = controller;
 
       win
         .fetch("/v1/chat", {
           method: "POST",
           credentials: "omit",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(Object.assign(buildChatPayload(question, intent.value, selectedFilterValues()), { defer_discovery: true })),
+          body: JSON.stringify(Object.assign(payloadOverride || buildChatPayload(question, intent.value, selectedFilterValues(), submittedScope), { defer_discovery: true })),
+          signal: controller ? controller.signal : undefined,
         })
         .then(function (response) {
           return response
@@ -4567,6 +4837,9 @@
             });
         })
         .then(function (result) {
+          if (submitGen !== requestGeneration || scopeGen !== conversationGeneration) {
+            return;
+          }
           if (!result.response.ok) {
             // The server's `detail` string is never read here: see
             // sanitizeErrorMessage's fixed, honest per-status messages.
@@ -4587,9 +4860,16 @@
           appendAnswerMessage(result.payload);
         })
         .catch(function () {
+          if (submitGen !== requestGeneration || scopeGen !== conversationGeneration) {
+            return;
+          }
           appendErrorMessage(sanitizeErrorMessage({ kind: "network" }));
         })
         .then(function () {
+          if (submitGen !== requestGeneration || scopeGen !== conversationGeneration) {
+            return;
+          }
+          activeChat = null;
           setBusy(false);
           setStatus("");
           restoreQuestionFocus();
@@ -4635,10 +4915,7 @@
     intent.addEventListener("change", syncModeControls);
     syncModeControls();
 
-    clearButton.addEventListener("click", function () {
-      cancelEnrichments(true);
-      conversationGeneration += 1;
-      messages.length = 0;
+    function clearHistoryNodes() {
       function disposePopups(node) {
         if (node.disposePopup) { node.disposePopup(); }
         Array.prototype.slice.call(node.children || []).forEach(disposePopups);
@@ -4650,6 +4927,42 @@
       if (historyEmptyState) {
         history.appendChild(historyEmptyState);
       }
+    }
+
+    function handleScopeChange(nextScope) {
+      cancelEnrichments(true);
+      conversationGeneration += 1;
+      requestGeneration += 1;
+      abortRequests();
+      messages.length = 0;
+      setBusy(false);
+      clearHistoryNodes();
+      if (scopeNote) {
+        scopeNote.textContent = SPECIES_SCOPE_NOTES[nextScope] || SPECIES_SCOPE_NOTES.all;
+      }
+      var scopeLabel = nextScope === "all" ? "전체" : (DISTRIBUTION_STATUS_LABELS[nextScope] || "전체");
+      setStatus("분포 범위 기준을 ‘" + scopeLabel + "’(으)로 변경했습니다. 입력 중인 질문은 유지됩니다.");
+    }
+
+    scopeRadios.forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        var nextScope = normalizeSpeciesScope(radio.value);
+        scopeRadios.forEach(function (other) {
+          other.checked = other === radio;
+        });
+        if (nextScope === activeSpeciesScope) { return; }
+        activeSpeciesScope = nextScope;
+        handleScopeChange(nextScope);
+      });
+    });
+
+    clearButton.addEventListener("click", function () {
+      cancelEnrichments(true);
+      conversationGeneration += 1;
+      requestGeneration += 1;
+      abortRequests();
+      messages.length = 0;
+      clearHistoryNodes();
       setStatus("대화 기록을 지웠습니다.");
     });
 
@@ -4700,6 +5013,8 @@
     formatBackendMode: formatBackendMode,
     sanitizeErrorMessage: sanitizeErrorMessage,
     boundedLimit: boundedLimit,
+    normalizeSpeciesScope: normalizeSpeciesScope,
+    distributionInfo: distributionInfo,
     buildChatPayload: buildChatPayload,
     resultSummaryLines: resultSummaryLines,
     buildSpeciesCard: buildSpeciesCard,
@@ -4722,6 +5037,7 @@
     conservationInfo: conservationInfo,
     referenceAssessmentInfo: referenceAssessmentInfo,
     photoAvailabilityInfo: photoAvailabilityInfo,
+    buildEntityCandidates: buildEntityCandidates,
     init: init,
   };
 });

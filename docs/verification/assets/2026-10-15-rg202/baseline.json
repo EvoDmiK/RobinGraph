@@ -1,0 +1,829 @@
+{
+  "scope": "synthetic fixture; actual TEST API, DB and configured embedding service",
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "question_count": 5,
+  "multihop_questions": 0,
+  "questions_sha256": "b9ee87e7a769e1c9c3890f4d41eed8060448f6bf96c9b2fd4cab3da6d0efb967",
+  "repeats": 3,
+  "limit": 5,
+  "modes": {
+    "fulltext": {
+      "runs": [
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 893.4374579694122
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 925.869332975708
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 866.611666046083
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [],
+              "recall_at_k": 0.0,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 1197.9194580344483
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 893.7123749637976
+            }
+          ],
+          "recall_at_k": 0.75,
+          "mean_reciprocal_rank": 0.75,
+          "mean_latency_ms": 955.5100579978898,
+          "p95_latency_ms": 1197.9194580344483,
+          "policy_safe": true
+        },
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 909.1462079668418
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 850.533084012568
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 1064.6718749776483
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [],
+              "recall_at_k": 0.0,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 963.5704999091104
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 1071.7020420124754
+            }
+          ],
+          "recall_at_k": 0.75,
+          "mean_reciprocal_rank": 0.75,
+          "mean_latency_ms": 971.9247417757288,
+          "p95_latency_ms": 1071.7020420124754,
+          "policy_safe": true
+        },
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 1009.7008750308305
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 815.6350420322269
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 846.2332088965923
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [],
+              "recall_at_k": 0.0,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 843.8204999547452
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 1321.6718330513686
+            }
+          ],
+          "recall_at_k": 0.75,
+          "mean_reciprocal_rank": 0.75,
+          "mean_latency_ms": 967.4122917931527,
+          "p95_latency_ms": 1321.6718330513686,
+          "policy_safe": true
+        }
+      ],
+      "calls": [
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": [
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        },
+        {
+          "requested_mode": "fulltext",
+          "actual_mode": "fulltext",
+          "warnings": [
+            "한국어 질문에 영어 검색어를 추가해 문헌을 검색했습니다."
+          ],
+          "result_channels": []
+        }
+      ],
+      "p50_ms": 909.1462079668418,
+      "p95_ms": 1321.6718330513686,
+      "all_runs_policy_safe": true
+    },
+    "hybrid": {
+      "runs": [
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 0.3333333333333333,
+              "policy_safe": true,
+              "elapsed_ms": 413.89450000133365
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 411.5000000456348
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 442.57887499406934
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 374.04745898675174
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 487.68266604747623
+            }
+          ],
+          "recall_at_k": 1.0,
+          "mean_reciprocal_rank": 0.8333333333333334,
+          "mean_latency_ms": 425.94070001505315,
+          "p95_latency_ms": 487.68266604747623,
+          "policy_safe": true
+        },
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 0.3333333333333333,
+              "policy_safe": true,
+              "elapsed_ms": 407.01041696593165
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 428.06966695934534
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 392.6798750180751
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 461.7960420437157
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 393.5413749422878
+            }
+          ],
+          "recall_at_k": 1.0,
+          "mean_reciprocal_rank": 0.8333333333333334,
+          "mean_latency_ms": 416.6194751858711,
+          "p95_latency_ms": 461.7960420437157,
+          "policy_safe": true
+        },
+        {
+          "limit": 5,
+          "cases": [
+            {
+              "question_id": "SQ-001",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-waterbirds-1",
+                "fixture-chunk-waterbirds-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 0.3333333333333333,
+              "policy_safe": true,
+              "elapsed_ms": 422.64375009108335
+            },
+            {
+              "question_id": "SQ-002",
+              "returned_chunk_ids": [
+                "fixture-chunk-waterbirds-2",
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 395.36745799705386
+            },
+            {
+              "question_id": "SQ-003",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 420.8760829642415
+            },
+            {
+              "question_id": "SQ-004",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-1",
+                "fixture-chunk-woodland-2"
+              ],
+              "recall_at_k": 1.0,
+              "reciprocal_rank": 1.0,
+              "policy_safe": true,
+              "elapsed_ms": 388.75049992930144
+            },
+            {
+              "question_id": "SQ-005",
+              "returned_chunk_ids": [
+                "fixture-chunk-woodland-2",
+                "fixture-chunk-woodland-1"
+              ],
+              "recall_at_k": null,
+              "reciprocal_rank": null,
+              "policy_safe": true,
+              "elapsed_ms": 412.5266660703346
+            }
+          ],
+          "recall_at_k": 1.0,
+          "mean_reciprocal_rank": 0.8333333333333334,
+          "mean_latency_ms": 408.03289141040295,
+          "p95_latency_ms": 422.64375009108335,
+          "policy_safe": true
+        }
+      ],
+      "calls": [
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "fulltext"
+            ],
+            [
+              "fulltext"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext"
+            ],
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "fulltext",
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        },
+        {
+          "requested_mode": "hybrid",
+          "actual_mode": "hybrid",
+          "warnings": [],
+          "result_channels": [
+            [
+              "vector"
+            ],
+            [
+              "vector"
+            ]
+          ]
+        }
+      ],
+      "p50_ms": 412.5266660703346,
+      "p95_ms": 487.68266604747623,
+      "all_runs_policy_safe": true
+    }
+  }
+}

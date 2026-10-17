@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "mode": "actual isolated Neo4j5.26.30, fixture taxa and vectors, no shared TEST writes",
+  "dry_run": {
+    "dry_run": true,
+    "inventory": 2,
+    "reused": 0,
+    "to_embed": 2,
+    "embedded": 0,
+    "stale": 0,
+    "schema": "absent",
+    "constraint": "absent",
+    "catalog_current": false
+  },
+  "first_apply": {
+    "dry_run": false,
+    "inventory": 2,
+    "reused": 0,
+    "to_embed": 2,
+    "embedded": 2,
+    "stale": 0,
+    "schema": "created",
+    "constraint": "created",
+    "catalog_current": true
+  },
+  "idempotent_apply": {
+    "dry_run": false,
+    "inventory": 2,
+    "reused": 2,
+    "to_embed": 0,
+    "embedded": 0,
+    "stale": 0,
+    "schema": "compatible",
+    "constraint": "compatible",
+    "catalog_current": true
+  },
+  "changed_apply": {
+    "dry_run": false,
+    "inventory": 1,
+    "reused": 0,
+    "to_embed": 1,
+    "embedded": 1,
+    "stale": 1,
+    "schema": "compatible",
+    "constraint": "compatible",
+    "catalog_current": true
+  },
+  "score_conversion": true,
+  "failure_preserves_old_catalog": true,
+  "fresh_repository_reuses_vectors": true,
+  "literature_index_unchanged": true,
+  "taxa_unchanged": true,
+  "no_legacy_ingest_state": true
+}

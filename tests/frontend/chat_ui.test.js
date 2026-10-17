@@ -782,6 +782,12 @@ function createFakeDom(fetchImplementation) {
     "evidence-limit",
     "prompt-chips",
     "history-empty-state",
+    "species-scope-controls",
+    "species-scope-all",
+    "species-scope-korea",
+    "species-scope-outside",
+    "species-scope-unknown",
+    "species-scope-note",
   ];
   const elementsById = {};
   for (const id of REQUIRED_IDS) {
@@ -790,6 +796,14 @@ function createFakeDom(fetchImplementation) {
   elementsById["chat-intent"].value = "auto";
   elementsById["observation-limit"].value = "10";
   elementsById["evidence-limit"].value = "10";
+  elementsById["species-scope-all"].value = "all";
+  elementsById["species-scope-all"].checked = true;
+  elementsById["species-scope-korea"].value = "korea";
+  elementsById["species-scope-korea"].checked = false;
+  elementsById["species-scope-outside"].value = "outside";
+  elementsById["species-scope-outside"].checked = false;
+  elementsById["species-scope-unknown"].value = "unknown";
+  elementsById["species-scope-unknown"].checked = false;
   // Mirror index.html: the empty state is static markup already nested
   // inside #history before chat.js ever runs.
   elementsById["history"].appendChild(elementsById["history-empty-state"]);
@@ -6184,4 +6198,543 @@ test("comparison uses card mass units and compact citations retain evidence behi
   assert.ok(metadata.every(n => !n.open && n.children[0].textContent === "자료 상세 정보"));
   assert.match(collectedText(sources), /raw-record-123/);
   assert.equal(collectAllNodes(sources).filter(n => n.tagName === "a" && n.href === DIET_SOURCE.source_url).length, 1);
+});
+
+test("buildEntityCandidates guards against missing or malformed fields, limits to 3 buttons, and never leaks scores", () => {
+  const doc = { createElement: createFakeElement };
+  assert.equal(chat.buildEntityCandidates(doc, null), null);
+  assert.equal(chat.buildEntityCandidates(doc, {}), null);
+  assert.equal(chat.buildEntityCandidates(doc, { status: "matched", candidates: [{ question: "q", display_name: "d" }] }), null);
+  assert.equal(chat.buildEntityCandidates(doc, { status: "not_found", candidates: [{ question: "q", display_name: "d" }] }), null);
+  assert.equal(chat.buildEntityCandidates(doc, { status: "candidates", candidates: [] }), null);
+  assert.equal(chat.buildEntityCandidates(doc, { status: "candidates", candidates: "not an array" }), null);
+  assert.equal(chat.buildEntityCandidates(doc, { status: "candidates", candidates: [null, {}, { score: 0.9 }] }), null);
+
+  const hostile = {
+    mention: "<script>bad()</script>",
+    status: "candidates",
+    candidates: [
+      { taxon_id: "t1", scientific_name: "Anas zonorhyncha", display_name: "<b>흰뺨검둥오리</b>", score: 0.95, question: "Anas zonorhyncha는 뭘 먹어" },
+      { taxon_id: "t2", scientific_name: "Anas platyrhynchos", display_name: "청둥오리", score: 0.85, question: "Anas platyrhynchos는 뭘 먹어" },
+      { taxon_id: "t3", scientific_name: "Anas poecilorhyncha", display_name: "인도흰뺨검둥오리", score: 0.75, question: "Anas poecilorhyncha는 뭘 먹어" },
+      { taxon_id: "t4", scientific_name: "Fourth species", display_name: "네번째종", score: 0.65, question: "Fourth species는 뭘 먹어" },
+    ],
+  };
+
+  let submittedQuestion = null;
+  const section = chat.buildEntityCandidates(doc, hostile, (q) => { submittedQuestion = q; });
+  assert.notEqual(section, null);
+  assert.equal(section.className, "entity-resolution-candidates");
+  assert.equal(section.getAttribute("role"), "group");
+
+  const hint = section.children.find((c) => c.className === "entity-candidates-hint");
+  assert.ok(hint);
+  assert.ok(hint.textContent.includes("<script>bad()</script>"), "uses textContent for mention, never executes markup");
+  assert.ok(hint.textContent.includes("추천"), "marks as suggestions");
+
+  const buttons = collectAllNodes(section).filter((n) => n.className === "entity-candidate-button");
+  assert.equal(buttons.length, 3, "strictly limits to at most 3 candidates");
+  assert.equal(buttons[0].textContent, "<b>흰뺨검둥오리</b> (Anas zonorhyncha)", "renders textContent without innerHTML parsing");
+  assert.equal(buttons[0].getAttribute("data-question"), "Anas zonorhyncha는 뭘 먹어");
+  assert.equal(buttons[0].getAttribute("type"), "button");
+
+  const fullText = collectedText(section);
+  assert.equal(/0\.95|0\.85|0\.75|0\.65/.test(fullText), false, "never exposes raw vector scores to the user");
+
+  buttons[0].dispatch("click");
+  assert.equal(submittedQuestion, "Anas zonorhyncha는 뭘 먹어");
+});
+
+test("chat response with entity_resolution candidates renders buttons, does not auto-submit, and clicking submits rewritten question", async () => {
+  const clarifyPayload = {
+    disposition: "clarify",
+    answer_text: "‘흰뺨 검둥 오리’와 일치하는 종을 찾지 못했습니다. 아래 추천 이름 중 하나를 선택해 보세요.",
+    warnings: ["종 이름을 임의로 추정하지 않았습니다."],
+    result: { kind: "clarify", prompt: "예: 흰뺨검둥오리" },
+    entity_resolution: {
+      mention: "흰뺨 검둥 오리",
+      status: "candidates",
+      method: "vector",
+      candidates: [
+        { taxon_id: "t1", scientific_name: "Anas zonorhyncha", display_name: "흰뺨검둥오리", score: 0.91, question: "Anas zonorhyncha는 뭘 먹어" },
+        { taxon_id: "t2", scientific_name: "Anas platyrhynchos", display_name: "청둥오리", score: 0.74, question: "Anas platyrhynchos는 뭘 먹어" },
+      ],
+    },
+  };
+  const profilePayload = {
+    disposition: "answer",
+    answer_text: "흰뺨검둥오리의 먹이 정보입니다.",
+    warnings: [],
+    result: { kind: "profile", profile: photoProfile({ taxon: { taxon_id: "t1", scientific_name: "Anas zonorhyncha", korean_name: "흰뺨검둥오리" } }) },
+    entity_resolution: {
+      mention: "Anas zonorhyncha",
+      status: "matched",
+      method: "graph_exact",
+      taxon_id: "t1",
+      canonical_name: "Anas zonorhyncha",
+    },
+  };
+
+  const dom = createFakeDom((url, options) => {
+    if (url === "/health") { return Promise.resolve(jsonResponse({ mode: "fixture" })); }
+    if (url === "/v1/chat") {
+      const body = JSON.parse(options.body);
+      if (body.question.includes("Anas zonorhyncha")) {
+        return Promise.resolve(jsonResponse(profilePayload));
+      }
+      return Promise.resolve(jsonResponse(clarifyPayload));
+    }
+    return Promise.resolve(jsonResponse({}));
+  });
+
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "흰뺨 검둥 오리는 뭘 먹어";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  // Exactly 2 messages: user question and clarify answer
+  const historyEl = dom.elementsById["history"];
+  let rows = messageRows(historyEl);
+  assert.equal(rows.length, 2);
+  assert.equal(rows[0].className, "message message-user");
+  assert.equal(rows[1].className, "message message-answer");
+
+  const candidatesBlock = collectAllNodes(rows[1]).find((n) => n.className === "entity-resolution-candidates");
+  assert.ok(candidatesBlock, "candidates block is rendered in clarify answer");
+  const buttons = collectAllNodes(candidatesBlock).filter((n) => n.className === "entity-candidate-button");
+  assert.equal(buttons.length, 2);
+  assert.equal(buttons[0].textContent, "흰뺨검둥오리 (Anas zonorhyncha)");
+
+  // Verify no automatic request was made just because suggestions were rendered!
+  assert.equal(dom.fetchCalls.filter((c) => c.url === "/v1/chat").length, 1, "no automatic request on rendering candidates");
+
+  dom.elementsById["chat-intent"].value = "profile";
+  dom.elementsById["profile-name"].value = "까치";
+  // A confirmation must override a stale manual filter while using the same fetch flow.
+  buttons[0].dispatch("click");
+  await settleEventPath();
+
+  rows = messageRows(historyEl);
+  assert.equal(rows.length, 4, "stacks rewritten user question and final profile answer without removing prior turns");
+  assert.equal(rows[2].className, "message message-user");
+  assert.equal(collectedText(rows[2]).includes("흰뺨검둥오리는 뭘 먹어"), true);
+  assert.equal(collectedText(rows[2]).includes("Anas zonorhyncha"), false, "confirmation bubble uses the display name");
+  assert.equal(rows[3].className, "message message-answer");
+
+  // Matched entity_resolution in profilePayload must not render extra candidate buttons
+  const finalCandidates = collectAllNodes(rows[3]).find((n) => n.className === "entity-resolution-candidates");
+  assert.equal(finalCandidates, undefined, "no extra candidate UI on matched entity_resolution");
+
+  // Total /v1/chat requests is now 2
+  assert.equal(dom.fetchCalls.filter((c) => c.url === "/v1/chat").length, 2);
+  const confirmation = JSON.parse(dom.fetchCalls.filter((c) => c.url === "/v1/chat")[1].options.body);
+  assert.equal(confirmation.intent, "profile");
+  assert.equal(confirmation.filters.name, "Anas zonorhyncha");
+  assert.equal(confirmation.question, "Anas zonorhyncha는 뭘 먹어");
+});
+
+test("candidate buttons respect disabled input / in-flight request state", async () => {
+  const clarifyPayload = {
+    disposition: "clarify",
+    answer_text: "확인 필요",
+    warnings: [],
+    result: { kind: "clarify", prompt: "선택" },
+    entity_resolution: {
+      status: "candidates",
+      candidates: [{ question: "q1", display_name: "새1", scientific_name: "Anas zonorhyncha" }],
+    },
+  };
+  const dom = createFakeDom((url) => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : clarifyPayload)));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "미상 새";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const button = collectAllNodes(dom.elementsById["history"]).find((n) => n.className === "entity-candidate-button");
+  assert.ok(button);
+
+  // When input is disabled (e.g. busy request in flight)
+  dom.elementsById["question-input"].disabled = true;
+  const initialCallCount = dom.fetchCalls.length;
+  button.dispatch("click");
+  assert.equal(dom.fetchCalls.length, initialCallCount, "click ignored while input is disabled / busy");
+  dom.elementsById["question-input"].disabled = false;
+  dom.elementsById["clear-button"].dispatch("click");
+  button.dispatch("click");
+  assert.equal(dom.fetchCalls.length, initialCallCount, "old candidate ignored after the conversation is cleared");
+});
+
+test("candidate confirmation shows the species name in a general question with scientific-name fallback", async () => {
+  for (const displayName of ["청둥오리", ""]) {
+    const dom = createFakeDom((url, options) => {
+      if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+      const body = JSON.parse(options.body);
+      if (body.question.includes("Anas platyrhynchos")) {
+        return Promise.resolve(jsonResponse({ disposition: "answer", answer_text: "종 정보", result: { kind: "profile", profile: null }, warnings: [] }));
+      }
+      return Promise.resolve(jsonResponse({ disposition: "clarify", answer_text: "후보 확인", result: { kind: "clarify" },
+        entity_resolution: { status: "candidates", candidates: [{ scientific_name: "Anas platyrhynchos", display_name: displayName, question: "Anas platyrhynchos에 대해 알고 싶어" }] } }));
+    });
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "천둥오리에 대해 알고 싶어";
+    pressKey(dom, {});
+    await settleEventPath();
+    collectAllNodes(dom.elementsById["history"]).find(n => n.className === "entity-candidate-button").dispatch("click");
+    await settleEventPath();
+    const rows = messageRows(dom.elementsById["history"]);
+    assert.ok(collectedText(rows[2]).endsWith((displayName || "Anas platyrhynchos") + "에 대해 알고 싶어"));
+    if (displayName) assert.equal(collectedText(rows[2]).includes("Anas platyrhynchos"), false);
+    const payload = JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[1].options.body);
+    assert.equal(payload.question, "Anas platyrhynchos에 대해 알고 싶어");
+    assert.equal(payload.filters.name, "Anas platyrhynchos");
+  }
+});
+
+// ---------------------------------------------------------------------------
+// RG-406: Species distribution scope toggle, display_name priority,
+// distribution provenance rendering, and scope-change invalidation.
+// ---------------------------------------------------------------------------
+
+test("RG-406: index.html and styles.css declare the 4-option species_scope radio controls and responsive touch-target rules", () => {
+  for (const id of ["species-scope-controls", "species-scope-all", "species-scope-korea", "species-scope-outside", "species-scope-unknown", "species-scope-note"]) {
+    assert.match(htmlSource, new RegExp(`id="${id}"`), `expected #${id} in index.html`);
+  }
+  assert.match(htmlSource, /id="species-scope-all"[^>]*value="all"[^>]*checked/);
+  assert.match(htmlSource, /국내 기록·분포 확인/);
+  assert.match(htmlSource, /국외 분포 검토/);
+  assert.match(htmlSource, /미확인/);
+  assert.match(cssSourceForCards, /\.species-scope-controls\s*\{/);
+  assert.match(cssSourceForCards, /\.species-scope-option\s*\{[\s\S]*?min-height:\s*44px/);
+  assert.match(cssSourceForCards, /\.species-distribution-badge\.status-korea\s*\{/);
+  assert.match(cssSourceForCards, /\.species-distribution-badge\.status-outside\s*\{/);
+  assert.match(cssSourceForCards, /\.species-distribution-badge\.status-unknown\s*\{/);
+});
+
+test("RG-406: normalizeSpeciesScope and buildChatPayload support all/korea/outside/unknown and omit species_scope when all", () => {
+  assert.equal(chat.normalizeSpeciesScope("all"), "all");
+  assert.equal(chat.normalizeSpeciesScope("korea"), "korea");
+  assert.equal(chat.normalizeSpeciesScope("outside"), "outside");
+  assert.equal(chat.normalizeSpeciesScope("unknown"), "unknown");
+  assert.equal(chat.normalizeSpeciesScope(" KOREAN "), "all");
+  assert.equal(chat.normalizeSpeciesScope(null), "all");
+
+  assert.deepEqual(chat.buildChatPayload("까치는?", "auto", {}, "all"), { question: "까치는?", intent: "auto" });
+  assert.deepEqual(chat.buildChatPayload("까치는?", "auto", {}, "korea"), { question: "까치는?", intent: "auto", species_scope: "korea" });
+  assert.deepEqual(chat.buildChatPayload("까치는?", "auto", {}, "outside"), { question: "까치는?", intent: "auto", species_scope: "outside" });
+  assert.deepEqual(chat.buildChatPayload("까치는?", "auto", {}, "unknown"), { question: "까치는?", intent: "auto", species_scope: "unknown" });
+});
+
+test("RG-406: speciesLabel and buildSpeciesCard/buildSpeciesAnswer honor server display_name and English-priority outside mode with verified fallbacks", () => {
+  const outsideTaxon = {
+    taxon_id: "t-outside",
+    rank: "species",
+    scientific_name: "Turdus merula",
+    korean_name: "대륙검은지빠귀",
+    korean_name_status: "verified",
+    english_name: "Eurasian Blackbird",
+    display_name: "Eurasian Blackbird",
+  };
+  assert.equal(chat.speciesLabel(outsideTaxon), "Eurasian Blackbird");
+
+  // Machine-translated Korean is never trusted even if display_name matches it
+  assert.equal(chat.speciesLabel({
+    scientific_name: "Cyanistes caeruleus",
+    korean_name: "푸른박새",
+    korean_name_status: "machine-translated",
+    english_name: "Eurasian Blue Tit",
+    display_name: "푸른박새",
+  }), "Eurasian Blue Tit");
+
+  // Fallback chain when English name is absent in outside mode: verified Korean -> scientific
+  assert.equal(chat.speciesLabel({
+    scientific_name: "Pica serica",
+    korean_name: "까치",
+    korean_name_status: "verified",
+    english_name: "",
+  }), "까치");
+  assert.equal(chat.speciesLabel({
+    scientific_name: "Pica serica",
+    korean_name: "",
+    english_name: "",
+  }), "Pica serica");
+
+  const profile = photoProfile({
+    taxon: outsideTaxon,
+    sections: [{ key: "basic", title: "기본 정보", items: [{ text: "유럽과 아시아에 분포합니다.", source_name: "Wikipedia", source_url: "https://en.wikipedia.org/wiki/Common_blackbird" }] }],
+  });
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile, { speciesScope: "outside" });
+  const titleNode = collectAllNodes(card).find(n => n.className === "species-title");
+  const secondaryNode = collectAllNodes(card).find(n => n.className === "species-english-name");
+  assert.equal(titleNode.textContent, "Eurasian Blackbird");
+  assert.equal(secondaryNode.textContent, "대륙검은지빠귀", "verified Korean name appears as secondary subtitle when English is primary");
+
+  const answer = chat.buildSpeciesAnswer(svgCapableDoc(), profile, true);
+  const answerHeading = collectAllNodes(answer).find(n => n.className === "species-answer-names");
+  assert.ok(answerHeading.textContent.includes("Eurasian Blackbird"));
+  const answerSub = collectAllNodes(answerHeading).find(n => n.className === "species-answer-english-name");
+  assert.equal(answerSub.textContent, "대륙검은지빠귀");
+});
+
+test("RG-406: distributionInfo and card/brief/sources render honest Korea/outside/unknown provenance and caveats without overclaiming residency", () => {
+  assert.equal(chat.distributionInfo(null), null);
+  assert.equal(chat.distributionInfo({ status: "invalid" }), null);
+
+  const krDist = {
+    status: "korea",
+    geographic_scope: "KR",
+    basis: "avilist_range_and_wikipedia_distribution",
+    seasonal_status: null,
+    note: "원자료에서 대한민국 또는 한반도 분포 기록이 확인됩니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다.",
+    evidence: [
+      {
+        source_title: "AviList v2025",
+        source_url: "https://www.avilist.org/checklist/v2025",
+        category: "distribution",
+        source_text: "Korea",
+      },
+      {
+        source_title: "unsafe",
+        source_url: "javascript:alert(1)",
+      },
+    ],
+  };
+  const info = chat.distributionInfo(krDist);
+  assert.equal(info.status, "korea");
+  assert.equal(info.label, "국내 기록·분포 확인");
+  assert.match(info.note, /텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다/);
+  assert.equal(info.evidence.length, 1, "unsafe evidence URLs are filtered out");
+
+  const profile = photoProfile({
+    taxon: {
+      taxon_id: "t-kr",
+      rank: "species",
+      scientific_name: "Pica serica",
+      korean_name: "까치",
+      display_name: "까치",
+      distribution: krDist,
+    },
+    sections: [{ key: "basic", title: "기본 정보", items: [{ text: "정보", source_name: "AviList", source_url: "https://www.avilist.org/checklist/v2025" }] }],
+  });
+  const brief = chat.buildSpeciesBrief(svgCapableDoc(), profile);
+  const badge = collectAllNodes(brief).find(n => (n.className || "").includes("species-distribution-badge"));
+  assert.ok(badge);
+  assert.equal(badge.textContent, "국내 기록·분포 확인");
+
+  const card = chat.buildSpeciesCard(svgCapableDoc(), profile);
+  assert.equal(card.getAttribute("data-distribution-status"), "korea");
+  const backInfo = collectAllNodes(card).find(n => (n.className || "").includes("species-distribution-info"));
+  assert.ok(backInfo);
+  assert.match(collectedText(backInfo), /분포 판정: 국내 기록·분포 확인/);
+  assert.match(collectedText(backInfo), /텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다/);
+
+  const distSources = collectAllNodes(card.sourceMaterial).find(n => n.className === "species-distribution-sources");
+  assert.ok(distSources);
+  assert.ok(collectAllNodes(distSources).some(n => n.tagName === "a" && n.href === "https://www.avilist.org/checklist/v2025" && n.textContent === "AviList v2025"));
+  assert.match(collectedText(distSources), /distribution · Korea/);
+});
+
+test("RG-406: related/similar explorer supports english_name_then_weighted_score priority and propagates speciesScope to GET requests and peer comparisons", async () => {
+  const calls = [];
+  const baseProfile = photoProfile({
+    taxon: { taxon_id: "t1", rank: "species", scientific_name: "Turdus merula", english_name: "Eurasian Blackbird", display_name: "Eurasian Blackbird" },
+    lineage: { taxonomy_source: "AviList", taxonomy_release: "v2025", concept_set_id: "cs1", items: [] },
+  });
+  const peerProfile = photoProfile({
+    taxon: { taxon_id: "t2", rank: "species", scientific_name: "Turdus iliacus", english_name: "Redwing", display_name: "Redwing" },
+    lineage: { taxonomy_source: "AviList", taxonomy_release: "v2025", concept_set_id: "cs1", items: [] },
+  });
+  const similarData = {
+    taxon: baseProfile.taxon,
+    taxonomy_source: "AviList",
+    taxonomy_release: "v2025",
+    concept_set_id: "cs1",
+    ranking: {
+      limit: 3,
+      method: "taxonomy-phylogeny-ecology-v3",
+      priority: "english_name_then_weighted_score",
+      weights: { phylogenetic_clade: 35, same_genus: 25, same_family: 10, same_habitat: 15, same_trophic_niche: 15 },
+    },
+    groups: [{
+      rank: "similarity",
+      label: "영어 이름 우선 비교 후보 3종",
+      source_name: "AviList",
+      source_url: "https://www.avilist.org/checklist/v2025",
+      items: [{
+        taxon_id: "t2",
+        rank: "species",
+        scientific_name: "Turdus iliacus",
+        english_name: "Redwing",
+        display_name: "Redwing",
+        similarity_rank: 1,
+        similarity_score: 85,
+        similarity_reasons: [{ label: "같은 속", points: 25 }],
+      }],
+    }],
+  };
+
+  const explorer = chat.buildRelatedExplorer(svgCapableDoc(), baseProfile, (url) => {
+    calls.push(url);
+    if (url.startsWith("/v1/taxa/similar")) return Promise.resolve(jsonResponse(similarData));
+    return Promise.resolve(jsonResponse(peerProfile));
+  }, { endpoint: "/v1/taxa/similar", speciesScope: "outside" });
+
+  const openBtn = explorer.children[0];
+  openBtn.dispatch("click");
+  await settleEventPath();
+
+  assert.equal(calls[0], "/v1/taxa/similar?name=Turdus%20merula&species_scope=outside");
+  assert.match(collectedText(explorer), /영어 이름 우선 · 점수순/);
+  assert.match(collectedText(explorer), /원자료에 영어 이름이 있는 후보를 먼저 표시하고/);
+  assert.match(collectedText(explorer), /추천 1/);
+  assert.match(collectedText(explorer), /Redwing/);
+
+  const compareBtn = collectAllNodes(explorer).find(n => n.className === "comparison-peer-choose");
+  compareBtn.dispatch("click");
+  await settleEventPath();
+  assert.equal(calls[1], "/v1/taxa/profile?name=Turdus%20iliacus&species_scope=outside");
+});
+
+test("RG-406: scope toggle propagates species_scope to POST /v1/chat, explorers, and deferred enrichment; switching scope preserves draft, does not auto-send, clears old cards, and drops stale responses", async () => {
+  const pendingChat = deferred();
+  const pendingEnrich = deferred();
+  const dom = createFakeDom((url, options) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    if (url === "/v1/chat") {
+      const body = JSON.parse(options.body);
+      if (body.question === "느린 질문") return pendingChat.promise;
+      return Promise.resolve(jsonResponse({
+        disposition: "answer",
+        answer_text: "검토 결과",
+        warnings: [],
+        result: {
+          kind: "profile",
+          profile: Object.assign(photoProfile({
+            taxon: {
+              taxon_id: "t-out",
+              rank: "species",
+              korean_name: null,
+              scientific_name: "Turdus merula",
+              english_name: "Eurasian Blackbird",
+              display_name: "Eurasian Blackbird",
+            },
+          }), { enrichment_pending: true }),
+        },
+      }));
+    }
+    if (url.startsWith("/v1/taxa/profile")) return pendingEnrich.promise;
+    if (url.startsWith("/v1/taxa/similar")) return Promise.resolve(jsonResponse({ taxon: { taxon_id: "t-out" }, groups: [] }));
+    if (url.startsWith("/v1/taxa/ecological-related")) return Promise.resolve(jsonResponse({ taxon: { taxon_id: "t-out" }, groups: [] }));
+    return Promise.resolve(jsonResponse({}));
+  });
+
+  chat.init(dom.doc, dom.win);
+
+  // Switch scope to 'outside' while a draft is typed: draft must be preserved and no /v1/chat sent
+  dom.elementsById["question-input"].value = "작성 중인 초안";
+  dom.elementsById["species-scope-outside"].checked = true;
+  dom.elementsById["species-scope-outside"].dispatch("change");
+
+  assert.equal(dom.elementsById["species-scope-all"].checked, false);
+  assert.equal(dom.elementsById["species-scope-outside"].checked, true);
+  assert.equal(dom.elementsById["question-input"].value, "작성 중인 초안", "typed draft must be preserved on scope change");
+  assert.equal(dom.fetchCalls.filter(c => c.url === "/v1/chat").length, 0, "changing scope must never auto-send a query");
+  assert.match(dom.elementsById["species-scope-note"].textContent, /영어 이름을 우선하고/);
+
+  // Submit question under 'outside' scope
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const chatCalls = dom.fetchCalls.filter(c => c.url === "/v1/chat");
+  assert.equal(chatCalls.length, 1);
+  assert.equal(JSON.parse(chatCalls[0].options.body).species_scope, "outside");
+  assert.equal(messageRows(dom.elementsById["history"]).length, 2);
+
+  // Trigger deferred enrichment and ecological explorer under 'outside' scope
+  const enrichBtn = collectAllNodes(dom.elementsById["history"]).find(n => n.className === "species-enrichment-load");
+  enrichBtn.dispatch("click");
+  const ecoExplorer = collectAllNodes(dom.elementsById["history"]).find(n => n.className === "species-ecological-related");
+  ecoExplorer.children[0].dispatch("click");
+  await tick();
+
+  assert.ok(dom.fetchCalls.some(c => c.url === "/v1/taxa/profile?name=Turdus%20merula&species_scope=outside"));
+  assert.ok(dom.fetchCalls.some(c => c.url === "/v1/taxa/ecological-related?name=Turdus%20merula&species_scope=outside"));
+
+  // Start an in-flight /v1/chat request, then switch scope to 'korea' before it resolves
+  dom.elementsById["question-input"].value = "느린 질문";
+  pressKey(dom, {});
+  assert.equal(dom.elementsById["send-button"].disabled, true);
+
+  dom.elementsById["question-input"].value = "새 초안 유지";
+  dom.elementsById["species-scope-korea"].checked = true;
+  dom.elementsById["species-scope-korea"].dispatch("change");
+
+  // Old history is cleared back to empty state, form is unblocked, draft is kept
+  assert.equal(messageRows(dom.elementsById["history"]).length, 0, "previous scope messages/cards are cleared on scope switch");
+  assert.equal(dom.elementsById["send-button"].disabled, false, "in-flight busy state is released on scope switch");
+  assert.equal(dom.elementsById["question-input"].value, "새 초안 유지");
+
+  // Resolve stale chat and enrichment promises: neither may write into #history
+  pendingChat.resolve(jsonResponse({ disposition: "answer", answer_text: "이전 범위 응답", warnings: [] }));
+  pendingEnrich.resolve(jsonResponse(photoProfile()));
+  await settleEventPath();
+
+  assert.equal(messageRows(dom.elementsById["history"]).length, 0, "stale /v1/chat response from previous scope must be dropped");
+  assert.equal(collectedText(dom.elementsById["history"]).includes("이전 범위 응답"), false);
+});
+
+
+function addScopeControls(dom) {
+  dom.win.AbortController = AbortController;
+  for (const scope of ['all','korea','outside','unknown']) {
+    const node=createFakeElement('input');node.value=scope;node.checked=scope==='all';
+    dom.elementsById['species-scope-'+scope]=node;
+  }
+  dom.elementsById['species-scope-note']=createFakeElement('p');
+  return function select(scope) {
+    for (const value of ['all','korea','outside','unknown']) dom.elementsById['species-scope-'+value].checked=value===scope;
+    dom.elementsById['species-scope-'+scope].dispatch('change',{});
+  };
+}
+
+test('RG406 scope change preserves draft, aborts pending chat and never auto-submits', async()=>{
+  const pending=deferred();
+  const dom=createFakeDom(url=>url==='/health'?Promise.resolve(jsonResponse({mode:'fixture'})):pending.promise);
+  const select=addScopeControls(dom);chat.init(dom.doc,dom.win);
+  dom.elementsById['question-input'].value='작성 중';select('korea');
+  assert.equal(dom.elementsById['question-input'].value,'작성 중');
+  assert.equal(dom.fetchCalls.filter(c=>c.url==='/v1/chat').length,0);
+  pressKey(dom,{});
+  const request=dom.fetchCalls.find(c=>c.url==='/v1/chat');
+  assert.equal(JSON.parse(request.options.body).species_scope,'korea');
+  select('outside');
+  assert.equal(request.options.signal.aborted,true);
+  assert.equal(dom.elementsById['question-input'].disabled,false);
+  assert.equal(messageRows(dom.elementsById['history']).length,0);
+  pending.resolve(jsonResponse({disposition:'answer',answer_text:'discarded old response'}));await settleEventPath();
+  assert.equal(messageRows(dom.elementsById['history']).length,0);
+});
+
+test('RG406 an old POST cannot render or end the busy state of a newer scope request',async()=>{
+  const old=deferred(),fresh=deferred();let n=0;
+  const dom=createFakeDom(url=>url==='/health'?Promise.resolve(jsonResponse({mode:'fixture'})):(n++===0?old.promise:fresh.promise));
+  const select=addScopeControls(dom);chat.init(dom.doc,dom.win);
+  select('korea');dom.elementsById['question-input'].value='first';pressKey(dom,{});
+  select('outside');dom.elementsById['question-input'].value='second';pressKey(dom,{});
+  old.resolve(jsonResponse({disposition:'answer',answer_text:'old scope secret'}));await settleEventPath();
+  assert.equal(dom.elementsById['question-input'].disabled,true);
+  assert.equal(messageRows(dom.elementsById['history']).length,1);
+  assert.equal(collectedText(dom.elementsById['history']).includes('old scope secret'),false);
+  fresh.resolve(jsonResponse({disposition:'answer',answer_text:'fresh scope'}));await settleEventPath();
+  assert.equal(dom.elementsById['question-input'].disabled,false);
+  assert.equal(messageRows(dom.elementsById['history']).length,2);
+  assert.ok(collectedText(dom.elementsById['history']).includes('fresh scope'));
+});
+
+test('RG406 an old candidate button cannot submit after changing scope',async()=>{
+  const dom=createFakeDom(url=>Promise.resolve(jsonResponse(url==='/health'?{mode:'fixture'}:{disposition:'clarify',answer_text:'confirm',result:{kind:'clarify'},entity_resolution:{status:'candidates',candidates:[{scientific_name:'Anas platyrhynchos',display_name:'청둥오리',question:'Anas platyrhynchos에 대해 알려줘'}]}})));
+  const select=addScopeControls(dom);chat.init(dom.doc,dom.win);
+  select('korea');dom.elementsById['question-input'].value='천둥오리에 대해 알려줘';pressKey(dom,{});await settleEventPath();
+  const button=collectAllNodes(dom.elementsById['history']).find(n=>n.className==='entity-candidate-button');assert.ok(button);
+  select('outside');const before=dom.fetchCalls.length;button.dispatch('click',{});
+  assert.equal(dom.fetchCalls.length,before);assert.equal(messageRows(dom.elementsById['history']).length,0);
 });

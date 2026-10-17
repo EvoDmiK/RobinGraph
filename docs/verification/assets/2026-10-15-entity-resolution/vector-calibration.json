@@ -1,0 +1,215 @@
+{
+  "purpose": "calibration only; cosine floor disabled here to inspect rankings; Korean-name text only",
+  "records": [
+    {
+      "mention": "흰뺨검둥오려",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:540",
+          "scientific_name": "Anas zonorhyncha",
+          "display_name": "흰뺨검둥오리",
+          "score": 0.3549
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:415",
+          "scientific_name": "Melanitta perspicillata",
+          "display_name": "흰이마검둥오리",
+          "score": 0.2716
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:4162",
+          "scientific_name": "Calidris temminckii",
+          "display_name": "흰꼬리좀도요",
+          "score": 0.2653
+        }
+      ],
+      "elapsed_seconds": 27.982
+    },
+    {
+      "mention": "흰뺨 검둥 오랴",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:540",
+          "scientific_name": "Anas zonorhyncha",
+          "display_name": "흰뺨검둥오리",
+          "score": 0.2879
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:4162",
+          "scientific_name": "Calidris temminckii",
+          "display_name": "흰꼬리좀도요",
+          "score": 0.2255
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:474",
+          "scientific_name": "Aythya affinis",
+          "display_name": "쇠검은머리흰죽지",
+          "score": 0.2216
+        }
+      ],
+      "elapsed_seconds": 1.036
+    },
+    {
+      "mention": "청둥오려",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:544",
+          "scientific_name": "Anas platyrhynchos",
+          "display_name": "청둥오리",
+          "score": 0.3321
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:414",
+          "scientific_name": "Melanitta americana",
+          "display_name": "검둥오리",
+          "score": 0.2472
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:416",
+          "scientific_name": "Melanitta fusca",
+          "display_name": "노랑부리검둥오리사촌",
+          "score": 0.2261
+        }
+      ],
+      "elapsed_seconds": 0.969
+    },
+    {
+      "mention": "왜가릐",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:4161",
+          "scientific_name": "Calidris ruficollis",
+          "display_name": "좀도요",
+          "score": 0.0768
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:4007",
+          "scientific_name": "Numenius minutus",
+          "display_name": "쇠부리도요",
+          "score": 0.0678
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:8293",
+          "scientific_name": "Tachyspiza gularis",
+          "display_name": "조롱이",
+          "score": 0.0625
+        }
+      ],
+      "elapsed_seconds": 0.992
+    },
+    {
+      "mention": "우주선",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:1298",
+          "scientific_name": "Lophura nycthemera",
+          "display_name": "은계",
+          "score": -0.0046
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:19732",
+          "scientific_name": "Lophorina superba",
+          "display_name": "어깨걸이풍조",
+          "score": -0.0051
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:539",
+          "scientific_name": "Anas laysanensis",
+          "display_name": "레이산오리",
+          "score": -0.0182
+        }
+      ],
+      "elapsed_seconds": 1.084
+    },
+    {
+      "mention": "아무새",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:27911",
+          "scientific_name": "Phoenicurus auroreus",
+          "display_name": "딱새",
+          "score": 0.2008
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:23182",
+          "scientific_name": "Phylloscopus tenellipes",
+          "display_name": "되솔새",
+          "score": 0.1945
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:30054",
+          "scientific_name": "Fringilla montifringilla",
+          "display_name": "되새",
+          "score": 0.194
+        }
+      ],
+      "elapsed_seconds": 1.016
+    },
+    {
+      "mention": "Pica sercia",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:4165",
+          "scientific_name": "Calidris alba",
+          "display_name": "세가락도요",
+          "score": 0.0683
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:20751",
+          "scientific_name": "Parus cinereus",
+          "display_name": "박새",
+          "score": 0.0588
+        },
+        {
+          "taxon_id": "avilist-taxon:v2025b:4196",
+          "scientific_name": "Turnix tanki",
+          "display_name": "세가락메추라기",
+          "score": 0.0562
+        }
+      ],
+      "elapsed_seconds": 0.97
+    }
+  ]
+}

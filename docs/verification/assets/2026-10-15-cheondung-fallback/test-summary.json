@@ -1,0 +1,34 @@
+{
+  "focused": {
+    "total": 59,
+    "passed": 59,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "mock/fixture"
+  },
+  "python_full": {
+    "total": 886,
+    "passed": 848,
+    "failed": 0,
+    "skipped": 38,
+    "mode": "unit/contract; opt-in integrations skipped"
+  },
+  "local_actual_http": {
+    "calls": 12,
+    "passed": true
+  },
+  "nas_actual_http": {
+    "calls": 12,
+    "passed": true
+  },
+  "nas_actual_browser": {
+    "widths": [
+      1280,
+      390,
+      320
+    ],
+    "chat_calls": 9,
+    "passed": true
+  },
+  "production_unchanged": true
+}

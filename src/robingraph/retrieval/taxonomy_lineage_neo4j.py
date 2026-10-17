@@ -288,6 +288,30 @@ class Neo4jTaxonomyLineageRepository:
             raise ValueError("Active Korean vernacular dataset id must not be blank")
         return cleaned
 
+    def reviewed_name_candidates(self) -> list[dict]:
+        """Bound vector suggestions to reviewed names in the current graph."""
+        concept_set_id, release = self._active_concept_set()
+        if (concept_set_id, release) != ('rg:concept-set:avilist-v2025b', 'v2025b'):
+            return []
+        names = [dict(label, taxon_id=taxon_id) for taxon_id, label in sourced_korean_names().items()
+                 if label.get('status') == 'source-reference']
+        if len(names) > 1000:
+            raise ValueError('Reviewed name inventory exceeds the bounded candidate limit')
+        return self._run("""
+UNWIND $names AS reviewed
+MATCH (s:TaxonConceptSet {id:$concept_set_id, version:$release, policy_status:'allowed'})
+MATCH (t:Taxon:BirdTaxon {id:reviewed.taxon_id, rank:'species', source_release:$release,
+                        policy_status:'allowed'})-[:IN_CONCEPT_SET]->(s)
+WHERE t.dataset_id=s.dataset_id AND t.scientific_name=reviewed.scientific_name
+MATCH (t)-[:HAS_VERNACULAR_NAME]->(en:VernacularName {language:'en', status:'source-preferred',
+                                                   policy_status:'allowed', source_release:$release})
+WHERE en.dataset_id=t.dataset_id AND en.name=reviewed.english_name
+RETURN DISTINCT t.id AS taxon_id, t.scientific_name AS scientific_name,
+       reviewed.name AS display_name,
+       reviewed.name AS text
+ORDER BY taxon_id
+""", names=names, concept_set_id=concept_set_id, release=release)
+
     def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
         cleaned = scientific_name.strip()
         if not cleaned:

@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "checks": [
+    "health_test_ok",
+    "chat_html",
+    "live_korean_lineage",
+    "live_profile",
+    "live_chat_profile",
+    "live_search_fulltext",
+    "live_search_hybrid",
+    "deployed_mrr_mixed_hit_miss",
+    "deployed_mrr_all_miss",
+    "deployed_mrr_no_answerable_questions"
+  ],
+  "count": 10,
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "searches": {
+    "fulltext": {
+      "returned": 4,
+      "actual_mode": "fulltext",
+      "channels": [
+        "fulltext"
+      ]
+    },
+    "hybrid": {
+      "returned": 4,
+      "actual_mode": "hybrid",
+      "channels": [
+        "fulltext",
+        "vector"
+      ]
+    }
+  },
+  "mrr_selfchecks": "synthetic inputs against deployed evaluator"
+}

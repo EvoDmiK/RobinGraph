@@ -19,6 +19,12 @@
 <p>활성 분류와 형질 자료에서 확인한 특징·먹이·서식 환경을 보여줍니다. 사진은 Wikimedia Commons의 대표 사진입니다.</p></header>
 <main><form id="bird-form"><label for="bird-name">국명 또는 학명</label><div class="bird-form">
 <input id="bird-name" name="name" value="청둥오리" maxlength="200" required autocomplete="off">
+<select id="bird-scope" name="species_scope" aria-label="분포 범위">
+<option value="all" selected>전체 (한국어 우선)</option>
+<option value="korea">국내 기록·분포 확인</option>
+<option value="outside">국외 분포 검토 (영어 우선)</option>
+<option value="unknown">미확인</option>
+</select>
 <button id="bird-submit" type="submit">정보 보기</button></div></form>
 <p id="bird-status" role="status" aria-live="polite"></p><article id="bird-card" class="bird-card" hidden></article></main>
 </div></body></html>

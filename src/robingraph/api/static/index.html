@@ -66,6 +66,17 @@
       <details id="advanced-settings" class="advanced-settings">
         <summary>고급 조회 옵션</summary>
 
+        <fieldset id="species-scope-controls" class="species-scope-controls">
+          <legend class="species-scope-legend">분포 범위 · 이름 우선 기준</legend>
+          <div class="species-scope-options">
+            <label class="species-scope-option"><input type="radio" id="species-scope-all" name="species_scope" value="all" checked /><span>전체 (기본 · 한국어 우선)</span></label>
+            <label class="species-scope-option"><input type="radio" id="species-scope-korea" name="species_scope" value="korea" /><span>국내 기록·분포 확인 (한국어 우선)</span></label>
+            <label class="species-scope-option"><input type="radio" id="species-scope-outside" name="species_scope" value="outside" /><span>국외 분포 검토 (영어 우선)</span></label>
+            <label class="species-scope-option"><input type="radio" id="species-scope-unknown" name="species_scope" value="unknown" /><span>미확인 (한국어 우선)</span></label>
+          </div>
+          <p id="species-scope-note" class="species-scope-note">전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.</p>
+        </fieldset>
+
         <div id="backend-status" class="backend-status" aria-live="polite">
           <span id="backend-mode-label">백엔드 모드</span>:
           <span id="backend-mode-value">확인 중…</span>

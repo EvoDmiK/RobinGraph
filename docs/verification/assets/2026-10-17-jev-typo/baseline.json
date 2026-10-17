@@ -1,0 +1,17 @@
+{
+  "scope": "Actual Jev calls in local TEST before changes; not full app requests",
+  "rows": [
+    {
+      "question": "청둥오리에 대해 일고 깊어",
+      "label": null,
+      "failure": "low_confidence",
+      "confidence": 0.59
+    },
+    {
+      "question": "청둥오리에 대해 알고 싶어",
+      "label": "profile",
+      "failure": null,
+      "confidence": 1.0
+    }
+  ]
+}

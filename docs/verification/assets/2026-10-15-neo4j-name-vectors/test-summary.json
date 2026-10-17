@@ -1,0 +1,43 @@
+{
+  "python_full": {
+    "total": 896,
+    "passed": 858,
+    "failed": 0,
+    "skipped": 38,
+    "mode": "unit/contract; opt-in actual integrations skipped"
+  },
+  "focused": {
+    "passed": 53,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "mock/fixture"
+  },
+  "disposable_neo4j": {
+    "passed": true,
+    "version": "5.26.30",
+    "mode": "actual isolated DB with fixture3dim vectors and taxa"
+  },
+  "nas_actual_http": {
+    "cheondung_calls": 12,
+    "baseline_calls": 8,
+    "passed": true
+  },
+  "nas_actual_browser": {
+    "widths": [
+      1280,
+      390,
+      320
+    ],
+    "chat_calls": 9,
+    "passed": true
+  },
+  "persisted_names": 850,
+  "repeat_index": {
+    "reused": 850,
+    "embedded": 0
+  },
+  "first_typo_seconds": 1.106,
+  "previous_memory_first_typo_seconds": 29.052,
+  "performance_scope": "single observations, not controlled benchmark or p95",
+  "production_unchanged": true
+}

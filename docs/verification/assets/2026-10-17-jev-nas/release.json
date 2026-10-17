@@ -1,0 +1,22 @@
+{
+  "archive": "/tmp/robingraph-jev-typo-0629aa1e9f4a.tar.gz",
+  "prefix": "robingraph-jev-typo-0629aa1e9f4a",
+  "snapshot_sha256": "0629aa1e9f4a6e12bba2091c1c30768b643cb95a76ea6e8bdd384b725d219d9d",
+  "archive_sha256": "56beeaa86ae203ed2811b6916de6c614edf561aefa506ad007d8ffda8c61f5dd",
+  "image": "robingraph-api:test-jev-typo-0629aa1e9f4a",
+  "previous_image": "robingraph-api:test-name-neo4j-71b1b0f58a62",
+  "runtime_files": 138,
+  "changed_files": [
+    "src/robingraph/api/jev_router.py"
+  ],
+  "deployed": true,
+  "container": {
+    "name": "robingraph-api-test",
+    "id": "37b6e3b8449e83fda49f2561efe2b8d7afe1bfde0b2301281d52ea68f4ce90d6",
+    "started_at": "2026-10-17T04:17:46.909882131Z",
+    "image": "robingraph-api:test-jev-typo-0629aa1e9f4a",
+    "image_id": "sha256:259adf7d9b40969834c71c8342ae19afb3d1633e32063569931fff3d428d459e",
+    "status": "running",
+    "health": "healthy"
+  }
+}

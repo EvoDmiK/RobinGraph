@@ -5,6 +5,10 @@
 - 보유 서비스: Neo4j, PostgreSQL, TimescaleDB, Redis, Jina-embeddings-v3 API, HermesAgent(gpt-5.6-sol), n8n, MLflow, Prometheus, Grafana
 - 하드웨어: Ugreen NAS 2800(RAM 16GB), Mac mini M4(RAM 32GB)
 
+## 현재 TEST 배치 (2026-10-17 실제 반영)
+
+아래 2026-09-03 Proposed 본문은 초기 설계다. 현재 TEST는 M4 16GB(192.168.219.97)의 ARM64 RobinGraph 앱·빌드, 32GB Mac(192.168.219.98)의 기존 Neo4j·n8n, NAS(192.168.219.99)의 기존 PostgreSQL로 분산한다. NAS 프록시의 https://robingraph-test.dove-nest.com 이 16GB Mac:8000으로 연결된다. NAS TEST 앱은 정지하고 이미지·컨테이너를 롤백용으로 보존했다. Production은 그대로다. [실제 이전·검증·관리·롤백 기록](work-log/2026-10-17-mac-test-migration.md).
+
 ## 1. 권장 구성
 
 ```mermaid

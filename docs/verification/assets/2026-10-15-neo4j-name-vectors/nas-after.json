@@ -1,0 +1,65 @@
+{
+  "Taxon": 33694,
+  "Document": 2,
+  "Chunk": 4,
+  "HybridVectorChunk": 2,
+  "TaxonNameVector": 850,
+  "literature_index": [
+    {
+      "name": "robingraphFixtureChunkVector",
+      "type": "VECTOR",
+      "labelsOrTypes": [
+        "HybridVectorChunk"
+      ],
+      "properties": [
+        "hybrid_vector"
+      ],
+      "options": {
+        "indexConfig": {
+          "vector.dimensions": 512,
+          "vector.hnsw.m": 16,
+          "vector.quantization.enabled": true,
+          "vector.similarity_function": "COSINE",
+          "vector.hnsw.ef_construction": 100
+        },
+        "indexProvider": "vector-2.0"
+      }
+    }
+  ],
+  "literature_vectors_sha256": "55fa8613e4f00b3e1c94a4dc81b7db81bde85a1186b795062ed21bc8f8a0e50d",
+  "name_index": [
+    {
+      "name": "robingraphTaxonNameVector",
+      "type": "VECTOR",
+      "state": "ONLINE",
+      "labelsOrTypes": [
+        "TaxonNameVector"
+      ],
+      "properties": [
+        "name_vector"
+      ],
+      "options": {
+        "indexConfig": {
+          "vector.dimensions": 512,
+          "vector.hnsw.m": 16,
+          "vector.quantization.enabled": true,
+          "vector.similarity_function": "COSINE",
+          "vector.hnsw.ef_construction": 100
+        },
+        "indexProvider": "vector-2.0"
+      }
+    }
+  ],
+  "catalog": [
+    {
+      "model": "jinaai/jina-embeddings-v3",
+      "dimensions": 512,
+      "count": 850,
+      "fingerprint": "32616b84993771ae3bdeb2ccd8f0418902e97109dc6b147d9d55b0af2e2a3216",
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b"
+    }
+  ],
+  "name_vector_links": 850,
+  "bad_name_vectors": 0
+}

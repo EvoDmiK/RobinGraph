@@ -14,7 +14,33 @@ class SpeciesQuestion:
     category: str | None = None
 
 
-_NAME = r'(?P<name>[가-힣]+?|[A-Za-z][a-z]+\s+[a-z]+(?:\s+[a-z]+)?)'
+# Korean names may be typed with internal spaces (흰뺨 검둥 오리); the span is
+# kept as typed and checked by bounded_korean_name before it is accepted.
+_NAME = r'(?P<name>[가-힣]+?(?:\s+[가-힣]+?){0,3}|[A-Za-z][a-z]+\s+[a-z]+(?:\s+[a-z]+)?)'
+MAX_QUESTION_CHARS = 200
+# Words that make a spaced span a phrase rather than one typed name.
+_SPAN_STOPWORDS = frozenset(('그', '이', '저', '그런', '이런', '저런', '어떤', '무슨', '혹시', '저기', '제가', '내가',
+                             '우리', '어제', '오늘', '아까', '방금', '본', '봤던', '새', '및', '또는', '그리고',
+                             '혹은', '아니면', '말고', '아니고', '아니라', '대신', '빼고', '보다', '처럼', '같이',
+                             '좀', '그냥', '정말', '진짜', '다른', '여러', '모든'))
+_CONJUNCTIVE_END = re.compile(r'(?:와|과|랑|이랑|하고|및|나)$')
+
+
+def bounded_korean_name(span):
+    """Accept one Korean name span, possibly typed with internal spaces.
+
+    A single token keeps the existing rule. Two to four tokens are accepted
+    only when no token is a deictic/filler word and no earlier token ends in
+    a conjunctive particle, so lists and phrases never become one name.
+    """
+    tokens = span.split()
+    if not tokens or len(tokens) > 4 or not all(re.fullmatch(r'[가-힣]+', token) for token in tokens):
+        return False
+    if len(tokens) == 1:
+        return True
+    compact = ''.join(tokens)
+    return (2 <= len(compact) <= 40 and not any(token in _SPAN_STOPWORDS for token in tokens)
+            and not any(_CONJUNCTIVE_END.search(token) for token in tokens[:-1]))
 _ASK = r'(?:알려\s*줘|알려\s*주세요|설명해\s*줘|설명해\s*주세요|알고\s*싶어(?:요)?)'
 _WHAT = r'(?:뭐야|뭔가요|무엇인가요|어떤\s*거야|어떤가요)'
 _PATTERNS = (
@@ -35,12 +61,18 @@ _COMPILED = tuple((topic, category, re.compile(pattern)) for topic, category, pa
 
 
 def parse_species_question(question):
-    normalized = re.sub(r'\s+', ' ', question.strip()).rstrip('.!?？').strip()
+    # Whitespace is not collapsed: the name is returned exactly as typed.
+    normalized = question.strip().rstrip('.!?？').strip()
+    if len(normalized) > MAX_QUESTION_CHARS:
+        return None
     for topic, category, pattern in _COMPILED:
         match = pattern.fullmatch(normalized)
         if match:
+            name = match.group('name').strip()
+            if re.match(r'[가-힣]', name) and not bounded_korean_name(name):
+                return None
             rank = match.groupdict().get('rank')
-            return SpeciesQuestion(match.group('name').strip(), topic, {'속':'genus','과':'family'}.get(rank, category))
+            return SpeciesQuestion(name, topic, {'속':'genus','과':'family'}.get(rank, category))
     return None
 
 
@@ -57,7 +89,7 @@ def _sourced(item):
 
 def focused_answer(profile, question, relations=None):
     """Use only own attributed fields; never infer diet from a broad niche."""
-    label = next((profile.get('taxon',{}).get(k) for k in ('korean_name','english_name','scientific_name')
+    label = profile.get('taxon',{}).get('display_name') or next((profile.get('taxon',{}).get(k) for k in ('korean_name','english_name','scientific_name')
                   if profile.get('taxon',{}).get(k)), question.name)
     title = {'diet':'먹이와 식성','habitat':'서식 환경','activity':'활동 시간',
              'appearance':'외관적 특징','related':'비슷한 종','ecological_related':'생태가 비슷한 종'}[question.topic]

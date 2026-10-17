@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "mode": "actual TEST API/Jina in Chromium, no route mocks; emulated viewports, not physical devices",
+  "results": [
+    {
+      "width": 1280,
+      "passed": true,
+      "chat_posts": 3,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "page_errors": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "chat_posts": 3,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "page_errors": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 320,
+      "passed": true,
+      "chat_posts": 3,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "page_errors": 0,
+      "horizontal_overflow": false
+    }
+  ]
+}

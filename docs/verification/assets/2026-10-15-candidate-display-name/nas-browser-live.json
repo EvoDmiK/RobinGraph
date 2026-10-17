@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "mode": "actual TEST API/Jina in Chromium, no route mocks; emulated viewports, not physical devices",
+  "results": [
+    {
+      "width": 1280,
+      "passed": true,
+      "chat_posts": 5,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "general_bubble": "청둥오리에 대해 알고 싶어",
+      "diet_bubble": "청둥오리는 뭘 먹어?",
+      "canonical_payload_preserved": true,
+      "page_errors": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "chat_posts": 5,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "general_bubble": "청둥오리에 대해 알고 싶어",
+      "diet_bubble": "청둥오리는 뭘 먹어?",
+      "canonical_payload_preserved": true,
+      "page_errors": 0,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 320,
+      "passed": true,
+      "chat_posts": 5,
+      "keyboard_confirmation": true,
+      "stale_filter_ignored": true,
+      "topic": "diet",
+      "general_bubble": "청둥오리에 대해 알고 싶어",
+      "diet_bubble": "청둥오리는 뭘 먹어?",
+      "canonical_payload_preserved": true,
+      "page_errors": 0,
+      "horizontal_overflow": false
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "base_commit": "434b6a4be8493f9b8bd85f477cbe8aca65ec7413",
+  "uncommitted_overlays": [
+    "src/robingraph/api/app.py",
+    "src/robingraph/api/question_entities.py",
+    "src/robingraph/cli.py",
+    "src/robingraph/retrieval/species_questions.py",
+    "src/robingraph/retrieval/taxonomy_lineage_neo4j.py",
+    "src/robingraph/retrieval/taxon_name_resolution.py",
+    "src/robingraph/retrieval/evaluation.py",
+    "scripts/audit_retrieval_readiness.py",
+    "src/robingraph/api/static/chat.js",
+    "src/robingraph/api/static/styles.css",
+    "src/robingraph/retrieval/taxon_name_vectors_neo4j.py",
+    "scripts/index_taxon_name_vectors.py"
+  ],
+  "runtime_file_count": 138,
+  "snapshot_sha256": "0b3da84849533cee211381691e62ac2f79e9dd16e1582ce217138ff6cc144093",
+  "archive_sha256": "70f07ae891817eee4b5331771398c2fade6a7f63cff144eacdb2c1161a23900f",
+  "archive": "/tmp/robingraph-name-neo4j-release/robingraph-name-neo4j-0b3da8484953.tar.gz",
+  "image_proposal": "robingraph-api:test-name-neo4j-0b3da8484953",
+  "deployed": true,
+  "deployment_receipt": "nas-release.json"
+}

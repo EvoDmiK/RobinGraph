@@ -1,0 +1,22 @@
+{
+  "frontend": {
+    "total": 307,
+    "passed": 307,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "fake DOM/fixture"
+  },
+  "nas_browser": {
+    "widths": [
+      1280,
+      390,
+      320
+    ],
+    "chat_calls": 15,
+    "passed": true,
+    "mode": "actual NAS TEST DB/Jina/API via SSH forwarding; no route mocks"
+  },
+  "backend_full_rerun": false,
+  "backend_full_rerun_reason": "Only frontend chat.js changes; API deployment contract checked",
+  "production_unchanged": true
+}

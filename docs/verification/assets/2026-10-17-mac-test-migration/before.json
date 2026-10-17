@@ -1,0 +1,20 @@
+{
+  "local:robingraph-api-test": {
+    "id": "96d8baaf078137601e9a308f1972c03661857e9c0c6befe16837e3a670b412d1",
+    "image": "robingraph-api:test-local",
+    "image_id": "sha256:5146f2d637ffa21621d7befdf1e93124dc218246bed42af17a3bb99a043fc826",
+    "started_at": "2026-10-14T11:24:08.111830786Z"
+  },
+  "nas:robingraph-api-test": {
+    "id": "7ff2b4dae586212dd71d2127239741cdeb2538533e2d08fd7e76aaa97cb4e09c",
+    "image": "robingraph-api:test-rg406-8ffeb7734750",
+    "image_id": "sha256:f8e91c74cbefec7a16429274666806f04c2b533ef7c417ac006faa1c2c50a285",
+    "started_at": "2026-10-17T09:22:26.332788063Z"
+  },
+  "nas:robingraph-api": {
+    "id": "03ce208b9f30a3242fd16dd2772935d45099d77aaba0c81d49240bb8699de8fd",
+    "image": "robingraph-api:prod-approved-ui-0681747",
+    "image_id": "sha256:db6b08852216ac26f4c99fd6a21b01dc85c43efe3ea9ca6faec9f7c880d892e4",
+    "started_at": "2026-10-10T06:07:33.413088244Z"
+  }
+}

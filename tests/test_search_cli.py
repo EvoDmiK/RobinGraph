@@ -142,7 +142,7 @@ class SearchCLITest(unittest.TestCase):
         parameters = {
             value["name"] for value in app.openapi()["paths"]["/v1/taxa/lineage"]["get"]["parameters"]
         }
-        self.assertEqual({"scientific_name", "name"}, parameters)
+        self.assertEqual({"scientific_name", "name", "species_scope"}, parameters)
 
         # Both query paths must actually be wired to a live handler (not left
         # `None`, which would surface as a 503 "available only in Neo4j

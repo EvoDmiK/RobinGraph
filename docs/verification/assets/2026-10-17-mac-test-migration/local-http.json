@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "scope": "Actual running NAS TEST HTTP application and real DB/provider",
+  "rows": [
+    {
+      "request": "chat",
+      "science": "Anas platyrhynchos",
+      "species_scope": "korea",
+      "passed": true,
+      "disposition": "answer",
+      "display_name": "청둥오리"
+    },
+    {
+      "request": "chat",
+      "science": "Anas platyrhynchos",
+      "species_scope": "outside",
+      "passed": true,
+      "disposition": "abstain",
+      "display_name": null
+    },
+    {
+      "request": "chat",
+      "science": "Nestor notabilis",
+      "species_scope": "outside",
+      "passed": true,
+      "disposition": "answer",
+      "display_name": "Kea"
+    },
+    {
+      "request": "chat",
+      "science": "Nestor notabilis",
+      "species_scope": "korea",
+      "passed": true,
+      "disposition": "abstain",
+      "display_name": null
+    },
+    {
+      "request": "chat",
+      "science": "Struthio camelus",
+      "species_scope": "unknown",
+      "passed": true,
+      "disposition": "answer",
+      "display_name": "타조"
+    },
+    {
+      "request": "chat",
+      "science": "Struthio camelus",
+      "species_scope": "outside",
+      "passed": true,
+      "disposition": "abstain",
+      "display_name": null
+    },
+    {
+      "request": "chat",
+      "science": "Saxicola maurus",
+      "species_scope": "korea",
+      "passed": true,
+      "disposition": "answer",
+      "display_name": "Siberian Stonechat"
+    },
+    {
+      "request": "related",
+      "item_count": 16,
+      "passed": true
+    },
+    {
+      "request": "similar",
+      "item_count": 3,
+      "passed": true
+    },
+    {
+      "request": "ecological-related",
+      "item_count": 6,
+      "passed": true
+    },
+    {
+      "request": "profile",
+      "passed": true
+    },
+    {
+      "request": "jev_typo",
+      "passed": true
+    }
+  ]
+}

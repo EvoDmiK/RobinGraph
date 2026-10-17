@@ -1,0 +1,28 @@
+{
+  "prefix": "robingraph-rg406-7c1eb99c3762",
+  "archive": "/tmp/robingraph-rg406-7c1eb99c3762.tar.gz",
+  "snapshot_sha256": "7c1eb99c3762dc37ce1f9eba45dfd25306ce44cf9b4b7976a3815af9aa414387",
+  "archive_sha256": "27375aad52b9ae55cb66878d688cfc8192ee82043eabd552fb99c2031e0b1bf1",
+  "runtime_files": 141,
+  "image": "robingraph-api:test-rg406-7c1eb99c3762",
+  "previous_image": "robingraph-api:test-jev-typo-0629aa1e9f4a",
+  "changed_files": [
+    "scripts/build_species_distribution.py",
+    "src/robingraph/api/app.py",
+    "src/robingraph/api/static/birds.html",
+    "src/robingraph/api/static/birds.js",
+    "src/robingraph/api/static/chat.js",
+    "src/robingraph/api/static/index.html",
+    "src/robingraph/api/static/styles.css",
+    "src/robingraph/cli.py",
+    "src/robingraph/retrieval/ecological_relations.py",
+    "src/robingraph/retrieval/related_species.py",
+    "src/robingraph/retrieval/similar_species.py",
+    "src/robingraph/retrieval/species_distribution.json",
+    "src/robingraph/retrieval/species_profile.py",
+    "src/robingraph/retrieval/species_questions.py",
+    "src/robingraph/retrieval/species_scope.py",
+    "src/robingraph/retrieval/taxon_name_resolution.py"
+  ],
+  "deployed": false
+}

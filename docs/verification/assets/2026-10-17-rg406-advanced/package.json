@@ -1,0 +1,13 @@
+{
+  "prefix": "robingraph-rg406-8ffeb7734750",
+  "archive": "/tmp/robingraph-rg406-8ffeb7734750.tar.gz",
+  "snapshot_sha256": "8ffeb7734750752ac20356128be9f0c36dd68954b2528a78c081d6cb85447807",
+  "archive_sha256": "67fa39cc841ac49f5e1d55919fe313c93788b12ac9a3fc8e079fdabc659c8f0a",
+  "runtime_files": 141,
+  "image": "robingraph-api:test-rg406-8ffeb7734750",
+  "previous_image": "robingraph-api:test-rg406-7c1eb99c3762",
+  "changed_files": [
+    "src/robingraph/api/static/index.html"
+  ],
+  "deployed": false
+}

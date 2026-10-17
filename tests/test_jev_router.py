@@ -106,6 +106,30 @@ class JevRouterTest(unittest.TestCase):
 
 
 class JevChatTest(unittest.TestCase):
+    def test_request_word_typos_preserve_source_name_and_provider_input(self):
+        for question in ('청둥오리에 대해 일고 깊어', '청둥오리에 대해 알고 시퍼',
+                         '청둥오리에 대해 일고 싶어', '청둥오리에 대해 알고 깊어'):
+            with self.subTest(question=question):
+                router = JevRouter(JevSettings('secret-test-key'))
+                router._opener.open = Mock(return_value=io.BytesIO(json.dumps(response('profile')).encode()))
+                profile = Mock(return_value=PROFILE)
+                client = TestClient(create_app(jev_router=router, species_profile_handler=profile))
+                result = client.post('/v1/chat', json={'question': question}).json()
+                self.assertEqual('answer', result['disposition'])
+                self.assertEqual('profile', result['selected_intent'])
+                profile.assert_called_once_with('청둥오리')
+                payload = json.loads(router._opener.open.call_args.args[0].data)
+                self.assertEqual(question, payload['state'])
+
+    def test_request_word_typos_do_not_override_provider_uncertainty(self):
+        for failure in ('low_confidence', 'uncertain'):
+            profile, semantic = Mock(), Mock()
+            client = self.make(None, failure, species_profile_handler=profile, semantic_router=semantic)
+            result = client.post('/v1/chat', json={'question': '청둥오리에 대해 일고 깊어'}).json()
+            self.assertEqual('clarify', result['disposition'])
+            profile.assert_not_called()
+            semantic.classify.assert_not_called()
+
     def make(self, label="subspecies", failure=None, **handlers):
         self.router = Mock(); self.router.classify.return_value = JevDecision(label, failure=failure)
         return TestClient(create_app(jev_router=self.router, **handlers))

@@ -1,0 +1,16 @@
+{
+  "production_unchanged": true,
+  "production_id": "03ce208b9f30a3242fd16dd2772935d45099d77aaba0c81d49240bb8699de8fd",
+  "test_id": "5d2a9c78514d3c960206ae636cdf4257c8dbc48b4145c5a84e53eb238954f83d",
+  "image": "robingraph-api:test-rg202-098d5f2da352",
+  "image_id": "sha256:fa81fc81d7706b98f85243910f9cddda18232f3a2c3f91f749998269ae23446f",
+  "health": "healthy",
+  "revision": "434b6a4be8493f9b8bd85f477cbe8aca65ec7413-dirty-rg202-098d5f2da352",
+  "snapshot_sha256": "098d5f2da352fdad80c5569e9114826f3401f7a41de99419e65fd8ac44ed364c",
+  "deployed_overlay_hashes_match": {
+    "src/robingraph/retrieval/evaluation.py": true,
+    "scripts/audit_retrieval_readiness.py": true
+  },
+  "previous_test_image": "robingraph-api:test-related-arrow-0681747",
+  "release_directory": "/home/kimdove/RobinGraph-rg202-098d5f2da352"
+}

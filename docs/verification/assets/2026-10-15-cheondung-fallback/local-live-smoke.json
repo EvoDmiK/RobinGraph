@@ -1,0 +1,278 @@
+{
+  "passed": true,
+  "mode": "actual TEST graph/Jina/HTTP; no route mocks",
+  "records": [
+    {
+      "question": "천둥오리에 대해 알려줘",
+      "seconds": 27.314,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "천둥오리",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:544",
+            "scientific_name": "Anas platyrhynchos",
+            "display_name": "청둥오리",
+            "score": 0.2138,
+            "question": "Anas platyrhynchos에 대해 알려줘"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "Anas platyrhynchos에 대해 알려줘",
+      "seconds": 0.585,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "Anas platyrhynchos",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas platyrhynchos",
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "rank": "species",
+        "scientific_name": "Anas platyrhynchos",
+        "authority": "Linnaeus, C, 1758",
+        "korean_name": "청둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Mallard"
+      },
+      "topic": null
+    },
+    {
+      "question": "천둥 오리에 대해 알려줘",
+      "seconds": 1.077,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "천둥 오리",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:544",
+            "scientific_name": "Anas platyrhynchos",
+            "display_name": "청둥오리",
+            "score": 0.2138,
+            "question": "Anas platyrhynchos에 대해 알려줘"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "Anas platyrhynchos에 대해 알려줘",
+      "seconds": 0.357,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "Anas platyrhynchos",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas platyrhynchos",
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "rank": "species",
+        "scientific_name": "Anas platyrhynchos",
+        "authority": "Linnaeus, C, 1758",
+        "korean_name": "청둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Mallard"
+      },
+      "topic": null
+    },
+    {
+      "question": "천둥오리는 뭘 먹어?",
+      "seconds": 1.036,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "천둥오리",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:544",
+            "scientific_name": "Anas platyrhynchos",
+            "display_name": "청둥오리",
+            "score": 0.2138,
+            "question": "Anas platyrhynchos는 뭘 먹어?"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "Anas platyrhynchos는 뭘 먹어?",
+      "seconds": 0.413,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "Anas platyrhynchos",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas platyrhynchos",
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "rank": "species",
+        "scientific_name": "Anas platyrhynchos",
+        "authority": "Linnaeus, C, 1758",
+        "korean_name": "청둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Mallard"
+      },
+      "topic": "diet"
+    },
+    {
+      "question": "천둥에 대해 알려줘",
+      "seconds": 0.882,
+      "disposition": "abstain",
+      "resolution": {
+        "mention": "천둥",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "우주선에 대해 알려줘",
+      "seconds": 0.864,
+      "disposition": "abstain",
+      "resolution": {
+        "mention": "우주선",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "아무새에 대해 알려줘",
+      "seconds": 0.913,
+      "disposition": "abstain",
+      "resolution": {
+        "mention": "아무새",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "아무오리에 대해 알려줘",
+      "seconds": 0.931,
+      "disposition": "abstain",
+      "resolution": {
+        "mention": "아무오리",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      },
+      "taxon": null,
+      "topic": null
+    },
+    {
+      "question": "청둥오리에 대해 알려줘",
+      "seconds": 0.567,
+      "disposition": "answer",
+      "resolution": {
+        "mention": "청둥오리",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas platyrhynchos",
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      },
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "rank": "species",
+        "scientific_name": "Anas platyrhynchos",
+        "authority": "Linnaeus, C, 1758",
+        "korean_name": "청둥오리",
+        "korean_name_status": "source-reference",
+        "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+        "english_name": "Mallard"
+      },
+      "topic": null
+    },
+    {
+      "question": "청둥오려에 대해 알려줘",
+      "seconds": 0.985,
+      "disposition": "clarify",
+      "resolution": {
+        "mention": "청둥오려",
+        "status": "candidates",
+        "method": "vector",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "taxonomy_release": "v2025b",
+        "candidates": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:544",
+            "scientific_name": "Anas platyrhynchos",
+            "display_name": "청둥오리",
+            "score": 0.3321,
+            "question": "Anas platyrhynchos에 대해 알려줘"
+          }
+        ]
+      },
+      "taxon": null,
+      "topic": null
+    }
+  ]
+}

@@ -19,13 +19,38 @@
     return node;
   }
   const ranks = {order:"목", family:"과", genus:"속", species:"종", subspecies:"아종"};
+  const scopes = ["all", "korea", "outside", "unknown"];
+  const distLabels = {korea:"국내 기록·분포 확인", outside:"국외 분포 검토", unknown:"미확인"};
+  const distNotes = {
+    korea:"국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다.",
+    outside:"국외 분포 검토: 검토한 출처의 정상 분포가 한국 밖입니다. 우연한 도래나 사육 기록이 없다는 뜻은 아닙니다.",
+    unknown:"미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+  };
+  function currentScope() {
+    const node = $("bird-scope");
+    return node && scopes.includes(node.value) ? node.value : "all";
+  }
   function speciesLabel(taxon) {
-    return (taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.scientific_name;
+    const display = typeof taxon.display_name === "string" && taxon.display_name.trim() && (taxon.korean_name_status !== "machine-translated" || taxon.display_name.trim() !== taxon.korean_name) ? taxon.display_name.trim() : "";
+    return display || (taxon.korean_name_status !== "machine-translated" && taxon.korean_name) || taxon.english_name || taxon.scientific_name;
   }
   function render(profile) {
     const card = $("bird-card"); card.replaceChildren(); card.hidden = false;
     element("h2", speciesLabel(profile.taxon), card);
     element("p", profile.taxon.scientific_name, card);
+    const dist = profile.taxon && profile.taxon.distribution;
+    if (dist && distLabels[dist.status]) {
+      const distSection = element("section", undefined, card); distSection.className = "species-distribution-info";
+      element("strong", `분포 범위: ${distLabels[dist.status]}`, distSection);
+      element("p", distNotes[dist.status], distSection);
+      (Array.isArray(dist.evidence) ? dist.evidence : []).forEach((ev) => {
+        if (!ev || typeof ev !== "object") return;
+        const row = element("small", undefined, distSection);
+        link(ev.source_title || ev.source_id || "분포 출처", ev.source_url, row);
+        const meta = [ev.category ? `범주 ${ev.category}` : "", ev.source_text || ""].filter(Boolean).join(" · ");
+        if (meta) element("span", ` · ${meta}`, row);
+      });
+    }
     const layout = element("div", undefined, card); layout.className = "species-layout";
     const media = element("section", undefined, layout); media.setAttribute("aria-label", "대표 사진");
     let renderedPhotos = 0;
@@ -88,11 +113,13 @@
   async function load(event) {
     if (event) event.preventDefault();
     const name = $("bird-name").value.trim(); if (!name) return;
+    const species_scope = currentScope();
     const current = ++requestId; $("bird-submit").disabled = true;
     $("bird-card").hidden = true; $("bird-status").textContent = "분류·형질·사진을 확인하고 있습니다…";
     try {
-      const response = await fetch("/v1/taxa/profile?" + new URLSearchParams({name}), {signal:AbortSignal.timeout(60000)});
-      if (!response.ok) throw new Error(response.status === 404 ? "활성 분류에서 해당 종을 찾지 못했습니다. 국명 또는 학명을 확인해 주세요." : "현재 새 정보를 조회할 수 없습니다. 잠시 후 다시 시도해 주세요.");
+      const params = species_scope === "all" ? {name} : {name, species_scope};
+      const response = await fetch("/v1/taxa/profile?" + new URLSearchParams(params), {signal:AbortSignal.timeout(60000)});
+      if (!response.ok) throw new Error(response.status === 404 ? (species_scope !== "all" ? "선택한 분포 범위에서 해당 종을 확인하지 못했습니다." : "활성 분류에서 해당 종을 찾지 못했습니다. 국명 또는 학명을 확인해 주세요.") : "현재 새 정보를 조회할 수 없습니다. 잠시 후 다시 시도해 주세요.");
       const profile = await response.json(); if (current !== requestId) return;
       render(profile); $("bird-status").textContent = "출처가 확인된 정보를 표시했습니다.";
     } catch (error) {
@@ -100,7 +127,20 @@
     } finally { if (current === requestId) $("bird-submit").disabled = false; }
   }
   $("bird-form").addEventListener("submit", load);
-  const initial = new URLSearchParams(location.search).get("name");
+  const scopeSelect = $("bird-scope");
+  if (scopeSelect) {
+    scopeSelect.addEventListener("change", () => {
+      ++requestId;
+      $("bird-submit").disabled = false;
+      $("bird-card").replaceChildren();
+      $("bird-card").hidden = true;
+      $("bird-status").textContent = "분포 범위 기준을 변경했습니다. 정보 보기를 눌러 조회하세요.";
+    });
+  }
+  const searchParams = new URLSearchParams(location.search);
+  const initial = searchParams.get("name");
   if (initial) $("bird-name").value = initial.slice(0, 200);
+  const initialScope = searchParams.get("species_scope");
+  if (scopeSelect && scopes.includes(initialScope)) scopeSelect.value = initialScope;
   load();
 })();

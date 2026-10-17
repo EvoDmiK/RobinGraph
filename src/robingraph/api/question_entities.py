@@ -2,11 +2,14 @@
 import re
 import unicodedata
 
+from ..retrieval.species_questions import bounded_korean_name
+
 
 _TOPICS = {
     "subspecies": r"아종|subspecies",
     "profile": r"정보|소개|특징|설명|궁금|알려|어떤\s*새|에\s*대해|에\s*관해|about|profile|information|tell\s+me",
-    "taxonomy": r"분류|계통|학명|속은|과는|목은|무슨\s*(?:목|과|속|종)|어느\s*(?:목|과|속|종)|taxonomy|lineage|scientific\s+name",
+    # 속은/과는/목은 must stand alone (황새의 과는), never end a name (황새과는).
+    "taxonomy": r"분류|계통|학명|(?<![가-힣])(?:속은|과는|목은)|무슨\s*(?:목|과|속|종)|어느\s*(?:목|과|속|종)|taxonomy|lineage|scientific\s+name",
     "diet": r"먹이|식성|무엇을|뭘|뭐를|먹|diet|eat|feed",
     "habitat": r"서식|어디|habitat|live",
     "activity": r"활동|야행|주행|밤|activity|nocturnal|diurnal|active",
@@ -41,8 +44,16 @@ def extract_name(question: str, label: str) -> str | None:
         if prefix.casefold() in _reviewed_names():
             return prefix
         # Do not strip final 이: it is part of names such as 부엉이/오목눈이.
-        prefix = re.sub(r"(?:에\s*대한|에\s*대해서|에\s*대해|에\s*관한|에서는|에는|의|은|는|가|와|과|랑|하고)$", "", prefix).strip()
+        stripped = re.sub(r"(?:에\s*대한|에\s*대해서|에\s*대해|에\s*관한|에서는|에는|의|은|는|가)$", "", prefix).strip()
+        if stripped == prefix:
+            stripped = _strip_conjunction(prefix, label in _COMPARISON_LABELS or
+                                          bool(re.search(r"비슷|같은", question[topic.start():])))
+            if stripped is None:
+                return None
+        prefix = stripped
         if re.fullmatch(r"[가-힣]{2,40}", prefix):
+            return prefix
+        if bounded_korean_name(prefix):
             return prefix
         if prefix and (prefix.casefold() in _reviewed_names() or _bounded_english_name(prefix)):
             return prefix
@@ -61,6 +72,33 @@ def extract_name(question: str, label: str) -> str | None:
     if len(latin) == 1:
         return latin[0].group()
     return None
+
+
+_COMPARISON_LABELS = frozenset(("related", "ecological_habitat", "ecological_diet"))
+
+
+def _has_final_consonant(syllable: str) -> bool:
+    return "가" <= syllable <= "힣" and (ord(syllable) - 0xAC00) % 28 != 0
+
+
+def _strip_conjunction(prefix: str, comparison: bool) -> str | None:
+    """Remove a final 와/과/랑/이랑/하고 only where it is grammatically a particle.
+
+    와/랑 follow a vowel and 과/이랑 a final consonant, so 황새과 (vowel + 과)
+    is a family name, not 황새 + particle. 꿩과 (consonant + 과) is either the
+    family or 꿩 + particle; outside comparison questions it is ambiguous.
+    """
+    match = re.search(r"(?P<stem>[가-힣])(?P<particle>이랑|하고|와|과|랑)$", prefix)
+    if not match:
+        return prefix
+    particle, final = match.group("particle"), _has_final_consonant(match.group("stem"))
+    if particle in ("와", "랑") and final or particle == "이랑" and not final:
+        return prefix
+    if particle == "과" and not final:
+        return prefix  # rank ending such as 황새과/오리과
+    if particle == "과" and not comparison:
+        return None
+    return prefix[:match.start("particle")].strip()
 
 
 def _bounded_english_name(value: str) -> bool:

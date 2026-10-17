@@ -1,0 +1,32 @@
+{
+  "deployed": true,
+  "test": {
+    "id": "e573fb75a12bf6100fe0aeb773baa3dde8aec6687cc7026671431c71142ff930",
+    "image": "robingraph-api:test-name-resolution-2ef0b2b08937",
+    "image_id": "sha256:ffa06ce3472ccbdd91ae5ec350d62ba674a549e94a09ebf2d8ef6d0a0192c9d7",
+    "started_at": "2026-10-15T09:36:22.314145594Z",
+    "health": "healthy"
+  },
+  "production": {
+    "id": "03ce208b9f30a3242fd16dd2772935d45099d77aaba0c81d49240bb8699de8fd",
+    "image": "robingraph-api:prod-approved-ui-0681747",
+    "image_id": "sha256:db6b08852216ac26f4c99fd6a21b01dc85c43efe3ea9ca6faec9f7c880d892e4",
+    "started_at": "2026-10-10T06:07:33.413088244Z",
+    "health": "healthy"
+  },
+  "production_unchanged": true,
+  "revision": "434b6a4be8493f9b8bd85f477cbe8aca65ec7413-dirty-name-resolution-2ef0b2b08937",
+  "deployed_overlay_hashes": {
+    "src/robingraph/api/app.py": "e98aa5d9f589519e05e95fa367339ab159e34680d83aa6f0eb5bccdd16693fb2",
+    "src/robingraph/api/question_entities.py": "82aa499143929faafeaf17e3017f8169707803cfb1834bcda448ad5623294918",
+    "src/robingraph/cli.py": "fe4af748c3138d14bd4d1d28e903be550eb297e18afee30768279d647f02c189",
+    "src/robingraph/retrieval/species_questions.py": "309a5b42a3b8a370164449e568e4a7e43fffd85aabea035c554cf160ee171ad0",
+    "src/robingraph/retrieval/taxonomy_lineage_neo4j.py": "829ab2cb05cf60b9999e645ce53eb3b21a7dd7019d89831aeba83f734297bc50",
+    "src/robingraph/retrieval/taxon_name_resolution.py": "37c9c7e3fd843fda82b0d784855e2581cbb9041a42eaeef85fe2516772ea2cc5",
+    "src/robingraph/retrieval/evaluation.py": "ec9ee6d851b5249db2b56e1d600dfb1fdddaab173762c292d244ec8e5f337f0f",
+    "scripts/audit_retrieval_readiness.py": "bc6fcd4ff23ca0f6bcc8f56469eb129ceb95bdca0376713dd0525aa536615514",
+    "src/robingraph/api/static/chat.js": "048ab29cf71221571463f08f488f6ceff652385991fd4716b3f8f6013732b602",
+    "src/robingraph/api/static/styles.css": "1938194cf842e3bb489feedce3c5a93396badd2df276d0c22d221cb31dd38e52"
+  },
+  "snapshot_sha256": "2ef0b2b08937bb223574af1d4c09bf413a6ee99b9495cbdf70ac0224823ba0b5"
+}

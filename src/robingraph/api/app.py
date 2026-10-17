@@ -8,6 +8,8 @@ have to guess.
 
 from __future__ import annotations
 
+from dataclasses import asdict
+
 from datetime import date
 import functools
 from hashlib import sha256
@@ -42,6 +44,7 @@ from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageReposit
 from ..slice import Answer, QuestionService, validate_answer
 from .ingest_router import IngestStore, create_ingest_router
 from .semantic_router import ChatIntent, SemanticRouter
+from ..retrieval.species_scope import SpeciesScope, scope_matches, with_species_scope
 from .jev_router import JevRouter
 from .question_entities import extract_name
 
@@ -206,6 +209,7 @@ class LineageTaxonResponse(BaseModel):
     korean_name_status: str | None = None
     korean_name_source_url: str | None = None
     english_name: str | None = None
+    display_name: str | None = None
 
 
 class TaxonomyLineageResponse(BaseModel):
@@ -290,6 +294,7 @@ class ChatRequest(_ChatModel):
     filters: ChatFilters | None = None
     defer_enrichment: bool = False
     defer_discovery: bool = False
+    species_scope: SpeciesScope = "all"
 
     @field_validator("question")
     @classmethod
@@ -335,6 +340,25 @@ class ChatClarifyResult(_ChatModel):
     prompt: str
 
 
+class EntityCandidateResponse(_ChatModel):
+    taxon_id: str = Field(min_length=1, max_length=256)
+    scientific_name: str = Field(min_length=1, max_length=200)
+    display_name: str = Field(min_length=1, max_length=200)
+    score: float = Field(ge=-1, le=1, allow_inf_nan=False)
+    question: str | None = None
+
+
+class EntityResolutionResponse(_ChatModel):
+    mention: str
+    status: Literal["matched", "candidates", "not_found", "unavailable"]
+    method: Literal["graph_exact", "graph_normalized", "vector", "none"]
+    canonical_name: str | None = None
+    taxon_id: str | None = None
+    concept_set_id: str | None = None
+    taxonomy_release: str | None = None
+    candidates: list[EntityCandidateResponse] = Field(default_factory=list, max_length=3)
+
+
 class ChatNameRelationsResult(_ChatModel):
     kind: Literal["name_relations"] = "name_relations"
     relationships: dict
@@ -353,6 +377,7 @@ class ChatResponse(_ChatModel):
     answer_text: str
     warnings: list[str]
     result: ChatResult
+    entity_resolution: EntityResolutionResponse | None = None
 
 
 _DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
@@ -517,7 +542,7 @@ def _operational_observation_response(
     )
 
 
-def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
+def _lineage_response(lineage: TaxonomyLineage, species_scope: SpeciesScope = "all") -> TaxonomyLineageResponse:
     return TaxonomyLineageResponse(
         query_name=lineage.query_name if lineage.query_name is not None else lineage.query_scientific_name,
         query_scientific_name=lineage.query_scientific_name,
@@ -529,7 +554,8 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
         matched_by=lineage.matched_by,
         taxonomy_release=lineage.taxonomy_release,
         concept_set_id=lineage.concept_set_id,
-        lineage=[LineageTaxonResponse(**item.__dict__) for item in lineage.items],
+        lineage=[LineageTaxonResponse(**item.__dict__, display_name=(None if species_scope == "all" else
+                 with_species_scope(item.__dict__, species_scope, lineage.concept_set_id, lineage.taxonomy_release)["display_name"])) for item in lineage.items],
     )
 
 
@@ -547,6 +573,29 @@ _AUTO_RANK_QUESTION = re.compile(
 )
 
 
+def _scoped_profile(handler, name: str, species_scope: SpeciesScope):
+    profile = handler(name)
+    if species_scope == "all":
+        return profile
+    context = profile.get("lineage") or {}
+    taxon = profile.get("taxon") or {}
+    concept, release = context.get("concept_set_id"), context.get("taxonomy_release")
+    if not scope_matches(taxon, species_scope, concept, release):
+        raise SpeciesNotFoundError("Species is outside the selected scope")
+    scoped_taxon = with_species_scope(taxon, species_scope, concept, release)
+    return {**profile, "taxon": scoped_taxon, "summary": species_summary(scoped_taxon, profile.get("traits") or [])}
+
+
+def _scoped_relations(handler, name: str, species_scope: SpeciesScope):
+    if species_scope == "all":
+        return handler(name)
+    result = handler(name, species_scope=species_scope)
+    if not scope_matches(result.get("taxon") or {}, species_scope,
+                         result.get("concept_set_id"), result.get("taxonomy_release")):
+        raise SpeciesNotFoundError("Species is outside the selected scope")
+    return result
+
+
 def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"], str] | None:
     for pattern, intent in ((_TAXONOMY_QUESTION, "taxonomy"), (_AUTO_RANK_QUESTION, "taxonomy"), (_PROFILE_QUESTION, "profile")):
         match = pattern.fullmatch(question)
@@ -560,10 +609,14 @@ def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"
     )
     if match and match.group("name").strip().lower() in reviewed_search_terms():
         return "profile", match.group("name").strip()
+    if match:
+        mention = extract_name(question, "profile")
+        if mention and mention == match.group("name").strip():
+            return "profile", mention
     return None
 
 
-def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool]:
+def _taxonomy_answer(question: str, lineage: TaxonomyLineage, species_scope: SpeciesScope = "all") -> tuple[str, bool]:
     requested = _RANK_QUESTION.search(question)
     if requested is None:
         return "분류 계통을 확인했습니다.", True
@@ -571,8 +624,10 @@ def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool
     target = next((item for item in lineage.items if _KOREAN_RANKS.get(item.rank) == rank_label), None)
     if target is None:
         return f"조회된 계보에 {rank_label} 정보가 없어 답변을 확인하지 못했습니다.", False
-    subject = lineage.items[-1].korean_name or lineage.items[-1].english_name or lineage.resolved_query_scientific_name or lineage.query_scientific_name
-    common_name = target.korean_name or target.english_name
+    subject_taxon = with_species_scope(asdict(lineage.items[-1]), species_scope, lineage.concept_set_id, lineage.taxonomy_release)
+    target_taxon = with_species_scope(asdict(target), species_scope, lineage.concept_set_id, lineage.taxonomy_release)
+    subject = subject_taxon['display_name'] or lineage.resolved_query_scientific_name or lineage.query_scientific_name
+    common_name = target_taxon['display_name'] if target_taxon['display_name'] != target.scientific_name else None
     name = f"{common_name}({target.scientific_name})" if common_name else target.scientific_name
     return f"{subject}의 {rank_label} 분류는 {name}입니다.", True
 
@@ -831,6 +886,7 @@ def create_app(
     ecological_relations_handler: Callable[[str], dict] | None = None,
     subspecies_handler: Callable[[str], dict] | None = None,
     name_relations_handler: Callable[[str], dict | None] | None = None,
+    taxon_name_resolution_handler: Callable[[str], dict] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
 ) -> FastAPI:
@@ -889,13 +945,13 @@ def create_app(
 
     @app.get("/v1/taxa/related")
     @_traced_route("GET /v1/taxa/related")
-    def species_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
+    def species_relations(name: Annotated[str, Query(min_length=1, max_length=200)], species_scope: SpeciesScope = "all"):
         if not name.strip():
             raise HTTPException(status_code=422, detail="A species name is required")
         if related_species_handler is None:
             raise HTTPException(status_code=503, detail="Species relations are unavailable")
         try:
-            return related_species_handler(name.strip())
+            return _scoped_relations(related_species_handler, name.strip(), species_scope)
         except SpeciesNotFoundError as error:
             raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
         except Exception as error:
@@ -903,13 +959,13 @@ def create_app(
 
     @app.get("/v1/taxa/similar")
     @_traced_route("GET /v1/taxa/similar")
-    def similar_species_results(name: Annotated[str, Query(min_length=1,max_length=200)]):
+    def similar_species_results(name: Annotated[str, Query(min_length=1,max_length=200)], species_scope: SpeciesScope = "all"):
         if not name.strip():
             raise HTTPException(status_code=422,detail="A species name is required")
         if similar_species_handler is None:
             raise HTTPException(status_code=503,detail="Species similarity is unavailable")
         try:
-            return similar_species_handler(name.strip())
+            return _scoped_relations(similar_species_handler, name.strip(), species_scope)
         except SpeciesNotFoundError:
             raise HTTPException(status_code=404,detail="Species not found in active taxonomy") from None
         except Exception:
@@ -917,13 +973,13 @@ def create_app(
 
     @app.get("/v1/taxa/ecological-related")
     @_traced_route("GET /v1/taxa/ecological-related")
-    def ecological_species_relations(name: Annotated[str, Query(min_length=1,max_length=200)]):
+    def ecological_species_relations(name: Annotated[str, Query(min_length=1,max_length=200)], species_scope: SpeciesScope = "all"):
         if not name.strip():
             raise HTTPException(status_code=422,detail="A species name is required")
         if ecological_relations_handler is None:
             raise HTTPException(status_code=503,detail="Ecological relations are unavailable")
         try:
-            return ecological_relations_handler(name.strip())
+            return _scoped_relations(ecological_relations_handler, name.strip(), species_scope)
         except SpeciesNotFoundError:
             raise HTTPException(status_code=404,detail="Species not found in active taxonomy") from None
         except Exception:
@@ -945,13 +1001,13 @@ def create_app(
 
     @app.get("/v1/taxa/profile")
     @_traced_route("GET /v1/taxa/profile")
-    def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)]):
+    def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)], species_scope: SpeciesScope = "all"):
         if not name.strip():
             raise HTTPException(status_code=422, detail="A species name is required")
         if species_profile_handler is None:
             raise HTTPException(status_code=503, detail="Species profiles are unavailable")
         try:
-            return species_profile_handler(name.strip())
+            return _scoped_profile(species_profile_handler, name.strip(), species_scope)
         except SpeciesNotFoundError as error:
             raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
         except Exception as error:
@@ -1124,6 +1180,13 @@ def create_app(
                     )
                 relationships = None
             if relationships and relationships.get("is_search_term") and relationships.get("relations"):
+                if request.species_scope != "all":
+                    return ChatResponse(
+                        selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                        disposition="clarify", answer_text="범위를 적용하려면 통칭 대신 정확한 종 이름이나 학명을 입력해 주세요.",
+                        warnings=["통칭의 관련 종을 선택한 범위로 임의 확정하지 않았습니다."],
+                        result=ChatClarifyResult(prompt="정확한 종 이름이나 학명을 입력해 주세요."),
+                    )
                 relations=relationships["relations"]
                 targets={r.get("taxon",{}).get("taxon_id") for r in relations}
                 single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
@@ -1199,15 +1262,87 @@ def create_app(
             # before external photos/notes and optional recommendations.
             deferred = (request.defer_enrichment and species_basic_profile_handler is not None
                         and (species_question is None or species_question.topic != "appearance"))
+            resolution = None
+            if taxon_name_resolution_handler is not None:
+                if not (focused_name or (filters and filters.name) or recognized):
+                    mention = extract_name(request.question, "profile")
+                    if (mention is None and request.intent == "profile"
+                            and re.fullmatch(r"[가-힣]{2,40}", request.question.strip())
+                            and not re.search(r"알려|설명|싶어|궁금|정보", request.question)):
+                        mention = request.question.strip()
+                    if mention is None:
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="clarify",
+                            answer_text="조회할 새 이름을 하나 입력해 주세요.",
+                            warnings=["조회할 새 이름을 확인하지 못했습니다."],
+                            result=ChatClarifyResult(prompt="예: 흰뺨 검둥 오리에 대해 알고 싶어"),
+                        )
+                    name = mention
+                try:
+                    resolved = (taxon_name_resolution_handler(name) if request.species_scope == "all"
+                                else taxon_name_resolution_handler(name, species_scope=request.species_scope))
+                    resolution = EntityResolutionResponse.model_validate(resolved)
+                    if resolution.mention != name:
+                        raise ValueError("Resolver changed the source mention")
+                    if resolution.status == "matched":
+                        if (not resolution.canonical_name or not resolution.taxon_id
+                                or not resolution.concept_set_id or not resolution.taxonomy_release
+                                or resolution.method not in ("graph_exact", "graph_normalized")):
+                            raise ValueError("Incomplete graph identity")
+                        name = resolution.canonical_name
+                    elif resolution.status == "candidates":
+                        if resolution.method != "vector" or not resolution.candidates:
+                            raise ValueError("Invalid vector suggestions")
+                        for candidate in resolution.candidates:
+                            mention_pattern = r"\s+".join(re.escape(part) for part in resolution.mention.split())
+                            rewritten, count = re.subn(mention_pattern, lambda _: candidate.scientific_name,
+                                                       request.question, count=1)
+                            candidate.question = rewritten if count else candidate.scientific_name + "에 대해 알려줘"
+                        _why("ambiguous_name", "name_resolution")
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="clarify",
+                            answer_text="입력한 이름을 찾지 못했습니다. 찾으시는 새를 후보에서 확인해 주세요.",
+                            warnings=["비슷한 이름의 후보이며, 같은 종이라고 확정하지 않았습니다."],
+                            result=ChatClarifyResult(prompt="찾으시는 새를 선택해 주세요."),
+                            entity_resolution=resolution,
+                        )
+                    else:
+                        prompt = ("이름 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요."
+                                  if resolution.status == "unavailable" else
+                                  "선택한 범위에서 이 이름의 종 정보를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다."
+                                  if request.species_scope != "all" else "입력한 이름의 종 정보를 확인하지 못했습니다.")
+                        _why("taxon_not_found", "name_resolution")
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="abstain",
+                            answer_text=prompt, warnings=["종 이름을 임의로 추정하지 않았습니다."],
+                            result=ChatSpeciesResult(profile=None), entity_resolution=resolution,
+                        )
+                except Exception:
+                    _why("upstream_error", "name_resolution")
+                    return ChatResponse(
+                        selected_intent=selected, route_method=method, disposition="abstain",
+                        answer_text="새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+                        warnings=["확인되지 않은 종의 자료로 답하지 않았습니다."],
+                        result=ChatSpeciesResult(profile=None),
+                    )
             try:
                 profile_handler = species_basic_profile_handler if deferred else species_profile_handler
-                profile = profile_handler(name)
+                profile = _scoped_profile(profile_handler, name, request.species_scope)
+                if resolution is not None:
+                    target = profile.get("taxon") or {}
+                    lineage = profile.get("lineage") or {}
+                    if (target.get("taxon_id") != resolution.taxon_id
+                            or target.get("scientific_name") != resolution.canonical_name
+                            or lineage.get("concept_set_id") != resolution.concept_set_id
+                            or lineage.get("taxonomy_release") != resolution.taxonomy_release):
+                        raise ValueError("Resolved profile identity changed")
             except SpeciesNotFoundError:
                 _why("taxon_not_found", "name_resolution")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
-                    answer_text="입력한 이름의 종 정보를 확인하지 못했습니다.",
-                    warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
+                    answer_text=("선택한 범위에서 이 종의 기록·분포를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다."
+                                 if request.species_scope != "all" else "입력한 이름의 종 정보를 확인하지 못했습니다."),
+                    warnings=["선택한 범위의 분포 근거를 확인하지 못했습니다." if request.species_scope != "all" else "활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
                     result=ChatSpeciesResult(profile=None),
                 )
             except Exception:
@@ -1277,7 +1412,7 @@ def create_app(
                     try:
                         if handler is None:
                             raise ValueError("Relation lookup unavailable")
-                        relations = handler(name)
+                        relations = _scoped_relations(handler, name, request.species_scope)
                         lineage = profile.get("lineage") or {}
                         if (relations.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
                                 or relations.get("concept_set_id") != lineage.get("concept_set_id")
@@ -1298,6 +1433,7 @@ def create_app(
                     answer_text=answer["text"] + ("\n" + "\n".join(item["text"] for item in answer["items"]) if answer["items"] else ""),
                     warnings=profile.get("warnings", []),
                     result=ChatSpeciesResult(profile=profile, question_answer=answer),
+                    entity_resolution=resolution,
                 )
             summary = profile.get("summary")
             if not isinstance(summary, str) or not summary.strip():
@@ -1307,7 +1443,7 @@ def create_app(
             if not deferred and not request.defer_discovery and similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
                 try:
                     with tracing.span("similar_species.lookup", tracing.RETRIEVER):
-                        similar = similar_species_handler(name)
+                        similar = _scoped_relations(similar_species_handler, name, request.species_scope)
                     if (similar.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
                             or similar.get("concept_set_id") != lineage.get("concept_set_id")
                             or similar.get("taxonomy_release") != lineage.get("taxonomy_release")):
@@ -1317,6 +1453,7 @@ def create_app(
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer",
                 answer_text=summary,
+                entity_resolution=resolution,
                 warnings=profile.get("warnings", []),
                 result=ChatSpeciesResult(profile=profile, similar_species=similar),
             )
@@ -1370,12 +1507,17 @@ def create_app(
                     warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
                     result=ChatTaxonomyResult(lineage=None),
                 )
-            answer_text, supported = _taxonomy_answer(request.question, lineage)
+            if (request.species_scope != "all" and lineage.items
+                    and not scope_matches(asdict(lineage.items[-1]), request.species_scope, lineage.concept_set_id, lineage.taxonomy_release)):
+                return ChatResponse(selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="선택한 범위에서 이 분류군의 분포를 확인하지 못했습니다.", warnings=[],
+                    result=ChatTaxonomyResult(lineage=None))
+            answer_text, supported = _taxonomy_answer(request.question, lineage, request.species_scope)
             _why(None if supported else "unsupported_question", "generation")
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer" if supported else "abstain",
                 answer_text=answer_text, warnings=[],
-                result=ChatTaxonomyResult(lineage=_lineage_response(lineage)),
+                result=ChatTaxonomyResult(lineage=_lineage_response(lineage, request.species_scope)),
             )
 
         if selected == "observations":
@@ -1578,6 +1720,7 @@ def create_app(
     def get_taxonomy_lineage(
         scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
         name: str | None = Query(default=None, min_length=1, max_length=200),
+        species_scope: SpeciesScope = "all",
     ) -> TaxonomyLineageResponse:
         provided = [
             (query_param, value)
@@ -1616,7 +1759,10 @@ def create_app(
                 raise HTTPException(
                     status_code=404, detail="No licensed Korean vernacular name found for name"
                 )
-        return _lineage_response(lineage)
+        if (species_scope != "all" and lineage.items and not scope_matches(
+                asdict(lineage.items[-1]), species_scope, lineage.concept_set_id, lineage.taxonomy_release)):
+            raise HTTPException(status_code=404, detail="No species in the selected distribution scope")
+        return _lineage_response(lineage, species_scope)
 
     return app
 

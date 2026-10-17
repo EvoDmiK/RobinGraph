@@ -1,0 +1,177 @@
+{
+  "counts": [
+    {
+      "label": "Chunk",
+      "count": 4
+    },
+    {
+      "label": "Document",
+      "count": 2
+    },
+    {
+      "label": "EvidenceUnit",
+      "count": 136213
+    },
+    {
+      "label": "HybridSearchChunk",
+      "count": 4
+    },
+    {
+      "label": "HybridVectorChunk",
+      "count": 2
+    },
+    {
+      "label": "Taxon",
+      "count": 33694
+    }
+  ],
+  "corpus": [
+    {
+      "document_labels": [
+        "Document",
+        "RobinGraph",
+        "Fixture"
+      ],
+      "documents": 2,
+      "chunks": 4,
+      "text_characters": 171
+    }
+  ],
+  "indexes": [
+    {
+      "name": "robingraphFixtureChunkFulltext",
+      "type": "FULLTEXT",
+      "state": "ONLINE",
+      "labelsOrTypes": [
+        "HybridSearchChunk"
+      ],
+      "properties": [
+        "text"
+      ],
+      "options": {
+        "indexConfig": {
+          "fulltext.analyzer": "standard-no-stop-words",
+          "fulltext.eventually_consistent": false
+        },
+        "indexProvider": "fulltext-1.0"
+      }
+    },
+    {
+      "name": "robingraphFixtureChunkVector",
+      "type": "VECTOR",
+      "state": "ONLINE",
+      "labelsOrTypes": [
+        "HybridVectorChunk"
+      ],
+      "properties": [
+        "hybrid_vector"
+      ],
+      "options": {
+        "indexConfig": {
+          "vector.dimensions": 512,
+          "vector.hnsw.m": 16,
+          "vector.quantization.enabled": true,
+          "vector.similarity_function": "COSINE",
+          "vector.hnsw.ef_construction": 100
+        },
+        "indexProvider": "vector-2.0"
+      }
+    }
+  ],
+  "profiles": [
+    {
+      "model": "jinaai/jina-embeddings-v3",
+      "dimensions": 512,
+      "normalized": true,
+      "chunks": 2
+    }
+  ],
+  "chunk_relations": [
+    {
+      "relationship": "FROM_CHUNK",
+      "target_labels": [
+        "EvidenceUnit",
+        "RobinGraph",
+        "Fixture"
+      ],
+      "count": 4
+    },
+    {
+      "relationship": "FROM_RECORD",
+      "target_labels": [
+        "SourceRecord",
+        "RobinGraph",
+        "Fixture"
+      ],
+      "count": 4
+    },
+    {
+      "relationship": "HAS_CHUNK",
+      "target_labels": [
+        "Document",
+        "RobinGraph",
+        "Fixture"
+      ],
+      "count": 4
+    }
+  ],
+  "policy_rechecked_manifest": {
+    "records": [
+      {
+        "chunk_id": "fixture-chunk-waterbirds-1",
+        "document_id": "fixture-doc-waterbirds",
+        "content_hash": "98e07d7b4737fe035bcdf4e101a178d0821a0a3f0a94507547b35be2e90d954f",
+        "source_record_hash": "5e0676c739d0c95506eb5e848fdbac9b486d33dfd72fc21e3c3ce85ac8a89f12",
+        "source_id": "fixture-document",
+        "kind": "synthetic",
+        "embedding_allowed": true
+      },
+      {
+        "chunk_id": "fixture-chunk-waterbirds-2",
+        "document_id": "fixture-doc-waterbirds",
+        "content_hash": "637666b20b7964e148f303b70f92c3cb73e9e2623ee977ef237fc14e1c9c4470",
+        "source_record_hash": "4f9f384d09c526f5be6c1d281b7cd7e1deb456faa7a0b8d3cc6d99928074cf9a",
+        "source_id": "fixture-document",
+        "kind": "synthetic",
+        "embedding_allowed": true
+      },
+      {
+        "chunk_id": "fixture-chunk-woodland-1",
+        "document_id": "fixture-doc-woodland",
+        "content_hash": "14c271b6a149293343db860ba55aed255f98441f8c615fe9b0878c0732acd56d",
+        "source_record_hash": "1dc21441189fd7c4f372f671a24d7f1f0684fde14c1e2d12c18528d9501ec2b4",
+        "source_id": "fixture-document",
+        "kind": "synthetic",
+        "embedding_allowed": true
+      },
+      {
+        "chunk_id": "fixture-chunk-woodland-2",
+        "document_id": "fixture-doc-woodland",
+        "content_hash": "f080fb66e695cd0246f53d766dfdb0b678f4552da3358f23386f8c8fa46ff539",
+        "source_record_hash": "75a0285cbb0c98fe1625c42a6492fc98b575fe90321d1cde9c5eca2c536f641d",
+        "source_id": "fixture-document",
+        "kind": "synthetic",
+        "embedding_allowed": true
+      }
+    ],
+    "sha256": "a32d31c8972b6cb7d851bc1e196386fa0e411064367bcc105e108d2d400f6622",
+    "invalid_content_hashes": 0,
+    "synthetic_documents": 2,
+    "pmc_pilot_documents": 0,
+    "unclassified_documents": 0
+  },
+  "manifest_truncated": false,
+  "candidate_count_sampled": 4,
+  "policy_excluded_candidates": 0,
+  "experiment_status": "not_ready_for_quality_comparison",
+  "remaining_gates": [
+    "Freeze a reviewed multi-document literature corpus with release provenance.",
+    "Review passage-linked entity/fact extraction separately from taxonomy/trait claims.",
+    "Freeze 50 questions (20 multi-hop minimum), tuning/heldout split and gold evidence.",
+    "Measure baseline, then freeze improvement and resource thresholds before PPR implementation."
+  ],
+  "timestamp": "2026-10-15T07:11:27.212829+00:00",
+  "deployment_target": "test",
+  "mode": "live_db_read_only",
+  "scope": "Current reader uses Fixture labels, including optional PmcPilot; manifest capped at 1000."
+}

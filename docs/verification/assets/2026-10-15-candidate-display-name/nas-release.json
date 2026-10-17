@@ -1,0 +1,34 @@
+{
+  "deployed": true,
+  "test": {
+    "id": "0d5cc225311750266cb1206a681694e92f59acfff1b4054b13ee694259c3d861",
+    "image": "robingraph-api:test-name-neo4j-71b1b0f58a62",
+    "image_id": "sha256:90b7ae5d64d4278fa64a96eb522a37e8c08268a969ce067b926bf56ecb6737eb",
+    "started_at": "2026-10-15T10:26:25.357390565Z",
+    "health": "healthy"
+  },
+  "production": {
+    "id": "03ce208b9f30a3242fd16dd2772935d45099d77aaba0c81d49240bb8699de8fd",
+    "image": "robingraph-api:prod-approved-ui-0681747",
+    "image_id": "sha256:db6b08852216ac26f4c99fd6a21b01dc85c43efe3ea9ca6faec9f7c880d892e4",
+    "started_at": "2026-10-10T06:07:33.413088244Z",
+    "health": "healthy"
+  },
+  "production_unchanged": true,
+  "revision": "434b6a4be8493f9b8bd85f477cbe8aca65ec7413-dirty-name-neo4j-71b1b0f58a62",
+  "deployed_overlay_hashes": {
+    "src/robingraph/api/app.py": "e98aa5d9f589519e05e95fa367339ab159e34680d83aa6f0eb5bccdd16693fb2",
+    "src/robingraph/api/question_entities.py": "82aa499143929faafeaf17e3017f8169707803cfb1834bcda448ad5623294918",
+    "src/robingraph/cli.py": "8821213c40bdadd656359ab7f796b3edd32b90cbdc6991e7113d7ddc0c317bae",
+    "src/robingraph/retrieval/species_questions.py": "309a5b42a3b8a370164449e568e4a7e43fffd85aabea035c554cf160ee171ad0",
+    "src/robingraph/retrieval/taxonomy_lineage_neo4j.py": "829ab2cb05cf60b9999e645ce53eb3b21a7dd7019d89831aeba83f734297bc50",
+    "src/robingraph/retrieval/taxon_name_resolution.py": "9f2cb1aca5ac42e1af92810580516434bf65e75957ff848e638bc027a8caa8ec",
+    "src/robingraph/retrieval/evaluation.py": "ec9ee6d851b5249db2b56e1d600dfb1fdddaab173762c292d244ec8e5f337f0f",
+    "scripts/audit_retrieval_readiness.py": "bc6fcd4ff23ca0f6bcc8f56469eb129ceb95bdca0376713dd0525aa536615514",
+    "src/robingraph/api/static/chat.js": "73d1a9f7bff13344b2ffcbd037b5354d5dfdb079e0484f6e975a558d4f4baaa8",
+    "src/robingraph/api/static/styles.css": "1938194cf842e3bb489feedce3c5a93396badd2df276d0c22d221cb31dd38e52",
+    "src/robingraph/retrieval/taxon_name_vectors_neo4j.py": "23b223d5f484388e275b28d8fa5217d6584298378aa461960e4e03a83d335416",
+    "scripts/index_taxon_name_vectors.py": "ad507ed34fb85ba57254c75902cbb0369e877e602533fa62de0cd30aaacf217e"
+  },
+  "snapshot_sha256": "71b1b0f58a62b586f97faf671fd7370a8338d4e2fa310048797081cbd22e8770"
+}

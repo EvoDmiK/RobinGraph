@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "public_domain": "https://robingraph-test.dove-nest.com",
+  "local_container": "5bbabf4ee079f0f4d3c1ecf5fbb9a9aad0fe4ed0197af20f06a8e67da8c0fc67",
+  "local_started_at": "2026-10-17T10:07:54.908021322Z",
+  "local_health": "healthy",
+  "nas_test_stopped": true,
+  "production_unchanged": true,
+  "db_settings_unchanged": true,
+  "neo4j_host": "192.168.219.98",
+  "pg_host": "192.168.219.99",
+  "pg_database": "robingraph_test",
+  "container_restart_public_health_passed": true
+}

@@ -457,6 +457,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name_status": None,
                         "korean_name_source_url": None,
                         "english_name": None,
+                        "display_name": None,
                     },
                     {
                         "taxon_id": "family:anatidae",
@@ -467,6 +468,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name_status": None,
                         "korean_name_source_url": None,
                         "english_name": None,
+                        "display_name": None,
                     },
                     {
                         "taxon_id": "genus:anas",
@@ -477,6 +479,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name_status": None,
                         "korean_name_source_url": None,
                         "english_name": None,
+                        "display_name": None,
                     },
                     {
                         "taxon_id": "species:anas-zonorhyncha",
@@ -487,6 +490,7 @@ class ApiTest(unittest.TestCase):
                         "korean_name_status": None,
                         "korean_name_source_url": None,
                         "english_name": None,
+                        "display_name": None,
                     },
                 ],
             },
@@ -634,7 +638,8 @@ class ApiTest(unittest.TestCase):
     def test_taxonomy_lineage_is_declared_but_unavailable_without_a_neo4j_handler(self) -> None:
         operation = self.client.get("/openapi.json").json()["paths"]["/v1/taxa/lineage"]["get"]
         parameters = {value["name"]: value for value in operation["parameters"]}
-        self.assertEqual({"scientific_name", "name"}, parameters.keys())
+        self.assertEqual({"scientific_name", "name", "species_scope"}, parameters.keys())
+        self.assertEqual("all", parameters["species_scope"]["schema"]["default"])
         for query_param_name in ("scientific_name", "name"):
             parameter = parameters[query_param_name]
             self.assertEqual("query", parameter["in"])

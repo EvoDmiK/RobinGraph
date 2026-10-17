@@ -1,5 +1,7 @@
 """Read-only ecological similarity, scoped to one approved trait dataset/release."""
 from dataclasses import asdict
+
+from .species_scope import scope_query_parameters, scope_matches, with_species_scope
 from urllib.parse import urlsplit
 
 from .species_profile import LABELS, VALUES, SpeciesNotFoundError, read_traits
@@ -17,7 +19,8 @@ WHERE origin.inferred=false
 WITH DISTINCT concept
 MATCH (claim:TraitClaim {policy_status:'allowed',dataset_id:$dataset_id,source_release:$release,trait_name:$trait_name,value_text:$value})-[:ASSERTS_ABOUT]->(peer:Taxon:BirdTaxon {rank:'species',source_release:$taxonomy_release,policy_status:'allowed'})-[:IN_CONCEPT_SET]->(concept)
 MATCH (claim)-[:SUPPORTED_BY]->(evidence:EvidenceUnit {policy_status:'allowed'})
-WHERE peer.id <> $target_id AND claim.inferred=false
+WHERE peer.id <> $target_id
+  AND ($species_scope='all' OR ($species_scope='unknown' AND coalesce($scope_known[peer.id],'')<>peer.scientific_name) OR $scope_selected[peer.id]=peer.scientific_name) AND claim.inferred=false
   AND (claim.taxonomy_release IS NULL OR claim.taxonomy_release=$taxonomy_release)
   AND evidence.dataset_id=claim.dataset_id AND evidence.source_record_id=claim.source_record_id
   AND (evidence.locator STARTS WITH 'https://' OR evidence.locator STARTS WITH 'http://')
@@ -33,8 +36,8 @@ WITH peer,evidence,english_name,
 RETURN {taxon_id:peer.id,rank:peer.rank,scientific_name:peer.scientific_name,
         korean_name:korean_name,english_name:english_name} AS taxon,
        evidence.locator AS source_url,evidence.citation AS citation
-ORDER BY CASE WHEN korean_name IS NULL THEN 1 ELSE 0 END,
-         coalesce(korean_name,english_name,peer.scientific_name),peer.id
+ORDER BY CASE WHEN $species_scope='outside' THEN CASE WHEN english_name IS NULL THEN 1 ELSE 0 END ELSE CASE WHEN korean_name IS NULL THEN 1 ELSE 0 END END,
+         CASE WHEN $species_scope='outside' THEN coalesce(english_name,korean_name,peer.scientific_name) ELSE coalesce(korean_name,english_name,peer.scientific_name) END,peer.id
 LIMIT 4
 """
 
@@ -49,7 +52,7 @@ def _web_url(value):
         return False
 
 
-def ecological_relations(repository, store, resolve, name):
+def ecological_relations(repository, store, resolve, name, species_scope="all"):
     lineage = resolve(name)
     if lineage is None or not lineage.items or lineage.items[-1].rank != 'species':
         raise SpeciesNotFoundError(name)
@@ -73,6 +76,7 @@ def ecological_relations(repository, store, resolve, name):
             taxonomy_release=lineage.taxonomy_release, target_id=target.taxon_id,
             dataset_id=trait['dataset_id'], release=trait['release'],
             trait_name=kind, value=value, korean_reference_names=korean_reference_names,
+            **scope_query_parameters(species_scope, lineage.concept_set_id, lineage.taxonomy_release),
         )
         items = []
         for row in rows:
@@ -81,13 +85,18 @@ def ecological_relations(repository, store, resolve, name):
                     or peer['taxon_id'] == target.taxon_id
                     or not _web_url(row.get('source_url'))):
                 raise ValueError('Invalid ecological relationship provenance')
+            peer = with_species_scope(peer, species_scope, lineage.concept_set_id, lineage.taxonomy_release)
+            if not scope_matches(peer, species_scope, lineage.concept_set_id, lineage.taxonomy_release):
+                continue
             items.append({**peer, 'evidence': {**source, 'source_url':row['source_url'], 'citation':row.get('citation')}})
-        items.sort(key=lambda peer: (not bool(peer.get('korean_name')),
-                   peer.get('korean_name') or peer.get('english_name') or peer['scientific_name'], peer['taxon_id']))
+        preferred = 'english_name' if species_scope == 'outside' else 'korean_name'
+        fallback = 'korean_name' if species_scope == 'outside' else 'english_name'
+        items.sort(key=lambda peer: (not bool(peer.get(preferred)),
+                   peer.get(preferred) or peer.get(fallback) or peer['scientific_name'], peer['taxon_id']))
         groups.append({'relation':kind, 'label':f'같은 {LABELS[kind]}의 새',
                        'value':value, 'display':VALUES[value], 'source':source,
                        'items':items[:3], 'has_more':len(items)>3})
-    return {'taxon':asdict(target), 'taxonomy_source':lineage.taxonomy_source,
+    return {'taxon':with_species_scope(asdict(target), species_scope, lineage.concept_set_id, lineage.taxonomy_release), 'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release,
             'concept_set_id':lineage.concept_set_id, 'groups':groups,
             'note':'같은 자료의 생태 분류값을 공유하는 종입니다. 가까운 계통이나 실제 공존·먹이 관계를 뜻하지 않습니다.'}

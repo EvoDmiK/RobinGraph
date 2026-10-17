@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "mode": "actual TEST API, no route mocks",
+  "records": [
+    {
+      "question": "흰뺨  검둥   오리에 대해 알고 싶어",
+      "disposition": "answer",
+      "mention": "흰뺨  검둥   오리",
+      "method": "graph_normalized",
+      "taxon": "Anas zonorhyncha",
+      "topic": null
+    },
+    {
+      "question": "흰뺨 검둥 오리는 뭘 먹어?",
+      "disposition": "answer",
+      "mention": "흰뺨 검둥 오리",
+      "method": "graph_normalized",
+      "taxon": "Anas zonorhyncha",
+      "topic": "diet"
+    },
+    {
+      "question": "황새과 정보 알려줘",
+      "disposition": "clarify",
+      "mention": null,
+      "method": null,
+      "taxon": null,
+      "topic": null
+    }
+  ]
+}

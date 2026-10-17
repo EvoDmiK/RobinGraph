@@ -1,0 +1,30 @@
+{
+  "python": {
+    "command": "PYTHONPATH=src /tmp/robingraph-qa-python/bin/python -m unittest discover -s tests",
+    "total": 884,
+    "passed": 846,
+    "failed": 0,
+    "skipped": 38,
+    "mode": "unit/contract; opt-in actual integrations skipped"
+  },
+  "frontend": {
+    "command": "node --test tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js",
+    "total": 306,
+    "passed": 306,
+    "failed": 0,
+    "skipped": 0,
+    "mode": "fake DOM/fixture, not real browser"
+  },
+  "nas_test": {
+    "deployment_completed": true,
+    "ssh_port": 99,
+    "last_result": "connected; deployed; actual HTTP and Chromium checks passed",
+    "production_touched": false,
+    "evidence": [
+      "nas-release.json",
+      "nas-api-contract.json",
+      "nas-live-smoke.json",
+      "nas-browser-live.json"
+    ]
+  }
+}
