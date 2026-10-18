@@ -826,10 +826,10 @@ b63343e11094: Pulling fs layer
 Digest: sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
 Status: Image is up to date for ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
 ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
- Container robingraph-api-test Recreate 
- Container robingraph-api-test Recreated 
- Container robingraph-api-test Starting 
- Container robingraph-api-test Started 
+ Container robingraph-api-test Recreate
+ Container robingraph-api-test Recreated
+ Container robingraph-api-test Starting
+ Container robingraph-api-test Started
 {
   "base_url": "http://127.0.0.1:8000",
   "lineage_name": "청둥오리",
