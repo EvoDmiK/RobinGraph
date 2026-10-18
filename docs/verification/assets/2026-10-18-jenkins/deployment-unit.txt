@@ -1,0 +1,11 @@
+test_deployment_preserves_database_settings_and_uses_private_digest_release (tests.test_registry_test_deployment.RegistryTestDeploymentTests) ... ok
+test_mutable_or_foreign_image_is_rejected_before_docker_or_release_changes (tests.test_registry_test_deployment.RegistryTestDeploymentTests) ... ok
+test_verification_failure_restores_previous_release_and_checks_rollback (tests.test_registry_test_deployment.RegistryTestDeploymentTests) ... ok
+test_failed_production_start_restores_environment_and_verifies_previous_image (tests.test_registry_prod_deployment.RegistryProductionDeploymentTests) ... ok
+test_mutable_image_is_rejected_before_ssh_or_docker (tests.test_registry_prod_deployment.RegistryProductionDeploymentTests) ... ok
+test_non_production_target_is_rejected_before_registry_login_or_mutation (tests.test_registry_prod_deployment.RegistryProductionDeploymentTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.008s
+
+OK

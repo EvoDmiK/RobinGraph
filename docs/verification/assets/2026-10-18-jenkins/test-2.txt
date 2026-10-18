@@ -1,0 +1,887 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on robingraph-mac16 in /Users/kimdove/jenkins-agent/robingraph/workspace/RobinGraph-TEST
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 1 hr 0 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+Checking out Revision b7c787e27811e17a41e7a33d9561bde71d109ad2 (refs/remotes/origin/dev-codex)
+ > git rev-parse --resolve-git-dir /Users/kimdove/jenkins-agent/robingraph/workspace/RobinGraph-TEST/.git # timeout=10
+ > git config remote.origin.url https://github.com/EvoDmiK/RobinGraph.git # timeout=10
+Fetching upstream changes from https://github.com/EvoDmiK/RobinGraph.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.50.1 (Apple Git-155)'
+ > git fetch --tags --force --progress -- https://github.com/EvoDmiK/RobinGraph.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/dev-codex^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f b7c787e27811e17a41e7a33d9561bde71d109ad2 # timeout=10
+Commit message: "feat: add graph-first name resolution and scoped bird discovery"
+ > git rev-list --no-walk b7c787e27811e17a41e7a33d9561bde71d109ad2 # timeout=10
+[Pipeline] sh
++ rm -f image-metadata.json test-release.json orbstack.dockercontext
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ git rev-parse HEAD
+[Pipeline] pwd
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh
+orbstack
+Successfully imported context "orbstack"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tests)
+[Pipeline] sh
+..................................English search-term conversion failed (RuntimeError)
+English search-term conversion failed (ValueError)
+English search-term conversion failed (ValueError)
+....................................................................................................................s..............................s...............................................................................................................................MLflow tracing disabled: initialization failed (RuntimeError)
+........................................................................................................s..........s.............Name relationship lookup failed (ValueError)
+..........s.......................................................sssssssss..ssssssssss......................................sssssssss....................s..............................................................Name relationship lookup failed (TypeError)
+.................................................................................................................s....s.........................................................................................................................ss.........................
+----------------------------------------------------------------------
+Ran 922 tests in 21.505s
+
+OK (skipped=38)
+workflow canonical-workflow-id is already active; no-op
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activated: workflow=canonical-workflow-id
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+dry-run: re-run with --apply to activate the schedule
+workflow canonical-workflow-id is already inactive; no-op
+deactivated: workflow=canonical-workflow-id
+dry-run: workflow canonical-workflow-id is active; re-run with --apply to deactivate
+local artifact: nodes=3 active=False
+schedule: cron='0 4 1 * *' timezone='Asia/Seoul' (next-run time not computed here)
+remote workflow canonical-workflow-id: active=False nodes=3
+remote definition matches reviewed local artifact: True
+most recent meaningful successful execution: execution=exec-1 run=n8n-korean-vernacular-exec-1 started_at=2026-09-11T12:00:00.000Z loaded_vernacular_names=846 loaded_candidates=102
+{"active_species": 11131, "korea": 592, "korea_kos_only": 490, "korea_avilist_only": 1, "korea_both": 101, "outside": 6, "unknown": 10533, "kos_ga2_unknown": 5, "avilist_korea_text_rejected_species": 44, "avilist_korea_text_rejected_rows": 46}
+✔ species UI groups identical measurements, keeps both sources and renders licensed attribution as text (2.305791ms)
+✔ unknown species UI reports a safe error and leaves card hidden (0.592167ms)
+✔ photo absence and broken image retry preserve species facts and attribution (1.091875ms)
+✔ RG-406: birds.js propagates species_scope, renders display_name and distribution provenance, and clears stale card on scope change without auto-submitting (0.562166ms)
+✔ answer photo preview follows deferred card photos and preserves its dialog button on missing or failed images (2.703792ms)
+✔ unverified translations fall back to English in cards, explanations and comparisons (1.045416ms)
+✔ card Korean title has a small English common name beside it while the scientific identity stays separate (0.578958ms)
+✔ empty English names, absent Korean names and unverified Korean translations never duplicate the primary title (1.922333ms)
+✔ long hostile English common names stay plain text in the wrapping title group (0.396708ms)
+✔ chat.js contains no HTML-injection sink in executable code (comments may discuss them) (0.878833ms)
+✔ chat.js wires the fail-closed disposition guard into the /v1/chat success path (0.440625ms)
+✔ chat submission and health checks fetch same-origin /health and /v1/chat (0.757ms)
+✔ chat.js has no browser persistence or analytics API (0.403875ms)
+✔ buildChatPayload sends only route-appropriate typed filters and bounds limits (0.156917ms)
+✔ sanitizeImageUrl (the render helper backing species photo <img src>) only accepts https Wikimedia media hosts (0.070291ms)
+✔ resultSummaryLines exposes typed lineage, public observations, and grounded evidence text with channels (0.110834ms)
+✔ sanitizeUrl (the render helper backing citation links) rejects every hostile URL scheme (0.034375ms)
+✔ sanitizeUrl accepts well-formed absolute http(s) URLs unchanged (0.01975ms)
+✔ formatDisposition gives honest Korean labels for answer/abstain/clarify and marks them recognized (0.044459ms)
+✔ formatDisposition fails closed on any unrecognized disposition: never echoes the raw value, never marks it recognized (0.051291ms)
+✔ formatBackendMode explains fixture, Neo4j, unavailable, and unsupported modes (0.032167ms)
+✔ sanitizeErrorMessage never leaks raw exception detail and stays specific per failure kind (0.087292ms)
+✔ sanitizeErrorMessage gives honest, distinct client/access/rate-limit messages for 400/401/403/429 instead of a generic server error (0.082667ms)
+✔ sanitizeErrorMessage exposes a distinct, safe "unsupported-response" message for fail-closed unknown dispositions (0.022834ms)
+✔ index.html declares every required interactive control and accessibility label (0.084292ms)
+✔ index.html nests a welcoming empty state inside #history so the conversation log is never a blank rectangle before the first message (0.059834ms)
+✔ index.html carries a small brand mark and a footer free of backend/API implementation jargon (0.04675ms)
+✔ index.html renders a single inline chat experience: no separate /birds tab or link, and route/filter controls are tucked behind a collapsed advanced disclosure (0.153917ms)
+✔ index.html exposes natural-language prompt chips that prefill real example questions (0.1125ms)
+✔ index.html discloses optional Gemini generation and evidence limits (0.018417ms)
+✔ index.html only references same-origin local assets, never a remote script/stylesheet (0.107542ms)
+✔ WCAG 2.1 AA: .send-button (light) foreground/background contrast is >=4.5:1 (0.183709ms)
+✔ WCAG 2.1 AA: .send-button (dark) foreground/background contrast is >=4.5:1 (0.059416ms)
+✔ WCAG 2.1 AA: .disposition-answer (light) foreground/background contrast is >=4.5:1 (0.024875ms)
+✔ WCAG 2.1 AA: .disposition-answer (dark) foreground/background contrast is >=4.5:1 (0.019125ms)
+✔ WCAG 2.1 AA: .disposition-abstain (light) foreground/background contrast is >=4.5:1 (0.022458ms)
+✔ WCAG 2.1 AA: .disposition-abstain (dark) foreground/background contrast is >=4.5:1 (0.016834ms)
+✔ WCAG 2.1 AA: .disposition-clarify (light) foreground/background contrast is >=4.5:1 (0.021417ms)
+✔ WCAG 2.1 AA: .disposition-clarify (dark) foreground/background contrast is >=4.5:1 (0.015875ms)
+✔ contrastRatio sanity check against known WCAG reference pairs (0.024458ms)
+✔ mode changes expose only the selected route controls (0.186959ms)
+✔ buildChatPayload + selectedFilterValues contract: selecting the profile route and typing a name sends {kind:'profile', name} (0.206167ms)
+✔ a data-send="true" prompt chip prefills the example question and submits it through the normal send path (0.145875ms)
+✔ a prompt chip without data-send="true" only prefills the question -- it never advertises a send it cannot guarantee (0.088792ms)
+✔ prompt chips do nothing while a request is already in flight (0.09575ms)
+✔ the welcoming empty state is visible at first load, removed once the first message arrives, and restored by 대화 지우기 (clear) (0.1035ms)
+✔ real keydown event path: Enter (not composing, not shifted) prevents default and submits via form.requestSubmit(), then the submit handler renders the user message (0.063875ms)
+✔ real keydown event path: Enter fired right after IME composition ends (isComposing: false) still submits (post-composition Enter is preserved) (0.058542ms)
+✔ real keydown event path: Enter while event.isComposing is true is ignored, leaving the in-progress IME composition alone (0.050666ms)
+✔ real keydown event path: Shift+Enter never submits, regardless of composition state, so a newline is preserved (0.093917ms)
+✔ real fetch calls use exact relative URLs and credentials omit (0.089292ms)
+✔ hostile malformed 2xx payload fails closed through the actual event path without rendering attacker content (8.222792ms)
+✔ question focus is restored only after the request settles, and never while IME composition is active (0.6095ms)
+✔ renders a species profile card with validated photos, sourced trait fact cards, a vegetation caveat, and a collapsible lineage (0.761792ms)
+✔ species profile card groups identical measurements from multiple sources into one fact with both citations, keeps diet/habitat and body mass visible, and collapses other measurements (1.668625ms)
+✔ species profile card renders the photo.credit attribution line alongside creator/license (0.428625ms)
+✔ species profile card gives honest fallback text instead of rendering nothing when photos/traits are empty (0.32525ms)
+✔ sanitizeErrorMessage never surfaces adversarial detail payloads (secrets/internal URLs/paths/control chars/very long text) for status 400 (0.0975ms)
+✔ sanitizeErrorMessage never surfaces adversarial detail payloads (secrets/internal URLs/paths/control chars/very long text) for status 422 (0.036334ms)
+✔ sanitizeErrorMessage: the http branch never reads context.detail for any recognized status (0.244667ms)
+✔ species popup opens from its trigger and closes only from close or outside the card (0.14775ms)
+✔ popup survives inside-to-outside releases from either face, photo, text, and dialog padding while its bounds rotate (0.182917ms)
+✔ popup dismisses an intentional backdrop press and release for mouse and touch (0.064917ms)
+✔ popup does not dismiss when a backdrop press ends inside the card or padded dialog (0.039792ms)
+✔ popup rejects cancelled, incomplete, mismatched, and non-primary backdrop gestures (0.130959ms)
+✔ popup consumes each backdrop click once and clears pending presses on close and reopen (0.044792ms)
+✔ card front contains compact facts and keeps source material outside both reversible faces (0.310459ms)
+✔ keyboard card flips at the edge, ignores repeated keys, and cancels stale transitions on reset (0.225834ms)
+✔ consecutive questions send and render without clearing; clearing then restarting remains valid (1.638041ms)
+✔ photo buttons move between validated images and sources start collapsed (0.308ms)
+✔ answer consolidates every card source category without nested source toggles and keeps warnings outside (1.17125ms)
+✔ late photo enrichment updates the answer source panel while preserving its open state and the card back (0.7045ms)
+✔ subspecies answer sources retain separate parent-reference provenance and visible card scope warnings (0.729917ms)
+✔ card has no flip button and only its own Enter/Space keys switch the accessible face (0.221959ms)
+✔ keyboard flip during a tracked drag releases capture and guards before switching faces (0.613792ms)
+✔ answer source dedupe retains different licenses, values and citation locators while dropping identical rows (2.370875ms)
+✔ targeted answer sources retain contexts and distinct licenses for the same URL (0.738625ms)
+✔ photo removal promotes a shared trait URL back to a unique link and recalculates the open answer source panel (0.558458ms)
+✔ deferred photos and additional explanation feed the same open source panel (2.557291ms)
+✔ donut composition preserves separate vertebrate percentages while icon policy still aggregates them (0.723042ms)
+✔ diet composition keeps datasets separate and never scales incomplete totals up to 100 percent (0.367625ms)
+✔ invalid diet values never become donut sectors and unknown keys remain explicitly labelled (0.363125ms)
+✔ diet and foraging use two paired columns with original Korean labels, percentages and source values (0.429333ms)
+✔ the card face no longer prints the dataset label under the donut, only caveats, while the label stays in attributes (0.578458ms)
+✔ 항목·비율 rows pair a swatch in the donut's color with the name and a right-aligned percent, muting zero rows (0.26175ms)
+✔ 항목·비율 CSS is a pill toggle with plain, divided rows and a hidden separator (0.341375ms)
+✔ a full single-component donut preserves the center hole and an incomplete donut explicitly labels its remainder (0.595125ms)
+✔ overfull, empty and non-object distributions use honest lists instead of normalized donut sectors (0.650792ms)
+✔ unknown component tooltip text is inert and parent-scope charts stay clearly labelled as references (0.237542ms)
+✔ static distribution sectors expose mouse hover only while touch, click, focus and keys do not activate them (0.339292ms)
+✔ distribution tooltip temporary guards clear on scroll, blur, resize, cancellation, outside press and popup reset (3.265ms)
+✔ Pica serica manual LC override colors only that species and preserves the original NE evidence (0.692041ms)
+✔ manual override fails closed for any incomplete or altered Pica contract (0.106917ms)
+✔ sample mean body mass retains its value and explains the study population in card and comparison sources (0.812291ms)
+✔ the pinned public IUCN checklist accepts eight categories without claiming live verification (0.409833ms)
+✔ checklist provenance rejects alternate sources, incomplete metadata, and mismatched assessment links (0.252458ms)
+✔ primary checklist sources show release, individual assessment year, attribution, and official assessment URL (0.670542ms)
+✔ habitatEmblemInfo maps every raw AVONET habitat value to a distinct emblem and falls back to unknown (0.104709ms)
+✔ the card's top-right emblem is an accessible SVG chosen by habitat, with a text fallback (0.249583ms)
+✔ conservationInfo trusts only exact category codes with a source; DD/NE/unknown stay neutral (0.143416ms)
+✔ snapshot NE preserves raw provenance without claiming IUCN Not Evaluated (0.487625ms)
+✔ unlinked taxonomy NE reads as unresolved on every shared surface, for any species, without a grade (0.610875ms)
+✔ effective category null with raw NE and a valid needs_review snapshot is the same unresolved state; other nulls stay unconfirmed (0.282542ms)
+✔ DD stays a distinct assessed outcome and real sourced NE is not relabelled; corrupted NE metadata is neutral (0.070333ms)
+✔ reference grade colours and standard badges omit inline notices while source toggle retains alignment details (2.995875ms)
+✔ actual Corvus macrorhynchos backend payload renders as reference beside an unresolved NE (0.06725ms)
+✔ validated reference colours follow every source grade without asserting taxon alignment (0.885167ms)
+✔ malformed or mismatched reference assessments are ignored and never colour the card (7.074042ms)
+✔ card, dialog, and chat button carry the verified tier; sources and the abundance caveat sit on the back (0.327291ms)
+✔ hostile or unverified conservation data renders neutral, inert text (1.308792ms)
+✔ chat shows the summary answer, a brief habitat/Red List line, then the card button (1.643083ms)
+✔ styles.css defines every habitat emblem, every risk tier, and a reduced-motion guard for foil (0.871625ms)
+✔ possibly extinct source flags stay visible without changing the CR palette (0.0425ms)
+✔ structured species answers preserve sections, source attribution, unknown facts and inert hostile text (0.105041ms)
+✔ related explorer loads lazily, toggles, compares attributed values and rejects a changed taxonomy (0.998959ms)
+✔ related explorer can retry outages and refuses stale relationship responses (0.171959ms)
+✔ related exploration stays in the explanation and is omitted from comparisons and cards (0.684875ms)
+✔ species headings use Korean names first, then sourced English common names, retaining scientific identity (0.12225ms)
+✔ scientific-name relationship lookup displays Korean heading and omits duplicate English name (0.246417ms)
+✔ name_relations chat result renders labelled, noted ambiguity choices in the explanation with explicit profile buttons (0.695042ms)
+✔ domestic-form relations carry an explicit domestic/wild warning; ordinary relations do not (0.095541ms)
+✔ selecting a domestic relation appends the domestic caveat to the wild-species explanation (0.354541ms)
+✔ relation sources are sanitized: only http(s) hrefs become links and hostile text stays inert (0.137625ms)
+✔ malformed name_relations payloads render a fixed fallback; empty relations say so honestly (0.206125ms)
+✔ candidate selection drops stale responses, ignores repeat clicks in flight, and rejects a mismatched taxon (0.509041ms)
+✔ species explanation offers a lazy 통칭·가축형 button outside the card that fetches by scientific name (0.569458ms)
+✔ name-relations explorer explains a missing endpoint, retries, and rejects unsupported or stale payloads (0.351375ms)
+✔ lookups that settle after 대화 지우기 never render into the cleared conversation (0.408292ms)
+✔ styles.css styles the name-relation explanation, warnings and caveat (0.256625ms)
+✔ RG-005: a peer comparison is appended as a separate assistant bubble and the original explanation is preserved (1.175083ms)
+✔ RG-005: consecutive peer selections each add their own bubble; a repeated click while loading fetches once (1.92175ms)
+✔ RG-005: a failed comparison shows a retry message without a bubble, and clicking again succeeds (0.938959ms)
+✔ RG-005: changed taxonomy or a different taxon never becomes a comparison bubble (2.799208ms)
+✔ RG-005: clearing the conversation before a comparison resolves drops the late response (0.619292ms)
+✔ RG-005: comparison bubbles render hostile trait text inert and drop unsafe sources (0.958917ms)
+✔ comparison bubbles end with cards and sources without nested explorers (1.035125ms)
+✔ RG-008: a sourced diet distribution yields one icon per positive member, sorted, with vertebrate subgroups merged (0.083291ms)
+✔ RG-008: fish-only distribution adds a clearly labelled parent 척추동물 grouping; duplicate records are not summed (0.049917ms)
+✔ RG-008: VertFishScav and Aquatic predator stay single broad icons and never imply fish (0.074542ms)
+✔ RG-008: fallback order is diet_category then trophic_niche; unsourced, unknown and null values are excluded (0.044125ms)
+✔ RG-008: card front and chat brief show accessible diet icons next to the habitat emblem; legend with sources on the back (0.379167ms)
+✔ RG-008: diet icons use SVG when available and a glyph fallback otherwise (0.206875ms)
+✔ RG-008: styles.css defines every diet icon class (0.307375ms)
+✔ RG-008: actual 왜가리 EltonTraits distribution shows 물고기, 척추동물 and 무척추동물 with sourced shares (0.036458ms)
+✔ RG-009: each no-photo status shows a generic placeholder with a fixed reason; facts and flip still work (0.557333ms)
+✔ RG-009: unknown status, missing status and all-unsafe photo URLs fall back to one honest generic reason (0.332083ms)
+✔ RG-009: a broken image shows a reload control that re-requests the same validated URL; attribution stays (0.180416ms)
+✔ RG-009: gallery navigation keeps working when every image is broken (0.175416ms)
+✔ RG-009: provider failure retry re-fetches the same species profile and only accepts a matching taxon and release (2.993917ms)
+✔ RG-009: retry never substitutes a different taxon, survives errors, and falls back to guidance without a transport (0.469708ms)
+✔ RG-009: in chat, a provider-failure answer keeps its explanation, and a retry that settles after clearing is dropped (0.465375ms)
+✔ RG-009: styles.css styles the placeholder, broken-image and retry states (0.287084ms)
+✔ RG-008 fix: conflicting distribution records are never fused; the first valid sourced record is the basis (0.343916ms)
+✔ RG-006 follow-up: reviewed activity stays visible; the raw nocturnal=false claim is only collapsed provenance (0.240542ms)
+✔ RG-006 follow-up: unsafe claim source URLs render as inert text (0.109875ms)
+✔ single common-name graph target automatically loads a closed card; multiple targets require choice (0.518042ms)
+✔ subspecies references retain parent provenance without becoming own stats, habitat, photos or risk (0.181042ms)
+✔ automatic common-name profile settling after clear is discarded (0.138917ms)
+✔ subspecies list uses sourced names, folded scientific identity and accessible cards (0.248334ms)
+✔ unnamed subspecies use distribution captions without inventing common names (0.147417ms)
+✔ global subspecies distribution fallback is preserved in folded details and selected labels (0.14075ms)
+✔ identical subspecies distribution captions remain distinguishable by list number (0.119667ms)
+✔ subspecies explorer fetches lazily and rejects a selected profile from another release (0.196ms)
+✔ subspecies card accepts independently sourced distribution while rejecting unsafe links (0.143541ms)
+✔ subspecies card shows only its sourced reviewed description and keeps raw range in source details (0.231708ms)
+✔ ecological explorer is lazy, sourced and separate; comparisons create independent bubbles with name fallbacks (1.763583ms)
+✔ ecological explorer skips unsupported values and unsafe source groups; hostile text stays inert (0.276667ms)
+✔ ecological lookup failure retries and stale releases or late-clear responses never render peers (0.267083ms)
+✔ ecological peer comparison rejects changed IDs/releases and ignores late responses (0.222125ms)
+✔ targeted diet answer appears first with sources and keeps the card without unrelated full sections (0.385542ms)
+✔ targeted diet answer renders supplied distribution as diet icons and keeps provenance only in the sources panel (0.4855ms)
+✔ targeted answers share the ordinary 더 알아보기 builders, endpoint and deferred behavior (0.311208ms)
+✔ direct ecological answer displays peers without another lookup and comparison creates a separate answer (3.00775ms)
+✔ initial relation data is validated and taxonomy peers use scientific-name fallback without lookup (0.214333ms)
+✔ targeted answers retain reviewed common-name provenance with safe source links (0.125125ms)
+✔ ordinary introduction follows the reference layout with folded TOP3, extra information and all answer sources (1.776709ms)
+✔ ranked fallback scores disclose missing phylogeny and retain fractional scores (0.181875ms)
+✔ ranked similar species render TOP3 in rank order with scores, explanation and safe provenance (0.289833ms)
+✔ ranked comparison preserves similarity reasons in a new bubble and rejects stale peer release (0.86725ms)
+✔ Jev subspecies answers show the supplied list immediately without another list request (0.117791ms)
+✔ Jev supplied subspecies lists from another parent or release are rejected (0.127292ms)
+✔ progressive chat renders the answer and unlocks input before profile and recommendations settle (0.777916ms)
+✔ subspecies answers and selected subspecies explorer survive late enrichment without requesting recommendations (0.436834ms)
+✔ profile failure leaves the initial answer intact and allows recommendations to finish (0.39925ms)
+✔ recommendation failure does not prevent photos or initial answer display (0.412875ms)
+✔ deferred profile and recommendations reject mismatched taxon_id (2.052959ms)
+✔ deferred profile and recommendations reject mismatched concept_set_id (0.48775ms)
+✔ deferred profile and recommendations reject mismatched taxonomy_release (0.3935ms)
+✔ late enrichment cannot change an old answer after clear (0.503459ms)
+✔ late enrichment cannot change an old answer after new question (0.543458ms)
+✔ appending a comparison cancels pending enrichment without replacing the original answer (1.123333ms)
+✔ pending profiles do not claim missing explanations before enrichment finishes (0.080916ms)
+✔ successful enrichment preserves provider warnings without duplicating initial warnings (0.428583ms)
+✔ deferred enrichment shows confirmed empty sections that were hidden while loading (0.506875ms)
+✔ completed enrichment updates the shared profile used by later comparisons (1.122042ms)
+✔ extra information only loads on an explicit click and never repeats while pending or completed (0.552208ms)
+✔ a previous answer that has not started enrichment can still be expanded after a new question (0.488875ms)
+✔ clearing chat invalidates an unused extra-information button without making a request (2.235417ms)
+✔ full introductions show facts and external explanations immediately while all discovery stays under 더 알아보기 (0.832541ms)
+✔ direct ranked questions render exactly one unfolded TOP3 card set and compare in a new bubble (2.0765ms)
+✔ direct inline ranked cards reject changed concept_set_id (0.556958ms)
+✔ direct inline ranked cards reject changed taxonomy_release (0.47875ms)
+✔ direct inline ranked cards reject changed taxon_id (0.459375ms)
+✔ taxonomy answers show one ordered lineage with rank badges, italic scientific names and folded context (0.50025ms)
+✔ taxonomy names reject machine translations, keep scientific fallback and sanitize name-source links (0.154334ms)
+✔ taxonomy lineage handles missing ranks, names and optional subspecies without dropping valid ancestors (0.087541ms)
+✔ empty or malformed taxonomy data keeps an explicit empty message: null (0.040583ms)
+✔ empty or malformed taxonomy data keeps an explicit empty message: {} (0.026042ms)
+✔ empty or malformed taxonomy data keeps an explicit empty message: {"lineage":[]} (0.025833ms)
+✔ empty or malformed taxonomy data keeps an explicit empty message: {"lineage":"malformed"} (0.030959ms)
+✔ taxonomy reference labels distinguish community Wikidata names from audited Korean source names (0.094708ms)
+✔ ranking weight badges use the actual API weights: {"phylogenetic_clade":50,"same_genus":20,"same_family":10,"same_habitat":10,"same_trophic_niche":10} (2.119583ms)
+✔ ranking weight badges use the actual API weights: {"phylogenetic_clade":40,"same_genus":15,"same_family":5,"same_habitat":25,"same_trophic_niche":15} (0.193708ms)
+✔ invalid ranking weights preserve the original safe note: null (0.142625ms)
+✔ invalid ranking weights preserve the original safe note: {} (0.102459ms)
+✔ invalid ranking weights preserve the original safe note: {"phylogenetic_clade":"50","same_genus":20,"same_family":10,"same_habitat":10,"same_trophic_niche":10} (0.099125ms)
+✔ invalid ranking weights preserve the original safe note: {"phylogenetic_clade":null,"same_genus":20,"same_family":10,"same_habitat":10,"same_trophic_niche":10} (0.095584ms)
+✔ invalid ranking weights preserve the original safe note: {"phylogenetic_clade":50,"same_genus":-5,"same_family":35,"same_habitat":10,"same_trophic_niche":10} (0.097709ms)
+✔ invalid ranking weights preserve the original safe note: {"phylogenetic_clade":50,"same_genus":10,"same_family":10,"same_habitat":10,"same_trophic_niche":10} (0.103042ms)
+✔ unknown ranking methods keep the original note even when weights look valid (0.116833ms)
+✔ Korean-name display priority is explicit and does not reinterpret API rank or score (0.229583ms)
+✔ direct TOP3 answers show the structured scoring criteria once with the long note folded (0.554708ms)
+✔ mouse drag past the width-proportional threshold flips in both directions and suppresses the trailing click (0.472875ms)
+✔ short drags, cancels, blur, resize, vertical moves, and non-mouse pointers leave the card unflipped and clean (1.35575ms)
+✔ reduced motion drag skips continuous rotation but flips immediately past the threshold (0.126791ms)
+✔ dragging does not break keyboard flipping and styles define reduced-motion drag feedback (0.307834ms)
+✔ mouse drags from front and back text, including nested spans, flip in either direction with or without motion (1.71625ms)
+✔ mouse drags preserve editing, media and explicit draggable nodes, including their descendants (2.818625ms)
+✔ mouse and touch drags include images, nested decorative graphics and photo placeholders (1.123417ms)
+✔ card omits the removed front summary and gesture footer while retaining keyboard guidance (0.14075ms)
+✔ touch swipe past the width threshold flips both ways via the real touch pointer path without preventDefault or capture (3.421458ms)
+✔ touch pointerdown never calls preventDefault and buttons===0 during touch moves is not a release (0.166791ms)
+✔ touch taps, short, reverse and vertical gestures never flip and leave no listeners (0.656125ms)
+✔ touch below slop does not lock the axis; at slop a horizontal move starts (0.1225ms)
+✔ a second touch anywhere, selection, contextmenu, cancel, blur, resize and reset all cancel a touch gesture and clean up (4.404083ms)
+✔ pointercancel and lostpointercapture for another pointer or a bubbled child do not cancel; the own pointer does (0.114709ms)
+✔ touch starts on text, photos and action controls but preserves editing, explicit dragging and active selections (2.550791ms)
+✔ pen and non-primary or non-left touch contacts are unsupported; mouse text drag retains selection clearing and cancellation (0.383833ms)
+✔ card retains desktop pan while fitted mobile cards allow pinch without native scrolling (0.305542ms)
+✔ touch swipe on reduced motion flips without rotation (0.105209ms)
+✔ losing the tracked touch's implicit capture cancels it, while other pointer IDs are ignored (0.11175ms)
+✔ a stale touch click-guard timer never clears a newer swipe's suppression; reopen/clear drops it (0.224125ms)
+✔ glossy overlay is a noninteractive aria-hidden last child that is invisible at rest (0.25675ms)
+✔ drag sheen depends on the angle and reverses with the drag direction (0.394459ms)
+✔ keyboard flip runs both gloss phases with the card's duration, easing and fill (0.259542ms)
+✔ drag release continues from the current angle with matching timing for commit and snapback (0.232292ms)
+✔ cancel, blur, resize, capture loss and showFront leave no stuck sheen (0.564166ms)
+✔ reduced motion neither rotates nor shows a moving sheen, and flips stay instant (0.109417ms)
+✔ touch drag drives the sheen and a cancelled touch clears it (0.0955ms)
+✔ sheen is clearly perceptible around 20-35deg, zero when flat, and sub-keyframes track the card's linear angle (0.534625ms)
+✔ gloss style has a narrow bright core over a broad reflection, normal blending, no soft-light (0.100625ms)
+✔ incoming flip phase has an exact zero-strength keyframe at the angle-0 crossing, in both directions (0.211ms)
+✔ observation points prefer two sourced appearances, exclude only measurement labels, and retain original provenance safely (4.899417ms)
+✔ observation supplements are labeled 알아두기 and explicit empty updates clear notes and their source slot (1.07275ms)
+✔ missing, pending and subspecies cards retain four facts, two distribution places and honest observation states without fabricated sources (0.390958ms)
+✔ observation retry refresh is gated by active taxon and release checks (0.623708ms)
+✔ uniform card frames fit without popup scrolling and preserve the inactive front flex layout (0.184917ms)
+✔ desktop photos use one generous aspect ratio and phones retain their tall fitted slot (0.198791ms)
+✔ failed or cancelled enrichment stops inviting a finished 더 알아보기 and preserves any sourced observations (0.226792ms)
+✔ card weights use kg at 1000g while preserving small, zero, unknown and already-kg values and inference (1.19525ms)
+✔ card reference weights and different sourced measurements stay separate and retain raw g evidence (0.221459ms)
+✔ face focus preserves native keys and previous scroll offsets reset on flips and reopen (0.113459ms)
+✔ mobile fitting uses stable unscaled dimensions, refits updated content and leaves user pinch enlargement intact (0.387417ms)
+✔ desktop fitting leaves fitting cards at natural size and scales expanded details without clipping (0.137875ms)
+✔ opening details preserves the closed fit scale while additional content scrolls (0.162833ms)
+✔ mobile details keep the collapsed scale and trim the expanded scroll range (2.726208ms)
+✔ expanded details remain stable across observers, nested toggles and viewport resizing (0.2225ms)
+✔ all popup palettes anchor their material height independently of flip sheen (0.372208ms)
+✔ flipping the card returns the scrolled frame to the top (0.128292ms)
+✔ only the measurements and lineage toggles use scroll mode, and the CSS scrolls them without breaking touch swipe (0.478666ms)
+✔ the dialog frame follows the scaled card width using independent viewport space on every refit (0.181916ms)
+✔ fitting coalesces work and releases observers, RAF and viewport handlers on close, disposal and reopening (0.194083ms)
+✔ fit wrappers retain dialog drag and flip targets without overwriting the fit transform (0.163875ms)
+✔ clearing a conversation disposes nested popup fitting resources before detaching history (0.957375ms)
+✔ mouse and touch swipes start on every static chart surface and clear hover before dragging (3.086958ms)
+✔ button, link and summary taps remain native while horizontal drags and snapbacks suppress their click (1.986541ms)
+✔ without any percentages or qualitative category both places state the data is genuinely missing (0.149709ms)
+✔ diet and foraging fall back to sourced categories with a '비율 자료 없음' qualifier, for any species, without fake percentages (0.522291ms)
+✔ a lifestyle alone does not stand in for diet, and a diet category alone does not stand in for foraging (2.585167ms)
+✔ mixed: a column with real percentages keeps its donut while the other shows the qualitative fallback (0.453375ms)
+✔ the fallback adds no source entry or link: category sources stay listed once (0.240542ms)
+✔ fallback text is inserted as text, never as markup (0.122167ms)
+✔ the qualitative box keeps the empty-state size and adds no scroll or drag area (0.301166ms)
+✔ source toggle explains an accepted old-name mapping without overclaiming (0.185833ms)
+✔ source toggle states needs_review as undecided and never asserts a pre-split source (0.130083ms)
+✔ alignment rendering ignores unknown statuses, never echoes unknown codes or markup, and deduplicates identical notes (0.268125ms)
+✔ alignment notes also appear for distribution cards and carry no card-size change (0.172541ms)
+✔ subgroup values cannot enter species cards, sources, comparison or emblems (0.321084ms)
+✔ multiple subgroup sources never fill or join species trait values (0.223708ms)
+✔ author-inferred traits display their flag and original inference note without markup execution (0.136542ms)
+✔ published dataset conservation reference gives consistent grade colour and data year, never an invented assessment year (0.246625ms)
+✔ published dataset reference rejects changed identities, source pins, invented assessment dates and grades (0.078375ms)
+✔ literature mass retains the author's bounds average and all source range values (0.156958ms)
+✔ subgroup lifestyle is not used as a species fallback (0.1215ms)
+✔ comparison keeps visible literature statistic, original bounds and inference provenance (0.295292ms)
+✔ legacy subgroup sections are rejected while scoped prose stays attributed (0.155667ms)
+✔ empty bounded sections do not create empty toggles (0.031042ms)
+✔ review metadata stays in sources while the IUCN badge remains visible without inventing a grade (0.099417ms)
+✔ reviewed expert grades show in card and answer with scope and real source dates retained only in sources (0.31625ms)
+✔ expert references cannot colour another taxon or accept invented assessment identities (0.125792ms)
+✔ expert manifest rejects coordinated grade changes and fabricated scope/date even with original hashes (0.04425ms)
+✔ every approved expert record renders through the shared path and rejects unapproved extra evidence (0.331167ms)
+✔ comparison shows equal display values once while keeping all attributed raw claims in one footer (0.526708ms)
+✔ comparison uses card mass units and compact citations retain evidence behind closed details (0.432833ms)
+✔ buildEntityCandidates guards against missing or malformed fields, limits to 3 buttons, and never leaks scores (0.117083ms)
+✔ chat response with entity_resolution candidates renders buttons, does not auto-submit, and clicking submits rewritten question (3.982208ms)
+✔ candidate buttons respect disabled input / in-flight request state (0.208625ms)
+✔ candidate confirmation shows the species name in a general question with scientific-name fallback (0.320458ms)
+✔ RG-406: index.html and styles.css declare the 4-option species_scope radio controls and responsive touch-target rules (0.341541ms)
+✔ RG-406: normalizeSpeciesScope and buildChatPayload support all/korea/outside/unknown and omit species_scope when all (0.039833ms)
+✔ RG-406: speciesLabel and buildSpeciesCard/buildSpeciesAnswer honor server display_name and English-priority outside mode with verified fallbacks (0.194083ms)
+✔ RG-406: distributionInfo and card/brief/sources render honest Korea/outside/unknown provenance and caveats without overclaiming residency (0.208875ms)
+✔ RG-406: related/similar explorer supports english_name_then_weighted_score priority and propagates speciesScope to GET requests and peer comparisons (0.613666ms)
+✔ RG-406: scope toggle propagates species_scope to POST /v1/chat, explorers, and deferred enrichment; switching scope preserves draft, does not auto-send, clears old cards, and drops stale responses (0.533166ms)
+✔ RG406 scope change preserves draft, aborts pending chat and never auto-submits (0.157042ms)
+✔ RG406 an old POST cannot render or end the busy state of a newer scope request (0.171708ms)
+✔ RG406 an old candidate button cannot submit after changing scope (0.16625ms)
+ℹ tests 317
+ℹ suites 0
+ℹ pass 317
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 248.472375
+arm64
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build and publish ARM64 + AMD64)
+[Pipeline] withCredentials
+Masking supported pattern matches of $GHCR_TOKEN
+[Pipeline] {
+[Pipeline] sh
+Login Succeeded
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.17kB done
+#1 DONE 0.0s
+
+#2 [linux/amd64 internal] load metadata for ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#2 ...
+
+#3 [auth] astral-sh/uv:pull token for ghcr.io
+#3 DONE 0.0s
+
+#4 [linux/arm64 internal] load metadata for ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#4 DONE 1.0s
+
+#2 [linux/amd64 internal] load metadata for ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#2 ...
+
+#5 [internal] load .dockerignore
+#5 transferring context: 261B done
+#5 DONE 0.0s
+
+#2 [linux/amd64 internal] load metadata for ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#2 DONE 1.7s
+
+#6 [linux/arm64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#6 resolve ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86 0.0s done
+#6 CACHED
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 resolve ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86 0.0s done
+#7 DONE 0.2s
+
+#8 [internal] load build context
+#8 transferring context: 36.87MB 0.1s done
+#8 DONE 0.2s
+
+#9 [linux/arm64  2/13] RUN groupadd --gid 10001 robingraph     && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin robingraph
+#9 DONE 0.2s
+
+#10 [linux/arm64  3/13] WORKDIR /app
+#10 DONE 0.0s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 ...
+
+#11 [linux/arm64  4/13] COPY --chown=robingraph:robingraph pyproject.toml uv.lock README.md .python-version ./
+#11 DONE 0.0s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 0B / 26.70MB 0.3s
+#7 sha256:b32430367bf08f32c23778909985ac645d1794f0aeef670aa796a50c8751527d 0B / 248B 0.2s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 0B / 12.11MB 0.2s
+#7 sha256:aff2d9f8dc87f4c10bbb7f438f3a325169379776bdfad5c49e4be5acc3c2f192 0B / 1.29MB 0.2s
+#7 sha256:b32430367bf08f32c23778909985ac645d1794f0aeef670aa796a50c8751527d 248B / 248B 0.4s done
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 0B / 29.79MB 0.2s
+#7 sha256:aff2d9f8dc87f4c10bbb7f438f3a325169379776bdfad5c49e4be5acc3c2f192 1.29MB / 1.29MB 0.6s done
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 3.15MB / 26.70MB 0.8s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 6.29MB / 26.70MB 0.9s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 1.05MB / 12.11MB 0.9s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 8.39MB / 26.70MB 1.1s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 2.10MB / 12.11MB 1.1s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 4.19MB / 29.79MB 0.8s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 10.49MB / 26.70MB 1.2s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 5.24MB / 12.11MB 1.2s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 7.34MB / 12.11MB 1.4s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 10.49MB / 29.79MB 1.1s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 13.63MB / 26.70MB 1.5s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 10.49MB / 12.11MB 1.5s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 12.58MB / 29.79MB 1.2s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 15.73MB / 26.70MB 1.7s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 16.78MB / 29.79MB 1.4s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 17.83MB / 26.70MB 1.8s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 11.53MB / 12.11MB 1.8s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 20.97MB / 29.79MB 1.5s
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 19.92MB / 26.70MB 2.0s
+#7 sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 12.11MB / 12.11MB 2.0s done
+#7 ...
+
+#12 [linux/arm64  5/13] RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing --no-install-project
+#12 0.158 Using CPython 3.12.13 interpreter at: /usr/local/bin/python
+#12 0.158 Creating virtual environment at: .venv
+#12 0.162 Resolved 70 packages in 0.78ms
+#12 0.340 Downloading cryptography (4.5MiB)
+#12 0.340 Downloading pydantic-core (1.9MiB)
+#12 0.340 Downloading mlflow-tracing (1.6MiB)
+#12 0.340 Downloading uvloop (4.1MiB)
+#12 0.341 Downloading zstandard (4.8MiB)
+#12 0.341 Downloading psycopg-binary (6.5MiB)
+#12 0.342 Downloading databricks-sdk (1.0MiB)
+#12 0.638  Downloaded databricks-sdk
+#12 0.690  Downloaded mlflow-tracing
+#12 0.716  Downloaded pydantic-core
+#12 0.872  Downloaded uvloop
+#12 0.901  Downloaded cryptography
+#12 0.925  Downloaded zstandard
+#12 0.953  Downloaded psycopg-binary
+#12 0.954 Prepared 67 packages in 790ms
+#12 1.159 Installed 67 packages in 205ms
+#12 1.994 Bytecode compiled 3299 files in 834ms
+#12 1.994  + annotated-doc==0.0.5
+#12 1.994  + annotated-types==0.8.0
+#12 1.994  + anyio==4.15.0
+#12 1.994  + cachetools==7.2.0
+#12 1.994  + certifi==2026.7.22
+#12 1.994  + cffi==2.1.1
+#12 1.994  + charset-normalizer==3.5.2
+#12 1.994  + click==8.5.0
+#12 1.994  + cryptography==50.0.2
+#12 1.994  + databricks-sdk==0.146.0
+#12 1.994  + distro==1.9.0
+#12 1.994  + fastapi==0.141.1
+#12 1.994  + google-auth==2.59.1
+#12 1.994  + google-genai==2.8.0
+#12 1.994  + h11==0.16.0
+#12 1.994  + httpcore==1.0.9
+#12 1.994  + httpcore2==2.12.0
+#12 1.994  + httptools==0.8.0
+#12 1.994  + httpx==0.28.1
+#12 1.994  + httpx2==2.12.0
+#12 1.994  + idna==3.19
+#12 1.994  + jsonpatch==1.33
+#12 1.994  + jsonpointer==3.1.1
+#12 1.994  + langchain==1.3.18
+#12 1.994  + langchain-core==1.6.6
+#12 1.994  + langchain-protocol==0.0.19
+#12 1.994  + langgraph==1.2.12
+#12 1.994  + langgraph-checkpoint==4.2.0
+#12 1.994  + langgraph-prebuilt==1.1.0
+#12 1.994  + langgraph-sdk==0.4.5
+#12 1.994  + langsmith==0.14.1
+#12 1.994  + mlflow-tracing==3.14.0
+#12 1.994  + neo4j==6.3.0
+#12 1.994  + opentelemetry-api==1.45.0
+#12 1.994  + opentelemetry-proto==1.45.0
+#12 1.994  + opentelemetry-sdk==1.45.0
+#12 1.994  + opentelemetry-semantic-conventions==0.66b0
+#12 1.994  + orjson==3.12.0
+#12 1.994  + ormsgpack==1.12.2
+#12 1.994  + packaging==26.3
+#12 1.994  + protobuf==6.33.6
+#12 1.994  + psycopg==3.3.6
+#12 1.994  + psycopg-binary==3.3.6
+#12 1.994  + pyasn1==0.6.4
+#12 1.994  + pyasn1-modules==0.4.2
+#12 1.994  + pycparser==3.0
+#12 1.994  + pydantic==2.13.5
+#12 1.994  + pydantic-core==2.46.5
+#12 1.994  + python-dotenv==1.2.3
+#12 1.994  + pytz==2026.3.post1
+#12 1.994  + pyyaml==6.0.3
+#12 1.994  + requests==2.34.2
+#12 1.994  + requests-toolbelt==1.0.0
+#12 1.994  + sniffio==1.3.1
+#12 1.994  + starlette==1.6.0
+#12 1.994  + tenacity==9.1.4
+#12 1.994  + truststore==0.10.4
+#12 1.994  + typing-extensions==4.16.0
+#12 1.994  + typing-inspection==0.4.4
+#12 1.994  + urllib3==2.8.0
+#12 1.994  + uuid-utils==0.17.1
+#12 1.994  + uvicorn==0.52.4
+#12 1.994  + uvloop==0.22.1
+#12 1.994  + watchfiles==1.2.0
+#12 1.994  + websockets==16.1.1
+#12 1.994  + xxhash==4.0.1
+#12 1.994  + zstandard==0.25.0
+#12 DONE 2.0s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 ...
+
+#13 [linux/arm64  6/13] COPY --chown=robingraph:robingraph src ./src
+#13 DONE 0.1s
+
+#14 [linux/arm64  7/13] COPY --chown=robingraph:robingraph data/eval/v1 ./data/eval/v1
+#14 DONE 0.0s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 ...
+
+#15 [linux/arm64  8/13] COPY --chown=robingraph:robingraph config ./config
+#15 DONE 0.0s
+
+#16 [linux/arm64  9/13] COPY --chown=robingraph:robingraph n8n ./n8n
+#16 DONE 0.0s
+
+#17 [linux/arm64 10/13] COPY --chown=robingraph:robingraph scripts ./scripts
+#17 DONE 0.1s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 ...
+
+#18 [linux/arm64 11/13] RUN test -s src/robingraph/api/static/index.html     && test -s src/robingraph/api/static/chat.js     && test -s src/robingraph/api/static/styles.css
+#18 DONE 0.1s
+
+#7 [linux/amd64  1/13] FROM ghcr.io/astral-sh/uv:0.11.26-python3.12-trixie-slim@sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 23.07MB / 29.79MB 2.3s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 27.26MB / 29.79MB 2.6s
+#7 sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 29.79MB / 29.79MB 2.6s done
+#7 extracting sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 22.02MB / 26.70MB 3.5s
+#7 extracting sha256:e95a6c7ea7d49b37920899b023ecd0e32796c976c1748491f76cae53ba86d13a 0.3s done
+#7 extracting sha256:aff2d9f8dc87f4c10bbb7f438f3a325169379776bdfad5c49e4be5acc3c2f192 0.0s done
+#7 extracting sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492
+#7 extracting sha256:df79d931cd67092e2b8e48d8f6369922571efe4ee0f9af71636ce36600481492 0.2s done
+#7 sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 26.70MB / 26.70MB 3.7s done
+#7 extracting sha256:b32430367bf08f32c23778909985ac645d1794f0aeef670aa796a50c8751527d done
+#7 extracting sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592
+#7 extracting sha256:9596b17a223f968388e163baf6eade933c305f7cd6b9c9231534908e4799a592 0.3s done
+#7 DONE 4.2s
+
+#19 [linux/arm64 12/13] RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing
+#19 0.151 Resolved 70 packages in 0.77ms
+#19 0.153    Building robingraph @ file:///app
+#19 1.236       Built robingraph @ file:///app
+#19 1.237 Prepared 1 package in 1.08s
+#19 1.238 Installed 1 package in 1ms
+#19 1.392 Bytecode compiled 3299 files in 154ms
+#19 1.392  + robingraph==0.1.0 (from file:///app)
+#19 DONE 1.4s
+
+#20 [linux/arm64 13/13] RUN install -d -o robingraph -g robingraph /app/.cache /home/robingraph/.local/state
+#20 DONE 0.2s
+
+#21 [linux/amd64  2/13] RUN groupadd --gid 10001 robingraph     && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin robingraph
+#21 DONE 0.2s
+
+#22 [linux/amd64  3/13] WORKDIR /app
+#22 DONE 0.0s
+
+#23 [linux/amd64  4/13] COPY --chown=robingraph:robingraph pyproject.toml uv.lock README.md .python-version ./
+#23 DONE 0.0s
+
+#24 [linux/amd64  5/13] RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing --no-install-project
+#24 0.379 Using CPython 3.12.13 interpreter at: /usr/local/bin/python
+#24 0.382 Creating virtual environment at: .venv
+#24 0.431 Resolved 70 packages in 24ms
+#24 0.649 Downloading uvloop (4.2MiB)
+#24 0.649 Downloading psycopg-binary (5.0MiB)
+#24 0.649 Downloading zstandard (5.3MiB)
+#24 0.650 Downloading pydantic-core (2.0MiB)
+#24 0.650 Downloading cryptography (4.5MiB)
+#24 0.652 Downloading databricks-sdk (1.0MiB)
+#24 0.652 Downloading mlflow-tracing (1.6MiB)
+#24 1.111  Downloaded databricks-sdk
+#24 1.179  Downloaded pydantic-core
+#24 1.193  Downloaded mlflow-tracing
+#24 1.317  Downloaded uvloop
+#24 1.329  Downloaded zstandard
+#24 1.330  Downloaded psycopg-binary
+#24 1.334  Downloaded cryptography
+#24 1.334 Prepared 67 packages in 890ms
+#24 1.619 Installed 67 packages in 283ms
+#24 3.060 Bytecode compiled 3299 files in 1.44s
+#24 3.062  + annotated-doc==0.0.5
+#24 3.062  + annotated-types==0.8.0
+#24 3.062  + anyio==4.15.0
+#24 3.062  + cachetools==7.2.0
+#24 3.062  + certifi==2026.7.22
+#24 3.062  + cffi==2.1.1
+#24 3.062  + charset-normalizer==3.5.2
+#24 3.062  + click==8.5.0
+#24 3.062  + cryptography==50.0.2
+#24 3.062  + databricks-sdk==0.146.0
+#24 3.062  + distro==1.9.0
+#24 3.062  + fastapi==0.141.1
+#24 3.062  + google-auth==2.59.1
+#24 3.062  + google-genai==2.8.0
+#24 3.062  + h11==0.16.0
+#24 3.062  + httpcore==1.0.9
+#24 3.062  + httpcore2==2.12.0
+#24 3.062  + httptools==0.8.0
+#24 3.062  + httpx==0.28.1
+#24 3.062  + httpx2==2.12.0
+#24 3.062  + idna==3.19
+#24 3.062  + jsonpatch==1.33
+#24 3.062  + jsonpointer==3.1.1
+#24 3.062  + langchain==1.3.18
+#24 3.062  + langchain-core==1.6.6
+#24 3.062  + langchain-protocol==0.0.19
+#24 3.062  + langgraph==1.2.12
+#24 3.062  + langgraph-checkpoint==4.2.0
+#24 3.062  + langgraph-prebuilt==1.1.0
+#24 3.062  + langgraph-sdk==0.4.5
+#24 3.062  + langsmith==0.14.1
+#24 3.062  + mlflow-tracing==3.14.0
+#24 3.062  + neo4j==6.3.0
+#24 3.062  + opentelemetry-api==1.45.0
+#24 3.062  + opentelemetry-proto==1.45.0
+#24 3.062  + opentelemetry-sdk==1.45.0
+#24 3.062  + opentelemetry-semantic-conventions==0.66b0
+#24 3.062  + orjson==3.12.0
+#24 3.062  + ormsgpack==1.12.2
+#24 3.062  + packaging==26.3
+#24 3.062  + protobuf==6.33.6
+#24 3.062  + psycopg==3.3.6
+#24 3.062  + psycopg-binary==3.3.6
+#24 3.062  + pyasn1==0.6.4
+#24 3.062  + pyasn1-modules==0.4.2
+#24 3.062  + pycparser==3.0
+#24 3.062  + pydantic==2.13.5
+#24 3.062  + pydantic-core==2.46.5
+#24 3.062  + python-dotenv==1.2.3
+#24 3.062  + pytz==2026.3.post1
+#24 3.062  + pyyaml==6.0.3
+#24 3.062  + requests==2.34.2
+#24 3.062  + requests-toolbelt==1.0.0
+#24 3.062  + sniffio==1.3.1
+#24 3.062  + starlette==1.6.0
+#24 3.062  + tenacity==9.1.4
+#24 3.062  + truststore==0.10.4
+#24 3.062  + typing-extensions==4.16.0
+#24 3.062  + typing-inspection==0.4.4
+#24 3.062  + urllib3==2.8.0
+#24 3.062  + uuid-utils==0.17.1
+#24 3.062  + uvicorn==0.52.4
+#24 3.062  + uvloop==0.22.1
+#24 3.062  + watchfiles==1.2.0
+#24 3.062  + websockets==16.1.1
+#24 3.063  + xxhash==4.0.1
+#24 3.063  + zstandard==0.25.0
+#24 DONE 3.2s
+
+#25 [linux/amd64  6/13] COPY --chown=robingraph:robingraph src ./src
+#25 DONE 0.1s
+
+#26 [linux/amd64  7/13] COPY --chown=robingraph:robingraph data/eval/v1 ./data/eval/v1
+#26 DONE 0.0s
+
+#27 [linux/amd64  8/13] COPY --chown=robingraph:robingraph config ./config
+#27 DONE 0.0s
+
+#28 [linux/amd64  9/13] COPY --chown=robingraph:robingraph n8n ./n8n
+#28 DONE 0.0s
+
+#29 [linux/amd64 10/13] COPY --chown=robingraph:robingraph scripts ./scripts
+#29 DONE 0.0s
+
+#30 [linux/amd64 11/13] RUN test -s src/robingraph/api/static/index.html     && test -s src/robingraph/api/static/chat.js     && test -s src/robingraph/api/static/styles.css
+#30 DONE 0.1s
+
+#31 [linux/amd64 12/13] RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing
+#31 0.394 Resolved 70 packages in 24ms
+#31 0.418    Building robingraph @ file:///app
+#31 2.018       Built robingraph @ file:///app
+#31 2.024 Prepared 1 package in 1.61s
+#31 2.033 Installed 1 package in 8ms
+#31 2.440 Bytecode compiled 3299 files in 404ms
+#31 2.440  + robingraph==0.1.0 (from file:///app)
+#31 DONE 2.5s
+
+#32 [linux/amd64 13/13] RUN install -d -o robingraph -g robingraph /app/.cache /home/robingraph/.local/state
+#32 DONE 0.1s
+
+#33 exporting to image
+#33 exporting layers
+#33 exporting layers 5.7s done
+#33 exporting manifest sha256:73705840d40994da76a14ea1978de4588860a3054dada3d91ea1b2f916e0c423
+#33 exporting manifest sha256:73705840d40994da76a14ea1978de4588860a3054dada3d91ea1b2f916e0c423 done
+#33 exporting config sha256:f1ff00d995b503bd77e9c6b0cb48640eda903a28bc132af065ebb5cc748db1a3 done
+#33 exporting attestation manifest sha256:ec7ecbe8e91d5eb361f4d3efb9250c89ec3b725910a4710d7ea6b1881aaf46fc done
+#33 exporting manifest sha256:d4b6b8df1c229c4346355424092761bc5a9ae6b868e6f46caa3178b7c35e3ceb done
+#33 exporting config sha256:25b8fd44e48fc9ea1d7b4f3b3d065501dceff95dfdae05ace71b33b86ce9df3c done
+#33 exporting attestation manifest sha256:2bdd123386b4bbb1a2dc7c7ed2b406ebac451ff95dd2316f7f970a01bdca6b08 done
+#33 exporting manifest list sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6 done
+#33 naming to ghcr.io/evodmik/robingraph:sha-b7c787e27811e17a41e7a33d9561bde71d109ad2 done
+#33 pushing layers
+#33 ...
+
+#34 [auth] evodmik/robingraph:pull,push token for ghcr.io
+#34 DONE 0.0s
+
+#33 exporting to image
+#33 ...
+
+#35 [auth] evodmik/robingraph:pull,push openclaw/openclaw:pull token for ghcr.io
+#35 DONE 0.0s
+
+#33 exporting to image
+#33 pushing layers 20.9s done
+#33 pushing manifest for ghcr.io/evodmik/robingraph:sha-b7c787e27811e17a41e7a33d9561bde71d109ad2@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
+#33 pushing manifest for ghcr.io/evodmik/robingraph:sha-b7c787e27811e17a41e7a33d9561bde71d109ad2@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6 3.7s done
+#33 DONE 30.4s
+
+#36 resolving provenance for metadata file
+#36 DONE 0.0s
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ python3 -c 'import json; print(json.load(open("image-metadata.json"))["containerimage.digest"])'
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (AMD64 fixture startup smoke)
+[Pipeline] sh
+16003724586b7f8cc492642f66811f2abc899c646e035d0c81bf0900de4a1406
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy and verify Mac TEST)
+[Pipeline] sh
+ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6: Pulling from evodmik/robingraph
+0f0b51e6689b: Pulling fs layer
+f6fe87853f29: Pulling fs layer
+7adfb9db750c: Pulling fs layer
+ef0c8c827dd8: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+d19501ef3246: Pulling fs layer
+fd62da45f21c: Pulling fs layer
+1674949635e0: Pulling fs layer
+5e1bf72e021a: Pulling fs layer
+2e58491cc22d: Pulling fs layer
+a50ede5d67d4: Pulling fs layer
+b63343e11094: Pulling fs layer
+Digest: sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
+Status: Image is up to date for ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
+ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6
+ Container robingraph-api-test Recreate 
+ Container robingraph-api-test Recreated 
+ Container robingraph-api-test Starting 
+ Container robingraph-api-test Started 
+{
+  "base_url": "http://127.0.0.1:8000",
+  "lineage_name": "청둥오리",
+  "expected_scientific_name": "Anas platyrhynchos",
+  "expected_korean_name_status": "source-reference",
+  "health": {
+    "path": "/health",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "openapi": {
+    "path": "/openapi.json",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "lineage": {
+    "path": "/v1/taxa/lineage?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC",
+    "ok": true,
+    "status_code": 200,
+    "error": null
+  },
+  "process_taxonomy_release": "fixture-avlist-2025",
+  "lineage_taxonomy_release": "v2025b",
+  "structural_errors": [],
+  "schema_drift": [],
+  "response_drift": [],
+  "canary_issues": [],
+  "notes": [
+    "health.taxonomy_release is the fixture-corpus process release used by /v1/answers and /v1/search, not the AviList reference-taxonomy release served by /v1/taxa/lineage -- the two are unrelated data areas.",
+    "health reports process release 'fixture-avlist-2025'; lineage reports AviList release 'v2025b'. A difference between these two values is expected and is not a defect by itself."
+  ],
+  "backend_reachable": true,
+  "contract_parity_ok": true,
+  "passed": true
+}
+{"status":"ok","mode":"neo4j","taxonomy_release":"fixture-avlist-2025","deployment_target":"test"}{"image": "ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6", "revision": "b7c787e27811e17a41e7a33d9561bde71d109ad2", "previous_release": "/Users/kimdove/robingraph-test/releases/robingraph-rg406-8ffeb7734750", "state": "verified", "deployment_target": "test"}
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] sh
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

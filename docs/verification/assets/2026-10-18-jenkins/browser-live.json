@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "base": "https://robingraph-test.dove-nest.com",
+  "scope": "Actual TEST HTTP and DB; Chromium viewport emulation, no route mocks",
+  "rows": [
+    {
+      "width": 1280,
+      "passed": true,
+      "requests": 3,
+      "pageerrors": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "requests": 3,
+      "pageerrors": []
+    },
+    {
+      "width": 320,
+      "passed": true,
+      "requests": 3,
+      "pageerrors": []
+    },
+    {
+      "page": "birds",
+      "passed": true,
+      "species_scope": "outside"
+    }
+  ]
+}

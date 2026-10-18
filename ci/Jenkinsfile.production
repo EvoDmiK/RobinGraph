@@ -1,0 +1,57 @@
+pipeline {
+    agent none
+    options {
+        skipDefaultCheckout(true)
+        disableConcurrentBuilds()
+        timeout(time: 60, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+    parameters {
+        string(name: 'TEST_BUILD', defaultValue: '', description: 'Latest successful RobinGraph-TEST build number to promote.')
+    }
+    stages {
+        stage('Load verified TEST release') {
+            agent { label 'robingraph-mac16' }
+            steps {
+                script {
+                    if (!(params.TEST_BUILD ==~ /[1-9][0-9]*/)) {
+                        error('A successful TEST build number is required')
+                    }
+                }
+                copyArtifacts(projectName: 'RobinGraph-TEST', selector: lastSuccessful(), resultVariableSuffix: 'TEST',
+                    filter: 'test-release.json', fingerprintArtifacts: true)
+                script {
+                    if (env.COPYARTIFACT_BUILD_NUMBER_TEST != params.TEST_BUILD) {
+                        error('The requested build must be the latest successful TEST build')
+                    }
+                    env.IMMUTABLE_IMAGE = sh(script: '''python3 -c 'import json,re; d=json.load(open("test-release.json")); assert d.get("test_verified") is True; assert re.fullmatch(r"ghcr.io/evodmik/robingraph@sha256:[a-f0-9]{64}",d["image"]); print(d["image"])' ''', returnStdout: true).trim()
+                    env.REVISION = sh(script: '''python3 -c 'import json,re; d=json.load(open("test-release.json")); assert re.fullmatch(r"[a-f0-9]{40}",d["revision"]); print(d["revision"])' ''', returnStdout: true).trim()
+                }
+            }
+        }
+        stage('Production approval') {
+            steps {
+                input(id: 'approveProduction', submitter: 'admin', ok: 'Deploy this verified release',
+                    message: "Deploy TEST build ${params.TEST_BUILD}, commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production?")
+            }
+        }
+        stage('Promote and verify NAS Production') {
+            agent { label 'robingraph-mac16' }
+            environment {
+                PATH = '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
+            }
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN'),
+                    usernamePassword(credentialsId: 'robingraph-nas-ssh', usernameVariable: 'NAS_USERNAME', passwordVariable: 'NAS_PASSWORD')
+                ]) {
+                    sh '''#!/bin/sh
+set -eu
+python3 /Users/kimdove/robingraph-test/deploy_registry_prod.py \
+  --image "$IMMUTABLE_IMAGE" --revision "$REVISION"
+'''
+                }
+            }
+        }
+    }
+}

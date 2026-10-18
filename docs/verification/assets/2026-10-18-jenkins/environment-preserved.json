@@ -1,0 +1,13 @@
+{
+  "production_unchanged": true,
+  "production_container": "03ce208b9f30a3242fd16dd2772935d45099d77aaba0c81d49240bb8699de8fd",
+  "production_started_at": "2026-10-10T06:07:33.413088244Z",
+  "production_image": "robingraph-api:prod-approved-ui-0681747",
+  "nas_test_container_present": false,
+  "test_env_changed_keys": [
+    "ROBINGRAPH_IMAGE",
+    "ROBINGRAPH_VCS_REF"
+  ],
+  "previous_mac_release_preserved": true,
+  "nas_ssh_read_only_check_passed": true
+}

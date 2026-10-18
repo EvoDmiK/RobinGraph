@@ -9,6 +9,10 @@
 
 아래 2026-09-03 Proposed 본문은 초기 설계다. 현재 TEST는 M4 16GB(192.168.219.97)의 ARM64 RobinGraph 앱·빌드, 32GB Mac(192.168.219.98)의 기존 Neo4j·n8n, NAS(192.168.219.99)의 기존 PostgreSQL로 분산한다. NAS 프록시의 https://robingraph-test.dove-nest.com 이 16GB Mac:8000으로 연결된다. NAS TEST 앱은 정지하고 이미지·컨테이너를 롤백용으로 보존했다. Production은 그대로다. [실제 이전·검증·관리·롤백 기록](work-log/2026-10-17-mac-test-migration.md).
 
+### TEST 자동 배포 (2026-10-18)
+
+Jenkins http://dove-jenkins/job/RobinGraph-TEST/ #2에서 GHCR 멀티 아키텍처 게시와 M4 TEST digest 배포·API/UI 검증을 완료했다. dev-codex 5분 polling을 사용하며 Production job은 비활성·명시 승인 후 승격 대상이다. 현재 NAS TEST 컨테이너는 없고 Mac previous release를 롤백 기준으로 쓴다. [Jenkins 운영 절차](jenkins-deployment.md) · [구성·실패 보정·검증](work-log/2026-10-18-jenkins-ghcr-setup.md).
+
 ## 1. 권장 구성
 
 ```mermaid

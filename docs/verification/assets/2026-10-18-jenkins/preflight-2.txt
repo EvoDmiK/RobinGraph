@@ -1,0 +1,80 @@
+Started by user admin
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on robingraph-mac16 in /Users/kimdove/jenkins-agent/robingraph/workspace/RobinGraph-Preflight
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 1 hr 0 min
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+ > git rev-parse --resolve-git-dir /Users/kimdove/jenkins-agent/robingraph/workspace/RobinGraph-Preflight/.git # timeout=10
+ > git config remote.origin.url https://github.com/EvoDmiK/RobinGraph.git # timeout=10
+Fetching upstream changes from https://github.com/EvoDmiK/RobinGraph.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.50.1 (Apple Git-155)'
+ > git fetch --tags --force --progress -- https://github.com/EvoDmiK/RobinGraph.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking out Revision b7c787e27811e17a41e7a33d9561bde71d109ad2 (refs/remotes/origin/dev-codex)
+ > git rev-parse refs/remotes/origin/dev-codex^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f b7c787e27811e17a41e7a33d9561bde71d109ad2 # timeout=10
+Commit message: "feat: add graph-first name resolution and scoped bird discovery"
+ > git rev-list --no-walk b7c787e27811e17a41e7a33d9561bde71d109ad2 # timeout=10
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ git rev-parse HEAD
+[Pipeline] pwd
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh
+Written file "orbstack.dockercontext"
+invalid context: no metadata found
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Tests)
+Stage "Tests" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build and publish ARM64 + AMD64)
+Stage "Build and publish ARM64 + AMD64" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (AMD64 fixture startup smoke)
+Stage "AMD64 fixture startup smoke" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy and verify Mac TEST)
+Stage "Deploy and verify Mac TEST" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] archiveArtifacts
+Archiving artifacts
+[Pipeline] sh
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE

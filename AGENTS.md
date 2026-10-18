@@ -35,7 +35,9 @@ Rules:
 
 ### Codex — 총괄·통합·TEST 환경 (dev-codex)
 
-- TEST 실행 위치(사용자 지시, 2026-10-17): 앱·이미지 빌드는 M4 16GB(192.168.219.97), TEST Neo4j·n8n은 32GB Mac(192.168.219.98), TEST PostgreSQL은 NAS(192.168.219.99)를 유지한다. 현재 TEST URL은 https://robingraph-test.dove-nest.com 이며 NAS 프록시가 16GB Mac:8000으로 연결한다. NAS의 기존 TEST 앱은 정지·롤백용 보존 상태다. 이후 일반 TEST 배포를 NAS 앱 재가동으로 해석하지 않는다.
+- Jenkins 배포 상태(2026-10-18): http://dove-jenkins/ 의 robingraph-mac16 agent, GHCR 인증, RobinGraph-TEST #2의 멀티 아키텍처 publish·TEST 배포·API 검증이 통과했다. TEST job은 활성·dev-codex 5분 polling이며 운영 RobinGraph-PROD는 비활성이다. 운영은 최신 성공 TEST artifact와 admin 명시 승인 이후에만 가능하며 기존 운영 승인 규칙을 유지한다. 실제 절차·한계는 docs/jenkins-deployment.md를 따른다.
+
+- TEST 실행 위치(사용자 지시, 2026-10-17): 앱·이미지 빌드는 M4 16GB(192.168.219.97), TEST Neo4j·n8n은 32GB Mac(192.168.219.98), TEST PostgreSQL은 NAS(192.168.219.99)를 유지한다. 현재 TEST URL은 https://robingraph-test.dove-nest.com 이며 NAS 프록시가 16GB Mac:8000으로 연결한다. NAS TEST 앱은 이전 때 정지했으나 2026-10-18 재조회에서는 해당 컨테이너가 없다. 현재 롤백 기준은 Mac의 previous release·이미지다. 이후 일반 TEST 배포를 NAS 앱 재가동으로 해석하지 않는다.
 - 16GB Mac의 실행 관리 경로는 /Users/kimdove/robingraph-test/manage.sh (start/status/stop/verify), current는 검증한 runtime release를 가리킨다. 다음 배포는 최신 snapshot을 ARM64로 빌드·검증하고 current 및 TEST 앱만 갱신한다. DB·n8n·Neo4j 이동이나 운영 반영은 이 역할 지시 범위가 아니다. 상세는 docs/work-log/2026-10-17-mac-test-migration.md를 따른다.
 
 - 사용자 요구를 구현 가능한 작업으로 나누고 담당자, 대상 파일, API 계약, 완료 조건을 정한다. 세 담당 에이전트의 결과를 검토하고 충돌·공통 계약 변경을 조정한다.

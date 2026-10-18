@@ -1,0 +1,20 @@
+{
+  "RobinGraph-TEST": {
+    "source_matches": true,
+    "disabled": false,
+    "source_sha256": "761e20909f4c789f9516fa69ff1a3bceae7394fac584fad429e275c7ca1ac67e"
+  },
+  "RobinGraph-PROD": {
+    "source_matches": true,
+    "disabled": true,
+    "source_sha256": "535ef51a8c11c9e4b23ea5dbd0ccc710e6fe608c4648fd3f0bcf0570d9915454"
+  },
+  "deploy_registry_test.py": {
+    "host_copy_matches": true,
+    "source_sha256": "762f6eb2db79a35e241d692b72a2244e9e6b4d519447649dc2f893c864f370cd"
+  },
+  "deploy_registry_prod.py": {
+    "host_copy_matches": true,
+    "source_sha256": "c280c6412870522073f152226cabb325287b363a8891d28b11764afb62f2ed25"
+  }
+}
