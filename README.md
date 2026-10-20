@@ -123,7 +123,7 @@ TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 
 | 그래프·검색 | Neo4j, Cypher, 전문·벡터 인덱스 | 종·근거 관계 탐색, 종 이름 후보 검색, 문헌 하이브리드 검색 |
 | 수집 상태 저장 | PostgreSQL, psycopg 3 | 수집 작업·분류판·활성 스냅샷·승인 상태 관리 |
 | 검색·생성 흐름 | LangChain Core / LCEL, RRF | 검색·라우팅·생성 단계 연결, 전문·벡터 검색 순위 결합 |
-| 외부 AI 연동 | Jev System1, Jina 호환 임베딩 API, Gemini | 설정에 따라 질문 의도 분석·임베딩·근거 기반 답변 생성 |
+| AI 모델·API 연동 | Jev System1, 자체 배포 임베딩 모델(Jina 호환 API), Gemini | 설정에 따라 질문 의도 분석·임베딩·근거 기반 답변 생성 |
 | 관측 | MLflow Tracing | 선택적 호출·검색 추적과 결과 태그 기록 |
 | 수집 자동화 | n8n, Django ASGI 수집 실행기 | 수집 준비·검증·승인된 적용 단계 실행 |
 | 실행·배포 | Docker, Docker Compose, OrbStack, Jenkins | 컨테이너 패키징, Mac TEST 실행, 승인 절차를 거치는 배포 |
@@ -179,7 +179,7 @@ uv run --locked robingraph ask-neo4j --question "Anas zonorhyncha의 한국어 �
 | 기능 | 주요 설정 | 적용 범위 |
 | --- | --- | --- |
 | Jev System1 | `JEV_API_KEY`, `ROBINGRAPH_INTENT_ROUTER=auto` | 규칙으로 해석되지 않은 질문의 의도 분석. 종 이름 존재 여부는 DB에서 별도 검증 |
-| Jina 호환 임베딩 | `ROBINGRAPH_JINA_ENDPOINT`, `ROBINGRAPH_JINA_MODEL`, `ROBINGRAPH_JINA_DIMENSIONS`, `ROBINGRAPH_JINA_API_KEY` 등 | 문헌 벡터 검색·임베딩 라우터. 현재 BirdsNest 프로필은 512차원 |
+| 자체 배포 임베딩 모델(Jina 호환 API) | `ROBINGRAPH_JINA_ENDPOINT`, `ROBINGRAPH_JINA_MODEL`, `ROBINGRAPH_JINA_DIMENSIONS`, `ROBINGRAPH_JINA_API_KEY` 등 | 문헌 벡터 검색·임베딩 라우터. 현재 BirdsNest 프로필은 512차원 |
 | Gemini | `GEMINI_API_KEY`, `ROBINGRAPH_GEMINI_MODEL` | 문헌 근거 답변 생성·추가 종 설명 등 설정된 생성 경로 |
 | MLflow | `ROBINGRAPH_MLFLOW_TRACING=true`, `MLFLOW_TRACKING_URI`, `MLFLOW_EXPERIMENT_NAME` | 선택적 추적. 별도 MLflow 서버 필요 |
 
@@ -254,7 +254,7 @@ curl -X POST http://127.0.0.1:8000/v1/search \
   -d '{"question":"호수와 하천에서 관찰된 물새","mode":"hybrid","limit":5}'
 ```
 
-`requested_mode`는 요청값, `mode`는 실제 검색 모드입니다. `fulltext`는 Jina를 호출하지 않습니다. `serve-fixture`에는 계약이 노출되지만 문헌 검색과 운영 관찰 조회는 HTTP 503을 반환합니다. 자세한 정책은 [하이브리드 검색](docs/hybrid-retrieval.md), [임베딩 어댑터](docs/embedding-adapter.md), [실제 PMC 문헌 파일럿](docs/pmc-literature-pilot.md)을 참고합니다.
+`requested_mode`는 요청값, `mode`는 실제 검색 모드입니다. `fulltext`는 자체 배포 임베딩 모델을 호출하지 않습니다. `serve-fixture`에는 계약이 노출되지만 문헌 검색과 운영 관찰 조회는 HTTP 503을 반환합니다. 자세한 정책은 [하이브리드 검색](docs/hybrid-retrieval.md), [임베딩 어댑터](docs/embedding-adapter.md), [실제 PMC 문헌 파일럿](docs/pmc-literature-pilot.md)을 참고합니다.
 
 ## NAS 배포와 패키징
 
