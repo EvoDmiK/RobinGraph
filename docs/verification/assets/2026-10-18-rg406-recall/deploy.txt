@@ -34,8 +34,8 @@
 #8 naming to docker.io/library/robingraph-api:test-rg406-recall-f8c64d62bbc8 done
 #8 unpacking to docker.io/library/robingraph-api:test-rg406-recall-f8c64d62bbc8 0.0s done
 #8 DONE 0.1s
- Container robingraph-api-test Recreate 
- Container robingraph-api-test Recreated 
- Container robingraph-api-test Starting 
- Container robingraph-api-test Started 
+ Container robingraph-api-test Recreate
+ Container robingraph-api-test Recreated
+ Container robingraph-api-test Starting
+ Container robingraph-api-test Started
 TEST deployed and API verified: robingraph-api:test-rg406-recall-f8c64d62bbc8

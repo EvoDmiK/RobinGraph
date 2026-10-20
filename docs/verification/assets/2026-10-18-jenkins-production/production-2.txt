@@ -652,10 +652,10 @@ ef8f9de6c5f1: Pull complete
 Digest: sha256:100e4aa30fd8981ebb631ced8c4bfecd95e71fcdb6d90cc5026e42f11b333ead
 Status: Downloaded newer image for ghcr.io/evodmik/robingraph@sha256:100e4aa30fd8981ebb631ced8c4bfecd95e71fcdb6d90cc5026e42f11b333ead
 ghcr.io/evodmik/robingraph@sha256:100e4aa30fd8981ebb631ced8c4bfecd95e71fcdb6d90cc5026e42f11b333ead
- Container robingraph-api Recreate 
- Container robingraph-api Recreated 
- Container robingraph-api Starting 
- Container robingraph-api Started 
+ Container robingraph-api Recreate
+ Container robingraph-api Recreated
+ Container robingraph-api Starting
+ Container robingraph-api Started
 {
   "base_url": "http://127.0.0.1:8000",
   "lineage_name": "청둥오리",

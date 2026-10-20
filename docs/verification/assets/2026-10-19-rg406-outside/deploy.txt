@@ -31,9 +31,9 @@
 #7 naming to docker.io/library/robingraph-api:test-rg406-outside-3b4106fe77ed done
 #7 unpacking to docker.io/library/robingraph-api:test-rg406-outside-3b4106fe77ed done
 #7 DONE 0.0s
- Container robingraph-api-test Recreate 
- Container robingraph-api-test Recreated 
- Container robingraph-api-test Starting 
- Container robingraph-api-test Started 
+ Container robingraph-api-test Recreate
+ Container robingraph-api-test Recreated
+ Container robingraph-api-test Starting
+ Container robingraph-api-test Started
 TEST deployed and API verified: robingraph-api:test-rg406-outside-3b4106fe77ed
 TEST catalog and app updated
