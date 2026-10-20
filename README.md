@@ -112,7 +112,7 @@ TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 
 
 ## 기술 스택
 
-2026-10-20 기준 소스와 TEST 배포에 사용하는 구성입니다. Python 의존성 범위는 [pyproject.toml](pyproject.toml), 정확한 설치 버전은 [uv.lock](uv.lock)에서 관리합니다.
+2026-10-20 기준 소스·TEST·Production 배포에 사용하는 구성입니다. Python 의존성 범위는 [pyproject.toml](pyproject.toml), 정확한 설치 버전은 [uv.lock](uv.lock)에서 관리합니다.
 
 | 영역 | 기술 | 역할 |
 | --- | --- | --- |
@@ -129,7 +129,7 @@ TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 
 | 실행·배포 | Docker, Docker Compose, OrbStack, Jenkins | 컨테이너 패키징, Mac TEST 실행, 승인 절차를 거치는 배포 |
 | 테스트·CI | Python unittest, HTTPX ASGI 클라이언트, Node.js test runner, Playwright, GitHub Actions | API 계약·검색 로직·UI·브라우저·통합 검증 |
 
-API와 독립 수집 실행기는 Django 기반이며 FastAPI·Starlette 의존성은 제거했습니다. DB 접근은 기존 Neo4j 드라이버와 PostgreSQL SQL 계층이 담당하고, Django ORM·관리자·세션 기능은 사용하지 않습니다. 외부 AI와 MLflow는 설정한 경로에서만 사용하며, 로컬 fixture는 외부 DB·AI 없이 실행할 수 있습니다. Production의 Django 전환은 TEST 확인 후 별도 승인 대상입니다.
+API와 독립 수집 실행기는 Django 기반이며 FastAPI·Starlette 의존성은 제거했습니다. DB 접근은 기존 Neo4j 드라이버와 PostgreSQL SQL 계층이 담당하고, Django ORM·관리자·세션 기능은 사용하지 않습니다. 외부 AI와 MLflow는 설정한 경로에서만 사용하며, 로컬 fixture는 외부 DB·AI 없이 실행할 수 있습니다. Django 전환은 TEST 검증과 사용자 승인 후 Production에도 반영했습니다. 이후 운영 변경에도 명시적 승인 절차를 적용합니다.
 
 ## 로컬에서 빠르게 실행
 

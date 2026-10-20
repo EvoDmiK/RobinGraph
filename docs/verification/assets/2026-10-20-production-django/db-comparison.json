@@ -1,0 +1,12 @@
+{
+  "target": "prod",
+  "read_only": true,
+  "unchanged": true,
+  "scope": [
+    "ingest_state fingerprint",
+    "Taxon count",
+    "TaxonNameVector count and catalog fingerprint"
+  ],
+  "not_full_database_checksum": true,
+  "test_database_copied": false
+}

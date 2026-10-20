@@ -1,0 +1,15 @@
+{
+  "build": 3,
+  "revision": "770495a13fe7c7431c2d66cbf41a1080272d42f0",
+  "image": "ghcr.io/evodmik/robingraph@sha256:336ace7938471bdcdf2be1bfac904a33aa1cfd20987ed945c4ed5a74632f005d",
+  "checkout": "main",
+  "user_explicit_approval": true,
+  "jenkins_admin_gate_submitted": true,
+  "gate_console_confirmed": true,
+  "python_total": 1029,
+  "python_passed": 991,
+  "python_skipped": 38,
+  "node_passed": 317,
+  "amd64_fixture_smoke_passed": true,
+  "test_db_copy_performed": false
+}

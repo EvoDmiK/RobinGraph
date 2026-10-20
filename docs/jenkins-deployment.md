@@ -2,7 +2,7 @@
 
 ## main 기준 운영 배포 (2026-10-20)
 
-사용자의 커밋·푸시·main 병합·Production 배포 지시에 따라 운영 파이프라인의 checkout과 SCM polling 기준을 `main`으로 변경한다. 아래 2026-10-18의 `dev-codex` 기준 설명은 당시 이력이다. 저장소 `Jenkinsfile`과 `ci/Jenkinsfile.production`, Jenkins의 Inline Pipeline 정의를 함께 맞추고, 운영 승인 단계에는 배포할 main 커밋과 immutable 이미지 digest를 표시한다. 실제 배포 결과는 별도 작업 기록에 남긴다.
+사용자의 커밋·푸시·main 병합·Production 배포 지시에 따라 운영 파이프라인의 checkout과 SCM polling 기준을 `main`으로 변경했다. 아래 2026-10-18의 `dev-codex` 기준 설명은 당시 이력이다. 저장소 `Jenkinsfile`과 `ci/Jenkinsfile.production`, Jenkins의 Inline Pipeline 정의를 함께 맞추고, 운영 승인 단계에는 배포할 main 커밋과 immutable 이미지 digest를 표시한다. RobinGraph-PROD #3이 main 커밋 `770495a`의 Django 이미지를 NAS에 배포하고 실제 API 검사까지 SUCCESS로 완료했다. 상세 결과는 [운영 배포 기록](work-log/2026-10-20-main-production-django.md)을 따른다.
 
 ## 현재 상태 (2026-10-18, 운영 대상 정정)
 

@@ -1,0 +1,19 @@
+{
+  "native_django_asgi": true,
+  "packages_absent": {
+    "fastapi": true,
+    "starlette": true
+  },
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "prod"
+  },
+  "target": "prod",
+  "container": "robingraph-api",
+  "image": "ghcr.io/evodmik/robingraph@sha256:336ace7938471bdcdf2be1bfac904a33aa1cfd20987ed945c4ed5a74632f005d",
+  "image_id": "sha256:957d679e2effc8e3232646ad590e9f171b4f671c5e269b4dd93203384e8f8bf4",
+  "revision": "770495a13fe7c7431c2d66cbf41a1080272d42f0",
+  "healthy": true
+}

@@ -1,0 +1,17 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+  "artifacts": [
+    {
+      "fileName": "image-metadata.json",
+      "relativePath": "image-metadata.json"
+    },
+    {
+      "fileName": "production-release.json",
+      "relativePath": "production-release.json"
+    }
+  ],
+  "building": false,
+  "duration": 203615,
+  "number": 3,
+  "result": "SUCCESS"
+}
