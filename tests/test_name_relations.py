@@ -3,8 +3,8 @@ from types import SimpleNamespace as NS
 import unittest
 from unittest.mock import Mock
 
-from fastapi.testclient import TestClient
-from robingraph.api.app import create_app
+from asgi_client import TestClient
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.name_relations import NameRelationRepository, manifest_digest, validate_manifest, RELATIONS_QUERY, load_manifest
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
 
@@ -114,7 +114,7 @@ class NameRelationsTest(unittest.TestCase):
 
     def test_chat_prompts_for_related_wild_taxon_without_fetching_domestic_profile(self):
         profile = Mock()
-        client = TestClient(create_app(species_profile_handler=profile, name_relations_handler=self.reader.for_name))
+        client = TestClient(create_django_app(species_profile_handler=profile, name_relations_handler=self.reader.for_name))
         for question in ("닭", "닭에 대해 알려줘"):
             result = client.post("/v1/chat", json={"question": question}).json()
             self.assertEqual("clarify", result["disposition"])
@@ -123,7 +123,7 @@ class NameRelationsTest(unittest.TestCase):
 
     def test_reviewed_domestic_binomial_routes_but_canonical_binomial_bypasses(self):
         reader = Mock(return_value={"is_search_term": True, "relations": [self.row], "summary": "choose"})
-        client = TestClient(create_app(name_relations_handler=reader))
+        client = TestClient(create_django_app(name_relations_handler=reader))
         result = client.post("/v1/chat", json={"question": "Streptopelia risoria"}).json()
         self.assertEqual("name_relations", result["result"]["kind"])
         reader.assert_called_once_with("Streptopelia risoria")
@@ -133,13 +133,13 @@ class NameRelationsTest(unittest.TestCase):
 
     def test_explicit_evidence_and_scientific_filter_are_not_rerouted(self):
         reader = Mock(return_value={"is_search_term": True, "relations": [self.row], "summary": "choose"})
-        client = TestClient(create_app(name_relations_handler=reader))
+        client = TestClient(create_django_app(name_relations_handler=reader))
         client.post("/v1/chat", json={"question": "닭", "intent": "evidence"})
         client.post("/v1/chat", json={"question": "닭", "intent": "taxonomy", "filters": {"kind": "taxonomy", "scientific_name": "Gallus gallus"}})
         reader.assert_not_called()
 
     def test_endpoint_unavailable_blank_and_safe_errors(self):
-        client = TestClient(create_app(name_relations_handler=Mock(side_effect=RuntimeError("password-secret"))))
+        client = TestClient(create_django_app(name_relations_handler=Mock(side_effect=RuntimeError("password-secret"))))
         response = client.get("/v1/taxa/name-relations", params={"name": "닭"})
         self.assertEqual(503, response.status_code)
         self.assertNotIn("password-secret", response.text)
@@ -147,14 +147,14 @@ class NameRelationsTest(unittest.TestCase):
 
     def test_known_domestic_term_never_falls_back_to_wild_profile_on_outage(self):
         profile = Mock()
-        client = TestClient(create_app(species_profile_handler=profile, name_relations_handler=Mock(side_effect=ValueError("unavailable"))))
+        client = TestClient(create_django_app(species_profile_handler=profile, name_relations_handler=Mock(side_effect=ValueError("unavailable"))))
         result = client.post("/v1/chat", json={"question":"닭에 대해 알려줘"}).json()
         self.assertEqual("abstain", result["disposition"])
         profile.assert_not_called()
 
     def test_auto_evidence_filters_and_explicit_taxonomy_question(self):
         reader = Mock(return_value={"is_search_term": True, "relations": [self.row], "summary": "choose"})
-        client = TestClient(create_app(name_relations_handler=reader))
+        client = TestClient(create_django_app(name_relations_handler=reader))
         client.post("/v1/chat", json={"question":"닭", "filters":{"kind":"evidence"}})
         reader.assert_not_called()
         result = client.post("/v1/chat", json={"question":"닭은 무슨 과야?", "intent":"taxonomy", "filters":{"kind":"taxonomy","name":"닭"}}).json()

@@ -1,0 +1,10 @@
+{
+  "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+  "bundle_sha256": "859192488fb24952e509937249351a5daf2266709f3326ecd20259e2a6b44cc3",
+  "decision": "approved",
+  "reviewer": "codex-independent-reviewer term_022f8f2d-7456-43b8-a965-521843ebc469",
+  "reviewer_type": "agent",
+  "reviewed_at": "2026-10-19T05:11:48.448716+00:00",
+  "rationale": "Independent read-only agent review confirmed pinned AviList source hash, current KOS/generator input hashes, exact deterministic manifest/bundle reconstruction, equality with installed distribution, and unchanged six existing outside entries. Approval is only for storing this composite artifact in the manifest TEST pilot target after runner readiness gates; no human approval, new distribution judgement, domain projection, or production authorization. Hash binding is an operator error guard, not an authenticated signature.",
+  "target": "test"
+}

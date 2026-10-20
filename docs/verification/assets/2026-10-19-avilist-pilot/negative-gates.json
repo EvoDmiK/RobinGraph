@@ -1,0 +1,21 @@
+{
+  "checks": [
+    {
+      "case": "missing_approval",
+      "blocked": true
+    },
+    {
+      "case": "invalid_approval",
+      "blocked": true
+    },
+    {
+      "case": "tampered_bundle",
+      "blocked": true
+    },
+    {
+      "case": "production_target",
+      "blocked": true
+    }
+  ],
+  "write_attempted": false
+}

@@ -20,10 +20,11 @@ import types
 import unittest
 from unittest import mock
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
 from robingraph import tracing
-from robingraph.api.app import create_app, create_neo4j_search_handler
+from robingraph.api.drf import create_django_app
+from robingraph.api.services import create_neo4j_search_handler
 from robingraph.api.semantic_router import SemanticRouter
 from robingraph.embeddings import QUERY_TASK, PASSAGE_TASK, JinaEmbeddingClient, JinaEmbeddingSettings
 from robingraph.fixture import load_fixture
@@ -114,7 +115,7 @@ def _chat_app(gemini: FakeGeminiServer, jina: FakeJinaServer, answerer: GeminiAn
     ), urlopen=jina)
     settings = Neo4jSettings("bolt://neo4j.invalid:7687", "neo4j", "neo4j-password", "neo4j")
     answerer = answerer or GeminiAnswerer("gemini-secret-key", model="gemini-test", urlopen=gemini)
-    return create_app(
+    return create_django_app(
         FixtureRepository(load_fixture()),
         search_handler=create_neo4j_search_handler(settings, embedding_client=client),
         answer_generator=answerer,

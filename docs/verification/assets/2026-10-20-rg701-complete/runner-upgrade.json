@@ -1,0 +1,69 @@
+{
+  "target": "test",
+  "image": "sha256:5b70ec992ea88dadcaf914596ecfe17d37c7e208b2226ab35a93ed29a2b68349",
+  "image_tag": "robingraph-api:test-rg701-django-only-0e15293544bb",
+  "image_source_sha256": "0e15293544bb20ca862e04201d5be40bbeab56e7a31a36851b6aec4f4c144718",
+  "previous_image": "robingraph-api:test-rg406-outside-spelling-1c7cbbdaf1c7",
+  "previous_image_id": "sha256:44005f68dbf79d6164e2dab4f2484d879e56899b2e7a86082847754a1b52fbb1",
+  "baseline_probe": {
+    "http": 200,
+    "body": {
+      "status": "verified",
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "bundle_sha256": "859192488fb24952e509937249351a5daf2266709f3326ecd20259e2a6b44cc3",
+      "search_regression_passed": 4,
+      "stage": "verify",
+      "projection_performed": false
+    }
+  },
+  "code_directory": "/Users/kimdove/robingraph-test/pipelines/n8n-avilist-test/code-releases/django-only-0e15293544bb",
+  "backup_directory": "/Users/kimdove/robingraph-test/pipelines/n8n-avilist-test/backups/django-only-0e15293544bb-96aaf6",
+  "state": "verified",
+  "production_changed": false,
+  "old_binding_probe": {
+    "http": 409,
+    "body": {
+      "status": "failed",
+      "stage": "verify",
+      "error": "code_changed",
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "projection_performed": false
+    }
+  },
+  "old_fingerprint": {
+    "builder": "991d1bfc1d85140b34abec1eb6ef3a918588d3ba2f4cb74b7af3c2412240b8bf",
+    "core": "ae0a1140bb31493981d49916f6e5c3605db998e4abadb3cdb6c1295afd3fe026",
+    "runner": "155b41d46c4b9fdec0ad9e70ed3fd232e9eff6a70a34a0d79c98bca6bf35e680",
+    "service": "7f8f0722d62a1fe325ce848fbf61b5a9eff12f1011d5df9f9c232a149f1e375c"
+  },
+  "new_fingerprint": {
+    "builder": "991d1bfc1d85140b34abec1eb6ef3a918588d3ba2f4cb74b7af3c2412240b8bf",
+    "core": "ae0a1140bb31493981d49916f6e5c3605db998e4abadb3cdb6c1295afd3fe026",
+    "django_asgi": "986eae572e951e637d1656d736a9794c67c452853aec14f97f9e01992a13566f",
+    "runner": "155b41d46c4b9fdec0ad9e70ed3fd232e9eff6a70a34a0d79c98bca6bf35e680",
+    "service": "dd2fc90717cdc3de35b65e8a99aaa5ca91f5dd51c89d6091447135605b55622e"
+  },
+  "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+  "bundle_sha256": "859192488fb24952e509937249351a5daf2266709f3326ecd20259e2a6b44cc3",
+  "source_refetched": true,
+  "package_byte_identical": true,
+  "legacy_packages_absent": true,
+  "pinned_source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+  "reviewed_transport_fingerprint": {
+    "service": "dd2fc90717cdc3de35b65e8a99aaa5ca91f5dd51c89d6091447135605b55622e",
+    "django_asgi": "986eae572e951e637d1656d736a9794c67c452853aec14f97f9e01992a13566f"
+  },
+  "reviewer_type": "agent",
+  "reviewed_at": "2026-10-20T07:46:24.460393+00:00",
+  "new_binding_probe": {
+    "http": 200,
+    "body": {
+      "status": "verified",
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "bundle_sha256": "859192488fb24952e509937249351a5daf2266709f3326ecd20259e2a6b44cc3",
+      "search_regression_passed": 4,
+      "stage": "verify",
+      "projection_performed": false
+    }
+  }
+}

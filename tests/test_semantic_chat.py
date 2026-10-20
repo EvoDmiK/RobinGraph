@@ -10,9 +10,9 @@ import types
 import unittest
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.api.semantic_router import SemanticRouter, SemanticRouterConfig
 from robingraph.cli import serve_neo4j
 from robingraph.embeddings import EmbeddingConfigurationError, JinaEmbeddingClient, JinaEmbeddingSettings
@@ -192,7 +192,7 @@ class SemanticRouterTest(unittest.TestCase):
 
 class SemanticChatApiTest(unittest.TestCase):
     def make_client(self, **kwargs) -> TestClient:
-        return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
+        return TestClient(create_django_app(FixtureRepository(load_fixture()), **kwargs))
 
     def test_profile_chat_displays_summary_and_falls_back_safely(self) -> None:
         profile = {'taxon': {'korean_name':'청둥오리'}, 'traits':[], 'warnings':[],
@@ -541,7 +541,7 @@ class EvidenceAnswerGeneratorTest(unittest.TestCase):
     """`/v1/chat` evidence-route generation: fail-closed, never inventive."""
 
     def make_client(self, **kwargs) -> TestClient:
-        return TestClient(create_app(FixtureRepository(load_fixture()), **kwargs))
+        return TestClient(create_django_app(FixtureRepository(load_fixture()), **kwargs))
 
     def test_generated_answer_includes_verifiable_citations(self) -> None:
         generator = FakeAnswerGenerator(text="청둥오리에 대한 합성 답변입니다.")

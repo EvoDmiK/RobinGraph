@@ -155,7 +155,7 @@ def serve_fixture(arguments: argparse.Namespace) -> int:
 
     configure_tracing()
 
-    uvicorn.run("robingraph.api.app:app", host=arguments.host, port=arguments.port)
+    uvicorn.run("robingraph.django_api.asgi:application", host=arguments.host, port=arguments.port)
     return 0
 
 
@@ -164,13 +164,13 @@ def serve_ingest(arguments: argparse.Namespace) -> int:
 
     import uvicorn
 
-    from .api.app import create_app
+    from .api.drf import create_django_app
     from .ingest.postgres import PostgresSettings
     from .ingest.store import IngestionStore
 
     settings = PostgresSettings.from_environment()
     configure_tracing()
-    app = create_app(ingest_store=IngestionStore(settings))
+    app = create_django_app(ingest_store=IngestionStore(settings))
     uvicorn.run(app, host=arguments.host, port=arguments.port)
     return 0
 
@@ -178,8 +178,8 @@ def serve_ingest(arguments: argparse.Namespace) -> int:
 def serve_neo4j(arguments: argparse.Namespace) -> int:
     import uvicorn
 
-    from .api.app import (
-        create_app,
+    from .api.drf import create_django_app
+    from .api.services import (
         create_neo4j_korean_lineage_handler,
         create_neo4j_lineage_handler,
         create_neo4j_observation_handler,
@@ -289,7 +289,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
                 context.get("concept_set_id"), context.get("taxonomy_release"))}
 
     try:
-        app = create_app(
+        app = create_django_app(
             repository,
             search_handler=create_neo4j_search_handler(
                 settings, embedding_client=embedding_client,

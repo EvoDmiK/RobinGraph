@@ -1,26 +1,22 @@
 # Jenkins + GHCR 배포 운영 방법
 
-## 현재 상태 (2026-10-18)
+## main 기준 운영 배포 (2026-10-20)
 
-Jenkins와 GHCR 연결을 완료했다. **RobinGraph-TEST #2가 ARM64/AMD64 게시·Mac TEST 배포·실제 API 검증까지 성공했다.** 공개 Chromium 검사도 통과했다. TEST job은 활성·dev-codex 5분 polling, Production job은 비활성·미실행이다.
+사용자의 커밋·푸시·main 병합·Production 배포 지시에 따라 운영 파이프라인의 checkout과 SCM polling 기준을 `main`으로 변경한다. 아래 2026-10-18의 `dev-codex` 기준 설명은 당시 이력이다. 저장소 `Jenkinsfile`과 `ci/Jenkinsfile.production`, Jenkins의 Inline Pipeline 정의를 함께 맞추고, 운영 승인 단계에는 배포할 main 커밋과 immutable 이미지 digest를 표시한다. 실제 배포 결과는 별도 작업 기록에 남긴다.
 
-| 작업 | URL | 현재 상태 |
-|---|---|---|
-| 사전 검사 | http://dove-jenkins/job/RobinGraph-Preflight/ | #3 SUCCESS. Registry 인증/배포 없이 Git checkout·Python·UI·Docker 연결 검사 |
-| TEST | http://dove-jenkins/job/RobinGraph-TEST/ | 활성, #2 SUCCESS. dev-codex 5분 polling |
-| Production | http://dove-jenkins/job/RobinGraph-PROD/ | 생성·비활성. TEST 검증과 별도 운영 승인 전 실행하지 않음 |
+## 현재 상태 (2026-10-18, 운영 대상 정정)
 
-초기 job은 Jenkinsfile과 같은 내용을 Jenkins Inline Pipeline으로 등록하고 저장 결과를 대조했다. 초기 설정 당시에는 CI 파일이 원격에 없어 inline을 사용했다. 이후 사용자 지시로 CI 파일을 Git에 게시한다. job은 현재 inline 방식이므로 Jenkinsfile의 Git 수정만으로 job 정의가 자동 갱신되지는 않는다. Pipeline from SCM 전환 전까지 파일과 job 내용을 함께 대조한다. 현재 앱 체크아웃은 공개 저장소 https://github.com/EvoDmiK/RobinGraph.git 의 dev-codex만 대상으로 한다.
+사용자가 지정한 배포 대상은 **NAS Production**이다. 기본 `Jenkinsfile`과 `ci/Jenkinsfile.production`은 동일한 운영 파이프라인이며 **RobinGraph-PROD**에 등록했다. **RobinGraph-TEST는 비활성**이고 SCM polling을 제거했다. TEST에 먼저 배포해야 운영 배포가 가능한 이전 승격 구조를 제거했다. 수동 TEST 레시피는 `ci/Jenkinsfile.test`에 보존한다.
 
-## 배치
+- Jenkins 내부 접속: http://192.168.219.99:8080/ . 기본 http://dove-jenkins/ 는 Mac Tailscale 중단 시 DNS 실패를 관측했으나 연결 복구 후 응답과 관리 agent 재연결을 확인했다.
+- 운영 job: http://192.168.219.99:8080/job/RobinGraph-PROD/ . dev-codex 변경을 5분 간격 polling한다.
+- 빌드·Python/UI 검사·멀티 아키텍처 게시·AMD64 fixture 검사는 M4 16GB의 robingraph-mac16 agent에서 실행한다.
+- 운영 앱 교체는 NAS `192.168.219.99`, `robingraph-api`에서 수행한다. 공개 주소는 https://robingraph.dove-nest.com 이다.
+- 향후 운영 앱 교체 전에는 commit/digest를 표시하는 admin 승인 단계를 유지한다. polling은 운영 앱 교체의 자동 승인을 의미하지 않는다.
+- job은 Inline Pipeline이다. 저장소 Jenkinsfile 변경만으로 job 정의가 자동 갱신되지 않으므로 등록 내용과 파일을 함께 대조한다.
+- TEST 앱과 TEST DB 위치는 변경하지 않는다. Production DB 마이그레이션·수집·volume 변경도 포함하지 않는다.
 
-- Controller: dove-jenkins, Jenkins2.580.1·Linux amd64·Java21.0.12.1. controller executor0.
-- Agent: robingraph-mac16, label robingraph-mac16 arm64 test, executor1·exclusive. 현재 M4 16GB(192.168.219.97).
-- Java: `/opt/homebrew/opt/openjdk@21/bin/java`, uv와 Node/Docker CLI 사용.
-- agent home: `/Users/kimdove/jenkins-agent/robingraph`, native WebSocket inbound agent.
-- 로그인 LaunchAgent: `~/Library/LaunchAgents/com.robingraph.jenkins-agent.plist`, RunAtLoad/KeepAlive. agent secret은 별도0600 파일이며 문서/저장소에 포함하지 않는다.
-- TEST 앱: 기존 `/Users/kimdove/robingraph-test/manage.sh`와 current release 사용.
-- TEST Neo4j/n8n 및 PostgreSQL 위치는 변경하지 않는다. 운영 앱·DB도 별도 승인 전 변경하지 않는다.
+RobinGraph-PROD #2의 실제 NAS 배포·내부/공개 API 검증이 SUCCESS로 완료됐다. TEST 컨테이너는 변경되지 않았다. 실제 실행 결과와 제한은 [운영 대상 정정 기록](work-log/2026-10-18-jenkins-production-target.md)을 기준으로 한다. [초기 TEST 연결 기록](work-log/2026-10-18-jenkins-ghcr-setup.md)은 당시 이력이다.
 
 ## GHCR 인증 등록
 
@@ -35,46 +31,22 @@ Jenkins → Manage Jenkins → Credentials → System → Global credentials에 
 
 [등록 화면](http://dove-jenkins/credentials/store/system/domain/_/newCredentials). 토큰 본문은 문서·Git·작업 로그에 기록하지 않는다. Jenkins binding으로만 전달하고 docker login은 password-stdin을 사용한다. 빌드별 임시 Docker config에 **OrbStack context도 함께 import**하여 인증 파일 분리가 Docker 연결을 가리지 않도록 한다. post에서 로그아웃하고 임시 config를 제거한다.
 
-NAS SSH용 robingraph-nas-ssh credential은 Jenkins에 등록했다. 같은 계정으로 NAS 읽기 전용 SSH 로그인은 확인했다. 운영 작업은 이 credential만으로 실행되지 않으며 비활성과 admin 승인 단계를 함께 유지한다. Jenkins Production 배포 경로는 미실행이다.
+NAS SSH용 `robingraph-nas-ssh` credential을 binding한다. 인증 정보는 SSH argv·문서에 포함하지 않는다. 기존 known_hosts와 StrictHostKeyChecking=yes를 사용한다.
 
-## TEST 실행 흐름
+## 운영 실행 흐름
 
-Jenkinsfile 기준:
+1. 공개 Git 저장소 dev-codex checkout 후 실제 전체 commit을 확인한다. 이전 metadata/receipt를 삭제한다.
+2. locked Python 전체 검사, Node UI 검사, Docker 연결 검사를 실행한다.
+3. ARM64/AMD64 이미지를 GHCR에 게시하고 buildx metadata의 immutable manifest digest를 얻는다.
+4. M4에서 AMD64 fixture health/openapi를 검사한다. 이는 실제 운영 DB 검증과 구별한다.
+5. commit/digest를 표시하고 admin 승인을 기다린다. 현재 단일 agent를 점유하며 전체 60분 timeout이 적용된다.
+6. NAS에서 기존 컨테이너 target=prod와 DB endpoint 일치를 확인하고 AMD64 image/revision을 검사한다.
+7. private env를 0600으로 백업한 뒤 image/revision만 변경한다. `docker compose up -d --no-build --no-deps api`로 운영 앱을 교체한다. 소스 tar 전달이나 NAS 빌드는 없다.
+8. container health와 실제 API 계약 검사를 실행한다. 실패하면 원래 env/이미지 복구를 시도하고 검증한다. rollback receipt에 실제 상태를 남긴다.
+9. 성공한 경우에만 `production-release.json`을 archive한다.
 
-1. Git dev-codex checkout, 실제40자리 commit 확인. 이전 image metadata·release receipt를 지워 stale artifact 재사용 방지.
-2. uv locked 환경에서 Python 전체 검사와 Node UI 검사. Docker 연결 확인.
-3. 같은 소스로 linux/arm64 + linux/amd64 빌드 후 GHCR 업로드. 커밋 tag는 sha-<full commit>.
-4. buildx metadata에서 **manifest digest**를 얻는다. 배포에는 tag 대신 ghcr.io/evodmik/robingraph@sha256:<digest> 사용.
-5. M4에서 AMD64 fixture 컨테이너를 에뮬레이션으로 시작해 health/openapi 확인. network none·read-only·임시 /tmp로 실행한다. 이는 NAS 실 DB 검증이 아니다.
-6. Mac TEST에 ARM64 digest를 pull하고 image revision label·architecture 확인.
-7. 기존 TEST env의 DB값을 보존한 private release를 만들고 current를 atomic 전환. 컨테이너 시작·health·실제 API 계약·공개 TEST health를 검증한다.
-8. 실패 시 previous release로 current를 복구하고 이전 앱 health/API를 다시 확인한다. 롤백도 실패하면 작업은 실패 상태로 남고 receipt에 rollback_started를 남긴다.
-9. 검증 후에만 test-release.json을 작성·archive한다. 이 파일에 digest·commit·test_verified:true를 보존한다.
+`CHECK_ONLY=true`는 이미지 게시·승인·배포를 건너뛴다. TEST job은 비활성 상태이므로 자동 실행되지 않는다. 운영 파이프라인은 TEST artifact나 TEST_BUILD 매개변수에 의존하지 않는다.
 
-CHECK_ONLY=true는 publish/AMD64 smoke/TEST 변경을 모두 건너뛴다. Preflight는 이 모드 전용이며 polling이 없다. 실제 TEST job의 polling은 활성화 이후5분 간격이며 운영 job에는 자동 트리거가 없다. 같은 TEST job 동시 배포를 막고 agent도1executor로 직렬화했다.
+helper 원본 `scripts/deploy_registry_prod.py`와 관리 호스트 `/Users/kimdove/robingraph-test/deploy_registry_prod.py`를 대조했다. 관리 폴더명에 test가 포함되어 있지만 실제 목적지는 helper의 NAS Production guard로 확인한다. 관리 호스트 사본을 변경할 때는 원본과 검증 결과를 함께 맞춘다.
 
-TEST helper 원본은 scripts/deploy_registry_test.py이며 현재 host의 `/Users/kimdove/robingraph-test/deploy_registry_test.py`에 설치했다. helper 변경 시 원본을 검증하고 관리 호스트 사본을 함께 갱신한다. inline pipeline 자체 변경도 Jenkins job과 Jenkinsfile을 함께 대조한다.
-
-## Production 실행 흐름과 승인
-
-ci/Jenkinsfile.production 기준이며 아직 비활성·미실행이다.
-
-1. TEST_BUILD에 **가장 최근 성공한 RobinGraph-TEST 번호**를 지정한다.
-2. Copy Artifact가 latest successful build에서 test-release.json을 가져오고 선택 번호와 일치하는지 확인한다. 임의 JSON·실패 build·TEST가 확인되지 않은 이미지를 승격하지 않는다.
-3. commit·immutable digest를 화면에 제시하고 **submitter=admin**의 명시적 승인 입력을 기다린다. approval stage는 agent를 점유하지 않는다.
-4. 승인 후 NAS SSH와 GHCR credential을 binding한다. StrictHostKeyChecking=yes를 사용한다.
-5. NAS에서 기존 Production target과 DB설정 일치를 먼저 확인한다. immutable AMD64 image를 pull하고 revision·architecture를 확인한다.
-6. 기존 Production의 compose/env 위치를 inspect로 찾아 image/revision만 atomic 변경하고 --no-build --no-deps up으로 앱만 교체한다. 소스 tar 전달·NAS 빌드는 없다.
-7. health/API 계약 실패 시 원래 env·이미지를 복원하고 복구를 검증한다. DB 마이그레이션·수집·volume 삭제·compose down은 없다.
-
-원본 scripts/deploy_registry_prod.py는 관리 호스트 `/Users/kimdove/robingraph-test/deploy_registry_prod.py`에 설치했다. 원격 실행 코드는 SSH stdin으로 전달하며 소스 릴리스 tar를 NAS에 풀지 않는다. Registry 인증은 원격 private 임시 폴더에 두고 종료 시 제거한다. 실제 운영 실행 전에 TEST 전체 경로 성공과 사용자 결과 확인·별도 승인이 필요하다.
-
-## 실제 완료와 남은 검증
-
-GHCR login/push/pull·ARM64/AMD64 게시·M4의 AMD64 fixture 시작·Mac TEST digest 배포·API 계약·공개 Chromium 1280/390/320의9POST 및 /birds 검사가 통과했다. revision은 b7c787e27811e17a41e7a33d9561bde71d109ad2, image는 ghcr.io/evodmik/robingraph@sha256:9d3fbea038a9a4cdfb423a2de50d9ca923766af5891c24941f28f79cfbafcee6 이다.
-
-실제 TEST rollback·Production approval 런타임·운영 배포/rollback·운영 DB에서 새 앱 검증은 미실행이다. rollback은 mock subprocess/임시 파일6개 검사로 확인했다. 운영 helper는0600 원본 env 백업과 receipt를 남기도록 준비했다. 물리 재부팅·로그인 전 agent 복구도 미검증이다.
-
-현재 NAS에는 robingraph-api-test 컨테이너가 없다. 이전 NAS TEST 정지·보존 기록은 당시 상태이며 현재 롤백은 Mac previous release를 기준으로 한다. TEST 자동 배포 완료와 Production 운영 완료를 구분한다.
-
-공식 참고: [Jenkins agents](https://www.jenkins.io/doc/book/using/using-agents/), [Pipeline syntax](https://www.jenkins.io/doc/book/pipeline/syntax/), [Copy Artifact](https://plugins.jenkins.io/copyartifact).
+실제 실패 복구 검사는 mock subprocess/임시 파일 검사이며 운영 rollback을 일부러 유발하지 않는다. 재부팅·로그인 전 agent 복구와 물리 모바일 검증은 별도 미검증 범위다.

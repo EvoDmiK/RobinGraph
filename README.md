@@ -20,6 +20,7 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 ## 목차
 
 - [현재 제공 기능](#현재-제공-기능)
+- [기술 스택](#기술-스택)
 - [로컬에서 빠르게 실행](#로컬에서-빠르게-실행)
 - [실제 종 데이터 환경](#실제-종-데이터-환경)
 - [외부 API와 MLflow 설정](#외부-api와-mlflow-설정)
@@ -109,6 +110,27 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 새 알려줘`, `청둥오리 아종 알려줘`, `흰뺨검둥오리의 분류 계통 알려줘`를 입력해 확인할 수 있습니다. 대화 기록은 현재 창에서만 유지됩니다.
 
+## 기술 스택
+
+2026-10-20 기준 소스와 TEST 배포에 사용하는 구성입니다. Python 의존성 범위는 [pyproject.toml](pyproject.toml), 정확한 설치 버전은 [uv.lock](uv.lock)에서 관리합니다.
+
+| 영역 | 기술 | 역할 |
+| --- | --- | --- |
+| 언어·패키지 관리 | Python 3.12.13, uv | API·검색·수집 로직과 의존성 고정 |
+| API | Django 5.2, Django REST Framework 3.16 | REST API, 채팅·도감 정적 자산 제공 |
+| 서버·입출력 검증 | Uvicorn (ASGI), Pydantic 2 | ASGI 실행, 요청·응답 데이터 계약 검증 |
+| 프런트엔드 | HTML, CSS, JavaScript | 별도 프런트엔드 프레임워크 없이 채팅·도감 카드·관계 비교 구현 |
+| 그래프·검색 | Neo4j, Cypher, 전문·벡터 인덱스 | 종·근거 관계 탐색, 종 이름 후보 검색, 문헌 하이브리드 검색 |
+| 수집 상태 저장 | PostgreSQL, psycopg 3 | 수집 작업·분류판·활성 스냅샷·승인 상태 관리 |
+| 검색·생성 흐름 | LangChain Core / LCEL, RRF | 검색·라우팅·생성 단계 연결, 전문·벡터 검색 순위 결합 |
+| 외부 AI 연동 | Jev System1, Jina 호환 임베딩 API, Gemini | 설정에 따라 질문 의도 분석·임베딩·근거 기반 답변 생성 |
+| 관측 | MLflow Tracing | 선택적 호출·검색 추적과 결과 태그 기록 |
+| 수집 자동화 | n8n, Django ASGI 수집 실행기 | 수집 준비·검증·승인된 적용 단계 실행 |
+| 실행·배포 | Docker, Docker Compose, OrbStack, Jenkins | 컨테이너 패키징, Mac TEST 실행, 승인 절차를 거치는 배포 |
+| 테스트·CI | Python unittest, HTTPX ASGI 클라이언트, Node.js test runner, Playwright, GitHub Actions | API 계약·검색 로직·UI·브라우저·통합 검증 |
+
+API와 독립 수집 실행기는 Django 기반이며 FastAPI·Starlette 의존성은 제거했습니다. DB 접근은 기존 Neo4j 드라이버와 PostgreSQL SQL 계층이 담당하고, Django ORM·관리자·세션 기능은 사용하지 않습니다. 외부 AI와 MLflow는 설정한 경로에서만 사용하며, 로컬 fixture는 외부 DB·AI 없이 실행할 수 있습니다. Production의 Django 전환은 TEST 확인 후 별도 승인 대상입니다.
+
 ## 로컬에서 빠르게 실행
 
 소스 체크아웃에서 실행합니다. 개발환경은 `.python-version`의 Python **3.12.13**과 `uv.lock`으로 고정합니다. [uv 설치](https://docs.astral.sh/uv/getting-started/installation/) 후 Windows PowerShell·macOS·Linux에서 아래 명령을 사용합니다. 가상환경 활성화는 필요 없습니다.
@@ -186,7 +208,7 @@ MLflow Traces의 태그 필터로 다음을 조회할 수 있습니다.
 ```text
 브라우저 채팅·도감 카드
         ↓ 같은 origin의 API
-FastAPI → 질문 규칙 / Jev / 임베딩 라우터
+Django + DRF → 질문 규칙 / Jev / 임베딩 라우터
         ↓
 종·분류·관계 조회 / 문헌 검색 → 선택적 Gemini 생성
         ↓
@@ -271,3 +293,24 @@ GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/
 ## 기여자
 
 RobinGraph는 프로젝트 소유자 김둘기와 AI 개발 도구인 [OpenAI Codex](https://github.com/apps/chatgpt-codex-connector), [Anthropic Claude](https://github.com/apps/claude)의 협업으로 개발합니다. 역할과 Git 커밋 표기 기준은 [CONTRIBUTORS.md](CONTRIBUTORS.md)를 참고합니다.
+
+### Django API runtime (RG-701)
+
+`robingraph serve-fixture`, `serve-neo4j`, and `serve-ingest` use Django ASGI
+and DRF. Existing Neo4j drivers and PostgreSQL ingest SQL retain ownership of
+their data. Django auth/admin/session apps and ORM databases are not enabled;
+no Django `migrate` command is required for this transition. The former FastAPI
+adapters and dependency have been removed. Contract regression uses recorded
+responses rather than a second web framework. The separate AviList TEST runner
+(`scripts/serve_avilist_pipeline.py`) also uses Django ASGI, with isolated routes
+and the same reviewed-source, approval, authentication and TEST-target gates.
+
+```sh
+uv run --locked python -m django check --settings=robingraph.django_api.settings
+```
+
+Configure allowed hosts with `ROBINGRAPH_DJANGO_ALLOWED_HOSTS` (comma separated).
+This API does not use signed sessions or cookies. Before adding those features,
+configure a persistent `ROBINGRAPH_DJANGO_SECRET_KEY` and explicitly separate
+Django database ownership from the existing ingest schema.
+Production deployment requires separate user approval after TEST verification.

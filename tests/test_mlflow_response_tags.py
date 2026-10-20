@@ -20,10 +20,11 @@ import sys
 import unittest
 from unittest import mock
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
 from robingraph import tracing
-from robingraph.api.app import create_app, create_neo4j_search_handler
+from robingraph.api.drf import create_django_app
+from robingraph.api.services import create_neo4j_search_handler
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.retrieval import neo4j_hybrid
 from robingraph.retrieval.hybrid import HybridSearchOutcome
@@ -63,7 +64,7 @@ def _name_relations(name):
 
 def _app():
     settings = Neo4jSettings("bolt://neo4j.invalid:7687", "neo4j", "neo4j-password", "neo4j")
-    return create_app(
+    return create_django_app(
         species_profile_handler=_profile,
         observation_handler=lambda query: [],
         name_relations_handler=_name_relations,

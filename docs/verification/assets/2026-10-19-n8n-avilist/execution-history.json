@@ -1,0 +1,14 @@
+{
+  "workflow_id": "rgAvilistTest01",
+  "stored_execution_status_counts": [
+    {
+      "status": "error",
+      "count": 2
+    },
+    {
+      "status": "success",
+      "count": 2
+    }
+  ],
+  "test_execution_method": "n8n execute --id (CLI)"
+}

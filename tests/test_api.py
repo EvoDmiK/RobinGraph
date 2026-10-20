@@ -7,13 +7,15 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import (
+from robingraph.api.drf import create_django_app
+from robingraph.api.schemas import (
     OperationalBackendUnavailableError,
     SearchBackendUnavailableError,
     TaxonomyLineageBackendUnavailableError,
-    create_app,
+)
+from robingraph.api.services import (
     create_neo4j_korean_lineage_handler,
     create_neo4j_lineage_handler,
     create_neo4j_observation_handler,
@@ -52,7 +54,7 @@ class ApiTest(unittest.TestCase):
         )
         (cls.static_root / "chat.js").write_text("console.log('chat');", encoding="utf-8")
         (cls.static_root / "styles.css").write_text("body { color: #123; }", encoding="utf-8")
-        cls.client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=cls.static_root))
+        cls.client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=cls.static_root))
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -81,7 +83,7 @@ class ApiTest(unittest.TestCase):
 
     def test_mocked_neo4j_app_keeps_chat_and_health_routes_available(self) -> None:
         client = TestClient(
-            create_app(MockedNeo4jRepository(load_fixture()), static_dir=self.static_root)
+            create_django_app(MockedNeo4jRepository(load_fixture()), static_dir=self.static_root)
         )
         self.assertEqual("neo4j", client.get("/health").json()["mode"])
         self.assertEqual(200, client.get("/").status_code)
@@ -96,7 +98,7 @@ class ApiTest(unittest.TestCase):
             )
             (root / "styles.css").write_text("body {color:green}")
             (root / "chat.js").write_text("// old renderer")
-            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=root))
             before = client.get("/chat")
             old_url = re.search(r'src="([^"]+)"', before.text).group(1)
             self.assertIn("?v=", old_url)
@@ -111,7 +113,7 @@ class ApiTest(unittest.TestCase):
 
     def test_missing_chat_assets_return_sanitized_service_unavailable(self) -> None:
         missing_static_root = self.static_root / "missing"
-        client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=missing_static_root))
+        client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=missing_static_root))
         for path in ("/", "/chat", "/static/chat.js"):
             response = client.get(path)
             self.assertEqual(503, response.status_code)
@@ -131,7 +133,7 @@ class ApiTest(unittest.TestCase):
                     if asset_name != missing_asset:
                         (static_root / asset_name).write_text(content, encoding="utf-8")
 
-                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=static_root))
                 for path in ("/", "/chat", "/static/chat.js", "/static/styles.css"):
                     response = client.get(path)
                     self.assertEqual(503, response.status_code)
@@ -153,7 +155,7 @@ class ApiTest(unittest.TestCase):
                         encoding="utf-8",
                     )
 
-                client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=static_root))
+                client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=static_root))
                 for path in ("/", "/chat", "/static/index.html", "/static/chat.js", "/static/styles.css"):
                     response = client.get(path)
                     self.assertEqual(503, response.status_code)
@@ -173,7 +175,7 @@ class ApiTest(unittest.TestCase):
                 raise PermissionError("styles.css must not be disclosed")
             return original_open(path, flags, mode)
 
-        with patch("robingraph.api.app.os.open", side_effect=reject_stylesheet):
+        with patch("robingraph.api.services.os.open", side_effect=reject_stylesheet):
             for path in ("/", "/chat", "/static/chat.js"):
                 response = self.client.get(path)
                 self.assertEqual(503, response.status_code)
@@ -220,7 +222,7 @@ class ApiTest(unittest.TestCase):
             return HybridSearchOutcome((result,), ())
 
         client = TestClient(
-            create_app(FixtureRepository(load_fixture()), search_handler=search_handler)
+            create_django_app(FixtureRepository(load_fixture()), search_handler=search_handler)
         )
         response = client.post(
             "/v1/search",
@@ -246,7 +248,7 @@ class ApiTest(unittest.TestCase):
             ("Embedding request failed; results are keyword-only fulltext",),
         )
         client = TestClient(
-            create_app(FixtureRepository(load_fixture()), search_handler=lambda *_args: outcome)
+            create_django_app(FixtureRepository(load_fixture()), search_handler=lambda *_args: outcome)
         )
         response = client.post("/v1/search", json={"question": "물새", "mode": "hybrid"})
         self.assertEqual(200, response.status_code)
@@ -258,7 +260,7 @@ class ApiTest(unittest.TestCase):
         def unavailable(_question: str, _limit: int, _hybrid: bool) -> HybridSearchOutcome:
             raise SearchBackendUnavailableError("upstream token=not-for-client")
 
-        client = TestClient(create_app(FixtureRepository(load_fixture()), search_handler=unavailable))
+        client = TestClient(create_django_app(FixtureRepository(load_fixture()), search_handler=unavailable))
         response = client.post("/v1/search", json={"question": "물새"})
         self.assertEqual(503, response.status_code)
         self.assertEqual("Document search is temporarily unavailable.", response.json()["detail"])
@@ -321,7 +323,7 @@ class ApiTest(unittest.TestCase):
             return (observation,)
 
         client = TestClient(
-            create_app(FixtureRepository(load_fixture()), observation_handler=handler)
+            create_django_app(FixtureRepository(load_fixture()), observation_handler=handler)
         )
         response = client.get(
             "/v1/observations",
@@ -387,7 +389,7 @@ class ApiTest(unittest.TestCase):
             media=(),
         )
         client = TestClient(
-            create_app(
+            create_django_app(
                 FixtureRepository(load_fixture()),
                 observation_handler=lambda _query: (observation,),
             )
@@ -399,7 +401,7 @@ class ApiTest(unittest.TestCase):
 
     def test_operational_observation_filters_are_validated(self) -> None:
         client = TestClient(
-            create_app(FixtureRepository(load_fixture()), observation_handler=lambda _query: ())
+            create_django_app(FixtureRepository(load_fixture()), observation_handler=lambda _query: ())
         )
         self.assertEqual(422, client.get("/v1/observations?limit=101").status_code)
         self.assertEqual(422, client.get("/v1/observations?offset=-1").status_code)
@@ -433,7 +435,7 @@ class ApiTest(unittest.TestCase):
             calls.append(scientific_name)
             return lineage
 
-        client = TestClient(create_app(FixtureRepository(load_fixture()), lineage_handler=handler))
+        client = TestClient(create_django_app(FixtureRepository(load_fixture()), lineage_handler=handler))
         response = client.get("/v1/taxa/lineage", params={"scientific_name": "  Anas zonorhyncha  "})
 
         self.assertEqual(200, response.status_code)
@@ -511,7 +513,7 @@ class ApiTest(unittest.TestCase):
             items=(LineageTaxon("species:anas-zonorhyncha", "species", "Anas zonorhyncha", None),),
         )
         client = TestClient(
-            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: legacy_lineage)
+            create_django_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: legacy_lineage)
         )
         payload = client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha").json()
         self.assertEqual("Anas zonorhyncha", payload["query_name"])
@@ -552,7 +554,7 @@ class ApiTest(unittest.TestCase):
             return lineage
 
         client = TestClient(
-            create_app(
+            create_django_app(
                 FixtureRepository(load_fixture()),
                 lineage_handler=scientific_handler,
                 korean_lineage_handler=korean_handler,
@@ -572,7 +574,7 @@ class ApiTest(unittest.TestCase):
         self.assertIsNone(payload["lineage"][0]["korean_name_status"])
 
     def test_taxonomy_lineage_requires_exactly_one_of_scientific_name_or_name(self) -> None:
-        client = TestClient(create_app(FixtureRepository(load_fixture())))
+        client = TestClient(create_django_app(FixtureRepository(load_fixture())))
         self.assertEqual(422, client.get("/v1/taxa/lineage").status_code)
         self.assertEqual(
             422,
@@ -584,7 +586,7 @@ class ApiTest(unittest.TestCase):
 
     def test_taxonomy_lineage_rejects_blank_and_overlong_queries(self) -> None:
         client = TestClient(
-            create_app(
+            create_django_app(
                 FixtureRepository(load_fixture()),
                 lineage_handler=lambda _name: None,
                 korean_lineage_handler=lambda _name: None,
@@ -597,14 +599,14 @@ class ApiTest(unittest.TestCase):
 
     def test_taxonomy_lineage_scientific_name_not_found_and_unavailable_are_distinguished(self) -> None:
         missing_client = TestClient(
-            create_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None)
+            create_django_app(FixtureRepository(load_fixture()), lineage_handler=lambda _name: None)
         )
         response = missing_client.get("/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha")
         self.assertEqual(404, response.status_code)
         self.assertIn("scientific_name", response.json()["detail"])
 
         unavailable_client = TestClient(
-            create_app(
+            create_django_app(
                 FixtureRepository(load_fixture()),
                 lineage_handler=lambda _name: (_ for _ in ()).throw(
                     TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")
@@ -617,14 +619,14 @@ class ApiTest(unittest.TestCase):
 
     def test_taxonomy_lineage_name_not_found_and_unavailable_are_distinguished(self) -> None:
         missing_client = TestClient(
-            create_app(FixtureRepository(load_fixture()), korean_lineage_handler=lambda _name: None)
+            create_django_app(FixtureRepository(load_fixture()), korean_lineage_handler=lambda _name: None)
         )
         response = missing_client.get("/v1/taxa/lineage", params={"name": "흰뺨검둥오리"})
         self.assertEqual(404, response.status_code)
         self.assertIn("Korean vernacular name", response.json()["detail"])
 
         unavailable_client = TestClient(
-            create_app(
+            create_django_app(
                 FixtureRepository(load_fixture()),
                 korean_lineage_handler=lambda _name: (_ for _ in ()).throw(
                     TaxonomyLineageBackendUnavailableError("AviList reference taxonomy is unavailable")

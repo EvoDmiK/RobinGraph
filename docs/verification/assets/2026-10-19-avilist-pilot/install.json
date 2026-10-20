@@ -1,0 +1,11 @@
+{
+  "source_git_revision": "bc643ee9edef0fc58c605adde70b4808b7622ac5",
+  "uncommitted_pilot": true,
+  "test_tools_only": true,
+  "app_restart": false,
+  "files_sha256": {
+    "scripts/build_species_distribution.py": "991d1bfc1d85140b34abec1eb6ef3a918588d3ba2f4cb74b7af3c2412240b8bf",
+    "scripts/run_avilist_pipeline.py": "155b41d46c4b9fdec0ad9e70ed3fd232e9eff6a70a34a0d79c98bca6bf35e680",
+    "src/robingraph/ingest/avilist_pipeline.py": "ae0a1140bb31493981d49916f6e5c3605db998e4abadb3cdb6c1295afd3fe026"
+  }
+}

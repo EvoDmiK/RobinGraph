@@ -1,0 +1,27 @@
+{
+  "target": "test",
+  "mocked": false,
+  "passed": true,
+  "cases": [
+    {
+      "case": "unauthenticated_stage",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "case": "authenticated_body_limit",
+      "status": 413,
+      "passed": true
+    },
+    {
+      "case": "public_api_isolated",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "case": "host_guard",
+      "status": 400,
+      "passed": true
+    }
+  ]
+}

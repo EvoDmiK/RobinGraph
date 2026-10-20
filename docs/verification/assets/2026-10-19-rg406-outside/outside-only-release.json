@@ -1,0 +1,14 @@
+{
+  "image": "robingraph-api:test-rg406-outside-spelling-f4a3996cf124",
+  "base_image": "robingraph-api:test-rg406-outside-3b4106fe77ed",
+  "base_revision": "bc643ee9edef0fc58c605adde70b4808b7622ac5",
+  "patch_sha256": "f4a3996cf12434b21ecd5173fffe3e71ccaf9cfac1b49cdbbca7e29fdd068f3d",
+  "file_sha256": {
+    "src/robingraph/retrieval/taxon_name_resolution.py": "884ca8c1fada94d865a59a8df6d22f0ae10c2a7055c6373bb817cd9cac68289e",
+    "src/robingraph/retrieval/taxon_name_vectors_neo4j.py": "e843a1274e6d7f32dfee38f19236b196877a1f2b09b5430e262d6129868a505d"
+  },
+  "previous_release": "/Users/kimdove/robingraph-test/releases/rg406-outside-3b4106fe77ed",
+  "state": "verified",
+  "target": "test",
+  "uncommitted_runtime_patch": true
+}

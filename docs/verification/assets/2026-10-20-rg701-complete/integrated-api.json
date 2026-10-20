@@ -1,0 +1,40 @@
+{
+  "copied": [
+    "src/robingraph/api/services.py",
+    "src/robingraph/api/schemas.py",
+    "src/robingraph/api/ingest_service.py",
+    "src/robingraph/api/drf/application.py",
+    "scripts/evaluate_jev_intents.py",
+    "tests/asgi_client.py",
+    "tests/fixtures/drf_parity_golden.json",
+    "tests/test_drf_parity.py",
+    "tests/test_django_runtime.py",
+    "tests/test_api.py",
+    "tests/test_ecological_relations.py",
+    "tests/test_entity_resolution_api.py",
+    "tests/test_favicon.py",
+    "tests/test_ingest_api.py",
+    "tests/test_jev_router.py",
+    "tests/test_mlflow_response_tags.py",
+    "tests/test_mlflow_tracing.py",
+    "tests/test_name_relations.py",
+    "tests/test_name_relations_integration.py",
+    "tests/test_related_species.py",
+    "tests/test_semantic_chat.py",
+    "tests/test_search_cli.py",
+    "tests/test_similar_species.py",
+    "tests/test_similar_species_korean_priority.py",
+    "tests/test_species_profile.py",
+    "tests/test_species_questions.py",
+    "tests/test_species_scope_api.py",
+    "tests/test_subspecies.py"
+  ],
+  "deleted": [
+    "src/robingraph/api/app.py",
+    "src/robingraph/api/ingest_router.py",
+    "tests/test_drf_legacy_suite.py"
+  ],
+  "golden_sha256": "5e57bf73f4e6106ac3e1f88a7e778e48ee723f31b3fcf6ea2eb4169777f2d6de",
+  "response_records": 273,
+  "store_records": 10
+}

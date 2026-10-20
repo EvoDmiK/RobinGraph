@@ -4,8 +4,8 @@ from dataclasses import replace
 import unittest
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
-from robingraph.api.app import create_app
+from asgi_client import TestClient
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.similar_species import similar_species
 from tests.test_similar_species_korean_priority import NameRepository, checked_candidate
 from tests.test_similar_species import LINEAGE, TARGET, candidate
@@ -22,7 +22,7 @@ PROFILE = {
 class SpeciesScopeApiTests(unittest.TestCase):
     def client(self, profile=PROFILE):
         self.reader=Mock(return_value=deepcopy(profile))
-        return TestClient(create_app(species_profile_handler=self.reader))
+        return TestClient(create_django_app(species_profile_handler=self.reader))
 
     def test_korea_profile_and_chat_accept_verified_records(self):
         client=self.client()
@@ -65,7 +65,7 @@ class SpeciesScopeApiTests(unittest.TestCase):
         result={'taxon':PROFILE['taxon'],**PROFILE['lineage'],'groups':[]}
         for endpoint, arg in [('related','related_species_handler'),('similar','similar_species_handler'),('ecological-related','ecological_relations_handler')]:
             handler=Mock(return_value=result)
-            client=TestClient(create_app(**{arg:handler}))
+            client=TestClient(create_django_app(**{arg:handler}))
             self.assertEqual(200,client.get('/v1/taxa/'+endpoint,params={'name':'청둥오리','species_scope':'korea'}).status_code)
             handler.assert_called_once_with('청둥오리',species_scope='korea')
 
@@ -108,7 +108,7 @@ class SpeciesScopeApiTests(unittest.TestCase):
         from robingraph.retrieval.taxonomy_lineage import LineageTaxon, TaxonomyLineage
         target=LineageTaxon('avilist-taxon:v2025b:11283','species','Nestor notabilis',None,'높은산앵무',english_name='Kea')
         lineage=TaxonomyLineage('Nestor notabilis','AviList','v2025b',CONCEPT,(target,))
-        client=TestClient(create_app(lineage_handler=lambda _:lineage))
+        client=TestClient(create_django_app(lineage_handler=lambda _:lineage))
         response=client.get('/v1/taxa/lineage',params={'scientific_name':'Nestor notabilis','species_scope':'outside'})
         self.assertEqual('Kea',response.json()['lineage'][-1]['display_name'])
         self.assertEqual(404,client.get('/v1/taxa/lineage',params={'scientific_name':'Nestor notabilis','species_scope':'korea'}).status_code)

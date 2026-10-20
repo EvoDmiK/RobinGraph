@@ -1,8 +1,11 @@
-"""Authenticated, fail-closed control-plane ingest API.
+"""Framework-independent, fail-closed control-plane ingest service.
 
-This router deliberately accepts only source/control-plane facts. It never
+This boundary deliberately accepts only source/control-plane facts. It never
 accepts Taxon, VernacularName, or any other Neo4j domain-graph mutation, and
 source records remain PostgreSQL-only rather than being projected to Neo4j.
+
+The Pydantic request/response DTOs and every operation back the internal
+native DRF views (`robingraph.api.drf`).
 """
 
 from __future__ import annotations
@@ -12,9 +15,8 @@ import json
 import os
 import re
 import secrets
-from typing import Annotated, Any, Literal, Protocol
+from typing import Any, Literal, Protocol
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Path, status
 from pydantic import BaseModel, ConfigDict, Field, JsonValue, StrictInt, field_validator, model_validator
 
 from ..ingest.store import (
@@ -28,6 +30,7 @@ from ..ingest.store import (
     SourceRecordInput,
     SourceReleaseInput,
 )
+from .services import ApiError
 
 
 _TOKEN_ENV = "ROBINGRAPH_INGEST_INTERNAL_TOKEN"
@@ -272,56 +275,45 @@ def _run_id(value: str) -> str:
     try:
         return _identifier(value)
     except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid run id") from error
+        raise ApiError(422, "Invalid run id") from error
 
 
-def _operation_error(error: Exception) -> HTTPException:
+def _operation_error(error: Exception) -> ApiError:
     if isinstance(error, IngestionConflictError):
-        return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ingestion conflict")
+        return ApiError(409, "Ingestion conflict")
     if isinstance(error, IngestionStateError):
-        return HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Invalid ingestion state")
-    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid ingestion request")
+        return ApiError(409, "Invalid ingestion state")
+    return ApiError(422, "Invalid ingestion request")
 
 
-def create_ingest_router(store: IngestStore) -> APIRouter:
-    """Create the private ingest router using its mandatory environment token.
+class IngestService:
+    """Private ingest operations bound to an explicitly injected store.
 
     The caller must explicitly supply a repository; this module never creates
-    a PostgreSQL connection from ambient environment configuration.
+    a PostgreSQL connection from ambient environment configuration. The
+    internal bearer token is mandatory and read once at construction.
     """
 
-    token = os.getenv(_TOKEN_ENV, "")
-    if not token:
-        raise ValueError(f"{_TOKEN_ENV} must be configured before enabling the ingest API")
+    def __init__(self, store: IngestStore) -> None:
+        token = os.getenv(_TOKEN_ENV, "")
+        if not token:
+            raise ValueError(f"{_TOKEN_ENV} must be configured before enabling the ingest API")
+        self.store = store
+        self._token = token
 
-    async def require_internal_bearer(
-        authorization: Annotated[str | None, Header()] = None,
-    ) -> None:
+    def require_internal_bearer(self, authorization: str | None) -> None:
         supplied = authorization[7:] if authorization and authorization.startswith("Bearer ") else ""
-        if not supplied or not secrets.compare_digest(supplied, token):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Unauthorized",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+        if not supplied or not secrets.compare_digest(supplied, self._token):
+            raise ApiError(401, "Unauthorized", {"WWW-Authenticate": "Bearer"})
 
-    router = APIRouter(
-        prefix="/internal/v1/ingest",
-        tags=["internal-ingest"],
-        dependencies=[Depends(require_internal_bearer)],
-    )
-
-    @router.get("/active/{pipeline_id}", response_model=ActiveReleaseResponse)
-    def active_release(
-        pipeline_id: Annotated[str, Path(min_length=1, max_length=_IDENTIFIER_MAX_LENGTH)],
-    ) -> ActiveReleaseResponse:
+    def active_release(self, pipeline_id: str) -> ActiveReleaseResponse:
         pipeline_id = _run_id(pipeline_id)
         try:
-            active = store.active_release_context(pipeline_id)
+            active = self.store.active_release_context(pipeline_id)
         except ValueError as error:
             raise _operation_error(error) from error
         if active is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Active release not found")
+            raise ApiError(404, "Active release not found")
         return ActiveReleaseResponse(
             pipeline_id=active.pipeline_id,
             dataset_id=active.dataset.id,
@@ -334,28 +326,23 @@ def create_ingest_router(store: IngestStore) -> APIRouter:
             state_version=active.version,
         )
 
-    @router.post("/begin", response_model=OperationResponse)
-    def begin(request: BeginRequest) -> OperationResponse:
+    def begin(self, request: BeginRequest) -> OperationResponse:
         dataset = SourceDatasetInput(**request.dataset.model_dump())
         release = SourceReleaseInput(
             **request.release.model_dump(), dataset_id=dataset.id
         )
         run = IngestionRunInput(**request.run.model_dump(), source_release_id=release.id)
         try:
-            store.begin_run(dataset, release, run)
-            state_version = store.pipeline_state_version(run.pipeline_id)
+            self.store.begin_run(dataset, release, run)
+            state_version = self.store.pipeline_state_version(run.pipeline_id)
         except (IngestionConflictError, IngestionStateError, ValueError) as error:
             raise _operation_error(error) from error
         return OperationResponse(status="started", state_version=state_version)
 
-    @router.post("/{run_id}/append", response_model=OperationResponse)
-    def append(
-        run_id: Annotated[str, Path(min_length=1, max_length=_IDENTIFIER_MAX_LENGTH)],
-        request: AppendRequest,
-    ) -> OperationResponse:
+    def append(self, run_id: str, request: AppendRequest) -> OperationResponse:
         run_id = _run_id(run_id)
         try:
-            context = store.run_context(run_id)
+            context = self.store.run_context(run_id)
             records = tuple(
                 SourceRecordInput(
                     **record.model_dump(),
@@ -368,7 +355,7 @@ def create_ingest_router(store: IngestStore) -> APIRouter:
                 QuarantineItemInput(**item.model_dump(), ingestion_run_id=run_id)
                 for item in request.quarantine_items
             )
-            store.append_batch(
+            self.store.append_batch(
                 run_id,
                 records=records,
                 quarantine_items=quarantine_items,
@@ -378,14 +365,10 @@ def create_ingest_router(store: IngestStore) -> APIRouter:
             raise _operation_error(error) from error
         return OperationResponse(status="appended")
 
-    @router.post("/{run_id}/finalize", response_model=OperationResponse)
-    def finalize(
-        run_id: Annotated[str, Path(min_length=1, max_length=_IDENTIFIER_MAX_LENGTH)],
-        request: FinalizeRequest,
-    ) -> OperationResponse:
+    def finalize(self, run_id: str, request: FinalizeRequest) -> OperationResponse:
         run_id = _run_id(run_id)
         try:
-            version = store.activate_release(
+            version = self.store.activate_release(
                 run_id,
                 counts=request.counts,
                 cursor_value=request.cursor,
@@ -395,16 +378,10 @@ def create_ingest_router(store: IngestStore) -> APIRouter:
             raise _operation_error(error) from error
         return OperationResponse(status="finalized", state_version=version)
 
-    @router.post("/{run_id}/fail", response_model=OperationResponse)
-    def fail(
-        run_id: Annotated[str, Path(min_length=1, max_length=_IDENTIFIER_MAX_LENGTH)],
-        request: FailRequest,
-    ) -> OperationResponse:
+    def fail(self, run_id: str, request: FailRequest) -> OperationResponse:
         run_id = _run_id(run_id)
         try:
-            store.fail_run(run_id, request.reason)
+            self.store.fail_run(run_id, request.reason)
         except (IngestionConflictError, IngestionStateError, ValueError) as error:
             raise _operation_error(error) from error
         return OperationResponse(status="failed")
-
-    return router

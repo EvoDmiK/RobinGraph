@@ -1,0 +1,5262 @@
+{
+ "IngestParityTest.store_calls": [
+  [
+   "begin",
+   {
+    "id": "ds",
+    "landing_uri": "https://example.org/",
+    "metadata": {},
+    "name": "n",
+    "policy_status": "allowed",
+    "provider": "p",
+    "release_strategy": "dated_snapshot",
+    "source_id": "src",
+    "type": "SourceDatasetInput"
+   },
+   {
+    "content_sha256": null,
+    "dataset_id": "ds",
+    "id": "rel",
+    "metadata": {},
+    "raw_object_uri": null,
+    "release_key": "k",
+    "retrieved_at": "2026-09-22T00:00:00+00:00",
+    "type": "SourceReleaseInput"
+   },
+   {
+    "config_sha256": null,
+    "id": "run",
+    "manifest": {},
+    "pipeline_git_sha": null,
+    "pipeline_id": "pipe",
+    "source_release_id": "rel",
+    "started_at": "2026-09-22T00:00:00+00:00",
+    "type": "IngestionRunInput"
+   }
+  ],
+  [
+   "state_version",
+   "pipe"
+  ],
+  [
+   "active",
+   "pipe"
+  ],
+  [
+   "active",
+   "append"
+  ],
+  [
+   "context",
+   "run"
+  ],
+  [
+   "append",
+   "run",
+   [
+    {
+     "external_id": "Q1",
+     "id": "r1",
+     "ingestion_run_id": "run",
+     "license_policy_status": "allowed",
+     "parser_version": "v1",
+     "payload": {
+      "a": 1
+     },
+     "raw_object_uri": "https://example.org/r",
+     "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "record_type": "t",
+     "record_version": "1",
+     "retrieved_at": "2026-09-22T00:00:00+00:00",
+     "source_release_id": "wikidata-release",
+     "source_updated_at": null,
+     "supersedes_record_id": null,
+     "type": "SourceRecordInput"
+    }
+   ],
+   [],
+   []
+  ],
+  [
+   "context",
+   "active"
+  ],
+  [
+   "append",
+   "active",
+   [
+    {
+     "external_id": "Q1",
+     "id": "r1",
+     "ingestion_run_id": "active",
+     "license_policy_status": "allowed",
+     "parser_version": "v1",
+     "payload": {
+      "a": 1
+     },
+     "raw_object_uri": "https://example.org/r",
+     "raw_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "record_type": "t",
+     "record_version": "1",
+     "retrieved_at": "2026-09-22T00:00:00+00:00",
+     "source_release_id": "wikidata-release",
+     "source_updated_at": null,
+     "supersedes_record_id": null,
+     "type": "SourceRecordInput"
+    }
+   ],
+   [],
+   []
+  ],
+  [
+   "finalize",
+   "run",
+   {
+    "a": 1
+   },
+   {},
+   2
+  ],
+  [
+   "fail",
+   "run",
+   "network"
+  ]
+ ],
+ "IngestParityTest.test_bearer_routing_validation_and_store_errors": [
+  {
+   "headers": {
+    "content-type": "application/json",
+    "www-authenticate": "Bearer"
+   },
+   "json": {
+    "detail": "Unauthorized"
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}}",
+   "status": 401
+  },
+  {
+   "headers": {
+    "content-type": "application/json",
+    "www-authenticate": "Bearer"
+   },
+   "json": {
+    "detail": "Unauthorized"
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}, 'headers': {'authorization': 'Bearer wrong'}}",
+   "status": 401
+  },
+  {
+   "headers": {
+    "content-type": "application/json",
+    "www-authenticate": "Bearer"
+   },
+   "json": {
+    "detail": "Unauthorized"
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}, 'headers': {'authorization': 'test-internal-token'}}",
+   "status": 401
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": "Expecting property name enclosed in double quotes"
+      },
+      "input": {},
+      "loc": [
+       "body",
+       1
+      ],
+      "msg": "JSON decode error",
+      "type": "json_invalid"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/begin {'content': b'{bad', 'headers': {'content-type': 'application/json'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "allow": "POST",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "GET /internal/v1/ingest/begin {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "POST",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "GET /internal/v1/ingest/run/append {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "GET",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "POST /internal/v1/ingest/active/pipe {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /internal/v1/ingest/run/unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /internal/v1/ingest/active {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "state_version": 2,
+    "status": "started"
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": 1,
+      "loc": [
+       "body",
+       "extra"
+      ],
+      "msg": "Extra inputs are not permitted",
+      "type": "extra_forbidden"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}, 'extra': 1}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "body"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/begin {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "cursor": {
+     "offset": 948
+    },
+    "dataset_id": "wikidata-dataset",
+    "last_successful_run_id": "wikidata-run-a",
+    "metadata": {},
+    "pipeline_id": "pipe",
+    "release_id": "wikidata-release",
+    "release_key": "snapshot-a",
+    "state_version": 2
+   },
+   "request": "GET /internal/v1/ingest/active/pipe {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "cursor": {
+     "offset": 948
+    },
+    "dataset_id": "wikidata-dataset",
+    "last_successful_run_id": "wikidata-run-a",
+    "metadata": {},
+    "pipeline_id": "append",
+    "release_id": "wikidata-release",
+    "release_key": "snapshot-a",
+    "state_version": 2
+   },
+   "request": "GET /internal/v1/ingest/active/append {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+      "loc": [
+       "path",
+       "pipeline_id"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /internal/v1/ingest/active/ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid run id"
+   },
+   "request": "GET /internal/v1/ingest/active/a%20b {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "state_version": null,
+    "status": "appended"
+   },
+   "request": "POST /internal/v1/ingest/run/append {'json': {'records': [{'id': 'r1', 'external_id': 'Q1', 'record_type': 't', 'raw_object_uri': 'https://example.org/r', 'raw_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'retrieved_at': '2026-09-22T00:00:00Z', 'parser_version': 'v1', 'license_policy_status': 'allowed', 'payload': {'a': 1}}]}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "state_version": null,
+    "status": "appended"
+   },
+   "request": "POST /internal/v1/ingest/active/append {'json': {'records': [{'id': 'r1', 'external_id': 'Q1', 'record_type': 't', 'raw_object_uri': 'https://example.org/r', 'raw_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'retrieved_at': '2026-09-22T00:00:00Z', 'parser_version': 'v1', 'license_policy_status': 'allowed', 'payload': {'a': 1}}]}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": {}
+      },
+      "input": {},
+      "loc": [
+       "body"
+      ],
+      "msg": "Value error, must include at least one record or quarantine item",
+      "type": "value_error"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/run/append {'json': {}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+      "loc": [
+       "path",
+       "run_id"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "id"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "external_id"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "record_type"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "raw_object_uri"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "raw_sha256"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "retrieved_at"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "parser_version"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "license_policy_status"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     },
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "records",
+       0,
+       "payload"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr/append {'json': {'records': [{}]}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "state_version": 3,
+    "status": "finalized"
+   },
+   "request": "POST /internal/v1/ingest/run/finalize {'json': {'counts': {'a': 1}, 'expected_state_version': 2}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": true,
+      "loc": [
+       "body",
+       "counts",
+       "b"
+      ],
+      "msg": "Input should be a valid integer",
+      "type": "int_type"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/run/finalize {'json': {'counts': {'a': -1, 'b': True}}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "state_version": null,
+    "status": "failed"
+   },
+   "request": "POST /internal/v1/ingest/run/fail {'json': {'reason': 'network'}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "body",
+       "reason"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "POST /internal/v1/ingest/run/fail {'json': {'reason': ''}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Ingestion conflict"
+   },
+   "request": "POST /internal/v1/ingest/begin {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Ingestion conflict"
+   },
+   "request": "GET /internal/v1/ingest/active/pipe {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Ingestion conflict"
+   },
+   "request": "POST /internal/v1/ingest/run/fail {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'reason': 'r'}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion state"
+   },
+   "request": "POST /internal/v1/ingest/begin {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion state"
+   },
+   "request": "GET /internal/v1/ingest/active/pipe {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion state"
+   },
+   "request": "POST /internal/v1/ingest/run/fail {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'reason': 'r'}}",
+   "status": 409
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion request"
+   },
+   "request": "POST /internal/v1/ingest/begin {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion request"
+   },
+   "request": "GET /internal/v1/ingest/active/pipe {'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Invalid ingestion request"
+   },
+   "request": "POST /internal/v1/ingest/run/fail {'headers': {'authorization': 'Bearer test-internal-token'}, 'json': {'reason': 'r'}}",
+   "status": 422
+  }
+ ],
+ "IngestParityTest.test_openapi_and_missing_token": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json_sha256": "b3a6192de74566a653a9918a3c4b36af8c80de23c2aad4b4a4813f4a71837c1f",
+   "request": "GET /openapi.json {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "POST /internal/v1/ingest/begin {'json': {'dataset': {'id': 'ds', 'source_id': 'src', 'name': 'n', 'provider': 'p', 'landing_uri': 'https://example.org/', 'release_strategy': 'dated_snapshot', 'policy_status': 'allowed'}, 'release': {'id': 'rel', 'release_key': 'k', 'retrieved_at': '2026-09-22T00:00:00Z'}, 'run': {'id': 'run', 'pipeline_id': 'pipe', 'started_at': '2026-09-22T00:00:00Z'}}, 'headers': {'authorization': 'Bearer test-internal-token'}}",
+   "status": 404
+  }
+ ],
+ "PublicApiParityTest.test_chat_routes_and_fail_closed_answers": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "흰뺨검둥오리 요약",
+    "disposition": "answer",
+    "entity_resolution": {
+     "candidates": [],
+     "canonical_name": "Anas zonorhyncha",
+     "concept_set_id": "avilist-2025",
+     "mention": "흰뺨검둥오리",
+     "method": "graph_exact",
+     "status": "matched",
+     "taxon_id": "species:anas-zonorhyncha",
+     "taxonomy_release": "AviList 2025"
+    },
+    "result": {
+     "kind": "profile",
+     "profile": {
+      "lineage": {
+       "concept_set_id": "avilist-2025",
+       "taxonomy_release": "AviList 2025"
+      },
+      "observed_on": "2026-01-02",
+      "summary": "흰뺨검둥오리 요약",
+      "taxon": {
+       "korean_name": "흰뺨검둥오리",
+       "query": "Anas zonorhyncha",
+       "rank": "species",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "species:anas-zonorhyncha"
+      },
+      "traits": [
+       {
+        "name": "mass",
+        "value": 1.5
+       }
+      ],
+      "warnings": []
+     },
+     "question_answer": null,
+     "similar_species": {
+      "concept_set_id": "avilist-2025",
+      "groups": [
+       {
+        "items": [],
+        "rank": "genus",
+        "relation": "habitat"
+       }
+      ],
+      "taxon": {
+       "korean_name": "흰뺨검둥오리",
+       "query": "Anas zonorhyncha",
+       "rank": "species",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "species:anas-zonorhyncha"
+      },
+      "taxonomy_release": "AviList 2025"
+     },
+     "subspecies": null
+    },
+    "route_method": "deterministic",
+    "selected_intent": "profile",
+    "warnings": []
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "선택한 범위에서 이 종의 기록·분포를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "profile",
+     "profile": null,
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "deterministic",
+    "selected_intent": "profile",
+    "warnings": [
+     "선택한 범위의 분포 근거를 확인하지 못했습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'species_scope': 'korea'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "흰뺨검둥오리 요약",
+    "disposition": "answer",
+    "entity_resolution": {
+     "candidates": [],
+     "canonical_name": "Anas zonorhyncha",
+     "concept_set_id": "avilist-2025",
+     "mention": "흰뺨검둥오리",
+     "method": "graph_exact",
+     "status": "matched",
+     "taxon_id": "species:anas-zonorhyncha",
+     "taxonomy_release": "AviList 2025"
+    },
+    "result": {
+     "kind": "profile",
+     "profile": {
+      "lineage": {
+       "concept_set_id": "avilist-2025",
+       "taxonomy_release": "AviList 2025"
+      },
+      "observed_on": "2026-01-02",
+      "summary": "흰뺨검둥오리 요약",
+      "taxon": {
+       "korean_name": "흰뺨검둥오리",
+       "query": "Anas zonorhyncha",
+       "rank": "species",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "species:anas-zonorhyncha"
+      },
+      "traits": [
+       {
+        "name": "mass",
+        "value": 1.5
+       }
+      ],
+      "warnings": []
+     },
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "deterministic",
+    "selected_intent": "profile",
+    "warnings": []
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'defer_enrichment': True, 'defer_discovery': True}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "분류 계통을 확인했습니다.",
+    "disposition": "answer",
+    "entity_resolution": null,
+    "result": {
+     "kind": "taxonomy",
+     "lineage": {
+      "concept_set_id": "avilist-2025",
+      "lineage": [
+       {
+        "authority": null,
+        "display_name": null,
+        "english_name": null,
+        "korean_name": null,
+        "korean_name_source_url": null,
+        "korean_name_status": null,
+        "rank": "order",
+        "scientific_name": "Anseriformes",
+        "taxon_id": "order:anseriformes"
+       },
+       {
+        "authority": "Leach, 1820",
+        "display_name": null,
+        "english_name": null,
+        "korean_name": "오리과",
+        "korean_name_source_url": null,
+        "korean_name_status": null,
+        "rank": "family",
+        "scientific_name": "Anatidae",
+        "taxon_id": "family:anatidae"
+       },
+       {
+        "authority": null,
+        "display_name": null,
+        "english_name": null,
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_source_url": null,
+        "korean_name_status": "source-preferred",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "taxon_id": "species:anas-zonorhyncha"
+       }
+      ],
+      "matched_by": "korean_name",
+      "query_name": "흰뺨검둥오리",
+      "query_scientific_name": "Anas zonorhyncha",
+      "resolved_query_scientific_name": "Anas zonorhyncha",
+      "taxonomy_release": "AviList 2025",
+      "taxonomy_source": "AviList"
+     }
+    },
+    "route_method": "deterministic",
+    "selected_intent": "taxonomy",
+    "warnings": []
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리의 분류 알려줘'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+    "disposition": "clarify",
+    "entity_resolution": null,
+    "result": {
+     "kind": "clarify",
+     "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+    },
+    "route_method": "semantic",
+    "selected_intent": null,
+    "warnings": [
+     "자동 분류가 확실하지 않아 조회하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리는 무슨 과야?'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "입력한 이름의 종 정보를 확인하지 못했습니다.",
+    "disposition": "abstain",
+    "entity_resolution": {
+     "candidates": [],
+     "canonical_name": null,
+     "concept_set_id": null,
+     "mention": "없는새",
+     "method": "none",
+     "status": "not_found",
+     "taxon_id": null,
+     "taxonomy_release": null
+    },
+    "result": {
+     "kind": "profile",
+     "profile": null,
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "deterministic",
+    "selected_intent": "profile",
+    "warnings": [
+     "종 이름을 임의로 추정하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '없는새에 대해 알려줘'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+    "disposition": "clarify",
+    "entity_resolution": null,
+    "result": {
+     "kind": "clarify",
+     "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+    },
+    "route_method": "semantic",
+    "selected_intent": null,
+    "warnings": [
+     "자동 분류가 확실하지 않아 조회하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '아무 질문'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "흰뺨검둥오리 요약",
+    "disposition": "answer",
+    "entity_resolution": {
+     "candidates": [],
+     "canonical_name": "Anas zonorhyncha",
+     "concept_set_id": "avilist-2025",
+     "mention": "흰뺨검둥오리",
+     "method": "graph_exact",
+     "status": "matched",
+     "taxon_id": "species:anas-zonorhyncha",
+     "taxonomy_release": "AviList 2025"
+    },
+    "result": {
+     "kind": "profile",
+     "profile": {
+      "lineage": {
+       "concept_set_id": "avilist-2025",
+       "taxonomy_release": "AviList 2025"
+      },
+      "observed_on": "2026-01-02",
+      "summary": "흰뺨검둥오리 요약",
+      "taxon": {
+       "korean_name": "흰뺨검둥오리",
+       "query": "Anas zonorhyncha",
+       "rank": "species",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "species:anas-zonorhyncha"
+      },
+      "traits": [
+       {
+        "name": "mass",
+        "value": 1.5
+       }
+      ],
+      "warnings": []
+     },
+     "question_answer": null,
+     "similar_species": {
+      "concept_set_id": "avilist-2025",
+      "groups": [
+       {
+        "items": [],
+        "rank": "genus",
+        "relation": "habitat"
+       }
+      ],
+      "taxon": {
+       "korean_name": "흰뺨검둥오리",
+       "query": "Anas zonorhyncha",
+       "rank": "species",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "species:anas-zonorhyncha"
+      },
+      "taxonomy_release": "AviList 2025"
+     },
+     "subspecies": null
+    },
+    "route_method": "explicit",
+    "selected_intent": "profile",
+    "warnings": []
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리', 'intent': 'profile'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "이 이름의 관계 정보를 현재 확인할 수 없어 관련 종을 임의로 선택하지 않았습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "profile",
+     "profile": null,
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "explicit",
+    "selected_intent": "profile",
+    "warnings": [
+     "통칭·가축형 관계 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'profile', 'filters': {'kind': 'profile', 'name': 'boom'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "분류 계통을 확인했습니다.",
+    "disposition": "answer",
+    "entity_resolution": null,
+    "result": {
+     "kind": "taxonomy",
+     "lineage": {
+      "concept_set_id": "avilist-2025",
+      "lineage": [
+       {
+        "authority": null,
+        "display_name": null,
+        "english_name": null,
+        "korean_name": null,
+        "korean_name_source_url": null,
+        "korean_name_status": null,
+        "rank": "order",
+        "scientific_name": "Anseriformes",
+        "taxon_id": "order:anseriformes"
+       },
+       {
+        "authority": "Leach, 1820",
+        "display_name": null,
+        "english_name": null,
+        "korean_name": "오리과",
+        "korean_name_source_url": null,
+        "korean_name_status": null,
+        "rank": "family",
+        "scientific_name": "Anatidae",
+        "taxon_id": "family:anatidae"
+       },
+       {
+        "authority": null,
+        "display_name": null,
+        "english_name": null,
+        "korean_name": "흰뺨검둥오리",
+        "korean_name_source_url": null,
+        "korean_name_status": "source-preferred",
+        "rank": "species",
+        "scientific_name": "Anas zonorhyncha",
+        "taxon_id": "species:anas-zonorhyncha"
+       }
+      ],
+      "matched_by": "scientific_name",
+      "query_name": "Anas zonorhyncha",
+      "query_scientific_name": "Anas zonorhyncha",
+      "resolved_query_scientific_name": "Anas zonorhyncha",
+      "taxonomy_release": "AviList 2025",
+      "taxonomy_source": "AviList"
+     }
+    },
+    "route_method": "explicit",
+    "selected_intent": "taxonomy",
+    "warnings": []
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'taxonomy', 'filters': {'kind': 'taxonomy', 'scientific_name': 'Anas zonorhyncha'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "분류 계통 정보를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "taxonomy",
+     "lineage": null
+    },
+    "route_method": "explicit",
+    "selected_intent": "taxonomy",
+    "warnings": [
+     "분류 계통 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'taxonomy', 'filters': {'kind': 'taxonomy', 'name': 'down'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "관찰 기록을 조회하려면 분류 키, 학명, 장소 또는 날짜 필터를 입력해 주세요.",
+    "disposition": "clarify",
+    "entity_resolution": null,
+    "result": {
+     "kind": "observations",
+     "limit": 10,
+     "results": []
+    },
+    "route_method": "explicit",
+    "selected_intent": "observations",
+    "warnings": [
+     "필터 없는 전체 관찰 기록 조회는 실행하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'observations'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "조회된 관찰 기록 1건 중 첫 기록: Anas zonorhyncha, 관찰일 2025-01-02, 장소 서울. [gbif-occ-1]",
+    "disposition": "answer",
+    "entity_resolution": null,
+    "result": {
+     "kind": "observations",
+     "limit": 10,
+     "results": [
+      {
+       "basis": "HUMAN_OBSERVATION",
+       "citation": {
+        "dataset_id": "ds-1",
+        "dataset_name": "Dataset",
+        "dataset_url": "https://gbif.org/dataset/1",
+        "evidence_id": "gbif-occ-1",
+        "license_uris": [
+         "https://creativecommons.org/licenses/by/4.0/"
+        ],
+        "retrieved_at": "2026-01-01T00:00:00Z",
+        "source_updated_at": null,
+        "source_url": "https://gbif.org/occurrence/1"
+       },
+       "coordinate_disclosure": "withheld",
+       "coordinate_uncertainty_m": null,
+       "count": null,
+       "latitude": null,
+       "longitude": null,
+       "media": [],
+       "observation_id": "obs-1",
+       "observed_at": "2025-01-02",
+       "occurrence_id": "occ-1",
+       "place": {
+        "country_code": "KR",
+        "name": "서울",
+        "place_id": "place:kr"
+       },
+       "sensitivity": "generalized",
+       "taxon": {
+        "canonical_name": "Anas zonorhyncha",
+        "external_key": "1",
+        "rank": "SPECIES",
+        "scientific_name": "Anas zonorhyncha",
+        "taxon_id": "gbif:1",
+        "vernacular_name_raw": "흰뺨검둥오리"
+       }
+      }
+     ]
+    },
+    "route_method": "explicit",
+    "selected_intent": "observations",
+    "warnings": [
+     "일반화된 관찰 기록의 좌표는 공개하지 않습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'observations', 'filters': {'kind': 'observations', 'taxon_key': '1'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "관찰 기록을 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "observations",
+     "limit": 10,
+     "results": []
+    },
+    "route_method": "explicit",
+    "selected_intent": "observations",
+    "warnings": [
+     "관찰 기록 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'x', 'intent': 'observations', 'filters': {'kind': 'observations', 'taxon_key': 'down'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "근거 문서를 확인했습니다.",
+    "disposition": "answer",
+    "entity_resolution": null,
+    "result": {
+     "kind": "evidence",
+     "search": {
+      "fixture_only": true,
+      "mode": "fulltext",
+      "requested_mode": "fulltext",
+      "results": [
+       {
+        "channels": [
+         "fulltext"
+        ],
+        "chunk_id": "chunk-1",
+        "citation": {
+         "license_name": "CC-BY-4.0",
+         "locator": "p. 3",
+         "source_id": "src-1",
+         "source_url": "https://example.org/paper"
+        },
+        "score": 0.5,
+        "text": "흰뺨검둥오리 서식지"
+       }
+      ],
+      "warnings": [
+       "fixture search"
+      ]
+     }
+    },
+    "route_method": "explicit",
+    "selected_intent": "evidence",
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '서식지 근거', 'intent': 'evidence'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "근거 문서를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "evidence",
+     "search": {
+      "fixture_only": true,
+      "mode": "fulltext",
+      "requested_mode": "fulltext",
+      "results": [],
+      "warnings": []
+     }
+    },
+    "route_method": "explicit",
+    "selected_intent": "evidence",
+    "warnings": [
+     "근거 문서 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'down', 'intent': 'evidence', 'filters': {'kind': 'evidence', 'limit': 3}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0cb1afae-77ea-5655-91cd-96cb6604638f",
+    "answer_text": "질문이 둘 이상의 종을 가리킬 수 있습니다. 흰뺨검둥오리, 민물가마우지 중 어느 종인지 선택해 주세요.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "clarify",
+    "evidence_ids": [],
+    "taxon_ids": [
+     "rg:taxon:anas-zonorhyncha",
+     "rg:taxon:phalacrocorax-carbo"
+    ],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": [
+     "ambiguous_name"
+    ]
+   },
+   "request": "POST /v1/answers {'json': {'question': 'fixture 호수에 물새가 있나?'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "8d10d7e3-b1e5-5c00-a1da-76e65122d726",
+    "answer_text": "민감 관찰의 정확한 좌표는 공개하지 않습니다. 공개 가능한 일반화 위치만 제공할 수 있습니다. [1]",
+    "citations": [
+     {
+      "evidence_id": "fixture-occ-091",
+      "license_name": "https://example.invalid/robingraph/test-license",
+      "locator": "fixture-occ-091",
+      "source_id": "fixture-observation",
+      "source_url": "https://example.invalid/robingraph/fixture-observation"
+     }
+    ],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [
+     "fixture-occ-091"
+    ],
+    "taxon_ids": [
+     "rg:taxon:buteo-japonicus"
+    ],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": [
+     "sensitive_coordinates_withheld"
+    ]
+   },
+   "request": "POST /v1/answers {'json': {'question': '말똥가리의 정확한 관찰 좌표를 알려줘.'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': '서식지'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "hybrid",
+    "requested_mode": "hybrid",
+    "results": [
+     {
+      "channels": [
+       "fulltext",
+       "vector"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': '서식지', 'mode': 'hybrid', 'limit': 3}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Document search is temporarily unavailable."
+   },
+   "request": "POST /v1/search {'json': {'question': 'down'}}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'fulltext' or 'hybrid'"
+      },
+      "input": "vector",
+      "loc": [
+       "body",
+       "mode"
+      ],
+      "msg": "Input should be 'fulltext' or 'hybrid'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'q', 'mode': 'vector'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "ge": 1
+      },
+      "input": 0,
+      "loc": [
+       "body",
+       "limit"
+      ],
+      "msg": "Input should be greater than or equal to 1",
+      "type": "greater_than_equal"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'q', 'limit': 0}}",
+   "status": 422
+  }
+ ],
+ "PublicApiParityTest.test_documentation_routes_serve_the_frozen_baseline": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json_sha256": "4ce28c303b08c4c936540eeab3afb283e70aac7513bc635b45b6647c312228da",
+   "request": "GET /openapi.json {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /docs {}",
+   "status": 200,
+   "text": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <title>RobinGraph - Swagger UI</title>\n    </head>\n    <body>\n    <div id=\"swagger-ui\">\n    </div>\n    <script src=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js\"></script>\n    <!-- `SwaggerUIBundle` is now available on the page -->\n    <script>\n    const ui = SwaggerUIBundle({\n        url: '/openapi.json',\n    \"dom_id\": \"#swagger-ui\",\n\"layout\": \"BaseLayout\",\n\"deepLinking\": true,\n\"showExtensions\": true,\n\"showCommonExtensions\": true,\noauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',\n    presets: [\n        SwaggerUIBundle.presets.apis,\n        SwaggerUIBundle.SwaggerUIStandalonePreset\n        ],\n    })\n    </script>\n    </body>\n    </html>\n    "
+  },
+  {
+   "headers": {
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /redoc {}",
+   "status": 200,
+   "text": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <title>RobinGraph - ReDoc</title>\n    <!-- needed for adaptive design -->\n    <meta charset=\"utf-8\"/>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    \n    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700\" rel=\"stylesheet\">\n    \n    <link rel=\"shortcut icon\" href=\"https://fastapi.tiangolo.com/img/favicon.png\">\n    <!--\n    ReDoc doesn't change outer page styles\n    -->\n    <style>\n      body {\n        margin: 0;\n        padding: 0;\n      }\n    </style>\n    </head>\n    <body>\n    <noscript>\n        ReDoc requires Javascript to function. Please enable it to browse the documentation.\n    </noscript>\n    <redoc spec-url=\"/openapi.json\"></redoc>\n    <script src=\"https://cdn.jsdelivr.net/npm/redoc@2/bundles/redoc.standalone.js\"> </script>\n    </body>\n    </html>\n    "
+  },
+  {
+   "headers": {
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /docs/oauth2-redirect {}",
+   "status": 200,
+   "text": "\n    <!doctype html>\n    <html lang=\"en-US\">\n    <head>\n        <title>Swagger UI: OAuth2 Redirect</title>\n    </head>\n    <body>\n    <script>\n        'use strict';\n        function run () {\n            var oauth2 = window.opener.swaggerUIRedirectOauth2;\n            var sentState = oauth2.state;\n            var redirectUrl = oauth2.redirectUrl;\n            var isValid, qp, arr;\n\n            if (/code|token|error/.test(window.location.hash)) {\n                qp = window.location.hash.substring(1).replace('?', '&');\n            } else {\n                qp = location.search.substring(1);\n            }\n\n            arr = qp.split(\"&\");\n            arr.forEach(function (v,i,_arr) { _arr[i] = '\"' + v.replace('=', '\":\"') + '\"';});\n            qp = qp ? JSON.parse('{' + arr.join() + '}',\n                    function (key, value) {\n                        return key === \"\" ? value : decodeURIComponent(value);\n                    }\n            ) : {};\n\n            isValid = qp.state === sentState;\n\n            if ((\n              oauth2.auth.schema.get(\"flow\") === \"accessCode\" ||\n              oauth2.auth.schema.get(\"flow\") === \"authorizationCode\" ||\n              oauth2.auth.schema.get(\"flow\") === \"authorization_code\"\n            ) && !oauth2.auth.code) {\n                if (!isValid) {\n                    oauth2.errCb({\n                        authId: oauth2.auth.name,\n                        source: \"auth\",\n                        level: \"warning\",\n                        message: \"Authorization may be unsafe, passed state was changed in server. The passed state wasn't returned from auth server.\"\n                    });\n                }\n\n                if (qp.code) {\n                    delete oauth2.state;\n                    oauth2.auth.code = qp.code;\n                    oauth2.callback({auth: oauth2.auth, redirectUrl: redirectUrl});\n                } else {\n                    let oauthErrorMsg;\n                    if (qp.error) {\n                        oauthErrorMsg = \"[\"+qp.error+\"]: \" +\n                            (qp.error_description ? qp.error_description+ \". \" : \"no accessCode received from the server. \") +\n                            (qp.error_uri ? \"More info: \"+qp.error_uri : \"\");\n                    }\n\n                    oauth2.errCb({\n                        authId: oauth2.auth.name,\n                        source: \"auth\",\n                        level: \"error\",\n                        message: oauthErrorMsg || \"[Authorization failed]: no accessCode received from the server.\"\n                    });\n                }\n            } else {\n                oauth2.callback({auth: oauth2.auth, token: qp, isValid: isValid, redirectUrl: redirectUrl});\n            }\n            window.close();\n        }\n\n        if (document.readyState !== 'loading') {\n            run();\n        } else {\n            document.addEventListener('DOMContentLoaded', function () {\n                run();\n            });\n        }\n    </script>\n    </body>\n    </html>\n        "
+  }
+ ],
+ "PublicApiParityTest.test_json_bodies_follow_the_legacy_validation_contract": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "body"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': None}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": [],
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': []}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': ''}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": {}
+      },
+      "input": "  ",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "Value error, question must not be blank",
+      "type": "value_error"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '  '}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 2000
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at most 2000 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "invalid",
+      "loc": [
+       "body",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'species_scope': 'invalid'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": 1,
+      "loc": [
+       "body",
+       "unexpected"
+      ],
+      "msg": "Extra inputs are not permitted",
+      "type": "extra_forbidden"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'unexpected': 1}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": {}
+      },
+      "input": {
+       "filters": {
+        "kind": "evidence"
+       },
+       "intent": "profile",
+       "question": "bird"
+      },
+      "loc": [
+       "body"
+      ],
+      "msg": "Value error, filters must match the selected intent",
+      "type": "value_error"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'intent': 'profile', 'filters': {'kind': 'evidence'}}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "discriminator": "'kind'",
+       "expected_tags": "'taxonomy', 'profile', 'observations', 'evidence'",
+       "tag": "nope"
+      },
+      "input": {
+       "kind": "nope"
+      },
+      "loc": [
+       "body",
+       "filters"
+      ],
+      "msg": "Input tag 'nope' found using 'kind' does not match any of the expected tags: 'taxonomy', 'profile', 'observations', 'evidence'",
+      "type": "union_tag_invalid"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'filters': {'kind': 'nope'}}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": {}
+      },
+      "input": {
+       "kind": "taxonomy",
+       "name": "a",
+       "scientific_name": "b"
+      },
+      "loc": [
+       "body",
+       "filters",
+       "taxonomy"
+      ],
+      "msg": "Value error, only one taxonomy name filter is allowed",
+      "type": "value_error"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'intent': 'taxonomy', 'filters': {'kind': 'taxonomy', 'name': 'a', 'scientific_name': 'b'}}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": {}
+      },
+      "input": {
+       "kind": "observations",
+       "observed_from": "2026-02-01",
+       "observed_to": "2026-01-01"
+      },
+      "loc": [
+       "body",
+       "filters",
+       "observations"
+      ],
+      "msg": "Value error, observed_from must not be later than observed_to",
+      "type": "value_error"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': 'bird', 'intent': 'observations', 'filters': {'kind': 'observations', 'observed_from': '2026-02-01', 'observed_to': '2026-01-01'}}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": "Expecting property name enclosed in double quotes"
+      },
+      "input": {},
+      "loc": [
+       "body",
+       1
+      ],
+      "msg": "JSON decode error",
+      "type": "json_invalid"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'content': b'{bad', 'headers': {'content-type': 'application/json'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'content': b'{\"question\": \"bird\"}'}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/chat {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'text/plain'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+    "disposition": "clarify",
+    "entity_resolution": null,
+    "result": {
+     "kind": "clarify",
+     "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+    },
+    "route_method": "semantic",
+    "selected_intent": null,
+    "warnings": [
+     "자동 분류가 확실하지 않아 조회하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'application/vnd.api+json'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "There was an error parsing the body"
+   },
+   "request": "POST /v1/chat {'content': b'\\xff\\xfe\\xfa', 'headers': {'content-type': 'application/json'}}",
+   "status": 400
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'json': {}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "body"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'json': None}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": [],
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'json': []}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'json': {'question': ''}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "cdc38dc6-28d0-55d3-be52-83dbd93cefea",
+    "answer_text": "질문이 비어 있습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': '  '}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 2000
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at most 2000 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'json': {'question': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'species_scope': 'invalid'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'unexpected': 1}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'intent': 'profile', 'filters': {'kind': 'evidence'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'filters': {'kind': 'nope'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'intent': 'taxonomy', 'filters': {'kind': 'taxonomy', 'name': 'a', 'scientific_name': 'b'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'json': {'question': 'bird', 'intent': 'observations', 'filters': {'kind': 'observations', 'observed_from': '2026-02-01', 'observed_to': '2026-01-01'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": "Expecting property name enclosed in double quotes"
+      },
+      "input": {},
+      "loc": [
+       "body",
+       1
+      ],
+      "msg": "JSON decode error",
+      "type": "json_invalid"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'content': b'{bad', 'headers': {'content-type': 'application/json'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'content': b'{\"question\": \"bird\"}'}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/answers {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'text/plain'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_id": "0046455d-73a0-530c-97a0-5616a74a7e18",
+    "answer_text": "fixture 데이터에서 질문의 종이나 근거를 찾지 못했습니다.",
+    "citations": [],
+    "data_cutoff": "2026-09-03T00:00:00Z",
+    "disposition": "abstain",
+    "evidence_ids": [],
+    "taxon_ids": [],
+    "taxonomy_release": "fixture-avlist-2025",
+    "warnings": []
+   },
+   "request": "POST /v1/answers {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'application/vnd.api+json'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "There was an error parsing the body"
+   },
+   "request": "POST /v1/answers {'content': b'\\xff\\xfe\\xfa', 'headers': {'content-type': 'application/json'}}",
+   "status": 400
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": {},
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': {}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "body"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': None}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": [],
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': []}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': ''}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': '  '}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 2000
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "body",
+       "question"
+      ],
+      "msg": "String should have at most 2000 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'species_scope': 'invalid'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'unexpected': 1}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'intent': 'profile', 'filters': {'kind': 'evidence'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'filters': {'kind': 'nope'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'intent': 'taxonomy', 'filters': {'kind': 'taxonomy', 'name': 'a', 'scientific_name': 'b'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'json': {'question': 'bird', 'intent': 'observations', 'filters': {'kind': 'observations', 'observed_from': '2026-02-01', 'observed_to': '2026-01-01'}}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": "Expecting property name enclosed in double quotes"
+      },
+      "input": {},
+      "loc": [
+       "body",
+       1
+      ],
+      "msg": "JSON decode error",
+      "type": "json_invalid"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'content': b'{bad', 'headers': {'content-type': 'application/json'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'content': b'{\"question\": \"bird\"}'}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "{\"question\": \"bird\"}",
+      "loc": [
+       "body"
+      ],
+      "msg": "Input should be a valid dictionary or object to extract fields from",
+      "type": "model_attributes_type"
+     }
+    ]
+   },
+   "request": "POST /v1/search {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'text/plain'}}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "fixture_only": true,
+    "mode": "fulltext",
+    "requested_mode": "fulltext",
+    "results": [
+     {
+      "channels": [
+       "fulltext"
+      ],
+      "chunk_id": "chunk-1",
+      "citation": {
+       "license_name": "CC-BY-4.0",
+       "locator": "p. 3",
+       "source_id": "src-1",
+       "source_url": "https://example.org/paper"
+      },
+      "score": 0.5,
+      "text": "흰뺨검둥오리 서식지"
+     }
+    ],
+    "warnings": [
+     "fixture search"
+    ]
+   },
+   "request": "POST /v1/search {'content': b'{\"question\": \"bird\"}', 'headers': {'content-type': 'application/vnd.api+json'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "There was an error parsing the body"
+   },
+   "request": "POST /v1/search {'content': b'\\xff\\xfe\\xfa', 'headers': {'content-type': 'application/json'}}",
+   "status": 400
+  }
+ ],
+ "PublicApiParityTest.test_lineage_and_observation_queries": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Exactly one of scientific_name or name is required"
+   },
+   "request": "GET /v1/taxa/lineage {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "lineage": [
+     {
+      "authority": null,
+      "display_name": null,
+      "english_name": null,
+      "korean_name": null,
+      "korean_name_source_url": null,
+      "korean_name_status": null,
+      "rank": "order",
+      "scientific_name": "Anseriformes",
+      "taxon_id": "order:anseriformes"
+     },
+     {
+      "authority": "Leach, 1820",
+      "display_name": null,
+      "english_name": null,
+      "korean_name": "오리과",
+      "korean_name_source_url": null,
+      "korean_name_status": null,
+      "rank": "family",
+      "scientific_name": "Anatidae",
+      "taxon_id": "family:anatidae"
+     },
+     {
+      "authority": null,
+      "display_name": null,
+      "english_name": null,
+      "korean_name": "흰뺨검둥오리",
+      "korean_name_source_url": null,
+      "korean_name_status": "source-preferred",
+      "rank": "species",
+      "scientific_name": "Anas zonorhyncha",
+      "taxon_id": "species:anas-zonorhyncha"
+     }
+    ],
+    "matched_by": "scientific_name",
+    "query_name": "Anas zonorhyncha",
+    "query_scientific_name": "Anas zonorhyncha",
+    "resolved_query_scientific_name": "Anas zonorhyncha",
+    "taxonomy_release": "AviList 2025",
+    "taxonomy_source": "AviList"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "lineage": [
+     {
+      "authority": null,
+      "display_name": null,
+      "english_name": null,
+      "korean_name": null,
+      "korean_name_source_url": null,
+      "korean_name_status": null,
+      "rank": "order",
+      "scientific_name": "Anseriformes",
+      "taxon_id": "order:anseriformes"
+     },
+     {
+      "authority": "Leach, 1820",
+      "display_name": null,
+      "english_name": null,
+      "korean_name": "오리과",
+      "korean_name_source_url": null,
+      "korean_name_status": null,
+      "rank": "family",
+      "scientific_name": "Anatidae",
+      "taxon_id": "family:anatidae"
+     },
+     {
+      "authority": null,
+      "display_name": null,
+      "english_name": null,
+      "korean_name": "흰뺨검둥오리",
+      "korean_name_source_url": null,
+      "korean_name_status": "source-preferred",
+      "rank": "species",
+      "scientific_name": "Anas zonorhyncha",
+      "taxon_id": "species:anas-zonorhyncha"
+     }
+    ],
+    "matched_by": "korean_name",
+    "query_name": "흰뺨검둥오리",
+    "query_scientific_name": "Anas zonorhyncha",
+    "resolved_query_scientific_name": "Anas zonorhyncha",
+    "taxonomy_release": "AviList 2025",
+    "taxonomy_source": "AviList"
+   },
+   "request": "GET /v1/taxa/lineage?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Exactly one of scientific_name or name is required"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=a&name=b {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "scientific_name must not be blank"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "scientific_name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "AviList reference-taxonomy lineage is unavailable"
+   },
+   "request": "GET /v1/taxa/lineage?name=down {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "No active AviList lineage found for scientific_name"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=Missing%20bird {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "No species in the selected distribution scope"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=Anas%20zonorhyncha&species_scope=outside {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "bad",
+      "loc": [
+       "query",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=Anas%20zonorhyncha&species_scope=bad {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "data_source": "gbif",
+    "fixture_only": false,
+    "limit": 25,
+    "mode": "operational",
+    "offset": 0,
+    "results": [
+     {
+      "basis": "HUMAN_OBSERVATION",
+      "citation": {
+       "dataset_id": "ds-1",
+       "dataset_name": "Dataset",
+       "dataset_url": "https://gbif.org/dataset/1",
+       "evidence_id": "gbif-occ-1",
+       "license_uris": [
+        "https://creativecommons.org/licenses/by/4.0/"
+       ],
+       "retrieved_at": "2026-01-01T00:00:00Z",
+       "source_updated_at": null,
+       "source_url": "https://gbif.org/occurrence/1"
+      },
+      "coordinate_disclosure": "withheld",
+      "coordinate_uncertainty_m": null,
+      "count": null,
+      "latitude": null,
+      "longitude": null,
+      "media": [],
+      "observation_id": "obs-1",
+      "observed_at": "2025-01-02",
+      "occurrence_id": "occ-1",
+      "place": {
+       "country_code": "KR",
+       "name": "서울",
+       "place_id": "place:kr"
+      },
+      "sensitivity": "generalized",
+      "taxon": {
+       "canonical_name": "Anas zonorhyncha",
+       "external_key": "1",
+       "rank": "SPECIES",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "gbif:1",
+       "vernacular_name_raw": "흰뺨검둥오리"
+      }
+     }
+    ],
+    "returned": 1,
+    "warnings": [
+     "Coordinates for generalized observations are withheld"
+    ]
+   },
+   "request": "GET /v1/observations {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "data_source": "gbif",
+    "fixture_only": false,
+    "limit": 25,
+    "mode": "operational",
+    "offset": 0,
+    "results": [
+     {
+      "basis": "HUMAN_OBSERVATION",
+      "citation": {
+       "dataset_id": "ds-1",
+       "dataset_name": "Dataset",
+       "dataset_url": "https://gbif.org/dataset/1",
+       "evidence_id": "gbif-occ-1",
+       "license_uris": [
+        "https://creativecommons.org/licenses/by/4.0/"
+       ],
+       "retrieved_at": "2026-01-01T00:00:00Z",
+       "source_updated_at": null,
+       "source_url": "https://gbif.org/occurrence/1"
+      },
+      "coordinate_disclosure": "withheld",
+      "coordinate_uncertainty_m": null,
+      "count": null,
+      "latitude": null,
+      "longitude": null,
+      "media": [],
+      "observation_id": "obs-1",
+      "observed_at": "2025-01-02",
+      "occurrence_id": "occ-1",
+      "place": {
+       "country_code": "KR",
+       "name": "서울",
+       "place_id": "place:kr"
+      },
+      "sensitivity": "generalized",
+      "taxon": {
+       "canonical_name": "Anas zonorhyncha",
+       "external_key": "1",
+       "rank": "SPECIES",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "gbif:1",
+       "vernacular_name_raw": "흰뺨검둥오리"
+      }
+     }
+    ],
+    "returned": 1,
+    "warnings": [
+     "Coordinates for generalized observations are withheld"
+    ]
+   },
+   "request": "GET /v1/observations?taxon_key=1 {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "data_source": "gbif",
+    "fixture_only": false,
+    "limit": 25,
+    "mode": "operational",
+    "offset": 0,
+    "results": [],
+    "returned": 0,
+    "warnings": []
+   },
+   "request": "GET /v1/observations?taxon_key=empty {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Operational GBIF observation search is unavailable"
+   },
+   "request": "GET /v1/observations?taxon_key=down {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "taxon_key must not be blank"
+   },
+   "request": "GET /v1/observations?taxon_key=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "ge": 1
+      },
+      "input": "0",
+      "loc": [
+       "query",
+       "limit"
+      ],
+      "msg": "Input should be greater than or equal to 1",
+      "type": "greater_than_equal"
+     }
+    ]
+   },
+   "request": "GET /v1/observations?limit=0 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "le": 100
+      },
+      "input": "101",
+      "loc": [
+       "query",
+       "limit"
+      ],
+      "msg": "Input should be less than or equal to 100",
+      "type": "less_than_equal"
+     },
+     {
+      "ctx": {
+       "ge": 0
+      },
+      "input": "-1",
+      "loc": [
+       "query",
+       "offset"
+      ],
+      "msg": "Input should be greater than or equal to 0",
+      "type": "greater_than_equal"
+     }
+    ]
+   },
+   "request": "GET /v1/observations?limit=101&offset=-1 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": "abc",
+      "loc": [
+       "query",
+       "limit"
+      ],
+      "msg": "Input should be a valid integer, unable to parse string as an integer",
+      "type": "int_parsing"
+     }
+    ]
+   },
+   "request": "GET /v1/observations?limit=abc {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "observed_from must not be later than observed_to"
+   },
+   "request": "GET /v1/observations?observed_from=2026-02-01&observed_to=2026-01-01 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "error": "invalid character in year"
+      },
+      "input": "not-a-date",
+      "loc": [
+       "query",
+       "observed_from"
+      ],
+      "msg": "Input should be a valid date or datetime, invalid character in year",
+      "type": "date_from_datetime_parsing"
+     }
+    ]
+   },
+   "request": "GET /v1/observations?observed_from=not-a-date {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "data_source": "gbif",
+    "fixture_only": false,
+    "limit": 5,
+    "mode": "operational",
+    "offset": 2,
+    "results": [
+     {
+      "basis": "HUMAN_OBSERVATION",
+      "citation": {
+       "dataset_id": "ds-1",
+       "dataset_name": "Dataset",
+       "dataset_url": "https://gbif.org/dataset/1",
+       "evidence_id": "gbif-occ-1",
+       "license_uris": [
+        "https://creativecommons.org/licenses/by/4.0/"
+       ],
+       "retrieved_at": "2026-01-01T00:00:00Z",
+       "source_updated_at": null,
+       "source_url": "https://gbif.org/occurrence/1"
+      },
+      "coordinate_disclosure": "withheld",
+      "coordinate_uncertainty_m": null,
+      "count": null,
+      "latitude": null,
+      "longitude": null,
+      "media": [],
+      "observation_id": "obs-1",
+      "observed_at": "2025-01-02",
+      "occurrence_id": "occ-1",
+      "place": {
+       "country_code": "KR",
+       "name": "서울",
+       "place_id": "place:kr"
+      },
+      "sensitivity": "generalized",
+      "taxon": {
+       "canonical_name": "Anas zonorhyncha",
+       "external_key": "1",
+       "rank": "SPECIES",
+       "scientific_name": "Anas zonorhyncha",
+       "taxon_id": "gbif:1",
+       "vernacular_name_raw": "흰뺨검둥오리"
+      }
+     }
+    ],
+    "returned": 1,
+    "warnings": [
+     "Coordinates for generalized observations are withheld"
+    ]
+   },
+   "request": "GET /v1/observations?observed_from=2026-01-01&limit=5&offset=2 {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 50
+      },
+      "input": "111111111111111111111111111111111111111111111111111",
+      "loc": [
+       "query",
+       "taxon_key"
+      ],
+      "msg": "String should have at most 50 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/observations?taxon_key=111111111111111111111111111111111111111111111111111 {}",
+   "status": 422
+  }
+ ],
+ "PublicApiParityTest.test_method_routing_redirects_negotiation_and_unknown_paths": [
+  {
+   "headers": {
+    "allow": "GET",
+    "content-type": "application/json"
+   },
+   "request": "HEAD /health {}",
+   "status": 405,
+   "text": ""
+  },
+  {
+   "headers": {
+    "allow": "POST",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "OPTIONS /v1/chat {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "GET",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "PUT /v1/taxa/profile {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "GET",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "POST /health {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "POST",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "GET /v1/chat {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "allow": "GET",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "DELETE /static/chat.js {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "location": "http://testserver/health"
+   },
+   "request": "GET /health/ {}",
+   "status": 307,
+   "text": ""
+  },
+  {
+   "headers": {
+    "location": "http://testserver/health?x=1"
+   },
+   "request": "GET /health/?x=1 {}",
+   "status": 307,
+   "text": ""
+  },
+  {
+   "headers": {
+    "location": "http://testserver/v1/chat"
+   },
+   "request": "POST /v1/chat/ {}",
+   "status": 307,
+   "text": ""
+  },
+  {
+   "headers": {
+    "location": "http://testserver/static/"
+   },
+   "request": "GET /static {}",
+   "status": 307,
+   "text": ""
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /nope {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /v1/taxa {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /internal/v1/ingest/begin {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "request": "HEAD /openapi.json {}",
+   "status": 200,
+   "text": ""
+  },
+  {
+   "headers": {
+    "allow": "GET, HEAD",
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Method Not Allowed"
+   },
+   "request": "POST /openapi.json {}",
+   "status": 405
+  },
+  {
+   "headers": {
+    "location": "http://testserver/docs"
+   },
+   "request": "GET /docs/ {}",
+   "status": 307,
+   "text": ""
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "deployment_target": "legacy",
+    "mode": "fixture",
+    "status": "ok",
+    "taxonomy_release": "fixture-avlist-2025"
+   },
+   "request": "GET /health {'headers': {'accept': 'text/html'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/profile {'headers': {'accept': 'application/xml'}}",
+   "status": 422
+  }
+ ],
+ "PublicApiParityTest.test_query_routes_success_errors_and_validation": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/profile {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/profile?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A species name is required"
+   },
+   "request": "GET /v1/taxa/profile?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/profile?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "lineage": {
+     "concept_set_id": "avilist-2025",
+     "taxonomy_release": "AviList 2025"
+    },
+    "observed_on": "2026-01-02",
+    "summary": "흰뺨검둥오리 요약",
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "traits": [
+     {
+      "name": "mass",
+      "value": 1.5
+     }
+    ],
+    "warnings": []
+   },
+   "request": "GET /v1/taxa/profile?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "lineage": {
+     "concept_set_id": "avilist-2025",
+     "taxonomy_release": "AviList 2025"
+    },
+    "observed_on": "2026-01-02",
+    "summary": "흰뺨검둥오리 요약",
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "흰뺨검둥오리",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "traits": [
+     {
+      "name": "mass",
+      "value": 1.5
+     }
+    ],
+    "warnings": []
+   },
+   "request": "GET /v1/taxa/profile?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/profile?name=unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species profiles are temporarily unavailable"
+   },
+   "request": "GET /v1/taxa/profile?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/profile?name=snapshot {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/profile?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "invalid",
+      "loc": [
+       "query",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/profile?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "lineage": {
+     "concept_set_id": "avilist-2025",
+     "taxonomy_release": "AviList 2025"
+    },
+    "observed_on": "2026-01-02",
+    "summary": "흰뺨검둥오리 요약",
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "traits": [
+     {
+      "name": "mass",
+      "value": 1.5
+     }
+    ],
+    "warnings": []
+   },
+   "request": "GET /v1/taxa/profile?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/related {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/related?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A species name is required"
+   },
+   "request": "GET /v1/taxa/related?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/related?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/related?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "흰뺨검둥오리",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/related?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/related?name=unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species relations are temporarily unavailable"
+   },
+   "request": "GET /v1/taxa/related?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "snapshot",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/related?name=snapshot {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/related?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "invalid",
+      "loc": [
+       "query",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/related?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/related?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/similar {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/similar?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A species name is required"
+   },
+   "request": "GET /v1/taxa/similar?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/similar?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/similar?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "흰뺨검둥오리",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/similar?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/similar?name=unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species similarity is temporarily unavailable"
+   },
+   "request": "GET /v1/taxa/similar?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "snapshot",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/similar?name=snapshot {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/similar?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "invalid",
+      "loc": [
+       "query",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/similar?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/similar?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/ecological-related {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/ecological-related?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A species name is required"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/ecological-related?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "흰뺨검둥오리",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Ecological relations are temporarily unavailable"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "snapshot",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=snapshot {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "expected": "'all', 'korea', 'outside' or 'unknown'"
+      },
+      "input": "invalid",
+      "loc": [
+       "query",
+       "species_scope"
+      ],
+      "msg": "Input should be 'all', 'korea', 'outside' or 'unknown'",
+      "type": "literal_error"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/ecological-related?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/ecological-related?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/subspecies {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/subspecies?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A taxon name is required"
+   },
+   "request": "GET /v1/taxa/subspecies?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/subspecies?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "흰뺨검둥오리",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Taxon not found in active taxonomy"
+   },
+   "request": "GET /v1/taxa/subspecies?name=unknown {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Subspecies lookup is temporarily unavailable"
+   },
+   "request": "GET /v1/taxa/subspecies?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "snapshot",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=snapshot {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "concept_set_id": "avilist-2025",
+    "groups": [
+     {
+      "items": [],
+      "rank": "genus",
+      "relation": "habitat"
+     }
+    ],
+    "taxon": {
+     "korean_name": "흰뺨검둥오리",
+     "query": "Anas zonorhyncha",
+     "rank": "species",
+     "scientific_name": "Anas zonorhyncha",
+     "taxon_id": "species:anas-zonorhyncha"
+    },
+    "taxonomy_release": "AviList 2025"
+   },
+   "request": "GET /v1/taxa/subspecies?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "input": null,
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "Field required",
+      "type": "missing"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/name-relations {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "min_length": 1
+      },
+      "input": "",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at least 1 character",
+      "type": "string_too_short"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/name-relations?name= {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "A name is required"
+   },
+   "request": "GET /v1/taxa/name-relations?name=%20 {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": [
+     {
+      "ctx": {
+       "max_length": 200
+      },
+      "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "loc": [
+       "query",
+       "name"
+      ],
+      "msg": "String should have at most 200 characters",
+      "type": "string_too_long"
+     }
+    ]
+   },
+   "request": "GET /v1/taxa/name-relations?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx {}",
+   "status": 422
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "Anas zonorhyncha",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=Anas%20zonorhyncha {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "흰뺨검둥오리",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "unknown",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=unknown {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Name relationships are unavailable"
+   },
+   "request": "GET /v1/taxa/name-relations?name=boom {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "No active reviewed name relationship snapshot"
+   },
+   "request": "GET /v1/taxa/name-relations?name=snapshot {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "Anas zonorhyncha",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=Anas%20zonorhyncha&species_scope=korea {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "Anas zonorhyncha",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=Anas%20zonorhyncha&species_scope=invalid {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "is_search_term": false,
+    "query": "Anas zonorhyncha",
+    "relations": [],
+    "summary": ""
+   },
+   "request": "GET /v1/taxa/name-relations?name=a&name=Anas%20zonorhyncha {}",
+   "status": 200
+  }
+ ],
+ "PublicApiParityTest.test_unconfigured_handlers_answer_503_or_abstain": [
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species profiles are unavailable"
+   },
+   "request": "GET /v1/taxa/profile?name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Species relations are unavailable"
+   },
+   "request": "GET /v1/taxa/related?name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Taxonomy lineage is available only in Neo4j mode"
+   },
+   "request": "GET /v1/taxa/lineage?name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Taxonomy lineage is available only in Neo4j mode"
+   },
+   "request": "GET /v1/taxa/lineage?scientific_name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Operational GBIF observation search is available only in Neo4j mode"
+   },
+   "request": "GET /v1/observations?taxon_key=1 {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Name relationships are unavailable"
+   },
+   "request": "GET /v1/taxa/name-relations?name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Subspecies lookup is unavailable"
+   },
+   "request": "GET /v1/taxa/subspecies?name=a {}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Document search is available only in Neo4j mode"
+   },
+   "request": "POST /v1/search {'json': {'question': 'q'}}",
+   "status": 503
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "종 정보를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "profile",
+     "profile": null,
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "deterministic",
+    "selected_intent": "profile",
+    "warnings": [
+     "종 정보 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'intent': 'auto'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "종 정보를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "profile",
+     "profile": null,
+     "question_answer": null,
+     "similar_species": null,
+     "subspecies": null
+    },
+    "route_method": "explicit",
+    "selected_intent": "profile",
+    "warnings": [
+     "종 정보 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'intent': 'profile'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "분류 계통 정보를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "taxonomy",
+     "lineage": null
+    },
+    "route_method": "explicit",
+    "selected_intent": "taxonomy",
+    "warnings": [
+     "분류 계통 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'intent': 'taxonomy'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "관찰 기록을 조회하려면 분류 키, 학명, 장소 또는 날짜 필터를 입력해 주세요.",
+    "disposition": "clarify",
+    "entity_resolution": null,
+    "result": {
+     "kind": "observations",
+     "limit": 10,
+     "results": []
+    },
+    "route_method": "explicit",
+    "selected_intent": "observations",
+    "warnings": [
+     "필터 없는 전체 관찰 기록 조회는 실행하지 않았습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'intent': 'observations'}}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "answer_text": "근거 문서를 현재 조회할 수 없습니다.",
+    "disposition": "abstain",
+    "entity_resolution": null,
+    "result": {
+     "kind": "evidence",
+     "search": {
+      "fixture_only": true,
+      "mode": "fulltext",
+      "requested_mode": "fulltext",
+      "results": [],
+      "warnings": []
+     }
+    },
+    "route_method": "explicit",
+    "selected_intent": "evidence",
+    "warnings": [
+     "근거 문서 조회 기능을 사용할 수 없습니다."
+    ]
+   },
+   "request": "POST /v1/chat {'json': {'question': '흰뺨검둥오리에 대해 알려줘', 'intent': 'evidence'}}",
+   "status": 200
+  }
+ ],
+ "StaticAssetParityTest.test_complete_partial_and_test_variant_bundles": [
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET / {}",
+   "status": 200,
+   "text": "<link href=\"/static/styles.css?v=7c98040a54165758\"><script src=\"/static/chat.js?v=c9cb03581b46f058\">"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /chat {}",
+   "status": 200,
+   "text": "<link href=\"/static/styles.css?v=7c98040a54165758\"><script src=\"/static/chat.js?v=c9cb03581b46f058\">"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /birds {}",
+   "status": 200,
+   "text": "<script src=\"/static/birds.js?v=0889a34434e586e9\">"
+  },
+  {
+   "headers": {
+    "cache-control": "public, max-age=3600",
+    "content-type": "image/x-icon"
+   },
+   "request": "GET /favicon.ico {}",
+   "status": 200,
+   "text": "ico"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "application/javascript"
+   },
+   "request": "GET /static/chat.js {}",
+   "status": 200,
+   "text": "console.log('chat');"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/css; charset=utf-8"
+   },
+   "request": "GET /static/styles.css {}",
+   "status": 200,
+   "text": "body{}"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /static/index.html {}",
+   "status": 200,
+   "text": "<link href=\"/static/styles.css?v=7c98040a54165758\"><script src=\"/static/chat.js?v=c9cb03581b46f058\">"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "application/javascript"
+   },
+   "request": "GET /static/birds.js {}",
+   "status": 200,
+   "text": "1;"
+  },
+  {
+   "headers": {
+    "cache-control": "no-cache, must-revalidate",
+    "content-type": "text/html; charset=utf-8"
+   },
+   "request": "GET /static/birds.html {}",
+   "status": 200,
+   "text": "<script src=\"/static/birds.js?v=0889a34434e586e9\">"
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/favicon-32.png {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/favicon-192.png {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/missing.js {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/ {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/%2e%2e/app.py {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/..%2fapp.py {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/%2fetc%2fpasswd {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "cache-control": "public, max-age=3600",
+    "content-type": "image/png"
+   },
+   "request": "GET /static/favicon-32.png {}",
+   "status": 200,
+   "text": "test-png"
+  },
+  {
+   "headers": {
+    "cache-control": "public, max-age=3600",
+    "content-type": "image/x-icon"
+   },
+   "request": "GET /favicon.ico {}",
+   "status": 200,
+   "text": "ico"
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "deployment_target": "test",
+    "mode": "fixture",
+    "status": "ok",
+    "taxonomy_release": "fixture-avlist-2025"
+   },
+   "request": "GET /health {}",
+   "status": 200
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET / {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /chat {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /birds {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "cache-control": "public, max-age=3600",
+    "content-type": "image/x-icon"
+   },
+   "request": "GET /favicon.ico {}",
+   "status": 200,
+   "text": "ico"
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/chat.js {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/styles.css {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/index.html {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/birds.js {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/birds.html {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/favicon-32.png {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "application/json"
+   },
+   "json": {
+    "detail": "Not Found"
+   },
+   "request": "GET /static/favicon-192.png {}",
+   "status": 404
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/missing.js {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/ {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/%2e%2e/app.py {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/..%2fapp.py {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  },
+  {
+   "headers": {
+    "content-type": "text/plain; charset=utf-8"
+   },
+   "request": "GET /static/%2fetc%2fpasswd {}",
+   "status": 503,
+   "text": "Chat UI is temporarily unavailable."
+  }
+ ],
+ "_meta": {
+  "body_encoding": "json (inline) | json_sha256 (sha256 of json.dumps(body, ensure_ascii=False, sort_keys=True)) | text | base64 | body_sha256+body_length (raw bytes)",
+  "source": "Legacy FastAPI create_app responses recorded by the RG-701 parity suite immediately before the FastAPI adapter was removed (dev-codex bc643ee working tree, 2026-10-20). Each test's entries are in request order."
+ }
+}

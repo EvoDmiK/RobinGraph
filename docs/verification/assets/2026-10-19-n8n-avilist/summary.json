@@ -1,0 +1,14 @@
+{
+  "n8n_successful_runs": 2,
+  "n8n_missing_approval_blocked": true,
+  "apply_skipped_on_failure": true,
+  "pg_and_vector_snapshot_unchanged": true,
+  "pilot_runs": 1,
+  "pilot_records": 1,
+  "vectors": 855,
+  "unit_tests_passed": 76,
+  "production_changed": false,
+  "git_commit_push": false,
+  "runner_auto_start": false,
+  "runner_reboot_recovery_tested": false
+}

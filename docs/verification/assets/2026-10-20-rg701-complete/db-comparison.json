@@ -1,0 +1,7 @@
+{
+  "target": "test",
+  "read_only_snapshots": true,
+  "unchanged": true,
+  "before": "db-before.json",
+  "after": "db-after.json"
+}

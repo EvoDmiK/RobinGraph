@@ -1,0 +1,14 @@
+{
+  "target": "test",
+  "runner_url": "http://192.168.219.97:18001",
+  "mode": "native foreground; no automatic startup",
+  "host_code": "/Users/kimdove/robingraph-test/pipelines/n8n-avilist-test/code",
+  "files_sha256": {
+    "scripts/serve_avilist_pipeline.py": "7f8f0722d62a1fe325ce848fbf61b5a9eff12f1011d5df9f9c232a149f1e375c",
+    "scripts/run_avilist_pipeline.py": "155b41d46c4b9fdec0ad9e70ed3fd232e9eff6a70a34a0d79c98bca6bf35e680",
+    "scripts/build_species_distribution.py": "991d1bfc1d85140b34abec1eb6ef3a918588d3ba2f4cb74b7af3c2412240b8bf",
+    "src/robingraph/ingest/avilist_pipeline.py": "ae0a1140bb31493981d49916f6e5c3605db998e4abadb3cdb6c1295afd3fe026"
+  },
+  "app_image_unchanged": true,
+  "app_restart": false
+}

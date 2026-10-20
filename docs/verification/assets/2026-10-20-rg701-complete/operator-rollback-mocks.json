@@ -1,0 +1,41 @@
+{
+  "kind": "isolated AST rollback mocks; no actual Docker/DB/rollback performed",
+  "passed": true,
+  "cases": [
+    {
+      "case": "success",
+      "passed": true,
+      "state": "rolled_back"
+    },
+    {
+      "case": "stop_failed_running",
+      "passed": true,
+      "state": "rollback_unverified"
+    },
+    {
+      "case": "stop_failed_stopped",
+      "passed": true,
+      "state": "rolled_back"
+    },
+    {
+      "case": "inspect_failed",
+      "passed": true,
+      "state": "rollback_unverified"
+    },
+    {
+      "case": "approval_restore_failed",
+      "passed": true,
+      "state": "rollback_unverified"
+    },
+    {
+      "case": "audit_failed",
+      "passed": true,
+      "state": "rolled_back"
+    },
+    {
+      "case": "wrong_image",
+      "passed": true,
+      "state": "rollback_unverified"
+    }
+  ]
+}

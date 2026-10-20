@@ -1,0 +1,39 @@
+{
+  "target": "test",
+  "base": "http://127.0.0.1:8000",
+  "passed": true,
+  "rows": [
+    {
+      "mention": "Kea",
+      "scope": "outside",
+      "expected_disposition": "answer",
+      "scientific_name": "Nestor notabilis",
+      "passed": true
+    },
+    {
+      "mention": "Kea",
+      "scope": "all",
+      "expected_disposition": "answer",
+      "scientific_name": "Nestor notabilis",
+      "passed": true
+    },
+    {
+      "mention": "Keaa",
+      "scope": "outside",
+      "expected_disposition": "clarify",
+      "scientific_name": "Nestor notabilis",
+      "passed": true
+    },
+    {
+      "mention": "Anas platyrhynchos",
+      "scope": "korea",
+      "expected_disposition": "answer",
+      "scientific_name": "Anas platyrhynchos",
+      "passed": true
+    },
+    {
+      "endpoint": "lineage",
+      "passed": true
+    }
+  ]
+}

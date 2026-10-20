@@ -1,0 +1,43 @@
+{
+  "status": "dry_run",
+  "verification": {
+    "name_index": {
+      "dry_run": true,
+      "inventory": 855,
+      "reused": 855,
+      "to_embed": 0,
+      "embedded": 0,
+      "stale": 0,
+      "schema": "compatible",
+      "constraint": "compatible",
+      "catalog_current": true
+    },
+    "search_regression": [
+      {
+        "mention": "Kea",
+        "scope": "outside",
+        "disposition": "answer",
+        "passed": true
+      },
+      {
+        "mention": "Kea",
+        "scope": "all",
+        "disposition": "answer",
+        "passed": true
+      },
+      {
+        "mention": "Keaa",
+        "scope": "outside",
+        "disposition": "clarify",
+        "passed": true
+      },
+      {
+        "mention": "청둥오리",
+        "scope": "korea",
+        "disposition": "answer",
+        "passed": true
+      }
+    ],
+    "projection_performed": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "application_class": "DjangoApiApplication",
+  "django": "5.2.18",
+  "drf": "3.16.1",
+  "fastapi_imported": false,
+  "image": "robingraph-api:test-rg701-django-34f84c494c6a",
+  "healthy": true,
+  "target": "test",
+  "command": [
+    "robingraph",
+    "serve-neo4j",
+    "--host",
+    "0.0.0.0",
+    "--port",
+    "8000"
+  ],
+  "source_label": "34f84c494c6a100a73674a5c25be599d52a50431a2a5af264f4deb7688f4370a"
+}

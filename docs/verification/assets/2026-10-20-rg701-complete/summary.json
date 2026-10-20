@@ -1,0 +1,38 @@
+{
+  "target": "test",
+  "framework": "Django + DRF; independent pipeline runner Django ASGI",
+  "legacy_runtime_packages_absent": true,
+  "python_suite": {
+    "total": 1029,
+    "passed": 991,
+    "skipped": 38,
+    "failed": 0,
+    "kind": "offline fixture/mock; opt-in integrations skipped",
+    "scope_note": "full suite before docs/favicon-only change; final API19 and independent reviewer API/runtime23 passed after it"
+  },
+  "node_suite": {
+    "passed": 317,
+    "failed": 0,
+    "skipped": 0
+  },
+  "contract_oracle": {
+    "http_records": 273,
+    "store_call_records": 10,
+    "sha256": "5e57bf73f4e6106ac3e1f88a7e778e48ee723f31b3fcf6ea2eb4169777f2d6de",
+    "regenerated": false
+  },
+  "actual_test": {
+    "api_cases": 5,
+    "browser_cases": 6,
+    "runner_guards": 4,
+    "n8n_cli_exit": 0,
+    "n8n_apply": "already_applied",
+    "db_snapshots_unchanged": true
+  },
+  "rollback": {
+    "mock_cases_passed": 7,
+    "actual_rollback_executed": false
+  },
+  "production_changed": false,
+  "commit_push_performed": false
+}

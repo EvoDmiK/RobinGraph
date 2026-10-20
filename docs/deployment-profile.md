@@ -11,7 +11,7 @@
 
 ### TEST 자동 배포 (2026-10-18)
 
-Jenkins http://dove-jenkins/job/RobinGraph-TEST/ #2에서 GHCR 멀티 아키텍처 게시와 M4 TEST digest 배포·API/UI 검증을 완료했다. dev-codex 5분 polling을 사용하며 Production job은 비활성·명시 승인 후 승격 대상이다. 현재 NAS TEST 컨테이너는 없고 Mac previous release를 롤백 기준으로 쓴다. [Jenkins 운영 절차](jenkins-deployment.md) · [구성·실패 보정·검증](work-log/2026-10-18-jenkins-ghcr-setup.md).
+Jenkins 기본 배포 대상은 NAS Production이다. RobinGraph-PROD는 M4에서 검사·멀티 아키텍처 빌드 후 admin 승인을 받아 NAS 앱을 교체한다. RobinGraph-TEST는 비활성·자동 polling 없음이며 TEST artifact 승격 의존성을 제거했다. 내부 Jenkins http://192.168.219.99:8080/ . [운영 절차](jenkins-deployment.md) · [실제 운영 검증](work-log/2026-10-18-jenkins-production-target.md).
 
 ## 1. 권장 구성
 

@@ -35,6 +35,7 @@ RUN test -s src/robingraph/api/static/index.html \
     && test -s src/robingraph/api/static/chat.js \
     && test -s src/robingraph/api/static/styles.css
 RUN uv sync --python /usr/local/bin/python --locked --no-dev --extra tracing
+RUN .venv/bin/python -m django check --settings=robingraph.django_api.settings
 
 RUN install -d -o robingraph -g robingraph /app/.cache /home/robingraph/.local/state
 

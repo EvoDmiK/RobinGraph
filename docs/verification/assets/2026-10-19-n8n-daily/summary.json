@@ -1,0 +1,20 @@
+{
+  "schedule_active": true,
+  "cron": "0 6 * * *",
+  "timezone": "Asia/Seoul",
+  "n8n_live_activation_confirmed": true,
+  "runner_container": "robingraph-avilist-runner-test",
+  "runner_restart_policy": "unless-stopped",
+  "automatic_crash_recovery_tested": true,
+  "post_recovery_workflow_success": true,
+  "approval_directory_revocation_test_passed": true,
+  "workflow_successes": 2,
+  "tests_passed": 76,
+  "pg_and_vector_state_unchanged": true,
+  "physical_reboot_tested": false,
+  "first_clock_trigger_run_observed": false,
+  "production_changed": false,
+  "app_restarted": false,
+  "test_n8n_restarted_for_activation": true,
+  "commit_push": false
+}

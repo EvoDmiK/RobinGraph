@@ -297,7 +297,7 @@ class Neo4jTaxonomyLineageRepository:
                  if label.get('status') == 'source-reference']
         if len(names) > 1000:
             raise ValueError('Reviewed name inventory exceeds the bounded candidate limit')
-        return self._run("""
+        korean = self._run("""
 UNWIND $names AS reviewed
 MATCH (s:TaxonConceptSet {id:$concept_set_id, version:$release, policy_status:'allowed'})
 MATCH (t:Taxon:BirdTaxon {id:reviewed.taxon_id, rank:'species', source_release:$release,
@@ -311,6 +311,33 @@ RETURN DISTINCT t.id AS taxon_id, t.scientific_name AS scientific_name,
        reviewed.name AS text
 ORDER BY taxon_id
 """, names=names, concept_set_id=concept_set_id, release=release)
+        from .species_scope import scope_query_parameters
+        selected = scope_query_parameters('outside', concept_set_id, release)['scope_selected']
+        outside = self._run("""
+UNWIND $names AS reviewed
+MATCH (s:TaxonConceptSet {id:$concept_set_id, version:$release, policy_status:'allowed'})
+MATCH (t:Taxon:BirdTaxon {id:reviewed.taxon_id, rank:'species', source_release:$release,
+                        policy_status:'allowed'})-[:IN_CONCEPT_SET]->(s)
+WHERE t.dataset_id=s.dataset_id AND t.scientific_name=reviewed.scientific_name
+MATCH (t)-[:HAS_VERNACULAR_NAME]->(en:VernacularName {language:'en', status:'source-preferred',
+                                                   policy_status:'allowed', source_release:$release})
+WHERE en.dataset_id=t.dataset_id AND trim(en.name) <> ''
+WITH t,en ORDER BY en.name
+WITH t,head(collect(en.name)) AS english_name
+RETURN t.id AS taxon_id,t.scientific_name AS scientific_name,
+       english_name AS display_name,english_name + ' ' + t.scientific_name AS text
+ORDER BY taxon_id
+""", names=[{'taxon_id': key, 'scientific_name': name} for key, name in selected.items()],
+            concept_set_id=concept_set_id, release=release)
+        combined = {row['taxon_id']: dict(row) for row in korean}
+        for row in outside:
+            previous = combined.get(row['taxon_id'])
+            combined[row['taxon_id']] = ({**row, 'display_name': previous['display_name'],
+                'text': previous['text'] + ' ' + row['text']} if previous else row)
+        if len(combined) > 1000:
+            raise ValueError('Reviewed name inventory exceeds the bounded candidate limit')
+        return sorted(combined.values(), key=lambda row: row['taxon_id'])
+
 
     def lineage_for_scientific_name(self, scientific_name: str) -> TaxonomyLineage | None:
         cleaned = scientific_name.strip()

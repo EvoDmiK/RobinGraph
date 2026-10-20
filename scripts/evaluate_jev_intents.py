@@ -6,10 +6,10 @@ import json
 from pathlib import Path
 import statistics
 
-from robingraph.api.app import _species_chat_question
 from robingraph.api.jev_router import CRITERIA, JevRouter, JevSettings
 from robingraph.api.question_entities import extract_name
 from robingraph.api.semantic_router import SemanticRouter
+from robingraph.api.services import _species_chat_question
 from robingraph.embeddings import JinaEmbeddingClient
 from robingraph.environment import load_local_environment
 from robingraph.retrieval.species_questions import parse_species_question

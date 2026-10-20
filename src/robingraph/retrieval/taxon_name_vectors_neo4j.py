@@ -155,6 +155,15 @@ RETURN node.taxon_id AS taxon_id, node.scientific_name AS scientific_name,
 """
 
 
+# The reviewed catalog is capped at 1,000: exact scoped ranking avoids losing
+# in-scope hits below the global ANN cutoff without changing the shared index.
+_SCOPED_SEARCH = _SEARCH.replace(
+    'CALL db.index.vector.queryNodes($index_name, $limit, $vector) YIELD node, score',
+    'MATCH (node:TaxonNameVector) WHERE node.taxon_id IN $eligible_taxon_ids\n'
+    'WITH node, s, vector.similarity.cosine(node.name_vector, $vector) AS score',
+) + '\nORDER BY score DESC, taxon_id ASC LIMIT $limit\n'
+
+
 def _text_hash(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -292,7 +301,8 @@ class Neo4jTaxonNameVectorRepository:
     def __exit__(self, *_exc: object) -> None:
         self.close()
 
-    def search(self, vector: Any, profile: Any, context: Any, inventory: Any, limit: int = 10) -> list[dict]:
+    def search(self, vector: Any, profile: Any, context: Any, inventory: Any, limit: int = 10,
+               *, eligible_taxon_ids: Sequence[str] | None = None) -> list[dict]:
         """Read-only cosine search; every hit is checked against the current inventory."""
         model, dimensions, normalized = profile_key = _profile(profile)
         context = _context(context)
@@ -302,6 +312,18 @@ class Neo4jTaxonNameVectorRepository:
             raise TaxonNameVectorUnavailable("Search limit is invalid")
         fingerprint = catalog_fingerprint(rows, profile_key, context)
         expected = {row["taxon_id"]: row for row in rows}
+        parameters = {}
+        search_query = _SEARCH
+        if eligible_taxon_ids is not None:
+            if (isinstance(eligible_taxon_ids, (str, bytes))
+                    or not isinstance(eligible_taxon_ids, Sequence)
+                    or len(eligible_taxon_ids) > MAX_INVENTORY
+                    or any(not isinstance(key, str) or key not in expected for key in eligible_taxon_ids)):
+                raise TaxonNameVectorUnavailable("Scoped taxon IDs must belong to the reviewed inventory")
+            if not eligible_taxon_ids:
+                return []
+            parameters['eligible_taxon_ids'] = sorted(set(eligible_taxon_ids))
+            search_query = _SCOPED_SEARCH
 
         def read(tx):
             _index_state(tx, dimensions, require_online=True)
@@ -311,9 +333,9 @@ class Neo4jTaxonNameVectorRepository:
                     "fingerprint": fingerprint, "model": model, "dimensions": dimensions, "normalized": normalized,
                     "concept_set_id": context[0], "taxonomy_release": context[1], "count": len(rows)}:
                 raise TaxonNameVectorUnavailable("Taxon name vector catalog is stale")
-            return tx.run(_SEARCH, catalog_id=CATALOG_ID, fingerprint=fingerprint, model=model,
+            return tx.run(search_query, catalog_id=CATALOG_ID, fingerprint=fingerprint, model=model,
                           dimensions=dimensions, normalized=normalized, concept_set_id=context[0],
-                          release=context[1], index_name=INDEX_NAME, limit=limit, vector=query).data()
+                          release=context[1], index_name=INDEX_NAME, limit=limit, vector=query, **parameters).data()
 
         with self._session() as session:
             hits = session.execute_read(read)
@@ -321,7 +343,8 @@ class Neo4jTaxonNameVectorRepository:
         for hit in hits:
             row = expected.get(hit.get("taxon_id"))
             score = hit.get("score")
-            if (row is None or hit["taxon_id"] in seen
+            if (row is None or (eligible_taxon_ids is not None and hit.get("taxon_id") not in eligible_taxon_ids)
+                    or hit["taxon_id"] in seen
                     or any(hit.get(field) != row[field] for field in _FIELDS)
                     or hit.get("text_hash") != _text_hash(row["text"])
                     or isinstance(score, bool) or not isinstance(score, (int, float))

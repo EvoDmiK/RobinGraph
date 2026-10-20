@@ -1,0 +1,132 @@
+[
+  {
+    "query": "높은산앵무아",
+    "scope": "outside",
+    "disposition": "clarify",
+    "resolution": {
+      "mention": "높은산앵무아",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:11283",
+          "scientific_name": "Nestor notabilis",
+          "display_name": "Kea",
+          "score": 0.428,
+          "question": "Nestor notabilis에 대해 알려줘"
+        }
+      ]
+    },
+    "result": {
+      "kind": "clarify",
+      "prompt": "찾으시는 새를 선택해 주세요."
+    }
+  },
+  {
+    "query": "청둥오리아",
+    "scope": "korea",
+    "disposition": "clarify",
+    "resolution": {
+      "mention": "청둥오리아",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:544",
+          "scientific_name": "Anas platyrhynchos",
+          "display_name": "청둥오리",
+          "score": 0.2575,
+          "question": "Anas platyrhynchos에 대해 알려줘"
+        }
+      ]
+    },
+    "result": {
+      "kind": "clarify",
+      "prompt": "찾으시는 새를 선택해 주세요."
+    }
+  },
+  {
+    "query": "타조아",
+    "scope": "unknown",
+    "disposition": "clarify",
+    "resolution": {
+      "mention": "타조아",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:5",
+          "scientific_name": "Struthio camelus",
+          "display_name": "타조",
+          "score": 0.2913,
+          "question": "Struthio camelus에 대해 알려줘"
+        }
+      ]
+    },
+    "result": {
+      "kind": "clarify",
+      "prompt": "찾으시는 새를 선택해 주세요."
+    }
+  },
+  {
+    "query": "천둥오리",
+    "scope": "korea",
+    "disposition": "clarify",
+    "resolution": {
+      "mention": "천둥오리",
+      "status": "candidates",
+      "method": "vector",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": "rg:concept-set:avilist-v2025b",
+      "taxonomy_release": "v2025b",
+      "candidates": [
+        {
+          "taxon_id": "avilist-taxon:v2025b:544",
+          "scientific_name": "Anas platyrhynchos",
+          "display_name": "청둥오리",
+          "score": 0.2138,
+          "question": "Anas platyrhynchos에 대해 알려줘"
+        }
+      ]
+    },
+    "result": {
+      "kind": "clarify",
+      "prompt": "찾으시는 새를 선택해 주세요."
+    }
+  },
+  {
+    "query": "청둥오리아",
+    "scope": "outside",
+    "disposition": "abstain",
+    "resolution": {
+      "mention": "청둥오리아",
+      "status": "not_found",
+      "method": "none",
+      "canonical_name": null,
+      "taxon_id": null,
+      "concept_set_id": null,
+      "taxonomy_release": null,
+      "candidates": []
+    },
+    "result": {
+      "kind": "profile",
+      "profile": null,
+      "question_answer": null,
+      "similar_species": null,
+      "subspecies": null
+    }
+  }
+]

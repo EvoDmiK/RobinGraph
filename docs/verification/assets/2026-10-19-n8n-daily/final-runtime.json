@@ -1,0 +1,12 @@
+{
+  "app_image": "robingraph-api:test-rg406-outside-spelling-1c7cbbdaf1c7",
+  "app_started_at": "2026-10-19T04:07:34.661778761Z",
+  "runner_healthy": true,
+  "runner_restart_count": 1,
+  "restart_policy": "unless-stopped",
+  "no_foreground_runner_required": true,
+  "approval_path": "/review/approval.json",
+  "code_read_only": true,
+  "approval_directory_read_only": true,
+  "state_writable_verified": true
+}

@@ -1,0 +1,49 @@
+{
+  "dry_run": true,
+  "inventory": 855,
+  "reused": 849,
+  "to_embed": 6,
+  "embedded": 0,
+  "stale": 0,
+  "schema": "compatible",
+  "constraint": "compatible",
+  "catalog_current": false,
+  "outside": [
+    {
+      "taxon_id": "avilist-taxon:v2025b:11283",
+      "scientific_name": "Nestor notabilis",
+      "display_name": "높은산앵무",
+      "text": "높은산앵무 Kea Nestor notabilis"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:12333",
+      "scientific_name": "Xenicus gilviventris",
+      "display_name": "New Zealand Rockwren",
+      "text": "New Zealand Rockwren Xenicus gilviventris"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:20393",
+      "scientific_name": "Callaeas wilsoni",
+      "display_name": "North Island Kokako",
+      "text": "North Island Kokako Callaeas wilsoni"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:28",
+      "scientific_name": "Apteryx maxima",
+      "display_name": "Great Spotted Kiwi",
+      "text": "Great Spotted Kiwi Apteryx maxima"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:32",
+      "scientific_name": "Apteryx rowi",
+      "display_name": "Okarito Kiwi",
+      "text": "Okarito Kiwi Apteryx rowi"
+    },
+    {
+      "taxon_id": "avilist-taxon:v2025b:33",
+      "scientific_name": "Apteryx mantelli",
+      "display_name": "North Island Brown Kiwi",
+      "text": "North Island Brown Kiwi Apteryx mantelli"
+    }
+  ]
+}

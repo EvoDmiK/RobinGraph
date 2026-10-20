@@ -2,14 +2,13 @@ pipeline {
     agent { label 'robingraph-mac16' }
     options {
         disableConcurrentBuilds()
-        copyArtifactPermission('RobinGraph-PROD')
         skipDefaultCheckout(true)
         timeout(time: 60, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
     parameters {
         booleanParam(name: 'CHECK_ONLY', defaultValue: false,
-            description: 'Run checkout and tests only; do not publish images or deploy TEST.')
+            description: 'Run checkout and tests only; do not publish images or deploy Production.')
     }
     triggers { pollSCM('H/5 * * * *') }
     environment {
@@ -20,9 +19,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/dev-codex']],
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']],
                     userRemoteConfigs: [[url: 'https://github.com/EvoDmiK/RobinGraph.git']]])
-                sh 'rm -f image-metadata.json test-release.json orbstack.dockercontext'
+                sh 'rm -f image-metadata.json production-release.json orbstack.dockercontext'
                 script {
                     env.REVISION = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
                     env.IMAGE_TAG = "${env.IMAGE_REPOSITORY}:sha-${env.REVISION}"
@@ -45,6 +44,7 @@ DOCKER_CONFIG="$HOME/.docker" docker context export orbstack - | \
             steps {
                 sh '''#!/bin/sh
 set -eu
+uv run --locked python -m django check --settings=robingraph.django_api.settings
 uv run --locked --extra test --extra tracing python -m unittest discover -s tests
 node --test tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js
 docker version --format '{{.Server.Arch}}'
@@ -92,22 +92,34 @@ done
 '''
             }
         }
-        stage('Deploy and verify Mac TEST') {
+        stage('Production approval') {
             when { expression { !params.CHECK_ONLY } }
             steps {
-                sh '''#!/bin/sh
+                input(id: 'approveProduction', submitter: 'admin', ok: 'Deploy to NAS Production',
+                    message: "Deploy verified commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production?")
+            }
+        }
+        stage('Deploy and verify NAS Production') {
+            when { expression { !params.CHECK_ONLY } }
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN'),
+                    usernamePassword(credentialsId: 'robingraph-nas-ssh', usernameVariable: 'NAS_USERNAME', passwordVariable: 'NAS_PASSWORD')
+                ]) {
+                    sh '''#!/bin/sh
 set -eu
-python3 /Users/kimdove/robingraph-test/deploy_registry_test.py \
+python3 /Users/kimdove/robingraph-test/deploy_registry_prod.py \
   --image "$IMMUTABLE_IMAGE" --revision "$REVISION"
-printf '{"revision":"%s","image":"%s","test_verified":true}\n' \
-  "$REVISION" "$IMMUTABLE_IMAGE" > test-release.json
+printf '{"revision":"%s","image":"%s","production_verified":true}\n' \
+  "$REVISION" "$IMMUTABLE_IMAGE" > production-release.json
 '''
+                }
             }
         }
     }
     post {
         always {
-            archiveArtifacts artifacts: '*-metadata.json,test-release.json', allowEmptyArchive: true
+            archiveArtifacts artifacts: '*-metadata.json,production-release.json', allowEmptyArchive: true
             sh '''#!/bin/sh
 set -eu
 if [ -n "${DOCKER_CONFIG:-}" ]; then

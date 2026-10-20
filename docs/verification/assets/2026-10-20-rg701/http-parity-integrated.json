@@ -1,0 +1,745 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/chat",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/birds",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/index.html",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/birds.html",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/chat.js",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/birds.js",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/styles.css",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.ico",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/favicon-32.png",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/favicon-192.png",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/apple-touch-icon.png",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/missing.js",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/%2e%2e/app.py",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/..%2fapp.py",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/static/%2fetc%2fpasswd",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/profile?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/related?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/similar?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/ecological-related?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/subspecies?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=Turdus+merula&species_scope=all",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=Turdus+merula&species_scope=korea",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=Turdus+merula&species_scope=outside",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=Turdus+merula&species_scope=unknown",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=%20",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=DefinitelyUnknownBird",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "GET",
+      "path": "/v1/taxa/name-relations?name=Turdus%20merula&species_scope=invalid",
+      "payload": null,
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "auto",
+        "defer_discovery": true
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "profile",
+        "defer_discovery": true,
+        "filters": {
+          "kind": "profile",
+          "name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "taxonomy",
+        "defer_discovery": true,
+        "filters": {
+          "kind": "taxonomy",
+          "scientific_name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "observations",
+        "defer_discovery": true,
+        "filters": {
+          "kind": "observations",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "evidence",
+        "defer_discovery": true,
+        "filters": {
+          "kind": "evidence",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "auto",
+        "defer_discovery": true,
+        "species_scope": "korea"
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "profile",
+        "defer_discovery": true,
+        "species_scope": "korea",
+        "filters": {
+          "kind": "profile",
+          "name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "taxonomy",
+        "defer_discovery": true,
+        "species_scope": "korea",
+        "filters": {
+          "kind": "taxonomy",
+          "scientific_name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "observations",
+        "defer_discovery": true,
+        "species_scope": "korea",
+        "filters": {
+          "kind": "observations",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "evidence",
+        "defer_discovery": true,
+        "species_scope": "korea",
+        "filters": {
+          "kind": "evidence",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "auto",
+        "defer_discovery": true,
+        "species_scope": "outside"
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "profile",
+        "defer_discovery": true,
+        "species_scope": "outside",
+        "filters": {
+          "kind": "profile",
+          "name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "taxonomy",
+        "defer_discovery": true,
+        "species_scope": "outside",
+        "filters": {
+          "kind": "taxonomy",
+          "scientific_name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "observations",
+        "defer_discovery": true,
+        "species_scope": "outside",
+        "filters": {
+          "kind": "observations",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "evidence",
+        "defer_discovery": true,
+        "species_scope": "outside",
+        "filters": {
+          "kind": "evidence",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "auto",
+        "defer_discovery": true,
+        "species_scope": "unknown"
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "profile",
+        "defer_discovery": true,
+        "species_scope": "unknown",
+        "filters": {
+          "kind": "profile",
+          "name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "taxonomy",
+        "defer_discovery": true,
+        "species_scope": "unknown",
+        "filters": {
+          "kind": "taxonomy",
+          "scientific_name": "Turdus merula"
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "observations",
+        "defer_discovery": true,
+        "species_scope": "unknown",
+        "filters": {
+          "kind": "observations",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "Turdus merula에 대해 알려줘",
+        "intent": "evidence",
+        "defer_discovery": true,
+        "species_scope": "unknown",
+        "filters": {
+          "kind": "evidence",
+          "limit": 10
+        }
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {},
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": ""
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "bird",
+        "species_scope": "invalid"
+      },
+      "problems": []
+    },
+    {
+      "method": "POST",
+      "path": "/v1/chat",
+      "payload": {
+        "question": "bird",
+        "intent": "profile",
+        "filters": {
+          "kind": "evidence"
+        }
+      },
+      "problems": []
+    }
+  ]
+}

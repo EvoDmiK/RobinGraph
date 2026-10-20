@@ -19,7 +19,7 @@ import re
 import unicodedata
 from typing import Any, Callable, Mapping, Sequence
 
-from .taxonomy_lineage import TaxonomyLineage
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage
 from .species_scope import scope_matches, with_species_scope
 
 
@@ -138,6 +138,26 @@ def _validate_vector(vector: Any, dimensions: int) -> tuple[float, ...]:
     return unit
 
 
+def _one_latin_edit(value: str, canonical: str | None) -> bool:
+    """Confirmation only: one edit in a bounded Latin source name."""
+    if not canonical or len(value) < 4 or len(canonical) < 3:
+        return False
+    if not all(re.fullmatch(r"[A-Za-z]+(?:[ -][A-Za-z]+)*", text) for text in (value, canonical)):
+        return False
+    left, right = value.casefold(), canonical.casefold()
+    if left == right or abs(len(left) - len(right)) > 1:
+        return False
+    if len(left) == len(right):
+        different = [i for i, (a, b) in enumerate(zip(left, right)) if a != b]
+        return (len(different) == 1 or (len(different) == 2
+            and different[1] == different[0] + 1
+            and left[different[0]] == right[different[1]]
+            and left[different[1]] == right[different[0]]))
+    short, long = (left, right) if len(left) < len(right) else (right, left)
+    first = next((i for i, (a, b) in enumerate(zip(short, long)) if a != b), len(short))
+    return short[first:] == long[first + 1:]
+
+
 def _validate_inventory(raw: Any) -> list[dict]:
     if isinstance(raw, (str, bytes, Mapping)) or not isinstance(raw, Sequence):
         raise _Unavailable
@@ -245,16 +265,24 @@ class TaxonNameResolver:
             raise _Unavailable
         return (type(self._embedding_client).__qualname__, model, dimensions, normalized), dimensions
 
-    def _suggest(self, value: str, context: tuple[str, str], species_scope="all") -> list[dict]:
+    def _suggest(self, value: str, context: tuple[str, str], species_scope="all",
+                 *, query_vector=None) -> list[dict]:
         profile_key, dimensions = self._profile_key()
         inventory = _validate_inventory(self._load_candidates())
         if not inventory:
             raise _Unavailable  # no reviewed inventory for this context: cannot suggest
-        query = _validate_vector(self._embedding_client.embed_query(value), dimensions)
+        query = _validate_vector(self._embedding_client.embed_query(value)
+                                 if query_vector is None else query_vector, dimensions)
         if self._context() != context:
             raise _Unavailable
+        parameters = {}
+        if species_scope != 'all':
+            parameters['eligible_taxon_ids'] = [entry['taxon_id'] for entry in inventory
+                if scope_matches({**entry, 'rank': 'species'}, species_scope, *context)]
+            if not parameters['eligible_taxon_ids']:
+                return []
         hits = self._candidate_search(query, self._embedding_client.profile, context, inventory,
-                                      limit=MAX_VERIFICATIONS)
+                                      limit=MAX_VERIFICATIONS, **parameters)
         if isinstance(hits, (str, bytes, Mapping)) or not isinstance(hits, Sequence) or len(hits) > MAX_VERIFICATIONS:
             raise _Unavailable
         allowed = {entry["taxon_id"]: entry for entry in inventory}
@@ -273,7 +301,7 @@ class TaxonNameResolver:
             scored.append((float(score), entry))
         if self._profile_key()[0] != profile_key:
             raise _Unavailable
-        # Scope never backfills a suggestion from outside the bounded search.
+        # Recheck scope defensively even when the repository ranked within it.
         scored = [(score, entry) for score, entry in scored
                   if scope_matches({**entry, "rank":"species"}, species_scope, *context)]
         scored.sort(key=lambda pair: (-round(pair[0], 6), pair[1]["taxon_id"]))
@@ -283,24 +311,51 @@ class TaxonNameResolver:
             eligible = [(score, entry) for score, entry in scored[:MAX_VERIFICATIONS]
                         if score >= SPELLING_COSINE_FLOOR
                         and _one_jamo_substitution(value, entry["display_name"])]
+        verified = {}
+        # Latin source names in the reviewed outside set may need spelling
+        # support below the vector floor. Keep the measured cosine unchanged.
+        if not eligible and species_scope == 'outside':
+            for score, entry in scored[:MAX_VERIFICATIONS]:
+                target = self._verified_target(entry, context)
+                verified[entry['taxon_id']] = target
+                if target is not None and any(_one_latin_edit(value, name)
+                        for name in (target.english_name, target.scientific_name)):
+                    eligible.append((score, entry))
+        if (not eligible and species_scope == 'all' and len(value) >= 4
+                and re.fullmatch(r"[A-Za-z]+(?:[ -][A-Za-z]+)*", value)):
+            # Reuse the query vector; only the reviewed outside set supplies
+            # this spelling fallback, and all keeps its Korean-first labels.
+            outside = self._suggest(value, context, 'outside', query_vector=query)
+            for candidate in outside:
+                entry = allowed.get(candidate['taxon_id'])
+                if entry is None or entry['scientific_name'] != candidate['scientific_name']:
+                    raise _Unavailable
+                candidate['display_name'] = entry['display_name']
+            if self._profile_key()[0] != profile_key or self._context() != context:
+                raise _Unavailable
+            return outside
         suggestions: list[dict] = []
         for score, entry in eligible:
             if len(suggestions) >= MAX_SUGGESTIONS:
                 break
-            if self._verified_species(entry, context):
+            target = (verified[entry['taxon_id']] if entry['taxon_id'] in verified
+                      else self._verified_target(entry, context))
+            if target is not None:
                 suggestions.append({"taxon_id": entry["taxon_id"], "scientific_name": entry["scientific_name"],
                                     "display_name": (entry["display_name"] if species_scope == "all" else
-                                        with_species_scope({**entry, "rank":"species", "korean_name":entry["display_name"]}, species_scope, *context)["display_name"]), "score": round(score, 4)})
+                                        with_species_scope({**vars(target), "korean_name":target.korean_name or entry["display_name"]}, species_scope, *context)["display_name"]), "score": round(score, 4)})
         if self._context() != context:
             raise _Unavailable
         return suggestions
 
-    def _verified_species(self, entry: dict, context: tuple[str, str]) -> bool:
+    def _verified_target(self, entry: dict, context: tuple[str, str]) -> LineageTaxon | None:
         lineage = self._resolve_exact(entry["scientific_name"])
         if lineage is None:
-            return False  # revoked or no longer active
+            return None  # revoked or no longer active
         target = _lineage_target(lineage, context)
         if target is None:
-            return False  # stale lineage from another release/concept set
-        return (target.taxon_id == entry["taxon_id"] and target.rank == "species"
-                and target.scientific_name.casefold() == entry["scientific_name"].casefold())
+            return None  # stale lineage from another release/concept set
+        if (target.taxon_id == entry["taxon_id"] and target.rank == "species"
+                and target.scientific_name.casefold() == entry["scientific_name"].casefold()):
+            return target
+        return None

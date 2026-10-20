@@ -1,0 +1,26 @@
+..................................English search-term conversion failed (RuntimeError)
+English search-term conversion failed (ValueError)
+English search-term conversion failed (ValueError)
+.......................................................................................................................s..............................s...............................................................................................................................MLflow tracing disabled: initialization failed (RuntimeError)
+........................................................................................................s..........s.............Name relationship lookup failed (ValueError)
+..........s.......................................................sssssssss..ssssssssss......................................sssssssss..........................s..............................................................Name relationship lookup failed (TypeError)
+.................................................................................................................s....s......................................................................................................................................ss.........................
+----------------------------------------------------------------------
+Ran 944 tests in 21.925s
+
+OK (skipped=38)
+workflow canonical-workflow-id is already active; no-op
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activated: workflow=canonical-workflow-id
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+dry-run: re-run with --apply to activate the schedule
+workflow canonical-workflow-id is already inactive; no-op
+deactivated: workflow=canonical-workflow-id
+dry-run: workflow canonical-workflow-id is active; re-run with --apply to deactivate
+local artifact: nodes=3 active=False
+schedule: cron='0 4 1 * *' timezone='Asia/Seoul' (next-run time not computed here)
+remote workflow canonical-workflow-id: active=False nodes=3
+remote definition matches reviewed local artifact: True
+most recent meaningful successful execution: execution=exec-1 run=n8n-korean-vernacular-exec-1 started_at=2026-09-11T12:00:00.000Z loaded_vernacular_names=846 loaded_candidates=102
+{"active_species": 11131, "korea": 592, "korea_kos_only": 490, "korea_avilist_only": 1, "korea_both": 101, "outside": 6, "unknown": 10533, "kos_ga2_unknown": 5, "avilist_korea_text_rejected_species": 44, "avilist_korea_text_rejected_rows": 46}

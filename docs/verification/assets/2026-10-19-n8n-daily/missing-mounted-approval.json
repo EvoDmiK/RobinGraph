@@ -1,0 +1,32 @@
+{
+  "cli_exit_code": 1,
+  "last_node": "Verify approved artifact",
+  "executed_nodes": [
+    "Manual TEST run",
+    "Prepare pinned AviList",
+    "Check prepare result",
+    "Verify approved artifact"
+  ],
+  "phases": {
+    "Prepare pinned AviList": {
+      "status": "prepared",
+      "reused": true,
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "counts": {
+        "active_species": 11131,
+        "korea": 592,
+        "korea_kos_only": 490,
+        "korea_avilist_only": 1,
+        "korea_both": 101,
+        "outside": 6,
+        "unknown": 10533,
+        "kos_ga2_unknown": 5,
+        "avilist_korea_text_rejected_species": 44,
+        "avilist_korea_text_rejected_rows": 46
+      },
+      "stage": "prepare",
+      "projection_performed": false
+    }
+  },
+  "error_present": true
+}

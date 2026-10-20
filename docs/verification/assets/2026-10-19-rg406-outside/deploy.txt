@@ -1,0 +1,39 @@
+#0 building with "orbstack" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 303B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/robingraph-api:test-rg406-recall-f8c64d62bbc8
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/2] FROM docker.io/library/robingraph-api:test-rg406-recall-f8c64d62bbc8@sha256:91fcae4e831a47cc0d843c2d6edfabbfdb8543c3ce33d1cc4729d06f034aaf9c
+#4 resolve docker.io/library/robingraph-api:test-rg406-recall-f8c64d62bbc8@sha256:91fcae4e831a47cc0d843c2d6edfabbfdb8543c3ce33d1cc4729d06f034aaf9c 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 24.55kB done
+#5 DONE 0.0s
+
+#6 [2/2] COPY --chown=10001:10001 taxonomy_lineage_neo4j.py /app/src/robingraph/retrieval/taxonomy_lineage_neo4j.py
+#6 CACHED
+
+#7 exporting to image
+#7 exporting layers done
+#7 exporting manifest sha256:8a1affc453699447c7d6c05072f75cf31b2413a113393ecc2927509d41957b66 done
+#7 exporting config sha256:383fa7b5ea3154ed069ce6b4c8f33b9af4840bb0139d48c84585d99b1f752d6c done
+#7 exporting attestation manifest sha256:3508788de5d213e618313c8fec3e652ad2414ad0cecc5d8559aa8c4ad182ffa0 done
+#7 exporting manifest list sha256:cff732910d13ea76150d3eba487b2b673c15bc10f928e69711938f08742a8e32 done
+#7 naming to docker.io/library/robingraph-api:test-rg406-outside-3b4106fe77ed done
+#7 unpacking to docker.io/library/robingraph-api:test-rg406-outside-3b4106fe77ed done
+#7 DONE 0.0s
+ Container robingraph-api-test Recreate 
+ Container robingraph-api-test Recreated 
+ Container robingraph-api-test Starting 
+ Container robingraph-api-test Started 
+TEST deployed and API verified: robingraph-api:test-rg406-outside-3b4106fe77ed
+TEST catalog and app updated

@@ -1,9 +1,9 @@
 import unittest
 from copy import deepcopy
 from unittest.mock import Mock
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.species_questions import parse_species_question
 
 SOURCE={'source_name':'EltonTraits','source_url':'https://example.org/traits','label':'먹이 구성','display':'물고기 60%',
@@ -41,7 +41,7 @@ class SpeciesQuestionTest(unittest.TestCase):
 
     def test_diet_answers_actual_question_without_embedding_or_relation_click(self):
         profile=Mock(return_value=PROFILE);router=Mock();router.classify.side_effect=AssertionError('must not call embeddings')
-        client=TestClient(create_app(species_profile_handler=profile,semantic_router=router))
+        client=TestClient(create_django_app(species_profile_handler=profile,semantic_router=router))
         response=client.post('/v1/chat',json={'question':'왜가리는 무엇을 먹고 사니?'}).json()
         self.assertEqual('answer',response['disposition'])
         self.assertEqual('deterministic',response['route_method'])
@@ -62,7 +62,7 @@ class SpeciesQuestionTest(unittest.TestCase):
                                                            {'key':'same_genus','label':'같은 속','points':50,
                                                             'source_name':'AviList','source_url':'https://example.org/taxonomy'}]}]}]}
         similar=Mock(return_value=ranked)
-        client=TestClient(create_app(species_profile_handler=lambda _:PROFILE,similar_species_handler=similar))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:PROFILE,similar_species_handler=similar))
         response=client.post('/v1/chat',json={'question':'왜가리와 비슷한 종은 어떤게 있니?'}).json()
         self.assertEqual('answer',response['disposition'])
         self.assertIn('대백로',response['answer_text'])
@@ -81,14 +81,14 @@ class SpeciesQuestionTest(unittest.TestCase):
     def test_rank_and_ecological_category_are_filtered_and_peer_sources_used(self):
         relations=deepcopy(RELATIONS)
         relations['groups'].append({**relations['groups'][0],'rank':'family','label':'같은 과의 다른 속 새'})
-        client=TestClient(create_app(species_profile_handler=lambda _:PROFILE,related_species_handler=lambda _:relations))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:PROFILE,related_species_handler=lambda _:relations))
         result=client.post('/v1/chat',json={'question':'왜가리와 같은 속의 새는?'}).json()
         self.assertEqual(['genus'],[g['rank']for g in result['result']['question_answer']['relations']['groups']])
         ecological=deepcopy(RELATIONS)
         ecological['groups']=[{'relation':'habitat','display':'습지','label':'같은 서식 환경의 새',
                               'source':SOURCE,'items':[{**RELATIONS['groups'][0]['items'][0],'evidence':{**SOURCE,'source_url':'https://example.org/peer'}}]},
                              {'relation':'trophic_niche','display':'수생동물 포식','source':SOURCE,'items':[]}]
-        client=TestClient(create_app(species_profile_handler=lambda _:PROFILE,ecological_relations_handler=lambda _:ecological))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:PROFILE,ecological_relations_handler=lambda _:ecological))
         result=client.post('/v1/chat',json={'question':'왜가리와 서식 환경이 비슷한 새는?'}).json()
         answer=result['result']['question_answer']
         self.assertEqual(['habitat'],[g['relation']for g in answer['relations']['groups']])
@@ -98,24 +98,24 @@ class SpeciesQuestionTest(unittest.TestCase):
         for traits in ([],[{**SOURCE,'source_url':'javascript:bad'}],[{**SOURCE,'inferred':True}],
                        [{**SOURCE,'value':{'fish':0,'seed':float('nan'),'Forest':20}}]):
             profile={**PROFILE,'traits':traits,'reference_traits':[SOURCE]}
-            client=TestClient(create_app(species_profile_handler=lambda _:profile))
+            client=TestClient(create_django_app(species_profile_handler=lambda _:profile))
             result=client.post('/v1/chat',json={'question':'왜가리는 무엇을 먹고 사니?'}).json()
             self.assertEqual('abstain',result['disposition'])
             self.assertNotIn('물고기 60%',result['answer_text'])
         profile={**PROFILE,'traits':[{**SOURCE,'name':'trophic_niche','value':'Aquatic predator','display':'수생동물 포식','label':'먹이 생태 범주'}]}
-        client=TestClient(create_app(species_profile_handler=lambda _:profile))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:profile))
         result=client.post('/v1/chat',json={'question':'왜가리는 무엇을 먹고 사니?'}).json()
         self.assertIn('수생동물 포식',result['answer_text']);self.assertNotIn('물고기',result['answer_text'])
 
     def test_activity_false_uses_requested_usual_activity_label(self):
         profile={**PROFILE,'traits':[{**SOURCE,'name':'nocturnal','value':False,'display':'야행성 아님','label':'활동 시간'}]}
-        client=TestClient(create_app(species_profile_handler=lambda _:profile))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:profile))
         result=client.post('/v1/chat',json={'question':'해오라기는 야행성이니?'}).json()
         self.assertIn('활동 시간: 야행성 아님',result['answer_text'])
 
     def test_explicit_other_routes_bypass_and_wrong_profile_filter_clarifies(self):
         handler=Mock(return_value=PROFILE)
-        client=TestClient(create_app(species_profile_handler=handler))
+        client=TestClient(create_django_app(species_profile_handler=handler))
         for intent in ('auto','profile'):
             result=client.post('/v1/chat',json={'intent':intent,'question':'왜가리는 무엇을 먹고 사니?',
                                              'filters':{'kind':'profile','name':'청둥오리'}}).json()
@@ -129,7 +129,7 @@ class SpeciesQuestionTest(unittest.TestCase):
                       'concept_set_id':'active','taxonomy_release':'v2025b',
                       'relations':[{'entity_kind':'common_name','taxon':PROFILE['taxon']}]}
         profile=Mock(return_value=PROFILE);names=Mock(return_value=relationship)
-        client=TestClient(create_app(species_profile_handler=profile,name_relations_handler=names))
+        client=TestClient(create_django_app(species_profile_handler=profile,name_relations_handler=names))
         result=client.post('/v1/chat',json={'question':'학은 무엇을 먹어?'}).json()
         self.assertEqual('answer',result['disposition'])
         names.assert_called_once_with('학');profile.assert_called_once_with('Ardea cinerea')
@@ -151,7 +151,7 @@ class ProfileIntroSimilarTest(unittest.TestCase):
         ranked={**RELATIONS,'ranking':{'limit':3},'groups':[{'rank':'similarity','items':[]}]}
         similar=Mock(return_value=ranked)
         profile={**PROFILE,'summary':'왜가리 요약'}
-        client=TestClient(create_app(species_profile_handler=lambda _:profile,similar_species_handler=similar))
+        client=TestClient(create_django_app(species_profile_handler=lambda _:profile,similar_species_handler=similar))
         for question in ('왜가리에 대해 알고싶어.','왜가리에 대해 알고 싶어'):
             similar.return_value=ranked
             body=client.post('/v1/chat',json={'question':question}).json()
@@ -166,6 +166,6 @@ class ProfileIntroSimilarTest(unittest.TestCase):
             self.assertIsNone(body['result']['similar_species'])
         sub=Mock(return_value=ranked)
         sub_profile={**profile,'taxon':{**PROFILE['taxon'],'rank':'subspecies'}}
-        body=TestClient(create_app(species_profile_handler=lambda _:sub_profile,similar_species_handler=sub)
+        body=TestClient(create_django_app(species_profile_handler=lambda _:sub_profile,similar_species_handler=sub)
                         ).post('/v1/chat',json={'question':'왜가리에 대해 알고싶어.'}).json()
         sub.assert_not_called();self.assertIsNone(body['result']['similar_species'])

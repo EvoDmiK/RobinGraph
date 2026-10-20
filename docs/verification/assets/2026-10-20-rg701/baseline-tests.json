@@ -1,0 +1,9 @@
+{
+  "command": "uv run --locked --extra test python -m unittest discover -s tests -q",
+  "run": 999,
+  "passed": 961,
+  "skipped": 38,
+  "failed": 0,
+  "duration_seconds": 23.058,
+  "kind": "fixture/mock/offline suite; opt-in integration skips"
+}

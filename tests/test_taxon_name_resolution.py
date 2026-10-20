@@ -1,7 +1,7 @@
 import unicodedata
 from types import SimpleNamespace
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from robingraph.retrieval import taxon_name_resolution as module
 from robingraph.retrieval.taxon_name_resolution import TaxonNameResolver, compact_korean_name, normalize_mention
@@ -270,3 +270,74 @@ class PersistentVectorSuggestionTests(ResolverCase):
             self.assertEqual([(c["display_name"], c["score"]) for c in result["candidates"]], [("청둥오리", .2138)])
         self.assertEqual(client.query_calls, ["천둥오리", "천둥오리"])
         self.assertEqual(client.document_calls, [])
+
+
+class ScopedRecallTests(ResolverCase):
+    def test_scope_ranking_recovers_candidate_below_global_top_ten(self):
+        rows = [{'taxon_id': f'taxon:{i}', 'scientific_name': f'Example species{i}',
+                 'display_name': f'검증이름{i}', 'text': f'검증이름{i}'} for i in range(11)]
+        self.load = Mock(return_value=rows)
+        self.graph.overrides[rows[-1]['scientific_name']] = lineage(rows[-1]['scientific_name'], rows[-1]['taxon_id'])
+        def search(*args, limit, eligible_taxon_ids=None):
+            ranked = [{**row, 'score': .9-i*.01} for i, row in enumerate(rows)]
+            if eligible_taxon_ids is not None:
+                ranked = [r for r in ranked if r['taxon_id'] in eligible_taxon_ids]
+            return ranked[:limit]
+        search = Mock(side_effect=search)
+        with patch.object(module, 'scope_matches', side_effect=lambda taxon, *args: taxon['taxon_id'] == rows[-1]['taxon_id']):
+            result = self.resolver(FakeEmbeddings({}, {'오타이름': (1.,0.,0.)}), search).resolve('오타이름', 'korea')
+        self.assertEqual(result['status'], 'candidates')
+        self.assertEqual([r['taxon_id'] for r in result['candidates']], ['taxon:10'])
+        self.assertEqual(search.call_args.kwargs, {'limit': 10, 'eligible_taxon_ids': ['taxon:10']})
+        self.assertEqual(len(search.call_args.args[3]), 11)  # full catalog remains intact
+
+    def test_empty_scope_never_calls_repository_or_backfills_other_scope(self):
+        search = Mock()
+        with patch.object(module, 'scope_matches', return_value=False):
+            result = self.resolver(FakeEmbeddings({}, {'오타이름': (1.,0.,0.)}), search).resolve('오타이름', 'outside')
+        self.assertEqual(result['candidates'], [])
+        search.assert_not_called()
+
+
+    def test_outside_candidate_uses_english_name_from_verified_graph(self):
+        from dataclasses import replace
+        value = lineage('Ardea cinerea', 'avilist-taxon:v2025b:100')
+        self.graph.overrides['Ardea cinerea'] = replace(value, items=(*value.items[:-1],
+            replace(value.items[-1], korean_name='왜가리', english_name='Grey Heron')))
+        search = Mock(return_value=[{**inventory()[0], 'score': .8}])
+        with patch.object(module, 'scope_matches', return_value=True):
+            result = self.resolver(FakeEmbeddings({}, {'왜가리아': (1.,0.,0.)}), search).resolve('왜가리아', 'outside')
+        self.assertEqual(result['candidates'][0]['display_name'], 'Grey Heron')
+
+
+class LatinSpellingSupportTests(ResolverCase):
+    def test_one_edit_boundaries(self):
+        for value,name in [('Keaa','Kea'),('Nestor notabilix','Nestor notabilis'),
+                           ('Okarito Kiwx','Okarito Kiwi'),('Kea','Keaa'),('Kxea','Kexa')]:
+            if len(value) >= 4:
+                self.assertTrue(module._one_latin_edit(value,name),(value,name))
+        for value,name in [('Kea','Kea'),('Kex','Kea'),('Kezz','Kea'),('bird','Kea'),('Kea?','Kea')]:
+            self.assertFalse(module._one_latin_edit(value,name),(value,name))
+
+    def test_outside_spelling_candidate_preserves_real_cosine_and_requires_graph(self):
+        from dataclasses import replace
+        row={'taxon_id':'fixture:kea','scientific_name':'Nestor notabilis','display_name':'Kea','text':'Kea Nestor notabilis'}
+        self.load=Mock(return_value=[row])
+        base=lineage(row['scientific_name'],row['taxon_id'])
+        self.graph.overrides[row['scientific_name']]=replace(base,items=(*base.items[:-1],replace(base.items[-1],english_name='Kea')))
+        search=Mock(return_value=[{**row,'score':.1}])
+        embeddings=FakeEmbeddings({}, {'Keaa':(1.,0.,0.),'Kezz':(1.,0.,0.)})
+        resolver=self.resolver(embeddings,search)
+        with patch.object(module,'scope_matches',return_value=True):
+            result=resolver.resolve('Keaa','outside')
+            self.assertEqual(result['status'],'candidates')
+            self.assertEqual(result['candidates'][0]['display_name'],'Kea')
+            self.assertEqual(result['candidates'][0]['score'],.1)
+            embeddings.query_calls.clear()
+            all_result=resolver.resolve('Keaa','all')
+            self.assertEqual(all_result['status'],'candidates')
+            self.assertEqual(all_result['candidates'][0]['display_name'],'Kea')
+            self.assertEqual(embeddings.query_calls,['Keaa'])
+            self.assertEqual(resolver.resolve('Kezz','outside')['status'],'not_found')
+            self.graph.overrides[row['scientific_name']]=None
+            self.assertEqual(resolver.resolve('Keaa','outside')['status'],'not_found')

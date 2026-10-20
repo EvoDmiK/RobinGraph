@@ -22,8 +22,8 @@ class TaxonNameCatalogTests(unittest.TestCase):
                  'b': {'status': 'unreviewed', 'name': '추정명'}}
         with patch('robingraph.retrieval.taxonomy_lineage_neo4j.sourced_korean_names', return_value=names):
             repo.reviewed_name_candidates()
-        query = repo._run.call_args.args[0]
-        params = repo._run.call_args.kwargs
+        query = repo._run.call_args_list[0].args[0]
+        params = repo._run.call_args_list[0].kwargs
         self.assertEqual(['a'], [item['taxon_id'] for item in params['names']])
         self.assertEqual('v2025b', params['release'])
         self.assertIn("policy_status:'allowed'", query)

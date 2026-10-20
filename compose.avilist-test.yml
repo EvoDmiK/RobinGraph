@@ -1,0 +1,46 @@
+name: robingraph-avilist-test
+
+services:
+  runner:
+    image: ${ROBINGRAPH_AVILIST_IMAGE:?Set the reviewed TEST image}
+    container_name: robingraph-avilist-runner-test
+    network_mode: host
+    user: "${ROBINGRAPH_AVILIST_UID:?Set the state owner UID}:${ROBINGRAPH_AVILIST_GID:?Set the state owner GID}"
+    working_dir: /code
+    command: [python, -m, scripts.serve_avilist_pipeline, --host, 0.0.0.0, --port, "18001"]
+    env_file:
+      - ${ROBINGRAPH_AVILIST_APP_ENV_FILE:?Set the private TEST application env file}
+      - ${ROBINGRAPH_AVILIST_SERVICE_ENV_FILE:?Set the private runner env file}
+    environment:
+      ROBINGRAPH_DEPLOY_TARGET: test
+      ROBINGRAPH_AVILIST_PIPELINE_ROOT: /state
+      ROBINGRAPH_AVILIST_APPROVAL_PATH: /review/approval.json
+      PYTHONPATH: /code/src:/code
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - type: bind
+        source: ${ROBINGRAPH_AVILIST_CODE_DIR:?Set the reviewed code directory}
+        target: /code
+        read_only: true
+      - type: bind
+        source: ${ROBINGRAPH_AVILIST_STATE_DIR:?Set the persistent state directory}
+        target: /state
+      - type: bind
+        source: ${ROBINGRAPH_AVILIST_APPROVAL_DIR:?Set the reviewed approval directory}
+        target: /review
+        read_only: true
+    init: true
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:size=64m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, python, -c, "from urllib.request import urlopen; import json; r=json.load(urlopen('http://127.0.0.1:18001/health', timeout=3)); assert r['deployment_target']=='test'"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: "3"}

@@ -3,9 +3,9 @@ from copy import deepcopy
 import unittest
 from unittest.mock import Mock
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 
 
 PROFILE = {
@@ -26,7 +26,7 @@ class EntityResolutionApiTests(unittest.TestCase):
     def client(self, response, profile=PROFILE):
         resolver = Mock(return_value=response)
         reader = Mock(return_value=deepcopy(profile))
-        return TestClient(create_app(species_profile_handler=reader,
+        return TestClient(create_django_app(species_profile_handler=reader,
                                      taxon_name_resolution_handler=resolver)), resolver, reader
 
     def test_graph_identity_is_request_metadata_and_controls_profile_lookup(self):
@@ -92,7 +92,7 @@ class EntityResolutionApiTests(unittest.TestCase):
         resolver.assert_not_called()
 
     def test_legacy_handler_without_resolver_remains_usable(self):
-        client = TestClient(create_app(species_profile_handler=lambda _: PROFILE))
+        client = TestClient(create_django_app(species_profile_handler=lambda _: PROFILE))
         body = client.post('/v1/chat', json={'question': '흰뺨검둥오리에 대해 알려줘'}).json()
         self.assertEqual('answer', body['disposition'])
         self.assertIsNone(body['entity_resolution'])

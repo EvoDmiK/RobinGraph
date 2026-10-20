@@ -1,0 +1,51 @@
+{
+  "base": "https://robingraph-test.dove-nest.com",
+  "response_mocking": false,
+  "passed": true,
+  "rows": [
+    {
+      "width": 1280,
+      "query": "Anas platyrhynchos",
+      "scope": "korea",
+      "disposition": "answer",
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "query": "Keaa",
+      "scope": "outside",
+      "disposition": "clarify",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "query": "Anas platyrhynchos",
+      "scope": "korea",
+      "disposition": "answer",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "query": "Keaa",
+      "scope": "outside",
+      "disposition": "clarify",
+      "passed": true
+    },
+    {
+      "width": 320,
+      "query": "Anas platyrhynchos",
+      "scope": "korea",
+      "disposition": "answer",
+      "passed": true
+    },
+    {
+      "width": 320,
+      "query": "Keaa",
+      "scope": "outside",
+      "disposition": "clarify",
+      "passed": true
+    }
+  ],
+  "page_errors": 0,
+  "physical_mobile": false
+}

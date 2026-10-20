@@ -3,9 +3,9 @@ from dataclasses import asdict
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 from tests.test_similar_species import FakeRepository, HABITAT, LINEAGE, TARGET, candidate, ecology
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.similar_species import NAMES_QUERY, similar_species
 from robingraph.retrieval.taxonomy_lineage import sourced_korean_names
 
@@ -152,7 +152,7 @@ class SimilarSpeciesKoreanPriorityTest(TestCase):
             candidate(f"e{i}", f"AAA bird{i}", True, True) for i in range(3)])
         profile = {"taxon": asdict(TARGET), "lineage": asdict(LINEAGE), "traits": [], "warnings": []}
         handler = Mock(return_value=relations)
-        client = TestClient(create_app(species_profile_handler=lambda _: profile, similar_species_handler=handler))
+        client = TestClient(create_django_app(species_profile_handler=lambda _: profile, similar_species_handler=handler))
         response = client.post("/v1/chat", json={"question": "청둥오리와 비슷한 새 알려줘"})
         self.assertEqual(200, response.status_code)
         answer = response.json()

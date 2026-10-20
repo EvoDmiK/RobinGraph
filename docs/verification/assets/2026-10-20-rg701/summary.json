@@ -1,0 +1,62 @@
+{
+  "status": "TEST deployed and verified; Production approval pending",
+  "python": {
+    "run": 1262,
+    "passed": 1223,
+    "skipped": 39,
+    "failed": 0,
+    "seconds": 27.69,
+    "kind": "offline fixture/mock; external integration opt-in skips"
+  },
+  "frontend": {
+    "passed": 317,
+    "failed": 0,
+    "skipped": 0
+  },
+  "fixture_http_parity": {
+    "cases": 95,
+    "passed": 95,
+    "real_local_sockets": true
+  },
+  "live_test_api": {
+    "cases": 5,
+    "passed": 5,
+    "real_db_api": true
+  },
+  "browser": {
+    "base": "https://robingraph-test.dove-nest.com",
+    "cases": 6,
+    "widths": [
+      1280,
+      390,
+      320
+    ],
+    "passed": 6,
+    "page_errors": 0,
+    "response_mocking": false,
+    "physical_mobile": false
+  },
+  "n8n": {
+    "target": "n8n-test",
+    "workflow": "rgAvilistTest01",
+    "passed": true,
+    "last_node": "Check apply result",
+    "apply": "already_applied",
+    "projection_performed": false,
+    "internal_ingest_write_test": "fake-store only"
+  },
+  "db_snapshot_unchanged": true,
+  "name_vectors": 855,
+  "django_check": "passed",
+  "native_imports_fastapi": false,
+  "graphify": {
+    "nodes": 6576,
+    "edges": 13829,
+    "communities": 389
+  },
+  "production_changed": false,
+  "commit_push": false,
+  "rollback_plan": "previous release/image retained; automatic recovery path prepared, not exercised",
+  "standalone_avilist_runner": "existing independent FastAPI TEST service unchanged",
+  "openapi": "frozen pre-migration compatibility documents; keep synchronized for future API changes"
+}

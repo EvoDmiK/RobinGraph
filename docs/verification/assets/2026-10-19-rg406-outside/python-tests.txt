@@ -1,0 +1,50 @@
+..................................English search-term conversion failed (RuntimeError)
+English search-term conversion failed (ValueError)
+English search-term conversion failed (ValueError)
+.......................................................................................................................s..............................s...............................................................................................................................MLflow tracing disabled: initialization failed (RuntimeError)
+........................................................................................................s..........s.............Name relationship lookup failed (ValueError)
+..........s.......................................................sssssssss..ssssssssss......................................sssssssss..........................s..............................................................Name relationship lookup failed (TypeError)
+.................................................................................................................s....s..............F.....................................................................................................................ss.........................
+======================================================================
+FAIL: test_inventory_is_bound_to_reviewed_identity_and_active_graph (test_taxon_name_catalog.TaxonNameCatalogTests.test_inventory_is_bound_to_reviewed_identity_and_active_graph)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/kimdove/orca/workspaces/RobinGraph/dev-codex/tests/test_taxon_name_catalog.py", line 27, in test_inventory_is_bound_to_reviewed_identity_and_active_graph
+    self.assertEqual(['a'], [item['taxon_id'] for item in params['names']])
+AssertionError: Lists differ: ['a'] != ['avilist-taxon:v2025b:28', 'avilist-taxon:v[122 chars]393']
+
+First differing element 0:
+'a'
+'avilist-taxon:v2025b:28'
+
+Second list contains 5 additional elements.
+First extra element 1:
+'avilist-taxon:v2025b:32'
+
+- ['a']
++ ['avilist-taxon:v2025b:28',
++  'avilist-taxon:v2025b:32',
++  'avilist-taxon:v2025b:33',
++  'avilist-taxon:v2025b:11283',
++  'avilist-taxon:v2025b:12333',
++  'avilist-taxon:v2025b:20393']
+
+----------------------------------------------------------------------
+Ran 942 tests in 22.386s
+
+FAILED (failures=1, skipped=38)
+workflow canonical-workflow-id is already active; no-op
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activated: workflow=canonical-workflow-id
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+dry-run: re-run with --apply to activate the schedule
+workflow canonical-workflow-id is already inactive; no-op
+deactivated: workflow=canonical-workflow-id
+dry-run: workflow canonical-workflow-id is active; re-run with --apply to deactivate
+local artifact: nodes=3 active=False
+schedule: cron='0 4 1 * *' timezone='Asia/Seoul' (next-run time not computed here)
+remote workflow canonical-workflow-id: active=False nodes=3
+remote definition matches reviewed local artifact: True
+most recent meaningful successful execution: execution=exec-1 run=n8n-korean-vernacular-exec-1 started_at=2026-09-11T12:00:00.000Z loaded_vernacular_names=846 loaded_candidates=102
+{"active_species": 11131, "korea": 592, "korea_kos_only": 490, "korea_avilist_only": 1, "korea_both": 101, "outside": 6, "unknown": 10533, "kos_ga2_unknown": 5, "avilist_korea_text_rejected_species": 44, "avilist_korea_text_rejected_rows": 46}

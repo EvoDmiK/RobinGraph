@@ -1,8 +1,8 @@
 from dataclasses import asdict
 from unittest import TestCase
 from unittest.mock import Mock,patch
-from fastapi.testclient import TestClient
-from robingraph.api.app import create_app
+from asgi_client import TestClient
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.taxonomy_lineage import LineageTaxon,TaxonomyLineage
 from robingraph.retrieval.species_profile import create_species_flow,PhotoLookup,SpeciesNotFoundError,_licensed_images
 from robingraph.retrieval.subspecies import subspecies_for,subspecies_metadata
@@ -147,19 +147,19 @@ class SubspeciesTest(TestCase):
  def test_subspecies_api_and_trinomial_chat_use_graph_profile_not_name_relation_fallback(self):
   profile={'taxon':asdict(CHILD),'summary':'청둥오리에 속하는 아종입니다.','traits':[],'warnings':[]}
   handler=Mock(return_value=profile);relations=Mock(side_effect=AssertionError('should bypass'))
-  client=TestClient(create_app(species_profile_handler=handler,name_relations_handler=relations,subspecies_handler=lambda name:{'subspecies':[asdict(CHILD)]}))
+  client=TestClient(create_django_app(species_profile_handler=handler,name_relations_handler=relations,subspecies_handler=lambda name:{'subspecies':[asdict(CHILD)]}))
   self.assertEqual(200,client.get('/v1/taxa/subspecies?name=청둥오리').status_code)
   self.assertEqual(422,client.get('/v1/taxa/subspecies?name=%20').status_code)
   for q in (CHILD.scientific_name+'에 대해 알려줘',CHILD.scientific_name):
    data=client.post('/v1/chat',json={'question':q,'intent':'profile' if q==CHILD.scientific_name else 'auto'}).json()
    self.assertEqual('answer',data['disposition']);self.assertEqual('subspecies',data['result']['profile']['taxon']['rank'])
   relations.assert_not_called()
-  self.assertEqual(503,TestClient(create_app()).get('/v1/taxa/subspecies?name=청둥오리').status_code)
+  self.assertEqual(503,TestClient(create_django_app()).get('/v1/taxa/subspecies?name=청둥오리').status_code)
 
  def test_single_common_graph_target_is_answer_but_multiple_and_domestic_require_choice(self):
   relation={'entity_kind':'common_name','relation_type':'common_usage','taxon':asdict(PARENT)}
   reader=Mock(return_value={'is_search_term':True,'relations':[relation],'summary':'연결된 종'})
-  client=TestClient(create_app(name_relations_handler=reader))
+  client=TestClient(create_django_app(name_relations_handler=reader))
   data=client.post('/v1/chat',json={'question':'비둘기'}).json()
   self.assertEqual('answer',data['disposition']);self.assertEqual('name_relations',data['result']['kind'])
   for other in ({**relation,'taxon':{**asdict(PARENT),'taxon_id':'other'}},{**relation,'entity_kind':'domestic_form'}):

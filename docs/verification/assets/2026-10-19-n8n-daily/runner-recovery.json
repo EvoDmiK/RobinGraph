@@ -1,0 +1,25 @@
+{
+  "restart_policy": "unless-stopped",
+  "crash_recovery_confirmed": true,
+  "restart_count": 1,
+  "health_restored": true,
+  "manual_docker_start_not_used": true,
+  "read_only_rootfs": true,
+  "mounts": [
+    {
+      "Destination": "/code",
+      "RW": false
+    },
+    {
+      "Destination": "/review",
+      "RW": false
+    },
+    {
+      "Destination": "/state",
+      "RW": true
+    }
+  ],
+  "network_mode": "host",
+  "user": "501:20",
+  "physical_reboot_tested": false
+}

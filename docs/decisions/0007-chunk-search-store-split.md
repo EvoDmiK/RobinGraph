@@ -169,3 +169,32 @@ CREATE TABLE search.chunk_embedding (
 - 정책의 기준 데이터를 PG로 옮기지 않는다.
 - 관찰(Observation)·분류·Claim은 이전하지 않는다. 이 문서는 문헌 Chunk 검색만 다룬다.
 - 이 문서는 구현을 포함하지 않는다. 코드, 스키마, 배포는 바뀌지 않았다.
+
+
+## 2026-10-18 TEST 실측 후속 (설계 상태 Proposed 유지)
+
+사용자 승인으로 RG-101 첫 단계의 읽기 전용 기준선을 측정했다. 현재 문헌 코퍼스는
+Fixture Document 2개·Chunk 4개, 본문 171문자/UTF-8 357바이트, 512차원 벡터 2개다.
+종 이름 벡터 인덱스는 별개이며 이 분리 대상에 포함하지 않는다.
+
+5개 fixture 질의 × 10회, 모드별 50표본의 warm sequential 검색에서 p50/p95는
+전문 3.945/6.806ms, 벡터 8.920/18.262ms, 하이브리드 9.504/10.851ms다.
+질의 임베딩은 실제 설정 서비스로 각 1회 생성하고 DB 시간 측정에는 재사용했다.
+첫 생성 8729.422ms, 나머지 4회 205.979–216.448ms로 DB 측정과 분리한다.
+이 수치를 cold-start 원인이나 실제 문헌 검색 품질의 증거로 확대하지 않는다.
+
+현재 TEST Neo4j는 32GB Mac에 있고 heap initial/max 4/6GiB, page cache 설정 1GiB다.
+JMX heap used는 측정 전후 약 1.00→1.32GiB였지만 공유 서비스/GC 영향을 통제하지
+않았으므로 차이를 Chunk나 인덱스 메모리로 귀속할 수 없다. 실제 page-cache hit ratio와
+인덱스별 디스크/RSS는 미측정이다. NAS TEST PostgreSQL robingraph_test의 읽기 전용
+pg_available_extensions 조회에서 vector/pg_bigm/pgroonga는 없고 pg_trgm만 설치 가능,
+미설치였다. CREATE EXTENSION이나 이미지 교체는 실행하지 않았다.
+
+**현재 판단: 이전 구현을 보류하고 Neo4j를 유지한다.** 이는 작은 fixture에서의 잠정 판단이며,
+pgvector가 느리거나 불필요하다는 비교 결론은 아니다. 대표 실제 문헌 코퍼스·한국어 질의와
+품질/지연 목표를 정하고 격리된 환경에서 규모별 성능·메모리 및 PG 후보를 비교한 뒤
+이전 시점과 규모 기준을 확정한다. 현재 임의의 Chunk 수를 전환 기준으로 정하지 않는다.
+
+상세·재현 명령·실측 한계: [RG-101 기준선 기록](../work-log/2026-10-18-rg101-chunk-search-baseline.md).
+
+사용자 후속 지시(2026-10-18): RG-101은 보류한다. 실제 문헌 축적 후 재개 판단까지 이 제안의 구현·DB 이전은 진행하지 않는다.

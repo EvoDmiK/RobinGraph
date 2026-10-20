@@ -3,8 +3,8 @@ from dataclasses import replace
 from types import SimpleNamespace as NS
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
-from robingraph.api.app import create_app
+from asgi_client import TestClient
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.ecological_relations import ecological_relations, PEERS_QUERY
 from robingraph.retrieval.species_profile import SpeciesNotFoundError
 from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
@@ -109,7 +109,7 @@ class EcologicalRelationsTest(unittest.TestCase):
                 ecological_relations(repo,Mock(),lambda _:lineage,'x')
             repo._run.assert_not_called()
         handler=Mock(return_value={'groups':[]})
-        client=TestClient(create_app(ecological_relations_handler=handler))
+        client=TestClient(create_django_app(ecological_relations_handler=handler))
         url='/v1/taxa/ecological-related'
         self.assertEqual(200,client.get(url,params={'name':' 청둥오리 '}).status_code)
         handler.assert_called_once_with('청둥오리')
@@ -121,4 +121,4 @@ class EcologicalRelationsTest(unittest.TestCase):
         response=client.get(url,params={'name':'x'})
         self.assertEqual(503,response.status_code)
         self.assertNotIn('secret',response.text)
-        self.assertEqual(503,TestClient(create_app()).get(url,params={'name':'x'}).status_code)
+        self.assertEqual(503,TestClient(create_django_app()).get(url,params={'name':'x'}).status_code)

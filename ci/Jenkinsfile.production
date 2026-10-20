@@ -1,45 +1,106 @@
 pipeline {
-    agent none
+    agent { label 'robingraph-mac16' }
     options {
-        skipDefaultCheckout(true)
         disableConcurrentBuilds()
+        skipDefaultCheckout(true)
         timeout(time: 60, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '20'))
     }
     parameters {
-        string(name: 'TEST_BUILD', defaultValue: '', description: 'Latest successful RobinGraph-TEST build number to promote.')
+        booleanParam(name: 'CHECK_ONLY', defaultValue: false,
+            description: 'Run checkout and tests only; do not publish images or deploy Production.')
+    }
+    triggers { pollSCM('H/5 * * * *') }
+    environment {
+        DOCKER_CONTEXT = 'orbstack'
+        IMAGE_REPOSITORY = 'ghcr.io/evodmik/robingraph'
+        PATH = '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
     }
     stages {
-        stage('Load verified TEST release') {
-            agent { label 'robingraph-mac16' }
+        stage('Checkout') {
             steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/EvoDmiK/RobinGraph.git']]])
+                sh 'rm -f image-metadata.json production-release.json orbstack.dockercontext'
                 script {
-                    if (!(params.TEST_BUILD ==~ /[1-9][0-9]*/)) {
-                        error('A successful TEST build number is required')
-                    }
+                    env.REVISION = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+                    env.IMAGE_TAG = "${env.IMAGE_REPOSITORY}:sha-${env.REVISION}"
+                    env.DOCKER_CONFIG = "${pwd(tmp: true)}/registry-auth"
                 }
-                copyArtifacts(projectName: 'RobinGraph-TEST', selector: lastSuccessful(), resultVariableSuffix: 'TEST',
-                    filter: 'test-release.json', fingerprintArtifacts: true)
+                sh '''#!/bin/sh
+set -eu
+umask 077
+rm -rf "$DOCKER_CONFIG"
+mkdir -p "$DOCKER_CONFIG"
+if [ -d "$HOME/.docker/cli-plugins" ]; then
+  ln -s "$HOME/.docker/cli-plugins" "$DOCKER_CONFIG/cli-plugins"
+fi
+DOCKER_CONFIG="$HOME/.docker" docker context export orbstack - | \
+  env -u DOCKER_CONTEXT docker context import orbstack -
+'''
+            }
+        }
+        stage('Tests') {
+            steps {
+                sh '''#!/bin/sh
+set -eu
+uv run --locked python -m django check --settings=robingraph.django_api.settings
+uv run --locked --extra test --extra tracing python -m unittest discover -s tests
+node --test tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js
+docker version --format '{{.Server.Arch}}'
+'''
+            }
+        }
+        stage('Build and publish ARM64 + AMD64') {
+            when { expression { !params.CHECK_ONLY } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'robingraph-ghcr',
+                    usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN')]) {
+                    sh '''#!/bin/sh
+set -eu
+umask 077
+mkdir -p "$DOCKER_CONFIG"
+printf '%s\n' "$GHCR_TOKEN" | docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
+docker buildx build --platform linux/arm64,linux/amd64 --push \
+  --build-arg "VCS_REF=$REVISION" --tag "$IMAGE_TAG" \
+  --metadata-file image-metadata.json .
+'''
+                }
                 script {
-                    if (env.COPYARTIFACT_BUILD_NUMBER_TEST != params.TEST_BUILD) {
-                        error('The requested build must be the latest successful TEST build')
-                    }
-                    env.IMMUTABLE_IMAGE = sh(script: '''python3 -c 'import json,re; d=json.load(open("test-release.json")); assert d.get("test_verified") is True; assert re.fullmatch(r"ghcr.io/evodmik/robingraph@sha256:[a-f0-9]{64}",d["image"]); print(d["image"])' ''', returnStdout: true).trim()
-                    env.REVISION = sh(script: '''python3 -c 'import json,re; d=json.load(open("test-release.json")); assert re.fullmatch(r"[a-f0-9]{40}",d["revision"]); print(d["revision"])' ''', returnStdout: true).trim()
+                    env.IMAGE_DIGEST = sh(script: '''python3 -c 'import json; print(json.load(open("image-metadata.json"))["containerimage.digest"])' ''', returnStdout: true).trim()
+                    env.IMMUTABLE_IMAGE = "${env.IMAGE_REPOSITORY}@${env.IMAGE_DIGEST}"
                 }
+            }
+        }
+        stage('AMD64 fixture startup smoke') {
+            when { expression { !params.CHECK_ONLY } }
+            steps {
+                sh '''#!/bin/sh
+set -eu
+name="robingraph-amd64-smoke-$BUILD_NUMBER"
+cleanup() { docker rm -f "$name" >/dev/null 2>&1 || true; }
+trap cleanup EXIT HUP INT TERM
+docker run -d --platform linux/amd64 --name "$name" --network none \
+  --read-only --tmpfs /tmp "$IMMUTABLE_IMAGE" \
+  robingraph serve-fixture --host 0.0.0.0 --port 8000
+attempt=0
+until docker exec "$name" python -c 'import json,urllib.request; d=json.load(urllib.request.urlopen("http://127.0.0.1:8000/health",timeout=3)); assert d["status"]=="ok"; urllib.request.urlopen("http://127.0.0.1:8000/openapi.json",timeout=3)' >/dev/null 2>&1; do
+  attempt=$((attempt+1))
+  if [ "$attempt" -ge 30 ]; then echo 'AMD64 fixture smoke failed' >&2; exit 1; fi
+  sleep 2
+done
+'''
             }
         }
         stage('Production approval') {
+            when { expression { !params.CHECK_ONLY } }
             steps {
-                input(id: 'approveProduction', submitter: 'admin', ok: 'Deploy this verified release',
-                    message: "Deploy TEST build ${params.TEST_BUILD}, commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production?")
+                input(id: 'approveProduction', submitter: 'admin', ok: 'Deploy to NAS Production',
+                    message: "Deploy verified commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production?")
             }
         }
-        stage('Promote and verify NAS Production') {
-            agent { label 'robingraph-mac16' }
-            environment {
-                PATH = '/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
-            }
+        stage('Deploy and verify NAS Production') {
+            when { expression { !params.CHECK_ONLY } }
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN'),
@@ -49,9 +110,23 @@ pipeline {
 set -eu
 python3 /Users/kimdove/robingraph-test/deploy_registry_prod.py \
   --image "$IMMUTABLE_IMAGE" --revision "$REVISION"
+printf '{"revision":"%s","image":"%s","production_verified":true}\n' \
+  "$REVISION" "$IMMUTABLE_IMAGE" > production-release.json
 '''
                 }
             }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: '*-metadata.json,production-release.json', allowEmptyArchive: true
+            sh '''#!/bin/sh
+set -eu
+if [ -n "${DOCKER_CONFIG:-}" ]; then
+  docker logout ghcr.io >/dev/null 2>&1 || true
+  rm -rf "$DOCKER_CONFIG"
+fi
+'''
         }
     }
 }

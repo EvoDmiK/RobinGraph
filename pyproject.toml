@@ -11,10 +11,12 @@ requires-python = ">=3.12"
 license = { text = "Proprietary" }
 authors = [{ name = "RobinGraph" }]
 dependencies = [
-  "fastapi>=0.115,<1",
+  "django>=5.2,<5.3",
+  "djangorestframework>=3.16,<3.17",
   "langchain-core>=1,<2",
   "neo4j>=6,<7",
   "psycopg[binary]>=3.2,<4",
+  "pydantic>=2.12,<3",
   "uvicorn[standard]>=0.30,<1",
 ]
 
@@ -39,6 +41,8 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 robingraph = [
+  "api/drf/*.json",
+  "api/drf/*.html",
   "api/static/*.html",
   "api/static/*.js",
   "api/static/*.css",

@@ -1,0 +1,51 @@
+{
+  "cli_exit_code": 0,
+  "last_node": "Check apply result",
+  "executed_nodes": [
+    "Manual TEST run",
+    "Prepare pinned AviList",
+    "Check prepare result",
+    "Verify approved artifact",
+    "Check verify result",
+    "Apply TEST pilot",
+    "Check apply result"
+  ],
+  "phases": {
+    "Prepare pinned AviList": {
+      "status": "prepared",
+      "reused": true,
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "counts": {
+        "active_species": 11131,
+        "korea": 592,
+        "korea_kos_only": 490,
+        "korea_avilist_only": 1,
+        "korea_both": 101,
+        "outside": 6,
+        "unknown": 10533,
+        "kos_ga2_unknown": 5,
+        "avilist_korea_text_rejected_species": 44,
+        "avilist_korea_text_rejected_rows": 46
+      },
+      "stage": "prepare",
+      "projection_performed": false
+    },
+    "Verify approved artifact": {
+      "status": "verified",
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "bundle_sha256": "859192488fb24952e509937249351a5daf2266709f3326ecd20259e2a6b44cc3",
+      "search_regression_passed": 4,
+      "stage": "verify",
+      "projection_performed": false
+    },
+    "Apply TEST pilot": {
+      "status": "already_applied",
+      "manifest_sha256": "efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "release_id": "rg:release:avilist-pilot:efa03d4ee4bdc19780c3a83ed994a6faf5637f814a82fe42c3b2640a4b29913f",
+      "run_id": "avilist-pilot-cdf8b630-def1-4283-8125-f6d349e0cbcb",
+      "stage": "apply",
+      "projection_performed": false
+    }
+  },
+  "error_present": false
+}

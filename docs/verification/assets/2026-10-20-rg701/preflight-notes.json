@@ -1,0 +1,8 @@
+{
+  "public_default_python_urllib_health": 403,
+  "public_curl_get_health": 200,
+  "internal_health": 200,
+  "internal_live_regression_cases": 5,
+  "staged_contract_verifier_attempt": "ModuleNotFoundError before agent schemas module integrated; no app deployment attempted",
+  "production_changed": false
+}

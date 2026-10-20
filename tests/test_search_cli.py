@@ -6,7 +6,7 @@ import json
 import unittest
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
 from robingraph.cli import main
 from robingraph.embeddings import EmbeddingHTTPError

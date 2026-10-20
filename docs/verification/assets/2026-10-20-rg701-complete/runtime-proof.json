@@ -1,0 +1,27 @@
+{
+  "target": "test",
+  "containers": [
+    {
+      "container": "robingraph-api-test",
+      "image_id": "sha256:5b70ec992ea88dadcaf914596ecfe17d37c7e208b2226ab35a93ed29a2b68349",
+      "healthy": true,
+      "asgi_class": "robingraph.api.drf.application.DjangoApiApplication",
+      "native_django_asgi": true,
+      "packages_absent": {
+        "fastapi": true,
+        "starlette": true
+      }
+    },
+    {
+      "container": "robingraph-avilist-runner-test",
+      "image_id": "sha256:5b70ec992ea88dadcaf914596ecfe17d37c7e208b2226ab35a93ed29a2b68349",
+      "healthy": true,
+      "asgi_class": "scripts.serve_avilist_pipeline.create_app.<locals>.PipelineApplication",
+      "native_django_asgi": true,
+      "packages_absent": {
+        "fastapi": true,
+        "starlette": true
+      }
+    }
+  ]
+}

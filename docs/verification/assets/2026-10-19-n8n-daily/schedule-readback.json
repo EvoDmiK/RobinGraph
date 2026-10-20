@@ -1,0 +1,10 @@
+{
+  "workflow_id": "rgAvilistTest01",
+  "active": true,
+  "name": "RobinGraph AviList reviewed pipeline [TEST daily]",
+  "nodes": 9,
+  "timezone": "Asia/Seoul",
+  "cron": "0 6 * * *",
+  "runtime_activation_log_confirmed": true,
+  "artifact_imports_inactive_then_explicit_publish": true
+}
