@@ -1,0 +1,33 @@
+const {chromium}=require('/tmp/robingraph-browser-qa/node_modules/playwright');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true});const rows=[];
+try{for(const width of [1280,390]){
+ const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'}),errors=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ assert.equal((await page.goto('https://robingraph.dove-nest.com/chat')).status(),200);
+ await page.locator('#advanced-settings summary').click();
+ await page.locator('#chat-intent').selectOption('profile');
+ await page.locator('#species-scope-korea').check();
+ await page.locator('#profile-name').fill('천둥오리');
+ await page.locator('#question-input').fill('천둥오리');
+ const first=page.waitForResponse(r=>r.url().endsWith('/v1/chat')&&r.request().method()==='POST',{timeout:180000});
+ await page.locator('#question-input').press('Enter');
+ const response=await first;assert.equal(response.status(),200);const data=await response.json();
+ assert.equal(data.disposition,'clarify');assert.equal(data.entity_resolution.method,'vector');
+ assert.ok(JSON.stringify(data.entity_resolution.candidates).includes('Anas platyrhynchos'));
+ await page.waitForFunction(()=>!document.querySelector('#question-input').disabled);
+ const button=page.locator('.entity-candidate-button').filter({hasText:'Anas platyrhynchos'}).first();
+ await button.waitFor({state:'visible'});assert.ok((await button.innerText()).includes('청둥오리'));
+ const second=page.waitForResponse(r=>r.url().endsWith('/v1/chat')&&r.request().method()==='POST',{timeout:180000});
+ await button.click();const selected=await second;assert.equal(selected.status(),200);const answer=await selected.json();
+ assert.equal(answer.disposition,'answer');assert.ok(JSON.stringify(answer).includes('Anas platyrhynchos'));
+ await page.waitForFunction(()=>!document.querySelector('#question-input').disabled);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.deepEqual(errors,[]);
+ await page.screenshot({path:__dirname+'/deployed-'+width+'.png',fullPage:true});
+ rows.push({width,query:'천둥오리',candidate:'청둥오리 / Anas platyrhynchos',vector_clarification:true,candidate_click_answer:true,page_errors:0,passed:true});
+ await page.close();
+}
+fs.writeFileSync(__dirname+'/browser.json',JSON.stringify({base:'https://robingraph.dove-nest.com',response_mocking:false,passed:true,rows,physical_mobile:false},null,2)+'\n');
+console.log('Actual public browser typo -> vector candidates -> chosen species passed:',rows.length);
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});
