@@ -8,9 +8,9 @@ import sys
 import unittest
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 from neo4j import GraphDatabase
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.graph.settings import Neo4jSettings
 from robingraph.ingest.postgres import PostgresSettings, apply_migrations
 from robingraph.ingest.store import IngestionStore, SourceDatasetInput, SourceReleaseInput, IngestionRunInput
@@ -74,7 +74,7 @@ class NameRelationsIntegrationTest(unittest.TestCase):
         repeated = subprocess.run(self.loader+["--apply"], text=True, capture_output=True, check=True)
         self.assertIn("Already active", repeated.stdout)
         self.assertEqual(version, self.store.pipeline_state_version(PIPELINE))
-        client = TestClient(create_app(name_relations_handler=self.reader.for_name))
+        client = TestClient(create_django_app(name_relations_handler=self.reader.for_name))
         # Verify every reviewed name usage, not just the original four examples.
         terms = sorted({r["search_terms"][0] for r in self.manifest["records"]})
         for term in terms:

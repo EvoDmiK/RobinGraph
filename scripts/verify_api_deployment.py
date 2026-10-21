@@ -12,7 +12,7 @@ script:
    for every request. HTTP status alone cannot tell you the deployed
    contract is behind the current checkout -- only comparing the deployed
    `/openapi.json` (names *and* declared types), and the shape of a real
-   response, against what this checkout's FastAPI app declares can.
+   response, against what this checkout's shared response model declares can.
 2. **A `200` with a useless body still needs to fail**: an empty list, a
    bare `null`, or a JSON scalar are all valid JSON and would satisfy a
    naive "is this 200 and parseable" check while telling you nothing about
@@ -160,10 +160,9 @@ def _fetch_endpoint(fetcher: Fetcher, base_url: str, path: str, timeout: float) 
 def local_lineage_schema() -> dict:
     """The `LineageTaxonResponse` JSON schema this checkout's API actually declares."""
 
-    from robingraph.api.app import create_app
+    from robingraph.api.schemas import LineageTaxonResponse
 
-    schema = create_app().openapi()
-    return schema["components"]["schemas"][LINEAGE_SCHEMA_NAME]
+    return LineageTaxonResponse.model_json_schema()
 
 
 def _property_type_signature(property_schema: object) -> object:

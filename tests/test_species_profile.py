@@ -2,9 +2,9 @@ from dataclasses import replace
 import unittest
 from types import SimpleNamespace as NS
 from unittest.mock import Mock, patch
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
 from robingraph.retrieval.species_profile import (
     CONSERVATION_LABELS, create_species_flow, read_conservation, read_traits,
@@ -35,7 +35,7 @@ class SpeciesProfileTest(unittest.TestCase):
         basic = create_species_flow(lambda _: LINEAGE, lambda _: [], include_enrichment=False)
         full = Mock(return_value={'taxon':{'rank':'species'}, 'summary':'전체 카드', 'lineage':{}, 'warnings':[]})
         similar = Mock(return_value={})
-        client = TestClient(create_app(species_profile_handler=full,
+        client = TestClient(create_django_app(species_profile_handler=full,
             species_basic_profile_handler=basic.invoke, similar_species_handler=similar))
         early = client.post('/v1/chat', json={'question':'청둥오리', 'intent':'profile', 'defer_enrichment':True})
         self.assertEqual(200, early.status_code)
@@ -55,7 +55,7 @@ class SpeciesProfileTest(unittest.TestCase):
         router.classify.return_value = NS(label='subspecies', failure=None)
         data = {'parent_species':{'taxon':{'taxon_id':'t'}}, 'concept_set_id':'concept',
                 'taxonomy_release':'v2025b', 'subspecies':[{'taxon_id':'child'}], 'has_more':False}
-        client = TestClient(create_app(jev_router=router, species_profile_handler=full,
+        client = TestClient(create_django_app(jev_router=router, species_profile_handler=full,
             species_basic_profile_handler=basic.invoke, similar_species_handler=similar,
             subspecies_handler=lambda _: data))
         result = client.post('/v1/chat', json={'question':'청둥오리 아종 알려줘', 'defer_enrichment':True}).json()
@@ -79,7 +79,7 @@ class SpeciesProfileTest(unittest.TestCase):
                          'source_name': 'AVONET', 'source_url': 'https://example.com/avonet'}
                         for name, value in [('beak_length_culmen', '59.9'), ('wing_length', '268.2'), ('tail_length', '87.2')]]
         full = create_species_flow(lambda _: LINEAGE, lambda _: measurements, photos=lambda _: [], notes=notes)
-        client = TestClient(create_app(species_profile_handler=full.invoke,
+        client = TestClient(create_django_app(species_profile_handler=full.invoke,
             species_basic_profile_handler=basic, similar_species_handler=similar,
             name_relations_handler=relations, ecological_relations_handler=ecological,
             subspecies_handler=subspecies))
@@ -105,7 +105,7 @@ class SpeciesProfileTest(unittest.TestCase):
         data = {'parent_species': {'taxon': {'taxon_id': 't'}}, 'concept_set_id': 'concept',
                 'taxonomy_release': 'v2025b', 'subspecies': [{'taxon_id': 'child'}], 'has_more': False}
         subspecies, similar = Mock(return_value=data), Mock()
-        client = TestClient(create_app(jev_router=router, species_profile_handler=full.invoke,
+        client = TestClient(create_django_app(jev_router=router, species_profile_handler=full.invoke,
             subspecies_handler=subspecies, similar_species_handler=similar))
         response = client.post('/v1/chat', json={
             'question': '청둥오리 아종 알려줘', 'defer_discovery': True}).json()
@@ -119,7 +119,7 @@ class SpeciesProfileTest(unittest.TestCase):
         notes = Mock(return_value={'appearance':[{'text':'녹색 머리가 있습니다.',
             'source_name':'Wikipedia', 'source_url':'https://en.wikipedia.org/w/index.php?oldid=1'}], 'fun_facts':[]})
         full = create_species_flow(lambda _: LINEAGE, lambda _: [], photos=lambda _: [], notes=notes)
-        client = TestClient(create_app(species_profile_handler=full.invoke, species_basic_profile_handler=basic))
+        client = TestClient(create_django_app(species_profile_handler=full.invoke, species_basic_profile_handler=basic))
         result = client.post('/v1/chat', json={'question':'청둥오리 외관 알려줘', 'defer_enrichment':True}).json()
         self.assertEqual('answer', result['disposition'])
         self.assertIn('녹색 머리', result['answer_text'])
@@ -255,7 +255,7 @@ class SpeciesProfileTest(unittest.TestCase):
             lambda _: [{'name':'habitat', 'display':'습지', 'source_name':'AVONET',
                         'source_url':'https://example.com/avonet'}],
             photos=lambda _: [], conservation=lambda lineage: read_conservation(repository, lineage))
-        client = TestClient(create_app(species_profile_handler=flow.invoke))
+        client = TestClient(create_django_app(species_profile_handler=flow.invoke))
         profile = client.get('/v1/taxa/profile?name=청둥오리').json()
         self.assertEqual('CR', profile['conservation']['category'])
         self.assertEqual('CR (PE)', profile['conservation']['category_raw'])
@@ -268,7 +268,7 @@ class SpeciesProfileTest(unittest.TestCase):
         photos = Mock(side_effect=TimeoutError)
         flow = create_species_flow(lambda name: LINEAGE if name == '청둥오리' else None,
                                    lambda lineage: [{'label':'체중', 'display':'843.42'}], photos)
-        client = TestClient(create_app(species_profile_handler=flow.invoke))
+        client = TestClient(create_django_app(species_profile_handler=flow.invoke))
         data = client.get('/v1/taxa/profile', params={'name':'청둥오리'}).json()
         self.assertEqual('청둥오리', data['taxon']['korean_name'])
         self.assertEqual('843.42', data['traits'][0]['display'])
@@ -423,7 +423,7 @@ class SpeciesProfileTest(unittest.TestCase):
             self.assertEqual([], result)
 
     def test_profile_outage_does_not_expose_database_details(self):
-        client = TestClient(create_app(species_profile_handler=Mock(side_effect=RuntimeError('secret database path'))))
+        client = TestClient(create_django_app(species_profile_handler=Mock(side_effect=RuntimeError('secret database path'))))
         response = client.get('/v1/taxa/profile?name=청둥오리')
         self.assertEqual(503, response.status_code)
         self.assertNotIn('secret', response.text)

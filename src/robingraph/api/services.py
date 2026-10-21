@@ -1,12 +1,16 @@
-"""FastAPI application shared by fixture (offline) and Neo4j retrieval modes.
+"""Framework-independent RobinGraph API service layer.
 
-The active `GraphRepository` decides the retrieval backend; the Answer/
-Citation response contract and provenance validation are identical either
-way. `/health` discloses which mode is active so operators and tests do not
-have to guess.
+The web adapter (native Django/DRF views in `robingraph.api.drf`) only
+parses/validates the HTTP request and renders the result.  Every routing,
+provenance, scope, fail-closed and static-asset decision lives here.
+
+Expected client-visible failures are raised as `ApiError`; the adapter renders
+them as `{"detail": ...}` with the given status and headers.
 """
 
 from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
 
 from datetime import date
 import functools
@@ -16,12 +20,10 @@ import os
 import re
 from pathlib import Path
 import stat
-from typing import TYPE_CHECKING, Annotated, Callable, Literal, cast
+from typing import Callable, Literal, cast
 
-from fastapi import FastAPI, HTTPException, Query
 from langchain_core.runnables import RunnableLambda
-from fastapi.responses import PlainTextResponse, Response
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel
 
 from .. import tracing
 from ..embeddings import EmbeddingClient
@@ -40,319 +42,68 @@ from ..retrieval.species_questions import SpeciesQuestion, parse_species_questio
 from ..retrieval.name_relations import reviewed_search_terms
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
-from .ingest_router import IngestStore, create_ingest_router
-from .semantic_router import ChatIntent, SemanticRouter
+from .schemas import (
+    AnswerGenerator,
+    AnswerResponse,
+    ChatClarifyResult,
+    ChatEvidenceResult,
+    ChatNameRelationsResult,
+    ChatObservationsResult,
+    ChatRequest,
+    ChatResponse,
+    ChatSpeciesResult,
+    ChatTaxonomyResult,
+    CitationResponse,
+    DocumentSearchRequest,
+    DocumentSearchResponse,
+    EntityResolutionResponse,
+    EvidenceChatFilters,
+    LineageHandler,
+    LineageTaxonResponse,
+    ObservationChatFilters,
+    ObservationSearchHandler,
+    OperationalBackendUnavailableError,
+    OperationalCitationResponse,
+    OperationalMediaResponse,
+    OperationalObservationResponse,
+    OperationalObservationSearchResponse,
+    OperationalPlaceResponse,
+    OperationalTaxonResponse,
+    ProfileChatFilters,
+    QuestionRequest,
+    SearchBackendUnavailableError,
+    SearchCitationResponse,
+    SearchHandler,
+    SearchMode,
+    SearchResultResponse,
+    TaxonomyChatFilters,
+    TaxonomyLineageBackendUnavailableError,
+    TaxonomyLineageResponse,
+)
+from .semantic_router import SemanticRouter
+from ..retrieval.species_scope import SpeciesScope, scope_matches, with_species_scope
 from .jev_router import JevRouter
 from .question_entities import extract_name
 
-if TYPE_CHECKING:
-    # The evidence-route answer generator is an optional integration seam.
-    # Typing it against the real adapter without importing it at runtime
-    # keeps this module loadable in deployments that never configure
-    # generation (fixture mode, unconfigured Neo4j serving).
-    from ..generation import GeneratedAnswer
+
+class ApiError(Exception):
+    """A client-visible HTTP outcome; adapters render `{"detail": detail}`."""
+
+    def __init__(self, status_code: int, detail: object, headers: dict[str, str] | None = None) -> None:
+        super().__init__(status_code, detail)
+        self.status_code = status_code
+        self.detail = detail
+        self.headers = headers
 
 
-class QuestionRequest(BaseModel):
-    question: str = Field(min_length=1, max_length=2_000)
+@dataclass(frozen=True)
+class AssetResponse:
+    """A complete static/UI response body, independent of any web framework."""
 
-
-class CitationResponse(BaseModel):
-    evidence_id: str
-    source_id: str
-    source_url: str
-    locator: str
-    license_name: str
-
-
-class AnswerResponse(BaseModel):
-    answer_id: str
-    answer_text: str
-    taxon_ids: list[str]
-    evidence_ids: list[str]
-    citations: list[CitationResponse]
-    disposition: str
-    warnings: list[str]
-    taxonomy_release: str
-    data_cutoff: str
-
-
-SearchMode = Literal["fulltext", "hybrid"]
-SearchHandler = Callable[[str, int, bool], HybridSearchOutcome]
-AnswerGenerator = Callable[[str, "tuple[HybridResult, ...]"], "GeneratedAnswer"]
-
-
-class DocumentSearchRequest(BaseModel):
-    question: str = Field(min_length=1, max_length=2_000)
-    mode: SearchMode = "fulltext"
-    limit: int = Field(default=10, ge=1, le=100)
-
-
-class SearchCitationResponse(BaseModel):
-    source_id: str
-    source_url: str
-    locator: str
-    license_name: str
-
-
-class SearchResultResponse(BaseModel):
-    chunk_id: str
-    text: str
-    score: float
-    channels: list[str]
-    citation: SearchCitationResponse
-
-
-class DocumentSearchResponse(BaseModel):
-    requested_mode: SearchMode
-    mode: SearchMode
-    fixture_only: bool
-    results: list[SearchResultResponse]
-    warnings: list[str]
-
-
-class SearchBackendUnavailableError(RuntimeError):
-    """Search could not run because a configured external dependency failed."""
-
-
-class OperationalBackendUnavailableError(RuntimeError):
-    """The operational GBIF observation graph could not be read safely."""
-
-
-ObservationSearchHandler = Callable[
-    [OperationalObservationQuery], tuple[OperationalObservation, ...]
-]
-
-
-class OperationalTaxonResponse(BaseModel):
-    taxon_id: str
-    external_key: str
-    scientific_name: str
-    canonical_name: str | None
-    vernacular_name_raw: str | None
-    rank: str
-
-
-class OperationalPlaceResponse(BaseModel):
-    place_id: str
-    name: str
-    country_code: str
-
-
-class OperationalCitationResponse(BaseModel):
-    evidence_id: str
-    dataset_id: str
-    dataset_name: str
-    source_url: str
-    dataset_url: str
-    license_uris: list[str]
-    retrieved_at: str
-    source_updated_at: str | None
-
-
-class OperationalMediaResponse(BaseModel):
-    media_id: str
+    content: bytes
     media_type: str
-    format: str | None
-    landing_uri: str
-    asset_uri: str | None
-    creator: str | None
-    publisher: str | None
-    attribution: str
-    license_uri: str
-
-
-class OperationalObservationResponse(BaseModel):
-    observation_id: str
-    occurrence_id: str
-    observed_at: str
-    count: int | None
-    basis: str
-    sensitivity: str
-    coordinate_disclosure: Literal["public", "withheld"]
-    latitude: float | None
-    longitude: float | None
-    coordinate_uncertainty_m: float | None
-    taxon: OperationalTaxonResponse
-    place: OperationalPlaceResponse
-    citation: OperationalCitationResponse
-    media: list[OperationalMediaResponse]
-
-
-class OperationalObservationSearchResponse(BaseModel):
-    mode: Literal["operational"] = "operational"
-    data_source: Literal["gbif"] = "gbif"
-    fixture_only: Literal[False] = False
-    limit: int
-    offset: int
-    returned: int
-    results: list[OperationalObservationResponse]
-    warnings: list[str]
-
-
-class TaxonomyLineageBackendUnavailableError(RuntimeError):
-    """The AviList reference-taxonomy graph could not be read safely."""
-
-
-LineageHandler = Callable[[str], "TaxonomyLineage | None"]
-
-
-class LineageTaxonResponse(BaseModel):
-    taxon_id: str
-    rank: str
-    scientific_name: str
-    authority: str | None
-    korean_name: str | None
-    korean_name_status: str | None = None
-    korean_name_source_url: str | None = None
-    english_name: str | None = None
-
-
-class TaxonomyLineageResponse(BaseModel):
-    query_name: str
-    query_scientific_name: str
-    resolved_query_scientific_name: str
-    matched_by: Literal["scientific_name", "korean_name", "english_name"]
-    taxonomy_source: Literal["AviList"] = "AviList"
-    taxonomy_release: str
-    concept_set_id: str
-    lineage: list[LineageTaxonResponse]
-
-
-# Integrated chat is intentionally additive.  It exposes only filters the
-# established bounded handlers understand; it never accepts arbitrary Cypher,
-# coordinates, or a common-name observation filter the operational handler
-# cannot promise to honor.
-class _ChatModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-
-class TaxonomyChatFilters(_ChatModel):
-    kind: Literal["taxonomy"] = "taxonomy"
-    scientific_name: str | None = Field(default=None, max_length=200)
-    name: str | None = Field(default=None, max_length=200)
-
-    @model_validator(mode="after")
-    def exactly_one_name(self) -> "TaxonomyChatFilters":
-        values = [value for value in (self.scientific_name, self.name) if value is not None]
-        if len(values) > 1:
-            raise ValueError("only one taxonomy name filter is allowed")
-        if values and not values[0].strip():
-            raise ValueError("taxonomy name must not be blank")
-        return self
-
-
-class ProfileChatFilters(_ChatModel):
-    kind: Literal["profile"] = "profile"
-    name: str | None = Field(default=None, max_length=200)
-
-    @field_validator("name")
-    @classmethod
-    def nonblank_name(cls, value: str | None) -> str | None:
-        if value is not None and not value.strip():
-            raise ValueError("profile name must not be blank")
-        return value
-
-
-class ObservationChatFilters(_ChatModel):
-    kind: Literal["observations"] = "observations"
-    taxon_key: str | None = Field(default=None, max_length=50)
-    scientific_name: str | None = Field(default=None, max_length=200)
-    place: str | None = Field(default=None, max_length=200)
-    observed_from: date | None = None
-    observed_to: date | None = None
-    limit: int = Field(default=10, ge=1, le=10)
-
-    @model_validator(mode="after")
-    def valid_dates_and_text(self) -> "ObservationChatFilters":
-        if self.observed_from and self.observed_to and self.observed_from > self.observed_to:
-            raise ValueError("observed_from must not be later than observed_to")
-        for value in (self.taxon_key, self.scientific_name, self.place):
-            if value is not None and not value.strip():
-                raise ValueError("observation text filters must not be blank")
-        return self
-
-
-class EvidenceChatFilters(_ChatModel):
-    kind: Literal["evidence"] = "evidence"
-    limit: int = Field(default=10, ge=1, le=10)
-
-
-ChatFilters = Annotated[
-    TaxonomyChatFilters | ProfileChatFilters | ObservationChatFilters | EvidenceChatFilters,
-    Field(discriminator="kind"),
-]
-
-
-class ChatRequest(_ChatModel):
-    question: str = Field(min_length=1, max_length=2_000)
-    intent: Literal["auto", "taxonomy", "profile", "observations", "evidence"] = "auto"
-    filters: ChatFilters | None = None
-    defer_enrichment: bool = False
-    defer_discovery: bool = False
-
-    @field_validator("question")
-    @classmethod
-    def nonblank_question(cls, value: str) -> str:
-        cleaned = value.strip()
-        if not cleaned:
-            raise ValueError("question must not be blank")
-        return cleaned
-
-    @model_validator(mode="after")
-    def route_filter_matches_explicit_intent(self) -> "ChatRequest":
-        if self.filters is not None and self.intent != "auto" and self.filters.kind != self.intent:
-            raise ValueError("filters must match the selected intent")
-        return self
-
-
-class ChatTaxonomyResult(_ChatModel):
-    kind: Literal["taxonomy"] = "taxonomy"
-    lineage: TaxonomyLineageResponse | None
-
-
-class ChatSpeciesResult(_ChatModel):
-    kind: Literal["profile"] = "profile"
-    profile: dict | None
-    question_answer: dict | None = None
-    similar_species: dict | None = None
-    subspecies: dict | None = None
-
-
-class ChatObservationsResult(_ChatModel):
-    kind: Literal["observations"] = "observations"
-    results: list[OperationalObservationResponse]
-    limit: int
-
-
-class ChatEvidenceResult(_ChatModel):
-    kind: Literal["evidence"] = "evidence"
-    search: DocumentSearchResponse
-
-
-class ChatClarifyResult(_ChatModel):
-    kind: Literal["clarify"] = "clarify"
-    prompt: str
-
-
-class ChatNameRelationsResult(_ChatModel):
-    kind: Literal["name_relations"] = "name_relations"
-    relationships: dict
-
-
-ChatResult = Annotated[
-    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult | ChatNameRelationsResult,
-    Field(discriminator="kind"),
-]
-
-
-class ChatResponse(_ChatModel):
-    selected_intent: ChatIntent | None
-    route_method: Literal["semantic", "explicit", "deterministic", "jev"]
-    disposition: Literal["answer", "abstain", "clarify"]
-    answer_text: str
-    warnings: list[str]
-    result: ChatResult
+    status_code: int = 200
+    headers: dict[str, str] = field(default_factory=dict)
 
 
 _DEFAULT_STATIC_ROOT = Path(__file__).resolve().parent / "static"
@@ -407,7 +158,7 @@ def _read_chat_asset_bundle(asset_root: Path, asset_names: tuple[str, ...] = _RE
     return assets
 
 
-def _chat_asset_response(assets: dict[str, bytes], name: str) -> Response:
+def _chat_asset_response(assets: dict[str, bytes], name: str) -> AssetResponse:
     content = assets[name]
     if name.endswith(".html"):
         for asset_name, asset_content in assets.items():
@@ -415,8 +166,8 @@ def _chat_asset_response(assets: dict[str, bytes], name: str) -> Response:
                 url = f"/static/{asset_name}".encode()
                 version = sha256(asset_content).hexdigest()[:16].encode()
                 content = content.replace(url, url + b"?v=" + version)
-    return Response(content, media_type=_CHAT_ASSET_MEDIA_TYPES[name],
-                    headers={"Cache-Control": "no-cache, must-revalidate"})
+    return AssetResponse(content, _CHAT_ASSET_MEDIA_TYPES[name],
+                         headers={"Cache-Control": "no-cache, must-revalidate"})
 
 
 def _response(answer: Answer) -> AnswerResponse:
@@ -517,7 +268,7 @@ def _operational_observation_response(
     )
 
 
-def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
+def _lineage_response(lineage: TaxonomyLineage, species_scope: SpeciesScope = "all") -> TaxonomyLineageResponse:
     return TaxonomyLineageResponse(
         query_name=lineage.query_name if lineage.query_name is not None else lineage.query_scientific_name,
         query_scientific_name=lineage.query_scientific_name,
@@ -529,7 +280,8 @@ def _lineage_response(lineage: TaxonomyLineage) -> TaxonomyLineageResponse:
         matched_by=lineage.matched_by,
         taxonomy_release=lineage.taxonomy_release,
         concept_set_id=lineage.concept_set_id,
-        lineage=[LineageTaxonResponse(**item.__dict__) for item in lineage.items],
+        lineage=[LineageTaxonResponse(**item.__dict__, display_name=(None if species_scope == "all" else
+                 with_species_scope(item.__dict__, species_scope, lineage.concept_set_id, lineage.taxonomy_release)["display_name"])) for item in lineage.items],
     )
 
 
@@ -547,6 +299,29 @@ _AUTO_RANK_QUESTION = re.compile(
 )
 
 
+def _scoped_profile(handler, name: str, species_scope: SpeciesScope):
+    profile = handler(name)
+    if species_scope == "all":
+        return profile
+    context = profile.get("lineage") or {}
+    taxon = profile.get("taxon") or {}
+    concept, release = context.get("concept_set_id"), context.get("taxonomy_release")
+    if not scope_matches(taxon, species_scope, concept, release):
+        raise SpeciesNotFoundError("Species is outside the selected scope")
+    scoped_taxon = with_species_scope(taxon, species_scope, concept, release)
+    return {**profile, "taxon": scoped_taxon, "summary": species_summary(scoped_taxon, profile.get("traits") or [])}
+
+
+def _scoped_relations(handler, name: str, species_scope: SpeciesScope):
+    if species_scope == "all":
+        return handler(name)
+    result = handler(name, species_scope=species_scope)
+    if not scope_matches(result.get("taxon") or {}, species_scope,
+                         result.get("concept_set_id"), result.get("taxonomy_release")):
+        raise SpeciesNotFoundError("Species is outside the selected scope")
+    return result
+
+
 def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"], str] | None:
     for pattern, intent in ((_TAXONOMY_QUESTION, "taxonomy"), (_AUTO_RANK_QUESTION, "taxonomy"), (_PROFILE_QUESTION, "profile")):
         match = pattern.fullmatch(question)
@@ -560,10 +335,14 @@ def _species_chat_question(question: str) -> tuple[Literal["taxonomy", "profile"
     )
     if match and match.group("name").strip().lower() in reviewed_search_terms():
         return "profile", match.group("name").strip()
+    if match:
+        mention = extract_name(question, "profile")
+        if mention and mention == match.group("name").strip():
+            return "profile", mention
     return None
 
 
-def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool]:
+def _taxonomy_answer(question: str, lineage: TaxonomyLineage, species_scope: SpeciesScope = "all") -> tuple[str, bool]:
     requested = _RANK_QUESTION.search(question)
     if requested is None:
         return "분류 계통을 확인했습니다.", True
@@ -571,8 +350,10 @@ def _taxonomy_answer(question: str, lineage: TaxonomyLineage) -> tuple[str, bool
     target = next((item for item in lineage.items if _KOREAN_RANKS.get(item.rank) == rank_label), None)
     if target is None:
         return f"조회된 계보에 {rank_label} 정보가 없어 답변을 확인하지 못했습니다.", False
-    subject = lineage.items[-1].korean_name or lineage.items[-1].english_name or lineage.resolved_query_scientific_name or lineage.query_scientific_name
-    common_name = target.korean_name or target.english_name
+    subject_taxon = with_species_scope(asdict(lineage.items[-1]), species_scope, lineage.concept_set_id, lineage.taxonomy_release)
+    target_taxon = with_species_scope(asdict(target), species_scope, lineage.concept_set_id, lineage.taxonomy_release)
+    subject = subject_taxon['display_name'] or lineage.resolved_query_scientific_name or lineage.query_scientific_name
+    common_name = target_taxon['display_name'] if target_taxon['display_name'] != target.scientific_name else None
     name = f"{common_name}({target.scientific_name})" if common_name else target.scientific_name
     return f"{subject}의 {rank_label} 분류는 {name}입니다.", True
 
@@ -604,9 +385,10 @@ def _http_error_tags(status_code: int) -> dict[str, str]:
 def _traced_route(name: str) -> Callable[[Callable], Callable]:
     """Make each API request one MLflow trace whose children are its retrieval/model calls.
 
-    FastAPI runs sync endpoints in a worker thread; opening the parent span
-    inside that thread keeps every child span (including LangChain autolog
-    spans) in the same context.  Disabled tracing adds one attribute check.
+    Both web adapters run these synchronous service calls in a worker thread;
+    opening the parent span inside that thread keeps every child span
+    (including LangChain autolog spans) in the same context.  Disabled tracing
+    adds one attribute check.
     """
 
     def decorate(endpoint: Callable) -> Callable:
@@ -620,7 +402,7 @@ def _traced_route(name: str) -> Callable[[Callable], Callable]:
                     span.set_inputs({key: _trace_payload(value) for key, value in kwargs.items()})
                     try:
                         result = endpoint(*args, **kwargs)
-                    except HTTPException as error:
+                    except ApiError as error:
                         span.set_attribute("http.status_code", error.status_code)
                         tracing.set_trace_tags(_http_error_tags(error.status_code))
                         raise
@@ -657,7 +439,7 @@ def create_neo4j_search_handler(
     settings: Neo4jSettings, *, embedding_client: EmbeddingClient | None = None,
     english_search_terms: Callable[[str], str] | None = None,
 ) -> SearchHandler:
-    """Build the read-only Neo4j/Jina search boundary used by FastAPI."""
+    """Build the read-only Neo4j/Jina search boundary used by the API."""
 
     def handle(question: str, limit: int, hybrid: bool) -> HybridSearchOutcome:
         from neo4j.exceptions import Neo4jError, ServiceUnavailable, SessionExpired
@@ -814,205 +596,203 @@ def create_neo4j_korean_lineage_handler(repository: TaxonomyLineageRepository) -
     return handle
 
 
-def create_app(
-    repository: GraphRepository | None = None,
-    *,
-    search_handler: SearchHandler | None = None,
-    answer_generator: AnswerGenerator | None = None,
-    observation_handler: ObservationSearchHandler | None = None,
-    lineage_handler: LineageHandler | None = None,
-    korean_lineage_handler: LineageHandler | None = None,
-    semantic_router: SemanticRouter | None = None,
-    jev_router: JevRouter | None = None,
-    species_profile_handler: Callable[[str], dict] | None = None,
-    species_basic_profile_handler: Callable[[str], dict] | None = None,
-    related_species_handler: Callable[[str], dict] | None = None,
-    similar_species_handler: Callable[[str], dict] | None = None,
-    ecological_relations_handler: Callable[[str], dict] | None = None,
-    subspecies_handler: Callable[[str], dict] | None = None,
-    name_relations_handler: Callable[[str], dict | None] | None = None,
-    static_dir: Path | None = None,
-    ingest_store: IngestStore | None = None,
-) -> FastAPI:
-    """Create the API and, when the packaged asset bundle is complete, the chat shell.
+class ApiService:
+    """All public API behaviour behind `create_django_app`.
 
-    ``static_dir`` is an internal test/integration seam. Production callers use
-    the package-local ``robingraph.api/static`` directory included in the wheel.
-    A missing, empty, or unreadable required chat asset deliberately does not
-    stop the API from starting: all UI requests receive a generic 503 rather
-    than an absolute server path or a partial chat shell.
-
-    ``answer_generator`` is an optional integration seam for the `/v1/chat`
-    evidence route only: when configured, it runs after retrieval to turn
-    already-fetched hybrid results into a cited answer. Any generator error,
-    or output that fails citation validation, falls back to the existing
-    retrieval-only response rather than inventing an answer.
+    Accepts the factory's dependencies except `ingest_store`, whose private
+    boundary lives in `ingest_service`.
+    `static_dir` is an internal test/integration seam; production uses the
+    package-local `robingraph.api/static` directory included in the wheel.
     """
 
-    repository = repository or FixtureRepository(load_fixture())
-    service = QuestionService(repository)
-    app = FastAPI(title="RobinGraph", version="0.1.0")
-    # The public application never discovers PostgreSQL credentials or opens
-    # a write path from ambient configuration.  A private caller must inject
-    # the control-plane repository explicitly, and the router independently
-    # requires its internal bearer token from the environment.
-    if ingest_store is not None:
-        app.include_router(create_ingest_router(ingest_store))
-    asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
+    def __init__(
+        self,
+        repository: GraphRepository | None = None,
+        *,
+        search_handler: SearchHandler | None = None,
+        answer_generator: AnswerGenerator | None = None,
+        observation_handler: ObservationSearchHandler | None = None,
+        lineage_handler: LineageHandler | None = None,
+        korean_lineage_handler: LineageHandler | None = None,
+        semantic_router: SemanticRouter | None = None,
+        jev_router: JevRouter | None = None,
+        species_profile_handler: Callable[[str], dict] | None = None,
+        species_basic_profile_handler: Callable[[str], dict] | None = None,
+        related_species_handler: Callable[[str], dict] | None = None,
+        similar_species_handler: Callable[[str], dict] | None = None,
+        ecological_relations_handler: Callable[[str], dict] | None = None,
+        subspecies_handler: Callable[[str], dict] | None = None,
+        name_relations_handler: Callable[[str], dict | None] | None = None,
+        taxon_name_resolution_handler: Callable[[str], dict] | None = None,
+        static_dir: Path | None = None,
+    ) -> None:
+        self.repository = repository or FixtureRepository(load_fixture())
+        self.question_service = QuestionService(self.repository)
+        self.search_handler = search_handler
+        self.answer_generator = answer_generator
+        self.observation_handler = observation_handler
+        self.lineage_handler = lineage_handler
+        self.korean_lineage_handler = korean_lineage_handler
+        self.semantic_router = semantic_router
+        self.jev_router = jev_router
+        self.species_profile_handler = species_profile_handler
+        self.species_basic_profile_handler = species_basic_profile_handler
+        self.related_species_handler = related_species_handler
+        self.similar_species_handler = similar_species_handler
+        self.ecological_relations_handler = ecological_relations_handler
+        self.subspecies_handler = subspecies_handler
+        self.name_relations_handler = name_relations_handler
+        self.taxon_name_resolution_handler = taxon_name_resolution_handler
+        self.asset_root = static_dir if static_dir is not None else _DEFAULT_STATIC_ROOT
 
-    def retrieve_evidence(state):
-        return {**state, "outcome": search_handler(state["question"], state["limit"], state["hybrid"])}
+        def retrieve_evidence(state):
+            return {**state, "outcome": self.search_handler(state["question"], state["limit"], state["hybrid"])}
 
-    def answer_evidence(state):
-        outcome = state["outcome"]
-        text = "근거 문서를 확인했습니다." if outcome.results else "일치하는 근거 문서를 확인하지 못했습니다."
-        if answer_generator is not None and outcome.results:
-            text = _generated_evidence_answer(answer_generator, state["question"], outcome.results) or text
-        return {**state, "answer_text": text}
+        def answer_evidence(state):
+            outcome = state["outcome"]
+            text = "근거 문서를 확인했습니다." if outcome.results else "일치하는 근거 문서를 확인하지 못했습니다."
+            if self.answer_generator is not None and outcome.results:
+                text = _generated_evidence_answer(self.answer_generator, state["question"], outcome.results) or text
+            return {**state, "answer_text": text}
 
-    evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
+        self.evidence_flow = RunnableLambda(retrieve_evidence) | RunnableLambda(answer_evidence)
 
-    @app.get("/v1/taxa/name-relations")
-    @_traced_route("GET /v1/taxa/name-relations")
-    def name_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422, detail="A name is required")
-        if name_relations_handler is None:
-            raise HTTPException(status_code=503, detail="Name relationships are unavailable")
-        try:
-            result = name_relations_handler(name.strip())
-        except Exception:
-            raise HTTPException(status_code=503, detail="Name relationships are unavailable") from None
-        if result is None:
-            raise HTTPException(status_code=503, detail="No active reviewed name relationship snapshot")
-        return result
+    # -- packaged chat/birds UI ------------------------------------------------
+    # A missing, empty, or unreadable required asset never stops the API: UI
+    # requests get a generic 503 instead of a server path or a partial shell.
 
-    @app.get("/v1/taxa/related")
-    @_traced_route("GET /v1/taxa/related")
-    def species_relations(name: Annotated[str, Query(min_length=1, max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422, detail="A species name is required")
-        if related_species_handler is None:
-            raise HTTPException(status_code=503, detail="Species relations are unavailable")
-        try:
-            return related_species_handler(name.strip())
-        except SpeciesNotFoundError as error:
-            raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
-        except Exception as error:
-            raise HTTPException(status_code=503, detail="Species relations are temporarily unavailable") from error
+    def _unavailable_ui(self) -> AssetResponse:
+        return AssetResponse(_CHAT_UI_UNAVAILABLE.encode(), "text/plain; charset=utf-8", status_code=503)
 
-    @app.get("/v1/taxa/similar")
-    @_traced_route("GET /v1/taxa/similar")
-    def similar_species_results(name: Annotated[str, Query(min_length=1,max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422,detail="A species name is required")
-        if similar_species_handler is None:
-            raise HTTPException(status_code=503,detail="Species similarity is unavailable")
-        try:
-            return similar_species_handler(name.strip())
-        except SpeciesNotFoundError:
-            raise HTTPException(status_code=404,detail="Species not found in active taxonomy") from None
-        except Exception:
-            raise HTTPException(status_code=503,detail="Species similarity is temporarily unavailable") from None
-
-    @app.get("/v1/taxa/ecological-related")
-    @_traced_route("GET /v1/taxa/ecological-related")
-    def ecological_species_relations(name: Annotated[str, Query(min_length=1,max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422,detail="A species name is required")
-        if ecological_relations_handler is None:
-            raise HTTPException(status_code=503,detail="Ecological relations are unavailable")
-        try:
-            return ecological_relations_handler(name.strip())
-        except SpeciesNotFoundError:
-            raise HTTPException(status_code=404,detail="Species not found in active taxonomy") from None
-        except Exception:
-            raise HTTPException(status_code=503,detail="Ecological relations are temporarily unavailable") from None
-
-    @app.get("/v1/taxa/subspecies")
-    @_traced_route("GET /v1/taxa/subspecies")
-    def subspecies(name: Annotated[str, Query(min_length=1,max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422,detail="A taxon name is required")
-        if subspecies_handler is None:
-            raise HTTPException(status_code=503,detail="Subspecies lookup is unavailable")
-        try:
-            return subspecies_handler(name.strip())
-        except SpeciesNotFoundError as error:
-            raise HTTPException(status_code=404,detail="Taxon not found in active taxonomy") from error
-        except Exception as error:
-            raise HTTPException(status_code=503,detail="Subspecies lookup is temporarily unavailable") from error
-
-    @app.get("/v1/taxa/profile")
-    @_traced_route("GET /v1/taxa/profile")
-    def species_profile(name: Annotated[str, Query(min_length=1, max_length=200)]):
-        if not name.strip():
-            raise HTTPException(status_code=422, detail="A species name is required")
-        if species_profile_handler is None:
-            raise HTTPException(status_code=503, detail="Species profiles are unavailable")
-        try:
-            return species_profile_handler(name.strip())
-        except SpeciesNotFoundError as error:
-            raise HTTPException(status_code=404, detail="Species not found in active taxonomy") from error
-        except Exception as error:
-            raise HTTPException(status_code=503, detail="Species profiles are temporarily unavailable") from error
-
-    @app.get("/birds", include_in_schema=False, response_model=None)
-    def birds_ui():
-        assets = _read_chat_asset_bundle(asset_root, ("birds.html", "birds.js", "styles.css"))
+    def birds_ui(self) -> AssetResponse:
+        assets = _read_chat_asset_bundle(self.asset_root, ("birds.html", "birds.js", "styles.css"))
         if assets is None:
-            return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
+            return self._unavailable_ui()
         return _chat_asset_response(assets, "birds.html")
 
-    def unavailable_chat_ui() -> PlainTextResponse:
-        return PlainTextResponse(_CHAT_UI_UNAVAILABLE, status_code=503)
-
-    def chat_ui() -> Response | PlainTextResponse:
-        assets = _read_chat_asset_bundle(asset_root)
+    def chat_ui(self) -> AssetResponse:
+        assets = _read_chat_asset_bundle(self.asset_root)
         if assets is None:
-            return unavailable_chat_ui()
+            return self._unavailable_ui()
         return _chat_asset_response(assets, "index.html")
 
-    def icon_asset(name: str) -> Response:
+    def icon_asset(self, name: str) -> AssetResponse:
         # The TEST deployment serves a blue variant (favicon-32-test.png, ...) under
         # the same URLs so it is not mistaken for PROD; a missing variant falls back.
         stem, _, extension = name.rpartition(".")
         candidates = [f"{stem}-test.{extension}", name] if os.getenv("ROBINGRAPH_DEPLOY_TARGET") == "test" else [name]
         for candidate in candidates:
-            assets = _read_chat_asset_bundle(asset_root, (candidate,))
+            assets = _read_chat_asset_bundle(self.asset_root, (candidate,))
             if assets is not None:
-                return Response(assets[candidate], media_type=_ICON_ASSET_MEDIA_TYPES[name],
-                                headers={"Cache-Control": "public, max-age=3600"})
-        raise HTTPException(status_code=404, detail="Not Found")
+                return AssetResponse(assets[candidate], _ICON_ASSET_MEDIA_TYPES[name],
+                                     headers={"Cache-Control": "public, max-age=3600"})
+        raise ApiError(404, "Not Found")
 
-    @app.get("/favicon.ico", include_in_schema=False, response_model=None)
-    def favicon() -> Response:
-        return icon_asset("favicon.ico")
+    def favicon(self) -> AssetResponse:
+        return self.icon_asset("favicon.ico")
 
-    @app.get("/static/{asset_path:path}", include_in_schema=False, response_model=None)
-    def static_asset(asset_path: str) -> Response | PlainTextResponse:
+    def static_asset(self, asset_path: str) -> AssetResponse:
         if asset_path in _ICON_ASSET_MEDIA_TYPES:
-            return icon_asset(asset_path)
+            return self.icon_asset(asset_path)
         names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
-        assets = _read_chat_asset_bundle(asset_root, names)
+        assets = _read_chat_asset_bundle(self.asset_root, names)
         if assets is None:
             # Do not reflect asset_path: it could contain deployment details or
             # be used to probe the server's filesystem layout.
-            return unavailable_chat_ui()
+            return self._unavailable_ui()
         if asset_path not in assets:
-            raise HTTPException(status_code=404, detail="Not Found")
+            raise ApiError(404, "Not Found")
         return _chat_asset_response(assets, asset_path)
 
-    @app.get("/", include_in_schema=False, response_model=None)
-    def root() -> Response | PlainTextResponse:
-        return chat_ui()
+    # -- JSON API ----------------------------------------------------------------
 
-    @app.get("/chat", include_in_schema=False, response_model=None)
-    def chat() -> Response | PlainTextResponse:
-        return chat_ui()
+    @_traced_route("GET /v1/taxa/name-relations")
+    def name_relations(self, *, name: str):
+        name_relations_handler = self.name_relations_handler
+        if not name.strip():
+            raise ApiError(status_code=422, detail="A name is required")
+        if name_relations_handler is None:
+            raise ApiError(status_code=503, detail="Name relationships are unavailable")
+        try:
+            result = name_relations_handler(name.strip())
+        except Exception:
+            raise ApiError(status_code=503, detail="Name relationships are unavailable") from None
+        if result is None:
+            raise ApiError(status_code=503, detail="No active reviewed name relationship snapshot")
+        return result
 
-    @app.get("/health")
-    def health() -> dict[str, str]:
+    @_traced_route("GET /v1/taxa/related")
+    def related(self, *, name: str, species_scope: SpeciesScope = "all"):
+        related_species_handler = self.related_species_handler
+        if not name.strip():
+            raise ApiError(status_code=422, detail="A species name is required")
+        if related_species_handler is None:
+            raise ApiError(status_code=503, detail="Species relations are unavailable")
+        try:
+            return _scoped_relations(related_species_handler, name.strip(), species_scope)
+        except SpeciesNotFoundError as error:
+            raise ApiError(status_code=404, detail="Species not found in active taxonomy") from error
+        except Exception as error:
+            raise ApiError(status_code=503, detail="Species relations are temporarily unavailable") from error
+
+    @_traced_route("GET /v1/taxa/similar")
+    def similar(self, *, name: str, species_scope: SpeciesScope = "all"):
+        similar_species_handler = self.similar_species_handler
+        if not name.strip():
+            raise ApiError(status_code=422,detail="A species name is required")
+        if similar_species_handler is None:
+            raise ApiError(status_code=503,detail="Species similarity is unavailable")
+        try:
+            return _scoped_relations(similar_species_handler, name.strip(), species_scope)
+        except SpeciesNotFoundError:
+            raise ApiError(status_code=404,detail="Species not found in active taxonomy") from None
+        except Exception:
+            raise ApiError(status_code=503,detail="Species similarity is temporarily unavailable") from None
+
+    @_traced_route("GET /v1/taxa/ecological-related")
+    def ecological_related(self, *, name: str, species_scope: SpeciesScope = "all"):
+        ecological_relations_handler = self.ecological_relations_handler
+        if not name.strip():
+            raise ApiError(status_code=422,detail="A species name is required")
+        if ecological_relations_handler is None:
+            raise ApiError(status_code=503,detail="Ecological relations are unavailable")
+        try:
+            return _scoped_relations(ecological_relations_handler, name.strip(), species_scope)
+        except SpeciesNotFoundError:
+            raise ApiError(status_code=404,detail="Species not found in active taxonomy") from None
+        except Exception:
+            raise ApiError(status_code=503,detail="Ecological relations are temporarily unavailable") from None
+
+    @_traced_route("GET /v1/taxa/subspecies")
+    def subspecies(self, *, name: str):
+        subspecies_handler = self.subspecies_handler
+        if not name.strip():
+            raise ApiError(status_code=422,detail="A taxon name is required")
+        if subspecies_handler is None:
+            raise ApiError(status_code=503,detail="Subspecies lookup is unavailable")
+        try:
+            return subspecies_handler(name.strip())
+        except SpeciesNotFoundError as error:
+            raise ApiError(status_code=404,detail="Taxon not found in active taxonomy") from error
+        except Exception as error:
+            raise ApiError(status_code=503,detail="Subspecies lookup is temporarily unavailable") from error
+
+    @_traced_route("GET /v1/taxa/profile")
+    def profile(self, *, name: str, species_scope: SpeciesScope = "all"):
+        species_profile_handler = self.species_profile_handler
+        if not name.strip():
+            raise ApiError(status_code=422, detail="A species name is required")
+        if species_profile_handler is None:
+            raise ApiError(status_code=503, detail="Species profiles are unavailable")
+        try:
+            return _scoped_profile(species_profile_handler, name.strip(), species_scope)
+        except SpeciesNotFoundError as error:
+            raise ApiError(status_code=404, detail="Species not found in active taxonomy") from error
+        except Exception as error:
+            raise ApiError(status_code=503, detail="Species profiles are temporarily unavailable") from error
+
+    def health(self) -> dict[str, str]:
+        repository = self.repository
         return {
             "status": "ok",
             "mode": repository.mode,
@@ -1020,25 +800,41 @@ def create_app(
             "deployment_target": os.getenv("ROBINGRAPH_DEPLOY_TARGET", "legacy"),
         }
 
-    @app.post("/v1/answers", response_model=AnswerResponse)
     @_traced_route("POST /v1/answers")
-    def answer_question(request: QuestionRequest) -> AnswerResponse:
+    def answer(self, *, request: QuestionRequest) -> AnswerResponse:
+        repository, service = self.repository, self.question_service
         answer = service.answer(request.question)
         try:
             validate_answer(answer, repository)
         except ValueError as error:
-            raise HTTPException(status_code=500, detail="Answer provenance validation failed") from error
+            raise ApiError(status_code=500, detail="Answer provenance validation failed") from error
         return _response(answer)
 
-    @app.post("/v1/chat", response_model=ChatResponse)
     @_traced_route("POST /v1/chat")
-    def integrated_chat(request: ChatRequest) -> ChatResponse:
+    def chat(self, *, request: ChatRequest) -> ChatResponse:
         """Route a bounded chat request without inventing facts or filters.
 
         Explicit routes never read the router, so a missing embedding setting
         or provider outage cannot affect established operational workflows.
         """
 
+        # The routing body below predates the service extraction; bind the
+        # injected dependencies to the local names it was written against.
+        search_handler = self.search_handler
+        observation_handler = self.observation_handler
+        lineage_handler = self.lineage_handler
+        korean_lineage_handler = self.korean_lineage_handler
+        semantic_router = self.semantic_router
+        jev_router = self.jev_router
+        species_profile_handler = self.species_profile_handler
+        species_basic_profile_handler = self.species_basic_profile_handler
+        related_species_handler = self.related_species_handler
+        similar_species_handler = self.similar_species_handler
+        ecological_relations_handler = self.ecological_relations_handler
+        subspecies_handler = self.subspecies_handler
+        name_relations_handler = self.name_relations_handler
+        taxon_name_resolution_handler = self.taxon_name_resolution_handler
+        evidence_flow = self.evidence_flow
         species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
         recognized = ("profile", species_question.name) if species_question else _species_chat_question(request.question) if request.intent == "auto" else None
         jev_label = None
@@ -1124,6 +920,13 @@ def create_app(
                     )
                 relationships = None
             if relationships and relationships.get("is_search_term") and relationships.get("relations"):
+                if request.species_scope != "all":
+                    return ChatResponse(
+                        selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                        disposition="clarify", answer_text="범위를 적용하려면 통칭 대신 정확한 종 이름이나 학명을 입력해 주세요.",
+                        warnings=["통칭의 관련 종을 선택한 범위로 임의 확정하지 않았습니다."],
+                        result=ChatClarifyResult(prompt="정확한 종 이름이나 학명을 입력해 주세요."),
+                    )
                 relations=relationships["relations"]
                 targets={r.get("taxon",{}).get("taxon_id") for r in relations}
                 single_common=(len(targets)==1 and None not in targets and all(r.get("entity_kind")=="common_name" for r in relations))
@@ -1199,15 +1002,87 @@ def create_app(
             # before external photos/notes and optional recommendations.
             deferred = (request.defer_enrichment and species_basic_profile_handler is not None
                         and (species_question is None or species_question.topic != "appearance"))
+            resolution = None
+            if taxon_name_resolution_handler is not None:
+                if not (focused_name or (filters and filters.name) or recognized):
+                    mention = extract_name(request.question, "profile")
+                    if (mention is None and request.intent == "profile"
+                            and re.fullmatch(r"[가-힣]{2,40}", request.question.strip())
+                            and not re.search(r"알려|설명|싶어|궁금|정보", request.question)):
+                        mention = request.question.strip()
+                    if mention is None:
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="clarify",
+                            answer_text="조회할 새 이름을 하나 입력해 주세요.",
+                            warnings=["조회할 새 이름을 확인하지 못했습니다."],
+                            result=ChatClarifyResult(prompt="예: 흰뺨 검둥 오리에 대해 알고 싶어"),
+                        )
+                    name = mention
+                try:
+                    resolved = (taxon_name_resolution_handler(name) if request.species_scope == "all"
+                                else taxon_name_resolution_handler(name, species_scope=request.species_scope))
+                    resolution = EntityResolutionResponse.model_validate(resolved)
+                    if resolution.mention != name:
+                        raise ValueError("Resolver changed the source mention")
+                    if resolution.status == "matched":
+                        if (not resolution.canonical_name or not resolution.taxon_id
+                                or not resolution.concept_set_id or not resolution.taxonomy_release
+                                or resolution.method not in ("graph_exact", "graph_normalized")):
+                            raise ValueError("Incomplete graph identity")
+                        name = resolution.canonical_name
+                    elif resolution.status == "candidates":
+                        if resolution.method != "vector" or not resolution.candidates:
+                            raise ValueError("Invalid vector suggestions")
+                        for candidate in resolution.candidates:
+                            mention_pattern = r"\s+".join(re.escape(part) for part in resolution.mention.split())
+                            rewritten, count = re.subn(mention_pattern, lambda _: candidate.scientific_name,
+                                                       request.question, count=1)
+                            candidate.question = rewritten if count else candidate.scientific_name + "에 대해 알려줘"
+                        _why("ambiguous_name", "name_resolution")
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="clarify",
+                            answer_text="입력한 이름을 찾지 못했습니다. 찾으시는 새를 후보에서 확인해 주세요.",
+                            warnings=["비슷한 이름의 후보이며, 같은 종이라고 확정하지 않았습니다."],
+                            result=ChatClarifyResult(prompt="찾으시는 새를 선택해 주세요."),
+                            entity_resolution=resolution,
+                        )
+                    else:
+                        prompt = ("이름 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요."
+                                  if resolution.status == "unavailable" else
+                                  "선택한 범위에서 이 이름의 종 정보를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다."
+                                  if request.species_scope != "all" else "입력한 이름의 종 정보를 확인하지 못했습니다.")
+                        _why("taxon_not_found", "name_resolution")
+                        return ChatResponse(
+                            selected_intent=selected, route_method=method, disposition="abstain",
+                            answer_text=prompt, warnings=["종 이름을 임의로 추정하지 않았습니다."],
+                            result=ChatSpeciesResult(profile=None), entity_resolution=resolution,
+                        )
+                except Exception:
+                    _why("upstream_error", "name_resolution")
+                    return ChatResponse(
+                        selected_intent=selected, route_method=method, disposition="abstain",
+                        answer_text="새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+                        warnings=["확인되지 않은 종의 자료로 답하지 않았습니다."],
+                        result=ChatSpeciesResult(profile=None),
+                    )
             try:
                 profile_handler = species_basic_profile_handler if deferred else species_profile_handler
-                profile = profile_handler(name)
+                profile = _scoped_profile(profile_handler, name, request.species_scope)
+                if resolution is not None:
+                    target = profile.get("taxon") or {}
+                    lineage = profile.get("lineage") or {}
+                    if (target.get("taxon_id") != resolution.taxon_id
+                            or target.get("scientific_name") != resolution.canonical_name
+                            or lineage.get("concept_set_id") != resolution.concept_set_id
+                            or lineage.get("taxonomy_release") != resolution.taxonomy_release):
+                        raise ValueError("Resolved profile identity changed")
             except SpeciesNotFoundError:
                 _why("taxon_not_found", "name_resolution")
                 return ChatResponse(
                     selected_intent=selected, route_method=method, disposition="abstain",
-                    answer_text="입력한 이름의 종 정보를 확인하지 못했습니다.",
-                    warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
+                    answer_text=("선택한 범위에서 이 종의 기록·분포를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다."
+                                 if request.species_scope != "all" else "입력한 이름의 종 정보를 확인하지 못했습니다."),
+                    warnings=["선택한 범위의 분포 근거를 확인하지 못했습니다." if request.species_scope != "all" else "활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
                     result=ChatSpeciesResult(profile=None),
                 )
             except Exception:
@@ -1277,7 +1152,7 @@ def create_app(
                     try:
                         if handler is None:
                             raise ValueError("Relation lookup unavailable")
-                        relations = handler(name)
+                        relations = _scoped_relations(handler, name, request.species_scope)
                         lineage = profile.get("lineage") or {}
                         if (relations.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
                                 or relations.get("concept_set_id") != lineage.get("concept_set_id")
@@ -1298,6 +1173,7 @@ def create_app(
                     answer_text=answer["text"] + ("\n" + "\n".join(item["text"] for item in answer["items"]) if answer["items"] else ""),
                     warnings=profile.get("warnings", []),
                     result=ChatSpeciesResult(profile=profile, question_answer=answer),
+                    entity_resolution=resolution,
                 )
             summary = profile.get("summary")
             if not isinstance(summary, str) or not summary.strip():
@@ -1307,7 +1183,7 @@ def create_app(
             if not deferred and not request.defer_discovery and similar_species_handler is not None and (profile.get("taxon") or {}).get("rank") == "species":
                 try:
                     with tracing.span("similar_species.lookup", tracing.RETRIEVER):
-                        similar = similar_species_handler(name)
+                        similar = _scoped_relations(similar_species_handler, name, request.species_scope)
                     if (similar.get("taxon", {}).get("taxon_id") != profile.get("taxon", {}).get("taxon_id")
                             or similar.get("concept_set_id") != lineage.get("concept_set_id")
                             or similar.get("taxonomy_release") != lineage.get("taxonomy_release")):
@@ -1317,6 +1193,7 @@ def create_app(
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer",
                 answer_text=summary,
+                entity_resolution=resolution,
                 warnings=profile.get("warnings", []),
                 result=ChatSpeciesResult(profile=profile, similar_species=similar),
             )
@@ -1370,12 +1247,17 @@ def create_app(
                     warnings=["활성 분류 개념집합에서 일치 항목을 찾지 못했습니다."],
                     result=ChatTaxonomyResult(lineage=None),
                 )
-            answer_text, supported = _taxonomy_answer(request.question, lineage)
+            if (request.species_scope != "all" and lineage.items
+                    and not scope_matches(asdict(lineage.items[-1]), request.species_scope, lineage.concept_set_id, lineage.taxonomy_release)):
+                return ChatResponse(selected_intent=selected, route_method=method, disposition="abstain",
+                    answer_text="선택한 범위에서 이 분류군의 분포를 확인하지 못했습니다.", warnings=[],
+                    result=ChatTaxonomyResult(lineage=None))
+            answer_text, supported = _taxonomy_answer(request.question, lineage, request.species_scope)
             _why(None if supported else "unsupported_question", "generation")
             return ChatResponse(
                 selected_intent=selected, route_method=method, disposition="answer" if supported else "abstain",
                 answer_text=answer_text, warnings=[],
-                result=ChatTaxonomyResult(lineage=_lineage_response(lineage)),
+                result=ChatTaxonomyResult(lineage=_lineage_response(lineage, request.species_scope)),
             )
 
         if selected == "observations":
@@ -1495,40 +1377,34 @@ def create_app(
             warnings=list(evidence.warnings), result=ChatEvidenceResult(search=evidence),
         )
 
-    @app.post(
-        "/v1/search",
-        response_model=DocumentSearchResponse,
-        responses={503: {"description": "Neo4j mode or a configured search dependency is unavailable"}},
-    )
     @_traced_route("POST /v1/search")
-    def search_documents(request: DocumentSearchRequest) -> DocumentSearchResponse:
+    def search(self, *, request: DocumentSearchRequest) -> DocumentSearchResponse:
+        search_handler = self.search_handler
         if search_handler is None:
-            raise HTTPException(status_code=503, detail="Document search is available only in Neo4j mode")
+            raise ApiError(status_code=503, detail="Document search is available only in Neo4j mode")
         try:
             outcome = search_handler(request.question, request.limit, request.mode == "hybrid")
         except SearchBackendUnavailableError as error:
             # Search handlers may wrap provider/configuration exceptions. Do
             # not turn their messages into a client-visible information leak.
-            raise HTTPException(status_code=503, detail=_SEARCH_UNAVAILABLE) from error
+            raise ApiError(status_code=503, detail=_SEARCH_UNAVAILABLE) from error
         return _search_response(outcome, requested_mode=request.mode)
 
-    @app.get(
-        "/v1/observations",
-        response_model=OperationalObservationSearchResponse,
-        responses={503: {"description": "The operational GBIF observation graph is unavailable"}},
-    )
     @_traced_route("GET /v1/observations")
-    def search_operational_observations(
-        taxon_key: str | None = Query(default=None, min_length=1, max_length=50),
-        scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
-        place: str | None = Query(default=None, min_length=1, max_length=200),
+    def observations(
+        self,
+        *,
+        taxon_key: str | None = None,
+        scientific_name: str | None = None,
+        place: str | None = None,
         observed_from: date | None = None,
         observed_to: date | None = None,
-        limit: int = Query(default=25, ge=1, le=100),
-        offset: int = Query(default=0, ge=0),
+        limit: int = 25,
+        offset: int = 0,
     ) -> OperationalObservationSearchResponse:
+        observation_handler = self.observation_handler
         if observation_handler is None:
-            raise HTTPException(
+            raise ApiError(
                 status_code=503,
                 detail="Operational GBIF observation search is available only in Neo4j mode",
             )
@@ -1538,9 +1414,9 @@ def create_app(
             ("place", place),
         ):
             if value is not None and not value.strip():
-                raise HTTPException(status_code=422, detail=f"{name} must not be blank")
+                raise ApiError(status_code=422, detail=f"{name} must not be blank")
         if observed_from and observed_to and observed_from > observed_to:
-            raise HTTPException(status_code=422, detail="observed_from must not be later than observed_to")
+            raise ApiError(status_code=422, detail="observed_from must not be later than observed_to")
         query = OperationalObservationQuery(
             taxon_key=taxon_key,
             scientific_name=scientific_name,
@@ -1553,7 +1429,7 @@ def create_app(
         try:
             observations = observation_handler(query)
         except OperationalBackendUnavailableError as error:
-            raise HTTPException(status_code=503, detail=str(error)) from error
+            raise ApiError(status_code=503, detail=str(error)) from error
         warnings = []
         if any(observation.coordinate_disclosure == "withheld" for observation in observations):
             warnings.append("Coordinates for generalized observations are withheld")
@@ -1565,60 +1441,54 @@ def create_app(
             warnings=warnings,
         )
 
-    @app.get(
-        "/v1/taxa/lineage",
-        response_model=TaxonomyLineageResponse,
-        responses={
-            404: {"description": "No active AviList lineage exists for scientific_name or name"},
-            422: {"description": "Exactly one nonblank scientific_name or name query parameter is required"},
-            503: {"description": "The AviList reference-taxonomy projection is unavailable"},
-        },
-    )
     @_traced_route("GET /v1/taxa/lineage")
-    def get_taxonomy_lineage(
-        scientific_name: str | None = Query(default=None, min_length=1, max_length=200),
-        name: str | None = Query(default=None, min_length=1, max_length=200),
+    def lineage(
+        self,
+        *,
+        scientific_name: str | None = None,
+        name: str | None = None,
+        species_scope: SpeciesScope = "all",
     ) -> TaxonomyLineageResponse:
+        lineage_handler = self.lineage_handler
+        korean_lineage_handler = self.korean_lineage_handler
         provided = [
             (query_param, value)
             for query_param, value in (("scientific_name", scientific_name), ("name", name))
             if value is not None
         ]
         if len(provided) != 1:
-            raise HTTPException(
+            raise ApiError(
                 status_code=422,
                 detail="Exactly one of scientific_name or name is required",
             )
         query_param, raw_value = provided[0]
         cleaned = raw_value.strip()
         if not cleaned:
-            raise HTTPException(status_code=422, detail=f"{query_param} must not be blank")
+            raise ApiError(status_code=422, detail=f"{query_param} must not be blank")
 
         if query_param == "scientific_name":
             if lineage_handler is None:
-                raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
+                raise ApiError(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
             try:
                 lineage = lineage_handler(cleaned)
             except TaxonomyLineageBackendUnavailableError as error:
-                raise HTTPException(status_code=503, detail=str(error)) from error
+                raise ApiError(status_code=503, detail=str(error)) from error
             if lineage is None:
-                raise HTTPException(
+                raise ApiError(
                     status_code=404, detail="No active AviList lineage found for scientific_name"
                 )
         else:
             if korean_lineage_handler is None:
-                raise HTTPException(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
+                raise ApiError(status_code=503, detail="Taxonomy lineage is available only in Neo4j mode")
             try:
                 lineage = korean_lineage_handler(cleaned)
             except TaxonomyLineageBackendUnavailableError as error:
-                raise HTTPException(status_code=503, detail=str(error)) from error
+                raise ApiError(status_code=503, detail=str(error)) from error
             if lineage is None:
-                raise HTTPException(
+                raise ApiError(
                     status_code=404, detail="No licensed Korean vernacular name found for name"
                 )
-        return _lineage_response(lineage)
-
-    return app
-
-
-app = create_app()
+        if (species_scope != "all" and lineage.items and not scope_matches(
+                asdict(lineage.items[-1]), species_scope, lineage.concept_set_id, lineage.taxonomy_release)):
+            raise ApiError(status_code=404, detail="No species in the selected distribution scope")
+        return _lineage_response(lineage, species_scope)

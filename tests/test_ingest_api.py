@@ -5,9 +5,9 @@ import os
 import unittest
 from unittest.mock import patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.fixture import load_fixture
 from robingraph.ingest.store import (
     ActiveReleaseContext,
@@ -89,7 +89,7 @@ class IngestApiTest(unittest.TestCase):
         self.environment = patch.dict(os.environ, {TOKEN_ENV: "test-internal-token"})
         self.environment.start()
         self.addCleanup(self.environment.stop)
-        self.client = TestClient(create_app(FixtureRepository(load_fixture()), ingest_store=self.store))
+        self.client = TestClient(create_django_app(FixtureRepository(load_fixture()), ingest_store=self.store))
         self.headers = {"Authorization": "Bearer test-internal-token"}
 
     def _begin_body(self) -> dict[str, object]:
@@ -226,12 +226,12 @@ class IngestApiTest(unittest.TestCase):
         self.assertEqual("Invalid ingestion state", response.json()["detail"])
 
     def test_router_is_not_enabled_without_explicit_store_or_token(self) -> None:
-        public_client = TestClient(create_app(FixtureRepository(load_fixture())))
+        public_client = TestClient(create_django_app(FixtureRepository(load_fixture())))
         self.assertEqual(404, public_client.post("/internal/v1/ingest/begin").status_code)
 
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaisesRegex(ValueError, TOKEN_ENV):
-                create_app(FixtureRepository(load_fixture()), ingest_store=FakeIngestStore())
+                create_django_app(FixtureRepository(load_fixture()), ingest_store=FakeIngestStore())
 
     def test_conflicts_are_safe_and_deterministic(self) -> None:
         self.store.error = IngestionConflictError("immutable content mismatch")

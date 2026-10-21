@@ -2,9 +2,9 @@ from dataclasses import asdict, replace
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.similar_species import (
     CANDIDATES_QUERY, ECOLOGY_QUERY, METHOD, similar_species,
 )
@@ -128,7 +128,7 @@ class SimilarSpeciesTest(TestCase):
                   'groups':[{'rank':'genus','label':'같은 속의 새','source_url':SOURCE['source_url'],
                              'source_name':SOURCE['source_name'],'items':[{'rank':'species','scientific_name':'Anas acuta'}]}]}
         similar=Mock(return_value=ranking); related=Mock(return_value=taxonomy)
-        client=TestClient(create_app(species_profile_handler=lambda _:profile,
+        client=TestClient(create_django_app(species_profile_handler=lambda _:profile,
                                      similar_species_handler=similar,related_species_handler=related))
         generic=client.post('/v1/chat',json={'question':'청둥오리와 비슷한 종은 어떤게 있니?'}).json()
         self.assertEqual('answer',generic['disposition'])

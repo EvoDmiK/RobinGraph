@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock
-from fastapi.testclient import TestClient
-from robingraph.api.app import create_app
+from asgi_client import TestClient
+from robingraph.api.drf import create_django_app
 from robingraph.retrieval.related_species import related_species, RELATED_QUERY
 from robingraph.retrieval.species_profile import SpeciesNotFoundError
 from robingraph.retrieval.taxonomy_lineage import TaxonomyLineage, LineageTaxon
@@ -91,7 +91,7 @@ class RelatedSpeciesTest(unittest.TestCase):
 
     def test_endpoint_validation_and_safe_outage(self):
         handler = Mock(return_value={'groups':[]})
-        client = TestClient(create_app(related_species_handler=handler))
+        client = TestClient(create_django_app(related_species_handler=handler))
         self.assertEqual(200, client.get('/v1/taxa/related', params={'name':' 청둥오리 '}).status_code)
         handler.assert_called_once_with('청둥오리')
         self.assertEqual(422, client.get('/v1/taxa/related?name=%20').status_code)
@@ -102,4 +102,4 @@ class RelatedSpeciesTest(unittest.TestCase):
         response = client.get('/v1/taxa/related?name=mallard')
         self.assertEqual(503, response.status_code)
         self.assertNotIn('secret', response.text)
-        self.assertEqual(503, TestClient(create_app()).get('/v1/taxa/related?name=mallard').status_code)
+        self.assertEqual(503, TestClient(create_django_app()).get('/v1/taxa/related?name=mallard').status_code)

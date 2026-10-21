@@ -7,9 +7,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from fastapi.testclient import TestClient
+from asgi_client import TestClient
 
-from robingraph.api.app import create_app
+from robingraph.api.drf import create_django_app
 from robingraph.fixture import load_fixture
 from robingraph.retrieval.fixture_repository import FixtureRepository
 
@@ -33,7 +33,7 @@ class FaviconTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         # The real packaged static directory, not a temporary stand-in.
-        cls.client = TestClient(create_app(FixtureRepository(load_fixture())))
+        cls.client = TestClient(create_django_app(FixtureRepository(load_fixture())))
 
     def test_icons_are_served_with_media_types_and_cache_header(self) -> None:
         for path, media_type in ICON_PATHS:
@@ -79,7 +79,7 @@ class FaviconTest(unittest.TestCase):
             (root / "index.html").write_text("<!doctype html><body>RobinGraph 채팅</body>", encoding="utf-8")
             (root / "chat.js").write_text("console.log('chat');", encoding="utf-8")
             (root / "styles.css").write_text("body { color: #123; }", encoding="utf-8")
-            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=root))
             for path in ("/favicon.ico", "/static/favicon-32.png"):
                 with self.subTest(path=path):
                     response = client.get(path)
@@ -91,7 +91,7 @@ class FaviconTest(unittest.TestCase):
         with TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "favicon.ico").write_bytes(b"")
-            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=root))
             self.assertEqual(404, client.get("/favicon.ico").status_code)
 
     def test_test_deployment_serves_distinct_blue_icons_under_the_same_urls(self) -> None:
@@ -126,7 +126,7 @@ class FaviconTest(unittest.TestCase):
         with TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "favicon.ico").write_bytes(b"\x00\x00\x01\x00default-icon")
-            client = TestClient(create_app(FixtureRepository(load_fixture()), static_dir=root))
+            client = TestClient(create_django_app(FixtureRepository(load_fixture()), static_dir=root))
             with patch.dict(os.environ, {"ROBINGRAPH_DEPLOY_TARGET": "test"}):
                 response = client.get("/favicon.ico")
             self.assertEqual(200, response.status_code)

@@ -29,6 +29,7 @@ CURRENT_LINEAGE_ITEM = {
     "korean_name_status": "source-reference",
     "korean_name_source_url": None,
     "english_name": None,
+    "display_name": None,
 }
 
 STALE_LINEAGE_ITEM = {
@@ -265,6 +266,7 @@ class VerifyDeploymentCanaryTest(unittest.TestCase):
             "korean_name_status": "source-reference",
             "korean_name_source_url": None,
             "english_name": None,
+            "display_name": None,
         }
         responses = _passing_responses()
         responses["name=%ED%83%80%EC%A1%B0"] = (200, _lineage_body(item))
