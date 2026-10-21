@@ -21,6 +21,7 @@ class RegistryProductionDeploymentTests(unittest.TestCase):
         self.original = b'ROBINGRAPH_IMAGE=old\nROBINGRAPH_API_MODE=serve-neo4j\nNEO4J_URI=bolt://prod\nROBINGRAPH_PG_HOST=prod\nROBINGRAPH_PG_DATABASE=robingraph\n'
         self.env = self.root / '.env.nas.prod'
         self.env.write_bytes(self.original)
+        (self.root / 'compose.nas.yml').write_text('services: {}\n')
         self.request = dict(image=IMAGE, revision=REVISION, registry_user='fixture', registry_token='fixture-token')
         self.container = {'Config': {'Image': 'old', 'Env': ['ROBINGRAPH_DEPLOY_TARGET=prod', 'NEO4J_URI=bolt://prod', 'ROBINGRAPH_PG_HOST=prod', 'ROBINGRAPH_PG_DATABASE=robingraph'], 'Labels': {'com.docker.compose.project.working_dir': str(self.root), 'com.docker.compose.project': 'robingraph'}}, 'State': {'Running': True, 'Health': {'Status': 'healthy'}}}
 
@@ -61,3 +62,22 @@ class RegistryProductionDeploymentTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 module.validate('ghcr.io/evodmik/robingraph:latest', REVISION)
             run.assert_not_called()
+
+    def test_local_check_needs_no_credentials_and_does_not_mutate(self):
+        self.container['Id'] = 'fixture-container'
+        self.container['State']['StartedAt'] = 'fixture-start'
+        with patch.object(module.subprocess, 'check_output', side_effect=self.inspect), \
+                patch.object(module.subprocess, 'run') as run, \
+                patch.object(module.sys, 'argv', ['deploy', '--local', '--check-only']), \
+                patch.dict(module.os.environ, {}, clear=True):
+            module.main()
+        self.assertEqual(run.call_args.args[0], ['docker', 'compose', 'version'])
+        self.assertEqual(self.env.read_bytes(), self.original)
+        self.assertFalse((self.root / '.registry-deployments').exists())
+
+    def test_local_deploy_does_not_require_ssh_credentials(self):
+        with patch.object(module, 'remote_deploy') as deploy, \
+                patch.object(module.sys, 'argv', ['deploy', '--local', '--image', IMAGE, '--revision', REVISION]), \
+                patch.dict(module.os.environ, {'GHCR_USERNAME': 'fixture', 'GHCR_TOKEN': 'fixture-token'}, clear=True):
+            module.main()
+        deploy.assert_called_once_with(self.request)

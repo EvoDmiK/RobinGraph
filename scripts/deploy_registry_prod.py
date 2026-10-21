@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Promote an approved immutable image over SSH; no build, migration, or DB writes."""
+"""Promote an approved immutable image locally or over SSH; no DB writes."""
 import argparse
 import json
 import os
@@ -12,6 +12,24 @@ import tempfile
 import time
 
 REPOSITORY = 'ghcr.io/evodmik/robingraph'
+
+
+def production_context():
+    previous = json.loads(subprocess.check_output(['docker', 'inspect', 'robingraph-api']))[0]
+    existing_env = dict(item.split('=', 1) for item in previous['Config']['Env'])
+    if existing_env.get('ROBINGRAPH_DEPLOY_TARGET') != 'prod':
+        raise ValueError('Refusing to change a non-Production container')
+    root = Path(previous['Config']['Labels']['com.docker.compose.project.working_dir'])
+    env_path = root / '.env.nas.prod'
+    original = env_path.read_bytes()
+    values = dict(line.split('=', 1) for line in original.decode().splitlines()
+                  if '=' in line and not line.startswith('#'))
+    for key in ['NEO4J_URI', 'ROBINGRAPH_PG_HOST', 'ROBINGRAPH_PG_DATABASE']:
+        if values.get(key) != existing_env.get(key):
+            raise ValueError('Production database configuration mismatch: ' + key)
+    if not (root / 'compose.nas.yml').is_file():
+        raise ValueError('Production compose file is not mounted at its host path')
+    return previous, root, env_path, original, values
 
 
 def validate(image, revision):
@@ -27,19 +45,8 @@ def remote_deploy(request):
     def inspect(name, image=False, environment=None):
         args = ['docker', 'image', 'inspect', name] if image else ['docker', 'inspect', name]
         return json.loads(subprocess.check_output(args, env=environment))[0]
-    previous = inspect('robingraph-api')
-    existing_env = dict(item.split('=', 1) for item in previous['Config']['Env'])
-    if existing_env.get('ROBINGRAPH_DEPLOY_TARGET') != 'prod':
-        raise ValueError('Refusing to change a non-Production container')
+    previous, root, env_path, original, values = production_context()
     labels = previous['Config']['Labels']
-    root = Path(labels['com.docker.compose.project.working_dir'])
-    env_path = root / '.env.nas.prod'
-    original = env_path.read_bytes()
-    values = dict(line.split('=', 1) for line in original.decode().splitlines()
-                  if '=' in line and not line.startswith('#'))
-    for key in ['NEO4J_URI', 'ROBINGRAPH_PG_HOST', 'ROBINGRAPH_PG_DATABASE']:
-        if values.get(key) != existing_env.get(key):
-            raise ValueError('Production database configuration mismatch: ' + key)
     with tempfile.TemporaryDirectory(prefix='robingraph-registry-') as auth_dir:
         plugins = Path.home() / '.docker' / 'cli-plugins'
         if plugins.is_dir():
@@ -114,13 +121,28 @@ def remote_deploy(request):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--image', required=True)
-    parser.add_argument('--revision', required=True)
+    parser.add_argument('--image')
+    parser.add_argument('--revision')
+    parser.add_argument('--local', action='store_true', help='Run on the NAS deployment agent without SSH')
+    parser.add_argument('--check-only', action='store_true', help='Read-only NAS context check; requires --local')
     args = parser.parse_args()
+    if args.check_only:
+        if not args.local:
+            parser.error('--check-only requires --local')
+        previous, *_ = production_context()
+        subprocess.run(['docker', 'compose', 'version'], check=True)
+        print(json.dumps({'production_context_verified': True, 'container_id': previous['Id'],
+                          'started_at': previous['State']['StartedAt'], 'mutations': 0}))
+        return
+    if not args.image or not args.revision:
+        parser.error('--image and --revision are required for deployment')
     validate(args.image, args.revision)
     # Password and registry token travel in SSH input/environment, never argv.
     request = {'image': args.image, 'revision': args.revision,
                'registry_user': os.environ['GHCR_USERNAME'], 'registry_token': os.environ['GHCR_TOKEN']}
+    if args.local:
+        remote_deploy(request)
+        return
     if os.environ['NAS_USERNAME'] != 'kimdove':
         raise ValueError('Unexpected NAS deployment account')
     source = 'import json\n_DEPLOY_REQUEST=json.loads(' + repr(json.dumps(request)) + ')\n' + Path(__file__).read_text()

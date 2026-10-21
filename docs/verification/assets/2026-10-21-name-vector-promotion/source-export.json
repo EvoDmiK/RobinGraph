@@ -1,0 +1,22 @@
+{
+  "context": [
+    "rg:concept-set:avilist-v2025b",
+    "v2025b"
+  ],
+  "profile": [
+    "jinaai/jina-embeddings-v3",
+    512,
+    true
+  ],
+  "fingerprint": "a96ed6f8e2ff224b9adfc2148e8b4144829b71c7fdaf27d0d9dce8591919f4c1",
+  "taxon_count": 33694,
+  "taxon_properties_sha256": "a878a1d28a8d7910d93613ac8c0b0b1ac56711bcafc8a785de74fcc0b3bfe6a0",
+  "ingest_states_sha256": "04e72da0edf9431bc3a93a07f3ae323c2cc973aab9f2f86a0534787bbf18e34f",
+  "module_sha256": "e843a1274e6d7f32dfee38f19236b196877a1f2b09b5430e262d6129868a505d",
+  "feature_count": 855,
+  "inventory_count": 855,
+  "active_vectors": 855,
+  "export_sha256": "a46d0bb4b3a1573c29ace2e7b91cada00333ff5c5f7fe783661d61fd637b4a1d",
+  "private_backup_directory": "/Users/kimdove/robingraph-test/backups/name-vector-promotion-20261021-06a7a825",
+  "production_written": false
+}

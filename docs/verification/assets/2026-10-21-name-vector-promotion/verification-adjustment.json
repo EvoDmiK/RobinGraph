@@ -1,0 +1,9 @@
+{
+  "initial_api_check": "failed expectation for a bare spaced Korean name without filters.name",
+  "http_error": false,
+  "expected_initially": "answer",
+  "observed": "clarify",
+  "correction": "Supply explicit profile name filter as actual UI does; separately observe bare spaced-name contract",
+  "application_code_changed": false,
+  "vector_promotion_rolled_back": false
+}

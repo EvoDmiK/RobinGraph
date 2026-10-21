@@ -1,0 +1,20 @@
+services:
+  agent:
+    image: robingraph-nas-agent:20261021
+    container_name: robingraph-jenkins-agent
+    init: true
+    user: ${NAS_AGENT_UID:?Set deployment account uid}:${NAS_DOCKER_GID:?Set Docker socket gid}
+    restart: unless-stopped
+    network_mode: host
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp
+    env_file: agent.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./work:/home/jenkins/agent
+      - ./helper:/opt/robingraph-deploy:ro
+      # Compose resolves host paths inside the agent; keep the same absolute path.
+      - ${NAS_DEPLOY_ROOT:?Set the existing Production compose directory}:${NAS_DEPLOY_ROOT}

@@ -100,20 +100,25 @@ done
             }
         }
         stage('Deploy and verify NAS Production') {
-            when { expression { !params.CHECK_ONLY } }
+            agent { label 'robingraph-nas-deploy' }
+            when { beforeAgent true; expression { !params.CHECK_ONLY } }
+            environment {
+                DOCKER_CONTEXT = 'default'
+                DOCKER_HOST = 'unix:///var/run/docker.sock'
+            }
             steps {
                 withCredentials([
-                    usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN'),
-                    usernamePassword(credentialsId: 'robingraph-nas-ssh', usernameVariable: 'NAS_USERNAME', passwordVariable: 'NAS_PASSWORD')
+                    usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN')
                 ]) {
                     sh '''#!/bin/sh
 set -eu
-python3 /Users/kimdove/robingraph-test/deploy_registry_prod.py \
+python3 /opt/robingraph-deploy/deploy_registry_prod.py --local \
   --image "$IMMUTABLE_IMAGE" --revision "$REVISION"
 printf '{"revision":"%s","image":"%s","production_verified":true}\n' \
   "$REVISION" "$IMMUTABLE_IMAGE" > production-release.json
 '''
                 }
+                archiveArtifacts artifacts: 'production-release.json'
             }
         }
     }

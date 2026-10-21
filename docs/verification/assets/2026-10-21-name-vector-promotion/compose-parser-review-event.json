@@ -1,0 +1,21 @@
+{
+  "id": "msg_c758b5880088",
+  "run_id": "run_20b39855aa1b",
+  "delivery_contract": "current_delivery",
+  "from_handle": "term_0d22f233-a32a-4e59-a3dd-6fb610a0b4e4",
+  "to_handle": "run:run_20b39855aa1b",
+  "subject": "Cleared: promote.py 4ad04729, common.py 07a17f95 unchanged",
+  "body": "Exact diff: I swapped the new 3-line block back to the old raw split-parser line in both wrappers, and the result hashes exactly to the previously cleared 0f1ff373...24e8, so the only change is the docker compose --env-file <working_dir>/.env.nas.prod -f <working_dir>/compose.nas.yml config --format json read, pinned with ROBINGRAPH_ENV_FILE=that path and DEPLOY_TARGET=prod, with services.api.environment kept only in memory; final sha256 is common.py 07a17f950c9eb868a2d2991d49f26cc9a47ed555245bfdbd406caa776dc9a156 (unchanged) and promote.py 4ad04729670b74d98bef6020eb67380f48245b4fa3f06000c71e2b43fd329767, cleared for --apply. Offline test with real local docker compose v5.5.0 config, the dev-codex compose.nas.yml and fake env files only (no DB/SSH/model/daemon calls): both wrapper segments returned identical results, 16/16 passed: single-quoted 'neo4j', double-quoted and plain values pass; omitted NEO4J_DATABASE/PG_PORT pass against neo4j/5432; container values other/5433 are rejected; mismatches in quoted neo4j2, URI, PG host, PG database, PG user and omitted URI are rejected; a literal quoted container value is rejected; exported shell NEO4J_DATABASE does not override env_file values; a stray shell ROBINGRAPH_ENV_FILE is overridden by the pin; both built wrappers parse, every placeholder is substituted and there are no token collisions. Parser is read-only (compose config renders the config and changes nothing); secrets are not printed because stdout stays in memory, stderr is captured, and error messages show only the command paths, the JSON position or the key name; the inspect/DEPLOY_TARGET guard, the lock and common.py's context/inventory/profile/identity validation are unchanged; leftover non-blocking points: the compose file path is working_dir/compose.nas.yml, not the com.docker.compose.project.config_files label, and if the NAS compose rejects --format json the check refuses to proceed (fails closed); I made no edits.",
+  "type": "worker_done",
+  "priority": "normal",
+  "thread_id": null,
+  "payload": "{\"taskId\":\"task_8e8246528e8d\",\"dispatchId\":\"ctx_7521c6cf3c3e\",\"outcome\":\"succeeded\"}",
+  "read": 1,
+  "sequence": 1142,
+  "created_at": "2026-10-20T22:16:16Z",
+  "delivered_at": null,
+  "sender_pane_key": "55985819-18c7-4507-833a-24e0d740c453:e0f2aa65-ae58-462d-957f-67764f5c024a",
+  "pointer_enter_pending": 0,
+  "pointer_pty_id": null,
+  "pointer_process_incarnation": null
+}

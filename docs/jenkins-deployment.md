@@ -1,5 +1,23 @@
 # Jenkins + GHCR 배포 운영 방법
 
+## 2026-10-21 SSH 없는 NAS 배포 에이전트 전환
+
+현재 Jenkins Inline PROD 정의는 검사·빌드를 Mac `robingraph-mac16`에서 실행하고, 기존 admin 승인 후 배포 단계만 NAS `robingraph-nas-deploy`에서 실행한다. `robingraph-nas-ssh` credential은 새 배포 단계에서 사용하지 않는다. 기존 SSH credential은 다른 사용처를 확인하지 않아 삭제하지 않았다.
+
+- NAS 에이전트는 `jenkins/inbound-agent:jdk21` 기반 이미지에 Docker CLI·Compose·Python을 추가한다. 정의는 `ci/nas-agent/Dockerfile`, `ci/nas-agent/compose.yml`이다.
+- 최초 설치는 기존 SSH를 사용했다. 이후 에이전트는 NAS에서 Jenkins의 `http://127.0.0.1:8080/`로 WebSocket 연결한다. 별도 SSH 접속이나 agent TCP 포트가 배포에 필요하지 않다. SSH 서비스 설정은 변경하지 않았다.
+- 노드: exclusive, executor 1, label `robingraph-nas-deploy`. 컨테이너: `robingraph-jenkins-agent`, uid 1000 / Docker socket gid 121, host network, root filesystem read-only, cap-drop ALL, no-new-privileges, restart unless-stopped.
+- NAS 설치 디렉터리: `/volume3/Birds-Nest/docker-data/robingraph-jenkins-agent`. `agent.env`의 노드 인증값은 0600 파일에만 보관한다. `.env`에 `NAS_DEPLOY_ROOT`, `NAS_AGENT_UID`, `NAS_DOCKER_GID`를 설정한다. 인증값은 문서·Git에 넣지 않는다.
+- `/var/run/docker.sock` 및 기존 Production compose 디렉터리를 같은 절대 경로로 연결한다. Docker socket은 호스트 제어 권한이므로 신뢰하는 배포 작업만 이 노드를 사용한다. exclusive 라벨은 보안 격리 경계가 아니다.
+- 배포 helper는 저장소 `scripts/deploy_registry_prod.py`를 NAS `helper/deploy_registry_prod.py`에 동기화하고 컨테이너 `/opt/robingraph-deploy/deploy_registry_prod.py`에 읽기 전용 마운트한다. helper 변경 시 사본과 해시도 함께 확인한다.
+- 실제 교체 명령은 `python3 /opt/robingraph-deploy/deploy_registry_prod.py --local --image "$IMMUTABLE_IMAGE" --revision "$REVISION"`이다. GHCR 인증은 Jenkins credential binding을 사용하며 기존 immutable digest·revision·Production DB 대상 가드·영수증·실패 복구를 유지한다.
+- 읽기 전용 확인은 `--local --check-only`다. GHCR/SSH 자격증명 없이 운영 대상과 compose 경로·Compose 실행 가능 여부만 확인하고 배포하지 않는다.
+
+실제 검증: [RobinGraph-NAS-Agent-Check #1](http://dove-jenkins/job/RobinGraph-NAS-Agent-Check/1/) SUCCESS. SSH 호출 없이 NAS 노드에서 helper 읽기 검사 및 운영 health/OpenAPI/청둥오리 lineage GET을 실행해 모두 200·계약 검사 통과했다. 기존 운영 앱 ID·시작 시각·이미지는 전후 동일하며 healthy다. 이번에 운영 앱 교체·DB 쓰기·Production 빌드 실행은 하지 않았다. 실제 SSH 없는 이미지 교체/실패 복구·호스트 재부팅 검증은 미실행이며 운영 배포는 별도 사용자 승인이 필요하다.
+
+로컬 관련 단위 검사 5개 통과·실패 0·건너뜀 0. Jenkins declarative lint 통과. 저장소 파일은 미커밋이며 commit/push/병합하지 않았다. 현재 Jenkins Inline 정의는 적용했으므로 Git의 main 정의와는 다음 승인된 커밋 반영 전까지 차이가 있다. 아래 이전 기록은 당시 SSH 구조의 이력이다.
+
+
 ## main 기준 운영 배포 (2026-10-20)
 
 사용자의 커밋·푸시·main 병합·Production 배포 지시에 따라 운영 파이프라인의 checkout과 SCM polling 기준을 `main`으로 변경했다. 아래 2026-10-18의 `dev-codex` 기준 설명은 당시 이력이다. 저장소 `Jenkinsfile`과 `ci/Jenkinsfile.production`, Jenkins의 Inline Pipeline 정의를 함께 맞추고, 운영 승인 단계에는 배포할 main 커밋과 immutable 이미지 digest를 표시한다. RobinGraph-PROD #3이 main 커밋 `770495a`의 Django 이미지를 NAS에 배포하고 실제 API 검사까지 SUCCESS로 완료했다. 상세 결과는 [운영 배포 기록](work-log/2026-10-20-main-production-django.md)을 따른다.

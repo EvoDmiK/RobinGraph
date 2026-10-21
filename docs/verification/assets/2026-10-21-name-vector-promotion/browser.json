@@ -1,0 +1,26 @@
+{
+  "base": "https://robingraph.dove-nest.com",
+  "response_mocking": false,
+  "passed": true,
+  "rows": [
+    {
+      "width": 1280,
+      "query": "천둥오리",
+      "candidate": "청둥오리 / Anas platyrhynchos",
+      "vector_clarification": true,
+      "candidate_click_answer": true,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "query": "천둥오리",
+      "candidate": "청둥오리 / Anas platyrhynchos",
+      "vector_clarification": true,
+      "candidate_click_answer": true,
+      "page_errors": 0,
+      "passed": true
+    }
+  ],
+  "physical_mobile": false
+}
