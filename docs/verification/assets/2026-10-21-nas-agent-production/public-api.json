@@ -1,0 +1,2256 @@
+{
+  "transport": "Chromium same-origin fetch",
+  "rows": [
+    {
+      "path": "/health",
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "prod"
+      }
+    },
+    {
+      "path": "/openapi.json",
+      "status": 200,
+      "body": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "RobinGraph",
+          "version": "0.1.0"
+        },
+        "paths": {
+          "/v1/taxa/name-relations": {
+            "get": {
+              "summary": "Name Relations",
+              "operationId": "name_relations_v1_taxa_name_relations_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/taxa/related": {
+            "get": {
+              "summary": "Species Relations",
+              "operationId": "species_relations_v1_taxa_related_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                },
+                {
+                  "name": "species_scope",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "enum": [
+                      "all",
+                      "korea",
+                      "outside",
+                      "unknown"
+                    ],
+                    "type": "string",
+                    "default": "all",
+                    "title": "Species Scope"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/taxa/similar": {
+            "get": {
+              "summary": "Similar Species Results",
+              "operationId": "similar_species_results_v1_taxa_similar_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                },
+                {
+                  "name": "species_scope",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "enum": [
+                      "all",
+                      "korea",
+                      "outside",
+                      "unknown"
+                    ],
+                    "type": "string",
+                    "default": "all",
+                    "title": "Species Scope"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/taxa/ecological-related": {
+            "get": {
+              "summary": "Ecological Species Relations",
+              "operationId": "ecological_species_relations_v1_taxa_ecological_related_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                },
+                {
+                  "name": "species_scope",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "enum": [
+                      "all",
+                      "korea",
+                      "outside",
+                      "unknown"
+                    ],
+                    "type": "string",
+                    "default": "all",
+                    "title": "Species Scope"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/taxa/subspecies": {
+            "get": {
+              "summary": "Subspecies",
+              "operationId": "subspecies_v1_taxa_subspecies_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/taxa/profile": {
+            "get": {
+              "summary": "Species Profile",
+              "operationId": "species_profile_v1_taxa_profile_get",
+              "parameters": [
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": true,
+                  "schema": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200,
+                    "title": "Name"
+                  }
+                },
+                {
+                  "name": "species_scope",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "enum": [
+                      "all",
+                      "korea",
+                      "outside",
+                      "unknown"
+                    ],
+                    "type": "string",
+                    "default": "all",
+                    "title": "Species Scope"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {}
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/health": {
+            "get": {
+              "summary": "Health",
+              "operationId": "health_health_get",
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "additionalProperties": {
+                          "type": "string"
+                        },
+                        "type": "object",
+                        "title": "Response Health Health Get"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/answers": {
+            "post": {
+              "summary": "Answer Question",
+              "operationId": "answer_question_v1_answers_post",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/QuestionRequest"
+                    }
+                  }
+                },
+                "required": true
+              },
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/AnswerResponse"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/chat": {
+            "post": {
+              "summary": "Integrated Chat",
+              "description": "Route a bounded chat request without inventing facts or filters.\n\nExplicit routes never read the router, so a missing embedding setting\nor provider outage cannot affect established operational workflows.",
+              "operationId": "integrated_chat_v1_chat_post",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ChatRequest"
+                    }
+                  }
+                },
+                "required": true
+              },
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/ChatResponse"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/v1/search": {
+            "post": {
+              "summary": "Search Documents",
+              "operationId": "search_documents_v1_search_post",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/DocumentSearchRequest"
+                    }
+                  }
+                },
+                "required": true
+              },
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/DocumentSearchResponse"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "Neo4j mode or a configured search dependency is unavailable"
+                }
+              }
+            }
+          },
+          "/v1/observations": {
+            "get": {
+              "summary": "Search Operational Observations",
+              "operationId": "search_operational_observations_v1_observations_get",
+              "parameters": [
+                {
+                  "name": "taxon_key",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 50
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Taxon Key"
+                  }
+                },
+                {
+                  "name": "scientific_name",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Scientific Name"
+                  }
+                },
+                {
+                  "name": "place",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Place"
+                  }
+                },
+                {
+                  "name": "observed_from",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Observed From"
+                  }
+                },
+                {
+                  "name": "observed_to",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Observed To"
+                  }
+                },
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1,
+                    "default": 25,
+                    "title": "Limit"
+                  }
+                },
+                {
+                  "name": "offset",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "title": "Offset"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/OperationalObservationSearchResponse"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "Validation Error",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/HTTPValidationError"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The operational GBIF observation graph is unavailable"
+                }
+              }
+            }
+          },
+          "/v1/taxa/lineage": {
+            "get": {
+              "summary": "Get Taxonomy Lineage",
+              "operationId": "get_taxonomy_lineage_v1_taxa_lineage_get",
+              "parameters": [
+                {
+                  "name": "scientific_name",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Scientific Name"
+                  }
+                },
+                {
+                  "name": "name",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Name"
+                  }
+                },
+                {
+                  "name": "species_scope",
+                  "in": "query",
+                  "required": false,
+                  "schema": {
+                    "enum": [
+                      "all",
+                      "korea",
+                      "outside",
+                      "unknown"
+                    ],
+                    "type": "string",
+                    "default": "all",
+                    "title": "Species Scope"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Successful Response",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/TaxonomyLineageResponse"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "No active AviList lineage exists for scientific_name or name"
+                },
+                "422": {
+                  "description": "Exactly one nonblank scientific_name or name query parameter is required"
+                },
+                "503": {
+                  "description": "The AviList reference-taxonomy projection is unavailable"
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "schemas": {
+            "AnswerResponse": {
+              "properties": {
+                "answer_id": {
+                  "type": "string",
+                  "title": "Answer Id"
+                },
+                "answer_text": {
+                  "type": "string",
+                  "title": "Answer Text"
+                },
+                "taxon_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Taxon Ids"
+                },
+                "evidence_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Evidence Ids"
+                },
+                "citations": {
+                  "items": {
+                    "$ref": "#/components/schemas/CitationResponse"
+                  },
+                  "type": "array",
+                  "title": "Citations"
+                },
+                "disposition": {
+                  "type": "string",
+                  "title": "Disposition"
+                },
+                "warnings": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Warnings"
+                },
+                "taxonomy_release": {
+                  "type": "string",
+                  "title": "Taxonomy Release"
+                },
+                "data_cutoff": {
+                  "type": "string",
+                  "title": "Data Cutoff"
+                }
+              },
+              "type": "object",
+              "required": [
+                "answer_id",
+                "answer_text",
+                "taxon_ids",
+                "evidence_ids",
+                "citations",
+                "disposition",
+                "warnings",
+                "taxonomy_release",
+                "data_cutoff"
+              ],
+              "title": "AnswerResponse"
+            },
+            "ChatClarifyResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "clarify",
+                  "title": "Kind",
+                  "default": "clarify"
+                },
+                "prompt": {
+                  "type": "string",
+                  "title": "Prompt"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "prompt"
+              ],
+              "title": "ChatClarifyResult"
+            },
+            "ChatEvidenceResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "evidence",
+                  "title": "Kind",
+                  "default": "evidence"
+                },
+                "search": {
+                  "$ref": "#/components/schemas/DocumentSearchResponse"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "search"
+              ],
+              "title": "ChatEvidenceResult"
+            },
+            "ChatNameRelationsResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "name_relations",
+                  "title": "Kind",
+                  "default": "name_relations"
+                },
+                "relationships": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Relationships"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "relationships"
+              ],
+              "title": "ChatNameRelationsResult"
+            },
+            "ChatObservationsResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "observations",
+                  "title": "Kind",
+                  "default": "observations"
+                },
+                "results": {
+                  "items": {
+                    "$ref": "#/components/schemas/OperationalObservationResponse"
+                  },
+                  "type": "array",
+                  "title": "Results"
+                },
+                "limit": {
+                  "type": "integer",
+                  "title": "Limit"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "results",
+                "limit"
+              ],
+              "title": "ChatObservationsResult"
+            },
+            "ChatRequest": {
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "title": "Question"
+                },
+                "intent": {
+                  "type": "string",
+                  "enum": [
+                    "auto",
+                    "taxonomy",
+                    "profile",
+                    "observations",
+                    "evidence"
+                  ],
+                  "title": "Intent",
+                  "default": "auto"
+                },
+                "filters": {
+                  "anyOf": [
+                    {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/TaxonomyChatFilters"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ProfileChatFilters"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ObservationChatFilters"
+                        },
+                        {
+                          "$ref": "#/components/schemas/EvidenceChatFilters"
+                        }
+                      ],
+                      "discriminator": {
+                        "propertyName": "kind",
+                        "mapping": {
+                          "evidence": "#/components/schemas/EvidenceChatFilters",
+                          "observations": "#/components/schemas/ObservationChatFilters",
+                          "profile": "#/components/schemas/ProfileChatFilters",
+                          "taxonomy": "#/components/schemas/TaxonomyChatFilters"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Filters"
+                },
+                "defer_enrichment": {
+                  "type": "boolean",
+                  "title": "Defer Enrichment",
+                  "default": false
+                },
+                "defer_discovery": {
+                  "type": "boolean",
+                  "title": "Defer Discovery",
+                  "default": false
+                },
+                "species_scope": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "korea",
+                    "outside",
+                    "unknown"
+                  ],
+                  "title": "Species Scope",
+                  "default": "all"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "question"
+              ],
+              "title": "ChatRequest"
+            },
+            "ChatResponse": {
+              "properties": {
+                "selected_intent": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "taxonomy",
+                        "profile",
+                        "observations",
+                        "evidence"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Selected Intent"
+                },
+                "route_method": {
+                  "type": "string",
+                  "enum": [
+                    "semantic",
+                    "explicit",
+                    "deterministic",
+                    "jev"
+                  ],
+                  "title": "Route Method"
+                },
+                "disposition": {
+                  "type": "string",
+                  "enum": [
+                    "answer",
+                    "abstain",
+                    "clarify"
+                  ],
+                  "title": "Disposition"
+                },
+                "answer_text": {
+                  "type": "string",
+                  "title": "Answer Text"
+                },
+                "warnings": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Warnings"
+                },
+                "result": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ChatTaxonomyResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ChatSpeciesResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ChatObservationsResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ChatEvidenceResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ChatClarifyResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ChatNameRelationsResult"
+                    }
+                  ],
+                  "title": "Result",
+                  "discriminator": {
+                    "propertyName": "kind",
+                    "mapping": {
+                      "clarify": "#/components/schemas/ChatClarifyResult",
+                      "evidence": "#/components/schemas/ChatEvidenceResult",
+                      "name_relations": "#/components/schemas/ChatNameRelationsResult",
+                      "observations": "#/components/schemas/ChatObservationsResult",
+                      "profile": "#/components/schemas/ChatSpeciesResult",
+                      "taxonomy": "#/components/schemas/ChatTaxonomyResult"
+                    }
+                  }
+                },
+                "entity_resolution": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/EntityResolutionResponse"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "selected_intent",
+                "route_method",
+                "disposition",
+                "answer_text",
+                "warnings",
+                "result"
+              ],
+              "title": "ChatResponse"
+            },
+            "ChatSpeciesResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "profile",
+                  "title": "Kind",
+                  "default": "profile"
+                },
+                "profile": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Profile"
+                },
+                "question_answer": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Question Answer"
+                },
+                "similar_species": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Similar Species"
+                },
+                "subspecies": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": true,
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Subspecies"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "profile"
+              ],
+              "title": "ChatSpeciesResult"
+            },
+            "ChatTaxonomyResult": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "taxonomy",
+                  "title": "Kind",
+                  "default": "taxonomy"
+                },
+                "lineage": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TaxonomyLineageResponse"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "lineage"
+              ],
+              "title": "ChatTaxonomyResult"
+            },
+            "CitationResponse": {
+              "properties": {
+                "evidence_id": {
+                  "type": "string",
+                  "title": "Evidence Id"
+                },
+                "source_id": {
+                  "type": "string",
+                  "title": "Source Id"
+                },
+                "source_url": {
+                  "type": "string",
+                  "title": "Source Url"
+                },
+                "locator": {
+                  "type": "string",
+                  "title": "Locator"
+                },
+                "license_name": {
+                  "type": "string",
+                  "title": "License Name"
+                }
+              },
+              "type": "object",
+              "required": [
+                "evidence_id",
+                "source_id",
+                "source_url",
+                "locator",
+                "license_name"
+              ],
+              "title": "CitationResponse"
+            },
+            "DocumentSearchRequest": {
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "title": "Question"
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "fulltext",
+                    "hybrid"
+                  ],
+                  "title": "Mode",
+                  "default": "fulltext"
+                },
+                "limit": {
+                  "type": "integer",
+                  "maximum": 100,
+                  "minimum": 1,
+                  "title": "Limit",
+                  "default": 10
+                }
+              },
+              "type": "object",
+              "required": [
+                "question"
+              ],
+              "title": "DocumentSearchRequest"
+            },
+            "DocumentSearchResponse": {
+              "properties": {
+                "requested_mode": {
+                  "type": "string",
+                  "enum": [
+                    "fulltext",
+                    "hybrid"
+                  ],
+                  "title": "Requested Mode"
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "fulltext",
+                    "hybrid"
+                  ],
+                  "title": "Mode"
+                },
+                "fixture_only": {
+                  "type": "boolean",
+                  "title": "Fixture Only"
+                },
+                "results": {
+                  "items": {
+                    "$ref": "#/components/schemas/SearchResultResponse"
+                  },
+                  "type": "array",
+                  "title": "Results"
+                },
+                "warnings": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Warnings"
+                }
+              },
+              "type": "object",
+              "required": [
+                "requested_mode",
+                "mode",
+                "fixture_only",
+                "results",
+                "warnings"
+              ],
+              "title": "DocumentSearchResponse"
+            },
+            "EntityCandidateResponse": {
+              "properties": {
+                "taxon_id": {
+                  "type": "string",
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "title": "Taxon Id"
+                },
+                "scientific_name": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "title": "Scientific Name"
+                },
+                "display_name": {
+                  "type": "string",
+                  "maxLength": 200,
+                  "minLength": 1,
+                  "title": "Display Name"
+                },
+                "score": {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": -1,
+                  "title": "Score"
+                },
+                "question": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Question"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "taxon_id",
+                "scientific_name",
+                "display_name",
+                "score"
+              ],
+              "title": "EntityCandidateResponse"
+            },
+            "EntityResolutionResponse": {
+              "properties": {
+                "mention": {
+                  "type": "string",
+                  "title": "Mention"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "matched",
+                    "candidates",
+                    "not_found",
+                    "unavailable"
+                  ],
+                  "title": "Status"
+                },
+                "method": {
+                  "type": "string",
+                  "enum": [
+                    "graph_exact",
+                    "graph_normalized",
+                    "vector",
+                    "none"
+                  ],
+                  "title": "Method"
+                },
+                "canonical_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Canonical Name"
+                },
+                "taxon_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Taxon Id"
+                },
+                "concept_set_id": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Concept Set Id"
+                },
+                "taxonomy_release": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Taxonomy Release"
+                },
+                "candidates": {
+                  "items": {
+                    "$ref": "#/components/schemas/EntityCandidateResponse"
+                  },
+                  "type": "array",
+                  "maxItems": 3,
+                  "title": "Candidates"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "required": [
+                "mention",
+                "status",
+                "method"
+              ],
+              "title": "EntityResolutionResponse"
+            },
+            "EvidenceChatFilters": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "evidence",
+                  "title": "Kind",
+                  "default": "evidence"
+                },
+                "limit": {
+                  "type": "integer",
+                  "maximum": 10,
+                  "minimum": 1,
+                  "title": "Limit",
+                  "default": 10
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "title": "EvidenceChatFilters"
+            },
+            "HTTPValidationError": {
+              "properties": {
+                "detail": {
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationError"
+                  },
+                  "type": "array",
+                  "title": "Detail"
+                }
+              },
+              "type": "object",
+              "title": "HTTPValidationError"
+            },
+            "LineageTaxonResponse": {
+              "properties": {
+                "taxon_id": {
+                  "type": "string",
+                  "title": "Taxon Id"
+                },
+                "rank": {
+                  "type": "string",
+                  "title": "Rank"
+                },
+                "scientific_name": {
+                  "type": "string",
+                  "title": "Scientific Name"
+                },
+                "authority": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Authority"
+                },
+                "korean_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Korean Name"
+                },
+                "korean_name_status": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Korean Name Status"
+                },
+                "korean_name_source_url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Korean Name Source Url"
+                },
+                "english_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "English Name"
+                },
+                "display_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Display Name"
+                }
+              },
+              "type": "object",
+              "required": [
+                "taxon_id",
+                "rank",
+                "scientific_name",
+                "authority",
+                "korean_name"
+              ],
+              "title": "LineageTaxonResponse"
+            },
+            "ObservationChatFilters": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "observations",
+                  "title": "Kind",
+                  "default": "observations"
+                },
+                "taxon_key": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 50
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Taxon Key"
+                },
+                "scientific_name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Scientific Name"
+                },
+                "place": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Place"
+                },
+                "observed_from": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Observed From"
+                },
+                "observed_to": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Observed To"
+                },
+                "limit": {
+                  "type": "integer",
+                  "maximum": 10,
+                  "minimum": 1,
+                  "title": "Limit",
+                  "default": 10
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "title": "ObservationChatFilters"
+            },
+            "OperationalCitationResponse": {
+              "properties": {
+                "evidence_id": {
+                  "type": "string",
+                  "title": "Evidence Id"
+                },
+                "dataset_id": {
+                  "type": "string",
+                  "title": "Dataset Id"
+                },
+                "dataset_name": {
+                  "type": "string",
+                  "title": "Dataset Name"
+                },
+                "source_url": {
+                  "type": "string",
+                  "title": "Source Url"
+                },
+                "dataset_url": {
+                  "type": "string",
+                  "title": "Dataset Url"
+                },
+                "license_uris": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "License Uris"
+                },
+                "retrieved_at": {
+                  "type": "string",
+                  "title": "Retrieved At"
+                },
+                "source_updated_at": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Source Updated At"
+                }
+              },
+              "type": "object",
+              "required": [
+                "evidence_id",
+                "dataset_id",
+                "dataset_name",
+                "source_url",
+                "dataset_url",
+                "license_uris",
+                "retrieved_at",
+                "source_updated_at"
+              ],
+              "title": "OperationalCitationResponse"
+            },
+            "OperationalMediaResponse": {
+              "properties": {
+                "media_id": {
+                  "type": "string",
+                  "title": "Media Id"
+                },
+                "media_type": {
+                  "type": "string",
+                  "title": "Media Type"
+                },
+                "format": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Format"
+                },
+                "landing_uri": {
+                  "type": "string",
+                  "title": "Landing Uri"
+                },
+                "asset_uri": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Asset Uri"
+                },
+                "creator": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Creator"
+                },
+                "publisher": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Publisher"
+                },
+                "attribution": {
+                  "type": "string",
+                  "title": "Attribution"
+                },
+                "license_uri": {
+                  "type": "string",
+                  "title": "License Uri"
+                }
+              },
+              "type": "object",
+              "required": [
+                "media_id",
+                "media_type",
+                "format",
+                "landing_uri",
+                "asset_uri",
+                "creator",
+                "publisher",
+                "attribution",
+                "license_uri"
+              ],
+              "title": "OperationalMediaResponse"
+            },
+            "OperationalObservationResponse": {
+              "properties": {
+                "observation_id": {
+                  "type": "string",
+                  "title": "Observation Id"
+                },
+                "occurrence_id": {
+                  "type": "string",
+                  "title": "Occurrence Id"
+                },
+                "observed_at": {
+                  "type": "string",
+                  "title": "Observed At"
+                },
+                "count": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Count"
+                },
+                "basis": {
+                  "type": "string",
+                  "title": "Basis"
+                },
+                "sensitivity": {
+                  "type": "string",
+                  "title": "Sensitivity"
+                },
+                "coordinate_disclosure": {
+                  "type": "string",
+                  "enum": [
+                    "public",
+                    "withheld"
+                  ],
+                  "title": "Coordinate Disclosure"
+                },
+                "latitude": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Latitude"
+                },
+                "longitude": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Longitude"
+                },
+                "coordinate_uncertainty_m": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Coordinate Uncertainty M"
+                },
+                "taxon": {
+                  "$ref": "#/components/schemas/OperationalTaxonResponse"
+                },
+                "place": {
+                  "$ref": "#/components/schemas/OperationalPlaceResponse"
+                },
+                "citation": {
+                  "$ref": "#/components/schemas/OperationalCitationResponse"
+                },
+                "media": {
+                  "items": {
+                    "$ref": "#/components/schemas/OperationalMediaResponse"
+                  },
+                  "type": "array",
+                  "title": "Media"
+                }
+              },
+              "type": "object",
+              "required": [
+                "observation_id",
+                "occurrence_id",
+                "observed_at",
+                "count",
+                "basis",
+                "sensitivity",
+                "coordinate_disclosure",
+                "latitude",
+                "longitude",
+                "coordinate_uncertainty_m",
+                "taxon",
+                "place",
+                "citation",
+                "media"
+              ],
+              "title": "OperationalObservationResponse"
+            },
+            "OperationalObservationSearchResponse": {
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "const": "operational",
+                  "title": "Mode",
+                  "default": "operational"
+                },
+                "data_source": {
+                  "type": "string",
+                  "const": "gbif",
+                  "title": "Data Source",
+                  "default": "gbif"
+                },
+                "fixture_only": {
+                  "type": "boolean",
+                  "const": false,
+                  "title": "Fixture Only",
+                  "default": false
+                },
+                "limit": {
+                  "type": "integer",
+                  "title": "Limit"
+                },
+                "offset": {
+                  "type": "integer",
+                  "title": "Offset"
+                },
+                "returned": {
+                  "type": "integer",
+                  "title": "Returned"
+                },
+                "results": {
+                  "items": {
+                    "$ref": "#/components/schemas/OperationalObservationResponse"
+                  },
+                  "type": "array",
+                  "title": "Results"
+                },
+                "warnings": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Warnings"
+                }
+              },
+              "type": "object",
+              "required": [
+                "limit",
+                "offset",
+                "returned",
+                "results",
+                "warnings"
+              ],
+              "title": "OperationalObservationSearchResponse"
+            },
+            "OperationalPlaceResponse": {
+              "properties": {
+                "place_id": {
+                  "type": "string",
+                  "title": "Place Id"
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name"
+                },
+                "country_code": {
+                  "type": "string",
+                  "title": "Country Code"
+                }
+              },
+              "type": "object",
+              "required": [
+                "place_id",
+                "name",
+                "country_code"
+              ],
+              "title": "OperationalPlaceResponse"
+            },
+            "OperationalTaxonResponse": {
+              "properties": {
+                "taxon_id": {
+                  "type": "string",
+                  "title": "Taxon Id"
+                },
+                "external_key": {
+                  "type": "string",
+                  "title": "External Key"
+                },
+                "scientific_name": {
+                  "type": "string",
+                  "title": "Scientific Name"
+                },
+                "canonical_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Canonical Name"
+                },
+                "vernacular_name_raw": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Vernacular Name Raw"
+                },
+                "rank": {
+                  "type": "string",
+                  "title": "Rank"
+                }
+              },
+              "type": "object",
+              "required": [
+                "taxon_id",
+                "external_key",
+                "scientific_name",
+                "canonical_name",
+                "vernacular_name_raw",
+                "rank"
+              ],
+              "title": "OperationalTaxonResponse"
+            },
+            "ProfileChatFilters": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "profile",
+                  "title": "Kind",
+                  "default": "profile"
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Name"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "title": "ProfileChatFilters"
+            },
+            "QuestionRequest": {
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "maxLength": 2000,
+                  "minLength": 1,
+                  "title": "Question"
+                }
+              },
+              "type": "object",
+              "required": [
+                "question"
+              ],
+              "title": "QuestionRequest"
+            },
+            "SearchCitationResponse": {
+              "properties": {
+                "source_id": {
+                  "type": "string",
+                  "title": "Source Id"
+                },
+                "source_url": {
+                  "type": "string",
+                  "title": "Source Url"
+                },
+                "locator": {
+                  "type": "string",
+                  "title": "Locator"
+                },
+                "license_name": {
+                  "type": "string",
+                  "title": "License Name"
+                }
+              },
+              "type": "object",
+              "required": [
+                "source_id",
+                "source_url",
+                "locator",
+                "license_name"
+              ],
+              "title": "SearchCitationResponse"
+            },
+            "SearchResultResponse": {
+              "properties": {
+                "chunk_id": {
+                  "type": "string",
+                  "title": "Chunk Id"
+                },
+                "text": {
+                  "type": "string",
+                  "title": "Text"
+                },
+                "score": {
+                  "type": "number",
+                  "title": "Score"
+                },
+                "channels": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Channels"
+                },
+                "citation": {
+                  "$ref": "#/components/schemas/SearchCitationResponse"
+                }
+              },
+              "type": "object",
+              "required": [
+                "chunk_id",
+                "text",
+                "score",
+                "channels",
+                "citation"
+              ],
+              "title": "SearchResultResponse"
+            },
+            "TaxonomyChatFilters": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "taxonomy",
+                  "title": "Kind",
+                  "default": "taxonomy"
+                },
+                "scientific_name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Scientific Name"
+                },
+                "name": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Name"
+                }
+              },
+              "additionalProperties": false,
+              "type": "object",
+              "title": "TaxonomyChatFilters"
+            },
+            "TaxonomyLineageResponse": {
+              "properties": {
+                "query_name": {
+                  "type": "string",
+                  "title": "Query Name"
+                },
+                "query_scientific_name": {
+                  "type": "string",
+                  "title": "Query Scientific Name"
+                },
+                "resolved_query_scientific_name": {
+                  "type": "string",
+                  "title": "Resolved Query Scientific Name"
+                },
+                "matched_by": {
+                  "type": "string",
+                  "enum": [
+                    "scientific_name",
+                    "korean_name",
+                    "english_name"
+                  ],
+                  "title": "Matched By"
+                },
+                "taxonomy_source": {
+                  "type": "string",
+                  "const": "AviList",
+                  "title": "Taxonomy Source",
+                  "default": "AviList"
+                },
+                "taxonomy_release": {
+                  "type": "string",
+                  "title": "Taxonomy Release"
+                },
+                "concept_set_id": {
+                  "type": "string",
+                  "title": "Concept Set Id"
+                },
+                "lineage": {
+                  "items": {
+                    "$ref": "#/components/schemas/LineageTaxonResponse"
+                  },
+                  "type": "array",
+                  "title": "Lineage"
+                }
+              },
+              "type": "object",
+              "required": [
+                "query_name",
+                "query_scientific_name",
+                "resolved_query_scientific_name",
+                "matched_by",
+                "taxonomy_release",
+                "concept_set_id",
+                "lineage"
+              ],
+              "title": "TaxonomyLineageResponse"
+            },
+            "ValidationError": {
+              "properties": {
+                "loc": {
+                  "items": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  },
+                  "type": "array",
+                  "title": "Location"
+                },
+                "msg": {
+                  "type": "string",
+                  "title": "Message"
+                },
+                "type": {
+                  "type": "string",
+                  "title": "Error Type"
+                },
+                "input": {
+                  "title": "Input"
+                },
+                "ctx": {
+                  "type": "object",
+                  "title": "Context"
+                }
+              },
+              "type": "object",
+              "required": [
+                "loc",
+                "msg",
+                "type"
+              ],
+              "title": "ValidationError"
+            }
+          }
+        }
+      }
+    },
+    {
+      "path": "/v1/taxa/lineage?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC",
+      "status": 200,
+      "body": {
+        "query_name": "청둥오리",
+        "query_scientific_name": "Anas platyrhynchos",
+        "resolved_query_scientific_name": "Anas platyrhynchos",
+        "matched_by": "korean_name",
+        "taxonomy_source": "AviList",
+        "taxonomy_release": "v2025b",
+        "concept_set_id": "rg:concept-set:avilist-v2025b",
+        "lineage": [
+          {
+            "taxon_id": "avilist-taxon:v2025b:230",
+            "rank": "order",
+            "scientific_name": "Anseriformes",
+            "authority": null,
+            "korean_name": "기러기목",
+            "korean_name_status": "community-sourced-reference",
+            "korean_name_source_url": "https://www.wikidata.org/wiki/Q21651",
+            "english_name": null,
+            "display_name": null
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:240",
+            "rank": "family",
+            "scientific_name": "Anatidae",
+            "authority": null,
+            "korean_name": "오리과",
+            "korean_name_status": "community-sourced-reference",
+            "korean_name_source_url": "https://www.wikidata.org/wiki/Q7556",
+            "english_name": null,
+            "display_name": null
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:526",
+            "rank": "genus",
+            "scientific_name": "Anas",
+            "authority": "Linnaeus, C, 1758",
+            "korean_name": "오리속",
+            "korean_name_status": "community-sourced-reference",
+            "korean_name_source_url": "https://www.wikidata.org/wiki/Q214264",
+            "english_name": null,
+            "display_name": null
+          },
+          {
+            "taxon_id": "avilist-taxon:v2025b:544",
+            "rank": "species",
+            "scientific_name": "Anas platyrhynchos",
+            "authority": "Linnaeus, C, 1758",
+            "korean_name": "청둥오리",
+            "korean_name_status": "source-reference",
+            "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "english_name": "Mallard",
+            "display_name": null
+          }
+        ]
+      }
+    }
+  ],
+  "passed": true,
+  "earlier_urllib_attempt": "HTTP 403 at public edge; no application response verified by that attempt"
+}

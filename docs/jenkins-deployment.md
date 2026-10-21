@@ -1,5 +1,15 @@
 # Jenkins + GHCR 배포 운영 방법
 
+## 2026-10-21 사용자 승인 후 실제 운영 앱 교체 완료
+
+[RobinGraph-PROD #6](http://dove-jenkins/job/RobinGraph-PROD/6/) SUCCESS. 사용자 명시 승인에 따라 main `7267df697fc0912752b9b2a848d42fb8baa80b85`를 검사·빌드하고 기존 admin 승인을 API로 제출했다. NAS `robingraph-nas-deploy` 노드가 SSH 없이 로컬 Docker로 운영 앱을 교체했다. 배포 digest는 `sha256:b8d68a53064e893c9f23f182e71c81ab33bd84cba00cf4da209ba3393d3003c3`다.
+
+- Python 1,031 실행 / 993 통과 / 38 건너뜀 / 0 실패, Node UI 317 통과, AMD64 fixture 기동 통과.
+- 신규 운영 컨테이너 `3e5cda21d1b8…`, 시작 `2026-10-21T07:42:57.518338114Z`, healthy. 기존 env는 배포 영수증의 0600 백업 경로에 보존했다.
+- NAS 읽기 검사 #2 SUCCESS, 내부 health/OpenAPI/lineage GET 계약 통과. 공개 Chromium 동일 출처 GET 3/3과 1280·390px 후보 선택 흐름 2/2 통과. Python urllib의 첫 공개 요청은 edge HTTP403이었으며 별도 Chromium 검사로 확인했다.
+- DB 마이그레이션·백필·자료 갱신 명령과 실제 롤백은 실행하지 않았다. 전체 DB 체크섬 불변 검증, 물리 기기·호스트 재부팅은 미실행이다.
+- 실제 배포 근거: `docs/verification/assets/2026-10-21-nas-agent-production/`. 아래 에이전트 설치 당시의 미배포·미커밋 설명은 과거 이력이다. 배포 후 문서·증거 커밋은 앱 이미지의 revision을 바꾸지 않는다.
+
 ## 2026-10-21 SSH 없는 NAS 배포 에이전트 전환
 
 현재 Jenkins Inline PROD 정의는 검사·빌드를 Mac `robingraph-mac16`에서 실행하고, 기존 admin 승인 후 배포 단계만 NAS `robingraph-nas-deploy`에서 실행한다. `robingraph-nas-ssh` credential은 새 배포 단계에서 사용하지 않는다. 기존 SSH credential은 다른 사용처를 확인하지 않아 삭제하지 않았다.

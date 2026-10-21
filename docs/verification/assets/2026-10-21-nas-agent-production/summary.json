@@ -1,0 +1,52 @@
+{
+  "deployment": "SUCCESS",
+  "jenkins_build": 6,
+  "deploy_revision": "7267df697fc0912752b9b2a848d42fb8baa80b85",
+  "image": "ghcr.io/evodmik/robingraph@sha256:b8d68a53064e893c9f23f182e71c81ab33bd84cba00cf4da209ba3393d3003c3",
+  "container_id": "3e5cda21d1b8058e9f58811cabd15513f0337e3a7a34182771735cab5836fb8f",
+  "started_at": "2026-10-21T07:42:57.518338114Z",
+  "health": "healthy",
+  "transport": "NAS inbound WebSocket agent -> local Docker; no SSH in deployment or postcheck",
+  "postcheck_build": 2,
+  "postcheck_result": "SUCCESS",
+  "tests": {
+    "python_total": 1031,
+    "python_passed": 993,
+    "python_skipped": 38,
+    "python_failed": 0,
+    "frontend_passed": 317,
+    "amd64_fixture_smoke": "passed"
+  },
+  "actual_public_browser": {
+    "passed": 2,
+    "widths": [
+      1280,
+      390
+    ],
+    "scenario": "천둥오리 -> vector clarification -> 청둥오리 candidate -> answer",
+    "physical_mobile": false
+  },
+  "actual_public_get": {
+    "passed": 3,
+    "transport": "Chromium same-origin fetch",
+    "initial_urllib": "HTTP403 at public edge"
+  },
+  "approval": {
+    "authorization": "explicit user request to replace Production app",
+    "submitted_by": "admin API via Codex",
+    "first_attempt": "HTTP404: lowercase id, no approval; corrected observed id ApproveProduction accepted"
+  },
+  "database_writes": "No migration/backfill/data update commands executed; no whole DB checksum comparison this time",
+  "rollback": "not executed",
+  "branch_snapshots": {
+    "main": "7267df6",
+    "dev-codex": "7267df6",
+    "dev-claude": "e6618a2",
+    "dev-agy": "bc89db6",
+    "dev": "499c976"
+  },
+  "branch_validation_limits": {
+    "dev-claude": "Historical worktree preserved; 3 species_scope_api tests fail due to missing scope-integrated modules and Django dependency declarations. Not merged to Production.",
+    "dev-agy": "Node UI 314 passed; fixture HTTP runtime comparison not rerun; agent CLI crashed, Codex completed commit/push."
+  }
+}

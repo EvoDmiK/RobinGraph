@@ -1,0 +1,14 @@
+Re-extracting code files in . (no LLM needed)...
+[graphify watch] 30 file(s) not classified (no supported extension or shebang), skipped: .dockerignore, .env.example, .env.nas.example, .env.nas.ingest.example, .git, .gitattributes (+24 more)
+  AST extraction: 67/67 uncached files (100%) [10 workers]
+  warning: 4 .sql file(s) contributed nothing to the graph because a dependency is missing: tree_sitter_sql not installed. Install it with: pip install "graphifyy[sql]" (#1745)
+  warning: 17 code file(s) yielded no symbols (0.03 MB) — a data file, or source this extractor models no symbols for: docs/verification/assets/2026-10-09-approved-production-db-compare.py, docs/verification/assets/2026-10-09-approved-production-pg-audit.py, docs/verification/assets/2026-10-09-approved-production-pg-metadata.py, docs/verification/assets/2026-10-09-db-promotion-r2-audit.py, docs/verification/assets/2026-10-18-rg101/inventory.py (+12 more)
+[graphify watch] community set changed since labeling (407 saved labels, 389 communities now; renamed 183 community(ies) by their hub). Run `graphify label` to refresh names with the LLM.
+[graphify] backed up curated graph (4 files) -> 2026-10-21/
+Graph has 6724 nodes (above 5000 limit). Building aggregated community view...
+graph.html written (aggregated: 389 community nodes, 1328 cross-community edges)
+Tip: run with --obsidian for full node-level detail.
+[graphify watch] Rebuilt: 6724 nodes, 14392 edges, 389 communities
+[graphify watch] graph.json, graph.html and GRAPH_REPORT.md updated in graphify-out
+Code graph updated. For doc/paper/image changes run /graphify --update in your AI assistant.
+Tip: set GEMINI_API_KEY or GOOGLE_API_KEY to use Gemini for semantic extraction.
