@@ -1,0 +1,14 @@
+{
+  "image": "robingraph-api:test-rg406-recall-f8c64d62bbc8",
+  "base_image": "robingraph-api:test-scope-layout-733d461cbc61",
+  "base_revision": "bc643ee9edef0fc58c605adde70b4808b7622ac5",
+  "patch_sha256": "f8c64d62bbc8a2a5317ac7d23d346dfa881b7157272cdde4e41b41a0dd661681",
+  "file_sha256": {
+    "src/robingraph/retrieval/taxon_name_resolution.py": "c14fda645788419347db9738b75c4b381f06cba2db227dd1544bd3fb94c87729",
+    "src/robingraph/retrieval/taxon_name_vectors_neo4j.py": "e843a1274e6d7f32dfee38f19236b196877a1f2b09b5430e262d6129868a505d"
+  },
+  "previous_release": "/Users/kimdove/robingraph-test/releases/scope-layout-733d461cbc61",
+  "state": "verified",
+  "target": "test",
+  "uncommitted_runtime_patch": true
+}

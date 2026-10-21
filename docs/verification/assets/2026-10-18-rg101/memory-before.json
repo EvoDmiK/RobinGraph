@@ -1,0 +1,46 @@
+{
+  "memory": [
+    {
+      "name": "java.lang:type=Memory",
+      "attributes": {
+        "ObjectPendingFinalizationCount": {
+          "description": "ObjectPendingFinalizationCount",
+          "value": 0
+        },
+        "Verbose": {
+          "description": "Verbose",
+          "value": false
+        },
+        "HeapMemoryUsage": {
+          "description": "HeapMemoryUsage",
+          "value": {
+            "description": "java.lang.management.MemoryUsage",
+            "properties": {
+              "init": 4294967296,
+              "committed": 4294967296,
+              "max": 6442450944,
+              "used": 1068029448
+            }
+          }
+        },
+        "NonHeapMemoryUsage": {
+          "description": "NonHeapMemoryUsage",
+          "value": {
+            "description": "java.lang.management.MemoryUsage",
+            "properties": {
+              "init": 7667712,
+              "committed": 281411584,
+              "max": -1,
+              "used": 266723936
+            }
+          }
+        },
+        "ObjectName": {
+          "description": "ObjectName",
+          "value": "java.lang:type=Memory"
+        }
+      }
+    }
+  ],
+  "page_cache": []
+}

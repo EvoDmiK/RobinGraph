@@ -1,0 +1,94 @@
+{
+  "state": "verified",
+  "target": "prod",
+  "count": 855,
+  "fingerprint": "a96ed6f8e2ff224b9adfc2148e8b4144829b71c7fdaf27d0d9dce8591919f4c1",
+  "profile": [
+    "jinaai/jina-embeddings-v3",
+    512,
+    true
+  ],
+  "context": [
+    "rg:concept-set:avilist-v2025b",
+    "v2025b"
+  ],
+  "repository_result": {
+    "dry_run": false,
+    "inventory": 855,
+    "reused": 0,
+    "to_embed": 855,
+    "embedded": 855,
+    "stale": 0,
+    "schema": "created",
+    "constraint": "created",
+    "catalog_current": true
+  },
+  "cache_calls": 1,
+  "external_embedding_calls_for_copy": 0,
+  "compatibility_probe": {
+    "texts": 3,
+    "cosines": [
+      0.9999990853756634,
+      0.99999879160047,
+      0.9999992185122778
+    ],
+    "purpose": "compatibility validation only; copied catalog is not regenerated"
+  },
+  "max_vector_component_difference": 2.7755575615628914e-17,
+  "actual_vector_queries": [
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "global_self_match": true,
+      "scoped_match": true
+    },
+    {
+      "scientific_name": "Anas zonorhyncha",
+      "global_self_match": true,
+      "scoped_match": true
+    },
+    {
+      "scientific_name": "Nestor notabilis",
+      "global_self_match": true,
+      "scoped_match": true
+    }
+  ],
+  "taxon_count": 33694,
+  "taxon_properties_unchanged": true,
+  "ingest_states_unchanged": true,
+  "schema": [
+    {
+      "type": "VECTOR",
+      "state": "ONLINE",
+      "labelsOrTypes": [
+        "TaxonNameVector"
+      ],
+      "properties": [
+        "name_vector"
+      ],
+      "options": {
+        "indexConfig": {
+          "vector.dimensions": 512,
+          "vector.default_search_expansion_factor": 3.0,
+          "vector.hnsw.m": 16,
+          "vector.quantization.type": "BINARY",
+          "vector.similarity_function": "COSINE",
+          "vector.hnsw.ef_construction": 100
+        }
+      }
+    }
+  ],
+  "constraint": [
+    {
+      "type": "NODE_PROPERTY_UNIQUENESS",
+      "labelsOrTypes": [
+        "TaxonNameVectorEntry"
+      ],
+      "properties": [
+        "key"
+      ]
+    }
+  ],
+  "destination_after_sha256": "59b74a0a93d86bbdd05c58636762cddd535d00c77dffa4a11e25f0be97311a0c",
+  "automatic_rollback_performed": false,
+  "nas_backup_directory": "/home/kimdove/RobinGraph-approved-ui-e7ad221/.name-vector-promotions/name-vector-promotion-20261021-8ffd9df9"
+}

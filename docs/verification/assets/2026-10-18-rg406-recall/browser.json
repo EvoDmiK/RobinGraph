@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "base": "https://robingraph-test.dove-nest.com",
+  "rows": [
+    {
+      "width": 1280,
+      "scope": "outside",
+      "query": "높은산앵무아",
+      "expected": "Kea",
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "scope": "korea",
+      "query": "천둥오리",
+      "expected": "청둥오리",
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "scope": "unknown",
+      "query": "타조아",
+      "expected": "타조",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "scope": "outside",
+      "query": "높은산앵무아",
+      "expected": "Kea",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "scope": "korea",
+      "query": "천둥오리",
+      "expected": "청둥오리",
+      "passed": true
+    },
+    {
+      "width": 390,
+      "scope": "unknown",
+      "query": "타조아",
+      "expected": "타조",
+      "passed": true
+    },
+    {
+      "width": 320,
+      "scope": "outside",
+      "query": "높은산앵무아",
+      "expected": "Kea",
+      "passed": true
+    },
+    {
+      "width": 320,
+      "scope": "korea",
+      "query": "천둥오리",
+      "expected": "청둥오리",
+      "passed": true
+    },
+    {
+      "width": 320,
+      "scope": "unknown",
+      "query": "타조아",
+      "expected": "타조",
+      "passed": true
+    }
+  ]
+}

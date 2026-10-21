@@ -1,0 +1,29 @@
+{
+  "state": "verified",
+  "target": "prod",
+  "promoted_name_vectors": 855,
+  "catalogs": 1,
+  "dimensions": 512,
+  "copied_from_test": true,
+  "regenerated_catalog": false,
+  "validation_model_probe_texts": 6,
+  "other_test_data_copied": false,
+  "taxon_count": 33694,
+  "taxon_properties_unchanged": true,
+  "postgres_ingest_states_unchanged": true,
+  "test_source_snapshot_unchanged": true,
+  "actual_vector_index_queries_passed": 6,
+  "actual_api_cases_passed": 4,
+  "additional_bare_spaced_name_contract_observed": true,
+  "public_browser_flows_passed": 2,
+  "viewports": [
+    1280,
+    390
+  ],
+  "service_restart_or_deployment_performed": false,
+  "git_commit_push_performed": false,
+  "automatic_rollback_performed": false,
+  "verified_at_utc": "2026-10-20T22:22:05.479719+00:00",
+  "embedding_profile_model_id": "jinaai/jina-embeddings-v3",
+  "embedding_service": "user self-hosted model through Jina-compatible API"
+}

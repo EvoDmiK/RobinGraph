@@ -1,0 +1,226 @@
+{
+  "inventory": 850,
+  "cases": [
+    {
+      "query": "케아",
+      "scope": "korea",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "케아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "케아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "높은산앵무아",
+      "scope": "korea",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "높은산앵무아",
+      "scope": "outside",
+      "global_top10_eligible_count": 1,
+      "exact_scoped_eligible_count": 1,
+      "best_scoped_global_rank": 1,
+      "best_scoped_name": "높은산앵무",
+      "best_scoped_cosine": 0.428025
+    },
+    {
+      "query": "높은산앵무아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "키위아",
+      "scope": "korea",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "키위아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "키위아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "타조아",
+      "scope": "korea",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "타조아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "타조아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 1,
+      "exact_scoped_eligible_count": 1,
+      "best_scoped_global_rank": 1,
+      "best_scoped_name": "타조",
+      "best_scoped_cosine": 0.291312
+    },
+    {
+      "query": "천둥오리",
+      "scope": "korea",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "천둥오리",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "천둥오리",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "청둥오리아",
+      "scope": "korea",
+      "global_top10_eligible_count": 1,
+      "exact_scoped_eligible_count": 1,
+      "best_scoped_global_rank": 1,
+      "best_scoped_name": "청둥오리",
+      "best_scoped_cosine": 0.257538
+    },
+    {
+      "query": "청둥오리아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "청둥오리아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "갈매기아",
+      "scope": "korea",
+      "global_top10_eligible_count": 1,
+      "exact_scoped_eligible_count": 1,
+      "best_scoped_global_rank": 1,
+      "best_scoped_name": "꼬마갈매기",
+      "best_scoped_cosine": 0.264624
+    },
+    {
+      "query": "갈매기아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "갈매기아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "검둥오리아",
+      "scope": "korea",
+      "global_top10_eligible_count": 1,
+      "exact_scoped_eligible_count": 1,
+      "best_scoped_global_rank": 1,
+      "best_scoped_name": "검둥오리",
+      "best_scoped_cosine": 0.267497
+    },
+    {
+      "query": "검둥오리아",
+      "scope": "outside",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    },
+    {
+      "query": "검둥오리아",
+      "scope": "unknown",
+      "global_top10_eligible_count": 0,
+      "exact_scoped_eligible_count": 0,
+      "best_scoped_global_rank": null,
+      "best_scoped_name": null,
+      "best_scoped_cosine": null
+    }
+  ],
+  "scope_counts": {
+    "korea": 591,
+    "outside": 1,
+    "unknown": 258
+  }
+}

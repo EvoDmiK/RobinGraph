@@ -1,0 +1,16 @@
+{
+  "python": {
+    "total": 1031,
+    "passed": 993,
+    "skipped": 38,
+    "failed": 0,
+    "kind": "offline mock/fixture; opt-in integrations skipped"
+  },
+  "frontend": {
+    "passed": 317,
+    "failed": 0,
+    "kind": "Node mock DOM"
+  },
+  "git_diff_check": "passed",
+  "production_deployment_authorized": true
+}

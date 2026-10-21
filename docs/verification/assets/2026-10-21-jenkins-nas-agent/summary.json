@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-21",
+  "remote": {
+    "production_id": "a4d2ce5232a9159806c15563ea0d30c46247766fa299513b160ce401129c4913",
+    "production_started": "2026-10-20T08:55:43.816773705Z",
+    "production_image": "ghcr.io/evodmik/robingraph@sha256:336ace7938471bdcdf2be1bfac904a33aa1cfd20987ed945c4ed5a74632f005d",
+    "production_health": "healthy",
+    "helper_sha256": "8d93a0daefe552d0ec71280c4ebff39b07ad0a7037569309c05ae9b3162337f1",
+    "agent_env_mode": "0o600",
+    "agent_image_id": "sha256:a8d86d2abd0222648d7df3aef47b347b651af517d1a009095773e0cf1f02f836",
+    "agent_user": "1000:121",
+    "agent_restart": "unless-stopped",
+    "agent_home": []
+  },
+  "node": {
+    "_class": "hudson.slaves.SlaveComputer",
+    "displayName": "robingraph-nas-deploy",
+    "numExecutors": 1,
+    "offline": false
+  },
+  "check_job": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+    "lastBuild": {
+      "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+      "building": false,
+      "number": 1,
+      "result": "SUCCESS",
+      "url": "http://192.168.219.99:8080/job/RobinGraph-NAS-Agent-Check/1/"
+    }
+  },
+  "production_build_triggered": false,
+  "app_restarted": false,
+  "db_write": false,
+  "unit_tests": {
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "jenkins_lint": "passed",
+  "commit_push_merge": false,
+  "bootstrap_transport": "SSH (installation only)",
+  "deployment_transport": "NAS inbound WebSocket agent; local Docker",
+  "production_job_updated": true,
+  "helper_sha256": "8d93a0daefe552d0ec71280c4ebff39b07ad0a7037569309c05ae9b3162337f1",
+  "limitations": [
+    "actual image replacement not executed",
+    "actual rollback not executed",
+    "host reboot not tested",
+    "Docker socket grants host control",
+    "inline Jenkins config ahead of uncommitted Git changes"
+  ]
+}

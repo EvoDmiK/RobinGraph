@@ -1,0 +1,16 @@
+F
+======================================================================
+FAIL: test_scope_ranking_recovers_candidate_below_global_top_ten (tests.test_taxon_name_resolution.ScopedRecallTests.test_scope_ranking_recovers_candidate_below_global_top_ten)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/kimdove/orca/workspaces/RobinGraph/dev-codex/tests/test_taxon_name_resolution.py", line 289, in test_scope_ranking_recovers_candidate_below_global_top_ten
+    self.assertEqual(result['status'], 'candidates')
+AssertionError: 'not_found' != 'candidates'
+- not_found
++ candidates
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (failures=1)

@@ -1,0 +1,45 @@
+{
+  "target": "prod",
+  "response_mocking": false,
+  "cases": [
+    {
+      "query": "Anas platyrhynchos",
+      "scope": "korea",
+      "disposition": "answer",
+      "method": "graph_exact",
+      "expected_scientific_name": "Anas platyrhynchos",
+      "passed": true
+    },
+    {
+      "query": "흰뺨 검둥 오리",
+      "scope": "korea",
+      "disposition": "answer",
+      "method": "graph_normalized",
+      "expected_scientific_name": "Anas zonorhyncha",
+      "passed": true
+    },
+    {
+      "query": "천둥오리",
+      "scope": "korea",
+      "disposition": "clarify",
+      "method": "vector",
+      "expected_scientific_name": "Anas platyrhynchos",
+      "passed": true
+    },
+    {
+      "query": "Keaa",
+      "scope": "outside",
+      "disposition": "clarify",
+      "method": "vector",
+      "expected_scientific_name": "Nestor notabilis",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "additional_contract_observation": {
+    "question": "흰뺨 검둥 오리",
+    "without_explicit_name_filter": "clarify_before_name_resolution",
+    "explicit_name_filter": "answer",
+    "initial_verification_expectation_corrected": true
+  }
+}

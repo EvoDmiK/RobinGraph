@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "base": "https://robingraph.dove-nest.com",
+  "scope": "Live Production GET/static UI; POST blocked; Chromium viewport emulation, no API response mocks",
+  "rows": [
+    {
+      "width": 1280,
+      "passed": true,
+      "blockedPostPaths": [
+        "/cdn-cgi/rum"
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "blockedPostPaths": [
+        "/cdn-cgi/rum"
+      ],
+      "pageErrors": []
+    },
+    {
+      "width": 320,
+      "passed": true,
+      "blockedPostPaths": [
+        "/cdn-cgi/rum"
+      ],
+      "pageErrors": []
+    }
+  ]
+}

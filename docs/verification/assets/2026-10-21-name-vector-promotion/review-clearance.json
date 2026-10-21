@@ -1,0 +1,15 @@
+{
+  "reviewer": "Claude in dev-claude",
+  "full_review_dispatch": "ctx_e052f00236e5",
+  "final_compose_parser_review_dispatch": "ctx_7521c6cf3c3e",
+  "common_sha256": "07a17f950c9eb868a2d2991d49f26cc9a47ed555245bfdbd406caa776dc9a156",
+  "operator_sha256": "4ad04729670b74d98bef6020eb67380f48245b4fa3f06000c71e2b43fd329767",
+  "offline_unit_tests_passed": 61,
+  "source_negative_cases_rejected": 16,
+  "destination_negative_cases_rejected": 4,
+  "compose_parser_cases_passed": 16,
+  "reviewer_db_model_ssh_calls": 0,
+  "mock_apply_count": 855,
+  "mock_max_component_difference": 2.8e-17,
+  "final_verdict": "cleared for guarded --apply; actual Production verification belongs to root"
+}

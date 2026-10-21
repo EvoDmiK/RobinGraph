@@ -1,0 +1,141 @@
+{
+  "target": "test",
+  "neo4j_host": "192.168.219.98",
+  "read_only": true,
+  "queries": {
+    "counts": [
+      {
+        "label": "SourceDataset",
+        "count": 3
+      },
+      {
+        "label": "Taxon",
+        "count": 33694
+      },
+      {
+        "label": "Document",
+        "count": 2
+      },
+      {
+        "label": "Chunk",
+        "count": 4
+      },
+      {
+        "label": "HybridSearchChunk",
+        "count": 4
+      },
+      {
+        "label": "HybridVectorChunk",
+        "count": 2
+      }
+    ],
+    "chunks": [
+      {
+        "count": 4,
+        "text_characters": 171,
+        "vector_components": 1024,
+        "dimensions": [
+          512
+        ]
+      }
+    ],
+    "documents": [
+      {
+        "labels": [
+          "Document",
+          "RobinGraph",
+          "Fixture"
+        ],
+        "count": 2
+      }
+    ],
+    "indices": [
+      {
+        "name": "robingraphFixtureChunkFulltext",
+        "type": "FULLTEXT",
+        "state": "ONLINE",
+        "populationPercent": 100.0,
+        "labelsOrTypes": [
+          "HybridSearchChunk"
+        ],
+        "properties": [
+          "text"
+        ],
+        "options": {
+          "indexConfig": {
+            "fulltext.analyzer": "standard-no-stop-words",
+            "fulltext.eventually_consistent": false
+          },
+          "indexProvider": "fulltext-1.0"
+        }
+      },
+      {
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "state": "ONLINE",
+        "populationPercent": 100.0,
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      },
+      {
+        "name": "robingraphTaxonNameVector",
+        "type": "VECTOR",
+        "state": "ONLINE",
+        "populationPercent": 100.0,
+        "labelsOrTypes": [
+          "TaxonNameVector"
+        ],
+        "properties": [
+          "name_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      }
+    ],
+    "metrics_available": [
+      {
+        "name": "db.stats.clear"
+      },
+      {
+        "name": "db.stats.collect"
+      },
+      {
+        "name": "db.stats.retrieve"
+      },
+      {
+        "name": "db.stats.retrieveAllAnonymized"
+      },
+      {
+        "name": "db.stats.status"
+      },
+      {
+        "name": "db.stats.stop"
+      },
+      {
+        "name": "dbms.queryJmx"
+      }
+    ]
+  }
+}

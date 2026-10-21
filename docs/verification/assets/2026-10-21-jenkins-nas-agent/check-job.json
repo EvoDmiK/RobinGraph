@@ -1,0 +1,11 @@
+{
+  "_class": "org.jenkinsci.plugins.workflow.job.WorkflowJob",
+  "lastBuild": {
+    "_class": "org.jenkinsci.plugins.workflow.job.WorkflowRun",
+    "building": false,
+    "number": 1,
+    "result": "SUCCESS",
+    "url": "http://192.168.219.99:8080/job/RobinGraph-NAS-Agent-Check/1/"
+  },
+  "inQueue": false
+}

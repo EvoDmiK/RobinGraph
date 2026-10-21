@@ -1,0 +1,13 @@
+{
+  "image": "robingraph-api:test-rg406-outside-3b4106fe77ed",
+  "base_image": "robingraph-api:test-rg406-recall-f8c64d62bbc8",
+  "base_revision": "bc643ee9edef0fc58c605adde70b4808b7622ac5",
+  "patch_sha256": "3b4106fe77ed9aad68e980b9cffda7dce59a96b1b5a8623e7c56079065e88c91",
+  "file_sha256": {
+    "src/robingraph/retrieval/taxonomy_lineage_neo4j.py": "fa8be084829559a8c9801918ef69a23159127e236d596d8c88e60b8b92efb780"
+  },
+  "previous_release": "/Users/kimdove/robingraph-test/releases/rg406-recall-f8c64d62bbc8",
+  "state": "verified",
+  "target": "test",
+  "uncommitted_runtime_patch": true
+}

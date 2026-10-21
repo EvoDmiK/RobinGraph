@@ -1,0 +1,47 @@
+{
+  "operator_sha256": "4ad04729670b74d98bef6020eb67380f48245b4fa3f06000c71e2b43fd329767",
+  "validation_sha256": "07a17f950c9eb868a2d2991d49f26cc9a47ed555245bfdbd406caa776dc9a156",
+  "operation": "TEST reviewed name vectors -> Production",
+  "target": "prod",
+  "source_count": 855,
+  "profile": [
+    "jinaai/jina-embeddings-v3",
+    512,
+    true
+  ],
+  "context": [
+    "rg:concept-set:avilist-v2025b",
+    "v2025b"
+  ],
+  "fingerprint": "a96ed6f8e2ff224b9adfc2148e8b4144829b71c7fdaf27d0d9dce8591919f4c1",
+  "source_sha256": "a46d0bb4b3a1573c29ace2e7b91cada00333ff5c5f7fe783661d61fd637b4a1d",
+  "destination_before_sha256": "69e60bdd50cdc44826272afcb11174ad37e6e3880201d5b427745a26465b6b39",
+  "private_backup": "/Users/kimdove/robingraph-test/backups/name-vector-promotion-20261021-8ffd9df9",
+  "compatibility": {
+    "plan": {
+      "dry_run": true,
+      "inventory": 855,
+      "reused": 0,
+      "to_embed": 855,
+      "embedded": 0,
+      "stale": 0,
+      "schema": "absent",
+      "constraint": "absent",
+      "catalog_current": false
+    },
+    "model_probe": {
+      "texts": 3,
+      "cosines": [
+        0.9999990853756634,
+        0.99999879160047,
+        0.9999992185122778
+      ],
+      "purpose": "compatibility validation only; copied catalog is not regenerated"
+    }
+  },
+  "production_written": false,
+  "destination_identity_sha256": "4f628bf42b421967bbc859d0a1e38fe4994a552c8c7471f31206722992536275",
+  "source_endpoint_equals_destination": true,
+  "source_taxon_count": 33694,
+  "destination_taxon_count": 33694
+}

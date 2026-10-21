@@ -1,0 +1,18 @@
+{
+  "checked_at_utc": "2026-10-20T22:08:55.843980+00:00",
+  "host": "192.168.219.99",
+  "ssh_ports": {
+    "99": "ConnectionRefusedError",
+    "22": "ConnectionRefusedError"
+  },
+  "production_db_writes": 0,
+  "source_export_complete": true,
+  "target_compatibility_checked": false,
+  "target_backup_created": false,
+  "model_validation_calls": 0,
+  "blocker": "Existing NAS SSH refuses connection; user asked to restore SSH or provide current port",
+  "nas_settings_changed": false,
+  "scope": "Initial check before user restored SSH",
+  "resolved_by_user": true,
+  "final_state": "SSH99 restored; Production promotion and validation completed"
+}

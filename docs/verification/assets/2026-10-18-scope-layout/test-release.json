@@ -1,0 +1,10 @@
+{
+  "image": "robingraph-api:test-scope-layout-733d461cbc61",
+  "base_image": "robingraph-api:test-scope-layout-8651b17c6a36",
+  "base_revision": "bc643ee9edef0fc58c605adde70b4808b7622ac5",
+  "css_sha256": "733d461cbc61ec6361223c056c262a54bc036d70819c11096c5bf5e2138849c6",
+  "previous_release": "/Users/kimdove/robingraph-test/releases/scope-layout-8651b17c6a36",
+  "state": "verified",
+  "target": "test",
+  "uncommitted_css_patch": true
+}
