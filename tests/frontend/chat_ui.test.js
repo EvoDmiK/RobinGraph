@@ -3955,6 +3955,18 @@ test("direct ecological answer displays peers without another lookup and compari
   const answer = messageRows(dom.elementsById.history)[1];
   const explorer = collectAllNodes(answer).find(n => n.className === "species-ecological-related");
   assert.equal(explorer.children[1].hidden, false);
+  assert.equal(explorer.children[0].hidden, true, "focused answer has no redundant toggle");
+  assert.equal(explorer.getAttribute("data-inline"), "true");
+  const compact = answer.children.find(n => n.getAttribute("data-ecological") === "true");
+  assert.ok(compact.children.includes(explorer));
+  assert.equal(collectAllNodes(compact).some(n => n.className === "question-answer-facts"), false);
+  assert.equal(compact.children.some(n => n.tagName === "p"), false, "duplicate summary is removed after valid groups render");
+  assert.equal(collectAllNodes(explorer).filter(n => n.className === "species-note").length, 1);
+  assert.ok(collectAllNodes(explorer).some(n => n.className === "ecological-category" && n.textContent === "습지"));
+  const sourceGroups = collectAllNodes(explorer).filter(n => n.className === "ecological-group").map(n => n.children.find(child => child.className === "ecological-source"));
+  assert.equal(sourceGroups.length, 2);
+  assert.ok(sourceGroups.every(n => n.children[0].textContent === "비교 기준과 출처"));
+  assert.ok(sourceGroups.every(n => collectAllNodes(n).some(child => child.tagName === "a" && child.href === "https://example.org/avonet")));
   assert.match(collectedText(explorer), /English peer/);
   assert.equal(dom.fetchCalls.some(c => c.url.startsWith("/v1/taxa/ecological-related")), false);
   collectAllNodes(explorer).find(n => n.tagName === "button" && /English peer/.test(n.getAttribute("aria-label") || "")).dispatch("click"); await tick();
@@ -6737,4 +6749,19 @@ test('RG406 an old candidate button cannot submit after changing scope',async()=
   const button=collectAllNodes(dom.elementsById['history']).find(n=>n.className==='entity-candidate-button');assert.ok(button);
   select('outside');const before=dom.fetchCalls.length;button.dispatch('click',{});
   assert.equal(dom.fetchCalls.length,before);assert.equal(messageRows(dom.elementsById['history']).length,0);
+});
+
+test("focused ecological answer retains prose for missing or stale structured evidence", async () => {
+  for (const relations of [Object.assign(ecologicalFixture(), { concept_set_id: "old" }), Object.assign(ecologicalFixture(), { groups: [] })]) {
+    const payload = fakeProfilePayload();
+    payload.result.question_answer = { topic: "ecological_related", title: "비교 결과", text: "아직 확인한 범위가 제한됩니다.", items: [{ text: "보존할 근거 설명" }], relations };
+    const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : payload)));
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "같은 생태의 새는?";
+    pressKey(dom, {}); await settleEventPath(); await tick();
+    const answer = messageRows(dom.elementsById.history)[1];
+    assert.match(collectedText(answer), /아직 확인한 범위가 제한됩니다/);
+    assert.match(collectedText(answer), /보존할 근거 설명/);
+    assert.equal(collectAllNodes(answer).filter(n => (n.className || "").split(" ").includes("ecological-peer")).length, 0);
+  }
 });

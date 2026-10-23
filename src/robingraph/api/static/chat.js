@@ -1906,10 +1906,11 @@
     var onComparison = typeof options.onComparison === "function" ? options.onComparison : null;
     var speciesScope = normalizeSpeciesScope(options.speciesScope);
     var section = doc.createElement("section"); section.className = "species-ecological-related";
+    if (options.inline) { section.setAttribute("data-inline", "true"); }
     section.setAttribute("aria-label", speciesLabel(profile.taxon) + " 생태 범주 탐색");
     var open = doc.createElement("button"); open.type = "button";
     open.textContent = "같은 서식 환경·먹이 생태의 새 살펴보기";
-    open.setAttribute("aria-expanded", "false"); section.appendChild(open);
+    open.setAttribute("aria-expanded", "false"); open.hidden = !!options.inline; section.appendChild(open);
     var content = doc.createElement("div"); content.hidden = true; section.appendChild(content);
     var status = doc.createElement("p"); status.setAttribute("role", "status"); content.appendChild(status);
     var results = doc.createElement("div"); content.appendChild(results);
@@ -1988,17 +1989,21 @@
         if (!data.taxon || data.taxon.taxon_id !== profile.taxon.taxon_id || !matchesRelease(data)) { throw new Error("changed"); }
         if (!active()) { return; }
         while (results.firstChild) { results.removeChild(results.firstChild); }
-        var note = doc.createElement("p"); note.className = "species-note"; note.textContent = ECOLOGICAL_NOTE; results.appendChild(note);
-        var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release; results.appendChild(version);
+        var note = doc.createElement("p"); note.className = "species-note"; note.textContent = ECOLOGICAL_NOTE; if (!options.inline) { results.appendChild(note); }
+        var version = doc.createElement("p"); version.textContent = data.taxonomy_source + " · " + data.taxonomy_release;
+        if (!options.inline) { results.appendChild(version); }
         var count = 0;
         (Array.isArray(data.groups) ? data.groups : []).forEach(function (group) {
           if (!supportedEcologicalGroup(group)) { return; }
           count++;
-          var block = doc.createElement("section");
+          var block = doc.createElement("section"); block.className = "ecological-group";
           var title = doc.createElement("h3");
-          title.textContent = (group.relation === "habitat" ? "같은 서식 환경의 새" : "같은 먹이 생태의 새") + " · " + group.display;
+          title.textContent = (group.relation === "habitat" ? "같은 서식 환경" : "같은 먹이 생태") + (options.inline ? "" : "의 새 · " + group.display);
+          if (options.inline) { var category = doc.createElement("span"); category.className = "ecological-category"; category.textContent = group.display; title.appendChild(category); }
           block.appendChild(title);
-          block.appendChild(buildEcologicalSource(doc, group.source));
+          var groupEvidence = buildEcologicalSource(doc, group.source);
+          if (options.inline) { groupEvidence.children[0].textContent = "비교 기준과 출처"; var classification = doc.createElement("p"); classification.textContent = "분류 기준: " + data.taxonomy_source + " · " + data.taxonomy_release; groupEvidence.appendChild(classification); }
+          else { block.appendChild(groupEvidence); }
           var peers = (Array.isArray(group.items) ? group.items : []).filter(function (peer) {
             return peer && peer.rank === "species" && peer.taxon_id && typeof peer.scientific_name === "string" && peer.scientific_name.trim() && peer.taxon_id !== profile.taxon.taxon_id && peer.evidence && peer.evidence.source_name && sanitizeUrl(peer.evidence.source_url);
           });
@@ -2009,20 +2014,23 @@
             choice.button.addEventListener("click", function () { selectPeer(peer, group, choice.button); });
             var evidence = buildEcologicalSource(doc, peer.evidence);
             if (sanitizeUrl(peer.korean_name_source_url)) { evidence.appendChild(safeLink(doc, "이름 출처", peer.korean_name_source_url)); }
-            choice.row.appendChild(evidence);
+            if (options.inline) { evidence.children[0].textContent = speciesLabel(peer) + " · 생태·이름 출처"; groupEvidence.appendChild(evidence); }
+            else { choice.row.appendChild(evidence); }
             block.appendChild(choice.row);
           });
           if (group.has_more || peers.length > 3) { var more = doc.createElement("p"); more.textContent = "일부 종만 표시합니다 (범주별 최대 3종)."; block.appendChild(more); }
+          if (options.inline) { block.appendChild(groupEvidence); }
           results.appendChild(block);
         });
-        status.textContent = count ? "비교할 새를 선택하세요." : "출처가 확인된 서식 환경·먹이 생태 관련 종이 없습니다.";
+        if (options.inline && count) { results.appendChild(note); if (typeof options.onRendered === "function") { options.onRendered(); } }
+        status.textContent = count ? (options.inline ? "" : "비교할 새를 선택하세요.") : "출처가 확인된 서식 환경·먹이 생태 관련 종이 없습니다.";
       }).catch(function (error) {
         loaded = false; if (!active()) { return; }
-        status.textContent = error && error.message === "changed" ? "분류 자료가 갱신되었습니다. 질문을 다시 보내 최신 생태 범주를 확인하세요." : "생태 범주를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.";
+        status.textContent = error && error.message === "changed" ? "분류 자료가 갱신되었습니다. 질문을 다시 보내 최신 생태 범주를 확인하세요." : (options.inline ? "생태 범주를 불러오지 못했습니다. 질문을 다시 보내 재시도해 주세요." : "생태 범주를 불러오지 못했습니다. 접었다 다시 펼쳐 재시도하거나, 카드를 다시 열어주세요.");
       });
     }
     open.addEventListener("click", toggle);
-    if (options.initiallyOpen) { toggle(); }
+    if (options.initiallyOpen || options.inline) { toggle(); }
     return section;
   }
 
@@ -4520,12 +4528,14 @@
 
       var questionAnswer = answer.result && answer.result.kind === "profile" && answer.result.question_answer;
       var ranking = questionAnswer && questionAnswer.relations && questionAnswer.relations.ranking;
+      var directEcological = questionAnswer && questionAnswer.topic === "ecological_related" && questionAnswer.relations && answer.result.profile.taxon.rank !== "subspecies";
       var directRanked = questionAnswer && questionAnswer.topic === "related" && ranking && ranking.limit === 3 &&
         ["taxonomy-ecology-v1", "taxonomy-phylogeny-ecology-v2", "taxonomy-phylogeny-ecology-v3"].indexOf(ranking.method) !== -1;
       var rankedExplorer = directRanked ? buildRelatedExplorer(doc, answer.result.profile, taxaFetch, {
         initialData: questionAnswer.relations, inline: true, onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope,
       }) : null;
       var targeted = buildQuestionAnswer(doc, questionAnswer, { rankedExplorer: rankedExplorer });
+      if (directEcological && targeted) { targeted.setAttribute("data-ecological", "true"); }
       var structured = targeted || (answer.result && answer.result.kind === "profile" ? buildSpeciesAnswer(doc, answer.result.profile, true) : null);
       var answerSources = null;
       if (structured) {
@@ -4628,6 +4638,14 @@
           if (result.profile.taxon.rank !== "subspecies") {
             var relatedOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope };
             var ecologicalOptions = { onComparison: appendComparisonMessage, isActive: conversationGuard(), speciesScope: scope };
+            if (directEcological && targeted) {
+              ecologicalOptions.inline = true;
+              ecologicalOptions.onRendered = function () {
+                Array.from(targeted.children).forEach(function (child) {
+                  if (child.tagName.toLowerCase() === "p" || child.className === "question-answer-facts") { targeted.removeChild(child); }
+                });
+              };
+            }
             var directOptions = targeted && questionAnswer.relations
               ? (questionAnswer.topic === "related" ? relatedOptions : questionAnswer.topic === "ecological_related" ? ecologicalOptions : null) : null;
             if (directOptions) { directOptions.initialData = questionAnswer.relations; directOptions.initiallyOpen = true; }
@@ -4641,7 +4659,8 @@
               else { extra.appendChild(related); }
             }
             var ecological = buildEcologicalExplorer(doc, result.profile, taxaFetch, ecologicalOptions);
-            if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
+            if (directEcological && targeted) { targeted.appendChild(ecological); speciesPopup.setAttribute("data-ecological-reference", "true"); }
+            else if (targeted && questionAnswer.topic === "ecological_related") { item.appendChild(ecological); }
             else { extra.appendChild(ecological); }
           }
           if (result.profile.taxon.rank !== "subspecies") {
