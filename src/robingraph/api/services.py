@@ -10,7 +10,7 @@ them as `{"detail": ...}` with the given status and headers.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 
 from datetime import date
 import functools
@@ -38,7 +38,7 @@ from ..retrieval.operational import (
 from ..retrieval.repository import GraphRepository
 from ..retrieval.fixture_repository import FixtureRepository
 from ..retrieval.species_profile import SpeciesNotFoundError, species_summary
-from ..retrieval.species_questions import SpeciesQuestion, parse_species_question, focused_answer
+from ..retrieval.species_questions import SpeciesQuestion, parse_species_question, focused_answer, ecology_meaning_choices
 from ..retrieval.name_relations import reviewed_search_terms
 from ..retrieval.taxonomy_lineage import TaxonomyLineage, TaxonomyLineageRepository
 from ..slice import Answer, QuestionService, validate_answer
@@ -47,6 +47,7 @@ from .schemas import (
     AnswerResponse,
     ChatClarifyResult,
     ChatEvidenceResult,
+    ChatGraphResult,
     ChatNameRelationsResult,
     ChatObservationsResult,
     ChatRequest,
@@ -83,7 +84,7 @@ from .schemas import (
 from .semantic_router import SemanticRouter
 from ..retrieval.species_scope import SpeciesScope, scope_matches, with_species_scope
 from .jev_router import JevRouter
-from .question_entities import extract_name
+from .question_entities import extract_name, rewrite_name_candidate, AmbiguousNameSpanError
 
 
 class ApiError(Exception):
@@ -621,6 +622,10 @@ class ApiService:
         related_species_handler: Callable[[str], dict] | None = None,
         similar_species_handler: Callable[[str], dict] | None = None,
         ecological_relations_handler: Callable[[str], dict] | None = None,
+        graph_question_handler: Callable[..., dict] | None = None,
+        graph_intent_handler: Callable[[str], object] | None = None,
+        graph_plan_handler: Callable[[str], object] | None = None,
+        graph_intent_mode: str = "off",
         subspecies_handler: Callable[[str], dict] | None = None,
         name_relations_handler: Callable[[str], dict | None] | None = None,
         taxon_name_resolution_handler: Callable[[str], dict] | None = None,
@@ -640,6 +645,12 @@ class ApiService:
         self.related_species_handler = related_species_handler
         self.similar_species_handler = similar_species_handler
         self.ecological_relations_handler = ecological_relations_handler
+        self.graph_question_handler = graph_question_handler
+        if graph_intent_mode not in ("off", "shadow", "active"):
+            raise ValueError("graph_intent_mode must be off, shadow or active")
+        self.graph_intent_handler = graph_intent_handler
+        self.graph_plan_handler = graph_plan_handler
+        self.graph_intent_mode = graph_intent_mode
         self.subspecies_handler = subspecies_handler
         self.name_relations_handler = name_relations_handler
         self.taxon_name_resolution_handler = taxon_name_resolution_handler
@@ -817,6 +828,182 @@ class ApiService:
         Explicit routes never read the router, so a missing embedding setting
         or provider outage cannot affect established operational workflows.
         """
+
+        from ..retrieval.graph_questions import parse_graph_question
+
+        if request.intent == "auto" and self.graph_intent_mode == "active":
+            choices = ecology_meaning_choices(request.question)
+            if choices:
+                prompt = "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요."
+                return ChatResponse(
+                    selected_intent="profile", route_method="deterministic", disposition="clarify",
+                    answer_text=prompt,
+                    warnings=["식물 군집 자체의 유사성을 비교하는 자료는 제공하지 않습니다. 선택 전에는 의미나 종을 확정하지 않았습니다."],
+                    result=ChatClarifyResult(prompt=prompt, choices=list(choices)),
+                )
+
+        graph_question = parse_graph_question(request.question) if request.intent in ("auto", "profile") else None
+        graph_method = "deterministic" if request.intent == "auto" else "explicit"
+        # Established single-species routes need no extra embedding request.
+        single_species = (parse_species_question(request.question) or _species_chat_question(request.question))
+        if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
+                and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
+            from ..retrieval.graph_intent_schema import execution_gate, to_graph_question, unsupported_food
+
+            with tracing.span("graph_intent.route", tracing.CHAIN) as route_span:
+                try:
+                    handler = (self.graph_plan_handler if self.graph_intent_mode == "active"
+                               and request.intent == "auto" and self.graph_plan_handler is not None
+                               else self.graph_intent_handler)
+                    interpreted = handler(request.question)
+                    if self.graph_intent_mode == "active" and getattr(interpreted, "source", None) not in ("extractor", "semantic"):
+                        raise ValueError("Graph interpretation must include extractor evidence")
+                    disposition = execution_gate(request.question, interpreted)
+                    route_span.set_attributes({"graph_intent.mode": self.graph_intent_mode,
+                                               "graph_intent.kind": getattr(interpreted, "kind", None),
+                                               "graph_intent.source": getattr(interpreted, "source", None),
+                                               "graph_intent.disposition": disposition,
+                                               "graph_intent.template_matches_legacy": to_graph_question(request.question, interpreted) == graph_question,
+                                               "graph_intent.negation_count": len(getattr(interpreted, "negation", ())),
+                                               "graph_intent.residual_count": len(getattr(interpreted, "residual", ())),
+                                               "graph_intent.ambiguity_count": len(getattr(interpreted, "ambiguity", ())),
+                                               "graph_intent.legacy_kind": graph_question.kind if graph_question else None})
+                    if self.graph_intent_mode == "active":
+                        legacy_match = graph_question is not None
+                        graph_question = to_graph_question(request.question, interpreted)
+                        graph_method = "semantic" if request.intent == "auto" else "explicit"
+                        foods = unsupported_food(request.question, interpreted)
+                        if foods:
+                            # A food with no data key: say so exactly; nothing is queried or broadened.
+                            from ..retrieval.graph_questions import unsupported_food_answer
+
+                            payload = unsupported_food_answer(request.question, foods)
+                            return ChatResponse(
+                                selected_intent="profile", route_method=graph_method, disposition="abstain",
+                                answer_text=payload["text"], warnings=payload["limitations"],
+                                result=ChatGraphResult(payload=payload),
+                            )
+                        if disposition not in ("answer", "insufficient_data", "not_graph") or (
+                                disposition != "not_graph" and graph_question is None) or (
+                                disposition == "not_graph" and legacy_match):
+                            unresolved = tuple(dict.fromkeys(
+                                span.text for span in (*getattr(interpreted, "negation", ()),
+                                                       *getattr(interpreted, "residual", ()))
+                                if request.question[span.start:span.end] == span.text))[:3]
+                            detail = ", ".join(f"‘{text}’" for text in unresolved)
+                            prompt = (f"{detail} 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요."
+                                      if detail else "비교할 기준 종과 관계를 하나로 확인하지 못했습니다. 먹이·식성 또는 서식 환경 중 비교 기준을 알려 주세요.")
+                            return ChatResponse(
+                                selected_intent="profile", route_method=graph_method, disposition="clarify",
+                                answer_text=prompt,
+                                warnings=["확인되지 않은 조건을 빼고 조회하지 않았습니다."],
+                                result=ChatClarifyResult(prompt=prompt),
+                            )
+                except Exception as error:
+                    logging.getLogger(__name__).warning("Graph intent interpretation failed (%s)", type(error).__name__)
+                    route_span.set_attributes({"graph_intent.failure": type(error).__name__})
+                    if self.graph_intent_mode == "active":
+                        return ChatResponse(
+                            selected_intent="profile", route_method="semantic" if request.intent == "auto" else "explicit",
+                            disposition="clarify", answer_text="관계 질문의 조건을 현재 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+                            warnings=["해석 실패를 종이나 관계가 없다는 뜻으로 해석하지 마세요."],
+                            result=ChatClarifyResult(prompt="질문을 다시 입력해 주세요."),
+                        )
+        if graph_question is not None and graph_question.kind == "same_genus" and parse_species_question(request.question):
+            graph_question = None  # Preserve the established single-species relation response.
+        if graph_question is not None:
+            if request.filters is not None and not (
+                    isinstance(request.filters, ProfileChatFilters) and (
+                        request.filters.name is None or request.filters.name.strip().casefold()
+                        in {name.casefold() for name in graph_question.names})):
+                return ChatResponse(
+                    selected_intent="profile", route_method=graph_method, disposition="clarify",
+                    answer_text="관계 탐색은 질문에 종과 조건을 함께 입력하고 개별 종 필터는 비워 주세요.",
+                    warnings=[], result=ChatClarifyResult(prompt="개별 종 필터를 비우고 다시 질문해 주세요."),
+                )
+            # Resolve names before fixed graph execution, just as the profile route does.
+            # Vector matches are suggestions and require a fresh, user-selected question.
+            if (self.graph_intent_mode == "active" and request.intent == "auto"
+                    and self.taxon_name_resolution_handler is not None and graph_question.names):
+                names = []
+                for mention in graph_question.names:
+                    try:
+                        resolver = self.taxon_name_resolution_handler
+                        raw = (resolver(mention) if request.species_scope == "all"
+                               else resolver(mention, species_scope=request.species_scope))
+                        resolution = EntityResolutionResponse.model_validate(raw)
+                        if resolution.mention != mention:
+                            raise ValueError("Resolver changed the source mention")
+                        if resolution.status == "matched":
+                            if (resolution.method not in ("graph_exact", "graph_normalized")
+                                    or not resolution.canonical_name or not resolution.taxon_id
+                                    or not resolution.concept_set_id or not resolution.taxonomy_release):
+                                raise ValueError("Incomplete graph identity")
+                            names.append(resolution.canonical_name)
+                            continue
+                        if resolution.status == "candidates":
+                            if resolution.method != "vector" or not resolution.candidates:
+                                raise ValueError("Invalid vector suggestions")
+                            for candidate in resolution.candidates:
+                                candidate.question = rewrite_name_candidate(request.question, mention, candidate.scientific_name)
+                                candidate.route_intent = "auto"
+                            return ChatResponse(
+                                selected_intent="profile", route_method=graph_method, disposition="clarify",
+                                answer_text=f"‘{mention}’을 현재 이름에서 찾지 못했습니다. 기준 새를 후보에서 선택해 주세요.",
+                                warnings=["후보를 같은 종으로 확정하지 않았습니다. 선택 후 원래 질문의 조건으로 다시 조회합니다."],
+                                result=ChatClarifyResult(prompt="기준 새를 선택해 주세요."), entity_resolution=resolution,
+                            )
+                        return ChatResponse(
+                            selected_intent="profile", route_method=graph_method, disposition="clarify",
+                            answer_text=f"‘{mention}’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+                            warnings=["이름 확인 실패를 생태 관계가 없다는 뜻으로 해석하지 마세요."],
+                            result=ChatClarifyResult(prompt="기준 새 이름을 확인해 주세요."), entity_resolution=resolution,
+                        )
+                    except AmbiguousNameSpanError:
+                        prompt = "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+                        return ChatResponse(
+                            selected_intent="profile", route_method=graph_method, disposition="clarify",
+                            answer_text=prompt, warnings=["이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."],
+                            result=ChatClarifyResult(prompt=prompt),
+                        )
+                    except Exception:
+                        return ChatResponse(
+                            selected_intent="profile", route_method=graph_method, disposition="clarify",
+                            answer_text="기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+                            warnings=["확인되지 않은 종으로 조회하지 않았습니다."],
+                            result=ChatClarifyResult(prompt="기준 새 이름을 확인해 주세요."),
+                        )
+                graph_question = replace(graph_question, names=tuple(names))
+            payload = None
+            if self.graph_question_handler is not None:
+                try:
+                    payload = self.graph_question_handler(graph_question, species_scope=request.species_scope)
+                    if (not isinstance(payload, dict)
+                            or payload.get("status") not in ("answer", "empty", "insufficient_data")
+                            or not isinstance(payload.get("text"), str)
+                            or not isinstance(payload.get("limitations", []), list)
+                            or not all(isinstance(value, str) for value in payload.get("limitations", []))):
+                        raise ValueError("Invalid graph query result")
+                except SpeciesNotFoundError:
+                    return ChatResponse(
+                        selected_intent="profile", route_method=graph_method,
+                        disposition="clarify", answer_text="질문에 입력한 종 이름을 현재 분류에서 확인하지 못했습니다. 정확한 종 이름이나 학명을 입력해 주세요.",
+                        warnings=["종 이름 확인 실패를 관계나 생태 자료가 없다는 뜻으로 해석하지 마세요."],
+                        result=ChatClarifyResult(prompt="종 이름이나 학명을 확인한 뒤 관계 질문을 다시 입력해 주세요."),
+                    )
+                except Exception as error:
+                    logging.getLogger(__name__).warning("Graph question lookup failed (%s)", type(error).__name__)
+                    payload = None
+            if payload is None:
+                payload = {"title": "관계 탐색", "text": "관계 탐색 자료를 현재 확인할 수 없습니다.",
+                           "status": "insufficient_data", "items": [], "paths": [], "sources": [],
+                           "limitations": ["조회 실패를 해당 종이나 관계가 없다는 뜻으로 해석하지 마세요."], "has_more": False}
+            return ChatResponse(
+                selected_intent="profile", route_method=graph_method,
+                disposition="answer" if payload["status"] == "answer" else "abstain",
+                answer_text=payload["text"], warnings=payload.get("limitations", []),
+                result=ChatGraphResult(payload=payload),
+            )
 
         # The routing body below predates the service extraction; bind the
         # injected dependencies to the local names it was written against.
@@ -1034,10 +1221,8 @@ class ApiService:
                         if resolution.method != "vector" or not resolution.candidates:
                             raise ValueError("Invalid vector suggestions")
                         for candidate in resolution.candidates:
-                            mention_pattern = r"\s+".join(re.escape(part) for part in resolution.mention.split())
-                            rewritten, count = re.subn(mention_pattern, lambda _: candidate.scientific_name,
-                                                       request.question, count=1)
-                            candidate.question = rewritten if count else candidate.scientific_name + "에 대해 알려줘"
+                            candidate.question = rewrite_name_candidate(
+                                request.question, resolution.mention, candidate.scientific_name)
                         _why("ambiguous_name", "name_resolution")
                         return ChatResponse(
                             selected_intent=selected, route_method=method, disposition="clarify",
@@ -1057,6 +1242,13 @@ class ApiService:
                             answer_text=prompt, warnings=["종 이름을 임의로 추정하지 않았습니다."],
                             result=ChatSpeciesResult(profile=None), entity_resolution=resolution,
                         )
+                except AmbiguousNameSpanError:
+                    prompt = "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+                    return ChatResponse(
+                        selected_intent=selected, route_method=method, disposition="clarify",
+                        answer_text=prompt, warnings=["이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."],
+                        result=ChatClarifyResult(prompt=prompt),
+                    )
                 except Exception:
                     _why("upstream_error", "name_resolution")
                     return ChatResponse(

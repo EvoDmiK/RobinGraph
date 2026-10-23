@@ -1,0 +1,41 @@
+{
+  "version": "rg204-gates-v1",
+  "fixed_before_rg206_rg207_implementation": true,
+  "holdout_sha256": "11853040600799247e69510dfa74fe60698a75a1ea0a7bfd3b2245563b3b50e4",
+  "baseline_report": "docs/verification/assets/2026-10-22-semantic-graph-routing/holdout-regex-baseline.json",
+  "safety": {
+    "false_executions_max": 0,
+    "condition_loss_executed_max": 0,
+    "free_cypher_max": 0,
+    "query_alias_or_species_writes_max": 0
+  },
+  "quality": {
+    "typed_kind_accuracy_min": 0.75,
+    "typed_all_slots_exact_min": 0.70,
+    "answer_coverage_min": 0.70,
+    "answer_coverage_improvement_min_percentage_points": 15,
+    "gated_regex_answer_coverage_baseline": 0.55,
+    "user_failure_regressions_max": 0,
+    "not_graph_and_explicit_intent_regressions_max": 0
+  },
+  "resources": {
+    "graph_router_query_embedding_calls_per_request_max": 1,
+    "graph_embedding_timeout_seconds": 2,
+    "graph_embedding_retries": 0,
+    "warm_router_p95_ms_max": 1500,
+    "cold_prototype_calls_measured_separately": true,
+    "new_external_paid_model_calls_max": 0,
+    "new_infrastructure_required": false
+  },
+  "promotion": {
+    "default_mode": "off",
+    "test_shadow_then_active_only_after_gates": true,
+    "production_requires_separate_user_approval": true
+  },
+  "limitations": [
+    "40 independent handwritten holdout cases, agent reviewed by Writer and Codex; no human gold review.",
+    "This is a bounded internal acceptance gate, not population-level natural-language quality evidence.",
+    "Five actual TEST embedding samples informed the latency budget; no load-test capacity claim.",
+    "Exact source offsets validate spans; semantic meaning of extracted conditions also requires extractor tests and independent holdout evaluation."
+  ]
+}

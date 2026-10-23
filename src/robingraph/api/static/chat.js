@@ -259,7 +259,7 @@
 
   /** Convert typed route results into bounded plain-text lines for safe DOM rendering. */
   function resultSummaryLines(result) {
-    if (!result || typeof result !== "object") {
+    if (!result || typeof result !== "object" || result.kind === "graph_query") {
       return [];
     }
     if (result.kind === "taxonomy" && result.lineage && Array.isArray(result.lineage.lineage)) {
@@ -646,8 +646,8 @@
   }
 
   var DISTRIBUTION_LABELS = {
-    diet_distribution: { invertebrate: "무척추동물", endotherm_vertebrate: "온혈 척추동물", ectotherm_vertebrate: "변온 척추동물",
-      unknown_vertebrate: "기타 척추동물", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" },
+    diet_distribution: { invertebrate: "곤충 (원자료: 무척추동물)", endotherm_vertebrate: "고기 (온혈 척추동물)", ectotherm_vertebrate: "고기 (변온 척추동물)",
+      unknown_vertebrate: "고기 (기타 척추동물)", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" },
     foraging_strata_distribution: { ground: "지면", understory: "하층", midhigh: "중상층", mid_high: "중상층", canopy: "수관",
       aerial: "공중", water: "수면", pelagic: "외해", below_water_surface: "수중", around_water_surface: "수면 주변" },
   };
@@ -900,9 +900,9 @@
   // broad icon so a combined category never implies every member is eaten.
   // Paths are 24x24 strokes that inherit `currentColor`.
   var DIET_ICONS = {
-    invertebrate: { label: "무척추동물", glyph: "✱",
+    invertebrate: { label: "곤충", glyph: "✱",
       path: "M12 7a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0v-5a3 3 0 0 1 3-3z M10 5L8 3 M14 5l2-2 M9 11H5 M9 15l-4 2 M15 11h4 M15 15l4 2" },
-    vertebrate: { label: "척추동물", glyph: "⌇",
+    vertebrate: { label: "고기", glyph: "⌇",
       path: "M8.5 6.5l9 9 M6.5 4.5a2 2 0 1 0-2 2 2 2 0 1 0 2 2l2-2 M17.5 19.5a2 2 0 1 0 2-2 2 2 0 1 0-2-2l-2 2" },
     fish: { label: "물고기", glyph: "≻",
       path: "M3 12c3-4 8-5 12-3l4-3v12l-4-3c-4 2-9 1-12-3z M8 11.5h.01" },
@@ -916,7 +916,7 @@
       path: "M12 3c4 3 5 9 0 18-5-9-4-15 0-18z M12 7v10" },
     plant: { label: "기타 식물", glyph: "♣",
       path: "M12 21v-9 M12 12c0-4 3-7 7-7 0 4-3 7-7 7z M12 15c0-3-2-5-5-5 0 3 2 5 5 5z" },
-    vert_fish_scav: { label: "척추동물·물고기·사체 (묶음 범주)", glyph: "▣", broad: true,
+    vert_fish_scav: { label: "고기·물고기·사체 (묶음 범주)", glyph: "▣", broad: true,
       path: "M4 4h16v16H4z M8.5 9h.01 M15.5 9h.01 M12 15h.01" },
     plant_seed: { label: "식물·씨앗 (묶음 범주)", glyph: "▤", broad: true,
       path: "M4 4h16v16H4z M12 18v-6 M12 12c0-3 2-5 5-5 M12 14c0-2-2-4-4-4" },
@@ -959,8 +959,7 @@
    * Feeding icons from sourced diet traits only -- never from habitat or the
    * species name. A sourced `diet_distribution` with positive finite
    * percentages wins and yields one icon per member (vertebrate subgroups
-   * merge into one 척추동물 icon; fish keeps its own icon and, when no other
-   * vertebrate share is present, a labelled parent 척추동물 grouping icon).
+   * merge into one 고기 icon; fish and carrion keep separate icons).
    * Otherwise the sourced `diet_category`, then `trophic_niche`, gives one
    * icon each. Unknown values, null and 0% are dropped; duplicates merge.
    */
@@ -1005,11 +1004,6 @@
     var basis = icons.length ? "distribution" : null;
     if (basis) {
       icons.sort(function (a, b) { return b.percent - a.percent; });
-      if (byKey.fish && !byKey.vertebrate) {
-        add("vertebrate", null, null);
-        byKey.vertebrate.parentGroup = true;
-        byKey.vertebrate.detail = "상위 묶음 · 물고기 포함";
-      }
     } else {
       [["diet_category", DIET_CATEGORY_KEYS], ["trophic_niche", TROPHIC_NICHE_KEYS]].some(function (pair) {
         sourcedTraits(profile, pair[0]).forEach(function (trait) {
@@ -1082,6 +1076,9 @@
       : "출처가 확인된 먹이 자료가 없어 먹이 아이콘을 표시하지 않습니다.";
     details.appendChild(basis);
     if (info.icons.length) {
+      var scope = doc.createElement("p");
+      scope.textContent = "표시명 기준: 곤충은 원자료의 무척추동물 범주로, 곤충 외 무척추동물도 포함합니다. 고기는 온혈·변온·기타 척추동물 성분을 합친 표시이며, 물고기와 사체는 별도로 표시합니다. 묶음 범주만으로 각 성분의 섭식을 단정하지 않습니다.";
+      details.appendChild(scope);
       details.appendChild(buildDietIcons(doc, info));
     }
     info.sources.forEach(function (trait) {
@@ -2094,6 +2091,194 @@
 
   var DOMESTIC_WARNING =
     "가축형과 야생 개체군의 정보를 구분합니다. 표시되는 측정값·사진·멸종위기 등급은 야생 개체군 기준 자료이며 가축형에 그대로 적용되지 않습니다.";
+
+  /**
+   * Render a graph query result: related species, connected paths, sources, and data limitations.
+   * Safe text insertion only; species buttons route through onQuestion callback.
+   */
+  function buildGraphQueryAnswer(doc, payload, options) {
+    if (!payload || typeof payload !== "object") {
+      return null;
+    }
+    options = options || {};
+    var onQuestion = typeof options.onQuestion === "function" ? options.onQuestion : null;
+
+    var section = doc.createElement("section");
+    section.className = "name-relations graph-query-answer";
+    if (typeof payload.title === "string" && payload.title.trim()) {
+      section.setAttribute("aria-label", payload.title.trim());
+      var heading = doc.createElement("h3");
+      heading.textContent = payload.title.trim();
+      section.appendChild(heading);
+    }
+
+    if (payload.status === "insufficient_data" || payload.status === "empty") {
+      if (typeof payload.text === "string" && payload.text.trim()) {
+        var emptyMsg = doc.createElement("p");
+        emptyMsg.className = "species-answer-empty";
+        emptyMsg.textContent = payload.text.trim();
+        section.appendChild(emptyMsg);
+      }
+    }
+
+    if ((Array.isArray(payload.limitations) && payload.limitations.length > 0) || (payload.status === "answer" && payload.text)) {
+      var noteBox = doc.createElement("details");
+      noteBox.className = "species-note graph-query-notes";
+      var noteTitle = doc.createElement("summary");
+      noteTitle.textContent = payload.status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
+      noteBox.appendChild(noteTitle);
+      if (payload.status === "answer" && typeof payload.text === "string" && payload.text.trim()) {
+        var queryContext = doc.createElement("p");
+        queryContext.textContent = payload.text.trim();
+        noteBox.appendChild(queryContext);
+      }
+      var noteList = doc.createElement("ul");
+      (Array.isArray(payload.limitations) ? payload.limitations : []).forEach(function (limitation) {
+        if (typeof limitation === "string" && limitation.trim()) {
+          var li = doc.createElement("li");
+          li.textContent = limitation.trim();
+          noteList.appendChild(li);
+        }
+      });
+      noteBox.appendChild(noteList);
+    }
+
+    if (Array.isArray(payload.paths) && payload.paths.length > 0) {
+      var sharedPaths = doc.createElement("details");
+      sharedPaths.className = "graph-shared-paths graph-query-evidence";
+      var sharedTitle = doc.createElement("summary");
+      sharedTitle.className = "answer-metadata";
+      sharedTitle.textContent = "연결 경로:";
+      sharedPaths.appendChild(sharedTitle);
+
+      var pathList = doc.createElement("ul");
+      pathList.className = "route-results";
+      payload.paths.forEach(function (path) {
+        if (!path || typeof path.text !== "string") { return; }
+        var li = doc.createElement("li");
+        li.textContent = path.text;
+        var url = sanitizeUrl(path.source_url);
+        if (url && typeof path.source_name === "string" && path.source_name.trim()) {
+          li.appendChild(doc.createTextNode(" ("));
+          li.appendChild(safeLink(doc, path.source_name.trim(), url));
+          li.appendChild(doc.createTextNode(")"));
+        }
+        pathList.appendChild(li);
+      });
+      sharedPaths.appendChild(pathList);
+      section.appendChild(sharedPaths);
+    }
+
+    if (Array.isArray(payload.items) && payload.items.length > 0) {
+      var itemsBox = doc.createElement("div");
+      itemsBox.className = "graph-items";
+
+      var countNotice = doc.createElement("p");
+      countNotice.className = "answer-metadata graph-query-count";
+      countNotice.textContent = "관련 종 · " + payload.items.length + (payload.has_more ? "종 이상" : "종");
+      itemsBox.appendChild(countNotice);
+
+      var itemsList = doc.createElement("ul");
+      itemsList.className = "graph-query-species";
+
+      payload.items.forEach(function (item) {
+        if (!item || typeof item !== "object") { return; }
+        var taxon = item.taxon;
+        if (!taxon || typeof taxon !== "object") { return; }
+
+        var itemLi = doc.createElement("li");
+        itemLi.className = "graph-query-species-row";
+        var nameLabel = speciesLabel(taxon) || taxon.scientific_name || "종";
+
+        if (onQuestion && (taxon.scientific_name || taxon.korean_name)) {
+          var btn = doc.createElement("button");
+          btn.type = "button";
+          btn.className = "entity-candidate-button";
+          btn.textContent = nameLabel;
+          var query = nameLabel;
+          var sciName = taxon.scientific_name || null;
+          btn.addEventListener("click", function () {
+            onQuestion(query, sciName);
+          });
+          itemLi.appendChild(btn);
+        } else {
+          var strong = doc.createElement("strong");
+          strong.textContent = nameLabel;
+          itemLi.appendChild(strong);
+        }
+
+        if (taxon.scientific_name && taxon.scientific_name !== nameLabel) {
+          var sciSpan = doc.createElement("span");
+          sciSpan.className = "graph-query-latin";
+          sciSpan.textContent = " " + taxon.scientific_name;
+          itemLi.appendChild(sciSpan);
+        }
+
+        if (Array.isArray(item.paths) && item.paths.length > 0) {
+          var itemEvidence = doc.createElement("details");
+          itemEvidence.className = "graph-query-evidence";
+          var itemSummary = doc.createElement("summary");
+          itemSummary.textContent = "연결 경로와 근거";
+          itemEvidence.appendChild(itemSummary);
+          var itemPathList = doc.createElement("ul");
+          item.paths.forEach(function (p) {
+            if (!p || typeof p.text !== "string") { return; }
+            var pLi = doc.createElement("li");
+            pLi.textContent = p.text;
+            var pUrl = sanitizeUrl(p.source_url);
+            if (pUrl && typeof p.source_name === "string" && p.source_name.trim()) {
+              pLi.appendChild(doc.createTextNode(" · "));
+              pLi.appendChild(safeLink(doc, p.source_name.trim(), pUrl));
+            }
+            itemPathList.appendChild(pLi);
+          });
+          itemEvidence.appendChild(itemPathList);
+          itemLi.appendChild(itemEvidence);
+        }
+
+        itemsList.appendChild(itemLi);
+      });
+
+      itemsBox.appendChild(itemsList);
+      section.appendChild(itemsBox);
+    }
+
+    if (payload.has_more) {
+      var hasMore = doc.createElement("p");
+      hasMore.className = "species-note";
+      hasMore.textContent = "결과가 많아 최대 20개 종까지만 표시되었습니다.";
+      section.appendChild(hasMore);
+    }
+
+    if (Array.isArray(payload.sources) && payload.sources.length > 0) {
+      var sourcesDetails = doc.createElement("details");
+      sourcesDetails.className = "species-answer-sources";
+      var summary = doc.createElement("summary");
+      summary.textContent = "출처 및 근거 자료 (" + payload.sources.length + ")";
+      sourcesDetails.appendChild(summary);
+
+      var seenUrls = {};
+      payload.sources.forEach(function (source) {
+        if (!source || typeof source.source_name !== "string" || !source.source_name.trim()) { return; }
+        var url = sanitizeUrl(source.source_url);
+        var key = (source.source_name.trim()) + "|" + (url || "");
+        if (seenUrls[key]) { return; }
+        seenUrls[key] = true;
+
+        var p = doc.createElement("p");
+        if (url) {
+          p.appendChild(safeLink(doc, source.source_name.trim(), url));
+        } else {
+          p.textContent = source.source_name.trim();
+        }
+        sourcesDetails.appendChild(p);
+      });
+      section.appendChild(sourcesDetails);
+    }
+
+    if (noteBox) { section.appendChild(noteBox); }
+    return section;
+  }
 
   /**
    * Render a source-backed name/domestic-form relationship payload in the
@@ -3927,6 +4112,7 @@
             question: question,
             displayName: displayName,
             scientificName: scientificName,
+            routeIntent: item.route_intent === "auto" ? "auto" : "profile",
           });
         }
       }
@@ -3965,7 +4151,7 @@
       btn.setAttribute("data-question", candidate.question);
       btn.addEventListener("click", function () {
         if (typeof onSubmit === "function") {
-          onSubmit(candidate.question, candidate.scientificName, candidate.displayName);
+          onSubmit(candidate.question, candidate.scientificName, candidate.displayName, candidate.routeIntent);
         }
       });
       buttonList.appendChild(btn);
@@ -4563,7 +4749,7 @@
       if (answer.result && answer.result.kind === "profile") { answerSources = buildCombinedAnswerSources(doc, answerSources); }
       if (structured) {
         item.appendChild(structured);
-      } else {
+      } else if (!(answer.result && answer.result.kind === "graph_query" && answer.result.payload && typeof answer.result.payload === "object")) {
         var text = doc.createElement("p");
         text.textContent = answer.answer_text;
         item.appendChild(text);
@@ -4579,9 +4765,58 @@
           item.appendChild(malformed);
         }
       }
+      if (answer.result && answer.result.kind === "graph_query") {
+        var graphQuestionActive = conversationGuard();
+        var graphAnswer = buildGraphQueryAnswer(doc, answer.result.payload, {
+          onQuestion: function (questionText, scientificName) {
+            if (!graphQuestionActive() || input.disabled || form.getAttribute("aria-busy") === "true") {
+              return;
+            }
+            appendUserMessage(questionText);
+            input.value = "";
+            var graphPayload = { question: questionText, intent: "profile" };
+            if (scientificName) { graphPayload.filters = { kind: "profile", name: scientificName }; }
+            var currentScope = currentSpeciesScope();
+            if (currentScope !== "all") { graphPayload.species_scope = currentScope; }
+            submitQuestion(questionText, graphPayload);
+          },
+        });
+        if (graphAnswer) {
+          item.appendChild(graphAnswer);
+        }
+      }
+
+      if (answer.result && answer.result.kind === "clarify" && Array.isArray(answer.result.choices)) {
+        var choicesActive = conversationGuard();
+        var choiceButtons = doc.createElement("div");
+        choiceButtons.className = "entity-candidate-buttons clarification-choices";
+        choiceButtons.setAttribute("role", "group");
+        choiceButtons.setAttribute("aria-label", "질문 의미 선택");
+        answer.result.choices.filter(function (choice) {
+          return choice && typeof choice.label === "string" && choice.label.trim()
+            && typeof choice.question === "string" && choice.question.trim();
+        }).slice(0, 3).forEach(function (choice) {
+          var button = doc.createElement("button");
+          button.type = "button";
+          button.setAttribute("type", "button");
+          button.className = "entity-candidate-button";
+          button.textContent = choice.label;
+          button.addEventListener("click", function () {
+            if (!choicesActive() || input.disabled || form.getAttribute("aria-busy") === "true") { return; }
+            appendUserMessage(choice.question);
+            input.value = "";
+            var payload = { question: choice.question, intent: "auto" };
+            var choiceScope = currentSpeciesScope();
+            if (choiceScope !== "all") { payload.species_scope = choiceScope; }
+            submitQuestion(choice.question, payload);
+          });
+          choiceButtons.appendChild(button);
+        });
+        if (choiceButtons.children.length) { item.appendChild(choiceButtons); }
+      }
 
       var candidatesActive = conversationGuard();
-      var entityCandidates = buildEntityCandidates(doc, answer.entity_resolution, function (question, scientificName, displayName) {
+      var entityCandidates = buildEntityCandidates(doc, answer.entity_resolution, function (question, scientificName, displayName, routeIntent) {
         if (!candidatesActive() || input.disabled || form.getAttribute("aria-busy") === "true") {
           return;
         }
@@ -4591,7 +4826,9 @@
         appendUserMessage(displayQuestion);
         input.value = "";
         // Confirmation owns its name; stale advanced filters must not redirect it.
-        var confirmPayload = { question: question, intent: "profile", filters: { kind: "profile", name: scientificName } };
+        var confirmPayload = routeIntent === "auto"
+          ? { question: question, intent: "auto" }
+          : { question: question, intent: "profile", filters: { kind: "profile", name: scientificName } };
         var confirmScope = currentSpeciesScope();
         if (confirmScope !== "all") { confirmPayload.species_scope = confirmScope; }
         submitQuestion(question, confirmPayload);
@@ -5053,6 +5290,7 @@
     buildSpeciesAnswer: buildSpeciesAnswer,
     buildQuestionAnswer: buildQuestionAnswer,
     buildTaxonomyAnswer: buildTaxonomyAnswer,
+    buildGraphQueryAnswer: buildGraphQueryAnswer,
     conservationInfo: conservationInfo,
     referenceAssessmentInfo: referenceAssessmentInfo,
     photoAvailabilityInfo: photoAvailabilityInfo,

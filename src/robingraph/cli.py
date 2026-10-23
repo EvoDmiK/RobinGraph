@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 import json
 import os
@@ -242,6 +242,69 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         embedding_client=embedding_client, active_context=active_taxonomy_context,
         candidate_search=name_vectors.search,
     )
+    graph_intent_mode = os.getenv("ROBINGRAPH_GRAPH_INTENT_MODE", "off").strip().lower()
+    if graph_intent_mode not in ("off", "shadow", "active"):
+        raise ValueError("ROBINGRAPH_GRAPH_INTENT_MODE must be off, shadow or active")
+    graph_intent_handler = None
+    graph_plan_handler = None
+    graph_resolve_species = resolve_species
+    if graph_intent_mode != "off":
+        from . import tracing
+        from .retrieval.graph_condition_extractor import extract_graph_intent
+        from .retrieval.graph_intent_schema import execution_gate
+        from .retrieval.graph_semantic_router import GraphSemanticRouter
+        from .retrieval.species_profile import SpeciesNotFoundError
+
+        # Graph interpretation has a short budget; other embedding consumers
+        # retain their existing settings. No request is made during construction.
+        graph_client = (JinaEmbeddingClient(replace(embedding_client.settings, timeout_seconds=2, max_retries=0))
+                        if embedding_client is not None else None)
+        graph_router = GraphSemanticRouter(graph_client) if graph_client is not None else None
+
+        def graph_intent_handler(question):
+            with tracing.span("graph_intent.candidates", tracing.CHAIN) as candidate_span:
+                lexical = extract_graph_intent(question)
+                if execution_gate(question, lexical) == "not_graph":
+                    candidate_span.set_attributes({"graph_intent.status": "not_graph",
+                                                   "graph_intent.embedding_calls": 0,
+                                                   "graph_intent.prototype_calls": 0})
+                    return lexical
+                candidates = graph_router.classify(question) if graph_router is not None else ()
+                if graph_router is not None:
+                    candidate_span.set_attributes({
+                        "graph_intent.status": candidates.status, "graph_intent.top": candidates.top,
+                        "graph_intent.score": candidates.candidates[0][1] if candidates.candidates else None,
+                        "graph_intent.margin": candidates.margin, "graph_intent.elapsed_ms": candidates.elapsed_ms,
+                        "graph_intent.embedding_calls": candidates.embedding_calls,
+                        "graph_intent.prototype_calls": candidates.prototype_calls,
+                        "graph_intent.prototype_requests": candidates.prototype_requests,
+                        "graph_intent.prototype_batches": candidates.prototype_batches,
+                        "graph_intent.model": candidates.model,
+                        "graph_intent.prototype_version": candidates.prototype_version,
+                    })
+                return extract_graph_intent(question, candidates)
+
+        graph_name_resolver = TaxonNameResolver(
+            resolve_species, lineage_repository.reviewed_name_candidates,
+            embedding_client=graph_client, active_context=active_taxonomy_context,
+            candidate_search=name_vectors.search,
+        )
+
+        def graph_resolve_species(name):
+            # Vector suggestions remain suggestions. Never auto-select a typo candidate.
+            match = graph_name_resolver.resolve(name)
+            if match.get("status") != "matched":
+                if match.get("status") == "unavailable":
+                    raise RuntimeError("Graph name resolution unavailable")
+                raise SpeciesNotFoundError(name)
+            lineage = resolve_species(match["canonical_name"])
+            target = lineage.items[-1] if lineage is not None and lineage.items else None
+            if (target is None or target.taxon_id != match.get("taxon_id")
+                    or target.scientific_name != match.get("canonical_name")
+                    or lineage.concept_set_id != match.get("concept_set_id")
+                    or lineage.taxonomy_release != match.get("taxonomy_release")):
+                raise RuntimeError("Graph name identity changed")
+            return lineage
     from .api.jev_router import configured_jev_router
     jev_router = configured_jev_router()
     # Gemini answer generation is opt-in: only a configured API key wires it
@@ -255,11 +318,33 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
 
         gemini_model = os.getenv("ROBINGRAPH_GEMINI_MODEL", "gemini-3.8-flash")
         answer_generator = GeminiAnswerer(gemini_api_key, gemini_model)
+    graph_interpreter = os.getenv("ROBINGRAPH_GRAPH_INTERPRETER", "lexical").strip().lower()
+    if graph_interpreter not in ("lexical", "semantic"):
+        raise ValueError("ROBINGRAPH_GRAPH_INTERPRETER must be lexical or semantic")
+    if graph_interpreter == "semantic" and graph_intent_mode != "off":
+        from .retrieval.semantic_graph_intent import SEMANTIC_PROTOTYPES, graph_intent_handler as interpret_graph
+        from .retrieval.graph_semantic_router import PROTOTYPES
+
+        if answer_generator is None or graph_client is None:
+            raise ValueError("Semantic graph interpretation requires configured generation and embedding clients")
+        interpretation_router = GraphSemanticRouter(graph_client, prototypes=PROTOTYPES + SEMANTIC_PROTOTYPES)
+
+        def graph_plan_handler(question):
+            lexical = extract_graph_intent(question)
+            if execution_gate(question, lexical) == "answer":
+                return graph_intent_handler(question)
+            with tracing.span("graph_intent.interpret", tracing.CHAIN) as span:
+                result = interpret_graph(question, provider=answer_generator.propose_structured_graph_intent,
+                                         retrieve=interpretation_router.retrieve)
+                span.set_attributes({"graph_intent.source": result.source, "graph_intent.kind": result.kind,
+                                     "graph_intent.disposition": execution_gate(question, result)})
+                return result
     from .retrieval.species_notes import create_species_notes
 
     from .retrieval.related_species import related_species
     from .retrieval.similar_species import similar_species
     from .retrieval.ecological_relations import ecological_relations
+    from .retrieval.graph_questions import graph_question_answer
     from .retrieval.subspecies import subspecies_for, subspecies_metadata
     from .retrieval.name_relations import NameRelationRepository, PIPELINE as NAME_RELATIONS_PIPELINE
 
@@ -307,6 +392,12 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             related_species_handler=lambda name, species_scope="all": related_species(lineage_repository, resolve_species, name, species_scope),
             similar_species_handler=lambda name, species_scope="all": similar_species(lineage_repository, ingest_store, resolve_species, name, species_scope),
             ecological_relations_handler=lambda name, species_scope="all": ecological_relations(lineage_repository, ingest_store, resolve_species, name, species_scope),
+            graph_question_handler=lambda parsed, species_scope="all": graph_question_answer(
+                lineage_repository, graph_resolve_species if graph_intent_mode == "active" else resolve_species,
+                parsed, species_scope=species_scope, store=ingest_store),
+            graph_intent_handler=graph_intent_handler,
+            graph_plan_handler=graph_plan_handler,
+            graph_intent_mode=graph_intent_mode,
             name_relations_handler=name_relations_repository.for_name,
             subspecies_handler=lambda name: subspecies_for(lineage_repository,resolve_species,name),
         )

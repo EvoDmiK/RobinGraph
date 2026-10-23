@@ -1187,6 +1187,14 @@
           "prompt": {
             "type": "string",
             "title": "Prompt"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/ChatClarifyChoice"
+            },
+            "maxItems": 3,
+            "title": "Choices",
+            "type": "array"
           }
         },
         "additionalProperties": false,
@@ -1414,6 +1422,9 @@
               },
               {
                 "$ref": "#/components/schemas/ChatNameRelationsResult"
+              },
+              {
+                "$ref": "#/components/schemas/ChatGraphResult"
               }
             ],
             "title": "Result",
@@ -1425,7 +1436,8 @@
                 "name_relations": "#/components/schemas/ChatNameRelationsResult",
                 "observations": "#/components/schemas/ChatObservationsResult",
                 "profile": "#/components/schemas/ChatSpeciesResult",
-                "taxonomy": "#/components/schemas/ChatTaxonomyResult"
+                "taxonomy": "#/components/schemas/ChatTaxonomyResult",
+                "graph_query": "#/components/schemas/ChatGraphResult"
               }
             }
           },
@@ -1761,6 +1773,15 @@
               }
             ],
             "title": "Question"
+          },
+          "route_intent": {
+            "default": "profile",
+            "enum": [
+              "auto",
+              "profile"
+            ],
+            "title": "Route Intent",
+            "type": "string"
           }
         },
         "additionalProperties": false,
@@ -3063,6 +3084,50 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ChatGraphResult": {
+        "properties": {
+          "kind": {
+            "const": "graph_query",
+            "default": "graph_query",
+            "title": "Kind",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "payload"
+        ],
+        "title": "ChatGraphResult"
+      },
+      "ChatClarifyChoice": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "question": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "question"
+        ],
+        "title": "ChatClarifyChoice",
+        "type": "object"
       }
     }
   }

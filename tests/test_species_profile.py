@@ -327,8 +327,9 @@ class SpeciesProfileTest(unittest.TestCase):
             self.assertIn(trait['value'], categories[trait['name']])
             self.assertRegex(trait['display'], r'[가-힣]')
             self.assertNotRegex(trait['display'], r'[A-Za-z]')
-        self.assertEqual('무척추동물', next(t['display'] for t in traits if t['value'] == 'Invertebrate'))
-        self.assertEqual('척추동물·물고기·사체', next(t['display'] for t in traits if t['value'] == 'VertFishScav'))
+        self.assertEqual('곤충 (원자료: 무척추동물)', next(t['display'] for t in traits if t['value'] == 'Invertebrate'))
+        self.assertEqual('고기·물고기·사체 (원자료: 척추동물·물고기·사체)',
+                         next(t['display'] for t in traits if t['value'] == 'VertFishScav'))
 
     def test_all_active_ecology_categories_and_distributions_translate_without_changing_values(self):
         categories = {

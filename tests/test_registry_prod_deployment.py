@@ -81,3 +81,75 @@ class RegistryProductionDeploymentTests(unittest.TestCase):
                 patch.dict(module.os.environ, {'GHCR_USERNAME': 'fixture', 'GHCR_TOKEN': 'fixture-token'}, clear=True):
             module.main()
         deploy.assert_called_once_with(self.request)
+
+    def test_runtime_flags_are_in_same_environment_update_as_approved_image(self):
+        self.env.write_bytes(self.original + b'ROBINGRAPH_GRAPH_INTENT_MODE=off\nROBINGRAPH_GRAPH_INTERPRETER=semantic\n')
+        before = self.env.read_bytes()
+        snapshots = []
+        def run(args, **kwargs):
+            if args[:2] == ['docker', 'compose']:
+                snapshots.append(self.env.read_text())
+        with patch.object(module.subprocess, 'check_output', side_effect=self.inspect), \
+                patch.object(module.subprocess, 'run', side_effect=run):
+            module.remote_deploy(dict(self.request, graph_intent_mode='active', graph_interpreter='lexical'))
+        self.assertEqual(len(snapshots), 1)
+        lines = snapshots[0].splitlines()
+        for line in ('ROBINGRAPH_IMAGE=' + IMAGE, 'ROBINGRAPH_GRAPH_INTENT_MODE=active',
+                     'ROBINGRAPH_GRAPH_INTERPRETER=lexical'):
+            self.assertEqual(lines.count(line), 1)
+        self.assertNotIn('ROBINGRAPH_GRAPH_INTENT_MODE=off', lines)
+        self.assertNotIn('ROBINGRAPH_GRAPH_INTERPRETER=semantic', lines)
+        receipt = json.loads(next(self.root.glob('.registry-deployments/*.json')).read_text())
+        self.assertEqual(receipt['state'], 'verified')
+        self.assertEqual(Path(receipt['previous_env_backup']).read_bytes(), before)
+        self.assertEqual(receipt['runtime_overrides'], {
+            'ROBINGRAPH_GRAPH_INTENT_MODE': 'active', 'ROBINGRAPH_GRAPH_INTERPRETER': 'lexical'})
+
+    def test_failed_runtime_verification_restores_original_flags_before_rollback(self):
+        self.env.write_bytes(self.original + b'ROBINGRAPH_GRAPH_INTENT_MODE=shadow\nROBINGRAPH_GRAPH_INTERPRETER=semantic\n')
+        before = self.env.read_bytes()
+        snapshots, verifications = [], []
+        def run(args, **kwargs):
+            if args[:2] == ['docker', 'compose']:
+                snapshots.append(self.env.read_bytes())
+            if args[:2] == ['docker', 'exec']:
+                verifications.append(args)
+                if len(verifications) == 1:
+                    raise subprocess.CalledProcessError(1, args)
+        with patch.object(module.subprocess, 'check_output', side_effect=self.inspect), \
+                patch.object(module.subprocess, 'run', side_effect=run):
+            with self.assertRaises(subprocess.CalledProcessError):
+                module.remote_deploy(dict(self.request, graph_intent_mode='active', graph_interpreter='lexical'))
+        self.assertIn(b'ROBINGRAPH_GRAPH_INTENT_MODE=active\n', snapshots[0])
+        self.assertIn(b'ROBINGRAPH_GRAPH_INTERPRETER=lexical\n', snapshots[0])
+        self.assertEqual(snapshots[1], before)
+        self.assertEqual(self.env.read_bytes(), before)
+        self.assertEqual(len(verifications), 2)
+        receipt = json.loads(next(self.root.glob('.registry-deployments/*.json')).read_text())
+        self.assertEqual(receipt['state'], 'rolled_back')
+
+    def test_invalid_runtime_flag_is_rejected_before_any_external_call(self):
+        for option in ('graph_intent_mode', 'graph_interpreter'):
+            with self.subTest(option=option), patch.object(module, 'production_context') as context, \
+                    patch.object(module.subprocess, 'run') as run:
+                with self.assertRaisesRegex(ValueError, 'Invalid runtime option'):
+                    module.remote_deploy(dict(self.request, **{option: 'invalid\nNEO4J_URI=other'}))
+                context.assert_not_called()
+                run.assert_not_called()
+        self.assertEqual(self.env.read_bytes(), self.original)
+
+    def test_local_deploy_forwards_only_explicit_runtime_flags(self):
+        with patch.object(module, 'remote_deploy') as deploy, \
+                patch.object(module.sys, 'argv', ['deploy', '--local', '--image', IMAGE, '--revision', REVISION,
+                                                 '--graph-intent-mode', 'active', '--graph-interpreter', 'lexical']), \
+                patch.dict(module.os.environ, {'GHCR_USERNAME': 'fixture', 'GHCR_TOKEN': 'fixture-token'}, clear=True):
+            module.main()
+        deploy.assert_called_once_with(dict(self.request, graph_intent_mode='active', graph_interpreter='lexical'))
+
+    def test_omitted_runtime_options_preserve_existing_settings(self):
+        self.env.write_bytes(self.original + b'ROBINGRAPH_GRAPH_INTENT_MODE=shadow\nROBINGRAPH_GRAPH_INTERPRETER=lexical\n')
+        with patch.object(module.subprocess, 'check_output', side_effect=self.inspect), \
+                patch.object(module.subprocess, 'run'):
+            module.remote_deploy(self.request)
+        self.assertIn(b'ROBINGRAPH_GRAPH_INTENT_MODE=shadow\n', self.env.read_bytes())
+        self.assertIn(b'ROBINGRAPH_GRAPH_INTERPRETER=lexical\n', self.env.read_bytes())

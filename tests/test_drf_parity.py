@@ -204,7 +204,21 @@ class ParityCase(unittest.TestCase):
         if "json" in golden:
             self.assertEqual(golden["json"], actual.json(), label)
         elif "json_sha256" in golden:
-            self.assertEqual(golden["json_sha256"], _sha256_json(actual.json()), label)
+            body = actual.json()
+            if path == "/openapi.json":
+                # Keep the migration oracle intact while testing the new
+                # additive graph result separately in OpenApiContractTest.
+                schemas = body["components"]["schemas"]
+                schemas.pop("ChatGraphResult", None)
+                # Additive confirmation controls are checked against live DTOs below.
+                schemas.pop("ChatClarifyChoice", None)
+                schemas["ChatClarifyResult"]["properties"].pop("choices", None)
+                schemas["EntityCandidateResponse"]["properties"].pop("route_intent", None)
+                result = schemas["ChatResponse"]["properties"]["result"]
+                result["oneOf"] = [entry for entry in result["oneOf"]
+                                   if entry.get("$ref") != "#/components/schemas/ChatGraphResult"]
+                result["discriminator"]["mapping"].pop("graph_query", None)
+            self.assertEqual(golden["json_sha256"], _sha256_json(body), label)
         elif "text" in golden:
             expected_text = golden["text"]
             if label in ("GET /docs {}", "GET /redoc {}"):

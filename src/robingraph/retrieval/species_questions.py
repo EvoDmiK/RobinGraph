@@ -41,13 +41,19 @@ def bounded_korean_name(span):
     compact = ''.join(tokens)
     return (2 <= len(compact) <= 40 and not any(token in _SPAN_STOPWORDS for token in tokens)
             and not any(_CONJUNCTIVE_END.search(token) for token in tokens[:-1]))
-_ASK = r'(?:알려\s*줘|알려\s*주세요|설명해\s*줘|설명해\s*주세요|알고\s*싶어(?:요)?)'
+_ASK = r'(?:알려\s*줘|알려\s*주세요|설명해\s*줘|설명해\s*주세요|알고\s*싶어(?:요)?|보여\s*줘|보여\s*주세요|찾아\s*줘|찾아\s*주세요|궁금해(?:요)?)'
 _WHAT = r'(?:뭐야|뭔가요|무엇인가요|어떤\s*거야|어떤가요)'
+# Words for the one trophic_niche category; the answer is a shared category, never the same food.
+_DIET_WORD = r'(?:먹이\s*생태\s*범주|먹이\s*생태|먹이\s*범주|먹이\s*습성|먹이|식성)'
+# A habitat phrase typed before the name (숲에 사는 까치와 …) is a condition, not part of the name.
+_PLACE_TOKEN = re.compile(r'(?:에|에서)$|^(?:사는|살고|서식하는)$')
 _PATTERNS = (
-    ('ecological_related', 'trophic_niche', rf'{_NAME}(?:와|과|랑|하고)\s*(?:먹이|먹이\s*생태|식성)(?:가|이)?\s*(?:비슷한|같은)\s*(?:새|종)(?:는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
-    ('ecological_related', 'habitat', rf'{_NAME}(?:와|과|랑|하고)\s*(?:서식\s*환경|서식지)(?:가|이)?\s*(?:비슷한|같은)\s*(?:새|종)(?:는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
-    ('related', None, rf'{_NAME}(?:와|과|랑|하고)\s*(?:비슷한|관련된)\s*(?:새|종)(?:들)?(?:은|는|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
-    ('related', None, rf'{_NAME}(?:와|과|랑|하고)\s*같은\s*(?P<rank>속|과)(?:에\s*속하는|의)?\s*(?:새|종)(?:은|는|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('ecological_related', 'trophic_niche', rf'{_NAME}(?:와|과|랑|하고)\s*{_DIET_WORD}(?:가|이)?\s*(?:비슷한|같은|동일한)\s*(?:새|종|조류)(?:들)?(?:을|를|는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('ecological_related', 'trophic_niche', rf'{_NAME}(?:와|과|랑|하고)\s*(?:같은|비슷한|동일한)\s*{_DIET_WORD}(?:의|인|(?:를|을)?\s*(?:가진|지닌|갖는|공유하는))?\s*(?:새|종|조류)(?:들)?(?:을|를|는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('ecological_related', 'habitat', rf'{_NAME}(?:와|과|랑|하고)\s*(?:서식\s*환경|서식지)(?:가|이)?\s*(?:비슷한|같은)\s*(?:새|종|조류)(?:는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('ecological_related', 'habitat', rf'{_NAME}(?:와|과|랑|하고)\s*(?:비슷한|같은|동일한)\s*(?:서식\s*환경|서식지)(?:의|인|(?:를|을)?\s*(?:가진|지닌|갖는|공유하는))?\s*(?:새|종|조류)(?:들)?(?:을|를|는|은|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('related', None, rf'{_NAME}(?:와|과|랑|하고)\s*(?:비슷한|관련된)\s*(?:새|종|조류)(?:들)?(?:은|는|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
+    ('related', None, rf'{_NAME}(?:와|과|랑|하고)\s*같은\s*(?P<rank>속|과)(?:에\s*속하는|의)?\s*(?:새|종|조류)(?:은|는|이|가)?\s*(?:(?:어떤\s*(?:게|것|종|새)(?:가)?\s*)?(?:있니|있어(?:요)?|있나요)|{_ASK})?'),
     ('diet', None, rf'{_NAME}(?:은|는|이|가)?\s*(?:무엇을|뭘|뭐를|뭐|어떤\s*(?:먹이|음식)(?:를|을))\s*먹(?:고\s*(?:사니|살아(?:요)?|살까요)|어(?:요)?|니|나요|습니까|는지\s*{_ASK})'),
     ('diet', None, rf'{_NAME}(?:의|은|는)?\s*(?:먹이|식성|먹이\s*유형|먹이\s*생태)(?:는|가|에\s*대해)?\s*(?:{_WHAT}|{_ASK})'),
     ('habitat', None, rf'{_NAME}(?:은|는|이|가)?\s*어디(?:에서|에|서)?\s*(?:살아(?:요)?|사니|사나요|살고\s*있니|살고\s*있나요)'),
@@ -60,6 +66,19 @@ _PATTERNS = (
 _COMPILED = tuple((topic, category, re.compile(pattern)) for topic, category, pattern in _PATTERNS)
 
 
+# Ambiguous domain wording is clarified, never silently equated with a trait.
+_ECOLOGY_TERM = re.compile(r'(?<![가-힣])식\s*생(?=[이가은는을를의인도과와\s?.!,]|$)')
+
+
+def ecology_meaning_choices(question):
+    if not isinstance(question, str) or len(question) > MAX_QUESTION_CHARS:
+        return ()
+    if not _ECOLOGY_TERM.search(question) or not re.search(r'비슷|같|동일|유사|공유', question):
+        return ()
+    return tuple({'label': label, 'question': _ECOLOGY_TERM.sub(value, question)}
+                 for label, value in (('식성·먹이 생태 범주', '식성'), ('서식 환경', '서식 환경')))
+
+
 def parse_species_question(question):
     # Whitespace is not collapsed: the name is returned exactly as typed.
     normalized = question.strip().rstrip('.!?？').strip()
@@ -70,6 +89,8 @@ def parse_species_question(question):
         if match:
             name = match.group('name').strip()
             if re.match(r'[가-힣]', name) and not bounded_korean_name(name):
+                return None
+            if topic == 'ecological_related' and any(_PLACE_TOKEN.search(t) for t in name.split()[:-1]):
                 return None
             rank = match.groupdict().get('rank')
             return SpeciesQuestion(name, topic, {'속':'genus','과':'family'}.get(rank, category))

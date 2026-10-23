@@ -85,6 +85,30 @@ class JinaHTTPContractTest(unittest.TestCase):
             JinaEmbeddingClient(_settings(), urlopen=fake_urlopen).embed_query("what"),
         )
 
+    def test_batch_queries_use_query_task_with_document_batching(self) -> None:
+        bodies: list[dict[str, object]] = []
+
+        def fake_urlopen(request: object, timeout: float) -> _Response:
+            body = json.loads(request.data.decode("utf-8"))  # type: ignore[attr-defined]
+            bodies.append(body)
+            return _Response(_rows([[1, 2, 3]] * len(body["input"])))  # type: ignore[arg-type]
+
+        client = JinaEmbeddingClient(_settings(), urlopen=fake_urlopen)
+        self.assertEqual(((1.0, 2.0, 3.0),) * 3, client.embed_queries(("a", "b", "c")))
+        self.assertEqual([["a", "b"], ["c"]], [body["input"] for body in bodies])
+        self.assertEqual({"retrieval.query"}, {body["task"] for body in bodies})
+        self.assertEqual((), client.embed_queries(()))
+        self.assertEqual(2, len(bodies))
+        client.embed_documents(("d",))
+        self.assertEqual("retrieval.passage", bodies[-1]["task"])
+
+    def test_batch_queries_validate_count_and_dimensions(self) -> None:
+        for payload in (_rows([[1, 2, 3]]), _rows([[1, 2], [1, 2]])):
+            with self.subTest(payload=payload):
+                client = JinaEmbeddingClient(_settings(), urlopen=lambda request, timeout, p=payload: _Response(p))
+                with self.assertRaises(EmbeddingResponseError):
+                    client.embed_queries(("a", "b"))
+
     def test_empty_documents_do_not_make_http_call(self) -> None:
         calls = 0
 

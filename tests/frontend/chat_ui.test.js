@@ -1919,7 +1919,7 @@ test("donut composition preserves separate vertebrate percentages while icon pol
   const rows = collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null);
   assert.deepEqual(rows.map(n => [n.getAttribute("data-component"), n.getAttribute("data-percent")]), [["fish", "10"], ["endotherm_vertebrate", "20"], ["ectotherm_vertebrate", "30"], ["unknown_vertebrate", "40"]]);
   assert.deepEqual(collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null).map(n => n.getAttribute("data-start-percent")), ["0", "10", "30", "60"]);
-  assert.match(collectedText(composition), /온혈 척추동물/); assert.match(collectedText(composition), /변온 척추동물/); assert.match(collectedText(composition), /추정값/);
+  assert.match(collectedText(composition), /고기 \(온혈 척추동물\)/); assert.match(collectedText(composition), /고기 \(변온 척추동물\)/); assert.match(collectedText(composition), /추정값/);
   assert.match(collectedText(card.sourceMaterial), /원래 한글 구성/);
   assert.ok(chat.dietIconInfo(profile).icons.some(icon => icon.key === "vertebrate" && /90%/.test(icon.text)));
 });
@@ -3296,18 +3296,17 @@ test("RG-008: a sourced diet distribution yields one icon per positive member, s
     value: { fish: 60, ectotherm_vertebrate: 20, endotherm_vertebrate: 10, invertebrate: 10, seed: 0, fruit: null, carrion: -5, nectar: Infinity, mystery_food: 40 } }]));
   assert.equal(info.basis, "distribution");
   assert.deepEqual(info.icons.map((i) => i.key), ["fish", "vertebrate", "invertebrate"], "왜가리 example: 물고기 + 척추동물 from sourced shares; 0/null/negative/unknown dropped");
-  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 척추동물 30%", "먹이: 무척추동물 10%"]);
+  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 고기 30%", "먹이: 곤충 10%"]);
 });
 
-test("RG-008: fish-only distribution adds a clearly labelled parent 척추동물 grouping; duplicate records are not summed", () => {
+test("RG-008: fish-only distribution does not imply meat; duplicate records are not summed", () => {
   const second = { ...DIET_SOURCE, source_name: "Second", source_url: "https://example.org/second" };
   const info = chat.dietIconInfo(dietProfile([
     { name: "diet_distribution", ...DIET_SOURCE, value: { fish: 100 } },
     { name: "diet_distribution", ...second, value: { fish: 100 } },
   ]));
-  assert.deepEqual(info.icons.map((i) => i.key), ["fish", "vertebrate"]);
-  assert.equal(info.icons[1].parentGroup, true);
-  assert.equal(info.icons[1].text, "먹이: 척추동물 (상위 묶음 · 물고기 포함)");
+  assert.deepEqual(info.icons.map((i) => i.key), ["fish"]);
+  assert.equal(info.icons.some((icon) => icon.key === "vertebrate"), false, "fish alone must not imply meat");
   assert.equal(info.icons[0].text, "먹이: 물고기 100%", "two identical {fish:100} records stay 100%, never 200%");
   assert.deepEqual(info.sources.map((t) => t.source_name), ["AVONET"], "the first valid record is the single display basis");
   assert.equal(info.otherDistributionCount, 1);
@@ -3322,7 +3321,7 @@ test("RG-008: VertFishScav and Aquatic predator stay single broad icons and neve
   assert.deepEqual(dietKeys(dietProfile([
     { name: "diet_category", value: "VertFishScav", ...DIET_SOURCE },
     { name: "diet_distribution", value: { fish: 70, carrion: 30 }, ...DIET_SOURCE },
-  ])), ["fish", "carrion", "vertebrate"], "a distribution supplies members and overrides the combined category");
+  ])), ["fish", "carrion"], "a distribution supplies members and overrides the combined category");
 });
 
 test("RG-008: fallback order is diet_category then trophic_niche; unsourced, unknown and null values are excluded", () => {
@@ -3350,16 +3349,18 @@ test("RG-008: card front and chat brief show accessible diet icons next to the h
   const front = collectAllNodes(card).find((n) => n.className === "species-card-front");
   const icons = collectAllNodes(front).find((n) => n.className === "species-diet-icons");
   assert.equal(icons.getAttribute("aria-label"), "먹이 아이콘 · 먹이 구성 비율");
-  assert.deepEqual(icons.children.map((n) => n.className), ["diet-icon diet-fish", "diet-icon diet-invertebrate", "diet-icon diet-vertebrate diet-parent"]);
-  assert.deepEqual(icons.children.map((n) => n.getAttribute("title")), ["먹이: 물고기 70%", "먹이: 무척추동물 30%", "먹이: 척추동물 (상위 묶음 · 물고기 포함)"]);
+  assert.deepEqual(icons.children.map((n) => n.className), ["diet-icon diet-fish", "diet-icon diet-invertebrate"]);
+  assert.deepEqual(icons.children.map((n) => n.getAttribute("title")), ["먹이: 물고기 70%", "먹이: 곤충 30%"]);
   assert.equal(icons.children[0].children[0].getAttribute("aria-hidden"), "true");
   const back = collectAllNodes(card).find((n) => n.className === "species-card-back");
   const legend = collectAllNodes(card.sourceMaterial).find((n) => n.className === "species-diet-legend");
   assert.ok(collectAllNodes(legend).some((n) => n.tagName === "a" && n.href === "https://example.org/avonet"));
   assert.ok(collectAllNodes(legend).some((n) => /서식지나 이름으로 먹이를 추정하지 않습니다/.test(n.textContent)));
+  assert.ok(collectAllNodes(legend).some((n) => /곤충 외 무척추동물도 포함/.test(n.textContent)));
+  assert.ok(collectAllNodes(legend).some((n) => /물고기와 사체는 별도로/.test(n.textContent)));
   const brief = chat.buildSpeciesBrief({ createElement: createFakeElement }, profile);
   assert.equal(brief.children[0].className, "species-emblem habitat-wetland");
-  assert.equal(brief.children.find((n) => n.className === "species-diet-icons").children.length, 3);
+  assert.equal(brief.children.find((n) => n.className === "species-diet-icons").children.length, 2);
   const none = chat.buildSpeciesCard({ createElement: createFakeElement }, dietProfile([]));
   assert.equal(collectAllNodes(none).some((n) => n.className === "species-diet-icons" && n.parentNode.className === "species-card-front"), false);
   assert.match(collectAllNodes(none.sourceMaterial).find((n) => n.className === "species-diet-legend").children[1].textContent, /먹이 아이콘을 표시하지 않습니다/);
@@ -3386,7 +3387,7 @@ test("RG-008: styles.css defines every diet icon class", () => {
 test("RG-008: actual 왜가리 EltonTraits distribution shows 물고기, 척추동물 and 무척추동물 with sourced shares", () => {
   const info = chat.dietIconInfo(dietProfile([{ name: "diet_distribution", ...DIET_SOURCE, source_name: "EltonTraits",
     value: { invertebrate: 20, endotherm_vertebrate: 10, ectotherm_vertebrate: 10, fish: 60 } }]));
-  assert.deepEqual(info.icons.map((i) => i.text).sort(), ["먹이: 무척추동물 20%", "먹이: 물고기 60%", "먹이: 척추동물 20%"]);
+  assert.deepEqual(info.icons.map((i) => i.text).sort(), ["먹이: 고기 20%", "먹이: 곤충 20%", "먹이: 물고기 60%"]);
   assert.equal(info.icons[0].key, "fish");
   assert.equal(info.icons.some((i) => i.parentGroup), false, "real vertebrate shares exist, so no synthetic parent icon");
 });
@@ -3576,7 +3577,7 @@ test("RG-008 fix: conflicting distribution records are never fused; the first va
   ]);
   const info = chat.dietIconInfo(profile);
   assert.equal(info.basis, "distribution");
-  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 척추동물 20%", "먹이: 무척추동물 20%"],
+  assert.deepEqual(info.icons.map((i) => i.text), ["먹이: 물고기 60%", "먹이: 고기 20%", "먹이: 곤충 20%"],
     "vertebrate subgroups aggregate inside the chosen record only; seed from the other source is not added");
   assert.deepEqual(info.sources.map((t) => t.source_url), ["https://example.org/avonet"]);
   assert.equal(info.otherDistributionCount, 1);
@@ -3922,7 +3923,7 @@ test("targeted diet answer renders supplied distribution as diet icons and keeps
   const fixture = await renderProfileMessage(profile, { result: payload.result });
   const targeted = fixture.message.children.find(n => n.className === "species-question-answer");
   const list = collectAllNodes(targeted).find(n => /species-diet-icons/.test(n.className || ""));
-  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["무척추동물", "씨앗", "기타 식물"]);
+  assert.deepEqual(collectAllNodes(list).filter(n => n.className === "diet-icon-label").map(n => n.textContent), ["곤충", "씨앗", "기타 식물"]);
   assert.deepEqual(collectAllNodes(list).filter(n => n.className === "question-answer-diet-share").map(n => n.textContent), ["40%", "35.5%", "24.5%"]);
   assert.equal(collectAllNodes(targeted).some(n => n.className === "question-answer-facts"), false);
   assert.equal(collectAllNodes(targeted).filter(n => n.tagName === "a").length, 0);
@@ -6750,6 +6751,147 @@ test('RG406 an old candidate button cannot submit after changing scope',async()=
   select('outside');const before=dom.fetchCalls.length;button.dispatch('click',{});
   assert.equal(dom.fetchCalls.length,before);assert.equal(messageRows(dom.elementsById['history']).length,0);
 });
+
+test("buildGraphQueryAnswer renders graph question result with paths, items, sources, limitations, and safe URLs", () => {
+  const doc = {
+    createElement: createFakeElement,
+    createTextNode: text => ({ textContent: text, nodeType: 3, children: [] }),
+  };
+  let calledQuery = null;
+  let calledSci = null;
+  const payload = {
+    title: "청둥오리와 흰뺨검둥오리의 공통 분류",
+    text: "청둥오리와 흰뺨검둥오리는 같은 속(오리속)에 속합니다.",
+    status: "answer",
+    paths: [
+      { text: "같은 속: 오리속 (Anas)", source_name: "AviList v2025b", source_url: "https://explore.avilist.org/sample" },
+      { text: "악성 링크 테스트", source_name: "Hostile", source_url: "javascript:alert(1)" },
+    ],
+    items: [
+      {
+        taxon: {
+          taxon_id: "avilist:123",
+          korean_name: "흰뺨검둥오리",
+          scientific_name: "Anas zonorhyncha",
+          english_name: "Eastern Spot-billed Duck",
+        },
+        paths: [
+          { text: "같은 속: 오리속", source_name: "AviList", source_url: "https://explore.avilist.org" },
+        ],
+      },
+    ],
+    sources: [
+      { source_name: "AviList v2025b", source_url: "https://explore.avilist.org/sample" },
+    ],
+    limitations: ["진화적 거리를 의미하지 않습니다."],
+    has_more: true,
+  };
+  const section = chat.buildGraphQueryAnswer(doc, payload, {
+    onQuestion: (q, sci) => { calledQuery = q; calledSci = sci; },
+  });
+  assert.ok(section);
+  assert.equal(section.className, "name-relations graph-query-answer");
+  const allText = collectedText(section);
+  assert.ok(allText.includes("청둥오리와 흰뺨검둥오리의 공통 분류"));
+  assert.ok(allText.includes("같은 속: 오리속 (Anas)"));
+  assert.ok(allText.includes("흰뺨검둥오리"));
+  assert.ok(allText.includes("Anas zonorhyncha"));
+  assert.ok(allText.includes("진화적 거리를 의미하지 않습니다."));
+  assert.ok(allText.includes("결과가 많아 최대 20개 종까지만 표시되었습니다."));
+
+  // Details remain available without crowding the initial species list.
+  const disclosures = collectAllNodes(section).filter(n => n.tagName === "details");
+  assert.ok(disclosures.length >= 3);
+  assert.ok(disclosures.every(n => !n.open && n.getAttribute("open") == null));
+  const speciesList = collectAllNodes(section).find(n => n.className === "graph-query-species");
+  assert.ok(speciesList);
+  assert.equal(section.children[section.children.length - 1].className, "species-note graph-query-notes");
+
+  // Verify hostile javascript: URL is rejected and safe link created
+  const links = collectAllNodes(section).filter(n => n.tagName === "a" || n.tagName === "A");
+  assert.ok(links.length > 0);
+  for (const a of links) {
+    assert.ok(!a.href || !a.href.startsWith("javascript:"));
+  }
+
+  // Verify species button click triggers onQuestion handler
+  const btn = collectAllNodes(section).find(n => n.tagName === "button" || n.tagName === "BUTTON");
+  assert.ok(btn);
+  assert.equal(btn.textContent, "흰뺨검둥오리");
+  btn.dispatch("click", {});
+  assert.equal(calledQuery, "흰뺨검둥오리");
+  assert.equal(calledSci, "Anas zonorhyncha");
+});
+
+test("buildGraphQueryAnswer handles insufficient_data with honest caveats and without species list", () => {
+  const doc = {
+    createElement: createFakeElement,
+    createTextNode: text => ({ textContent: text, nodeType: 3, children: [] }),
+  };
+  const payload = {
+    title: "숲에 사는 새 중 직박구리와 같은 열매를 먹는 새",
+    text: "특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다.",
+    status: "insufficient_data",
+    items: [],
+    paths: [],
+    sources: [],
+    limitations: ["특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."],
+    has_more: false,
+  };
+  const section = chat.buildGraphQueryAnswer(doc, payload);
+  assert.ok(section);
+  const allText = collectedText(section);
+  assert.ok(allText.includes("자료 한계 및 유의사항"));
+  assert.ok(allText.includes("특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."));
+});
+
+test("clarification choices submit exact auto question with scope only and honor busy and stale guards", async () => {
+  const question = "청둥오리랑 비슷한 먹이 범주를 가진 새들을 알려줘";
+  const reply = { disposition: "clarify", answer_text: "어떤 의미인가요?", warnings: [], result: { kind: "clarify", choices: [null, { label: "식성·먹이 범주", question }, { label: "서식 환경", question: "청둥오리와 같은 서식 환경의 새" }] } };
+  const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : reply)));
+  const select = addScopeControls(dom);
+  chat.init(dom.doc, dom.win);
+  select("korea");
+  dom.elementsById["question-input"].value = "청둥오리랑 비슷한 식생";
+  pressKey(dom, {}); await settleEventPath();
+  const group = collectAllNodes(dom.elementsById["history"]).find(n => n.className === "entity-candidate-buttons clarification-choices");
+  assert.ok(group); assert.equal(group.children.length, 2);
+  const button = group.children[0];
+  const before = dom.fetchCalls.length;
+  dom.elementsById["question-input"].disabled = true;
+  button.dispatch("click"); assert.equal(dom.fetchCalls.length, before);
+  dom.elementsById["question-input"].disabled = false;
+  dom.elementsById["chat-form"].setAttribute("aria-busy", "true");
+  button.dispatch("click"); assert.equal(dom.fetchCalls.length, before);
+  dom.elementsById["chat-form"].setAttribute("aria-busy", "false");
+  dom.elementsById["chat-intent"].value = "profile";
+  dom.elementsById["profile-name"].value = "까치";
+  button.dispatch("click"); await settleEventPath();
+  const calls = dom.fetchCalls.filter(c => c.url === "/v1/chat");
+  assert.deepEqual(JSON.parse(calls[1].options.body), { question, intent: "auto", species_scope: "korea", defer_discovery: true });
+  const count = dom.fetchCalls.length;
+  select("outside"); button.dispatch("click"); assert.equal(dom.fetchCalls.length, count);
+});
+
+test("relation entity candidates preserve full question through auto while profile remains explicit", async () => {
+  for (const routeIntent of ["auto", "profile", undefined]) {
+    const question = "Anas platyrhynchos랑 비슷한 식성을 가진 새들을 알려줘";
+    const reply = { disposition: "clarify", answer_text: "종 확인", warnings: [], result: { kind: "clarify" }, entity_resolution: { status: "candidates", candidates: [{ scientific_name: "Anas platyrhynchos", display_name: "청둥오리", question, route_intent: routeIntent }] } };
+    const dom = createFakeDom(url => Promise.resolve(jsonResponse(url === "/health" ? { mode: "fixture" } : reply)));
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "천둥오리랑 비슷한 식성을 가진 새들";
+    pressKey(dom, {}); await settleEventPath();
+    dom.elementsById["chat-intent"].value = "profile"; dom.elementsById["profile-name"].value = "까치";
+    collectAllNodes(dom.elementsById["history"]).find(n => n.className === "entity-candidate-button").dispatch("click");
+    await settleEventPath();
+    const payload = JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[1].options.body);
+    assert.equal(payload.question, question);
+    assert.equal(payload.intent, routeIntent === "auto" ? "auto" : "profile");
+    assert.deepEqual(payload.filters, routeIntent === "auto" ? undefined : { kind: "profile", name: "Anas platyrhynchos" });
+    assert.ok(collectedText(messageRows(dom.elementsById["history"])[2]).includes("청둥오리랑 비슷한 식성을 가진 새들을 알려줘"));
+  }
+});
+
 
 test("focused ecological answer retains prose for missing or stale structured evidence", async () => {
   for (const relations of [Object.assign(ecologicalFixture(), { concept_set_id: "old" }), Object.assign(ecologicalFixture(), { groups: [] })]) {

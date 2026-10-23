@@ -1,0 +1,48 @@
+{
+  "contributors": {
+    "tuning.jsonl": "agent:claude-opus-5-5; root/Codex semantic review (agent_reviewed, not human)",
+    "holdout.jsonl": "agent:codex author; agent:writer independent review; agent:codex review adjudication. Agent reviewed, not human reviewed; frozen before implementation.",
+    "schema_and_evaluator": "agent:claude-opus-5-5",
+    "third_party_review": "Writer semantic review completed, adjudicated by Codex before freeze; human review not performed."
+  },
+  "schema_version": "rg205-v1",
+  "files": {
+    "tuning.jsonl": {
+      "count": 84,
+      "sha256": "9bc38342b0d698a2770af8f5aa8304740ca6ec8bf87eea1864132679b57cb732",
+      "categories": {
+        "ambiguity": 5,
+        "contrastive": 6,
+        "extra_condition": 9,
+        "negation": 7,
+        "not_graph": 6,
+        "overclaim_reject": 6,
+        "per_kind_paraphrase": 31,
+        "root_probe": 4,
+        "scope": 8,
+        "specific_plant": 7,
+        "user_failure": 3
+      },
+      "review_status": [
+        "agent_reviewed"
+      ]
+    },
+    "holdout.jsonl": {
+      "count": 40,
+      "sha256": "11853040600799247e69510dfa74fe60698a75a1ea0a7bfd3b2245563b3b50e4",
+      "categories": {
+        "ambiguity": 1,
+        "contrastive": 1,
+        "extra_condition": 4,
+        "negation": 3,
+        "not_graph": 5,
+        "overclaim_reject": 4,
+        "paraphrase": 19,
+        "specific_plant": 3
+      },
+      "review_status": [
+        "agent_reviewed"
+      ]
+    }
+  }
+}
