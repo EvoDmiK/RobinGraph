@@ -300,6 +300,22 @@ _AUTO_RANK_QUESTION = re.compile(
 )
 
 
+def _resolve_taxon_name(handler, name: str, species_scope: SpeciesScope) -> EntityResolutionResponse:
+    raw = handler(name) if species_scope == "all" else handler(name, species_scope=species_scope)
+    resolution = EntityResolutionResponse.model_validate(raw)
+    if resolution.mention != name:
+        raise ValueError("Resolver changed the source mention")
+    if resolution.status == "matched":
+        if (resolution.method not in ("graph_exact", "graph_normalized")
+                or not resolution.canonical_name or not resolution.taxon_id
+                or not resolution.concept_set_id or not resolution.taxonomy_release):
+            raise ValueError("Incomplete graph identity")
+    elif resolution.status == "candidates":
+        if resolution.method != "vector" or not resolution.candidates:
+            raise ValueError("Invalid vector suggestions")
+    return resolution
+
+
 def _scoped_profile(handler, name: str, species_scope: SpeciesScope):
     profile = handler(name)
     if species_scope == "all":
@@ -986,22 +1002,12 @@ class ApiService:
                 names = []
                 for mention in graph_question.names:
                     try:
-                        resolver = self.taxon_name_resolution_handler
-                        raw = (resolver(mention) if request.species_scope == "all"
-                               else resolver(mention, species_scope=request.species_scope))
-                        resolution = EntityResolutionResponse.model_validate(raw)
-                        if resolution.mention != mention:
-                            raise ValueError("Resolver changed the source mention")
+                        resolution = _resolve_taxon_name(
+                            self.taxon_name_resolution_handler, mention, request.species_scope)
                         if resolution.status == "matched":
-                            if (resolution.method not in ("graph_exact", "graph_normalized")
-                                    or not resolution.canonical_name or not resolution.taxon_id
-                                    or not resolution.concept_set_id or not resolution.taxonomy_release):
-                                raise ValueError("Incomplete graph identity")
                             names.append(resolution.canonical_name)
                             continue
                         if resolution.status == "candidates":
-                            if resolution.method != "vector" or not resolution.candidates:
-                                raise ValueError("Invalid vector suggestions")
                             for candidate in resolution.candidates:
                                 candidate.question = rewrite_name_candidate(request.question, mention, candidate.scientific_name)
                                 candidate.route_intent = "auto"
@@ -1273,20 +1279,10 @@ class ApiService:
                         )
                     name = mention
                 try:
-                    resolved = (taxon_name_resolution_handler(name) if request.species_scope == "all"
-                                else taxon_name_resolution_handler(name, species_scope=request.species_scope))
-                    resolution = EntityResolutionResponse.model_validate(resolved)
-                    if resolution.mention != name:
-                        raise ValueError("Resolver changed the source mention")
+                    resolution = _resolve_taxon_name(taxon_name_resolution_handler, name, request.species_scope)
                     if resolution.status == "matched":
-                        if (not resolution.canonical_name or not resolution.taxon_id
-                                or not resolution.concept_set_id or not resolution.taxonomy_release
-                                or resolution.method not in ("graph_exact", "graph_normalized")):
-                            raise ValueError("Incomplete graph identity")
                         name = resolution.canonical_name
                     elif resolution.status == "candidates":
-                        if resolution.method != "vector" or not resolution.candidates:
-                            raise ValueError("Invalid vector suggestions")
                         for candidate in resolution.candidates:
                             candidate.question = rewrite_name_candidate(
                                 request.question, resolution.mention, candidate.scientific_name)

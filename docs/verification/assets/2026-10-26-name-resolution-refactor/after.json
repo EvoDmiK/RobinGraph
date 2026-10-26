@@ -1,0 +1,2072 @@
+[
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "matched",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "answer",
+      "answer_text": "확인된 종 소개",
+      "warnings": [],
+      "result": {
+        "kind": "profile",
+        "profile": {
+          "taxon": {
+            "taxon_id": "duck",
+            "scientific_name": "Anas zonorhyncha",
+            "rank": "species",
+            "korean_name": "흰뺨검둥오리"
+          },
+          "lineage": {
+            "concept_set_id": "active",
+            "taxonomy_release": "v2025b"
+          },
+          "summary": "확인된 종 소개",
+          "traits": [],
+          "warnings": []
+        },
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "matched",
+        "method": "graph_exact",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "duck",
+        "concept_set_id": "active",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 1,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "normalized",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "answer",
+      "answer_text": "확인된 종 소개",
+      "warnings": [],
+      "result": {
+        "kind": "profile",
+        "profile": {
+          "taxon": {
+            "taxon_id": "duck",
+            "scientific_name": "Anas zonorhyncha",
+            "rank": "species",
+            "korean_name": "흰뺨검둥오리"
+          },
+          "lineage": {
+            "concept_set_id": "active",
+            "taxonomy_release": "v2025b"
+          },
+          "summary": "확인된 종 소개",
+          "traits": [],
+          "warnings": []
+        },
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "matched",
+        "method": "graph_normalized",
+        "canonical_name": "Anas zonorhyncha",
+        "taxon_id": "duck",
+        "concept_set_id": "active",
+        "taxonomy_release": "v2025b",
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 1,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "vector",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "clarify",
+      "answer_text": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요.",
+      "warnings": [
+        "이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "changed_mention",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "vector_identity",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "empty_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "exact_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "not_found",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "입력한 이름의 종 정보를 확인하지 못했습니다.",
+      "warnings": [
+        "종 이름을 임의로 추정하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "unavailable",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "이름 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "종 이름을 임의로 추정하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "unavailable",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "malformed",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "exception",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "missing_canonical_name",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "missing_taxon_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "missing_concept_set_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "all",
+    "case": "missing_taxonomy_release",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "matched",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "선택한 범위에서 이 종의 기록·분포를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다.",
+      "warnings": [
+        "선택한 범위의 분포 근거를 확인하지 못했습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 1,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "normalized",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "선택한 범위에서 이 종의 기록·분포를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다.",
+      "warnings": [
+        "선택한 범위의 분포 근거를 확인하지 못했습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 1,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "vector",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "clarify",
+      "answer_text": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요.",
+      "warnings": [
+        "이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "changed_mention",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "vector_identity",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "empty_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "exact_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "not_found",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "선택한 범위에서 이 이름의 종 정보를 확인하지 못했습니다. 전체 범위에서 다시 조회할 수 있습니다.",
+      "warnings": [
+        "종 이름을 임의로 추정하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "unavailable",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "이름 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "종 이름을 임의로 추정하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "unavailable",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "malformed",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "exception",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "missing_canonical_name",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "missing_taxon_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "missing_concept_set_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "profile",
+    "scope": "korea",
+    "case": "missing_taxonomy_release",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "deterministic",
+      "disposition": "abstain",
+      "answer_text": "새 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종의 자료로 답하지 않았습니다."
+      ],
+      "result": {
+        "kind": "profile",
+        "profile": null,
+        "question_answer": null,
+        "similar_species": null,
+        "subspecies": null
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "matched",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "answer",
+      "answer_text": "fixture",
+      "warnings": [],
+      "result": {
+        "kind": "graph_query",
+        "payload": {
+          "status": "answer",
+          "title": "fixture",
+          "text": "fixture",
+          "limitations": []
+        }
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 1
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "normalized",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "answer",
+      "answer_text": "fixture",
+      "warnings": [],
+      "result": {
+        "kind": "graph_query",
+        "payload": {
+          "status": "answer",
+          "title": "fixture",
+          "text": "fixture",
+          "limitations": []
+        }
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 1
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "vector",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요.",
+      "warnings": [
+        "이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "changed_mention",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "vector_identity",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "empty_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "exact_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "not_found",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "‘흰뺨검둥오리’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "이름 확인 실패를 생태 관계가 없다는 뜻으로 해석하지 마세요."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "unavailable",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "‘흰뺨검둥오리’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "이름 확인 실패를 생태 관계가 없다는 뜻으로 해석하지 마세요."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "unavailable",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "malformed",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "exception",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "missing_canonical_name",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "missing_taxon_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "missing_concept_set_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "all",
+    "case": "missing_taxonomy_release",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {}
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "matched",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "answer",
+      "answer_text": "fixture",
+      "warnings": [],
+      "result": {
+        "kind": "graph_query",
+        "payload": {
+          "status": "answer",
+          "title": "fixture",
+          "text": "fixture",
+          "limitations": []
+        }
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 1
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "normalized",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "answer",
+      "answer_text": "fixture",
+      "warnings": [],
+      "result": {
+        "kind": "graph_query",
+        "payload": {
+          "status": "answer",
+          "title": "fixture",
+          "text": "fixture",
+          "limitations": []
+        }
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 1
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "vector",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요.",
+      "warnings": [
+        "이름을 바꾸면서 질문의 다른 조건을 삭제하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "changed_mention",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "vector_identity",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "empty_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "exact_candidates",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "not_found",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "‘흰뺨검둥오리’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "이름 확인 실패를 생태 관계가 없다는 뜻으로 해석하지 마세요."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "not_found",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "unavailable",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "‘흰뺨검둥오리’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "이름 확인 실패를 생태 관계가 없다는 뜻으로 해석하지 마세요."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": {
+        "mention": "흰뺨검둥오리",
+        "status": "unavailable",
+        "method": "none",
+        "canonical_name": null,
+        "taxon_id": null,
+        "concept_set_id": null,
+        "taxonomy_release": null,
+        "candidates": []
+      }
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "malformed",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "exception",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "missing_canonical_name",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "missing_taxon_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "missing_concept_set_id",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  },
+  {
+    "route": "graph",
+    "scope": "korea",
+    "case": "missing_taxonomy_release",
+    "status": 200,
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+      "warnings": [
+        "확인되지 않은 종으로 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "기준 새 이름을 확인해 주세요."
+      },
+      "entity_resolution": null
+    },
+    "resolver_calls": [
+      {
+        "args": [
+          "흰뺨검둥오리"
+        ],
+        "kwargs": {
+          "species_scope": "korea"
+        }
+      }
+    ],
+    "profile_calls": 0,
+    "graph_calls": 0
+  }
+]

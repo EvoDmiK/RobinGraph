@@ -1,0 +1,14 @@
+{
+  "reviewer": "completed_release_checks",
+  "decision": "PASS",
+  "checks": [
+    "resolver invocation and scope preserved",
+    "source mention and identity validation preserved",
+    "route-specific rendering, rewriting, trace reasons and exception handling preserved",
+    "profile downstream identity recheck preserved",
+    "60 before/after JSON records independently compared equal",
+    "new test covers 2 routes x 8 invalid identities and prohibits downstream reads"
+  ],
+  "reviewer_reran_tests": false,
+  "reviewer_modified_code_or_git": false
+}

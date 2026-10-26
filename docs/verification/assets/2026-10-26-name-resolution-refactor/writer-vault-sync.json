@@ -1,0 +1,27 @@
+{
+  "task": "2026-10-26-name-resolution-refactor",
+  "verified_at": "2026-10-26T11:31:20.860Z",
+  "repository_path": "docs/work-log/2026-10-26-name-resolution-refactor.md",
+  "scratch_path": "/tmp/2026-10-26-name-resolution-refactor.md",
+  "vault_path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-26-Ponytail-이름해소-중복정리.md",
+  "sha256": "285927a8a930165789058536d5202866af7f8f8e279fcddb95a0fbc5f1989176",
+  "scratch_repository_vault_raw_equal": true,
+  "characters": 3872,
+  "changed_vault_documents": 3,
+  "index_readback": true,
+  "backlog_readback": true,
+  "backlog_only_added_worklog_link": true,
+  "other_content_preserved": true,
+  "rg212_status_unchanged": true,
+  "unit": {
+    "run": 1327,
+    "pass": 1287,
+    "skip": 40,
+    "fail": 0
+  },
+  "fixture_comparison_cases": 60,
+  "actual_db_provider_calls": 0,
+  "test_deployed": false,
+  "production_deployed": false,
+  "commit_push_performed": false
+}

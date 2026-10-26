@@ -1,0 +1,22 @@
+{
+  "unit": {
+    "run": 1327,
+    "passed": 1287,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 24.973
+  },
+  "characterization_cases": 60,
+  "new_invalid_identity_subcases": 16,
+  "production_application_files_changed": [
+    "src/robingraph/api/services.py"
+  ],
+  "test_files_changed": [
+    "tests/test_entity_resolution_api.py"
+  ],
+  "real_provider_db_calls": 0,
+  "test_deployed": false,
+  "production_deployed": false,
+  "commit_push_performed": false,
+  "graphify_update": true
+}

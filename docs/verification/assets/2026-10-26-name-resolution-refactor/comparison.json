@@ -1,0 +1,7 @@
+{
+  "cases": 60,
+  "identical_http_bodies_and_statuses": true,
+  "identical_resolver_calls_and_scope": true,
+  "identical_downstream_call_counts": true,
+  "real_db_api_calls": 0
+}

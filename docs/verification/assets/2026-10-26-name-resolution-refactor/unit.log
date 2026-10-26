@@ -1,0 +1,1303 @@
+..................................English search-term conversion failed (RuntimeError)
+English search-term conversion failed (ValueError)
+English search-term conversion failed (ValueError)
+..........................................s....................avilist pipeline apply failed: invalid_json (StageFailure)
+avilist pipeline apply failed: body_must_be_empty_object (StageFailure)
+avilist pipeline apply failed: body_must_be_empty_object (StageFailure)
+avilist pipeline apply failed: body_must_be_empty_object (StageFailure)
+avilist pipeline apply failed: body_must_be_empty_object (StageFailure)
+avilist pipeline apply failed: body_must_be_empty_object (StageFailure)
+avilist pipeline apply failed: invalid_json (StageFailure)
+avilist pipeline apply failed: json_body_required (StageFailure)
+...2026-10-26 20:28:39,147 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: package_missing (StageFailure)
+2026-10-26 20:28:39,147 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,148 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,149 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,149 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,150 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,151 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: approval_missing (StageFailure)
+2026-10-26 20:28:39,151 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,151 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,152 INFO robingraph.avilist_pipeline_service avilist pipeline verify: verified
+2026-10-26 20:28:39,152 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,153 INFO robingraph.avilist_pipeline_service avilist pipeline apply: applied
+2026-10-26 20:28:39,153 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,155 INFO robingraph.avilist_pipeline_service avilist pipeline prepare: prepared
+2026-10-26 20:28:39,155 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,155 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 401 Unauthorized"
+.2026-10-26 20:28:39,157 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,157 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,158 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,159 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: code_unbound (StageFailure)
+2026-10-26 20:28:39,159 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,159 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,161 INFO robingraph.avilist_pipeline_service avilist pipeline prepare: prepared
+2026-10-26 20:28:39,161 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,162 INFO robingraph.avilist_pipeline_service avilist pipeline apply: applied
+2026-10-26 20:28:39,162 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 200 OK"
+.2026-10-26 20:28:39,164 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,164 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,165 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,165 INFO robingraph.avilist_pipeline_service avilist pipeline verify: verified
+2026-10-26 20:28:39,166 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,167 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: code_changed (StageFailure)
+2026-10-26 20:28:39,167 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,167 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,168 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: code_changed (StageFailure)
+2026-10-26 20:28:39,168 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,169 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,169 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: code_changed (StageFailure)
+2026-10-26 20:28:39,170 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,170 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,173 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: package_missing (StageFailure)
+2026-10-26 20:28:39,173 WARNING django.request Conflict: /verify
+.2026-10-26 20:28:39,175 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,175 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,175 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,176 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: code_changed (StageFailure)
+2026-10-26 20:28:39,176 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,176 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,178 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,178 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,179 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,180 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: code_changed (StageFailure)
+2026-10-26 20:28:39,180 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,181 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,181 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: code_changed (StageFailure)
+2026-10-26 20:28:39,181 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,182 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,182 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: code_changed (StageFailure)
+2026-10-26 20:28:39,182 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,183 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,186 WARNING django.request Not Found: /v1/chat
+2026-10-26 20:28:39,186 INFO httpx2 HTTP Request: GET http://testserver/v1/chat "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:39,187 WARNING django.request Not Found: /openapi.json
+2026-10-26 20:28:39,187 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:39,188 WARNING django.request Not Found: /docs
+2026-10-26 20:28:39,188 INFO httpx2 HTTP Request: GET http://testserver/docs "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:39,189 WARNING django.request Not Found: /chat
+2026-10-26 20:28:39,189 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:39,190 WARNING django.request Not Found: /prepare
+2026-10-26 20:28:39,190 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:39,190 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,191 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+.2026-10-26 20:28:39,193 INFO httpx2 HTTP Request: GET http://testserver/health/?q=1 "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:39,194 INFO httpx2 HTTP Request: GET http://testserver/prepare/?q=1 "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:39,195 INFO httpx2 HTTP Request: GET http://testserver/verify/?q=1 "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:39,195 INFO httpx2 HTTP Request: GET http://testserver/apply/?q=1 "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:39,196 WARNING django.request Method Not Allowed: /health
+2026-10-26 20:28:39,197 INFO httpx2 HTTP Request: POST http://testserver/health "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:39,197 WARNING django.request Method Not Allowed: /health
+2026-10-26 20:28:39,197 INFO httpx2 HTTP Request: HEAD http://testserver/health "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:39,198 WARNING django.request Method Not Allowed: /prepare
+2026-10-26 20:28:39,198 INFO httpx2 HTTP Request: OPTIONS http://testserver/prepare "HTTP/1.1 405 Method Not Allowed"
+..2026-10-26 20:28:39,200 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:39,201 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:39,202 INFO httpx2 HTTP Request: GET http://testserver/missing "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:39,202 INFO httpx2 HTTP Request: GET http://testserver/apply "HTTP/1.1 400 Bad Request"
+.2026-10-26 20:28:39,204 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,204 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,204 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,206 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,206 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,206 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,208 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,209 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,210 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,210 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,211 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,212 INFO robingraph.avilist_pipeline_service avilist pipeline prepare: prepared
+2026-10-26 20:28:39,212 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 200 OK"
+.2026-10-26 20:28:39,214 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: dependency_unavailable (OSError)
+2026-10-26 20:28:39,214 ERROR django.request Service Unavailable: /prepare
+2026-10-26 20:28:39,214 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 503 Service Unavailable"
+.2026-10-26 20:28:39,216 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,216 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,216 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+.......2026-10-26 20:28:39,222 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,222 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,222 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,223 INFO robingraph.avilist_pipeline_service avilist pipeline apply: applied
+2026-10-26 20:28:39,223 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,224 INFO robingraph.avilist_pipeline_service avilist pipeline apply: already_applied
+2026-10-26 20:28:39,224 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 200 OK"
+.2026-10-26 20:28:39,226 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: package_missing (StageFailure)
+2026-10-26 20:28:39,226 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,226 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,228 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,228 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,228 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,229 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: approval_missing (StageFailure)
+2026-10-26 20:28:39,229 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,229 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,230 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: approval_missing (StageFailure)
+2026-10-26 20:28:39,230 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,230 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,232 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,232 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,232 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,234 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: busy (StageFailure)
+2026-10-26 20:28:39,234 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,234 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,235 WARNING robingraph.avilist_pipeline_service avilist pipeline verify failed: busy (StageFailure)
+2026-10-26 20:28:39,235 WARNING django.request Conflict: /verify
+2026-10-26 20:28:39,235 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,235 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: busy (StageFailure)
+2026-10-26 20:28:39,236 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,236 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,236 INFO robingraph.avilist_pipeline_service avilist pipeline apply: applied
+2026-10-26 20:28:39,236 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 200 OK"
+2026-10-26 20:28:39,237 INFO robingraph.avilist_pipeline_service avilist pipeline verify: verified
+2026-10-26 20:28:39,237 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 200 OK"
+.2026-10-26 20:28:39,239 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,239 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,240 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,240 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: busy (RuntimeError)
+2026-10-26 20:28:39,241 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,241 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,243 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,243 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,243 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,244 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: approval_rejected (ApprovalError)
+2026-10-26 20:28:39,244 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,244 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:39,246 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,246 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,247 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,248 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: gate_failed (ValueError)
+2026-10-26 20:28:39,248 WARNING django.request Conflict: /apply
+2026-10-26 20:28:39,248 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,249 WARNING robingraph.avilist_pipeline_service avilist pipeline apply failed: internal_error (KeyError)
+2026-10-26 20:28:39,249 ERROR django.request Internal Server Error: /apply
+2026-10-26 20:28:39,249 INFO httpx2 HTTP Request: POST http://testserver/apply "HTTP/1.1 500 Internal Server Error"
+.2026-10-26 20:28:39,251 WARNING robingraph.avilist_pipeline_service avilist pipeline prepare failed: review_required (StageFailure)
+2026-10-26 20:28:39,251 WARNING django.request Conflict: /prepare
+2026-10-26 20:28:39,251 INFO httpx2 HTTP Request: POST http://testserver/prepare "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:39,252 INFO robingraph.avilist_pipeline_service avilist pipeline verify: verified
+2026-10-26 20:28:39,253 INFO httpx2 HTTP Request: POST http://testserver/verify "HTTP/1.1 200 OK"
+............................................2026-10-26 20:28:40,851 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:40,853 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:40,856 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:40,857 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:40,858 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:40,861 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+............................................s....................2026-10-26 20:28:42,461 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,464 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,465 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+...2026-10-26 20:28:42,835 WARNING django.request Unauthorized: /internal/v1/ingest/begin
+2026-10-26 20:28:42,836 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 401 Unauthorized"
+2026-10-26 20:28:42,837 WARNING django.request Unauthorized: /internal/v1/ingest/begin
+2026-10-26 20:28:42,837 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 401 Unauthorized"
+2026-10-26 20:28:42,838 WARNING django.request Unauthorized: /internal/v1/ingest/begin
+2026-10-26 20:28:42,838 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 401 Unauthorized"
+2026-10-26 20:28:42,839 WARNING django.request Unprocessable Entity: /internal/v1/ingest/begin
+2026-10-26 20:28:42,839 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,842 WARNING django.request Method Not Allowed: /internal/v1/ingest/begin
+2026-10-26 20:28:42,842 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/begin "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:42,843 WARNING django.request Method Not Allowed: /internal/v1/ingest/run/append
+2026-10-26 20:28:42,843 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/run/append "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:42,844 WARNING django.request Method Not Allowed: /internal/v1/ingest/active/pipe
+2026-10-26 20:28:42,844 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/active/pipe "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:42,845 WARNING django.request Not Found: /internal/v1/ingest/run/unknown
+2026-10-26 20:28:42,845 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/run/unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:42,846 WARNING django.request Not Found: /internal/v1/ingest/active
+2026-10-26 20:28:42,846 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:42,848 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,849 WARNING django.request Unprocessable Entity: /internal/v1/ingest/begin
+2026-10-26 20:28:42,850 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,851 WARNING django.request Unprocessable Entity: /internal/v1/ingest/begin
+2026-10-26 20:28:42,851 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,852 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/pipe "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,853 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/append "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,854 WARNING django.request Unprocessable Entity: /internal/v1/ingest/active/ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp
+2026-10-26 20:28:42,854 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,855 WARNING django.request Unprocessable Entity: /internal/v1/ingest/active/a b
+2026-10-26 20:28:42,855 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/a%20b "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,856 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/append "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,857 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/active/append "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,858 WARNING django.request Unprocessable Entity: /internal/v1/ingest/run/append
+2026-10-26 20:28:42,858 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/append "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,859 WARNING django.request Unprocessable Entity: /internal/v1/ingest/rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr/append
+2026-10-26 20:28:42,859 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr/append "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,860 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/finalize "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,861 WARNING django.request Unprocessable Entity: /internal/v1/ingest/run/finalize
+2026-10-26 20:28:42,861 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/finalize "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,862 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/fail "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,863 WARNING django.request Unprocessable Entity: /internal/v1/ingest/run/fail
+2026-10-26 20:28:42,863 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/fail "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,864 WARNING django.request Conflict: /internal/v1/ingest/begin
+2026-10-26 20:28:42,864 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,865 WARNING django.request Conflict: /internal/v1/ingest/active/pipe
+2026-10-26 20:28:42,865 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/pipe "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,866 WARNING django.request Conflict: /internal/v1/ingest/run/fail
+2026-10-26 20:28:42,867 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/fail "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,867 WARNING django.request Conflict: /internal/v1/ingest/begin
+2026-10-26 20:28:42,868 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,868 WARNING django.request Conflict: /internal/v1/ingest/active/pipe
+2026-10-26 20:28:42,868 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/pipe "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,869 WARNING django.request Conflict: /internal/v1/ingest/run/fail
+2026-10-26 20:28:42,869 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/fail "HTTP/1.1 409 Conflict"
+2026-10-26 20:28:42,870 WARNING django.request Unprocessable Entity: /internal/v1/ingest/begin
+2026-10-26 20:28:42,870 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,871 WARNING django.request Unprocessable Entity: /internal/v1/ingest/active/pipe
+2026-10-26 20:28:42,871 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/pipe "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:42,872 WARNING django.request Unprocessable Entity: /internal/v1/ingest/run/fail
+2026-10-26 20:28:42,872 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/fail "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:42,888 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/run/append "HTTP/1.1 200 OK"
+.2026-10-26 20:28:42,892 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,896 WARNING django.request Not Found: /internal/v1/ingest/begin
+2026-10-26 20:28:42,897 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 404 Not Found"
+.2026-10-26 20:28:42,901 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=a "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,902 ERROR django.request Service Unavailable: /v1/taxa/profile
+2026-10-26 20:28:42,902 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:42,903 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=a "HTTP/1.1 200 OK"
+..2026-10-26 20:28:42,908 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-26 20:28:42,909 WARNING django.request Not Found: /missing
+2026-10-26 20:28:42,909 INFO httpx2 HTTP Request: GET http://testserver/missing "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:42,910 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:42,911 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,911 INFO httpx2 HTTP Request: GET http://testserver/missing "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,912 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,912 INFO httpx2 HTTP Request: GET http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,913 INFO httpx2 HTTP Request: GET http://testserver/static/chat.js "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,914 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/begin "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,914 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,915 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,916 INFO httpx2 HTTP Request: GET http://testserver/missing "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,916 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,917 INFO httpx2 HTTP Request: GET http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,918 INFO httpx2 HTTP Request: GET http://testserver/static/chat.js "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,918 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/begin "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,919 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,919 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,920 INFO httpx2 HTTP Request: GET http://testserver/missing "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,921 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,921 INFO httpx2 HTTP Request: GET http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,922 INFO httpx2 HTTP Request: GET http://testserver/static/chat.js "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,923 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/begin "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:42,924 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+.2026-10-26 20:28:42,926 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+.....2026-10-26 20:28:43,303 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,304 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,305 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,306 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,307 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,308 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,309 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,311 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,312 WARNING robingraph.api.services Name relationship lookup failed (RuntimeError)
+2026-10-26 20:28:43,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,313 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,314 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,315 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,316 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,317 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,326 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,327 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,328 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,329 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,330 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,331 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,332 ERROR django.request Service Unavailable: /v1/search
+2026-10-26 20:28:43,332 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,333 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,333 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,334 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,334 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:43,337 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,338 INFO httpx2 HTTP Request: GET http://testserver/docs "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,339 INFO httpx2 HTTP Request: GET http://testserver/redoc "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,340 INFO httpx2 HTTP Request: GET http://testserver/docs/oauth2-redirect "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,343 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,344 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,344 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,345 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,345 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,346 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,346 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,347 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,347 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,348 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,348 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,349 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,349 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,350 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,350 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,351 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,351 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,352 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,352 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,353 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,353 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,354 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,354 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,355 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,355 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,356 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,356 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,357 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,357 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:28:43,357 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,358 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,359 WARNING django.request Bad Request: /v1/chat
+2026-10-26 20:28:43,359 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:43,360 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,360 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,361 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,361 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,362 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,362 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,363 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,363 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,364 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,365 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,365 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,366 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,367 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,368 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,369 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,370 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,371 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,371 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,372 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,372 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,373 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,373 WARNING django.request Unprocessable Entity: /v1/answers
+2026-10-26 20:28:43,374 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,374 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,375 WARNING django.request Bad Request: /v1/answers
+2026-10-26 20:28:43,375 INFO httpx2 HTTP Request: POST http://testserver/v1/answers "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:43,376 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,376 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,377 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,377 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,378 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,378 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,379 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,379 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,380 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,381 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,381 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,382 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,383 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,384 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,385 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,386 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,387 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,387 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,388 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,388 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,389 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,389 WARNING django.request Unprocessable Entity: /v1/search
+2026-10-26 20:28:43,390 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,391 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,391 WARNING django.request Bad Request: /v1/search
+2026-10-26 20:28:43,391 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 400 Bad Request"
+.2026-10-26 20:28:43,394 WARNING django.request Unprocessable Entity: /v1/taxa/lineage
+2026-10-26 20:28:43,394 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,395 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,396 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,397 WARNING django.request Unprocessable Entity: /v1/taxa/lineage
+2026-10-26 20:28:43,397 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=a&name=b "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,398 WARNING django.request Unprocessable Entity: /v1/taxa/lineage
+2026-10-26 20:28:43,398 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,399 WARNING django.request Unprocessable Entity: /v1/taxa/lineage
+2026-10-26 20:28:43,399 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,400 ERROR django.request Service Unavailable: /v1/taxa/lineage
+2026-10-26 20:28:43,400 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?name=down "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,401 WARNING django.request Not Found: /v1/taxa/lineage
+2026-10-26 20:28:43,401 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Missing%20bird "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,402 WARNING django.request Not Found: /v1/taxa/lineage
+2026-10-26 20:28:43,402 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha&species_scope=outside "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,403 WARNING django.request Unprocessable Entity: /v1/taxa/lineage
+2026-10-26 20:28:43,403 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha&species_scope=bad "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,404 INFO httpx2 HTTP Request: GET http://testserver/v1/observations "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,405 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=1 "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,406 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=empty "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,407 ERROR django.request Service Unavailable: /v1/observations
+2026-10-26 20:28:43,407 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=down "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,408 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,408 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,409 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,409 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?limit=0 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,410 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,410 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?limit=101&offset=-1 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,410 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,411 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?limit=abc "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,411 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,412 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?observed_from=2026-02-01&observed_to=2026-01-01 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,412 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,413 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?observed_from=not-a-date "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,414 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?observed_from=2026-01-01&limit=5&offset=2 "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,414 WARNING django.request Unprocessable Entity: /v1/observations
+2026-10-26 20:28:43,415 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=111111111111111111111111111111111111111111111111111 "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:43,417 WARNING django.request Method Not Allowed: /health
+2026-10-26 20:28:43,417 INFO httpx2 HTTP Request: HEAD http://testserver/health "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,418 WARNING django.request Method Not Allowed: /v1/chat
+2026-10-26 20:28:43,418 INFO httpx2 HTTP Request: OPTIONS http://testserver/v1/chat "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,419 WARNING django.request Method Not Allowed: /v1/taxa/profile
+2026-10-26 20:28:43,419 INFO httpx2 HTTP Request: PUT http://testserver/v1/taxa/profile "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,420 WARNING django.request Method Not Allowed: /health
+2026-10-26 20:28:43,420 INFO httpx2 HTTP Request: POST http://testserver/health "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,421 WARNING django.request Method Not Allowed: /v1/chat
+2026-10-26 20:28:43,421 INFO httpx2 HTTP Request: GET http://testserver/v1/chat "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,422 WARNING django.request Method Not Allowed: /static/chat.js
+2026-10-26 20:28:43,422 INFO httpx2 HTTP Request: DELETE http://testserver/static/chat.js "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,423 INFO httpx2 HTTP Request: GET http://testserver/health/ "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:43,424 INFO httpx2 HTTP Request: GET http://testserver/health/?x=1 "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:43,425 INFO httpx2 HTTP Request: POST http://testserver/v1/chat/ "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:43,426 INFO httpx2 HTTP Request: GET http://testserver/static "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:43,426 WARNING django.request Not Found: /nope
+2026-10-26 20:28:43,426 INFO httpx2 HTTP Request: GET http://testserver/nope "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,427 WARNING django.request Not Found: /v1/taxa
+2026-10-26 20:28:43,427 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,428 WARNING django.request Not Found: /internal/v1/ingest/begin
+2026-10-26 20:28:43,428 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/begin "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,429 INFO httpx2 HTTP Request: HEAD http://testserver/openapi.json "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,430 WARNING django.request Method Not Allowed: /openapi.json
+2026-10-26 20:28:43,430 INFO httpx2 HTTP Request: POST http://testserver/openapi.json "HTTP/1.1 405 Method Not Allowed"
+2026-10-26 20:28:43,431 INFO httpx2 HTTP Request: GET http://testserver/docs/ "HTTP/1.1 307 Temporary Redirect"
+2026-10-26 20:28:43,432 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,433 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,433 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:43,435 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,436 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,436 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,437 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,437 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,438 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,438 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,439 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,440 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,440 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,441 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:28:43,441 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,442 ERROR django.request Service Unavailable: /v1/taxa/profile
+2026-10-26 20:28:43,442 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,443 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:28:43,443 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=snapshot "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,444 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:28:43,445 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,445 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:28:43,445 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,446 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,447 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:28:43,447 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,448 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:28:43,448 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,449 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:28:43,449 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,450 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:28:43,450 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,451 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,452 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,453 WARNING django.request Not Found: /v1/taxa/related
+2026-10-26 20:28:43,453 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,454 ERROR django.request Service Unavailable: /v1/taxa/related
+2026-10-26 20:28:43,454 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,455 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=snapshot "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,456 WARNING django.request Not Found: /v1/taxa/related
+2026-10-26 20:28:43,456 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,457 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:28:43,457 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,458 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,459 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:28:43,459 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,460 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:28:43,460 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,461 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:28:43,461 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,462 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:28:43,462 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,463 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,464 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,464 WARNING django.request Not Found: /v1/taxa/similar
+2026-10-26 20:28:43,465 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,465 ERROR django.request Service Unavailable: /v1/taxa/similar
+2026-10-26 20:28:43,466 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,467 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=snapshot "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,467 WARNING django.request Not Found: /v1/taxa/similar
+2026-10-26 20:28:43,468 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,468 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:28:43,468 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,469 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,470 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,470 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,471 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,471 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,472 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,472 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,473 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,473 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,474 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,475 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,476 WARNING django.request Not Found: /v1/taxa/ecological-related
+2026-10-26 20:28:43,476 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,477 ERROR django.request Service Unavailable: /v1/taxa/ecological-related
+2026-10-26 20:28:43,477 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,478 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=snapshot "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,479 WARNING django.request Not Found: /v1/taxa/ecological-related
+2026-10-26 20:28:43,479 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,480 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,480 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,481 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,481 WARNING django.request Unprocessable Entity: /v1/taxa/subspecies
+2026-10-26 20:28:43,482 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,482 WARNING django.request Unprocessable Entity: /v1/taxa/subspecies
+2026-10-26 20:28:43,483 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,483 WARNING django.request Unprocessable Entity: /v1/taxa/subspecies
+2026-10-26 20:28:43,484 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,484 WARNING django.request Unprocessable Entity: /v1/taxa/subspecies
+2026-10-26 20:28:43,485 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,485 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,486 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,487 WARNING django.request Not Found: /v1/taxa/subspecies
+2026-10-26 20:28:43,487 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,488 ERROR django.request Service Unavailable: /v1/taxa/subspecies
+2026-10-26 20:28:43,488 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,489 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=snapshot "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,490 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,491 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,492 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,493 WARNING django.request Unprocessable Entity: /v1/taxa/name-relations
+2026-10-26 20:28:43,493 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,494 WARNING django.request Unprocessable Entity: /v1/taxa/name-relations
+2026-10-26 20:28:43,494 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name= "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,495 WARNING django.request Unprocessable Entity: /v1/taxa/name-relations
+2026-10-26 20:28:43,495 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,496 WARNING django.request Unprocessable Entity: /v1/taxa/name-relations
+2026-10-26 20:28:43,496 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,497 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,498 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,498 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=unknown "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,499 ERROR django.request Service Unavailable: /v1/taxa/name-relations
+2026-10-26 20:28:43,499 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=boom "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,500 ERROR django.request Service Unavailable: /v1/taxa/name-relations
+2026-10-26 20:28:43,500 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=snapshot "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,501 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=Anas%20zonorhyncha&species_scope=korea "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,502 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=Anas%20zonorhyncha&species_scope=invalid "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,503 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=a&name=Anas%20zonorhyncha "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,507 ERROR django.request Service Unavailable: /v1/taxa/profile
+2026-10-26 20:28:43,507 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,508 ERROR django.request Service Unavailable: /v1/taxa/related
+2026-10-26 20:28:43,508 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,509 ERROR django.request Service Unavailable: /v1/taxa/lineage
+2026-10-26 20:28:43,509 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,510 ERROR django.request Service Unavailable: /v1/taxa/lineage
+2026-10-26 20:28:43,510 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,511 ERROR django.request Service Unavailable: /v1/observations
+2026-10-26 20:28:43,511 INFO httpx2 HTTP Request: GET http://testserver/v1/observations?taxon_key=1 "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,512 ERROR django.request Service Unavailable: /v1/taxa/name-relations
+2026-10-26 20:28:43,512 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,513 ERROR django.request Service Unavailable: /v1/taxa/subspecies
+2026-10-26 20:28:43,513 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=a "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,514 ERROR django.request Service Unavailable: /v1/search
+2026-10-26 20:28:43,514 INFO httpx2 HTTP Request: POST http://testserver/v1/search "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,515 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,516 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,517 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,518 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,522 INFO httpx2 HTTP Request: GET http://testserver/ "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,523 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,524 INFO httpx2 HTTP Request: GET http://testserver/birds "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,525 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,526 INFO httpx2 HTTP Request: GET http://testserver/static/chat.js "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,527 INFO httpx2 HTTP Request: GET http://testserver/static/styles.css "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,527 INFO httpx2 HTTP Request: GET http://testserver/static/index.html "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,528 INFO httpx2 HTTP Request: GET http://testserver/static/birds.js "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,529 INFO httpx2 HTTP Request: GET http://testserver/static/birds.html "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,530 WARNING django.request Not Found: /static/favicon-32.png
+2026-10-26 20:28:43,530 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,531 WARNING django.request Not Found: /static/favicon-192.png
+2026-10-26 20:28:43,531 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,532 WARNING django.request Not Found: /static/missing.js
+2026-10-26 20:28:43,532 INFO httpx2 HTTP Request: GET http://testserver/static/missing.js "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,533 WARNING django.request Not Found: /static/
+2026-10-26 20:28:43,533 INFO httpx2 HTTP Request: GET http://testserver/static/ "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,534 WARNING django.request Not Found: /static/../app.py
+2026-10-26 20:28:43,534 INFO httpx2 HTTP Request: GET http://testserver/static/%2e%2e/app.py "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,535 WARNING django.request Not Found: /static/../app.py
+2026-10-26 20:28:43,535 INFO httpx2 HTTP Request: GET http://testserver/static/..%2fapp.py "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,536 WARNING django.request Not Found: /static//etc/passwd
+2026-10-26 20:28:43,536 INFO httpx2 HTTP Request: GET http://testserver/static/%2fetc%2fpasswd "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,537 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,538 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,538 INFO httpx2 HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,539 ERROR django.request Service Unavailable: /
+2026-10-26 20:28:43,540 INFO httpx2 HTTP Request: GET http://testserver/ "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,541 ERROR django.request Service Unavailable: /chat
+2026-10-26 20:28:43,541 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,541 ERROR django.request Service Unavailable: /birds
+2026-10-26 20:28:43,542 INFO httpx2 HTTP Request: GET http://testserver/birds "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,542 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,543 ERROR django.request Service Unavailable: /static/chat.js
+2026-10-26 20:28:43,543 INFO httpx2 HTTP Request: GET http://testserver/static/chat.js "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,544 ERROR django.request Service Unavailable: /static/styles.css
+2026-10-26 20:28:43,544 INFO httpx2 HTTP Request: GET http://testserver/static/styles.css "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,545 ERROR django.request Service Unavailable: /static/index.html
+2026-10-26 20:28:43,545 INFO httpx2 HTTP Request: GET http://testserver/static/index.html "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,546 ERROR django.request Service Unavailable: /static/birds.js
+2026-10-26 20:28:43,546 INFO httpx2 HTTP Request: GET http://testserver/static/birds.js "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,547 ERROR django.request Service Unavailable: /static/birds.html
+2026-10-26 20:28:43,547 INFO httpx2 HTTP Request: GET http://testserver/static/birds.html "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,548 WARNING django.request Not Found: /static/favicon-32.png
+2026-10-26 20:28:43,548 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,549 WARNING django.request Not Found: /static/favicon-192.png
+2026-10-26 20:28:43,549 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,550 ERROR django.request Service Unavailable: /static/missing.js
+2026-10-26 20:28:43,550 INFO httpx2 HTTP Request: GET http://testserver/static/missing.js "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,550 ERROR django.request Service Unavailable: /static/
+2026-10-26 20:28:43,551 INFO httpx2 HTTP Request: GET http://testserver/static/ "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,551 ERROR django.request Service Unavailable: /static/../app.py
+2026-10-26 20:28:43,552 INFO httpx2 HTTP Request: GET http://testserver/static/%2e%2e/app.py "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,552 ERROR django.request Service Unavailable: /static/../app.py
+2026-10-26 20:28:43,553 INFO httpx2 HTTP Request: GET http://testserver/static/..%2fapp.py "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,553 ERROR django.request Service Unavailable: /static//etc/passwd
+2026-10-26 20:28:43,553 INFO httpx2 HTTP Request: GET http://testserver/static/%2fetc%2fpasswd "HTTP/1.1 503 Service Unavailable"
+....2026-10-26 20:28:43,562 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=+%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC+ "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,563 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,563 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=+ "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,564 WARNING django.request Unprocessable Entity: /v1/taxa/ecological-related
+2026-10-26 20:28:43,564 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:43,565 WARNING django.request Not Found: /v1/taxa/ecological-related
+2026-10-26 20:28:43,565 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=missing "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,566 ERROR django.request Service Unavailable: /v1/taxa/ecological-related
+2026-10-26 20:28:43,566 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=x "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:43,568 ERROR django.request Service Unavailable: /v1/taxa/ecological-related
+2026-10-26 20:28:43,569 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=x "HTTP/1.1 503 Service Unavailable"
+........s...........2026-10-26 20:28:43,721 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,726 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,729 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,733 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,736 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,740 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,743 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,746 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,749 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,752 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,755 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,758 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,760 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,763 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,766 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,768 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,771 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,774 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,777 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,780 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,783 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,785 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,788 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,791 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,794 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,796 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,799 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,801 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,804 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,806 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,810 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+...2026-10-26 20:28:43,813 INFO httpx2 HTTP Request: GET http://testserver/ "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,814 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,816 INFO httpx2 HTTP Request: GET http://testserver/birds "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,818 WARNING django.request Not Found: /favicon.ico
+2026-10-26 20:28:43,818 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 404 Not Found"
+.2026-10-26 20:28:43,819 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+..2026-10-26 20:28:43,820 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,821 INFO httpx2 HTTP Request: GET http://testserver/static/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,822 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,823 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,824 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon.png "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,827 WARNING django.request Not Found: /favicon.ico
+2026-10-26 20:28:43,827 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,828 WARNING django.request Not Found: /static/favicon-32.png
+2026-10-26 20:28:43,828 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,829 INFO httpx2 HTTP Request: GET http://testserver/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,830 WARNING django.request Not Found: /static/favicon.png
+2026-10-26 20:28:43,830 INFO httpx2 HTTP Request: GET http://testserver/static/favicon.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,831 WARNING django.request Not Found: /static/robin.png
+2026-10-26 20:28:43,832 INFO httpx2 HTTP Request: GET http://testserver/static/robin.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,832 WARNING django.request Not Found: /static/apple-touch-icon.ico
+2026-10-26 20:28:43,833 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon.ico "HTTP/1.1 404 Not Found"
+.2026-10-26 20:28:43,834 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,835 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,836 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,837 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,838 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,838 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,839 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon.png "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,840 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,841 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,842 INFO httpx2 HTTP Request: GET http://testserver/static/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,843 INFO httpx2 HTTP Request: GET http://testserver/static/favicon.ico "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,844 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,845 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,846 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,848 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-192.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,849 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon.png "HTTP/1.1 200 OK"
+2026-10-26 20:28:43,850 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon.png "HTTP/1.1 200 OK"
+.2026-10-26 20:28:43,851 WARNING django.request Not Found: /static/favicon-32-test.png
+2026-10-26 20:28:43,851 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-32-test.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,852 WARNING django.request Not Found: /static/favicon-test.ico
+2026-10-26 20:28:43,852 INFO httpx2 HTTP Request: GET http://testserver/static/favicon-test.ico "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,853 WARNING django.request Not Found: /static/apple-touch-icon-test.png
+2026-10-26 20:28:43,853 INFO httpx2 HTTP Request: GET http://testserver/static/apple-touch-icon-test.png "HTTP/1.1 404 Not Found"
+2026-10-26 20:28:43,856 INFO httpx2 HTTP Request: GET http://testserver/favicon.ico "HTTP/1.1 200 OK"
+...................................2026-10-26 20:28:43,907 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:43,907 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:43,910 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+......................2026-10-26 20:28:44,140 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,141 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,144 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,146 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,149 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,150 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,153 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,154 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,157 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,159 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,165 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,165 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+.2026-10-26 20:28:44,166 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,167 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,168 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,169 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,171 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,172 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,173 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,174 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,175 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,176 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,177 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,178 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,179 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,180 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,181 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,233 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,234 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,235 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,237 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,238 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,250 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,252 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,253 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,254 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,255 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+.2026-10-26 20:28:44,270 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,271 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,273 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,273 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,275 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,276 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,278 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,279 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,281 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,281 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,283 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,284 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,286 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,289 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,292 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,295 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,297 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,300 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,302 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,305 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,307 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,396 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,399 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,401 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,404 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,406 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,409 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,412 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,415 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,417 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,420 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,420 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,423 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,423 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,426 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,429 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,431 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,434 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,436 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,437 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,439 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:44,439 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,442 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,445 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,448 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,450 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.....................................................................................................2026-10-26 20:28:44,593 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,596 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,599 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,602 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,604 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:44,607 WARNING robingraph.api.services Graph question lookup failed (RuntimeError)
+2026-10-26 20:28:44,607 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,610 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,613 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,615 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,618 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:44,621 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+......2026-10-26 20:28:45,102 WARNING robingraph.api.services Graph intent interpretation failed (TimeoutError)
+2026-10-26 20:28:45,103 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,106 WARNING robingraph.api.services Graph intent interpretation failed (ValueError)
+2026-10-26 20:28:45,106 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,109 WARNING robingraph.api.services Graph intent interpretation failed (ValueError)
+2026-10-26 20:28:45,110 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,112 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,115 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,118 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,121 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,124 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,127 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,130 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,132 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,135 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,138 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:45,142 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,145 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,148 WARNING robingraph.api.services Graph intent interpretation failed (RuntimeError)
+2026-10-26 20:28:45,148 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,151 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,154 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,157 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,159 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,163 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,165 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,168 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,171 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,174 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,176 WARNING robingraph.api.services Graph intent interpretation failed (ValueError)
+2026-10-26 20:28:45,176 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,179 WARNING robingraph.api.services Graph intent interpretation failed (ValueError)
+2026-10-26 20:28:45,180 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.................................................2026-10-26 20:28:45,258 INFO httpx2 HTTP Request: GET http://testserver/internal/v1/ingest/active/korean-vernacular-names "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,262 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/wikidata-run-a/append "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,265 WARNING django.request Unauthorized: /internal/v1/ingest/begin
+2026-10-26 20:28:45,265 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 401 Unauthorized"
+2026-10-26 20:28:45,266 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,269 WARNING django.request Conflict: /internal/v1/ingest/begin
+2026-10-26 20:28:45,269 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:45,272 WARNING django.request Unprocessable Entity: /internal/v1/ingest/begin
+2026-10-26 20:28:45,272 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:28:45,273 WARNING django.request Unprocessable Entity: /internal/v1/ingest/wikidata-run-a/append
+2026-10-26 20:28:45,273 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/wikidata-run-a/append "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:45,276 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/wikidata-run-a/finalize "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,277 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/wikidata-run-a/fail "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,278 WARNING django.request Conflict: /internal/v1/ingest/wikidata-run-a/finalize
+2026-10-26 20:28:45,278 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/wikidata-run-a/finalize "HTTP/1.1 409 Conflict"
+.2026-10-26 20:28:45,283 WARNING django.request Not Found: /internal/v1/ingest/begin
+2026-10-26 20:28:45,283 INFO httpx2 HTTP Request: POST http://testserver/internal/v1/ingest/begin "HTTP/1.1 404 Not Found"
+...2026-10-26 20:28:45,293 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,296 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,300 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,303 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,306 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,308 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,311 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,315 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,318 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,320 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,323 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,326 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,328 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,331 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,334 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,337 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,340 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,342 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,345 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,348 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,351 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:45,357 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,363 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,368 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,375 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:45,378 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,381 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:45,383 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..................2026-10-26 20:28:46,276 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+.2026-10-26 20:28:46,278 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+.2026-10-26 20:28:46,279 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+.2026-10-26 20:28:46,279 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+....2026-10-26 20:28:46,279 WARNING robingraph.tracing MLflow tracing disabled: initialization failed (RuntimeError)
+.2026-10-26 20:28:46,280 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+.2026-10-26 20:28:46,280 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+...2026-10-26 20:28:46,281 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+..........2026-10-26 20:28:46,286 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:46,287 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:46,310 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,311 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,313 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,444 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,445 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,446 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,447 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,447 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,447 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,448 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,448 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,469 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,470 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,470 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,471 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,471 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,471 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,472 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,472 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,494 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,494 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,494 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,494 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,494 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,495 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,495 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,495 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,517 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,518 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,518 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,519 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,530 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,530 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,530 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,531 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:46,531 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:46,534 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,535 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,536 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,538 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,539 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,540 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,541 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,542 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,543 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,545 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,546 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:46,546 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:46,549 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:28:46,549 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%97%86%EB%8A%94%EC%A2%85 "HTTP/1.1 404 Not Found"
+.2026-10-26 20:28:46,549 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:46,552 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,553 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:46,553 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:46,556 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:46,557 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,001 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,196 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,197 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,198 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,206 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,206 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,207 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,207 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,212 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,216 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,222 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,224 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,239 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,239 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,240 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,247 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,248 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,248 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,248 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,248 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,260 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,266 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,268 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,314 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,316 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,320 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,323 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,328 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,329 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,340 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,348 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,365 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,367 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,370 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,381 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:28:47,382 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%97%86%EB%8A%94%EC%A2%85 "HTTP/1.1 404 Not Found"
+.2026-10-26 20:28:47,384 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,397 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,404 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,411 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,420 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,428 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,433 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,444 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,459 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,468 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,477 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,486 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.....2026-10-26 20:28:47,500 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+......2026-10-26 20:28:47,503 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,515 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,517 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,527 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,528 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:47,543 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,548 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+.2026-10-26 20:28:47,572 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:47,573 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+2026-10-26 20:28:47,579 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:47,580 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,590 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:47,597 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+..2026-10-26 20:28:47,609 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:47,610 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+.2026-10-26 20:28:47,616 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:47,617 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:48,627 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:48,627 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+2026-10-26 20:28:48,641 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:48,642 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 400 Bad Request"
+2026-10-26 20:28:48,658 INFO google_genai.models AFC is enabled with max remote calls: 10.
+.2026-10-26 20:28:48,663 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:48,694 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:48,697 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:49,722 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:49,723 INFO robingraph.tracing MLflow tracing enabled (langchain_autolog=True, gemini_autolog=True)
+2026-10-26 20:28:49,735 INFO google_genai.models AFC is enabled with max remote calls: 10.
+2026-10-26 20:28:49,735 INFO httpx HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent "HTTP/1.1 200 OK"
+2026-10-26 20:28:49,736 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..............................................................s..........s.......2026-10-26 20:28:53,007 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:53,008 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:28:53,012 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:53,013 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:53,016 ERROR django.request Service Unavailable: /v1/taxa/name-relations
+2026-10-26 20:28:53,016 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=%EB%8B%AD "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:28:53,017 WARNING django.request Unprocessable Entity: /v1/taxa/name-relations
+2026-10-26 20:28:53,017 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/name-relations?name=++ "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:28:53,020 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:53,021 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:28:53,024 WARNING robingraph.api.services Name relationship lookup failed (ValueError)
+2026-10-26 20:28:53,025 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.......2026-10-26 20:28:53,030 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:28:53,031 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+...s.......................................................sssssssss..ssssssssss......................................sssssssss...................................2026-10-26 20:29:01,715 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=+%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC+ "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,716 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:29:01,716 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,717 WARNING django.request Unprocessable Entity: /v1/taxa/related
+2026-10-26 20:29:01,717 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,718 WARNING django.request Not Found: /v1/taxa/related
+2026-10-26 20:29:01,718 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:01,719 ERROR django.request Service Unavailable: /v1/taxa/related
+2026-10-26 20:29:01,719 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=mallard "HTTP/1.1 503 Service Unavailable"
+2026-10-26 20:29:01,722 ERROR django.request Service Unavailable: /v1/taxa/related
+2026-10-26 20:29:01,722 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=mallard "HTTP/1.1 503 Service Unavailable"
+....s....................................2026-10-26 20:29:01,777 WARNING django.request Not Found: /v1/taxa/lineage
+2026-10-26 20:29:01,777 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Anas%20zonorhyncha "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:01,778 WARNING django.request Not Found: /v1/taxa/lineage
+2026-10-26 20:29:01,778 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?name=%ED%9D%B0%EB%BA%A8%EA%B2%80%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 404 Not Found"
+........2026-10-26 20:29:01,785 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,788 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,791 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,794 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,796 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,799 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,800 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,803 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,806 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,809 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,812 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,814 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,817 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,818 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,819 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,822 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,825 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,826 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,827 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,828 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,829 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,830 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,831 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,833 INFO httpx2 HTTP Request: GET http://testserver/openapi.json "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,836 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,837 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,838 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:01,838 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,839 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:01,839 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,842 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,844 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,845 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,846 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,847 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,848 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,851 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,852 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,853 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,854 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,856 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:01,856 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,857 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:01,857 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,858 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:01,858 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:01,861 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,864 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,866 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+...2026-10-26 20:29:01,868 WARNING robingraph.api.services Name relationship lookup failed (TypeError)
+2026-10-26 20:29:01,869 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:01,872 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:29:01,876 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,877 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,878 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.............................2026-10-26 20:29:01,952 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,954 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,955 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,956 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:01,957 WARNING django.request Unprocessable Entity: /v1/taxa/similar
+2026-10-26 20:29:01,957 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=+ "HTTP/1.1 422 Unprocessable Content"
+........2026-10-26 20:29:01,962 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+...............................2026-10-26 20:29:02,223 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:29:02,228 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,229 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,233 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,237 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,240 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,242 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:29:02,248 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,248 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:29:02,249 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%97%86%EB%8A%94%EC%83%88 "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,250 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:29:02,250 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:02,251 INFO httpx2 HTTP Request: GET http://testserver/birds "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,252 INFO httpx2 HTTP Request: GET http://testserver/static/birds.js "HTTP/1.1 200 OK"
+...2026-10-26 20:29:02,259 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,261 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,264 ERROR django.request Service Unavailable: /v1/taxa/profile
+2026-10-26 20:29:02,264 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 503 Service Unavailable"
+.....2026-10-26 20:29:02,268 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,269 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,270 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,271 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,272 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,275 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,278 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,281 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,284 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,285 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,285 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,287 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,290 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,292 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,295 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,298 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,301 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,304 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,306 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,309 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,310 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,311 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,314 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,315 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,316 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,317 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,318 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,319 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+...2026-10-26 20:29:02,322 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,323 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,324 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..s.............2026-10-26 20:29:02,331 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,332 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=all "HTTP/1.1 200 OK"
+..2026-10-26 20:29:02,334 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:29:02,335 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=outside "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,336 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,338 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:29:02,339 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=unknown "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,340 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,342 WARNING django.request Unprocessable Entity: /v1/taxa/profile
+2026-10-26 20:29:02,342 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=bogus "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:02,343 WARNING django.request Unprocessable Entity: /v1/chat
+2026-10-26 20:29:02,344 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 422 Unprocessable Content"
+.2026-10-26 20:29:02,346 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=korea "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,347 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,350 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:29:02,350 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=outside "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,351 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=unknown "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,355 WARNING django.request Not Found: /v1/taxa/profile
+2026-10-26 20:29:02,355 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=outside "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,356 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/profile?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=unknown "HTTP/1.1 200 OK"
+..2026-10-26 20:29:02,359 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/related?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=korea "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,361 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/similar?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=korea "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,364 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/ecological-related?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC&species_scope=korea "HTTP/1.1 200 OK"
+.2026-10-26 20:29:02,367 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Nestor+notabilis&species_scope=outside "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,367 WARNING django.request Not Found: /v1/taxa/lineage
+2026-10-26 20:29:02,368 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/lineage?scientific_name=Nestor+notabilis&species_scope=korea "HTTP/1.1 404 Not Found"
+2026-10-26 20:29:02,369 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.......2026-10-26 20:29:02,378 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,379 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,380 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+..2026-10-26 20:29:02,383 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,384 WARNING django.request Unprocessable Entity: /v1/taxa/subspecies
+2026-10-26 20:29:02,384 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=%20 "HTTP/1.1 422 Unprocessable Content"
+2026-10-26 20:29:02,385 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,386 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:02,389 ERROR django.request Service Unavailable: /v1/taxa/subspecies
+2026-10-26 20:29:02,389 INFO httpx2 HTTP Request: GET http://testserver/v1/taxa/subspecies?name=%EC%B2%AD%EB%91%A5%EC%98%A4%EB%A6%AC "HTTP/1.1 503 Service Unavailable"
+..............s....s................................................................................................................2026-10-26 20:29:03,299 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,302 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,305 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,308 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,311 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,312 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,315 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,318 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,321 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,324 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,327 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,330 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,332 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,335 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,338 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,341 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,344 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,347 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,349 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,352 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,355 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,358 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,361 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.2026-10-26 20:29:03,364 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,368 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,371 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,374 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+2026-10-26 20:29:03,377 INFO httpx2 HTTP Request: POST http://testserver/v1/chat "HTTP/1.1 200 OK"
+.....................................................................ss.........................
+----------------------------------------------------------------------
+Ran 1327 tests in 24.973s
+
+OK (skipped=40)
+workflow canonical-workflow-id is already active; no-op
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activated: workflow=canonical-workflow-id
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+activation preconditions satisfied: definition matches, and execution exec-1 (run n8n-korean-vernacular-exec-1) shows finalize_ok with 846 names / 102 candidates
+dry-run: re-run with --apply to activate the schedule
+workflow canonical-workflow-id is already inactive; no-op
+deactivated: workflow=canonical-workflow-id
+dry-run: workflow canonical-workflow-id is active; re-run with --apply to deactivate
+local artifact: nodes=3 active=False
+schedule: cron='0 4 1 * *' timezone='Asia/Seoul' (next-run time not computed here)
+remote workflow canonical-workflow-id: active=False nodes=3
+remote definition matches reviewed local artifact: True
+most recent meaningful successful execution: execution=exec-1 run=n8n-korean-vernacular-exec-1 started_at=2026-09-11T12:00:00.000Z loaded_vernacular_names=846 loaded_candidates=102
+{"production_context_verified": true, "container_id": "fixture-container", "started_at": "fixture-start", "mutations": 0}
+{"image": "ghcr.io/evodmik/robingraph@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "previous_image": "old", "previous_env_backup": "/private/var/folders/v3/wmm1rjp56_g30vxys9_whkww0000gn/T/tmpoja43qnm/.registry-deployments/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-1793014141695989000.env.previous", "runtime_overrides": {}, "state": "verified"}
+{"image": "ghcr.io/evodmik/robingraph@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "previous_image": "old", "previous_env_backup": "/private/var/folders/v3/wmm1rjp56_g30vxys9_whkww0000gn/T/tmp9ttb825j/.registry-deployments/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-1793014141697209000.env.previous", "runtime_overrides": {"ROBINGRAPH_GRAPH_INTENT_MODE": "active", "ROBINGRAPH_GRAPH_INTERPRETER": "lexical"}, "state": "verified"}
