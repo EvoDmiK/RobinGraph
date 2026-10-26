@@ -1,0 +1,21 @@
+{
+  "branch": "main",
+  "source_services_sha256": "3232e36ef4cb93f2fca9c01d7f1b7a9da8c949cd640d5e8e0d0bed0632d4b83c",
+  "jenkins_build": 11,
+  "unit_run": 1327,
+  "unit_pass": 1287,
+  "unit_skip": 40,
+  "unit_fail": 0,
+  "unit_seconds": 24.749,
+  "frontend_pass": 322,
+  "frontend_fail": 0,
+  "deployed_revision": "9df92886cac349e346b6197085d4dfc9031ff614",
+  "production_deployed": true,
+  "immutable_image": "ghcr.io/evodmik/robingraph@sha256:d1077581143bbb59bb47ea2723c140af66b20a59e4df8cd3a1bae5f6985670f5",
+  "runtime_verified": true,
+  "running_source_sha_match": true,
+  "public_post_contracts_pass": 4,
+  "public_get_http200": 3,
+  "production_trace_matches": 4,
+  "test_container_unchanged": true
+}

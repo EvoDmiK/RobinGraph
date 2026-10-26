@@ -1,0 +1,973 @@
+{
+  "experiment_id": "50",
+  "experiment_name": "robingraph-prod",
+  "rows": [
+    {
+      "question": "청둥오리에 대해 알려줘",
+      "trace_id": "tr-cd04d0038363ddb982ab1ceeec9ab45b",
+      "experiment_id": "50",
+      "tags": {
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-cd04d0038363ddb982ab1ceeec9ab45b/artifacts",
+        "response_reason": "none",
+        "route_method": "deterministic",
+        "response_disposition": "answer",
+        "failure_stage": "none",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_api_disposition": "answer",
+        "mlflow.traceName": "POST /v1/chat",
+        "selected_intent": "profile"
+      },
+      "span_names": [
+        "POST /v1/chat",
+        "name_relations.lookup",
+        "RunnableSequence",
+        "resolve_species",
+        "RunnableParallel<lineage,traits,media,conservation,notes,reference,metadata>",
+        "RunnablePassthrough",
+        "trait_stage",
+        "image_stage",
+        "conservation_stage",
+        "notes_stage",
+        "reference_stage",
+        "metadata_stage",
+        "assemble"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "청둥오리에 대해 알려줘",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "answer",
+        "answer_text": "청둥오리의 서식 환경은 습지이며, 주 생활 방식은 수생입니다. 먹이 정보는 ‘잡식’입니다. 체중은 843.42 g입니다.",
+        "warnings": [],
+        "result": {
+          "kind": "profile",
+          "profile": {
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:544",
+              "rank": "species",
+              "scientific_name": "Anas platyrhynchos",
+              "authority": "Linnaeus, C, 1758",
+              "korean_name": "청둥오리",
+              "korean_name_status": "source-reference",
+              "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+              "english_name": "Mallard",
+              "distribution": {
+                "status": "[truncated]",
+                "geographic_scope": "[truncated]",
+                "basis": "[truncated]",
+                "evidence": "[truncated]",
+                "seasonal_status": "[truncated]",
+                "note": "[truncated]"
+              },
+              "display_name": "청둥오리"
+            },
+            "lineage": {
+              "query_scientific_name": "Anas platyrhynchos",
+              "taxonomy_source": "AviList",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "items": [
+                "[truncated]",
+                "[truncated]",
+                "[truncated]",
+                "[truncated]"
+              ],
+              "query_name": "Anas platyrhynchos",
+              "resolved_query_scientific_name": "Anas platyrhynchos",
+              "matched_by": "scientific_name"
+            },
+            "traits": [
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              },
+              {
+                "name": "[truncated]",
+                "label": "[truncated]",
+                "value": "[truncated]",
+                "display": "[truncated]",
+                "unit": "[truncated]",
+                "inferred": "[truncated]",
+                "summary_statistic": "[truncated]",
+                "source_note": "[truncated]",
+                "certainty": "[truncated]",
+                "source_url": "[truncated]",
+                "citation": "[truncated]",
+                "dataset_id": "[truncated]",
+                "release": "[truncated]",
+                "license_name": "[truncated]",
+                "source_name": "[truncated]",
+                "taxonomy_alignment": "[truncated]"
+              }
+            ],
+            "images": [],
+            "photo_availability": {
+              "status": "pending",
+              "message": "사진을 불러오는 중입니다."
+            },
+            "conservation": {
+              "category": "LC",
+              "category_raw": "LC",
+              "source_name": "IUCN Red List · GBIF public checklist",
+              "source_url": "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+              "source_id": "gbif-iucn-2026-1",
+              "source_release": "2026-1",
+              "evidence_kind": "red_list_checklist",
+              "assessment_status": "linked_checklist",
+              "independently_verified": false,
+              "assessment_scope": "global",
+              "sis_id": "22680186",
+              "assessment_id": "281835571",
+              "assessment_reference_url": "https://www.iucnredlist.org/species/22680186/281835571",
+              "assessment_citation": "BirdLife International 2025. Anas platyrhynchos Linnaeus, 1758. The IUCN Red List of Threatened Species 2025: https://doi.org/10.2305/IUCN.UK.2025-2.RLTS.T22680186A281835571.en",
+              "snapshot_sha256": "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+              "mapping_method": "exact_avilist_birdlife_sis_and_scientific_name",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_category_raw": "LC",
+              "authority_match_method": "single_author_initials_omitted",
+              "license_name": "CC BY 4.0",
+              "license_url": "https://creativecommons.org/licenses/by/4.0/",
+              "publisher": "International Union for Conservation of Nature",
+              "citation": "IUCN (2026). The IUCN Red List of Threatened Species. Version 2026-1. https://www.iucnredlist.org. Downloaded on 2026-07-28. https://doi.org/10.15468/0qnb58",
+              "published_at": "2026-07-28",
+              "quality_note": "IUCN의 GBIF 공개 평가목록에 연결된 세계 등급입니다. 자료 버전과 개별 평가 연도는 다르며, 실시간 조회나 평가 원문 전체의 독립 검증은 아닙니다.",
+              "assessment_year": 2025,
+              "label": "관심대상"
+            },
+            "note_evidence": [],
+            "summary": "청둥오리의 서식 환경은 습지이며, 주 생활 방식은 수생입니다. 먹이 정보는 ‘잡식’입니다. 체중은 843.42 g입니다.",
+            "sections": [
+              {
+                "key": "[truncated]",
+                "title": "[truncated]",
+                "items": "[truncated]",
+                "empty_text": "[truncated]"
+              },
+              {
+                "key": "[truncated]",
+                "title": "[truncated]",
+                "items": "[truncated]",
+                "empty_text": "[truncated]"
+              },
+              {
+                "key": "[truncated]",
+                "title": "[truncated]",
+                "items": "[truncated]",
+                "empty_text": "[truncated]"
+              },
+              {
+                "key": "[truncated]",
+                "title": "[truncated]",
+                "items": "[truncated]",
+                "empty_text": "[truncated]"
+              }
+            ],
+            "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+            "enrichment_pending": true
+          },
+          "question_answer": null,
+          "similar_species": null,
+          "subspecies": null
+        },
+        "entity_resolution": {
+          "mention": "청둥오리",
+          "status": "matched",
+          "method": "graph_exact",
+          "canonical_name": "Anas platyrhynchos",
+          "taxon_id": "avilist-taxon:v2025b:544",
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "taxonomy_release": "v2025b",
+          "candidates": []
+        }
+      },
+      "http_disposition": "answer"
+    },
+    {
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "trace_id": "tr-b8d1f78e27e8f2a4d4f758732b25abab",
+      "experiment_id": "50",
+      "tags": {
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-b8d1f78e27e8f2a4d4f758732b25abab/artifacts",
+        "response_reason": "none",
+        "route_method": "semantic",
+        "response_disposition": "answer",
+        "failure_stage": "none",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_api_disposition": "answer",
+        "mlflow.traceName": "POST /v1/chat",
+        "selected_intent": "profile"
+      },
+      "span_names": [
+        "POST /v1/chat",
+        "graph_intent.route",
+        "graph_intent.candidates",
+        "jina.embed",
+        "jina.embed",
+        "jina.embed"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "청둥오리와 같은 서식 환경 범주(습지)이면서 먹이 생태 범주가 ‘수생 초식’ 범주와 다른 종입니다.",
+        "warnings": [
+          "서식 환경 범주가 같고 먹이 생태 범주가 다른 종입니다. 실제로 같은 장소에서 함께 살거나 먹이 경쟁을 하지 않는다는 뜻은 아닙니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "청둥오리와 서식 환경 범주가 같고 먹이 생태 범주가 다른 종",
+            "text": "청둥오리와 같은 서식 환경 범주(습지)이면서 먹이 생태 범주가 ‘수생 초식’ 범주와 다른 종입니다.",
+            "items": [
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              }
+            ],
+            "limitations": [
+              "서식 환경 범주가 같고 먹이 생태 범주가 다른 종입니다. 실제로 같은 장소에서 함께 살거나 먹이 경쟁을 하지 않는다는 뜻은 아닙니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:544",
+              "rank": "species",
+              "scientific_name": "Anas platyrhynchos",
+              "authority": "Linnaeus, C, 1758",
+              "korean_name": "청둥오리",
+              "korean_name_status": "source-reference",
+              "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+              "english_name": "Mallard",
+              "distribution": {
+                "status": "[truncated]",
+                "geographic_scope": "[truncated]",
+                "basis": "[truncated]",
+                "evidence": "[truncated]",
+                "seasonal_status": "[truncated]",
+                "note": "[truncated]"
+              },
+              "display_name": "청둥오리"
+            },
+            "paths": [
+              {
+                "text": "[truncated]",
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "text": "[truncated]",
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              }
+            ],
+            "execution_summary": {
+              "kind": "habitat_different_diet",
+              "reference_name": "Anas platyrhynchos",
+              "share_basis": "trophic_niche",
+              "match": "different",
+              "exclude_reference": true,
+              "habitat": "Wetland",
+              "niche_value": "Herbivore aquatic",
+              "target_id": "avilist-taxon:v2025b:544",
+              "species_scope": "all",
+              "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+              "release": "figshare-article-16586228-v7:file-34480856",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_release": "v2025b"
+            }
+          }
+        },
+        "entity_resolution": null
+      },
+      "http_disposition": "answer"
+    },
+    {
+      "question": "천둥오리에 대해 알려줘",
+      "trace_id": "tr-e5d93d4218062daea0ba4f3f76c6f4a3",
+      "experiment_id": "50",
+      "tags": {
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-e5d93d4218062daea0ba4f3f76c6f4a3/artifacts",
+        "response_reason": "ambiguous_name",
+        "route_method": "deterministic",
+        "response_disposition": "clarify",
+        "failure_stage": "name_resolution",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_api_disposition": "clarify",
+        "mlflow.traceName": "POST /v1/chat",
+        "selected_intent": "profile"
+      },
+      "span_names": [
+        "POST /v1/chat",
+        "name_relations.lookup",
+        "jina.embed"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "천둥오리에 대해 알려줘",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "입력한 이름을 찾지 못했습니다. 찾으시는 새를 후보에서 확인해 주세요.",
+        "warnings": [
+          "비슷한 이름의 후보이며, 같은 종이라고 확정하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "찾으시는 새를 선택해 주세요."
+        },
+        "entity_resolution": {
+          "mention": "천둥오리",
+          "status": "candidates",
+          "method": "vector",
+          "canonical_name": null,
+          "taxon_id": null,
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "taxonomy_release": "v2025b",
+          "candidates": [
+            {
+              "taxon_id": "avilist-taxon:v2025b:544",
+              "scientific_name": "Anas platyrhynchos",
+              "display_name": "청둥오리",
+              "score": 0.2138,
+              "question": "Anas platyrhynchos에 대해 알려줘"
+            }
+          ]
+        }
+      },
+      "http_disposition": "clarify"
+    },
+    {
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "trace_id": "tr-68e81236d18012a6f42b41f88d01b7e2",
+      "experiment_id": "50",
+      "tags": {
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-68e81236d18012a6f42b41f88d01b7e2/artifacts",
+        "response_reason": "ambiguous_conditions",
+        "route_method": "deterministic",
+        "response_disposition": "clarify",
+        "failure_stage": "routing",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_api_disposition": "clarify",
+        "mlflow.traceName": "POST /v1/chat",
+        "selected_intent": "profile"
+      },
+      "span_names": [
+        "POST /v1/chat"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+        "warnings": [
+          "식물 군집 자체의 유사성을 비교하는 자료는 제공하지 않습니다. 선택 전에는 의미나 종을 확정하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+          "choices": [
+            {
+              "label": "식성·먹이 생태 범주",
+              "question": "청둥오리랑 비슷한 식성을 가진 새들을 알려줘"
+            },
+            {
+              "label": "서식 환경",
+              "question": "청둥오리랑 비슷한 서식 환경을 가진 새들을 알려줘"
+            }
+          ]
+        },
+        "entity_resolution": null
+      },
+      "http_disposition": "clarify"
+    }
+  ]
+}

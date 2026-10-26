@@ -1,0 +1,114 @@
+{
+  "buildx.build.provenance/linux/amd64": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/ghcr.io/astral-sh/uv@0.11.26-python3.12-trixie-slim?digest=sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "build-arg:VCS_REF": "9df92886cac349e346b6197085d4dfc9031ff614"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "build-arg:VCS_REF": "9df92886cac349e346b6197085d4dfc9031ff614",
+              "vcs:localdir:context": ".",
+              "vcs:localdir:dockerfile": ".",
+              "vcs:revision": "9df92886cac349e346b6197085d4dfc9031ff614",
+              "vcs:source": "https://github.com/EvoDmiK/RobinGraph.git"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.27.0",
+        "platform": "linux/arm64"
+      }
+    }
+  },
+  "buildx.build.provenance/linux/arm64": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/ghcr.io/astral-sh/uv@0.11.26-python3.12-trixie-slim?digest=sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86\u0026platform=linux%2Farm64",
+        "digest": {
+          "sha256": "0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "build-arg:VCS_REF": "9df92886cac349e346b6197085d4dfc9031ff614"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "build-arg:VCS_REF": "9df92886cac349e346b6197085d4dfc9031ff614",
+              "vcs:localdir:context": ".",
+              "vcs:localdir:dockerfile": ".",
+              "vcs:revision": "9df92886cac349e346b6197085d4dfc9031ff614",
+              "vcs:source": "https://github.com/EvoDmiK/RobinGraph.git"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.27.0",
+        "platform": "linux/arm64"
+      }
+    }
+  },
+  "buildx.build.ref": "orbstack/orbstack/qh2j69m2ot6u9v2jrmgdcv4a9",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:d1077581143bbb59bb47ea2723c140af66b20a59e4df8cd3a1bae5f6985670f5",
+    "size": 1609
+  },
+  "containerimage.digest": "sha256:d1077581143bbb59bb47ea2723c140af66b20a59e4df8cd3a1bae5f6985670f5",
+  "image.name": "ghcr.io/evodmik/robingraph:sha-9df92886cac349e346b6197085d4dfc9031ff614"
+}

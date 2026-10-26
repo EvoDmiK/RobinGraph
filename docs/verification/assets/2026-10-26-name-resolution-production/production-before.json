@@ -1,0 +1,18 @@
+{
+  "image": "ghcr.io/evodmik/robingraph@sha256:851bc96d358374f0dce37fa95638e905d79845c5c036a44590b20c57ef22d659",
+  "container_id": "29f02afa20cbd1a7c1c61ddcc8f8a49ed5e08ef3fe841ba86534510a04a72bf5",
+  "started_at": "2026-10-26T10:35:44.90273031Z",
+  "healthy": "healthy",
+  "runtime": {
+    "ROBINGRAPH_DEPLOY_TARGET": "prod",
+    "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+    "ROBINGRAPH_GRAPH_INTERPRETER": "semantic",
+    "ROBINGRAPH_MLFLOW_TRACING": "true",
+    "MLFLOW_EXPERIMENT_ID": "50",
+    "MLFLOW_EXPERIMENT_NAME": "robingraph-prod"
+  },
+  "tracking_host": "mlflow",
+  "mlflow_auth_present": false,
+  "working_dir": "/home/kimdove/RobinGraph-approved-ui-e7ad221",
+  "mutations": 0
+}
