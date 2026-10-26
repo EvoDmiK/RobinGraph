@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "file": "data/eval/graph_questions/taxonomic-regression-v1/questions.jsonl",
+      "manifest_sha256": "746baf0adb1bda3cd8c0fcdf2c16d045fdc1a39bde7658bad093eed364a8ad58",
+      "git_blob_sha256": "746baf0adb1bda3cd8c0fcdf2c16d045fdc1a39bde7658bad093eed364a8ad58",
+      "match": true
+    },
+    {
+      "file": "data/eval/graph_questions/taxonomic-regression-v1/questions.csv",
+      "manifest_sha256": "39ea0b080fe4fcaeff064218128fd0e51338765ea49850da5794593df6600e24",
+      "git_blob_sha256": "39ea0b080fe4fcaeff064218128fd0e51338765ea49850da5794593df6600e24",
+      "match": true
+    },
+    {
+      "file": "data/eval/graph_questions/taxonomic-regression-v1/observations.jsonl",
+      "manifest_sha256": "1f5c148c0828999df416649e87fd5b68deb8f1c9aaeff5c226f6cec80a344fb6",
+      "git_blob_sha256": "1f5c148c0828999df416649e87fd5b68deb8f1c9aaeff5c226f6cec80a344fb6",
+      "match": true
+    }
+  ],
+  "preserve_exact_csv_bytes": true,
+  "hashes_rewritten": false
+}

@@ -1,0 +1,31 @@
+{
+  "task": "2026-10-26-git-main-integration",
+  "synced_at": "2026-10-26T11:21:30.274Z",
+  "repository_path": "docs/work-log/2026-10-26-git-main-integration.md",
+  "scratch_path": "/tmp/2026-10-26-git-main-integration.md",
+  "vault_path": "Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-26-Git정리-main병합-원격동기화.md",
+  "sha256": "a190b15c155d2b8c7d03c55a763d28c6b449b01c6854ed48f15da32f480f2b87",
+  "scratch_repository_vault_raw_equal": true,
+  "changed_vault_documents": 3,
+  "index_readback_exact": true,
+  "backlog_readback_exact": true,
+  "other_content_preserved": true,
+  "rg212_status": "in_progress",
+  "main_merge": "cf52e1dc0c9439ebb7b8b579f9fc5ed2dcc117f4",
+  "origin_branches_pushed": [
+    "dev-codex",
+    "main"
+  ],
+  "inline_jenkins_definition_changed": false,
+  "production_redeployed": false,
+  "previous_production_worklog_modified": false,
+  "writer_git_mutation": false,
+  "characters": 6163,
+  "csv_crlf_followup": {
+    "single_path_no_text_attribute": true,
+    "source_and_manifest_unchanged": true,
+    "index_blob_matches": 3,
+    "app_changed": false,
+    "full_suite_rerun": false
+  }
+}

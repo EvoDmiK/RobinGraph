@@ -1,0 +1,118 @@
+{
+  "approved_snapshot_changed_files": [
+    "scripts/deploy_registry_prod.py"
+  ],
+  "app_bytes_unchanged": true,
+  "orig_backup_in_old_snapshot_but_exclude_from_git": true,
+  "origin_main_cached": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+  "base": "7267df697fc0912752b9b2a848d42fb8baa80b85",
+  "same_as_origin_paths": [
+    ".env.example",
+    "Jenkinsfile",
+    "ci/Jenkinsfile.production",
+    "data/eval/graph_questions/README.md",
+    "data/eval/graph_questions/gates.json",
+    "data/eval/graph_questions/holdout.jsonl",
+    "data/eval/graph_questions/manifest.json",
+    "data/eval/graph_questions/taxonomic-regression-v1/README.md",
+    "data/eval/graph_questions/taxonomic-regression-v1/manifest.json",
+    "data/eval/graph_questions/taxonomic-regression-v1/observations.jsonl",
+    "data/eval/graph_questions/taxonomic-regression-v1/publish-receipt.json",
+    "data/eval/graph_questions/taxonomic-regression-v1/questions.jsonl",
+    "data/eval/graph_questions/tuning.jsonl",
+    "scripts/audit_graph_question_safety.py",
+    "scripts/eval_graph_questions.py",
+    "scripts/evaluate_graph_question_dataset.py",
+    "scripts/publish_graph_question_dataset.py",
+    "scripts/verify_graph_question_evaluation_evidence.py",
+    "src/robingraph/api/drf/application.py",
+    "src/robingraph/api/drf/openapi.json",
+    "src/robingraph/api/drf/openapi_ingest.json",
+    "src/robingraph/api/drf/urls.py",
+    "src/robingraph/api/question_entities.py",
+    "src/robingraph/api/schemas.py",
+    "src/robingraph/api/static/chat.js",
+    "src/robingraph/api/static/styles.css",
+    "src/robingraph/embeddings/__init__.py",
+    "src/robingraph/retrieval/birdbase.py",
+    "src/robingraph/retrieval/graph_semantic_router.py",
+    "src/robingraph/retrieval/species_profile.py",
+    "src/robingraph/retrieval/species_questions.py",
+    "tests/frontend/chat_ui.test.js",
+    "tests/test_chat_clarification.py",
+    "tests/test_drf_parity.py",
+    "tests/test_embeddings.py",
+    "tests/test_gemini_generation.py",
+    "tests/test_graph_condition_extractor.py",
+    "tests/test_graph_intent_schema.py",
+    "tests/test_graph_questions_api.py",
+    "tests/test_graph_semantic_api.py",
+    "tests/test_graph_semantic_router.py",
+    "tests/test_registry_prod_deployment.py",
+    "tests/test_semantic_chat.py",
+    "tests/test_species_profile.py",
+    "tests/test_species_questions.py",
+    "tests/test_taxon_traits.py",
+    "tests/test_taxon_traits_api.py"
+  ],
+  "three_way_conflicts": [
+    {
+      "path": "data/eval/graph_questions/taxonomic-regression-v1/questions.csv",
+      "kind": "add/add"
+    },
+    {
+      "path": "scripts/deploy_registry_prod.py",
+      "kind": "content"
+    },
+    {
+      "path": "src/robingraph/api/services.py",
+      "kind": "content"
+    },
+    {
+      "path": "src/robingraph/cli.py",
+      "kind": "content"
+    },
+    {
+      "path": "src/robingraph/generation.py",
+      "kind": "content"
+    },
+    {
+      "path": "src/robingraph/retrieval/graph_condition_extractor.py",
+      "kind": "add/add"
+    },
+    {
+      "path": "src/robingraph/retrieval/graph_intent_schema.py",
+      "kind": "add/add"
+    },
+    {
+      "path": "src/robingraph/retrieval/graph_questions.py",
+      "kind": "add/add"
+    },
+    {
+      "path": "src/robingraph/retrieval/semantic_graph_intent.py",
+      "kind": "add/add"
+    },
+    {
+      "path": "tests/test_graph_questions.py",
+      "kind": "add/add"
+    },
+    {
+      "path": "tests/test_semantic_graph_intent.py",
+      "kind": "add/add"
+    }
+  ],
+  "three_way_clean_merges": [],
+  "note": "Read-only simulation with cached origin/main and dirty current file bytes, no git index/refs/worktree mutation.",
+  "upstream_only_behavior_lost_by_approved_ours_review": "No such behavior identified across the 11 candidate paths; remote33c0b67 implementation is preserved or superseded by approved later contracts.",
+  "upstream_review_limit": "Cached origin/main33c0b67; real merge conflicts and fresh refs still require root verification.",
+  "csv_git_diff_empty": true,
+  "pipeline_semantic_now": true,
+  "pipeline_tracing_bundle_now": true,
+  "pipeline_files_equal": true,
+  "helper_tests_current_repo": {
+    "passed": 16,
+    "failed": 0,
+    "mock_only": true
+  },
+  "root_source_or_git_mutation_by_reviewer": false
+}

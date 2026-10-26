@@ -1,0 +1,37 @@
+{
+  "approved_files": 234,
+  "matched": 232,
+  "approved_application_files_matched": 111,
+  "approved_data_files_matched": 46,
+  "changed": [
+    "scripts/deploy_registry_prod.py"
+  ],
+  "excluded_backup": [
+    "src/robingraph/retrieval/species_profile.py.orig"
+  ],
+  "application_hash_match": true,
+  "data_hash_match": true,
+  "resolved_conflicts": 12,
+  "conflict_policy": "reviewed latest validated working version; upstream changes already present",
+  "runtime_secret_scan_files": 1943,
+  "runtime_secret_matches": 0,
+  "git_commit": "e74aaa4eb38cd4bcfa2b6ec206ca637b99981291",
+  "origin_main_before": "33c0b67",
+  "production_redeploy": false,
+  "integration_merge_commit": "cf52e1dc0c9439ebb7b8b579f9fc5ed2dcc117f4",
+  "pushed_branches": [
+    "main",
+    "dev-codex"
+  ],
+  "unit": {
+    "run": 1326,
+    "passed": 1286,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 26.326
+  },
+  "frontend": {
+    "passed": 322,
+    "failed": 0
+  }
+}

@@ -10,3 +10,6 @@ uv.lock text eol=lf
 
 # Reviewed conservation artifacts are verified byte-for-byte on every platform.
 src/robingraph/retrieval/reviewed_conservation_references.json text eol=lf
+
+# Preserve the published evaluation CSV bytes used by its SHA256 manifest.
+data/eval/graph_questions/taxonomic-regression-v1/questions.csv -text

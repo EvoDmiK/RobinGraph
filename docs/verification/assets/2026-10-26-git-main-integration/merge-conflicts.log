@@ -1,0 +1,25 @@
+Auto-merging Jenkinsfile
+CONFLICT (content): Merge conflict in Jenkinsfile
+Auto-merging ci/Jenkinsfile.production
+CONFLICT (content): Merge conflict in ci/Jenkinsfile.production
+Auto-merging scripts/deploy_registry_prod.py
+CONFLICT (content): Merge conflict in scripts/deploy_registry_prod.py
+Auto-merging src/robingraph/api/services.py
+CONFLICT (content): Merge conflict in src/robingraph/api/services.py
+Auto-merging src/robingraph/cli.py
+CONFLICT (content): Merge conflict in src/robingraph/cli.py
+Auto-merging src/robingraph/generation.py
+CONFLICT (content): Merge conflict in src/robingraph/generation.py
+Auto-merging src/robingraph/retrieval/graph_condition_extractor.py
+CONFLICT (add/add): Merge conflict in src/robingraph/retrieval/graph_condition_extractor.py
+Auto-merging src/robingraph/retrieval/graph_intent_schema.py
+CONFLICT (add/add): Merge conflict in src/robingraph/retrieval/graph_intent_schema.py
+Auto-merging src/robingraph/retrieval/graph_questions.py
+CONFLICT (add/add): Merge conflict in src/robingraph/retrieval/graph_questions.py
+Auto-merging src/robingraph/retrieval/semantic_graph_intent.py
+CONFLICT (add/add): Merge conflict in src/robingraph/retrieval/semantic_graph_intent.py
+Auto-merging tests/test_graph_questions.py
+CONFLICT (add/add): Merge conflict in tests/test_graph_questions.py
+Auto-merging tests/test_semantic_graph_intent.py
+CONFLICT (add/add): Merge conflict in tests/test_semantic_graph_intent.py
+Automatic merge failed; fix conflicts and then commit the result.
