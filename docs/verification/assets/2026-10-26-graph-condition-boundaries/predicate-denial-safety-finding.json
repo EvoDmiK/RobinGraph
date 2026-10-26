@@ -1,0 +1,11 @@
+{
+  "stage": "pre-deployment predicate-tail expansion",
+  "independent_methods_run": 31,
+  "failed_methods": 1,
+  "failed_case": "NumericTailGuards.test_changed_quantity_comparator_field_or_ambiguous_prefix_does_not_recover",
+  "observed": "Original quoted negation was reduced to positive num_gte 200g after numeric surface reconciliation.",
+  "root_full_suite_result_reported": "1298 run; 1258 pass,40 skipped; independent safety failure remained",
+  "approval": "blocked until bounded quoted/nominal copular-denial fix verified",
+  "live_request_sent": false,
+  "gold_changed": false
+}

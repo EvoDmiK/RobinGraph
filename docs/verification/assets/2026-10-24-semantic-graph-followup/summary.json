@@ -1,0 +1,45 @@
+{
+  "task": "RG-212",
+  "status": "in_progress",
+  "code_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "f6f0e7746866b7f9d67fd3e0a94a65d991ab5ec5d0d6dba1c195e535f26bfedd",
+    "src/robingraph/retrieval/graph_questions.py": "f21d19ebc91c55dccfaf14da060a0bb019446797fadbaf86e1c55dba883973ab",
+    "src/robingraph/generation.py": "2d1746a14bb60f55b4be4ef3b06d2a0bc189a15944b84f5cbdc05f2e8698105e",
+    "tests/test_graph_questions.py": "ed9e59a39a969eddb2e76d6a1b14aab77321dd74d99634c7a0a1376bc45b3bb8",
+    "tests/test_semantic_restatements.py": "1c788ee3d21d72254ff97b03d6702849b15f0a09c1d05b81cfda896d669927f1"
+  },
+  "known_28_final": {
+    "supported": {
+      "fail": 1,
+      "pass": 16,
+      "unverifiable": 1
+    },
+    "hold": {
+      "pass": 6
+    },
+    "preserve": {
+      "pass": 4
+    }
+  },
+  "independent_20_first_measurement": {
+    "supported_pass": 7,
+    "supported_false_hold": 5,
+    "hold_pass": 6,
+    "preserve_pass": 2,
+    "evaluated_image": "robingraph-api:test-rg212-followup-6a185ada6006",
+    "final_image_not_reevaluated": true
+  },
+  "unit": {
+    "run": 1219,
+    "passed": 1179,
+    "skipped": 40,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 8,
+    "response_mocking": false
+  },
+  "production_changed": false,
+  "commit_push": false,
+  "bird_db_writes": 0
+}

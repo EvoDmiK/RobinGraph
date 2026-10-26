@@ -1,0 +1,7 @@
+{
+  "runtime_first_failure": "Jenkins one-line declarative pipeline syntax failed before runtime commands. Corrected newlines and validated declarative syntax; job4 SUCCESS.",
+  "public_first_failure": "All 9 graph questions passed, but lineage GET wrongly used scientific name in Korean-name parameter and returned404. Corrected name=청둥오리; full9+GET3 rerun passed.",
+  "direct_python_http": "Cloudflare blocked urllib user agent403; actual Chromium same-origin checks passed.",
+  "app_fixes_required": false,
+  "rollback_executed": false
+}

@@ -1,0 +1,18 @@
+{
+  "local_synthetic_tests": 26,
+  "passed": 26,
+  "review": "numeric morphology and original-boundary repairs approved",
+  "source_sha256": {
+    "/tmp/rg-numeric-tail-20261026/src/robingraph/retrieval/semantic_graph_intent.py": "9c0081830288fb46244b6700d8c503dbeb81eeb6db734732b151909f2a35d882",
+    "/tmp/rg-numeric-tail-20261026/src/robingraph/retrieval/graph_condition_extractor.py": "c91f19366c74b68fc725f2db4c722f2aa4f5bb1e05dcf5e922ff1cd9112f311f"
+  },
+  "fresh_gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "fresh_gold_executed": false,
+  "actual_regression_attempt2": {
+    "pass": 34,
+    "fail": 2,
+    "group_pass": 11,
+    "group_fail": 1
+  },
+  "app_modified_by_reviewer": false
+}

@@ -1,0 +1,11 @@
+{
+  "image": "robingraph-api:test-ecology-layout-d1958a21194a",
+  "health": "healthy",
+  "source_files": 208,
+  "workspace_and_release_match": true,
+  "runtime_flags": [
+    "ROBINGRAPH_GRAPH_INTENT_MODE=active",
+    "ROBINGRAPH_DEPLOY_TARGET=test",
+    "ROBINGRAPH_GRAPH_INTERPRETER=semantic"
+  ]
+}

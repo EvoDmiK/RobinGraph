@@ -1,0 +1,50 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -745,6 +745,7 @@
+     token = tracing.begin_outcome()
+     try:
+         framing = set()
++        record_frames = []
+         scope = candidate.get('taxon') if candidate.get('kind') == 'taxon_traits' else candidate.get('species')
+         if isinstance(scope, str):
+             matches = list(re.finditer(r'(?<!\w)' + re.escape(scope) + r'\s+(?P<rank>목|과|속|아종|종)의(?=\s)', question))
+@@ -763,6 +764,14 @@
+                 match = re.match(r'\s*(' + _RECORD_REQUEST + r')(?=\s|[.!?,]|$)', question[span.end:])
+                 if match and question.count(match[1]) == 1:
+                     framing.add(match[1])
++                    record_frames.append(Span(match[1], span.end + match.start(1), span.end + match.end(1)))
++        # A partial unresolved entry is framing only inside a uniquely proved original record request.
++        for text in unresolved:
++            fragment = text.strip().rstrip('.!?')
++            source = span_of(question, fragment) if fragment else None
++            if (source is not None and question.count(fragment) == 1
++                    and any(frame.start <= source.start and source.end <= frame.end for frame in record_frames)):
++                framing.add(fragment)
+         meta = {span.text for span in _meta_spans(question)}
+         meta |= framing
+         # The denial of a ratio condition is redundant only for an explicit category, never a share query.
+--- a/tests/test_graph_record_fragments.py
++++ b/tests/test_graph_record_fragments.py
+@@ -0,0 +1,22 @@
++"""Only unique original fragments fully inside proved positive record requests are query framing (mock plans)."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphRecordFragmentsTest(TestCase):
++    def test_original_containment_and_counterexamples(self):
++        rows=[]
++        q='Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.'
++        def plan(parts):return dict(kind='taxon_traits',taxon='Larus argentatus',conditions=[dict(trait_name='trophic_level',op='eq',value='Omnivore',surface='영양 단계가 Omnivore로')],unresolved=parts,unknown_relation=False)
++        def check(label,question,parts,want):
++         p=plan(parts);original=copy.deepcopy(p);after,changes=s.reconcile_graph_plan(question,p);actual=execution_gate(question,s.interpret(question,lambda *_:after));assert p==original;assert actual==want,(label,actual,after,changes);rows.append(dict(label=label,question=question,unresolved=parts,actual=actual,changes=changes))
++        for fragments in (['확인해 줘'],['기록되어'],['있는지'],['확인해'],['줘'],['기록되어','있는지','확인해 줘'],['종의','확인해 줘']):
++         check('contained_original_fragment',q,fragments,'answer')
++        for fragments in (['Omnivore로 기록되어'],['확인해 줘. 겨울에 사는'],['확인해 줘. 별도 조건'],['확인해 줘가 아닌']):
++         check('not_contained_or_not_original',q,fragments,'clarify')
++        check('repeated_fragment_not_removed',q+' 별도로 확인해 줘.', ['확인해 줘'],'clarify')
++        check('negative_record_not_framing',q.replace('기록되어 있는지','기록되어 있지 않은지'),['확인해 줘'],'clarify')
++        check('additional_condition_preserved',q+' 겨울에만 사는 새.', ['확인해 줘','겨울에만 사는'],'clarify')
++        check('overlap_after_frame',q+' 겨울에만 사는 새.', ['확인해 줘. 겨울에만'],'clarify')

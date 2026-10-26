@@ -1,0 +1,58 @@
+{
+  "status": "test_followup_implemented_rg212_generalization_still_in_progress",
+  "backend_tests": {
+    "passed": 115,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 1.125,
+    "type": "mock/unit/ASGI; not actual DB"
+  },
+  "frontend_tests": {
+    "passed": 317,
+    "failed": 0,
+    "type": "unit fake DOM"
+  },
+  "offline_independent_cases": 16,
+  "offline_safety_repros": 7,
+  "actual_api": {
+    "cases": 16,
+    "requests": 44,
+    "response_mocking": false,
+    "evaluation_type": "feedback-exposed regression; first results retained separately"
+  },
+  "actual_browser": {
+    "scenarios": 8,
+    "requests": 20,
+    "viewports": [
+      390,
+      1280
+    ],
+    "all_final_answer": true,
+    "page_errors": 0,
+    "overflows": 0,
+    "physical_mobile": false
+  },
+  "runtime": {
+    "source_manifest_verified": true,
+    "source_files": 208,
+    "image": "robingraph-api:test-taxonomic-traits-8a18de290625",
+    "health": "healthy",
+    "runtime_flags": {
+      "ROBINGRAPH_GRAPH_INTERPRETER": "semantic",
+      "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+      "ROBINGRAPH_DEPLOY_TARGET": "test"
+    },
+    "production_changed": false,
+    "git_commit_push": false
+  },
+  "case_sha256": "70cb962f70113ca2b500a16fe5193d8de43d34e2ba9bae4c63e0bc71b432ae3f",
+  "legacy_shadow_parity_queries": 7,
+  "production_changed": false,
+  "bird_db_writes": 0,
+  "git_commit_push": false,
+  "limitations": [
+    "Experimental semantic interpreter broader RG-212 scope still in progress; earlier six false-hold cases not declared fixed.",
+    "Some compound criteria and multi-reference queries remain held; interpretation is not universal.",
+    "Returned reference data were not independently recomputed from a second DB oracle."
+  ]
+}

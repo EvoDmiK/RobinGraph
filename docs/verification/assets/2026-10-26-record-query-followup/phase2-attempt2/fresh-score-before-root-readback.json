@@ -1,0 +1,463 @@
+{
+  "case_counts": {
+    "pass": 8,
+    "fail": 4
+  },
+  "classifications": {
+    "supported_answer": 5,
+    "false_hold": 2,
+    "wrong_plan": 1,
+    "negated_condition": 2,
+    "unsupported_specific_food": 1,
+    "wrong_hold_reason": 1
+  },
+  "group_counts": {
+    "pass": 2,
+    "fail": 2
+  },
+  "groups": [
+    {
+      "group": "contract-enum-record-check",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "contract-category-ratio-unapplied",
+      "status": "fail",
+      "equivalent_pair_exact": false,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "contract-biological-negative",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "contract-exact-fruit-gap",
+      "status": "fail",
+      "equivalent_pair_exact": false,
+      "contrast_distinguished": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "contract-enum-record-check-01",
+      "group": "contract-enum-record-check",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat_density_category\", \"value\": \"dense\"}"
+        ]
+      },
+      "trace_id": "tr-a78aa248bdaa2b50ac26d94aa6471220",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-enum-record-check-02",
+      "group": "contract-enum-record-check",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat_density_category\", \"value\": \"dense\"}"
+        ]
+      },
+      "trace_id": "tr-53416a20823d87f002b357b3b4ac1c9b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-enum-record-check-03",
+      "group": "contract-enum-record-check",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat_density_category\", \"value\": \"open\"}"
+        ]
+      },
+      "trace_id": "tr-ae1fcd6f304d82a7bf187beb055d01f5",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-01",
+      "group": "contract-category-ratio-unapplied",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Invertebrate\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": "family",
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-3a7c65fe2627c4b02855db5487243904",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-02",
+      "group": "contract-category-ratio-unapplied",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Invertebrate\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": "family",
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-9762d9ab142e0280b9d0e7a9b94feaa2",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-03",
+      "group": "contract-category-ratio-unapplied",
+      "role": "contrast",
+      "status": "fail",
+      "classification": "wrong_plan",
+      "errors": [
+        {
+          "executed_meaning_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Omnivore\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Omnivore\"}"
+              ]
+            }
+          }
+        },
+        {
+          "same_request_canonical_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Omnivore\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": "Alcedinidae",
+              "rank": "family",
+              "conditions": [
+                "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Omnivore\"}"
+              ]
+            }
+          }
+        }
+      ],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Alcedinidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Omnivore\"}"
+        ]
+      },
+      "trace_id": "tr-6a931bd86770e28ca12e641fbdf65784",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-biological-negative-01",
+      "group": "contract-biological-negative",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-9ff5727bce7a72d0c457312d80cd4b69",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-biological-negative-02",
+      "group": "contract-biological-negative",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-e54d22088e4f181c773bcd7995b2ac7b",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-biological-negative-03",
+      "group": "contract-biological-negative",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Columba",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"primary_lifestyle\", \"value\": \"Terrestrial\"}"
+        ]
+      },
+      "trace_id": "tr-78a16a77e073748c345695d40730716c",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-01",
+      "group": "contract-exact-fruit-gap",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-078376ff5469ad99c84881b003689dac",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-02",
+      "group": "contract-exact-fruit-gap",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "wrong_hold_reason",
+      "errors": [
+        "specific food data gap not distinguished from generic hold"
+      ],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "wrong_hold_reason"
+      },
+      "trace_id": "tr-0317767f0f8e9064f42aaf333135c933",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-03",
+      "group": "contract-exact-fruit-gap",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "shared_diet",
+        "reference": "Pycnonotus sinensis",
+        "habitat": null,
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-2b889b95e1f36ccae1df9e46f6921416",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "limits": [
+    "Saved same-request evidence only; no independent database re-query.",
+    "Model-authored gold; not human reviewed.",
+    "Exact-plan source no-data is separate from answer and name failure."
+  ],
+  "split": "holdout",
+  "source": "docs/verification/assets/2026-10-26-record-query-followup/fresh-traces.json",
+  "cases_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "responses_sha256": "91c40939cc07773c46208a3b5dc0779c862d157a1e723271f80faf6fec22ebd5"
+}

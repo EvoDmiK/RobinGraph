@@ -1,0 +1,136 @@
+{
+  "run_id": "0ef42977885444df85a8d6ac1bacdbbe",
+  "experiment_id": "33",
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/runs/0ef42977885444df85a8d6ac1bacdbbe",
+  "status": "FINISHED",
+  "metrics": {
+    "regression_cases_pass": 82.0,
+    "regression_supported_no_matching_results": 13.0,
+    "fresh_negated_condition": 1.0,
+    "followup_groups_fail": 1.0,
+    "recheck_cases_pass": 8.0,
+    "regression_cases_fail": 2.0,
+    "regression_negated_condition": 7.0,
+    "fresh_cases_pass": 5.0,
+    "fresh_wrong_hold_reason": 3.0,
+    "followup_supported_answer": 6.0,
+    "recheck_groups_fail": 4.0,
+    "regression_groups_fail": 2.0,
+    "regression_supported_source_no_data": 6.0,
+    "fresh_groups_fail": 4.0,
+    "followup_cases_fail": 2.0,
+    "followup_negated_condition": 2.0,
+    "recheck_negated_condition": 2.0,
+    "regression_groups_pass": 26.0,
+    "regression_false_hold": 2.0,
+    "fresh_cases_fail": 3.0,
+    "followup_cases_pass": 10.0,
+    "followup_false_hold": 2.0,
+    "recheck_supported_answer": 4.0,
+    "regression_supported_answer": 49.0,
+    "regression_unsupported_specific_food": 7.0,
+    "fresh_supported_answer": 4.0,
+    "followup_groups_pass": 3.0,
+    "followup_unsupported_specific_food": 2.0,
+    "recheck_unsupported_specific_food": 2.0
+  },
+  "artifacts_read_back": {
+    "datasets": [
+      "datasets/feedback12.json",
+      "datasets/holdout.json",
+      "datasets/manifest.json",
+      "datasets/regression.json",
+      "datasets/validation.json"
+    ],
+    "evaluation": [
+      "evaluation/followup-score.json",
+      "evaluation/fresh-score.json",
+      "evaluation/recheck-score.json",
+      "evaluation/regression-score.json"
+    ],
+    "same-request-evidence": [
+      "same-request-evidence/followup-traces.json",
+      "same-request-evidence/fresh-traces.json",
+      "same-request-evidence/recheck-traces.json",
+      "same-request-evidence/regression-traces.json"
+    ],
+    "verification": [
+      "verification/adjudication-label-ambiguity-peer.json",
+      "verification/code-freeze.json",
+      "verification/evaluation-context.json",
+      "verification/final-runtime-check.json",
+      "verification/followup-root-verification.json",
+      "verification/fresh-root-verification.json",
+      "verification/gold-label-adjudication.json",
+      "verification/health-final.json",
+      "verification/independent-final-signoff.json",
+      "verification/independent-port-recovery-verification.json",
+      "verification/port-proxy-recovery.json",
+      "verification/recheck-root-verification.json",
+      "verification/regression-root-verification.json",
+      "verification/resolved-four.json",
+      "verification/root-readback-score-provenance.json",
+      "verification/unit-full.log"
+    ],
+    "evaluator": [
+      "evaluator/evaluate_graph_question_families.py"
+    ],
+    "implementation": [
+      "implementation/app-changes.patch",
+      "implementation/backend.patch",
+      "implementation/field-proof-final-guards.log",
+      "implementation/field-proof-permanent-tests.log",
+      "implementation/field-proof-prior-guards.log",
+      "implementation/final-guards.log",
+      "implementation/final-prior-guards.log",
+      "implementation/fruit-unit-initial.log",
+      "implementation/fruit-unit.log",
+      "implementation/independent-source-review.json",
+      "implementation/independent-union-safety-failure.log",
+      "implementation/local-union-safety-finding.json",
+      "implementation/record-assignment-all-guards.log",
+      "implementation/record-assignment-boundaries-initial.log",
+      "implementation/record-assignment-results.json",
+      "implementation/record-assignment-unit.log",
+      "implementation/record-assignment.patch",
+      "implementation/record-coverage.patch",
+      "implementation/record-field-proof.patch",
+      "implementation/record-fragments.patch"
+    ],
+    "previous-evaluation": [
+      "previous-evaluation/fresh-score.json",
+      "previous-evaluation/regression-score.json"
+    ],
+    "previous-feedback-attempt": [
+      "previous-feedback-attempt/regression-attempt1",
+      "previous-feedback-attempt/regression-attempt2"
+    ],
+    "phase1-first-evaluations": [
+      "phase1-first-evaluations/fresh-score.json",
+      "phase1-first-evaluations/fresh-traces.json",
+      "phase1-first-evaluations/regression-score.json",
+      "phase1-first-evaluations/regression-traces.json"
+    ],
+    "phase2-attempt1": [
+      "phase2-attempt1/code-freeze.json",
+      "phase2-attempt1/family-comparison.json",
+      "phase2-attempt1/independent-phase2-attempt1-signoff.json",
+      "phase2-attempt1/regression-score.json",
+      "phase2-attempt1/regression-traces.json"
+    ],
+    "phase2-attempt2": [
+      "phase2-attempt2/fresh-score.json",
+      "phase2-attempt2/fresh-traces.json",
+      "phase2-attempt2/regression-score.json",
+      "phase2-attempt2/regression-traces.json"
+    ],
+    "phase3-first-evaluations": [
+      "phase3-first-evaluations/code-freeze.json",
+      "phase3-first-evaluations/fresh-score.json",
+      "phase3-first-evaluations/fresh-traces.json",
+      "phase3-first-evaluations/manifest.json",
+      "phase3-first-evaluations/regression-score.json"
+    ]
+  },
+  "deleted_traces": 0
+}

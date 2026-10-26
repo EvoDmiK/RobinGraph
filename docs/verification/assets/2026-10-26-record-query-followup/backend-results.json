@@ -1,0 +1,174 @@
+[
+  {
+    "label": "E04A",
+    "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Carnivore인",
+        "after": "영양 단계가 Carnivore로"
+      }
+    ]
+  },
+  {
+    "label": "E04C",
+    "question": "Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "종의",
+          "기록되어 있는지 확인해 줘"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "E05B",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "비율 조건은 적용하지 마세요."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "value_role_negation_not_recovered",
+    "question": "Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "value_role_negation_not_recovered",
+    "question": "Larus argentatus 종의 영양 단계가 Carnivore로 이동하는 기록되어 있는지 확인해 줘.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "value_role_negation_not_recovered",
+    "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있지 않은 기록되어 있는지 확인해 줘.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "repeated_evidence_not_recovered",
+    "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘. 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "rank_word_mismatch",
+    "question": "Larus argentatus 아종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "added_condition_kept",
+    "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘. 겨울에 사는 종만.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "typed_korean_value_record",
+    "question": "Larus argentatus 종의 영양 단계가 육식으로 기록되어 있는지 확인해 줘.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 육식인",
+        "after": "영양 단계가 육식으로"
+      }
+    ]
+  },
+  {
+    "label": "explicit_ratio_meta",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "비율 조건은 적용하지 마세요."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "explicit_ratio_meta",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 말아 주세요.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "비율 조건은 적용하지 말아 주세요."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "explicit_ratio_meta",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 말아 줘.",
+    "actual": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "비율 조건은 적용하지 말아 줘."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "share_ratio_conflict",
+    "question": "씨앗을 먹는 새. 비율 조건은 적용하지 마세요.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "meta_with_additional_negation",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요. 이 먹이 유형은 아님.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unresolved_combined_extra_constraint",
+    "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요. 겨울에 사는 종만.",
+    "actual": "clarify",
+    "expected": "clarify",
+    "changes": []
+  }
+]

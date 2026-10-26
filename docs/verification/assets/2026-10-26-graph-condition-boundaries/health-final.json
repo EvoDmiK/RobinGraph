@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-26T05:33:12.272582+00:00",
+  "rows": [
+    {
+      "name": "local",
+      "url": "http://127.0.0.1:8000/health",
+      "http_status": 200,
+      "payload": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    },
+    {
+      "name": "public",
+      "url": "https://robingraph-test.dove-nest.com/health",
+      "http_status": 200,
+      "payload": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    }
+  ]
+}

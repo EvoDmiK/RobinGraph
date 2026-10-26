@@ -1,0 +1,100 @@
+{
+  "case_counts": {
+    "pass": 23,
+    "fail": 13
+  },
+  "group_counts": {
+    "pass": 4,
+    "fail": 8
+  },
+  "classifications": {
+    "supported_answer": 11,
+    "supported_no_matching_results": 6,
+    "false_hold": 12,
+    "negated_condition": 3,
+    "supported_source_no_data": 3,
+    "wrong_hold_reason": 1
+  },
+  "matches_root_score": true,
+  "http_200": 36,
+  "unique_trace_ids": 36,
+  "unique_span_ids": 233,
+  "request_matches_frozen_gold": true,
+  "trace_tag_dispositions_match_api": true,
+  "runtime_image": "robingraph-api:test-question-family-06489197bcef",
+  "workspace_application_hashes_match_runtime_freeze": true,
+  "response_mocking": false,
+  "unsafe_answer_count": 0,
+  "hold_cases": 4,
+  "all_hold_cases_still_held": true,
+  "failed_supported": 12,
+  "held_wrong_diagnostic": 1,
+  "failure_causes": [
+    {
+      "cause": "supported English categorical values rejected at condition evidence validation",
+      "count": 6,
+      "cases": [
+        "V2-03A",
+        "V2-03B",
+        "V2-03C",
+        "V2-05A",
+        "V2-05B",
+        "V2-05C"
+      ]
+    },
+    {
+      "cause": "nonrestrictive wording left unresolved",
+      "count": 2,
+      "cases": [
+        "V2-02A",
+        "V2-10C"
+      ]
+    },
+    {
+      "cause": "valid unit-normalized comparison rejected by numeric/word check",
+      "count": 1,
+      "cases": [
+        "V2-07B"
+      ]
+    },
+    {
+      "cause": "incorrect proposal unit caught by semantic audit (20 cm proposed for 2 cm)",
+      "count": 1,
+      "cases": [
+        "V2-09A"
+      ]
+    },
+    {
+      "cause": "no-habitat-limit statement mistaken for a negative restriction",
+      "count": 1,
+      "cases": [
+        "V2-11B"
+      ]
+    },
+    {
+      "cause": "reference self-exclusion left unresolved then correctly blocked by audit",
+      "count": 1,
+      "cases": [
+        "V2-12B"
+      ]
+    },
+    {
+      "cause": "exact plant-food gap held at audit instead of specific data-gap response",
+      "count": 1,
+      "cases": [
+        "V2-12C"
+      ]
+    }
+  ],
+  "dataset_sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "responses_sha256": "9b6a3b2e43e11885a026cc53448d0d8c17a9769cc59c75068ac14ad6cb3bfd1b",
+  "post_result_gold_or_scorer_changes": false,
+  "graphify_update": "Completed previously via tool; separate persisted raw log unavailable. Tool reported SQL parser dependency warning. Not rerun after first measurement.",
+  "limits": [
+    "Artifact-only independent re-score; no fresh API/DB calls.",
+    "Trace correlation verified from runner question match, unique question strings/trace/span IDs and matching response dispositions; archived diagnostic spans omit the HTTP root span.",
+    "Model-authored, independently model-reviewed gold; not human reviewed.",
+    "23 passed cases include 6 empty and 3 source-no-data results; only 11 returned matching species answers."
+  ]
+}

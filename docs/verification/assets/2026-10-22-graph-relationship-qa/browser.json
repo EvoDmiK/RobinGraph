@@ -1,0 +1,84 @@
+{
+  "base": "https://robingraph-test.dove-nest.com",
+  "response_mocking": false,
+  "passed": true,
+  "rows": [
+    {
+      "width": 1280,
+      "question": "청둥오리와 흰뺨검둥오리는 어떤 관계야?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 6,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "question": "참새목 중 열매를 먹고 사는 새는?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 61,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "question": "숲에 사는 새중에 직박구리랑 같은 열매를 먹는 새는?",
+      "disposition": "abstain",
+      "rendered": true,
+      "source_links": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "question": "한국에 기록된 오리 중 청둥오리와 같은 속인 종은?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 16,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "graph_species_button_opens_profile": true,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "question": "청둥오리와 흰뺨검둥오리는 어떤 관계야?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 6,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "question": "참새목 중 열매를 먹고 사는 새는?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 61,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "question": "숲에 사는 새중에 직박구리랑 같은 열매를 먹는 새는?",
+      "disposition": "abstain",
+      "rendered": true,
+      "source_links": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "question": "한국에 기록된 오리 중 청둥오리와 같은 속인 종은?",
+      "disposition": "answer",
+      "rendered": true,
+      "source_links": 16,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "graph_species_button_opens_profile": true,
+      "page_errors": 0,
+      "passed": true
+    }
+  ],
+  "physical_mobile": false
+}

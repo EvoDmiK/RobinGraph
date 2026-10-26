@@ -1,0 +1,13 @@
+{
+  "source_manifest_verified": true,
+  "source_files": 208,
+  "image": "robingraph-api:test-taxonomic-traits-8a18de290625",
+  "health": "healthy",
+  "runtime_flags": {
+    "ROBINGRAPH_GRAPH_INTERPRETER": "semantic",
+    "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+    "ROBINGRAPH_DEPLOY_TARGET": "test"
+  },
+  "production_changed": false,
+  "git_commit_push": false
+}

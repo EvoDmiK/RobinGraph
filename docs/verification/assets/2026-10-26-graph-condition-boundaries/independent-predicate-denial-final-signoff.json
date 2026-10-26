@@ -1,0 +1,17 @@
+{
+  "independent_methods_passed": 32,
+  "producer_denial_matrix_methods_passed": 1,
+  "existing_terminal_methods_passed": 6,
+  "existing_numeric_particle_methods_passed": 2,
+  "tested_modules_identical_to_current_root": true,
+  "source_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "d48d3e37588de73421fe9f01b88ba067368d72554b0a938a0608ad9c921196a0",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "486f752ccccdf0a7265e0e773c30010e187f58f3960e83a154ae4290b8e7d4d8"
+  },
+  "review": "approved; original quoted/nominal negation preserved; bounded functional endings shared by validation and recovery; values/units/operators untouched",
+  "prior_safety_failure_preserved": "predicate-denial-safety-finding.json",
+  "gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "api_calls": 0,
+  "limits": "Local synthetic tests do not replace full repository suite or actual request evaluation."
+}

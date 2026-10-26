@@ -1,0 +1,332 @@
+{
+ "author": "Claude (dev-claude), written after implementing taxon_traits: not blind to the implementation; agent-reviewed, not human gold. Taxa checked against root read-only inventory.json; outcomes are meanings, not current-code predictions. Canonical units (g, mm).",
+ "cases": [
+  {
+   "id": "CT-001",
+   "question": "딱따구리과 중 무척추동물을 먹고 부리 너비가 1cm 이하인 새는?",
+   "taxon": "Picidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "diet_distribution",
+     "op": "share_gt",
+     "value": {
+      "invertebrate": 0
+     },
+     "unit": null
+    },
+    {
+     "trait_name": "beak_width",
+     "op": "lte",
+     "value": 10,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "query",
+   "note": "2 pipelines AND; cm->mm"
+  },
+  {
+   "id": "CT-002",
+   "question": "올빼미목에서 영양 단계가 육식인 새 알려줘",
+   "taxon": "Strigiformes",
+   "rank": "order",
+   "conditions": [
+    {
+     "trait_name": "trophic_level",
+     "op": "eq",
+     "value": "Carnivore",
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": "order without fruit -> not order_fruit"
+  },
+  {
+   "id": "CT-003",
+   "question": "Trochilidae 중 먹이 생태 범주가 꽃꿀 섭식이고 부리 길이 (전체) 30mm 이상인 종은?",
+   "taxon": "Trochilidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "trophic_niche",
+     "op": "eq",
+     "value": "Nectarivore",
+     "unit": null
+    },
+    {
+     "trait_name": "beak_length_culmen",
+     "op": "gte",
+     "value": 30,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "query",
+   "note": "scientific family; Korean label is 벌새 (no 과)"
+  },
+  {
+   "id": "CT-004",
+   "question": "꿩과면서 주 생활 방식이 지상 생활이고 부리 높이가 15mm 초과인 새",
+   "taxon": "Phasianidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "primary_lifestyle",
+     "op": "eq",
+     "value": "Terrestrial",
+     "unit": null
+    },
+    {
+     "trait_name": "beak_depth",
+     "op": "gt",
+     "value": 15,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "query",
+   "note": "exclusive bound"
+  },
+  {
+   "id": "CT-005",
+   "question": "갈매기과 중 해안에 살고 물고기를 먹는 새",
+   "taxon": "Laridae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "habitat",
+     "op": "eq",
+     "value": "Coastal",
+     "unit": null
+    },
+    {
+     "trait_name": "diet_distribution",
+     "op": "share_gt",
+     "value": {
+      "fish": 0
+     },
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": ""
+  },
+  {
+   "id": "CT-006",
+   "question": "물총새과 중 부리 길이 콧구멍 기준 4cm 이상인 새는?",
+   "taxon": "Alcedinidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "beak_length_nares",
+     "op": "gte",
+     "value": 40,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "query",
+   "note": "label words without parentheses or subject particle"
+  },
+  {
+   "id": "CT-007",
+   "question": "펭귄목 중 바다에 살고 서식지 밀도가 개방형인 새는?",
+   "taxon": "Sphenisciformes",
+   "rank": "order",
+   "conditions": [
+    {
+     "trait_name": "habitat",
+     "op": "eq",
+     "value": "Marine",
+     "unit": null
+    },
+    {
+     "trait_name": "habitat_density_category",
+     "op": "eq",
+     "value": "open",
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": ""
+  },
+  {
+   "id": "CT-008",
+   "question": "말똥가리속 중 날개 길이가 40cm 이상이고 다리 길이가 8cm 이하인 새",
+   "taxon": "Buteo",
+   "rank": "genus",
+   "conditions": [
+    {
+     "trait_name": "wing_length",
+     "op": "gte",
+     "value": 400,
+     "unit": "mm"
+    },
+    {
+     "trait_name": "tarsus_length",
+     "op": "lte",
+     "value": 80,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "query",
+   "note": "genus; two AVONET measures; cm->mm"
+  },
+  {
+   "id": "CT-009",
+   "question": "Phoenicopteriformes 중 습지에 사는 새는?",
+   "taxon": "Phoenicopteriformes",
+   "rank": "order",
+   "conditions": [
+    {
+     "trait_name": "habitat",
+     "op": "eq",
+     "value": "Wetland",
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": "order with no Korean label: scientific only"
+  },
+  {
+   "id": "CT-010",
+   "question": "검독수리 중 체중이 3kg 이상인 새는?",
+   "taxon": "Aquila chrysaetos",
+   "rank": "species",
+   "conditions": [
+    {
+     "trait_name": "body_mass",
+     "op": "gte",
+     "value": 3000,
+     "unit": "g"
+    }
+   ],
+   "outcome": "query",
+   "note": "species itself; answer or empty decided by its own claim"
+  },
+  {
+   "id": "CT-011",
+   "question": "Ardea cinerea jouyi 중 습지에 사는 새는?",
+   "taxon": "Ardea cinerea jouyi",
+   "rank": "subspecies",
+   "conditions": [
+    {
+     "trait_name": "habitat",
+     "op": "eq",
+     "value": "Wetland",
+     "unit": null
+    }
+   ],
+   "outcome": "insufficient",
+   "note": "subspecies: no direct claim; never the parent species"
+  },
+  {
+   "id": "CT-012",
+   "question": "칼새목 중 꼬리 길이가 100cm 이상인 새",
+   "taxon": "Apodiformes",
+   "rank": "order",
+   "conditions": [
+    {
+     "trait_name": "tail_length",
+     "op": "gte",
+     "value": 1000,
+     "unit": "mm"
+    }
+   ],
+   "outcome": "empty",
+   "note": "expected 0 matches with data present"
+  },
+  {
+   "id": "CT-013",
+   "question": "동박새과 중 나무 위에서 생활하는 새는?",
+   "taxon": "Zosteropidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "primary_lifestyle",
+     "op": "eq",
+     "value": "Insessorial",
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": "natural paraphrase of the display value 나무 위 생활"
+  },
+  {
+   "id": "CT-014",
+   "question": "되새과 중 먹이 유형이 식물·씨앗인 새",
+   "taxon": "Fringillidae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "diet_category",
+     "op": "eq",
+     "value": "PlantSeed",
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": ""
+  },
+  {
+   "id": "CT-015",
+   "question": "수리과 중 사체를 먹는 새는?",
+   "taxon": "Accipitridae",
+   "rank": "family",
+   "conditions": [
+    {
+     "trait_name": "diet_distribution",
+     "op": "share_gt",
+     "value": {
+      "carrion": 0
+     },
+     "unit": null
+    }
+   ],
+   "outcome": "query",
+   "note": "share key, not the category 사체 섭식"
+  },
+  {
+   "id": "CT-016",
+   "question": "나팔새류 중 숲에 사는 새",
+   "taxon": null,
+   "rank": null,
+   "conditions": [],
+   "outcome": "insufficient",
+   "note": "Korean label names both family Psophiidae and genus Psophia"
+  },
+  {
+   "id": "CT-017",
+   "question": "백로과 중 하천에 사는 새는?",
+   "taxon": null,
+   "rank": null,
+   "conditions": [],
+   "outcome": "hold",
+   "note": "not a reviewed label (Ardeidae has none); never guessed"
+  },
+  {
+   "id": "CT-018",
+   "question": "올빼미과 중 아프리카에 사는 새는?",
+   "taxon": "Strigidae",
+   "rank": "family",
+   "conditions": [],
+   "outcome": "hold",
+   "note": "region is not a supported condition"
+  },
+  {
+   "id": "CT-019",
+   "question": "매목 중 다리 길이 부척이 −2cm 이상인 새",
+   "taxon": "Falconiformes",
+   "rank": "order",
+   "conditions": [],
+   "outcome": "hold",
+   "note": "negative (U+2212) threshold"
+  },
+  {
+   "id": "CT-020",
+   "question": "두루미과 중 개방형이면서 밀집형 서식지에 사는 새",
+   "taxon": "Gruidae",
+   "rank": "family",
+   "conditions": [],
+   "outcome": "hold",
+   "note": "one trait, two values"
+  }
+ ]
+}

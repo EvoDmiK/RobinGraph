@@ -1,0 +1,312 @@
+[
+  {
+    "label": "F01B",
+    "question": "영양 단계 기록값이 Omnivore인지 Turdus merula 종에 대해 확인하고 싶어요.",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계 기록값이 Omnivore인지"
+      }
+    ]
+  },
+  {
+    "label": "F01C",
+    "question": "Turdus merula라는 종의 영양 단계가 Carnivore로 기록되어 있는지 조회해 주세요.",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Carnivore인",
+        "after": "영양 단계가 Carnivore로"
+      }
+    ]
+  },
+  {
+    "label": "F04A",
+    "question": "Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Wetland로 기록되어 있는지 확인해 주세요.",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Wetland로",
+        "after": "서식 환경이 Wetland로"
+      }
+    ]
+  },
+  {
+    "label": "request_verb_independent",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "literal_short_expansion",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Omnivore로",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "request_verb_independent",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "literal_short_expansion",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Omnivore로",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "request_verb_independent",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 살펴보고 싶어요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "literal_short_expansion",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 살펴보고 싶어요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Omnivore로",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "request_verb_independent",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 알고 싶어",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "literal_short_expansion",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 알고 싶어",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Omnivore로",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "request_verb_independent",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 검토 부탁해",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "literal_short_expansion",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 검토 부탁해",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "Omnivore로",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "wrong_field_same_enum",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_field_same_enum",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_value",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "repeated_value",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요 Omnivore",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "new_uncovered_predicate",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요 겨울에 사는 새만",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "mutation_is_not_new_recovery",
+    "changes": []
+  },
+  {
+    "label": "wrong_field_same_enum",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_field_same_enum",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_value",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "repeated_value",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요 Omnivore",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "new_uncovered_predicate",
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요 겨울에 사는 새만",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "mutation_is_not_new_recovery",
+    "changes": []
+  },
+  {
+    "label": "negative_record_guard",
+    "actual": "hold_before_provider"
+  },
+  {
+    "label": "missing_or_dual_field",
+    "question": "Omnivore로 기록되어 있는지 조회해 줘",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "missing_or_dual_field",
+    "question": "영양 단계가 Omnivore로 기록되어 있는지, 먹이 생태 범주가 Omnivore로 기록되어 있는지 조회해 줘",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "absolute_source_offset",
+    "question": " Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "absolute_source_offset",
+    "question": "\tTurdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "absolute_source_offset",
+    "question": "\nTurdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].surface",
+        "rule": "positive_record_equality",
+        "before": "영양 단계가 Omnivore인",
+        "after": "영양 단계가 Omnivore로"
+      }
+    ]
+  },
+  {
+    "label": "field_left_word_boundary",
+    "question": "Turdus merula 종의 가짜영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "field_left_word_boundary",
+    "question": "Turdus merula 종의 반영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  },
+  {
+    "label": "field_left_word_boundary",
+    "question": "Turdus merula 종의 유사먹이 유형가 Omnivore로 기록되어 있는지 조회해 주세요",
+    "actual": "clarify",
+    "changes": []
+  }
+]

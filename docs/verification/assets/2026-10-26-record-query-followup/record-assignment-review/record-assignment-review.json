@@ -1,0 +1,15 @@
+{
+  "candidate": "/tmp/rg-record-assignment-20261026/src/robingraph/retrieval/semantic_graph_intent.py",
+  "candidate_sha256": "a887f6c47cda437f9d393f35a651fe8db5895ae14a0fea5135d4f91750c569e4",
+  "assignment_and_boundaries": "9 passed",
+  "all_current_guards": "31 run,30 passed,1 failure",
+  "prior_guards": "32 passed",
+  "blocker": "Explicit negative query request 확인하지 마 is accepted after positive record-state repair. Previously held.",
+  "fixed_findings": [
+    "Leading source offset remains absolute",
+    "Source label inside an unrelated word cannot prove assignment"
+  ],
+  "reviewer_app_edits": false,
+  "api_calls": 0,
+  "approval": "withheld_pending_negative_request_boundary"
+}

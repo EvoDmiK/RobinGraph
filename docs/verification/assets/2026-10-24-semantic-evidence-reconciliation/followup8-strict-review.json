@@ -1,0 +1,423 @@
+{
+  "source": "docs/verification/assets/2026-10-24-semantic-evidence-reconciliation/followup-traces.json",
+  "method": "Read saved actual API and same-request MLflow trace artifacts only. No new calls.",
+  "api_counts": {
+    "supported": {
+      "pass": 6
+    },
+    "hold": {
+      "pass": 2
+    }
+  },
+  "intent_counts": {
+    "supported": {
+      "pass": 6
+    },
+    "hold": {
+      "not_applicable": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "R01",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "habitat",
+            "label": "서식 환경 숲(Forest)",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "label": "먹이 구성에 열매 포함",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0.0,
+            "unit": null,
+            "source_name": "AviList and EltonTraits approved reference bundle"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-d2d3ff1d84f20873d55e00e9949e06a3",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "R02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-f83f39e84ca09d8054108c68a2349bbf",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "relation_text",
+          "rule": "reference_relation",
+          "before": "먹이 생태 범주가",
+          "after": "먹이 생태 범주가 직박구리와 같은"
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "R03",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "body_mass",
+            "label": "체중 180g 초과",
+            "op": "num_gt",
+            "value": null,
+            "threshold": 180.0,
+            "unit": "g",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-39eaabf1df8c869e9d90f8611321b633",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "unresolved",
+          "rule": "strict_bound_restatement",
+          "before": [
+            "180g인 기록은 제외해"
+          ],
+          "after": []
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "habitat",
+            "label": "서식 환경 숲(Forest)",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "label": "먹이 구성에 열매 포함",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0.0,
+            "unit": null,
+            "source_name": "AviList and EltonTraits approved reference bundle"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-8a04b0d379d4cd3362e270af30a4ca16",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "F02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "habitat",
+            "label": "서식 환경 숲(Forest)",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "label": "먹이 구성에 열매 포함",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0.0,
+            "unit": null,
+            "source_name": "AviList and EltonTraits approved reference bundle"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-d7a0485ae75ef84c56d13c78bc214009",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "F03",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_status": "insufficient_data",
+      "trace_id": "tr-681f2090bae433d7a1b253af9e960582",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "F04",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-10ad87abebaa954681a9b64c77ed0c98",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "F05",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "body_mass",
+            "label": "체중 300g 초과",
+            "op": "num_gt",
+            "value": null,
+            "threshold": 300.0,
+            "unit": "g",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-84bb6b3099b1ce9e7c167751c18a75d3",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "unresolved",
+          "rule": "strict_bound_restatement",
+          "before": [
+            "300g인 기록은 제외해"
+          ],
+          "after": []
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    }
+  ],
+  "limitations": [
+    "Intent exactness is reported separately and never upgrades absent executed scope to API execution success.",
+    "No independent database record re-query.",
+    "All eight are feedback-exposed regression cases; do not call a new holdout.",
+    "Original first13 and final5 attempt1 retained; original N05 Korean-name resolution remains a failure, F05 is a distinct canonical-name diagnostic replacement."
+  ],
+  "evaluation_type": "feedback-exposed regression attempt 2; original3 plus previous final5",
+  "source_sha256": "fd1373af61a4f2e33f23a77e41c28117fe0805d737daf888096695217b73ce6c",
+  "integrity": {
+    "http_200_all": true,
+    "unique_trace_ids": true,
+    "rows": 8
+  }
+}

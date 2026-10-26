@@ -1,0 +1,116 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -26,7 +26,7 @@
+ from .. import tracing
+ 
+ from .graph_condition_extractor import (
+-    _ASKS, _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
++    _ASKS, _BARE, _COMMON, _COPULAR_DENIAL, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
+     _NICHE_SAME,
+     _NUM, _OPS, _RESIDENCY, _SAME_HABITAT, _SCIENTIFIC, _SHARE_WORDS, _TRAIT_LABELS, _UNIT, _UNITS, _UNSUPPORTED, GROUP_WORDS,
+     _FILLER, _PUNCT, _op, _pattern, _taxon_names, _tokens, _trait_surfaces, _valid_name, extract_graph_intent)
+@@ -303,6 +303,11 @@
+             values.append((_UNITS[unit][0], round(number * _UNITS[unit][1], 6)))
+         if sorted(values) != sorted((c.unit, c.threshold) for c in conditions):
+             return False
++        if (span.end < len(question) and re.match(r'[가-힣]', question[span.end:])
++                and re.search(r'(?:' + _OPS + r')$', span.text)
++                and not re.match(r'(?:는|고|인|이라는|이라고|이고|이며|이다|입니다|이면서)(?=\s|[,.!?]|$)',
++                                 question[span.end:])):
++            return False  # a comparator prefix must not consume the beginning of another content word
+         ops = [_op(m) for m in re.findall(_OP_WORD, span.text)]
+         if len(conditions) == 1 and ops != [conditions[0].op]:
+             return False   # the comparison must be written and agree
+@@ -522,6 +527,8 @@
+         raise SemanticIntentError('bad unresolved/unknown_relation')
+     taxon, species, relation = _text(raw, 'taxon'), _text(raw, 'species'), _text(raw, 'relation_text')
+     pairs = _conditions(question, raw)
++    if re.search(_COPULAR_DENIAL, _blank(question)):
++        raise _Reject('explicit denial of a proposed predicate')
+     unrestricted = {_META_DIMENSION_CODES[re.sub(r'\s+', '', m['dimension'])]
+                     for m in _UNRESTRICTED.finditer(question)}
+     if (any(c.trait_name in unrestricted for c, _ in pairs)
+@@ -637,6 +644,21 @@
+         text = item.get('surface')
+         if not isinstance(text, str) or span_of(question, text.strip()) is not None:
+             continue
++        # A numeric predicate keeps its exact operand/comparator; only a copular query ending may vary.
++        spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
++        operators = list(re.finditer(_OPS, text.strip()))
++        if spec and spec[1] == 'number' and len(operators) == 1:
++            operator = operators[0]
++            prefix, ending = text.strip()[:operator.end()], text.strip()[operator.end():]
++            functional = r'(?:인|이라는|이라고|이고|이며|이다|입니다|이면서|이라는\s*조건)'
++            matches = [] if not re.fullmatch(functional, ending) else list(re.finditer(
++                r'(?<!\w)' + re.escape(prefix).replace(r'\ ', r'\s*')
++                + r'(?=(?:' + functional + r')?(?:\s|[,.!?]|$))', question))
++            if len(matches) == 1:
++                item['surface'] = matches[0].group()
++                changes.append({'field': f'conditions[{index}].surface', 'rule': 'numeric_copular_ending',
++                                'before': text, 'after': item['surface']})
++                continue
+         # '조건' introduces the same filter; recover its grammatical tail, not a changed biological role.
+         scaffold = re.fullmatch(r'(.+\s조건)(?:인|으로|이고|이며)', text.strip())
+         matches = [] if scaffold is None else list(re.finditer(
+--- a/src/robingraph/retrieval/graph_condition_extractor.py
++++ b/src/robingraph/retrieval/graph_condition_extractor.py
+@@ -46,8 +46,9 @@
+     ('other', r'(?<![가-힣])어류(?:을|를)?(?=\s*먹)'),   # = 물고기 (fish): a synonym decision, not a data gap
+     ('other', r'같은\s*(?:과|목)(?:인|에\s*속하는|의|에)'),
+ )
++_COPULAR_DENIAL = r'(?:아니다|아니야|아닙니다|아니에요)(?=\s|[,.!?]|$)'
+ _NEGATION = (r'먹지\s*않는|먹지\s*않고|먹지\s*않은|안\s*먹는|안\s*먹고|겹치지\s*않는|겹치지\s*않고|같지\s*않은|같지\s*않고|'
+-             r'다르지\s*않은|않는|않은|않고|아닌|아니고|아니면서|말고|제외하고|제외한|제외|빼고|뺀|(?<![가-힣])외에|없는|없이')
++             r'다르지\s*않은|않는|않은|않고|아닌|아니고|아니면서|말고|제외하고|제외한|제외|빼고|뺀|(?<![가-힣])외에|없는|없이|' + _COPULAR_DENIAL)
+ _RESIDENCY = (r'(?:국내|한국|우리나라)(?:에서|에|으로)?\s*(?:찾아오는|날아오는|오는|사는|서식하는|번식하는|월동하는|머무는)|'
+               r'(?:해외|외국|국외|외래)(?:에서만|에만|에서|에|의)?(?:\s*(?:있는|사는|서식하는|분포하는))?')
+ _KOREA = (r'(?:국내|한국|우리나라)(?:에서|에)?\s*관찰된(?:\s*적\s*(?:이\s*)?있는)?|'
+@@ -324,8 +325,8 @@
+ # so "-1g", "1,000g", ".5g", "1e3g" stay residual instead of losing a character as filler.
+ _NUM = r'(?<![\d.,\-−+eE])\d+(?:\.\d+)?(?![\d.,eE])'
+ _UNIT = '|'.join(sorted(map(re.escape, _UNITS), key=len, reverse=True))
+-_BIGGER = r'보다\s*(?:큰|무거운|무겁다는|무겁고|긴|길다는|길고|넓은|높은|두꺼운)'
+-_SMALLER = r'보다\s*(?:작은|가벼운|가볍다는|가볍고|짧은|짧다는|짧고|좁은|낮은|얇은)'
++_BIGGER = r'보다\s*(?:큰|무거운|긴|넓은|높은|두꺼운|(?:크|무겁|길|넓|높|두껍)(?:다는|다고|다|고))'
++_SMALLER = r'보다\s*(?:작은|가벼운|짧은|좁은|낮은|얇은|(?:작|가볍|짧|좁|낮|얇)(?:다는|다고|다|고))'
+ _OPS = rf'이상|이하|초과|미만|넘는|넘고|넘으며|{_BIGGER}|{_SMALLER}'
+ _MEASURE_RE = '|'.join(_pattern(m) for m in sorted(_MEASURES, key=len, reverse=True))
+ _MEASURE = re.compile(rf'(?P<measure>{_MEASURE_RE})\s*(?:이|가|은|는)?\s*(?:'
+--- a/tests/test_graph_numeric_tails.py
++++ b/tests/test_graph_numeric_tails.py
+@@ -0,0 +1,35 @@
++"""Numeric source evidence keeps operands, field and comparisons unchanged (mock plans)."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval import graph_condition_extractor as e
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphNumericTailTest(TestCase):
++    def test_copular_tail_and_boundary_counterexamples(self):
++        rows=[]
++        def plan(surface,field='body_mass',threshold=200,op='num_gte',unit='g'):
++         return dict(kind='taxon_traits',conditions=[dict(trait_name=field,threshold=threshold,op=op,unit=unit,surface=surface)],unresolved=[],unknown_relation=False)
++        def check(q,p,want):
++         before=copy.deepcopy(p);candidate,changes=s.reconcile_graph_plan(q,p);actual=execution_gate(q,s.interpret(q,lambda *_:candidate));assert actual==want,(q,p,actual,candidate);assert p==before
++         rows.append(dict(question=q,expected=want,actual=actual,changes=changes))
++        check('0.2kg보다 무겁다는 새를 찾아줘',plan('0.2kg보다 무겁다',op='num_gt'),'answer')
++        q='자료를 펼쳐서 체중200g 이상이라는 새를 찾아줘'
++        p=plan('체중 200g 이상인');check(q,p,'answer')
++        check(q,plan('체중 300g 이상인',threshold=300),'clarify')
++        check(q,plan('체중 200g 이하인',op='num_lte'),'clarify')
++        check(q,plan('꼬리 길이 200g 이상인',field='tail_length'),'clarify')
++        check(q.replace('이상이라는','이상이라는 것은 아니고'),p,'clarify')
++        check(q+' 체중200g 이상이라는 새도 찾아줘',p,'clarify')
++        check('0.2kg보다 무겁다람쥐를 찾아줘',plan('0.2kg보다 무겁다',op='num_gt'),'clarify')
++        for denial in ('아니다','아니야','아닙니다','아니에요'):
++         q='자료를 펼쳐서 체중200g 이상이라는 것은 '+denial
++         check(q,plan('체중 200g 이상인'),'clarify')
++         check(q,plan('체중200g 이상'),'clarify')
++        category=dict(kind='taxon_traits',conditions=[dict(trait_name='diet_category',op='eq',value='PlantSeed',surface='먹이 유형이 식물·씨앗인')],unresolved=[],unknown_relation=False)
++        check('먹이 유형이 식물·씨앗인 새. 비율 조건을 뜻하는 건 아니야.',category,'answer')
++        check('먹이 유형이 식물·씨앗인 새. 비율 조건을 뜻하는 건 아니야. 이 먹이 유형은 아니다.',category,'clarify')
++        for word,op in [('길다','num_gt'),('짧다','num_lt'),('가볍다','num_lt'),('크다','num_gt'),('작다','num_lt')]:
++         assert e._op('보다 '+word)==op
++         rows.append(dict(comparator=word,op=op))

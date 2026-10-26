@@ -1,0 +1,15 @@
+{
+  "files": {
+    "src/robingraph/retrieval/graph_questions.py": "21315a10afd931ec9992ec273023ff16048ba0b721aacc3f5a21ec7ff1487414",
+    "src/robingraph/retrieval/graph_intent_schema.py": "dd949e3a16f9afbf6f71755dbbce38c46b0e898d4ea9823323d364c7dba6323f",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "0f6af2fa28d6dde7d3e086c279716327962229b65b84be9041564f444948b342",
+    "src/robingraph/retrieval/graph_semantic_router.py": "85a36933dccf68d73c991b61f5fe702bf1654749d88d197683b3ae296b1aa4dc",
+    "tests/test_graph_questions.py": "ea9e7c858a78011c12f888e1856cf584396509aa97941693d334d98504392ae2",
+    "tests/test_graph_intent_schema.py": "b4166c63ed43783171bb2eb8fcde86abbc13bd5a93498b4439e053ac4eef1325",
+    "tests/test_graph_condition_extractor.py": "b08f979d402c9a5e9048cd3770157ab5b033adad9d282a39254fa0525819ad0c",
+    "tests/test_graph_semantic_router.py": "57c7e45f9acac4e9507837bcb946e5289c1798533c93e38d84b0aee930f3b4f4",
+    "tests/test_taxon_traits.py": "580f38c5f07e14cfb50844cfaa6d72a4243b66f550c4c03ccaa410fd6c9b628b"
+  },
+  "previous_files_backup": "/tmp/robingraph-taxonomic-before-integration-1792663265",
+  "stage": "latest label normalization and router compatibility integrated for candidate recheck"
+}

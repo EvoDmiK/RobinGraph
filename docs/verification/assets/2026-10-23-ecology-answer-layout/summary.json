@@ -1,0 +1,39 @@
+{
+  "frontend": {
+    "passed": 318,
+    "failed": 0,
+    "skipped": 0,
+    "kind": "fake DOM unit"
+  },
+  "actual_browser": {
+    "core_flows": 8,
+    "chat_posts": 20,
+    "viewports": [
+      390,
+      1280
+    ],
+    "source_keyboard_toggle_passed": 8,
+    "real_comparison_passed": 1,
+    "dialog_open_escape_passed": 1,
+    "extra_320_light_dark": 2,
+    "response_mocking": false,
+    "page_errors": 0,
+    "overflows": 0,
+    "physical_mobile": false
+  },
+  "runtime": {
+    "image": "robingraph-api:test-ecology-layout-d1958a21194a",
+    "health": "healthy",
+    "source_files": 208,
+    "workspace_and_release_match": true,
+    "runtime_flags": [
+      "ROBINGRAPH_GRAPH_INTENT_MODE=active",
+      "ROBINGRAPH_DEPLOY_TARGET=test",
+      "ROBINGRAPH_GRAPH_INTERPRETER=semantic"
+    ]
+  },
+  "production_changed": false,
+  "bird_db_writes": 0,
+  "git_commit_push": false,
+  "scope": "ecological related answer UI only; RG-212 remains in progress"
+}

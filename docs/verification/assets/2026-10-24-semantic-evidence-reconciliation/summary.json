@@ -1,0 +1,62 @@
+{
+  "scope": "three traced interpretation failures and directly exposed lexical/rank-routing regressions",
+  "files": [
+    "src/robingraph/generation.py",
+    "src/robingraph/retrieval/semantic_graph_intent.py",
+    "src/robingraph/retrieval/graph_condition_extractor.py"
+  ],
+  "tests": [
+    "tests/test_graph_evidence_reconciliation.py",
+    "tests/test_graph_plant_word_boundaries.py",
+    "tests/test_semantic_rank_and_order_followup.py"
+  ],
+  "python": {
+    "run": 1253,
+    "passed": 1213,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 27.539,
+    "mock_fixture_offline": true
+  },
+  "actual_measurements": [
+    {
+      "file": "live-traces.json",
+      "total": 13,
+      "supported_pass": 7,
+      "supported_fail": 2,
+      "hold_pass": 4,
+      "original_failures_pass": 3,
+      "first_fresh_supported_pass": 4,
+      "first_fresh_supported_fail": 2
+    },
+    {
+      "file": "final-traces.json",
+      "total": 5,
+      "supported_pass": 1,
+      "supported_fail": 2,
+      "hold_pass": 2,
+      "classification": "feedback-exposed regression attempt1"
+    },
+    {
+      "file": "followup-traces.json",
+      "total": 8,
+      "supported_pass": 6,
+      "supported_fail": 0,
+      "hold_pass": 2,
+      "classification": "feedback-exposed regression final"
+    }
+  ],
+  "image": "robingraph-api:test-evidence-reconcile-4ab67ddcd227",
+  "source_sha256": "4ab67ddcd227bf42a85cc6a9e689f7b6feab7aebea6fd2ba22a62ac6f6122f91",
+  "test_state": "verified",
+  "production_changed": false,
+  "git_commit_push": false,
+  "bird_database_writes": 0,
+  "ui_changed": false,
+  "remaining": [
+    "비둘기과 name lookup was not_found; F05 canonical Columbidae success is not a pass for that Korean-name question",
+    "Generalization and probabilistic audit reliability are not established by these feedback-exposed regressions",
+    "40 opt-in/missing-input tests skipped; browser/mobile UI not rerun for backend-only change"
+  ],
+  "source_manifest_verified": true
+}

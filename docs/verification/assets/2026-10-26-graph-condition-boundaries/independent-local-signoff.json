@@ -1,0 +1,13 @@
+{
+  "tests": 16,
+  "passed": 16,
+  "failed": 0,
+  "execution": "local synthetic guard tests against integrated root app modules; no API/DB/model calls",
+  "source_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "1acf9cc6962e3d9e009c9e5c128a92302665240fecdeaeb479abca932ffa626c",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "f81f7fe2cac1f108128f1eb46f0e8eb92779168eedfffb74fecd019662519315"
+  },
+  "fresh_gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "fresh_gold_parser_executed": false,
+  "app_files_modified_by_reviewer": false
+}

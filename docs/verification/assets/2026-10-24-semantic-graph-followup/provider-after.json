@@ -1,0 +1,678 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "count": 3,
+  "rows": [
+    {
+      "case": {
+        "id": "fresh-01",
+        "question": "참새목 안에서 골라 줘. 숲이 서식지로 기록돼 있고 과일도 먹는 새를 찾고 있어.",
+        "category": "supported",
+        "expected": {
+          "kind": "taxon_traits",
+          "taxon_name": "참새목",
+          "rank": "order",
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest"
+            },
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "threshold": 0,
+              "value": "fruit"
+            }
+          ]
+        }
+      },
+      "result": {
+        "intent": {
+          "kind": "taxon_traits",
+          "species": [],
+          "rank": {
+            "text": "참새목",
+            "start": 0,
+            "end": 3
+          },
+          "group": null,
+          "diet": null,
+          "habitat": null,
+          "relation": null,
+          "scope": null,
+          "specific_plant": null,
+          "negation": [],
+          "residual": [],
+          "unsupported": [],
+          "ambiguity": [],
+          "evidence": [],
+          "source": "semantic",
+          "conditions": [
+            [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "qualifier": null
+              },
+              {
+                "text": "숲이 서식지로 기록돼 있고",
+                "start": 14,
+                "end": 28
+              }
+            ],
+            [
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0.0,
+                "unit": null,
+                "qualifier": null
+              },
+              {
+                "text": "과일도 먹는",
+                "start": 29,
+                "end": 35
+              }
+            ]
+          ],
+          "unsupported_food": []
+        },
+        "gate": "answer",
+        "parsed": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "참새목",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest",
+              "threshold": null,
+              "unit": null,
+              "qualifier": null
+            },
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "value": "fruit",
+              "threshold": 0.0,
+              "unit": null,
+              "qualifier": null
+            }
+          ]
+        }
+      },
+      "provider_calls": 1,
+      "retrieved_examples": [
+        {
+          "kind": "order_fruit",
+          "question": "열매 먹는 참새목 새를 찾아 줘",
+          "score": 0.819527
+        },
+        {
+          "kind": "order_fruit",
+          "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤게 있어?",
+          "score": 0.810011
+        },
+        {
+          "kind": "order_fruit",
+          "question": "참새목중 열매먹는 새",
+          "score": 0.795573
+        },
+        {
+          "kind": "order_fruit",
+          "question": "참새목 중에서 과실식 하는 새 알려줘",
+          "score": 0.778264
+        },
+        {
+          "kind": "order_fruit",
+          "question": "열매를 먹고 사는 참새목 새들은 어떤 게 있나요",
+          "score": 0.7754
+        }
+      ],
+      "raw_plans": [
+        {
+          "kind": "taxon_traits",
+          "taxon": "참새목",
+          "species": null,
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest",
+              "threshold": null,
+              "unit": null,
+              "surface": "숲이 서식지로 기록돼 있고"
+            },
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "value": "fruit",
+              "threshold": 0,
+              "unit": null,
+              "surface": "과일도 먹는"
+            }
+          ],
+          "relation_text": null,
+          "unresolved": [],
+          "unknown_relation": false
+        }
+      ],
+      "provider_responses": [
+        {
+          "operation": "graph_intent",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:53 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1793",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"kind\": \"taxon_traits\",\n  \"taxon\": \"참새목\",\n  \"species\": null,\n  \"conditions\": [\n    {\n      \"trait_name\": \"habitat\",\n      \"op\": \"eq\",\n      \"value\": \"Forest\",\n      \"threshold\": null,\n      \"unit\": null,\n      \"surface\": \"숲이 서식지로 기록돼 있고\"\n    },\n    {\n      \"trait_name\": \"diet_distribution\",\n      \"op\": \"share_gt\",\n      \"value\": \"fruit\",\n      \"threshold\": 0,\n      \"unit\": null,\n      \"surface\": \"과일도 먹는\"\n    }\n  ],\n  \"relation_text\": null,\n  \"unresolved\": [],\n  \"unknown_relation\": false\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TanLdtARq4HY1JM36S0F160SwJASEl3MHwasZLxclDn3lBWvG8BacH-Qy23ypy9JbUtVjbJ3GdQ6OuPHWMvEyiV7XNPWQ67K1QEgm-OD--rwMm1cN_pFhWEQ="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "CCHcapXmCejN1e8PtdzM2AM",
+            "usageMetadata": {
+              "candidatesTokenCount": 187,
+              "promptTokenCount": 2598,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 2598
+                }
+              ],
+              "totalTokenCount": 2785
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "kind": "taxon_traits",
+              "taxon": "참새목",
+              "species": null,
+              "conditions": [
+                {
+                  "trait_name": "habitat",
+                  "op": "eq",
+                  "value": "Forest",
+                  "threshold": null,
+                  "unit": null,
+                  "surface": "숲이 서식지로 기록돼 있고"
+                },
+                {
+                  "trait_name": "diet_distribution",
+                  "op": "share_gt",
+                  "value": "fruit",
+                  "threshold": 0,
+                  "unit": null,
+                  "surface": "과일도 먹는"
+                }
+              ],
+              "relation_text": null,
+              "unresolved": [],
+              "unknown_relation": false
+            }
+          }
+        },
+        {
+          "operation": "graph_intent_audit",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:54 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1056",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"faithful\": true,\n  \"issues\": []\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TEgfBVtr7XfoEc3aKJTyE-oqMuZ7MY5SjcXCYhfzys5iqn2RY7vFHRzOQHa-3SGnB2KBf895ntaHXOQ3srEWdeN9XRkG_nt6O0MECoWPpgfzqPi4mseebMJA="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "CSHcauGdMqC7vr0PgPemsAM",
+            "usageMetadata": {
+              "candidatesTokenCount": 16,
+              "promptTokenCount": 1858,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 1858
+                }
+              ],
+              "totalTokenCount": 1874
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "faithful": true,
+              "issues": []
+            }
+          }
+        }
+      ],
+      "elapsed_ms": 3706.35
+    },
+    {
+      "case": {
+        "id": "fresh-09",
+        "question": "까치속 새 중 몸무게가 180g을 넘는 경우를 보여 줘. 180g인 기록은 제외해.",
+        "category": "supported",
+        "expected": {
+          "kind": "taxon_traits",
+          "taxon_name": "까치속",
+          "rank": "genus",
+          "conditions": [
+            {
+              "trait_name": "body_mass",
+              "op": "num_gt",
+              "threshold": 180,
+              "unit": "g"
+            }
+          ]
+        }
+      },
+      "result": {
+        "error_type": "SemanticIntentError",
+        "error": "provider failed (GeminiAnswerError)",
+        "cause": "Graph interpretation did not pass semantic audit"
+      },
+      "provider_calls": 1,
+      "retrieved_examples": [
+        {
+          "kind": "taxon_traits",
+          "question": "참새목에서 몸무게가 100g 이상인 새",
+          "score": 0.730398
+        },
+        {
+          "kind": "taxon_traits",
+          "question": "오리과 새 중 꼬리 길이가 10cm 미만인 종",
+          "score": 0.629159
+        },
+        {
+          "kind": "shared_diet",
+          "question": "까치랑 같은 먹이 생태를 가진 새를 알려줘",
+          "score": 0.590417
+        },
+        {
+          "kind": "taxon_traits",
+          "question": "까마귀과 중 영양 단계가 잡식인 새",
+          "score": 0.488937
+        },
+        {
+          "kind": "specific_fruit",
+          "question": "참새목 중에서 감 먹는 새 있어?",
+          "score": 0.48529
+        }
+      ],
+      "raw_plans": [],
+      "provider_responses": [
+        {
+          "operation": "graph_intent",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:53 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1422",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"kind\": \"taxon_traits\",\n  \"taxon\": \"까치속\",\n  \"species\": null,\n  \"conditions\": [\n    {\n      \"trait_name\": \"body_mass\",\n      \"op\": \"num_gt\",\n      \"threshold\": 180,\n      \"unit\": \"g\",\n      \"surface\": \"몸무게가 180g을 넘는\"\n    }\n  ],\n  \"relation_text\": null,\n  \"unresolved\": [],\n  \"unknown_relation\": false\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TDCq2qM3JO4IbLPmnn7offEUGb9dgkpLhfEC-6BlLeq6eOqDwY13LAd4Z61QRayeKyjYV5zlQcPYmGkxDSOR-MvCj9wbkoLU4fqVIf99rzK0CvSp92Qk7EbY="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "CCHcaqHEAv3Y9tMPsoPVyQI",
+            "usageMetadata": {
+              "candidatesTokenCount": 128,
+              "promptTokenCount": 2845,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 2845
+                }
+              ],
+              "totalTokenCount": 2973
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "kind": "taxon_traits",
+              "taxon": "까치속",
+              "species": null,
+              "conditions": [
+                {
+                  "trait_name": "body_mass",
+                  "op": "num_gt",
+                  "threshold": 180,
+                  "unit": "g",
+                  "surface": "몸무게가 180g을 넘는"
+                }
+              ],
+              "relation_text": null,
+              "unresolved": [],
+              "unknown_relation": false
+            }
+          }
+        },
+        {
+          "operation": "graph_intent_audit",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:54 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1630",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"faithful\": false,\n  \"issues\": [\n    \"The question specifies to exclude records weighing exactly 180g (180g인 기록은 제외해), but the proposed plan uses 'num_gt' (greater than 180) which strictly excludes 180 anyway; however, the exclusion of 180g is part of the condition text and meaning, though mathematically redundant for gt. More importantly, the question asks for birds weighing over 180g with 180g excluded, which is fully captured by >180, but let's check if any condition was missed. Actually, '넘는' means strictly greater than, and '제외해' for 180g is redundant with strict inequality, so the plan is mathematically faithful.\"\n  ]\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TzSYAy72SzmyfVnLM5dLwUxAEtfsEqb4Y34w0m33jkJN2DXlOjniRzCHynqPgltHy_fgvOap-7sChFBU9Q9U6ZFBzwZeO9YbFHR4A-5wj35F-z6lXG6Wavt4="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "CSHcarCGGOjX9tMPxcbI2AQ",
+            "usageMetadata": {
+              "candidatesTokenCount": 178,
+              "promptTokenCount": 1823,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 1823
+                }
+              ],
+              "totalTokenCount": 2001
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "faithful": false,
+              "issues": [
+                "The question specifies to exclude records weighing exactly 180g (180g인 기록은 제외해), but the proposed plan uses 'num_gt' (greater than 180) which strictly excludes 180 anyway; however, the exclusion of 180g is part of the condition text and meaning, though mathematically redundant for gt. More importantly, the question asks for birds weighing over 180g with 180g excluded, which is fully captured by >180, but let's check if any condition was missed. Actually, '넘는' means strictly greater than, and '제외해' for 180g is redundant with strict inequality, so the plan is mathematically faithful."
+              ]
+            }
+          }
+        }
+      ],
+      "elapsed_ms": 3898.96
+    },
+    {
+      "case": {
+        "id": "fresh-13",
+        "question": "직박구리 말고 다른 새를 찾고 있어. AVONET의 먹이 생태 범주가 직박구리와 같은 새는 뭐가 있어?",
+        "category": "supported",
+        "expected": {
+          "kind": "relation",
+          "reference_taxon_name": "직박구리",
+          "share_basis": "trophic_niche",
+          "exclude_reference": true
+        }
+      },
+      "result": {
+        "intent": {
+          "kind": null,
+          "species": [],
+          "rank": null,
+          "group": null,
+          "diet": null,
+          "habitat": null,
+          "relation": null,
+          "scope": null,
+          "specific_plant": null,
+          "negation": [],
+          "residual": [],
+          "unsupported": [],
+          "ambiguity": [
+            "other"
+          ],
+          "evidence": [],
+          "source": "semantic",
+          "conditions": [],
+          "unsupported_food": []
+        },
+        "gate": "clarify",
+        "parsed": null
+      },
+      "provider_calls": 1,
+      "retrieved_examples": [
+        {
+          "kind": "shared_diet",
+          "question": "직박구리와 먹이 범주가 같은 종은 뭐야",
+          "score": 0.767457
+        },
+        {
+          "kind": "habitat_shared_diet",
+          "question": "직박구리처럼 숲에 살고 먹이 범주도 같은 새는?",
+          "score": 0.757233
+        },
+        {
+          "kind": "habitat_different_diet",
+          "question": "직박구리와 서식 환경이 겹치지만 식성이 다른 종 알려줘",
+          "score": 0.744226
+        },
+        {
+          "kind": "habitat_shared_diet",
+          "question": "숲에서 살면서 직박구리와 식성이 같은 새가 궁금해",
+          "score": 0.720078
+        },
+        {
+          "kind": "specific_fruit",
+          "question": "직박구리랑 같은 열매를 먹는 새는?",
+          "score": 0.703251
+        }
+      ],
+      "raw_plans": [
+        {
+          "kind": "shared_diet",
+          "taxon": null,
+          "species": "직박구리",
+          "conditions": [],
+          "relation_text": "먹이 생태 범주가 같은",
+          "unresolved": [],
+          "unknown_relation": false
+        }
+      ],
+      "provider_responses": [
+        {
+          "operation": "graph_intent",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:56 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1229",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"kind\": \"shared_diet\",\n  \"taxon\": null,\n  \"species\": \"직박구리\",\n  \"conditions\": [],\n  \"relation_text\": \"먹이 생태 범주가 같은\",\n  \"unresolved\": [],\n  \"unknown_relation\": false\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TYokD4qVP3xaf86sR4umXnMAHs7K6mynauWSiUx2yW39dUHyC1bg6QYjz8X7uKrbMbMjN0VsVaFEwvczGfGg9wygKxL0JVLO93L33tSWeCExvkQbnVSBOSRE="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "CyHcaqLlFurmosUP3om02QM",
+            "usageMetadata": {
+              "candidatesTokenCount": 69,
+              "promptTokenCount": 2655,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 2655
+                }
+              ],
+              "totalTokenCount": 2724
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "kind": "shared_diet",
+              "taxon": null,
+              "species": "직박구리",
+              "conditions": [],
+              "relation_text": "먹이 생태 범주가 같은",
+              "unresolved": [],
+              "unknown_relation": false
+            }
+          }
+        },
+        {
+          "operation": "graph_intent_audit",
+          "document": {
+            "sdkHttpResponse": {
+              "headers": {
+                "x-gemini-service-tier": "standard",
+                "content-type": "application/json; charset=UTF-8",
+                "vary": "Origin, X-Origin, Referer",
+                "content-encoding": "gzip",
+                "date": "Sat, 24 Oct 2026 03:07:57 GMT",
+                "server": "scaffolding on HTTPServer2",
+                "x-xss-protection": "0",
+                "x-frame-options": "SAMEORIGIN",
+                "x-content-type-options": "nosniff",
+                "server-timing": "gfet4t7; dur=1130",
+                "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+                "transfer-encoding": "chunked"
+              }
+            },
+            "candidates": [
+              {
+                "content": {
+                  "parts": [
+                    {
+                      "text": "{\n  \"faithful\": true,\n  \"issues\": []\n}",
+                      "thoughtSignature": "EmAKXgFpFH0TpyxtXmP369NsV0trBg_QVEO1lopHQAkMEeE6bEwoMFLc6vm6sEufKiHQZmvfy_xZh8h6G8JLJVYnjqPLWfnjViFPqlmzexMhkMLC1hqU5_7yslmlouRvUk0="
+                    }
+                  ],
+                  "role": "model"
+                },
+                "finishReason": "STOP",
+                "index": 0
+              }
+            ],
+            "modelVersion": "gemini-3.5-flash-lite",
+            "responseId": "DCHcarvKJfzq1e8Pkvbo8QI",
+            "usageMetadata": {
+              "candidatesTokenCount": 16,
+              "promptTokenCount": 1782,
+              "promptTokensDetails": [
+                {
+                  "modality": "TEXT",
+                  "tokenCount": 1782
+                }
+              ],
+              "totalTokenCount": 1798
+            },
+            "automaticFunctionCallingHistory": [],
+            "parsed": {
+              "faithful": true,
+              "issues": []
+            }
+          }
+        }
+      ],
+      "elapsed_ms": 2888.02
+    }
+  ]
+}

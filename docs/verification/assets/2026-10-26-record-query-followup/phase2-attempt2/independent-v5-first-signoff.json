@@ -1,0 +1,36 @@
+{
+  "measurement": "v5_fresh_first_attempt",
+  "case_counts": {
+    "pass": 8,
+    "fail": 4
+  },
+  "group_counts": {
+    "pass": 2,
+    "fail": 2
+  },
+  "classifications": {
+    "supported_answer": 5,
+    "false_hold": 2,
+    "wrong_plan": 1,
+    "negated_condition": 2,
+    "unsupported_specific_food": 1,
+    "wrong_hold_reason": 1
+  },
+  "image": "robingraph-api:test-record-query-followup-ef940d61e5ba",
+  "http200": 12,
+  "unique_trace_ids": 12,
+  "exact_root_verified": 12,
+  "reviewer_api_calls": 0,
+  "gold_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "scores_preserved_without_adjudication_adjustment": true,
+  "gold_quality_flags": {
+    "contract-category-ratio-unapplied-01": "Original 먹이 범주 is historical trophic_niche label, but Invertebrate is diet_category code; assumed unambiguous supported diet_category gold conflicts with established vocabulary.",
+    "contract-category-ratio-unapplied-03": "Original 먹이 범주 historically maps to trophic_niche. Actual niche Omnivore plan agrees with established vocabulary; gold requires diet_category. Do not label observed execution unsafe solely from this mismatched gold."
+  },
+  "valid_implementation_failures": {
+    "contract-category-ratio-unapplied-02": "Explicit canonical diet_category plan was held: supported=False for surface containing request words; taxon retention succeeds. Query metadata also unrecognized, but first rejection is own-evidence support.",
+    "contract-exact-fruit-gap-02": "Specific plant identity recognized but residual common/growing-fruit discourse remains; generic hold instead of insufficient-data reason."
+  },
+  "unsafe_answer_adjudication": "One automated wrong_plan has a preexisting vocabulary/gold conflict; no independently established unsafe execution from these artifacts. Do not silently convert raw 8/12 to adjusted pass count."
+}

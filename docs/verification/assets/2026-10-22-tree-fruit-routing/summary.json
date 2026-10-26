@@ -1,0 +1,70 @@
+{
+  "target": "test",
+  "question": "참새목 새 중에서 나무열매를 먹는 새는?",
+  "before": "clarify; deterministic graph parser did not support 나무열매/나무 열매",
+  "cause": "General fruit criterion lacked tree-fruit wording. 새 중에서 was already supported by previous fix; 中 에서 spacing expansion is additional robustness.",
+  "changes": [
+    "Allow 나무열매/나무 열매 and split 중 에서 wording",
+    "Preserve tree_fruit_share criterion to disclose broad fruit-category evidence",
+    "Display title suffix (나무·풀 구분 없음) and limitation; no new plant-specific diet data",
+    "Retain explicit plant questions (감나무) as insufficient_data"
+  ],
+  "files": [
+    "src/robingraph/retrieval/graph_questions.py",
+    "tests/test_graph_questions.py",
+    "tests/test_graph_questions_api.py"
+  ],
+  "tests": {
+    "graph_parser_api": 29,
+    "semantic_chat": 22,
+    "failed": 0,
+    "skipped": 0,
+    "retrieval": "mock/fixture for unit suites"
+  },
+  "actual_api": {
+    "passed": 6,
+    "mocked": false,
+    "tree_wording_cases": 2,
+    "original_general_cases": 2,
+    "specific_fruit_abstain_cases": 2,
+    "returned_species_limit": 20,
+    "not_total_species_count": true
+  },
+  "public_browser": {
+    "passed": 2,
+    "widths": [
+      1280,
+      390
+    ],
+    "mocked": false,
+    "visible_tree_grass_limitation_title": true,
+    "horizontal_overflow": false,
+    "page_errors": 0,
+    "console_events_collected": false,
+    "physical_mobile": false
+  },
+  "deployment": {
+    "image": "robingraph-api:test-tree-fruit-b1c6c45cd346",
+    "source_sha256": "b1c6c45cd3467dbf34114508f8e10dc1a30095481d2b33bf9dfd2efcb619d777",
+    "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+    "previous_image": "robingraph-api:test-fruit-routing-1a6f00caccaa",
+    "previous_release": "/Users/kimdove/robingraph-test/releases/fruit-routing-1a6f00caccaa-568651",
+    "release": "/Users/kimdove/robingraph-test/releases/tree-fruit-b1c6c45cd346-da9d5c",
+    "state": "verified",
+    "target": "test",
+    "uncommitted_source_snapshot": true,
+    "production_changed": false,
+    "fixture_network_none_smoke": true,
+    "physical_reboot_tested": false
+  },
+  "source_manifest_matches": true,
+  "graphify_update": "passed",
+  "not_run": [
+    "full Python suite",
+    "frontend suite (no UI asset changes)",
+    "physical mobile/Safari/Firefox"
+  ],
+  "production_actions": false,
+  "db_writes_by_task": false,
+  "git_commit_push": false
+}

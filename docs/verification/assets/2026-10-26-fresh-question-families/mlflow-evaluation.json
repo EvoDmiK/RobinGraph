@@ -1,0 +1,37 @@
+{
+  "run_id": "26d2af39b5c64fe08ccb88e95ed0e7aa",
+  "experiment_id": "33",
+  "status": "FINISHED",
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/runs/26d2af39b5c64fe08ccb88e95ed0e7aa",
+  "metrics": {
+    "holdout_cases_pass": 23.0,
+    "holdout_supported_no_matching_results": 6.0,
+    "holdout_groups_fail": 8.0,
+    "holdout_supported_source_no_data": 3.0,
+    "holdout_groups_pass": 4.0,
+    "holdout_negated_condition": 3.0,
+    "holdout_supported_answer": 11.0,
+    "holdout_wrong_hold_reason": 1.0,
+    "holdout_cases_fail": 13.0,
+    "holdout_false_hold": 12.0
+  },
+  "artifacts_read_back": {
+    "dataset": [
+      "dataset/holdout.json",
+      "dataset/manifest.json",
+      "dataset/validation.json"
+    ],
+    "evaluation": [
+      "evaluation/code-freeze.json",
+      "evaluation/dataset-freeze.json",
+      "evaluation/holdout-score.json"
+    ],
+    "same-request-evidence": [
+      "same-request-evidence/holdout-traces.json"
+    ],
+    "evaluator": [
+      "evaluator/evaluate_graph_question_families.py"
+    ]
+  },
+  "deleted_traces": 0
+}

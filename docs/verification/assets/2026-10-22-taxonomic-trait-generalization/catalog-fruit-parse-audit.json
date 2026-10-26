@@ -1,0 +1,17 @@
+{
+  "purpose": "All catalog names substituted into one fixed supported fruit template; no embeddings, no DB execution, not independent natural-language accuracy",
+  "count": 34891,
+  "counts": {
+    "species:scientific": 11131,
+    "subspecies:scientific": 19879,
+    "genus:scientific": 2376,
+    "family:scientific": 252,
+    "family:korean": 170,
+    "species:korean": 850,
+    "genus:korean": 162,
+    "order:scientific": 46,
+    "order:korean": 25
+  },
+  "failures": [],
+  "elapsed_seconds": 2.178
+}

@@ -1,0 +1,693 @@
+{
+  "schema": "graph-question-families-v1",
+  "split": "fresh_enum_holdout",
+  "cases": [
+    {
+      "id": "E01A",
+      "semantic_group_id": "E01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "오리과의 AVONET 먹이 생태 범주가 Herbivore terrestrial인 종을 찾아주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_niche",
+            "op": "eq",
+            "value": "Herbivore terrestrial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "오리과의 AVONET 먹이 생태 범주가 Herbivore terrestrial인 종을 찾아주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E01B",
+      "semantic_group_id": "E01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "AVONET 먹이 생태 범주 Herbivore terrestrial 조건으로 Anatidae를 조회해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_niche",
+            "op": "eq",
+            "value": "Herbivore terrestrial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "AVONET 먹이 생태 범주 Herbivore terrestrial 조건으로 Anatidae를 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E01C",
+      "semantic_group_id": "E01",
+      "role": "contrast",
+      "category": "supported",
+      "question": "오리과에서 AVONET 먹이 생태 범주가 Herbivore aquatic인 종을 찾아주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_niche",
+            "op": "eq",
+            "value": "Herbivore aquatic"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "오리과에서 AVONET 먹이 생태 범주가 Herbivore aquatic인 종을 찾아주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E02A",
+      "semantic_group_id": "E02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Parus 속에서 생활 방식 코드가 Insessorial인 종을 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Parus",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Insessorial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Parus 속에서 생활 방식 코드가 Insessorial인 종을 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E02B",
+      "semantic_group_id": "E02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "생활 방식이 Insessorial로 기록된 Parus 속의 새를 보여주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Parus",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Insessorial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "생활 방식이 Insessorial로 기록된 Parus 속의 새를 보여주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E02C",
+      "semantic_group_id": "E02",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Parus 속에서 생활 방식 코드가 Generalist인 종을 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Parus",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Generalist"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Parus 속에서 생활 방식 코드가 Generalist인 종을 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E03A",
+      "semantic_group_id": "E03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "도요목에서 서식 환경 코드 Coastal에 해당하는 새를 찾아줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Charadriiformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Coastal"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "도요목에서 서식 환경 코드 Coastal에 해당하는 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E03B",
+      "semantic_group_id": "E03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "서식지 범주가 Coastal인 Charadriiformes의 종을 조회해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Charadriiformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Coastal"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "서식지 범주가 Coastal인 Charadriiformes의 종을 조회해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E03C",
+      "semantic_group_id": "E03",
+      "role": "contrast",
+      "category": "hold",
+      "question": "도요목에서 서식 환경이 Coastal이 아닌 새를 찾아줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "도요목에서 서식 환경이 Coastal이 아닌 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E04A",
+      "semantic_group_id": "E04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Carnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Larus argentatus 종의 영양 단계가 Carnivore로 기록되어 있는지 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E04B",
+      "semantic_group_id": "E04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "영양 단계 코드 Carnivore 조건을 Larus argentatus 종의 기록에 적용해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Carnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "영양 단계 코드 Carnivore 조건을 Larus argentatus 종의 기록에 적용해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E04C",
+      "semantic_group_id": "E04",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Omnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E05A",
+      "semantic_group_id": "E05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "찌르레기속 자료를 살펴볼게. 먹이 유형이 Invertebrate인 종을 골라 줘. 구성비에는 제한을 두지 않을게.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Sturnus",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "찌르레기속 자료를 살펴볼게. 먹이 유형이 Invertebrate인 종을 골라 줘. 구성비에는 제한을 두지 않을게.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E05B",
+      "semantic_group_id": "E05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Sturnus",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Sturnus 속의 먹이 유형 Invertebrate 기록이 궁금해요. 비율 조건은 적용하지 마세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E05C",
+      "semantic_group_id": "E05",
+      "role": "contrast",
+      "category": "hold",
+      "question": "찌르레기속에서 먹이 유형이 Invertebrate가 아닌 종을 골라 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "찌르레기속에서 먹이 유형이 Invertebrate가 아닌 종을 골라 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E06A",
+      "semantic_group_id": "E06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "수리과에서 몸무게가 0.3kg보다 무거운 종을 찾아 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 300,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "수리과에서 몸무게가 0.3kg보다 무거운 종을 찾아 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E06B",
+      "semantic_group_id": "E06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Accipitridae에서 몸무게가 300g을 초과하는 종을 찾아 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 300,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Accipitridae에서 몸무게가 300g을 초과하는 종을 찾아 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E06C",
+      "semantic_group_id": "E06",
+      "role": "contrast",
+      "category": "supported",
+      "question": "수리과에서 몸무게가 0.3kg 이상인 종을 찾아 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gte",
+            "threshold": 300,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "수리과에서 몸무게가 0.3kg 이상인 종을 찾아 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E07A",
+      "semantic_group_id": "E07",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "동고비 자신은 제외하고, 숲에 서식하며 동고비와 AVONET 먹이 생태 범주가 같은 새를 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Sitta europaea",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": "Forest",
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "동고비 자신은 제외하고, 숲에 서식하며 동고비와 AVONET 먹이 생태 범주가 같은 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E07B",
+      "semantic_group_id": "E07",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "숲에 서식하고 AVONET 먹이 생태 범주가 동고비와 같은 종을 골라줘. 동고비는 빼 줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Sitta europaea",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": "Forest",
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "숲에 서식하고 AVONET 먹이 생태 범주가 동고비와 같은 종을 골라줘. 동고비는 빼 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E07C",
+      "semantic_group_id": "E07",
+      "role": "contrast",
+      "category": "supported",
+      "question": "동고비 자신은 제외하고, 습지에 서식하며 동고비와 AVONET 먹이 생태 범주가 같은 새를 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Sitta europaea",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": "Wetland",
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "동고비 자신은 제외하고, 습지에 서식하며 동고비와 AVONET 먹이 생태 범주가 같은 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E08A",
+      "semantic_group_id": "E08",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "꼬까울새와 정확히 같은 식물 종의 열매를 먹는 다른 새를 찾아줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "꼬까울새와 정확히 같은 식물 종의 열매를 먹는 다른 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E08B",
+      "semantic_group_id": "E08",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "다른 새 가운데 꼬까울새가 먹는 것과 식물 종까지 동일한 열매를 먹는 종을 알려줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "다른 새 가운데 꼬까울새가 먹는 것과 식물 종까지 동일한 열매를 먹는 종을 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "E08C",
+      "semantic_group_id": "E08",
+      "role": "contrast",
+      "category": "supported",
+      "question": "꼬까울새와 AVONET 먹이 생태 범주가 같은 다른 새를 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Erithacus rubecula",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": null,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "꼬까울새와 AVONET 먹이 생태 범주가 같은 다른 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    }
+  ]
+}

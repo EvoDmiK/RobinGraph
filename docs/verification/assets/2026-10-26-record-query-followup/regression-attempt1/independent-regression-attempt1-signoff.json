@@ -1,0 +1,29 @@
+{
+  "measurement": "feedback_exposed_regression_attempt1",
+  "case_counts": {
+    "pass": 57,
+    "fail": 3
+  },
+  "group_counts": {
+    "pass": 17,
+    "fail": 3
+  },
+  "http200": 60,
+  "unique_trace_ids": 60,
+  "same_request_verified": 60,
+  "image": "robingraph-api:test-record-query-followup-6c8e05ad15da",
+  "response_mocking": false,
+  "new_api_calls_by_independent_reviewer": 0,
+  "case_sha256": "1e00bf614301226da64962c68acbad7338c75b8607926f25e2e17b27908b1a61",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "failure_causes": {
+    "E04C": "Positive record request was split into unresolved fragment 확인해 줘; whole-frame-only reconciliation failed to consume the fragment.",
+    "V2-07B": "Same proposed plan as prior passing measurement. Provider audit now faithful:true with nonempty issues, rejected under unchanged audit contract. Stored audit replay rejects both baseline/current.",
+    "V2-12B": "Provider relation evidence changed from literal ... 와 같은 to ... 같은 and added self-exclusion unresolved. Stored proposal replay holds on both baseline/current; no code-caused regression demonstrated."
+  },
+  "unsafe_answers": 0,
+  "limitations": [
+    "Stored-response verification and injected provider replay are not new live requests.",
+    "Future source fix cannot overwrite these first-attempt results."
+  ]
+}

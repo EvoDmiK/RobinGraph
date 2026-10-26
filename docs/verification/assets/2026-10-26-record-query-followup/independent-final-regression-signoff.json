@@ -1,0 +1,56 @@
+{
+  "measurement": "feedback_exposed_final_regression",
+  "case_counts": {
+    "pass": 56,
+    "fail": 4
+  },
+  "group_counts": {
+    "fail": 4,
+    "pass": 16
+  },
+  "image": "robingraph-api:test-record-query-followup-aaf802327b68",
+  "focus_four": [
+    {
+      "id": "E04A",
+      "status": "pass",
+      "classification": "supported_answer"
+    },
+    {
+      "id": "E04C",
+      "status": "pass",
+      "classification": "supported_no_matching_results"
+    },
+    {
+      "id": "E05B",
+      "status": "pass",
+      "classification": "supported_no_matching_results"
+    },
+    {
+      "id": "E08B",
+      "status": "pass",
+      "classification": "unsupported_specific_food"
+    }
+  ],
+  "http200": 60,
+  "unique_trace_ids": 60,
+  "same_request_verified": 60,
+  "unsafe_answers": 0,
+  "reviewer_api_calls": 0,
+  "failures": {
+    "V2-01B": "interpretation_error before proposal; upstream-vs-parse cause not established from trace.",
+    "V2-11C": "Model condition surface is absent from original question. Same stored proposal rejects on baseline and final source.",
+    "E06B": "Audit false incorrectly requests numeric threshold in value despite threshold=300g being present in correct schema. Same audit rejected on baseline and final source.",
+    "E07C": "Audit false incorrectly claims missing Wetland condition which is present in plan. Same audit rejected on baseline and final source."
+  },
+  "all_changed_semantic_fields": false,
+  "gold_and_scorer_sha256": {
+    "data/eval/graph_questions/question-families-v4/holdout.json": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+    "data/eval/graph_questions/question-families-v4/regression.json": "f75c50c05429bf86f0ee2c5a8bb1a944f6239a34aa6904f73de79a6ac6a4b89d",
+    "scripts/evaluate_graph_question_families.py": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+  },
+  "limitations": [
+    "Old overall score is 56/60, not all-pass.",
+    "Focus4 includes valid empty-result and insufficient-data outcomes, not four populated answer lists.",
+    "Provider variability observed; no causal code regression demonstrated for three reproducible nonfocus failures. Fourth failure origin unknown."
+  ]
+}

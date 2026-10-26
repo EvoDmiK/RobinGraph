@@ -1,0 +1,139 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -26,7 +26,7 @@
+ from .. import tracing
+ 
+ from .graph_condition_extractor import (
+-    _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
++    _ASKS, _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
+     _NICHE_SAME,
+     _NUM, _RESIDENCY, _SAME_HABITAT, _SCIENTIFIC, _SHARE_WORDS, _TRAIT_LABELS, _UNIT, _UNITS, _UNSUPPORTED, GROUP_WORDS,
+     _FILLER, _PUNCT, _op, _pattern, _taxon_names, _tokens, _trait_surfaces, _valid_name, extract_graph_intent)
+@@ -342,7 +342,7 @@
+         token = question[start:end]
+         # Object + vowel-final connective + auxiliary request is a verb phrase, not a bare taxon.
+         if (re.search(r'[가-힣]+(?:을|를|만)\s+$', question[:start]) and token.endswith(('아', '어', '여'))
+-                and re.match(r'\s+(?:줘(?:요)?|주세요|줄래(?:요)?)(?=[\s.!?]|$)', question[end:])):
++                and re.match(r'\s+(?:줘(?:요)?|주세요|줄래(?:요)?)(?=[\s,.!?]|$)', question[end:])):
+             continue
+         lead = len(token) - len(re.sub(r'^\W+', '', token))
+         start, token = start + lead, re.sub(r'\W+$', '', token[lead:])
+@@ -362,7 +362,7 @@
+ 
+ 
+ # These forms express entity exclusion or numeric equality exclusion, never an arbitrary negated predicate.
+-_REMOVE = r'(?:말고|제외(?:하고|한|해(?:요)?|해\s*주세요)?|빼(?:고|\s*줘(?:요)?|\s*주세요)|뺀)(?=[\s.!?]|$)'
++_REMOVE = r'(?:말고|제외(?:하고|한|해(?:요)?|해\s*주세요)?|빼(?:고|\s*줘(?:요)?|\s*주세요)|뺀)(?=[\s,.!?]|$)'
+ _EQUAL_EXCLUSION = re.compile(
+     rf'(?<![\w.])(?P<number>{_NUM})\s*(?P<unit>{_UNIT})\s*(?:인|와\s*같은|에\s*해당하는)\s*'
+     rf'(?:(?:기록|경우|것|새|종)(?:은|는|을|를)?\s*)?{_REMOVE}')
+@@ -622,6 +622,16 @@
+                             'before': text, 'after': candidate['relation_text']})
+     token = tracing.begin_outcome()
+     try:
++        kept = [text for text in unresolved if not (
++            re.fullmatch(rf'(?:{_ASKS}|\s)+', text)
++            and re.search(r'(?:줘|줄래|주세요|주실래요|궁금해요|궁금해|궁금합니다|싶어요|싶어)$', text)
++            and question.count(text) == 1
++            and re.search(r'(?<!\w)' + re.escape(text) + r'[.!?]*\s*$', question))]
++        if len(kept) != len(unresolved):
++            candidate['unresolved'] = kept
++            changes.append({'field': 'unresolved', 'rule': 'terminal_request',
++                            'before': unresolved, 'after': kept})
++        unresolved = candidate.get('unresolved', [])
+         if unresolved and raw.get('kind') == 'taxon_traits':
+             pairs = _conditions(question, candidate)
+             names = [name] if (name := _taxon_span(question, candidate.get('taxon'))) is not None else []
+--- /dev/null
++++ b/tests/test_graph_terminal_requests.py
+@@ -0,0 +1,90 @@
++"""Feedback regressions from frozen H05B/H06B plus condition-preservation contrasts."""
++import copy
++import json
++import unittest
++from unittest.mock import Mock
++
++from robingraph.generation import GeminiAnswerer, GeminiAnswerError
++from robingraph.retrieval import semantic_graph_intent as sgi
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphTerminalRequestsTest(unittest.TestCase):
++    def test_terminal_request_only_is_reconciled_across_numeric_habitat_and_relation(self):
++        cases = [
++            ('Anas platyrhynchos platyrhynchos 아종의 날개 길이가 30cm보다 짧은지',
++             {'kind': 'taxon_traits', 'taxon': 'Anas platyrhynchos platyrhynchos', 'conditions': [
++                 {'trait_name': 'wing_length', 'op': 'num_lt', 'threshold': 300, 'unit': 'mm',
++                  'surface': '날개 길이가 30cm보다 짧은'}]}),
++            ('Corvidae 중 숲이 서식지로 기록되어 있는 종을',
++             {'kind': 'taxon_traits', 'taxon': 'Corvidae', 'conditions': [
++                 {'trait_name': 'habitat', 'op': 'eq', 'value': 'Forest', 'surface': '숲이 서식지로 기록되어 있는'}]}),
++            ('Ardea cinerea 자신은 빼고, 먹이 생태 범주가 같은 종을',
++             {'kind': 'shared_diet', 'species': 'Ardea cinerea', 'relation_text': '먹이 생태 범주가 같은',
++              'conditions': []})]
++        for stem, plan in cases:
++            for ending in ('궁금해', '궁금합니다', '알고 싶어', '알려줘', '보여 줘', '찾아 주세요'):
++                q = stem + ' ' + ending + '.'
++                raw = {**copy.deepcopy(plan), 'unresolved': [ending]}
++                before = copy.deepcopy(raw)
++                with self.subTest(q=q):
++                    candidate, changes = sgi.reconcile_graph_plan(q, raw)
++                    self.assertEqual(before, raw)
++                    self.assertEqual([], candidate['unresolved'])
++                    self.assertEqual('terminal_request', changes[0]['rule'])
++                    self.assertEqual(raw['conditions'], candidate['conditions'])
++                    self.assertEqual('answer', execution_gate(q, sgi.interpret(q, lambda *_: candidate)))
++
++    def test_nonterminal_attached_negative_and_actual_conditions_are_never_deleted(self):
++        stem = 'Anas platyrhynchos platyrhynchos 아종의 날개 길이가 30cm보다 짧은지 '
++        base = {'kind': 'taxon_traits', 'taxon': 'Anas platyrhynchos platyrhynchos', 'conditions': [
++            {'trait_name': 'wing_length', 'op': 'num_lt', 'threshold': 300, 'unit': 'mm',
++             'surface': '날개 길이가 30cm보다 짧은'}]}
++        cases = [('궁금해하지만 다른 조건도 있어', ['궁금해']), ('궁금해도', ['궁금해']),
++                 ('궁금해하는', ['궁금해']), ('안궁금해', ['궁금해']),
++                 ('궁금해, 궁금해', ['궁금해']), ('궁금해. 몸무게 100g 이상', ['궁금해']),
++                 ('밤에만 활동하는 종을 알려줘', ['밤에만 활동하는 종을 알려줘']),
++                 ('날개가 20cm인 것은 빼고 궁금해', ['궁금해']),
++                 ('새로운 제한도 궁금해', ['새로운 제한도', '궁금해'])]
++        for suffix, unresolved in cases:
++            q, raw = stem + suffix, {**copy.deepcopy(base), 'unresolved': unresolved}
++            with self.subTest(q=q):
++                self.assertEqual((raw, []), sgi.reconcile_graph_plan(q, raw))
++                self.assertNotEqual('answer', execution_gate(q, sgi.interpret(q, lambda *_: raw)))
++
++    def test_self_exclusion_punctuation_enters_existing_validation(self):
++        for name in ('Ardea cinerea', '청둥오리'):
++            for punctuation in (',', '.', '!', '?', ' '):
++                q = f'{name} 자신은 빼고{punctuation} 먹이 생태 범주가 같은 종을 알려줘.'
++                raw = {'kind': 'shared_diet', 'species': name, 'relation_text': '먹이 생태 범주가 같은'}
++                provider = Mock(return_value=raw)
++                result = sgi.graph_intent_handler(q, provider=provider)
++                with self.subTest(q=q):
++                    provider.assert_called_once()
++                    self.assertEqual('answer', execution_gate(q, result))
++                    self.assertEqual(name, result.species[0].text)
++
++    def test_comma_does_not_erase_other_exclusions_or_restrictions(self):
++        raw = {'kind': 'shared_diet', 'species': '청둥오리', 'relation_text': '먹이 생태 범주가 같은'}
++        for q in ('청둥오리와 먹이 생태 범주가 같은 종 중 까치는 빼고, 알려줘.',
++                  '청둥오리 자신은 빼고, 먹이 생태 범주가 같지 않은 종을 알려줘.',
++                  '청둥오리 자신은 빼고, 먹이 생태 범주가 같은 종 중 밤에만 활동하는 종을 알려줘.',
++                  '청둥오리 자신은 빼고, 먹이 생태 범주가 같은 종 중 몸무게가 100g인 종을 알려줘.'):
++            with self.subTest(q=q):
++                result = sgi.graph_intent_handler(q, provider=Mock(return_value=raw))
++                self.assertNotEqual('answer', execution_gate(q, result))
++
++    def test_reconciled_request_is_still_audited_and_false_never_retries(self):
++        q = 'Ardea cinerea 자신은 빼고, 먹이 생태 범주가 같은 종이 궁금해.'
++        raw = {'kind': 'shared_diet', 'species': 'Ardea cinerea', 'relation_text': '먹이 생태 범주가 같은',
++               'unresolved': ['궁금해']}
++        def document(payload):
++            return {'candidates': [{'content': {'parts': [{'text': json.dumps(payload)}]}}]}
++        answerer = GeminiAnswerer('dummy', urlopen=Mock())
++        answerer._request = Mock(side_effect=[document(raw), document({'faithful': False, 'issues': ['조건 불일치']})])
++        with self.assertRaisesRegex(GeminiAnswerError, 'did not pass semantic audit'):
++            answerer.propose_structured_graph_intent(q, [], sgi.CONTRACT)
++        self.assertEqual(2, answerer._request.call_count)
++        payload = json.loads(answerer._request.call_args_list[1].args[0].split('\n')[-1])
++        self.assertEqual(raw, payload['original_proposal'])
++        self.assertEqual([], payload['proposed_plan']['unresolved'])

@@ -1,0 +1,32 @@
+{
+  "scope": "Blocked-response observability; no interpretation or answer-accuracy fix",
+  "unit": {
+    "run": 1236,
+    "passed": 1196,
+    "skipped": 40,
+    "failed": 0
+  },
+  "independent_mock_e2e_methods": 2,
+  "live_observability_cases": 9,
+  "live_response_dispositions": {
+    "clarify": 6,
+    "answer": 1,
+    "abstain": 2
+  },
+  "live_reasons": {
+    "ambiguous_conditions": 1,
+    "filter_mismatch": 1,
+    "none": 1,
+    "no_matching_results": 1,
+    "insufficient_data": 1,
+    "unresolved_conditions": 1,
+    "plan_validation_rejected": 2,
+    "semantic_audit_rejected": 1
+  },
+  "live_response_mocking": false,
+  "bird_db_writes": 0,
+  "production_deployed": false,
+  "commit_push": false,
+  "image": "robingraph-api:test-blocked-tracing-54bb05bdd0b2",
+  "known_limit": "Live cases validate recorded causes and searchable tags, not semantic accuracy. Provider outages and invalid-plan categories exercised with mocks only."
+}

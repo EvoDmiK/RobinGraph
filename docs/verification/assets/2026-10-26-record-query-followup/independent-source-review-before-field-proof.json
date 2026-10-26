@@ -1,0 +1,19 @@
+{
+  "kind": "independent_static_review_and_mock_checks",
+  "time": "2026-10-26T16:11:25.486865",
+  "app_source_changes_by_reviewer": false,
+  "actual_api_calls": 0,
+  "gold_changed_after_freeze": false,
+  "source_sha256": {
+    "src/robingraph/retrieval/graph_condition_extractor.py": "76b26894445ba6e59f20201a74de6c309d483a8ce93d108cf1ee91e0bdc7afa4",
+    "src/robingraph/retrieval/semantic_graph_intent.py": "ce6cf43a622db48d5ca73ac74c68e24641e096e217256efe65b852eca619654f",
+    "scripts/evaluate_graph_question_families.py": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+  },
+  "gold_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "review": "pass",
+  "checks": {
+    "final-guards.log": "ourGuardTests.test_repaired_plan_does_not_bypass_independent_audit) ... ok\ntest_negative_repeated_or_other_conditions_never_disappear (test_record_fragment_guards.RecordFragmentGuardTests.test_negative_repeated_or_other_conditions_never_disappear) ... ok\ntest_only_positive_proved_frame_fragments (test_record_fragment_guards.RecordFragmentGuardTests.test_only_positive_proved_frame_fragments) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.037s\n\nOK\n",
+    "final-prior-guards.log": "test_copular_recovery_preserves_numeric_fields) ... ok\ntest_indirect_question_ending_is_functional_but_not_a_noun_prefix (test_numeric_tail.NumericTailGuards.test_indirect_question_ending_is_functional_but_not_a_noun_prefix) ... ok\ntest_original_copular_denial_survives_numeric_prefix_recovery (test_numeric_tail.NumericTailGuards.test_original_copular_denial_survives_numeric_prefix_recovery) ... ok\n\n----------------------------------------------------------------------\nRan 32 tests in 0.057s\n\nOK\n"
+  },
+  "change_since_attempt1": "Only unique original unresolved fragments wholly contained in an already proved positive record-request span can be consumed. Fresh24 remains sealed; next live regression after source change is feedback-exposed verification, not a blind rerun."
+}

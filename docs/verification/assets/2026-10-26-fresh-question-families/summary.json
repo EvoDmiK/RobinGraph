@@ -1,0 +1,51 @@
+{
+  "scope": "fresh first-attempt question interpretation and query-plan evaluation on frozen TEST",
+  "image": "robingraph-api:test-question-family-06489197bcef",
+  "dataset_sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "counts": {
+    "case_counts": {
+      "pass": 23,
+      "fail": 13
+    },
+    "group_counts": {
+      "pass": 4,
+      "fail": 8
+    },
+    "classifications": {
+      "supported_answer": 11,
+      "supported_no_matching_results": 6,
+      "false_hold": 12,
+      "negated_condition": 3,
+      "supported_source_no_data": 3,
+      "wrong_hold_reason": 1
+    }
+  },
+  "supported_cases": 32,
+  "held_cases": 4,
+  "scorer_unit_tests": {
+    "run": 11,
+    "pass": 11,
+    "fail": 0,
+    "skip": 0
+  },
+  "prior_v1_saved_artifact_rescore": {
+    "cases_pass": 24,
+    "groups_pass": 8,
+    "new_api_calls": 0
+  },
+  "mlflow_run": "https://mlflow.dove-nest.com/#/experiments/33/runs/26d2af39b5c64fe08ccb88e95ed0e7aa",
+  "same_request_trace_count": 36,
+  "unsafe_answers_observed": 0,
+  "new_app_changes": false,
+  "production_changed": false,
+  "app_redeployed": false,
+  "committed": false,
+  "pushed": false,
+  "limits": [
+    "Model-authored gold and agent peer review; not human reviewed.",
+    "One first API call per case; no probabilistic stability estimate.",
+    "Correct conditions and scope checked against saved API/trace metadata, not an independent audit of every species answer.",
+    "No whole database checksum audit or physical/browser UI test.",
+    "First-attempt failures preserved; no app fixes performed during this evaluation."
+  ]
+}

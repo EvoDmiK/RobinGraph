@@ -1,0 +1,10 @@
+{
+  "target": "test",
+  "image": "robingraph-api:test-taxonomic-traits-43fa2e4bcfd5",
+  "health": "healthy",
+  "graph_intent_mode": "active",
+  "source_manifest_files": 207,
+  "root_manifest_matches": true,
+  "production_changed": false,
+  "commit_push": false
+}

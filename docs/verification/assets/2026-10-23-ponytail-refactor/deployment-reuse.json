@@ -1,0 +1,10 @@
+{
+  "base_script": "docs/verification/assets/2026-10-23-ecology-answer-layout/deploy-test-snapshot.py",
+  "execution_script": "/tmp/rg-ponytail-deploy.py",
+  "changes": [
+    "root/assets absolute paths",
+    "TEST image/release/smoke/log prefix only"
+  ],
+  "runtime_flags_unchanged": "active+semantic (existing TEST)",
+  "production_changed": false
+}

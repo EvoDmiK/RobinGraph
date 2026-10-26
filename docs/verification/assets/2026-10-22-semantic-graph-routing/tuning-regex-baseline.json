@@ -1,0 +1,3191 @@
+{
+  "gold": "/Users/kimdove/orca/workspaces/RobinGraph/dev-codex/data/eval/graph_questions/tuning.jsonl",
+  "records": 84,
+  "invalid": [],
+  "leaked_ids": [],
+  "schema_version": "rg205-v1",
+  "scope": "parser-only (no service, filters or request scope)",
+  "overall": {
+    "n": 84,
+    "raw": {
+      "kind_accuracy": {
+        "n": 67,
+        "hits": 20,
+        "rate": 0.2985
+      },
+      "coverage": {
+        "n": 39,
+        "hits": 15,
+        "rate": 0.3846
+      },
+      "false_execution": {
+        "n": 84,
+        "hits": 4,
+        "rate": 0.0476
+      },
+      "appropriate_hold": {
+        "n": 45,
+        "hits": 41,
+        "rate": 0.9111
+      },
+      "condition_loss_executed": 3
+    },
+    "gated": {
+      "kind_accuracy": {
+        "n": 67,
+        "hits": 20,
+        "rate": 0.2985
+      },
+      "slot_accuracy": {
+        "species": {
+          "n": 67,
+          "hits": 36,
+          "rate": 0.5373
+        },
+        "rank": {
+          "n": 67,
+          "hits": 51,
+          "rate": 0.7612
+        },
+        "group": {
+          "n": 67,
+          "hits": 66,
+          "rate": 0.9851
+        },
+        "diet": {
+          "n": 67,
+          "hits": 38,
+          "rate": 0.5672
+        },
+        "habitat": {
+          "n": 67,
+          "hits": 50,
+          "rate": 0.7463
+        },
+        "relation": {
+          "n": 67,
+          "hits": 39,
+          "rate": 0.5821
+        },
+        "scope": {
+          "n": 67,
+          "hits": 63,
+          "rate": 0.9403
+        },
+        "specific_plant": {
+          "n": 67,
+          "hits": 62,
+          "rate": 0.9254
+        },
+        "negation": {
+          "n": 67,
+          "hits": 62,
+          "rate": 0.9254
+        },
+        "residual": {
+          "n": 67,
+          "hits": 57,
+          "rate": 0.8507
+        },
+        "unsupported": {
+          "n": 67,
+          "hits": 67,
+          "rate": 1.0
+        },
+        "ambiguity": {
+          "n": 67,
+          "hits": 62,
+          "rate": 0.9254
+        }
+      },
+      "all_slots_exact": {
+        "n": 67,
+        "hits": 17,
+        "rate": 0.2537
+      },
+      "disposition_accuracy": {
+        "n": 84,
+        "hits": 24,
+        "rate": 0.2857
+      },
+      "coverage": {
+        "n": 39,
+        "hits": 15,
+        "rate": 0.3846
+      },
+      "false_execution": {
+        "n": 84,
+        "hits": 3,
+        "rate": 0.0357
+      },
+      "appropriate_hold": {
+        "n": 45,
+        "hits": 42,
+        "rate": 0.9333
+      },
+      "condition_loss_executed": 2
+    }
+  },
+  "by_category": {
+    "ambiguity": {
+      "n": 5,
+      "raw": {
+        "kind_accuracy": {
+          "n": 5,
+          "hits": 1,
+          "rate": 0.2
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 5,
+          "hits": 1,
+          "rate": 0.2
+        },
+        "appropriate_hold": {
+          "n": 5,
+          "hits": 4,
+          "rate": 0.8
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 5,
+          "hits": 1,
+          "rate": 0.2
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 5,
+            "hits": 3,
+            "rate": 0.6
+          },
+          "rank": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "group": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 5,
+            "hits": 3,
+            "rate": 0.6
+          },
+          "habitat": {
+            "n": 5,
+            "hits": 4,
+            "rate": 0.8
+          },
+          "relation": {
+            "n": 5,
+            "hits": 1,
+            "rate": 0.2
+          },
+          "scope": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "unsupported": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 5,
+            "hits": 0,
+            "rate": 0.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 5,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "disposition_accuracy": {
+          "n": 5,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 5,
+          "hits": 1,
+          "rate": 0.2
+        },
+        "appropriate_hold": {
+          "n": 5,
+          "hits": 4,
+          "rate": 0.8
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "contrastive": {
+      "n": 6,
+      "raw": {
+        "kind_accuracy": {
+          "n": 3,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 3,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 3,
+            "hits": 1,
+            "rate": 0.3333
+          },
+          "rank": {
+            "n": 3,
+            "hits": 2,
+            "rate": 0.6667
+          },
+          "group": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 3,
+            "hits": 0,
+            "rate": 0.0
+          },
+          "habitat": {
+            "n": 3,
+            "hits": 1,
+            "rate": 0.3333
+          },
+          "relation": {
+            "n": 3,
+            "hits": 1,
+            "rate": 0.3333
+          },
+          "scope": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 3,
+            "hits": 2,
+            "rate": 0.6667
+          },
+          "residual": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "unsupported": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 3,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "disposition_accuracy": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "extra_condition": {
+      "n": 9,
+      "raw": {
+        "kind_accuracy": {
+          "n": 9,
+          "hits": 1,
+          "rate": 0.1111
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 9,
+          "hits": 1,
+          "rate": 0.1111
+        },
+        "appropriate_hold": {
+          "n": 9,
+          "hits": 8,
+          "rate": 0.8889
+        },
+        "condition_loss_executed": 1
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 9,
+          "hits": 1,
+          "rate": 0.1111
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 9,
+            "hits": 5,
+            "rate": 0.5556
+          },
+          "rank": {
+            "n": 9,
+            "hits": 4,
+            "rate": 0.4444
+          },
+          "group": {
+            "n": 9,
+            "hits": 9,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 9,
+            "hits": 3,
+            "rate": 0.3333
+          },
+          "habitat": {
+            "n": 9,
+            "hits": 7,
+            "rate": 0.7778
+          },
+          "relation": {
+            "n": 9,
+            "hits": 5,
+            "rate": 0.5556
+          },
+          "scope": {
+            "n": 9,
+            "hits": 8,
+            "rate": 0.8889
+          },
+          "specific_plant": {
+            "n": 9,
+            "hits": 9,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 9,
+            "hits": 9,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 9,
+            "hits": 1,
+            "rate": 0.1111
+          },
+          "unsupported": {
+            "n": 9,
+            "hits": 9,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 9,
+            "hits": 9,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 9,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "disposition_accuracy": {
+          "n": 9,
+          "hits": 1,
+          "rate": 0.1111
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 9,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 9,
+          "hits": 9,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "negation": {
+      "n": 7,
+      "raw": {
+        "kind_accuracy": {
+          "n": 5,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 7,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 7,
+          "hits": 7,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 5,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 5,
+            "hits": 3,
+            "rate": 0.6
+          },
+          "rank": {
+            "n": 5,
+            "hits": 2,
+            "rate": 0.4
+          },
+          "group": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 5,
+            "hits": 2,
+            "rate": 0.4
+          },
+          "habitat": {
+            "n": 5,
+            "hits": 4,
+            "rate": 0.8
+          },
+          "relation": {
+            "n": 5,
+            "hits": 3,
+            "rate": 0.6
+          },
+          "scope": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 5,
+            "hits": 4,
+            "rate": 0.8
+          },
+          "negation": {
+            "n": 5,
+            "hits": 0,
+            "rate": 0.0
+          },
+          "residual": {
+            "n": 5,
+            "hits": 4,
+            "rate": 0.8
+          },
+          "unsupported": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 5,
+            "hits": 5,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 5,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "disposition_accuracy": {
+          "n": 7,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 7,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 7,
+          "hits": 7,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "not_graph": {
+      "n": 6,
+      "raw": {
+        "kind_accuracy": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "rank": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "group": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "diet": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "habitat": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "relation": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "scope": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "specific_plant": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "negation": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "residual": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "unsupported": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "ambiguity": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          }
+        },
+        "all_slots_exact": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "disposition_accuracy": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "overclaim_reject": {
+      "n": 6,
+      "raw": {
+        "kind_accuracy": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "rank": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "group": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "diet": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "habitat": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "relation": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "scope": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "specific_plant": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "negation": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "residual": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "unsupported": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          },
+          "ambiguity": {
+            "n": 0,
+            "hits": 0,
+            "rate": null
+          }
+        },
+        "all_slots_exact": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "disposition_accuracy": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 6,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 6,
+          "hits": 6,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "per_kind_paraphrase": {
+      "n": 31,
+      "raw": {
+        "kind_accuracy": {
+          "n": 31,
+          "hits": 10,
+          "rate": 0.3226
+        },
+        "coverage": {
+          "n": 30,
+          "hits": 10,
+          "rate": 0.3333
+        },
+        "false_execution": {
+          "n": 31,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 1,
+          "hits": 1,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 31,
+          "hits": 10,
+          "rate": 0.3226
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 31,
+            "hits": 14,
+            "rate": 0.4516
+          },
+          "rank": {
+            "n": 31,
+            "hits": 27,
+            "rate": 0.871
+          },
+          "group": {
+            "n": 31,
+            "hits": 30,
+            "rate": 0.9677
+          },
+          "diet": {
+            "n": 31,
+            "hits": 19,
+            "rate": 0.6129
+          },
+          "habitat": {
+            "n": 31,
+            "hits": 23,
+            "rate": 0.7419
+          },
+          "relation": {
+            "n": 31,
+            "hits": 17,
+            "rate": 0.5484
+          },
+          "scope": {
+            "n": 31,
+            "hits": 28,
+            "rate": 0.9032
+          },
+          "specific_plant": {
+            "n": 31,
+            "hits": 31,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 31,
+            "hits": 31,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 31,
+            "hits": 30,
+            "rate": 0.9677
+          },
+          "unsupported": {
+            "n": 31,
+            "hits": 31,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 31,
+            "hits": 31,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 31,
+          "hits": 10,
+          "rate": 0.3226
+        },
+        "disposition_accuracy": {
+          "n": 31,
+          "hits": 10,
+          "rate": 0.3226
+        },
+        "coverage": {
+          "n": 30,
+          "hits": 10,
+          "rate": 0.3333
+        },
+        "false_execution": {
+          "n": 31,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 1,
+          "hits": 1,
+          "rate": 1.0
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "root_probe": {
+      "n": 4,
+      "raw": {
+        "kind_accuracy": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "false_execution": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 4,
+            "hits": 2,
+            "rate": 0.5
+          },
+          "rank": {
+            "n": 4,
+            "hits": 2,
+            "rate": 0.5
+          },
+          "group": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 4,
+            "hits": 0,
+            "rate": 0.0
+          },
+          "habitat": {
+            "n": 4,
+            "hits": 2,
+            "rate": 0.5
+          },
+          "relation": {
+            "n": 4,
+            "hits": 2,
+            "rate": 0.5
+          },
+          "scope": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "unsupported": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 4,
+            "hits": 4,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "disposition_accuracy": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "coverage": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "false_execution": {
+          "n": 4,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "condition_loss_executed": 0
+      }
+    },
+    "scope": {
+      "n": 8,
+      "raw": {
+        "kind_accuracy": {
+          "n": 8,
+          "hits": 5,
+          "rate": 0.625
+        },
+        "coverage": {
+          "n": 6,
+          "hits": 3,
+          "rate": 0.5
+        },
+        "false_execution": {
+          "n": 8,
+          "hits": 2,
+          "rate": 0.25
+        },
+        "appropriate_hold": {
+          "n": 2,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "condition_loss_executed": 2
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 8,
+          "hits": 5,
+          "rate": 0.625
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 8,
+            "hits": 4,
+            "rate": 0.5
+          },
+          "rank": {
+            "n": 8,
+            "hits": 7,
+            "rate": 0.875
+          },
+          "group": {
+            "n": 8,
+            "hits": 7,
+            "rate": 0.875
+          },
+          "diet": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          },
+          "habitat": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          },
+          "relation": {
+            "n": 8,
+            "hits": 5,
+            "rate": 0.625
+          },
+          "scope": {
+            "n": 8,
+            "hits": 4,
+            "rate": 0.5
+          },
+          "specific_plant": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 8,
+            "hits": 7,
+            "rate": 0.875
+          },
+          "unsupported": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 8,
+            "hits": 8,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 8,
+          "hits": 3,
+          "rate": 0.375
+        },
+        "disposition_accuracy": {
+          "n": 8,
+          "hits": 4,
+          "rate": 0.5
+        },
+        "coverage": {
+          "n": 6,
+          "hits": 3,
+          "rate": 0.5
+        },
+        "false_execution": {
+          "n": 8,
+          "hits": 1,
+          "rate": 0.125
+        },
+        "appropriate_hold": {
+          "n": 2,
+          "hits": 1,
+          "rate": 0.5
+        },
+        "condition_loss_executed": 1
+      }
+    },
+    "specific_plant": {
+      "n": 7,
+      "raw": {
+        "kind_accuracy": {
+          "n": 7,
+          "hits": 2,
+          "rate": 0.2857
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 7,
+          "hits": 1,
+          "rate": 0.1429
+        },
+        "appropriate_hold": {
+          "n": 7,
+          "hits": 6,
+          "rate": 0.8571
+        },
+        "condition_loss_executed": 1
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 7,
+          "hits": 2,
+          "rate": 0.2857
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 7,
+            "hits": 6,
+            "rate": 0.8571
+          },
+          "rank": {
+            "n": 7,
+            "hits": 3,
+            "rate": 0.4286
+          },
+          "group": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 7,
+            "hits": 6,
+            "rate": 0.8571
+          },
+          "habitat": {
+            "n": 7,
+            "hits": 6,
+            "rate": 0.8571
+          },
+          "relation": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          },
+          "scope": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 7,
+            "hits": 2,
+            "rate": 0.2857
+          },
+          "negation": {
+            "n": 7,
+            "hits": 6,
+            "rate": 0.8571
+          },
+          "residual": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          },
+          "unsupported": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 7,
+            "hits": 7,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 7,
+          "hits": 2,
+          "rate": 0.2857
+        },
+        "disposition_accuracy": {
+          "n": 7,
+          "hits": 2,
+          "rate": 0.2857
+        },
+        "coverage": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "false_execution": {
+          "n": 7,
+          "hits": 1,
+          "rate": 0.1429
+        },
+        "appropriate_hold": {
+          "n": 7,
+          "hits": 6,
+          "rate": 0.8571
+        },
+        "condition_loss_executed": 1
+      }
+    },
+    "user_failure": {
+      "n": 3,
+      "raw": {
+        "kind_accuracy": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "coverage": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "false_execution": {
+          "n": 3,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "condition_loss_executed": 0
+      },
+      "gated": {
+        "kind_accuracy": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "slot_accuracy": {
+          "species": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "rank": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "group": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "diet": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "habitat": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "relation": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "scope": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "specific_plant": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "negation": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "residual": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "unsupported": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          },
+          "ambiguity": {
+            "n": 3,
+            "hits": 3,
+            "rate": 1.0
+          }
+        },
+        "all_slots_exact": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "disposition_accuracy": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "coverage": {
+          "n": 3,
+          "hits": 3,
+          "rate": 1.0
+        },
+        "false_execution": {
+          "n": 3,
+          "hits": 0,
+          "rate": 0.0
+        },
+        "appropriate_hold": {
+          "n": 0,
+          "hits": 0,
+          "rate": null
+        },
+        "condition_loss_executed": 0
+      }
+    }
+  },
+  "parser_latency_ms": {
+    "p50": 0.006,
+    "p95": 0.009,
+    "n": 84
+  },
+  "mismatches": [
+    {
+      "id": "GGQ-T-004",
+      "question": "참새목에 속한 새 가운데 열매를 먹는 종류 좀 알려줄래?",
+      "categories": [
+        "root_probe"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-005",
+      "question": "열매 먹는 참새목 새를 찾아 줘",
+      "categories": [
+        "root_probe"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-006",
+      "question": "숲에서 살면서 직박구리와 식성이 같은 새가 궁금해",
+      "categories": [
+        "root_probe"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-007",
+      "question": "청둥오리랑 서식지는 같지만 먹이는 다른 종을 찾아줘",
+      "categories": [
+        "root_probe"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-008",
+      "question": "청둥오리와 흰뺨검둥오리는 분류상 어떤 사이야?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "common_taxonomy",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-009",
+      "question": "까치랑 어치의 분류 계통을 비교해줘",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "common_taxonomy",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-013",
+      "question": "까치와 물까치는 같은 과야?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "common_taxonomy",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-014",
+      "question": "청둥오리랑 속이 같은 새는 뭐가 있어?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-015",
+      "question": "직박구리와 동일한 속에 들어가는 종을 알려줘",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-018",
+      "question": "박새랑 같은 속으로 분류되는 새가 궁금해",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-020",
+      "question": "한국에서 관찰된 적 있는 청둥오리 같은 속 종 알려줘",
+      "categories": [
+        "per_kind_paraphrase",
+        "scope"
+      ],
+      "expected_kind": "korea_same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": false,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "scope"
+      ]
+    },
+    {
+      "id": "GGQ-T-021",
+      "question": "우리나라에 기록된 오리 중에 청둥오리랑 같은 속인 종은 뭐야?",
+      "categories": [
+        "per_kind_paraphrase",
+        "scope"
+      ],
+      "expected_kind": "korea_same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": false,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": false,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "scope"
+      ]
+    },
+    {
+      "id": "GGQ-T-022",
+      "question": "청둥오리와 같은 속 가운데 한국 기록이 있는 새는?",
+      "categories": [
+        "per_kind_paraphrase",
+        "scope"
+      ],
+      "expected_kind": "korea_same_genus",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": false,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "scope"
+      ]
+    },
+    {
+      "id": "GGQ-T-023",
+      "question": "참새목 중에서 과실식 하는 새 알려줘",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-025",
+      "question": "참새목에서 열매를 주로 먹는 새는?",
+      "categories": [
+        "per_kind_paraphrase",
+        "extra_condition"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-026",
+      "question": "참새목 새 가운데 열매 섭식 범주인 종",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-027",
+      "question": "열매를 먹고 사는 참새목 새들은 어떤 게 있나요",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-031",
+      "question": "초원에서 사는 새들 가운데 종다리랑 식성이 같은 종",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-032",
+      "question": "숲에 서식하는 새 중에서 직박구리와 같은 먹이 범주의 새를 보여줘",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-033",
+      "question": "직박구리처럼 숲에 살고 먹이 범주도 같은 새는?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-034",
+      "question": "해안에 사는 새 중 괭이갈매기와 먹이 습성이 같은 새",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-035",
+      "question": "청둥오리와 사는 곳은 같은데 먹는 건 다른 새는?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-036",
+      "question": "직박구리와 서식 환경이 겹치지만 식성이 다른 종 알려줘",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-037",
+      "question": "서식지는 청둥오리와 겹치고 먹이 범주는 다른 새",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-038",
+      "question": "왜가리랑 같은 서식지인데 먹이가 다른 새들은 뭐가 있어?",
+      "categories": [
+        "per_kind_paraphrase"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "answer",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-040",
+      "question": "마가목 열매 먹는 새 알려줘",
+      "categories": [
+        "specific_plant"
+      ],
+      "expected_kind": "specific_fruit",
+      "expected_disposition": "insufficient_data",
+      "raw_kind": "order_fruit",
+      "raw_executes": true,
+      "gated_disposition": "answer",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": false,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "specific_plant"
+      ]
+    },
+    {
+      "id": "GGQ-T-042",
+      "question": "숲에 사는 새 중 직박구리와 똑같은 열매를 먹는 새",
+      "categories": [
+        "specific_plant"
+      ],
+      "expected_kind": "specific_fruit",
+      "expected_disposition": "insufficient_data",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": false,
+        "relation": true,
+        "scope": true,
+        "specific_plant": false,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "specific_plant"
+      ]
+    },
+    {
+      "id": "GGQ-T-043",
+      "question": "감나무 열매를 먹는 참새목 새는?",
+      "categories": [
+        "specific_plant"
+      ],
+      "expected_kind": "specific_fruit",
+      "expected_disposition": "insufficient_data",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": false,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "specific_plant"
+      ]
+    },
+    {
+      "id": "GGQ-T-044",
+      "question": "참새목 중에서 감 먹는 새 있어?",
+      "categories": [
+        "specific_plant"
+      ],
+      "expected_kind": "specific_fruit",
+      "expected_disposition": "insufficient_data",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": false,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "specific_plant"
+      ]
+    },
+    {
+      "id": "GGQ-T-045",
+      "question": "숲에 사는 새 중 직박구리와 먹이 범주가 다른 새는?",
+      "categories": [
+        "contrastive"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-046",
+      "question": "청둥오리와 서식지도 같고 먹이도 같은 새는?",
+      "categories": [
+        "contrastive"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-047",
+      "question": "청둥오리와 같은 과인 새는?",
+      "categories": [
+        "contrastive"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-048",
+      "question": "청둥오리와 같은 목인 새는?",
+      "categories": [
+        "contrastive"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-049",
+      "question": "참새목 중 곤충을 먹는 새는?",
+      "categories": [
+        "contrastive"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-050",
+      "question": "참새목 중 과실식이 아닌 새는?",
+      "categories": [
+        "contrastive",
+        "negation"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation"
+      ]
+    },
+    {
+      "id": "GGQ-T-051",
+      "question": "참새목 중 열매를 안 먹는 새는?",
+      "categories": [
+        "negation"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation"
+      ]
+    },
+    {
+      "id": "GGQ-T-052",
+      "question": "직박구리 말고 숲에 사는 과실식 새는?",
+      "categories": [
+        "negation"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation"
+      ]
+    },
+    {
+      "id": "GGQ-T-053",
+      "question": "청둥오리와 같은 속이 아닌 오리는?",
+      "categories": [
+        "negation"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation"
+      ]
+    },
+    {
+      "id": "GGQ-T-054",
+      "question": "청둥오리와 서식지가 겹치지 않는 새는?",
+      "categories": [
+        "negation"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation"
+      ]
+    },
+    {
+      "id": "GGQ-T-055",
+      "question": "참새목 중 감나무 열매는 먹지 않는 새",
+      "categories": [
+        "negation",
+        "specific_plant"
+      ],
+      "expected_kind": "specific_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": false,
+        "negation": false,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation",
+        "specific_plant"
+      ]
+    },
+    {
+      "id": "GGQ-T-056",
+      "question": "오리과 제외하고 청둥오리와 서식지 같은데 먹이 다른 새",
+      "categories": [
+        "negation"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": false,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "negation",
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-057",
+      "question": "겨울에 한국에 오는 오리 중 청둥오리와 같은 속인 새는?",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-058",
+      "question": "참새목 중 열매를 먹는 작은 새는?",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-059",
+      "question": "숲에 사는 새 중 직박구리와 먹이 범주가 같고 멸종위기인 새",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-060",
+      "question": "청둥오리와 같은 속이면서 텃새인 종은?",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-061",
+      "question": "참새목 중 열매를 먹고 노래를 잘하는 새",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-062",
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다르고 몸집이 큰 새는?",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-063",
+      "question": "제주도에서 볼 수 있는 참새목 중 열매 먹는 새",
+      "categories": [
+        "extra_condition"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-064",
+      "question": "국내 기록된 참새목 중 열매를 먹는 새",
+      "categories": [
+        "extra_condition",
+        "scope"
+      ],
+      "expected_kind": "order_fruit",
+      "expected_disposition": "clarify",
+      "raw_kind": "order_fruit",
+      "raw_executes": true,
+      "gated_disposition": "clarify",
+      "slot_ok": {
+        "species": true,
+        "rank": false,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": false,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "scope"
+      ]
+    },
+    {
+      "id": "GGQ-T-065",
+      "question": "직박구리와 같이 사는 새는?",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-066",
+      "question": "청둥오리와 같은 곳에서 공존하는 새 알려줘",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-067",
+      "question": "청둥오리와 진화적으로 가장 가까운 새는?",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-068",
+      "question": "직박구리와 가장 비슷한 새 순위 보여줘",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-069",
+      "question": "청둥오리를 잡아먹는 새는?",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-070",
+      "question": "직박구리와 먹이 경쟁하는 새",
+      "categories": [
+        "overclaim_reject"
+      ],
+      "expected_kind": null,
+      "expected_disposition": "unsupported",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": false,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "unsupported"
+      ]
+    },
+    {
+      "id": "GGQ-T-073",
+      "question": "해외에만 있는 청둥오리와 같은 속 새",
+      "categories": [
+        "scope"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": "same_genus",
+      "raw_executes": true,
+      "gated_disposition": "answer",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": false,
+        "unsupported": true,
+        "ambiguity": true
+      },
+      "lost_conditions": [
+        "residual"
+      ]
+    },
+    {
+      "id": "GGQ-T-080",
+      "question": "오리와 같은 속인 새는?",
+      "categories": [
+        "ambiguity"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": "same_genus",
+      "raw_executes": true,
+      "gated_disposition": "answer",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": true,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": false
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-081",
+      "question": "숲이랑 습지에 사는 새 중 직박구리와 먹이가 같은 새",
+      "categories": [
+        "ambiguity"
+      ],
+      "expected_kind": "habitat_shared_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": false
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-082",
+      "question": "서식지가 겹치면서 먹이가 다른 새는?",
+      "categories": [
+        "ambiguity"
+      ],
+      "expected_kind": "habitat_different_diet",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": false,
+        "habitat": false,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": false
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-083",
+      "question": "같은 속인 새 알려줘",
+      "categories": [
+        "ambiguity"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": true,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": false
+      },
+      "lost_conditions": []
+    },
+    {
+      "id": "GGQ-T-084",
+      "question": "청둥오리와 흰뺨검둥오리와 같은 속인 새",
+      "categories": [
+        "ambiguity"
+      ],
+      "expected_kind": "same_genus",
+      "expected_disposition": "clarify",
+      "raw_kind": null,
+      "raw_executes": false,
+      "gated_disposition": "not_graph",
+      "slot_ok": {
+        "species": false,
+        "rank": true,
+        "group": true,
+        "diet": true,
+        "habitat": true,
+        "relation": false,
+        "scope": true,
+        "specific_plant": true,
+        "negation": true,
+        "residual": true,
+        "unsupported": true,
+        "ambiguity": false
+      },
+      "lost_conditions": []
+    }
+  ]
+}

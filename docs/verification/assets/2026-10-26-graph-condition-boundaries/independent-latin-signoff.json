@@ -1,0 +1,15 @@
+{
+  "local_synthetic_tests": 23,
+  "passed": 23,
+  "app_source_files": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "f60118ddd557373fadbc0e7f7035f2acd367244d4e9ba4f8406a61cbe544f495",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "dc224679334415fa4f37895d9d39e3a4c2025b6f3449000f60dd8c03755d4e88"
+  },
+  "new_gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "review": "approved; binomial/trinomial scope preserved, extra conditions held",
+  "limits": [
+    "Local parser/plan/low-level no-data checks only, not DB taxon identity validation.",
+    "Same-diet extraction may defer to semantic path; validated semantic plan preserves full subspecies name.",
+    "Specific-food low-level helper is generic data-gap; public API separately resolves names."
+  ]
+}

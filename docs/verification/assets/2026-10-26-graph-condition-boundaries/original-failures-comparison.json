@@ -1,0 +1,94 @@
+{
+  "original_first_attempt": {
+    "pass": 23,
+    "fail": 13
+  },
+  "original_failed_count": 13,
+  "final_regression": {
+    "pass": 36
+  },
+  "resolved_original_failures": 13,
+  "new_failures": [],
+  "original_failures": [
+    {
+      "id": "V2-02A",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-03A",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-03B",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-03C",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-05A",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-05B",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-05C",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-07B",
+      "before": "false_hold",
+      "after": "supported_no_matching_results",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-09A",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-10C",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-11B",
+      "before": "false_hold",
+      "after": "supported_answer",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-12B",
+      "before": "false_hold",
+      "after": "supported_no_matching_results",
+      "final_status": "pass"
+    },
+    {
+      "id": "V2-12C",
+      "before": "wrong_hold_reason",
+      "after": "unsupported_specific_food",
+      "final_status": "pass"
+    }
+  ],
+  "feedback_exposed": true,
+  "independent_fresh_evaluation_separate": true
+}

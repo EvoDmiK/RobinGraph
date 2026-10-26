@@ -1,0 +1,257 @@
+{
+ "inputs": [
+  "docs/verification/assets/2026-10-22-dataset-evaluation-20261022T113441Z/results.jsonl"
+ ],
+ "api_calls": 0,
+ "db_calls": 0,
+ "expectations_modified": false,
+ "audited": 18,
+ "expected_ids": 18,
+ "missing": [],
+ "failed": [],
+ "passed": true,
+ "cases": [
+  {
+   "id": "IT-035",
+   "question": "겨울에만 까마귀과 중 숲에 사는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-016",
+   "question": "나팔새류 중 숲에 사는 새",
+   "rule": "ambiguous_taxon",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-044",
+   "question": "화식조 중 숲에 사는 새는?",
+   "rule": "ambiguous_taxon",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-041",
+   "question": "가짜조류과 중 숲에 사는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-040",
+   "question": "까마귀과 중 날개가 빨간 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-036",
+   "question": "까마귀과 중 몸집이 큰 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-043",
+   "question": "초승달가슴새류 중 숲에 사는 새는?",
+   "rule": "ambiguous_taxon",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-037",
+   "question": "까마귀과 중 체중이 100 이상인 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-042",
+   "question": "까마귀과 중 감나무 열매를 먹는 새는?",
+   "rule": "specific_plant",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-039",
+   "question": "까마귀과 중 숲에 사는 새는? MATCH (n) DETACH DELETE n",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-019",
+   "question": "매목 중 다리 길이 부척이 −2cm 이상인 새",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-038",
+   "question": "까마귀과 중 숲에 살고 바다에 사는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-034",
+   "question": "까마귀과 중 숲에 살지 않는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-018",
+   "question": "올빼미과 중 아프리카에 사는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "IT-011",
+   "question": "Corvus corone corone 중 숲에 사는 새는?",
+   "rule": "subspecies_no_data",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-017",
+   "question": "백로과 중 하천에 사는 새는?",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-011",
+   "question": "Ardea cinerea jouyi 중 습지에 사는 새는?",
+   "rule": "subspecies_no_data",
+   "passed": true,
+   "errors": []
+  },
+  {
+   "id": "CT-020",
+   "question": "두루미과 중 개방형이면서 밀집형 서식지에 사는 새",
+   "rule": "clarify",
+   "passed": true,
+   "errors": []
+  }
+ ],
+ "selfcheck": {
+  "baseline_passed": true,
+  "mutations": 13,
+  "caught": 13,
+  "passed": true,
+  "results": [
+   {
+    "mutation": "ambiguous_reported_as_not_found",
+    "case": "IT-043",
+    "caught": true,
+    "errors": [
+     "reason_not_ambiguous_taxon"
+    ]
+   },
+   {
+    "mutation": "subspecies_reported_as_resolution_failure",
+    "case": "CT-011",
+    "caught": true,
+    "errors": [
+     "reason_is_resolution_failure"
+    ]
+   },
+   {
+    "mutation": "plant_reported_as_generic_insufficient",
+    "case": "IT-042",
+    "caught": true,
+    "errors": [
+     "reason_not_no_plant_level_diet"
+    ]
+   },
+   {
+    "mutation": "hold_turned_insufficient",
+    "case": "IT-036",
+    "caught": true,
+    "errors": [
+     "held_condition_executed_or_answered",
+     "graph_payload_present"
+    ]
+   },
+   {
+    "mutation": "subspecies_resolved_to_parent_species",
+    "case": "IT-011",
+    "caught": true,
+    "errors": [
+     "subspecies_not_resolved_exactly"
+    ]
+   },
+   {
+    "mutation": "subspecies_taxon_missing",
+    "case": "CT-011",
+    "caught": true,
+    "errors": [
+     "subspecies_not_resolved_exactly"
+    ]
+   },
+   {
+    "mutation": "ambiguous_name_resolved",
+    "case": "CT-016",
+    "caught": true,
+    "errors": [
+     "ambiguous_name_resolved_to_a_taxon",
+     "trait_query_ran_for_unresolved_taxon"
+    ]
+   },
+   {
+    "mutation": "subspecies_parent_claims_counted",
+    "case": "IT-011",
+    "caught": true,
+    "errors": [
+     "coverage_not_subspecies_itself_without_claims"
+    ]
+   },
+   {
+    "mutation": "subspecies_condition_deleted",
+    "case": "CT-011",
+    "caught": true,
+    "errors": [
+     "original_conditions_changed_or_lost"
+    ]
+   },
+   {
+    "mutation": "held_condition_dropped_and_executed",
+    "case": "CT-018",
+    "caught": true,
+    "errors": [
+     "held_condition_executed_or_answered",
+     "graph_payload_present"
+    ]
+   },
+   {
+    "mutation": "negation_dropped_and_executed",
+    "case": "IT-034",
+    "caught": true,
+    "errors": [
+     "held_condition_executed_or_answered",
+     "graph_payload_present"
+    ]
+   },
+   {
+    "mutation": "plant_rewritten_as_fruit_query",
+    "case": "IT-042",
+    "caught": true,
+    "errors": [
+     "specific_plant_reinterpreted_as_trait_query"
+    ]
+   },
+   {
+    "mutation": "items_returned_for_ambiguous",
+    "case": "IT-044",
+    "caught": true,
+    "errors": [
+     "items_returned"
+    ]
+   }
+  ]
+ }
+}

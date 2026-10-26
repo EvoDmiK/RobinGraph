@@ -1,0 +1,1 @@
+NAS candidate script docker cp failed into read-only root filesystem. Candidate readiness had passed; evaluator had not run. Live app not replaced. Fixed harness to stream files through docker exec into writable /tmp tmpfs.

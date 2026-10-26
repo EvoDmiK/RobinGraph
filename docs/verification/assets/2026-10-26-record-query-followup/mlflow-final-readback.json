@@ -1,0 +1,68 @@
+{
+  "run_id": "0ef42977885444df85a8d6ac1bacdbbe",
+  "status": "FINISHED",
+  "artifacts": [
+    {
+      "artifact": "final-readback/independent-final-metrics.json",
+      "sha256": "49756c990dfa5f4ae19af241a9e84ce668145b69abf0ce4cc6c7825d7de662ae",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/independent-port-recovery-verification.json",
+      "sha256": "6d814ca259567993dc2565b14d9476b06da4e2e0d607c2d6cf6c2d40caf9b9ca",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/independent-source-review.json",
+      "sha256": "24f422cfa13d561664aa3bc5010b9146a5e20cbd38687034976462348211e2d8",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/final-runtime-check.json",
+      "sha256": "4efe3cf5aebd2f6492e26d4edb0af8a20b1ff476dd799a172177be8266034e86",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/evaluation-context.json",
+      "sha256": "8e0f60e18f7425f83ac3177eb8bed287b420f977cf4accc883b3096eba134e26",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/root-readback-score-provenance.json",
+      "sha256": "b15a77a1a8a17afbbb3dc578c2de503f2cd830b9c4c68b6ff52c59f99420c99d",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/writer-vault-sync.json",
+      "sha256": "cbd231b08d3403ebda39837501e8da6b39af7b391f21e7fab8fca0265e009449",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/regression-score.json",
+      "sha256": "ab462cbd9517694ff0b1ed2c5cf23d04075b87d12bed71e1145585eb647acfc0",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/followup-score.json",
+      "sha256": "ea752053095b05537b3aa87b61fcbcdc9339405b50d36684913381b3a0060125",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/fresh-score.json",
+      "sha256": "d8286fa3ddf7718bf288fb293356215ab8014cbc7f77eb19f64eb7a8324bf5ba",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/recheck-score.json",
+      "sha256": "39f55700bd47504bab3c204f5c5fda355f8a3a13e6366c51138cf18a9183ea30",
+      "readback_matches": true
+    },
+    {
+      "artifact": "final-readback/2026-10-26-record-query-followup.md",
+      "sha256": "3bfe2ada00461383b6839c88c27371292a265b2e0c3d1c8bfc48a802710ba0a7",
+      "readback_matches": true
+    }
+  ],
+  "new_chat_requests": 0,
+  "deleted_traces": 0
+}

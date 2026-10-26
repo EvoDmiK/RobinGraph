@@ -1,0 +1,20 @@
+{
+  "result": "AGREE_WITH_AUTHOR_ADJUDICATION",
+  "reviewer": "independent_writer_peer",
+  "source": "/tmp/rg-contract-blind-20261026/adjudication-label-ambiguity.json",
+  "static_constants_checked": [
+    "graph_condition_extractor._TRAIT_LABELS",
+    "species_profile.LABELS"
+  ],
+  "findings": [
+    "Initial category-ratio-unapplied-01 has niche-label/category-value conflict; diet_category sole gold not established.",
+    "Initial category-ratio-unapplied-03 uses shared enum with niche alias; diet_category expectation insufficiently supported.",
+    "Initial category-ratio-unapplied-02 names diet_category explicitly and is clear."
+  ],
+  "initial_peer_review_limitation": "Initial peer reviewer checked scope ranks and structural equivalence but failed to resolve the imported field alias mapping; previous PASS did not establish the two gold labels.",
+  "original_gold_changed": false,
+  "score_changed": false,
+  "trace_access": false,
+  "api_calls": 0,
+  "human_reviewed": false
+}

@@ -1,0 +1,101 @@
+--- a/src/robingraph/api/services.py
++++ b/src/robingraph/api/services.py
+@@ -843,9 +843,10 @@
+                 )
+ 
+         graph_question = parse_graph_question(request.question) if request.intent in ("auto", "profile") else None
++        species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
+         graph_method = "deterministic" if request.intent == "auto" else "explicit"
+         # Established single-species routes need no extra embedding request.
+-        single_species = (parse_species_question(request.question) or _species_chat_question(request.question))
++        single_species = species_question or _species_chat_question(request.question)
+         if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
+                 and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
+             from ..retrieval.graph_intent_schema import execution_gate, to_graph_question, unsupported_food
+@@ -859,18 +860,19 @@
+                     if self.graph_intent_mode == "active" and getattr(interpreted, "source", None) not in ("extractor", "semantic"):
+                         raise ValueError("Graph interpretation must include extractor evidence")
+                     disposition = execution_gate(request.question, interpreted)
++                    interpreted_question = to_graph_question(request.question, interpreted)
+                     route_span.set_attributes({"graph_intent.mode": self.graph_intent_mode,
+                                                "graph_intent.kind": getattr(interpreted, "kind", None),
+                                                "graph_intent.source": getattr(interpreted, "source", None),
+                                                "graph_intent.disposition": disposition,
+-                                               "graph_intent.template_matches_legacy": to_graph_question(request.question, interpreted) == graph_question,
++                                               "graph_intent.template_matches_legacy": interpreted_question == graph_question,
+                                                "graph_intent.negation_count": len(getattr(interpreted, "negation", ())),
+                                                "graph_intent.residual_count": len(getattr(interpreted, "residual", ())),
+                                                "graph_intent.ambiguity_count": len(getattr(interpreted, "ambiguity", ())),
+                                                "graph_intent.legacy_kind": graph_question.kind if graph_question else None})
+                     if self.graph_intent_mode == "active":
+                         legacy_match = graph_question is not None
+-                        graph_question = to_graph_question(request.question, interpreted)
++                        graph_question = interpreted_question
+                         graph_method = "semantic" if request.intent == "auto" else "explicit"
+                         foods = unsupported_food(request.question, interpreted)
+                         if foods:
+@@ -909,7 +911,7 @@
+                             warnings=["해석 실패를 종이나 관계가 없다는 뜻으로 해석하지 마세요."],
+                             result=ChatClarifyResult(prompt="질문을 다시 입력해 주세요."),
+                         )
+-        if graph_question is not None and graph_question.kind == "same_genus" and parse_species_question(request.question):
++        if graph_question is not None and graph_question.kind == "same_genus" and species_question:
+             graph_question = None  # Preserve the established single-species relation response.
+         if graph_question is not None:
+             if request.filters is not None and not (
+@@ -1022,7 +1024,6 @@
+         name_relations_handler = self.name_relations_handler
+         taxon_name_resolution_handler = self.taxon_name_resolution_handler
+         evidence_flow = self.evidence_flow
+-        species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
+         recognized = ("profile", species_question.name) if species_question else _species_chat_question(request.question) if request.intent == "auto" else None
+         jev_label = None
+         jev_attempted = False
+--- a/src/robingraph/retrieval/graph_questions.py
++++ b/src/robingraph/retrieval/graph_questions.py
+@@ -68,6 +68,7 @@
+                           '먹거나 함께 산다는 근거는 아닙니다.'),
+     'different_diet': ('서식 환경 범주가 같고 먹이 생태 범주가 다른 종입니다. 실제로 같은 장소에서 함께 살거나 '
+                        '먹이 경쟁을 하지 않는다는 뜻은 아닙니다.'),
++    'tree_fruit': '나무열매만 먹는 종을 구분한 자료는 없습니다. 아래 목록은 나무와 풀을 구분하지 않은 열매 먹이 범주를 참고한 결과입니다.',
+     'no_plant_level_diet': '특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다.',
+     'frugivore_only': ("AVONET 먹이 생태 범주가 '열매 섭식(Frugivore)'인 종만 포함합니다. "
+                        '열매를 일부 먹는 잡식성 종은 빠집니다.'),
+@@ -387,7 +388,7 @@
+     if all(len(FOOD_GAPS[food]) == 1 for food in foods):
+         suggestion, cursor = '', 0
+         for span in sorted(spans, key=lambda s: s.start):
+-            label = _short_word(FOOD_GAPS[span.text][0])
++            label = VALUES[FOOD_GAPS[span.text][0]].split(' (')[0]
+             tail = question[span.end:span.end + 1]
+             suggestion += question[cursor:span.start] + label
+             cursor = span.end
+@@ -405,10 +406,6 @@
+     if key in DIET_SHARE_GROUPS:
+         return f"{VALUES[key]} ({'·'.join(SOURCE_CATEGORY[part] for part in DIET_SHARE_GROUPS[key])})"
+     return VALUES[key]
+-
+-
+-def _short_word(key):
+-    return VALUES[key].split(' (')[0]   # 곤충 (원자료: 무척추동물) -> 곤충, for a question the user can type
+ 
+ 
+ def _label(taxon):
+@@ -639,7 +636,7 @@
+     limitations = ([LIMITATIONS['frugivore_only']] if criterion == 'frugivore'
+                    else [LIMITATIONS['fruit_share'], LIMITATIONS['elton_interpolated']]) + [LIMITATIONS['graph_claims_only']]
+     if criterion == 'tree_fruit_share':
+-        limitations.insert(0, '나무열매만 먹는 종을 구분한 자료는 없습니다. 아래 목록은 나무와 풀을 구분하지 않은 열매 먹이 범주를 참고한 결과입니다.')
++        limitations.insert(0, LIMITATIONS['tree_fruit'])
+     sources_out = [taxonomy_source] + [_source(p['source_name'], p['source_url']) for item in items for p in item['paths']]
+     if not items:
+         return _payload('empty', title, f'{parsed.rank_name}에서 조건에 맞는 종을 그래프에서 찾지 못했습니다.',
+@@ -878,7 +875,7 @@
+     limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.']
+     for c in conditions:
+         if c.qualifier == 'tree_fruit':
+-            limitations.append('나무열매만 먹는 종을 구분한 자료는 없습니다. 아래 목록은 나무와 풀을 구분하지 않은 열매 먹이 범주를 참고한 결과입니다.')
++            limitations.append(LIMITATIONS['tree_fruit'])
+         if c.trait_name == 'trophic_niche' and c.value == 'Frugivore':
+             limitations.append(LIMITATIONS['frugivore_only'])
+         elif TRAIT_CONDITIONS[c.trait_name][1] == 'text' and c.trait_name != 'diet_category':

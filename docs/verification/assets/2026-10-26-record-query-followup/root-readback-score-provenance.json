@@ -1,0 +1,46 @@
+{
+  "reason": "Recompute score metadata after read-only root verification added exact_root_question_verified flag; no HTTP responses/traces/evaluator/gold/case outcomes changed.",
+  "new_api_calls": 0,
+  "items": [
+    {
+      "folder": "phase2-attempt2",
+      "split": "regression",
+      "case_counts_unchanged": true,
+      "all_case_rows_unchanged": true,
+      "trace_sha256_unchanged": "50479fdf9042b9ab36a1b4fe67149631bfa6c84ed47ed96720d64f8806851458",
+      "before_score_preserved": "docs/verification/assets/2026-10-26-record-query-followup/phase2-attempt2/regression-score-before-root-readback.json"
+    },
+    {
+      "folder": "phase2-attempt2",
+      "split": "fresh",
+      "case_counts_unchanged": true,
+      "all_case_rows_unchanged": true,
+      "trace_sha256_unchanged": "8364343a41fc8e61e47c6e56868e97a59b32d21aa955f78e19e99f08143b1364",
+      "before_score_preserved": "docs/verification/assets/2026-10-26-record-query-followup/phase2-attempt2/fresh-score-before-root-readback.json"
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "regression",
+      "case_counts_unchanged": true,
+      "all_case_rows_unchanged": true,
+      "trace_sha256_unchanged": "f400b2f058bbdac4f597620e669a751cf360136bed71d9a7b0f8c53d3f4a2876",
+      "before_score_preserved": "docs/verification/assets/2026-10-26-record-query-followup/phase3-first-evaluations/regression-score-before-root-readback.json"
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "fresh",
+      "case_counts_unchanged": true,
+      "all_case_rows_unchanged": true,
+      "trace_sha256_unchanged": "d4934eb402f9099cb4006399c092dd01dfe5ba091fb7d15ef62ac540f2240df4",
+      "before_score_preserved": "docs/verification/assets/2026-10-26-record-query-followup/phase3-first-evaluations/fresh-score-before-root-readback.json"
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "followup",
+      "case_counts_unchanged": true,
+      "all_case_rows_unchanged": true,
+      "trace_sha256_unchanged": "3c1b1deddfe8de2136223f12959793432b6836e4dc20421a07612ccfade77574",
+      "before_score_preserved": "docs/verification/assets/2026-10-26-record-query-followup/phase3-first-evaluations/followup-score-before-root-readback.json"
+    }
+  ]
+}

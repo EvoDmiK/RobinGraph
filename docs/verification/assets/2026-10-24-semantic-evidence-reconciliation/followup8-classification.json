@@ -1,0 +1,39 @@
+{
+  "source_score_sha256": "ae00140718a14f34500c7531ac5d83c8ffab686eb410e55aca1ed29fe8fa6181",
+  "counts": {
+    "supported": {
+      "pass": 6
+    },
+    "hold": {
+      "pass": 2
+    }
+  },
+  "same_request_intent_counts": {
+    "supported": {
+      "pass": 6
+    },
+    "hold": {
+      "not_applicable": 2
+    }
+  },
+  "observed_repair_rules": {
+    "R01": [],
+    "R02": [
+      "reference_relation"
+    ],
+    "R03": [
+      "strict_bound_restatement"
+    ],
+    "N02": [],
+    "F02": [],
+    "F05": [
+      "strict_bound_restatement"
+    ]
+  },
+  "review": "Six supported cases have expected resolved scope, rank and conditions in actual API response (or relation execution_summary), corroborated by same-request intent. Two explicit holds preserve missing specific-fruit data and negation safety. All responses HTTP200, eight unique trace IDs.",
+  "limits": [
+    "Final run did not exercise rank_suffix or predicate_ending repair because model returned valid original evidence; their execution is proven only by deterministic tests and earlier predicate-ending actual trace.",
+    "Taxon Korean-name failure N05 remains unresolved in first measurement.",
+    "No new provider/API/DB calls by reviewer; no source or gold modifications."
+  ]
+}

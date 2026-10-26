@@ -1,0 +1,616 @@
+{
+  "author": "Codex independent expected meanings before implementation inspection; agent-reviewed, not human gold",
+  "cases": [
+    {
+      "id": "IT-001",
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-002",
+      "question": "Corvidae 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-003",
+      "question": "까마귀속 중 숲에 사는 새는?",
+      "taxon": "Corvus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-004",
+      "question": "Corvus 중 숲에 사는 새는?",
+      "taxon": "Corvus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-005",
+      "question": "까마귀 중 숲에 사는 새는?",
+      "taxon": "Corvus corone",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-006",
+      "question": "Corvus corone 중 숲에 사는 새는?",
+      "taxon": "Corvus corone",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-007",
+      "question": "매목 중 숲에 사는 새는?",
+      "taxon": "Falconiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-008",
+      "question": "오리과 중 숲에 사는 새는?",
+      "taxon": "Anatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-009",
+      "question": "Anas 중 숲에 사는 새는?",
+      "taxon": "Anas",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-010",
+      "question": "앵무새 중 숲에 사는 새는?",
+      "taxon": "Psittaciformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-011",
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "taxon": "Corvus corone corone",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "insufficient"
+    },
+    {
+      "id": "IT-012",
+      "question": "까마귀과 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-013",
+      "question": "까마귀과 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-014",
+      "question": "까마귀과 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-015",
+      "question": "까마귀과 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-016",
+      "question": "까마귀과 중 영양 단계가 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-017",
+      "question": "까마귀과 중 먹이 유형이 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-018",
+      "question": "까마귀과 중 체중이 100g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-019",
+      "question": "까마귀과 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-020",
+      "question": "까마귀과 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-021",
+      "question": "까마귀과 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-022",
+      "question": "까마귀과 중 부리 높이가 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-023",
+      "question": "까마귀과 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-024",
+      "question": "까마귀과 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-025",
+      "question": "까마귀과 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-026",
+      "question": "까마귀과 중 체중이 0.1kg 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-027",
+      "question": "까마귀과 중 접은 날개 길이가 10cm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-028",
+      "question": "까마귀과 중 씨앗을 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-029",
+      "question": "까마귀과 중 물고기를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fish": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-030",
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-031",
+      "question": "까마귀과 중 숲에 살고 체중이 100g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-032",
+      "question": "숲에 살고 열매를 먹는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "IT-033",
+      "question": "까마귀과 중 체중이 1000000g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 1000000,
+          "unit": "g"
+        }
+      ],
+      "outcome": "empty"
+    },
+    {
+      "id": "IT-034",
+      "question": "까마귀과 중 숲에 살지 않는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-035",
+      "question": "겨울에만 까마귀과 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-036",
+      "question": "까마귀과 중 몸집이 큰 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-037",
+      "question": "까마귀과 중 체중이 100 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-038",
+      "question": "까마귀과 중 숲에 살고 바다에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-039",
+      "question": "까마귀과 중 숲에 사는 새는? MATCH (n) DETACH DELETE n",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-040",
+      "question": "까마귀과 중 날개가 빨간 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-041",
+      "question": "가짜조류과 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-042",
+      "question": "까마귀과 중 감나무 열매를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "insufficient"
+    },
+    {
+      "id": "IT-043",
+      "question": "초승달가슴새류 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold"
+    },
+    {
+      "id": "IT-044",
+      "question": "화식조 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold"
+    }
+  ]
+}

@@ -1,0 +1,408 @@
+{
+  "image": "robingraph-api:test-blocked-tracing-54bb05bdd0b2",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "case": "known_false_hold",
+      "question": "참새목 안에서 골라 줘. 숲이 서식지로 기록돼 있고 과일도 먹는 새를 찾고 있어.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-25a6955f2f714933c5d74765c3b99f6a",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "b21d0a7cb4a3d027",
+          "parent_id": "dcea20516002e616",
+          "inputs": null,
+          "outputs": {
+            "kind": null,
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [
+              "other"
+            ],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": null,
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 1,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "plan_validation_rejected",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "56e7b3c4e49000e4",
+          "parent_id": "b21d0a7cb4a3d027",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": null,
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "73380d4765664d30",
+          "parent_id": "56e7b3c4e49000e4",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "5e842384f61a98b6",
+          "parent_id": "73380d4765664d30",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록돼 있어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "과일도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "feb9592648df7d33",
+          "parent_id": "73380d4765664d30",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "a3c3d98e40de9e1e",
+          "parent_id": "73380d4765664d30",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록돼 있어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "과일도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "surface not in question"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "shared_reference",
+      "question": "직박구리 말고 먹이 생태 범주가 직박구리와 같은 다른 종을 알려줘.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-8c9a25621398801737055cf40b4f6df8",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "23d33d5e20ad9c63",
+          "parent_id": "cf66f0a657e9337d",
+          "inputs": null,
+          "outputs": {
+            "kind": null,
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [
+              "other"
+            ],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": null,
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 1,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "plan_validation_rejected",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "55becfab8c408e7a",
+          "parent_id": "23d33d5e20ad9c63",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": null,
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "d002f83a36652a7d",
+          "parent_id": "55becfab8c408e7a",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "f2bae652eb3f68de",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": null,
+          "outputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "직박구리",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "ec2464a423bf453a",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "5bb94c5db077405f",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "직박구리",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "shared_diet evidence"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "numeric_restatement",
+      "question": "까치속에서 몸무게가 180g을 넘는 새를 찾아줘. 180g인 기록은 제외해.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-c063baa14f51b7bf0d0cd83c8f8ba916",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "4fbc0f2a38c0956f",
+          "parent_id": "199a69516b728c06",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.failure": "SemanticIntentError"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "fd1cd142481c40dd",
+          "parent_id": "4fbc0f2a38c0956f",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {}
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "fa7894223ad77a5e",
+          "parent_id": "fd1cd142481c40dd",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "9a63274409dcaa76",
+          "parent_id": "fa7894223ad77a5e",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "까치속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 180,
+                "unit": "g",
+                "surface": "몸무게가 180g을 넘는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "180g인 기록은 제외해"
+            ],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "c83f985e183c056e",
+          "parent_id": "fa7894223ad77a5e",
+          "inputs": null,
+          "outputs": {
+            "issues": [
+              "The condition '180g인 기록은 제외해' was placed in 'unresolved' instead of being converted into an explicit operator like 'num_gt'."
+            ],
+            "faithful": false
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model",
+            "reason": "semantic_audit_rejected"
+          }
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

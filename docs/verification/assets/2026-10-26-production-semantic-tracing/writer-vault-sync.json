@@ -1,0 +1,33 @@
+{
+  "task": "2026-10-26-production-semantic-tracing",
+  "verified_at": "2026-10-26T10:41:54.827Z",
+  "repository_path": "docs/work-log/2026-10-26-production-semantic-tracing.md",
+  "scratch_path": "/tmp/2026-10-26-production-semantic-tracing.md",
+  "vault_path": "Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-26-시맨틱-질의-원인trace-운영배포.md",
+  "sha256": "b134f3a6f4b897f41e00e98789f83440755a26bee6f0cae7e6c7710012daf11e",
+  "scratch_repository_vault_raw_equal": true,
+  "characters": 9233,
+  "vault_documents_changed": 4,
+  "indexes": [
+    "2xx 검색·RAG·그래프 질의",
+    "7xx 배포·인프라"
+  ],
+  "index_readback_exact": true,
+  "backlog_row": "RG-212",
+  "backlog_status": "in_progress",
+  "other_index_backlog_content_preserved": true,
+  "production_deployment": "RobinGraph-PROD #9 SUCCESS",
+  "source_sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+  "snapshot_uncommitted": true,
+  "main_pipeline_lexical_unchanged": true,
+  "remaining_failures": [
+    "V2-07A",
+    "V2-10B"
+  ],
+  "corrections": [
+    "inventory NAS-Agent-Check #3 is one failure, not three",
+    "deploy helper changes separated from immutable app snapshot",
+    "NAS-Agent-Check #7 FAILURE, not ABORTED"
+  ],
+  "writer_git_mutations": false
+}

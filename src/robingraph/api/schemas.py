@@ -301,9 +301,15 @@ class ChatEvidenceResult(_ChatModel):
     search: DocumentSearchResponse
 
 
+class ChatClarifyChoice(_ChatModel):
+    label: str = Field(min_length=1, max_length=100)
+    question: str = Field(min_length=1, max_length=2_000)
+
+
 class ChatClarifyResult(_ChatModel):
     kind: Literal["clarify"] = "clarify"
     prompt: str
+    choices: list[ChatClarifyChoice] = Field(default_factory=list, max_length=3, exclude_if=lambda value: not value)
 
 
 class EntityCandidateResponse(_ChatModel):
@@ -312,6 +318,7 @@ class EntityCandidateResponse(_ChatModel):
     display_name: str = Field(min_length=1, max_length=200)
     score: float = Field(ge=-1, le=1, allow_inf_nan=False)
     question: str | None = None
+    route_intent: Literal["auto", "profile"] = Field(default="profile", exclude_if=lambda value: value == "profile")
 
 
 class EntityResolutionResponse(_ChatModel):
@@ -330,8 +337,13 @@ class ChatNameRelationsResult(_ChatModel):
     relationships: dict
 
 
+class ChatGraphResult(_ChatModel):
+    kind: Literal["graph_query"] = "graph_query"
+    payload: dict
+
+
 ChatResult = Annotated[
-    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult | ChatNameRelationsResult,
+    ChatTaxonomyResult | ChatSpeciesResult | ChatObservationsResult | ChatEvidenceResult | ChatClarifyResult | ChatNameRelationsResult | ChatGraphResult,
     Field(discriminator="kind"),
 ]
 

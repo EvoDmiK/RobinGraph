@@ -1,0 +1,13 @@
+[Pipeline] { (Tests)
+Ran 1031 tests in 22.832s
+OK (skipped=39)
+ℹ tests 318
+ℹ pass 318
+ℹ fail 0
+ℹ skipped 0
+[Pipeline] { (AMD64 fixture startup smoke)
+[Pipeline] { (Production approval)
+Deploy verified commit 54b4cd94cd032b3d2c25a55b796b383ff94e0a20, image ghcr.io/evodmik/robingraph@sha256:dc4974f9d82e4625d8f61361caf82f4bb1b7a841ad8f433d76bc3fdb89f0f91b to NAS Production?
+Approved by admin
+[Pipeline] { (Deploy and verify NAS Production)
+Finished: SUCCESS

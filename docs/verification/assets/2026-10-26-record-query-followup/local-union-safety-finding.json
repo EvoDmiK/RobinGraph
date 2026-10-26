@@ -1,0 +1,8 @@
+{
+  "stage": "independent_local_mock",
+  "actual_api_execution": false,
+  "deployed": false,
+  "finding": "trophic_level to trophic_niche with common value Omnivore incorrectly accepted by union proof",
+  "candidate_semantic_source_sha256": "fbbe97458387c80c29e841aba88dde2d368f7989ae44e518b84799596dbbeab8",
+  "review_status": "rejected_pending_explicit_source_field_proof"
+}

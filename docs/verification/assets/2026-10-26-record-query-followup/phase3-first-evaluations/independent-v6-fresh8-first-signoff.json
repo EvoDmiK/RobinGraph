@@ -1,0 +1,35 @@
+{
+  "measurement": "fresh8_first_attempt",
+  "case_counts": {
+    "pass": 5,
+    "fail": 3
+  },
+  "raw_group_counts": {
+    "fail": 4
+  },
+  "raw_group_metric_limit": "Each group has only2 equivalent questions and no contrast. Unchanged scorer requires a contrast so 0/4 groups structurally fail; do not interpret as 0/4 equivalence without this caveat.",
+  "equivalent_pair_exact_counts": {
+    "true": 2,
+    "false": 2
+  },
+  "classifications": {
+    "supported_answer": 4,
+    "negated_condition": 1,
+    "wrong_hold_reason": 3
+  },
+  "http200": 8,
+  "unique_trace_ids": 8,
+  "exact_root_verified": 8,
+  "image": "robingraph-api:test-record-query-followup-3b4392eb69a2",
+  "unsafe_answers": 0,
+  "api_calls_by_reviewer": 0,
+  "failure_causes": {
+    "fresh8-biologicalNOT-02": "Explicit canonical habitat label plus negative query loses graph cue and falls to generic JEV intent_uncertain.",
+    "fresh8-plantidentitygap-01": "Duplicate same-plant-species restatement leaves 식물/일치해야 residual instead of insufficient-data reason.",
+    "fresh8-plantidentitygap-02": "Relative same-species-plant relation not recognized lexically; provider none/unknown relation then audit rejection, not specific-food data-gap reason."
+  },
+  "cases_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "raw_scores_and_gold_unchanged": true,
+  "next_measurement": "If implementation changes, these now exposed questions are regression, not fresh."
+}

@@ -1,0 +1,92 @@
+{
+  "kind": "feedback_exposed_comparison",
+  "new_api_calls": 0,
+  "phase1_blind_first": {
+    "pass": 11,
+    "fail": 13
+  },
+  "same24_phase2_exposed": {
+    "pass": 21,
+    "fail": 3
+  },
+  "phase1_failed_cases": [
+    {
+      "id": "F01B",
+      "phase1_status": "fail",
+      "phase2_status": "fail",
+      "phase2_classification": "false_hold"
+    },
+    {
+      "id": "F01C",
+      "phase1_status": "fail",
+      "phase2_status": "fail",
+      "phase2_classification": "false_hold"
+    },
+    {
+      "id": "F03B",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F03C",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "negated_condition"
+    },
+    {
+      "id": "F04C",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_source_no_data"
+    },
+    {
+      "id": "F05A",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F05B",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F05C",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F06A",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F06B",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "supported_answer"
+    },
+    {
+      "id": "F07A",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "unsupported_specific_food"
+    },
+    {
+      "id": "F07B",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "unsupported_specific_food"
+    },
+    {
+      "id": "F08B",
+      "phase1_status": "fail",
+      "phase2_status": "pass",
+      "phase2_classification": "unsupported_specific_food"
+    }
+  ]
+}

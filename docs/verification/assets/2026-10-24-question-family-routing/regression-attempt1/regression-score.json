@@ -1,0 +1,794 @@
+{
+  "case_counts": {
+    "pass": 22,
+    "fail": 2
+  },
+  "classifications": {
+    "supported_answer": 18,
+    "unsupported_specific_food": 1,
+    "supported_no_matching_results": 1,
+    "negated_condition": 1,
+    "supported_source_no_data": 1,
+    "false_hold": 2
+  },
+  "group_counts": {
+    "pass": 6,
+    "fail": 2
+  },
+  "groups": [
+    {
+      "group": "T01",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "T02",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "H01",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "H02",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "H03",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "H04",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "H05",
+      "status": "fail",
+      "equivalent_pair_exact": false,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "H06",
+      "status": "fail",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "T01A",
+      "group": "T01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Corvidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+        ]
+      },
+      "trace_id": "tr-01b698650924a61c84c954d3ddc2ed6c",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "T01B",
+      "group": "T01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Corvidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+        ]
+      },
+      "trace_id": "tr-c3d2795196f8c3c090b0d2ac14273e02",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "T01C",
+      "group": "T01",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-4b687ad262e34b2fa8d9c455c0a21398",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "T02A",
+      "group": "T02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 180.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-20d37332e95da5372c8cf3f3d7297cd9",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "T02B",
+      "group": "T02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 180.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-476a0ace960728139811c7b7a8a49c6f",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "T02C",
+      "group": "T02",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_lte\", \"threshold\": 180.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-322e438d8416551492a18f8327fc8794",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H01A",
+      "group": "H01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Wetland\"}",
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"seed\"}"
+        ]
+      },
+      "trace_id": "tr-6a5611c9355e9da19a070567929fc484",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H01B",
+      "group": "H01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Wetland\"}",
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"seed\"}"
+        ]
+      },
+      "trace_id": "tr-98459be5dedbe636f68e4de00637b857",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H01C",
+      "group": "H01",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"seed\"}"
+        ]
+      },
+      "trace_id": "tr-8887d6a95c73e107366d1be9f14df62a",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H02A",
+      "group": "H02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 100.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-5eab340e6477b93bdbaba92611b5f030",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H02B",
+      "group": "H02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 100.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-424591a21b0d3b0d6bd77e167960986e",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H02C",
+      "group": "H02",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 100.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-103019dc02abde8ed77d7069293dea38",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H03A",
+      "group": "H03",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Wetland\"}"
+        ]
+      },
+      "trace_id": "tr-72633cae3bbd0ebe745381632037fd8c",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H03B",
+      "group": "H03",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Wetland\"}"
+        ]
+      },
+      "trace_id": "tr-1e8d1761b504b115c2b49ba93e4ecd32",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H03C",
+      "group": "H03",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anser",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Wetland\"}"
+        ]
+      },
+      "trace_id": "tr-708d5ad33d574dad6651de0c42fb978b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H04A",
+      "group": "H04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Aythya fuligula",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 500.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-16d00fc7b6f3d5b0b60f145954a1013d",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H04B",
+      "group": "H04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Aythya fuligula",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 500.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-e65450589a71663e41e02db14019ff10",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H04C",
+      "group": "H04",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-186d88a8de6475078a536f19320b15da",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H05A",
+      "group": "H05",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_source_no_data",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          "{\"op\": \"num_lt\", \"threshold\": 300.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-3d3c8b13fb3afe830799616370c1dd5d",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H05B",
+      "group": "H05",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Anas platyrhynchos platyrhynchos",
+              "rank": "subspecies",
+              "conditions": [
+                "{\"op\": \"num_lt\", \"threshold\": 300.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": "subspecies",
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-243ea52a6b9f1c374cdd636ad0d794a3",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H05C",
+      "group": "H05",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_lt\", \"threshold\": 300.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-fbc2c85ca1ee6db67b9f4e4d82448887",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H06A",
+      "group": "H06",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "shared_diet",
+        "reference": "Ardea cinerea",
+        "habitat": null,
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-53630dd1e9ed5d68c448d703308d94d8",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H06B",
+      "group": "H06",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "shared_diet",
+        "reference": "Ardea cinerea",
+        "habitat": null,
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-898a1faa87ef064768341ba34c99e287",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "H06C",
+      "group": "H06",
+      "role": "contrast",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "relation needs exactly one reference",
+        "relation basis or equality changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "shared_diet",
+              "reference": "Egretta garzetta",
+              "habitat": null,
+              "basis": "trophic_niche",
+              "match": "same",
+              "exclude_reference": true,
+              "species_scope": "all"
+            },
+            "actual": {
+              "kind": null,
+              "reference": null,
+              "habitat": null,
+              "basis": "trophic_niche",
+              "match": "same",
+              "exclude_reference": true,
+              "species_scope": "all"
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "same-request execution_summary missing"
+      ],
+      "observed_signature": null,
+      "trace_id": "tr-2c8d62106c353b3e4b066e43e9c4b01b",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "limits": [
+    "Saved same-request evidence only; no independent database re-query.",
+    "Model-authored gold; not human reviewed.",
+    "Exact-plan source no-data is separate from answer and name failure."
+  ],
+  "split": "regression",
+  "source": "docs/verification/assets/2026-10-24-question-family-routing/regression-traces.json",
+  "cases_sha256": "39604e9aa97a1170705c01068ab8a0d7afccd8d3fcb777c17b55bf63663d32c3",
+  "responses_sha256": "c3bc5ebb67512e9d5fe002c612c4986b0a55db44773d089a5d375dea7f1c076a"
+}

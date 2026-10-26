@@ -1,0 +1,1146 @@
+{
+  "case_counts": {
+    "pass": 34,
+    "fail": 2
+  },
+  "classifications": {
+    "supported_answer": 21,
+    "supported_no_matching_results": 6,
+    "negated_condition": 3,
+    "false_hold": 2,
+    "supported_source_no_data": 3,
+    "unsupported_specific_food": 1
+  },
+  "group_counts": {
+    "pass": 11,
+    "fail": 1
+  },
+  "groups": [
+    {
+      "group": "V2-01",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-02",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-03",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-04",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-05",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-06",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-07",
+      "status": "fail",
+      "equivalent_pair_exact": false,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "V2-08",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-09",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-10",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-11",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    },
+    {
+      "group": "V2-12",
+      "status": "pass",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": true
+    }
+  ],
+  "rows": [
+    {
+      "id": "V2-01A",
+      "group": "V2-01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Apodiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"nectar\"}"
+        ]
+      },
+      "trace_id": "tr-7679a6e67d2694c3c4f3e9965b9a9d6e",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-01B",
+      "group": "V2-01",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Apodiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"nectar\"}"
+        ]
+      },
+      "trace_id": "tr-ca45916c3abeb253d5e94a51efa14d7d",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-01C",
+      "group": "V2-01",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Apodiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+        ]
+      },
+      "trace_id": "tr-4defb1d8c9117c29a0c6c796ba0bf270",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-02A",
+      "group": "V2-02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Fringillidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"PlantSeed\"}"
+        ]
+      },
+      "trace_id": "tr-2b0f50196c424198094a06f54a8d3c67",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-02B",
+      "group": "V2-02",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Fringillidae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"PlantSeed\"}"
+        ]
+      },
+      "trace_id": "tr-70435f25081db8330d0e8aede927aff6",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-02C",
+      "group": "V2-02",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-2258812ec274790eb42a776079c4ed74",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-03A",
+      "group": "V2-03",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Turdus",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Omnivore\"}"
+        ]
+      },
+      "trace_id": "tr-582d17ec0ddda4c0cc52cc0389175687",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-03B",
+      "group": "V2-03",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Turdus",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Omnivore\"}"
+        ]
+      },
+      "trace_id": "tr-9d1815672f50a259e87c54d489f6df1b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-03C",
+      "group": "V2-03",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Turdus",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_niche\", \"value\": \"Invertivore\"}"
+        ]
+      },
+      "trace_id": "tr-6d28c469d040f4457fef1b6e2654110b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-04A",
+      "group": "V2-04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Charadriiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat_density_category\", \"value\": \"open\"}"
+        ]
+      },
+      "trace_id": "tr-b04d729d9cb1e52b12f0d7dbe1d5c1fb",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-04B",
+      "group": "V2-04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Charadriiformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat_density_category\", \"value\": \"open\"}"
+        ]
+      },
+      "trace_id": "tr-c0659f7c8b1985c37331d29e1ce64a9f",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-04C",
+      "group": "V2-04",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-ae4657e97395c3e1f10c4b54320f8e9e",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-05A",
+      "group": "V2-05",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"primary_lifestyle\", \"value\": \"Terrestrial\"}"
+        ]
+      },
+      "trace_id": "tr-3510bd95d4b5721dce4c717bcab55508",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-05B",
+      "group": "V2-05",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"primary_lifestyle\", \"value\": \"Terrestrial\"}"
+        ]
+      },
+      "trace_id": "tr-64e3c899985e42fa30f5c4b910e34ace",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-05C",
+      "group": "V2-05",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"primary_lifestyle\", \"value\": \"Generalist\"}"
+        ]
+      },
+      "trace_id": "tr-0b2fa0b87bab26bc7654c1ef0516d349",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-06A",
+      "group": "V2-06",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anser",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Riverine\"}"
+        ]
+      },
+      "trace_id": "tr-e0fd9014a82c0d4977d419328b3bb9b3",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-06B",
+      "group": "V2-06",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anser",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Riverine\"}"
+        ]
+      },
+      "trace_id": "tr-7b0e783ac53abb1cc35fdc030dc3695d",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-06C",
+      "group": "V2-06",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-a565ad6c3417e7f83fd97ffb2368aa6f",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-07A",
+      "group": "V2-07",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Falco tinnunculus",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"num_gt\", \"threshold\": 200.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+        ]
+      },
+      "trace_id": "tr-6147c993d20cd05eed6896837f00d40d",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-07B",
+      "group": "V2-07",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Falco tinnunculus",
+              "rank": "species",
+              "conditions": [
+                "{\"op\": \"num_gt\", \"threshold\": 200.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": "species",
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-ab32645938f471cb0855678fc00c1b2c",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-07C",
+      "group": "V2-07",
+      "role": "contrast",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": "Falco tinnunculus",
+              "rank": "species",
+              "conditions": [
+                "{\"op\": \"num_gte\", \"threshold\": 200.0, \"trait_name\": \"body_mass\", \"unit\": \"g\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": "species",
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-84eeb53398b55da0e80a712008afab50",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-08A",
+      "group": "V2-08",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_source_no_data",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Hirundo rustica gutturalis",
+        "rank": "subspecies",
+        "conditions": [
+          "{\"op\": \"num_lte\", \"threshold\": 90.0, \"trait_name\": \"tail_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-1dd8bd65edd8dfa4471d8d4ee9ebbc42",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-08B",
+      "group": "V2-08",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_source_no_data",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Hirundo rustica gutturalis",
+        "rank": "subspecies",
+        "conditions": [
+          "{\"op\": \"num_lte\", \"threshold\": 90.0, \"trait_name\": \"tail_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-78d21aeb4a80c06a802d165deb216abe",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-08C",
+      "group": "V2-08",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_source_no_data",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Hirundo rustica gutturalis",
+        "rank": "subspecies",
+        "conditions": [
+          "{\"op\": \"num_lt\", \"threshold\": 90.0, \"trait_name\": \"tail_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-48f54af1c20250d3d37d15fe49bfedb5",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-09A",
+      "group": "V2-09",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Falco",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"beak_length_culmen\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-0e4dc8ff50aa022ad4a9e8199995da55",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-09B",
+      "group": "V2-09",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Falco",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"beak_length_culmen\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-54e22655ca19672abd2308d4a079cb8b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-09C",
+      "group": "V2-09",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Falco",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"beak_length_nares\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-ac5db04f800b96278106891ffc80f047",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-10A",
+      "group": "V2-10",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"tarsus_length\", \"unit\": \"mm\"}",
+          "{\"op\": \"num_lt\", \"threshold\": 150.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-d169b3b1259e7d67bd25d06f2793283f",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-10B",
+      "group": "V2-10",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"tarsus_length\", \"unit\": \"mm\"}",
+          "{\"op\": \"num_lt\", \"threshold\": 150.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-6af2804bbd9e7154fb48dac3549790a4",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-10C",
+      "group": "V2-10",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": [
+          "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"tarsus_length\", \"unit\": \"mm\"}"
+        ]
+      },
+      "trace_id": "tr-8f3d014bed2bd4d7c986d13d89c64358",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-11A",
+      "group": "V2-11",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "shared_diet",
+        "reference": "Bubo bubo",
+        "habitat": null,
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-8b6a063a987b16c755e74262fde95db3",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-11B",
+      "group": "V2-11",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "shared_diet",
+        "reference": "Bubo bubo",
+        "habitat": null,
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-b13f468ebc912e19fbda54d52a9f0b2d",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-11C",
+      "group": "V2-11",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "habitat_shared_diet",
+        "reference": "Bubo bubo",
+        "habitat": "Forest",
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-3002631203762cfa8a950806f6b7cfc7",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-12A",
+      "group": "V2-12",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "habitat_shared_diet",
+        "reference": "Falco tinnunculus",
+        "habitat": "Coastal",
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-399ac368f551a1b9ceebd3c1cecde6c1",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-12B",
+      "group": "V2-12",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "habitat_shared_diet",
+        "reference": "Falco tinnunculus",
+        "habitat": "Coastal",
+        "basis": "trophic_niche",
+        "match": "same",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "trace_id": "tr-a3176c4e70fd6793d13a1a44b055cc1c",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-12C",
+      "group": "V2-12",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-cfa56d8fcd64b6dbfc2ff6584c30c8cd",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "limits": [
+    "Saved same-request evidence only; no independent database re-query.",
+    "Model-authored gold; not human reviewed.",
+    "Exact-plan source no-data is separate from answer and name failure."
+  ],
+  "split": "sealed-holdout-v2",
+  "source": "docs/verification/assets/2026-10-26-graph-condition-boundaries/regression-traces.json",
+  "cases_sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "responses_sha256": "76b34b519364713d304a90cca91a6c4c5e5b7f4fd6b2797e42d5095b51e2e268"
+}

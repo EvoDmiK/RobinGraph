@@ -1,0 +1,42 @@
+{
+  "run_id": "f2a5a01888cb428fa9db8d056e4f9bfd",
+  "experiment_id": "33",
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/runs/f2a5a01888cb428fa9db8d056e4f9bfd",
+  "status": "FINISHED",
+  "metrics": {
+    "tuning_supported_no_matching_results": 1.0,
+    "holdout_supported_answer": 14.0,
+    "tuning_groups_pass": 2.0,
+    "holdout_cases_fail": 2.0,
+    "holdout_supported_source_no_data": 1.0,
+    "tuning_unsupported_specific_food": 1.0,
+    "holdout_groups_pass": 4.0,
+    "holdout_false_hold": 2.0,
+    "tuning_cases_pass": 6.0,
+    "holdout_cases_pass": 16.0,
+    "holdout_negated_condition": 1.0,
+    "tuning_supported_answer": 4.0,
+    "holdout_groups_fail": 2.0
+  },
+  "artifacts_read_back": {
+    "datasets": [
+      "datasets/holdout.json",
+      "datasets/manifest.json",
+      "datasets/tuning.json",
+      "datasets/validation.json"
+    ],
+    "evaluation": [
+      "evaluation/code-freeze.json",
+      "evaluation/holdout-score.json",
+      "evaluation/tuning-score.json"
+    ],
+    "same-request-evidence": [
+      "same-request-evidence/holdout-traces.json",
+      "same-request-evidence/tuning-traces.json"
+    ],
+    "evaluator": [
+      "evaluator/evaluate_graph_question_families.py"
+    ]
+  },
+  "deleted_traces": 0
+}

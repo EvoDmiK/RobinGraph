@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "src/robingraph/api/services.py",
+      "before_sha256": "6178556448484b7a9f3a1d3de68fe1f5803f8d6cf5f5e7fd94d4b5e6ebf8dfe3",
+      "after_sha256": "2d56bb321c3b7ed920632daacc2bc9affdcf050144a9be4e9eb0ddc251326151"
+    },
+    {
+      "path": "src/robingraph/retrieval/graph_questions.py",
+      "before_sha256": "75e6034d3c56073900330ac90b6447606f70a46d6af5f2a1ffaf81101d8b82c1",
+      "after_sha256": "290d53123751b1dc96b82edc16f23465a6e13e8984cb77a6ee60a014b79346d9"
+    }
+  ],
+  "api_contract_changed": false,
+  "query_rules_changed": false,
+  "dependencies_added": false,
+  "production_deployed": false,
+  "committed": false,
+  "test_script_reused": {
+    "browser": "docs/verification/assets/2026-10-23-ecology-answer-layout/browser.cjs",
+    "api": "docs/verification/assets/2026-10-23-completed-production/evaluate.py",
+    "cases": "docs/verification/assets/2026-10-23-completed-production/cases.json"
+  },
+  "test_scope": "regression, not unseen evaluation or performance benchmark"
+}

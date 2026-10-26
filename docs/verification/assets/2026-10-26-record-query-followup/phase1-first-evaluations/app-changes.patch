@@ -1,0 +1,157 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -22,6 +22,7 @@
+ """
+ from copy import deepcopy
+ import re
++import unicodedata
+ 
+ from .. import tracing
+ 
+@@ -247,7 +248,26 @@
+     + r')(?:은|는|이|가)?\s*제한(?:은|는|을|를)?\s*'
+       r'(?:두지\s*않(?:을게|겠습니다|겠다|고)|하지\s*말고|없(?:이|어|다))(?=\s|[.!?,]|$)')
+ _DISCOURSE = re.compile(r'(?<![가-힣])(?:자료|데이터|목록)(?:을|를)?\s*(?:펼쳐서|살펴보고|읽어서|보여\s*줘)(?=\s|[.!?,]|$)')
+-_RATE_META = re.compile(r'(?<![가-힣])비율\s*조건(?:을|이)?\s*(?:뜻하는|의미하는)\s*(?:건|것은|것이)\s*아니(?:야|다|에요|고)(?=\s|[.!?,]|$)')
++_RATE_META = re.compile(r'(?<![가-힣])비율\s*조건(?:을|이|은|는)?\s*(?:'
++    r'(?:뜻하는|의미하는)\s*(?:건|것은|것이)\s*아니(?:야|다|에요|고)'
++    r'|적용하지\s*(?:마세요|마|말아\s*주세요|말아\s*줘))(?=\s|[.!?,]|$)')
++_RECORD_REQUEST = r'기록(?:되어|돼)\s*있(?:는지|는가)\s*확인해\s*(?:줘|주세요)'
++
++
++def _record_field_matches(surface, trait):
++    """Only an explicit, longest original field label proves a record-query predicate's dimension."""
++    labels = {**{label: name for name, label in LABELS.items() if name in TRAIT_CONDITIONS},
++              **_MEASURES, **_TRAIT_LABELS}
++    matches = [(match.start(), match.end(), name) for label, name in labels.items()
++               for match in re.finditer(_pattern(label) + r'(?=\s|[은는이가을를의:=：]|$)', surface.strip())]
++    chosen = []
++    for start, end, name in sorted(matches, key=lambda m: (-(m[1] - m[0]), m[0])):
++        if any(start < stop and begin < end for begin, stop, _ in chosen):
++            continue
++        chosen.append((start, end, name))
++    return (len(chosen) == 1 and chosen[0][0] == 0 and chosen[0][2] == trait
++            and {name for start, end, name in matches if (start, end) == chosen[0][:2]} == {trait})
++
+ 
+ 
+ def _meta_spans(question):
+@@ -529,6 +549,9 @@
+         raise SemanticIntentError('bad unresolved/unknown_relation')
+     taxon, species, relation = _text(raw, 'taxon'), _text(raw, 'species'), _text(raw, 'relation_text')
+     pairs = _conditions(question, raw)
++    if re.search(_RECORD_REQUEST, question) and any(
++            not _record_field_matches(span.text, condition.trait_name) for condition, span in pairs):
++        raise _Reject('record predicate field is not proved by its original label')
+     if re.search(_COPULAR_DENIAL, _blank(question)):
+         raise _Reject('explicit denial of a proposed predicate')
+     unrestricted = {_META_DIMENSION_CODES[re.sub(r'\s+', '', m['dimension'])]
+@@ -630,6 +653,9 @@
+     if (not isinstance(items, list) or not all(isinstance(item, dict) and isinstance(item.get('surface'), str) for item in items)
+             or not isinstance(unresolved, list) or not all(isinstance(t, str) for t in unresolved)):
+         return raw, []
++    if (re.search(_RECORD_REQUEST, question) and any(
++            not _record_field_matches(item['surface'], item.get('trait_name')) for item in items)):
++        return raw, []
+     lexical = extract_graph_intent(question)
+     if _lexical_decides(question, lexical):
+         return raw, []
+@@ -646,6 +672,22 @@
+         text = item.get('surface')
+         if not isinstance(text, str) or span_of(question, text.strip()) is not None:
+             continue
++        # A typed equality can be stated as a positive source-record question, with its field/value unchanged.
++        spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
++        value = item.get('value')
++        if (spec and spec[1] not in ('number', 'share') and item.get('op') == 'eq' and isinstance(value, str)
++                and _record_field_matches(text, item.get('trait_name'))):
++            aliases = {value} | {word for word, code in _trait_surfaces(item['trait_name']).items() if code == value}
++            nominal = re.fullmatch(r'(.+)인', text.strip()) if any(
++                text.strip().endswith(alias + '인') for alias in aliases) else None
++            matches = [] if nominal is None else list(re.finditer(
++                r'(?<!\w)(?P<evidence>' + re.escape(nominal[1]).replace(r'\ ', r'\s*')
++                + r'(?:으)?로)\s*' + _RECORD_REQUEST + r'(?=\s|[.!?,]|$)', question))
++            if len(matches) == 1:
++                item['surface'] = matches[0]['evidence']
++                changes.append({'field': f'conditions[{index}].surface', 'rule': 'positive_record_equality',
++                                'before': text, 'after': item['surface']})
++                continue
+         # A numeric predicate keeps its exact operand/comparator; only a copular query ending may vary.
+         spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
+         operators = list(re.finditer(_OPS, text.strip()))
+@@ -726,7 +768,43 @@
+                             'before': before, 'after': unit})
+     token = tracing.begin_outcome()
+     try:
++        framing = set()
++        record_frames = []
++        rank_frames = []
++        scope = candidate.get('taxon') if candidate.get('kind') == 'taxon_traits' else candidate.get('species')
++        if isinstance(scope, str):
++            matches = list(re.finditer(r'(?<!\w)' + re.escape(scope) + r'\s+(?P<rank>목|과|속|아종|종)의(?=\s)', question))
++            rank_word = ({1: '속', 2: '종', 3: '아종'}.get(len(scope.split()))
++                         if re.fullmatch(r'[A-Z][a-z]+(?: [a-z]+){0,2}', scope) else
++                         '종' if scope in _taxon_names()[1] else
++                         scope[-1] if scope in _taxon_names()[0] else None)
++            if (len(matches) == 1 and matches[0]['rank'] == rank_word
++                    and question.count(rank_word + '의') == 1):
++                framing.add(matches[0]['rank'] + '의')
++                rank_frames.append(Span(matches[0].group(), matches[0].start(), matches[0].end()))
++        # Only a positive record-check request immediately attached to retained condition evidence is framing.
++        for item in candidate['conditions']:
++            surface = item.get('surface', '')
++            span = span_of(question, surface.strip())
++            if span is not None and _record_field_matches(surface, item.get('trait_name')):
++                match = re.match(r'\s*(' + _RECORD_REQUEST + r')(?=\s|[.!?,]|$)', question[span.end:])
++                if match and question.count(match[1]) == 1:
++                    framing.add(match[1])
++                    record_frames.append(Span(match[1], span.end + match.start(1), span.end + match.end(1)))
++        # Unresolved segmentation is irrelevant: only the union of checked source evidence and framing may cover it.
++        retained = [span for condition, span in _conditions(question, candidate)
++                    if question.count(span.text) == 1 and _record_field_matches(span.text, condition.trait_name)]
++        coverage = rank_frames + retained + record_frames if record_frames else []
++        for text in unresolved:
++            fragment = text.strip().rstrip('.!?')
++            source = span_of(question, fragment) if fragment else None
++            if (source is not None and question.count(fragment) == 1 and coverage
++                    and all(char.isspace() or unicodedata.category(char).startswith('P')
++                            or any(frame.start <= offset < frame.end for frame in coverage)
++                            for offset, char in enumerate(question[source.start:source.end], source.start))):
++                framing.add(fragment)
+         meta = {span.text for span in _meta_spans(question)}
++        meta |= framing
+         # The denial of a ratio condition is redundant only for an explicit category, never a share query.
+         category_only = any(item.get('trait_name') == 'diet_category' and item.get('op') == 'eq'
+                             for item in candidate['conditions']) and not any(
+--- a/src/robingraph/retrieval/graph_condition_extractor.py
++++ b/src/robingraph/retrieval/graph_condition_extractor.py
+@@ -66,7 +66,7 @@
+ _HABITAT_SUBJECT = r'(?<![가-힣])(?:서식지|서식\s*환경|사는\s*곳|사는\s*데)(?:가|는|도|이|를|와|은)?'
+ _SAME_HABITAT = r'같은\s*서식지(?:인데|이면서|이고|에서\s*사는|에\s*사는|를\s*공유하는)?'
+ _HABITAT_REL = r'겹치는데|겹치면서|겹치지만|겹치고|겹치는|같은데|같으면서|같지만|같고|같은|동일한|일치하는'
+-_SAME_FRUIT = r'(?:정확히\s*)?(?:같은|똑같은|동일한)\s*(?:식물\s*(?:종)?(?:의)?\s*)?열매'
++_SAME_FRUIT = r'(?:식물\s*종(?:까지|이|도)?\s*)?(?:정확히\s*)?(?:같은|똑같은|동일한)\s*(?:식물\s*(?:종)?(?:의)?\s*)?열매'
+ _FRUGIVORE = (r'과실식(?:성)?(?:을|인|이|의|이면서|이고|이며)?(?:\s*하는)?(?:\s*범주(?:인|의|이면서|이고|이며)?)?|'
+               r'열매\s*섭식(?:\s*범주)?(?:인|의|을|하는|이면서|이고|이며|이자)?')
+ _TREE_FRUIT = r'(?<![가-힣])나무\s*열매(?:를|을|는)?'
+@@ -566,6 +566,12 @@
+     cue_starts = [(c[0], False) for c in commons]
+     cue_starts += [(c[0], True) for c in genus + niches + claims.of('niche_subject') + plants]
+     cue_starts += [(h[0], True) for h in habitats if h[3] == 'target']
++    if plants:
++        for match in re.finditer(_EAT, question):
++            before = question[:match.start()].split()
++            if before and _PARTICLE.fullmatch(before[-1]).group(1) in _taxon_names()[1]:
++                # The source-backed eater is the reference, not the plant-species comparison wording.
++                cue_starts.append((match.start(), True))
+     _claim_names(claims, sorted(cue_starts))
+     names = [claims.span(i) for i in sorted(claims.of('name') + claims.of('latin'))]
+ 
+@@ -600,6 +606,7 @@
+     # Differing values for one condition, or two kinds of request, are never resolved by picking one.
+     families = [bool(commons), bool(genus), bool(niches), traits and not plants, bool(plants)]
+     if (claims.of('habitat2') or len(claims.of('rank')) > 1 or len({h[3] for h in habitats}) > 1
++            or (plants and (conds or vague or diets))
+             or len({d[3] for d in diets}) > 1 or len({claims.q[p[0]:p[1]] for p in plants}) > 1 or sum(families) > 1):
+         ambiguity.append('other')
+     if len({n[3] for n in niches}) > 1:

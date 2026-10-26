@@ -1,0 +1,656 @@
+{
+  "source": "/Users/kimdove/orca/workspaces/RobinGraph/dev-codex/docs/verification/assets/2026-10-24-semantic-evidence-reconciliation/live-traces.json",
+  "method": "Read saved actual API and same-request MLflow trace artifacts only. No new calls.",
+  "api_counts": {
+    "supported": {
+      "pass": 7,
+      "fail": 2
+    },
+    "hold": {
+      "pass": 4
+    }
+  },
+  "intent_counts": {
+    "supported": {
+      "pass": 7,
+      "fail": 2
+    },
+    "hold": {
+      "not_applicable": 4
+    }
+  },
+  "rows": [
+    {
+      "id": "R01",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "habitat",
+            "label": "서식 환경 숲(Forest)",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "label": "먹이 구성에 열매 포함",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0.0,
+            "unit": null,
+            "source_name": "AviList and EltonTraits approved reference bundle"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-2e1c35e183b0347577ae6ff01717eb56",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "conditions[0].surface",
+          "rule": "predicate_ending",
+          "before": "숲이 서식지로 기록돼 있어",
+          "after": "숲이 서식지로 기록돼 있고"
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "R02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-f4e0d683dd66112f8979f4da21fde6ae",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "R03",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "body_mass",
+            "label": "체중 180g 초과",
+            "op": "num_gt",
+            "value": null,
+            "threshold": 180.0,
+            "unit": "g",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-009aee819c6dd641c3f0606dc2f17a68",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N01",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "habitat",
+            "label": "서식 환경 습지(Wetland)",
+            "op": "eq",
+            "value": "Wetland",
+            "threshold": null,
+            "unit": null,
+            "source_name": "AVONET Supplementary dataset 1"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "label": "먹이 구성에 씨앗 포함",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0.0,
+            "unit": null,
+            "source_name": "AviList and EltonTraits approved reference bundle"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-d25f3acbfcdb6eeca3e13db1fa34b869",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "expected_kind": "graph_query",
+            "actual_kind": "clarify"
+          },
+          {
+            "unexpected_status": null
+          }
+        ],
+        "limits": [
+          "API has no machine-readable complete executed scope/conditions; separate provider plan is corroboration only."
+        ],
+        "observed": {
+          "kind": "clarify",
+          "status": null,
+          "disposition": "clarify"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "field": "gate",
+            "expected": "answer",
+            "actual": "clarify"
+          },
+          {
+            "field": "kind",
+            "expected": "taxon_traits",
+            "actual": "specific_fruit"
+          },
+          {
+            "field": "taxon_scope",
+            "expected": [
+              [
+                "Corvus",
+                "genus"
+              ]
+            ],
+            "actual": [
+              [
+                "Corvus",
+                "genus"
+              ],
+              [
+                "UNRESOLVED_OR_AMBIGUOUS",
+                "기록되어"
+              ]
+            ]
+          },
+          {
+            "field": "conditions",
+            "missing": [
+              "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+              "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+            ],
+            "extra": []
+          },
+          "Unexpected intent restriction: residual"
+        ]
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-19de46cb9a391af59cd87986ea6b6348",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "N03",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-ed79f5af3308a6ce8b89794a73a0f1ff",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "relation_text",
+          "rule": "reference_relation",
+          "before": "먹이 생태 범주가",
+          "after": "먹이 생태 범주가 고니랑 같은"
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N04",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-a45ceddfac575c1ef430af664aa94eea",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "relation_text",
+          "rule": "reference_relation",
+          "before": "먹이 생태 범주가",
+          "after": "먹이 생태 범주가 원앙과 같은"
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N05",
+      "category": "supported",
+      "api_verdict": {
+        "status": "fail",
+        "errors": [
+          "API echoed scope/conditions mismatch"
+        ],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "insufficient_data",
+          "disposition": "abstain"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "body_mass",
+            "label": "체중 300g 초과",
+            "op": "num_gt",
+            "value": null,
+            "threshold": 300.0,
+            "unit": "g",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "field": "rank",
+            "expected": "family",
+            "actual": "비둘기과"
+          }
+        ]
+      },
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_status": "insufficient_data",
+      "trace_id": "tr-7da735ec3209f6a3d517eaa4efacad5d",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "unresolved",
+          "rule": "strict_bound_restatement",
+          "before": [
+            "300g인 기록은 제외해"
+          ],
+          "after": []
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N06",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "wing_length",
+            "label": "접은 날개 길이 90mm 미만",
+            "op": "num_lt",
+            "value": null,
+            "threshold": 90.0,
+            "unit": "mm",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-28c114da52ba66f1dec1a6ff1dbf691b",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "unresolved",
+          "rule": "strict_bound_restatement",
+          "before": [
+            "90mm인 기록은 제외해"
+          ],
+          "after": []
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "N07",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-78b46e85cf9fa77cfb25218d3a7b2c87",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "N09",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-5040dcb7418bf4d3b63926f567191092",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "N13",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-a5766e54b1662a781d21736122c21ec6",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [
+          "The exclusion condition '350g인 기록은 제외해' was placed in unresolved instead of being handled as an exact-value inequality bound."
+        ],
+        "faithful": false
+      }
+    },
+    {
+      "id": "N15",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-a94bd6856a75c734f44d916d542123f9",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    }
+  ],
+  "limitations": [
+    "Intent exactness is reported separately and never upgrades absent execution_summary to API execution success.",
+    "No independent database record re-query.",
+    "New cases first measurement; original three feedback-exposed regression."
+  ]
+}

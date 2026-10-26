@@ -1,0 +1,230 @@
+{
+  "focus": "Four previous fresh24 failures and common four families",
+  "focused_cases": [
+    {
+      "id": "E04A",
+      "group": "E04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Carnivore\"}"
+        ]
+      },
+      "trace_id": "tr-f027a7fe96b34d28245d5a9fda7e82f3",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E04C",
+      "group": "E04",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Omnivore\"}"
+        ]
+      },
+      "trace_id": "tr-4a04ec96b143284d0bc8645247d81904",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E05B",
+      "group": "E05",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Sturnus",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Invertebrate\"}"
+        ]
+      },
+      "trace_id": "tr-596d7d1ad1c4351ce93be723f42b11d3",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E08B",
+      "group": "E08",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-a27ab4736e861bbf7a227757662175a5",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "focused_pass": 4,
+  "all84": {
+    "pass": 82,
+    "fail": 2
+  },
+  "all84_groups": {
+    "pass": 26,
+    "fail": 2
+  },
+  "first_blind24_score": {
+    "pass": 11,
+    "fail": 13
+  },
+  "same24_feedback_latest": {
+    "pass": 24,
+    "fail": 0
+  },
+  "first_blind8": {
+    "pass": 5,
+    "fail": 3
+  },
+  "same8_feedback_recheck": {
+    "pass": 8
+  },
+  "latest_remaining": [
+    {
+      "id": "V2-07A",
+      "group": "V2-07",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result"
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-73771b3ebfa28d900982eafc49302cfb",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-10B",
+      "group": "V2-10",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "same-request trait query kind or extra scope changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": null,
+              "conditions": [
+                "{\"op\": \"num_gte\", \"threshold\": 20.0, \"trait_name\": \"tarsus_length\", \"unit\": \"mm\"}",
+                "{\"op\": \"num_lt\", \"threshold\": 150.0, \"trait_name\": \"wing_length\", \"unit\": \"mm\"}"
+              ]
+            },
+            "actual": {
+              "kind": "taxon_traits",
+              "taxon": null,
+              "rank": null,
+              "conditions": []
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "explicit whole-catalog taxon",
+        "whole-catalog execution coverage",
+        "conditions",
+        "explicit same-request whole-catalog canonical plan"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-c6aa08b3c59ed48cabddcb55c2d1b2f2",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "full_RG212_complete": false,
+  "limits": [
+    "No fresh unseen evaluation after the last extractor change.",
+    "Eight-case groups have no contrasts: raw group failure is structural; equivalent-pair exactness is reported separately.",
+    "Strict original gold and first scores preserved."
+  ]
+}

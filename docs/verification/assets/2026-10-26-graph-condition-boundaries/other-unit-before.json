@@ -1,0 +1,147 @@
+[
+  {
+    "label": "descriptive_comparison",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "unit_label_only",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "wrong_threshold_not_repaired",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_threshold_not_repaired",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_other_measure",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_conflicting_measure",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_habitat",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "biological_negation_not_removed",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "category_discourse",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "rate_denial_not_removed_for_share",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "self_exclusion",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "other_species_exclusion",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "clarify",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "ambiguous_dimension_not_proved",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "ratio_explanation_requires_category",
+    "gate": "answer",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_conflicts_with_relation",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "specific_food",
+    "question": "황조롱이와 같은 식물 종의 열매를 먹는 새는?",
+    "gate": "clarify",
+    "kind": "taxon_traits",
+    "residual": [
+      "같은",
+      "식물"
+    ]
+  },
+  {
+    "label": "specific_food",
+    "question": "해안에 사는 새 중 황조롱이와 정확히 같은 식물 종의 열매를 먹는 새는?",
+    "gate": "clarify",
+    "kind": "taxon_traits",
+    "residual": [
+      "정확히",
+      "같은",
+      "식물"
+    ]
+  },
+  {
+    "label": "specific_food",
+    "question": "황조롱이와 같은 식물 종의 열매를 먹지 않는 새는?",
+    "gate": "clarify",
+    "kind": "taxon_traits",
+    "residual": [
+      "같은",
+      "식물"
+    ]
+  }
+]

@@ -1,0 +1,177 @@
+{
+  "target": "test",
+  "repeats": 20,
+  "concurrency": 1,
+  "warmup_rounds_excluded": 1,
+  "scope": "actual current graph relationship repository; sequential; PG reads and Python included in total; no HTTP/Jev/embedding",
+  "rows": [
+    {
+      "question": "청둥오리와 흰뺨검둥오리는 어떤 관계야?",
+      "kind": "common_taxonomy",
+      "first_observed_call_ms": 864.116,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 217.782,
+        "p95_ms": 230.739,
+        "max_ms": 256.139
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 71.182,
+        "p95_ms": 74.263,
+        "max_ms": 80.124
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 59.5,
+        "p95_ms": 64,
+        "max_ms": 70
+      },
+      "cypher_queries_per_answer": [
+        3
+      ],
+      "answer_stable": true,
+      "result_count": 2
+    },
+    {
+      "question": "청둥오리와 같은 속에 속하는 새를 보여줘",
+      "kind": "same_genus",
+      "first_observed_call_ms": 339.022,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 137.8,
+        "p95_ms": 147.063,
+        "max_ms": 156.071
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 60.317,
+        "p95_ms": 65.817,
+        "max_ms": 67.492
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 32.0,
+        "p95_ms": 35,
+        "max_ms": 36
+      },
+      "cypher_queries_per_answer": [
+        3
+      ],
+      "answer_stable": true,
+      "result_count": 20
+    },
+    {
+      "question": "한국에 기록된 오리 중 청둥오리와 같은 속인 종은?",
+      "kind": "korea_same_genus",
+      "first_observed_call_ms": 103.91,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 132.794,
+        "p95_ms": 147.204,
+        "max_ms": 148.24
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 63.688,
+        "p95_ms": 68.401,
+        "max_ms": 70.236
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 32.0,
+        "p95_ms": 36,
+        "max_ms": 36
+      },
+      "cypher_queries_per_answer": [
+        3
+      ],
+      "answer_stable": true,
+      "result_count": 4
+    },
+    {
+      "question": "참새목 중 열매를 먹고 사는 새는?",
+      "kind": "order_fruit",
+      "first_observed_call_ms": 1109.427,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 241.991,
+        "p95_ms": 256.521,
+        "max_ms": 267.58
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 195.516,
+        "p95_ms": 207.921,
+        "max_ms": 211.447
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 168.0,
+        "p95_ms": 182,
+        "max_ms": 185
+      },
+      "cypher_queries_per_answer": [
+        3
+      ],
+      "answer_stable": true,
+      "result_count": 20
+    },
+    {
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "kind": "habitat_different_diet",
+      "first_observed_call_ms": 923.797,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 377.874,
+        "p95_ms": 396.563,
+        "max_ms": 448.006
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 194.988,
+        "p95_ms": 207.469,
+        "max_ms": 219.012
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 160.5,
+        "p95_ms": 170,
+        "max_ms": 182
+      },
+      "cypher_queries_per_answer": [
+        3
+      ],
+      "answer_stable": true,
+      "result_count": 20
+    },
+    {
+      "question": "숲에 사는 새중 직박구리랑 같은 먹이 범주를 공유하는 새는?",
+      "kind": "habitat_shared_diet",
+      "first_observed_call_ms": 746.805,
+      "warm_total_including_pg_and_python": {
+        "n": 20,
+        "p50_ms": 489.963,
+        "p95_ms": 511.124,
+        "max_ms": 552.226
+      },
+      "neo4j_roundtrip_sum": {
+        "n": 20,
+        "p50_ms": 273.697,
+        "p95_ms": 290.04,
+        "max_ms": 292.295
+      },
+      "neo4j_reported_duration_sum": {
+        "n": 20,
+        "p50_ms": 235.5,
+        "p95_ms": 248,
+        "max_ms": 250
+      },
+      "cypher_queries_per_answer": [
+        4
+      ],
+      "answer_stable": true,
+      "result_count": 20
+    }
+  ]
+}

@@ -292,15 +292,19 @@ RESPONSE_REASONS = frozenset({
     "none", "taxon_not_found", "intent_uncertain", "ambiguous_name", "filter_mismatch",
     "evidence_not_found", "observations_empty", "handler_unavailable", "upstream_error",
     "unsupported_question", "unknown",
+    "interpretation_error", "invalid_plan", "semantic_audit_rejected", "plan_validation_rejected",
+    "unresolved_conditions", "unsupported_relation", "unsupported_conditions", "negated_conditions",
+    "ambiguous_conditions", "insufficient_data", "no_matching_results",
 })
 FAILURE_STAGES = frozenset({
     "none", "routing", "name_resolution", "retrieval", "generation", "validation", "unknown",
+    "interpretation", "semantic_audit", "plan_validation",
 })
 SELECTED_INTENTS = frozenset({"profile", "taxonomy", "observations", "evidence", "none"})
 ROUTE_METHODS = frozenset({"semantic", "explicit", "deterministic", "jev", "none"})
 # Reasons that mean a dependency failed rather than the user's question being
 # unanswerable; they map to disposition ``error`` even when HTTP is 200.
-TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error"})
+TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error", "interpretation_error", "invalid_plan"})
 
 _outcome: ContextVar[dict[str, str] | None] = ContextVar("robingraph_trace_outcome", default=None)
 

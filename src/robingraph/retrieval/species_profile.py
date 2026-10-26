@@ -188,7 +188,7 @@ def species_summary(taxon, traits):
     name = taxon.get('display_name') or taxon.get('korean_name') or taxon.get('english_name') or taxon.get('scientific_name')
     return (f'{name}의 ' if name else '') + ' '.join(sentences)
 VALUES = {'PlantSeed':'식물·씨앗', 'FruiNect':'열매·꽃꿀',
-          'Invertebrate':'무척추동물', 'VertFishScav':'척추동물·물고기·사체',
+          'Invertebrate':'곤충 (원자료: 무척추동물)', 'VertFishScav':'고기·물고기·사체 (원자료: 척추동물·물고기·사체)',
           'Forest':'숲', 'Shrubland':'관목 지대', 'Woodland':'성긴 숲',
           'Grassland':'초지', 'Rock':'바위 지대', 'Human Modified':'인공·변형 환경',
           'Coastal':'해안', 'Marine':'바다', 'Riverine':'하천', 'Desert':'사막',
@@ -196,17 +196,23 @@ VALUES = {'PlantSeed':'식물·씨앗', 'FruiNect':'열매·꽃꿀',
           'Generalist':'다양한 생활 방식', 'Wetland':'습지', 'Aquatic':'수생', 'Herbivore aquatic':'수생 초식',
           'open':'개방형', 'dense':'밀집형', 'semi_open':'반개방형',
           'Omnivore':'잡식', 'Herbivore':'초식', 'Carnivore':'육식',
-          'Scavenger':'사체 섭식', 'Vertivore':'척추동물 섭식',
-          'Invertivore':'무척추동물 섭식', 'Aquatic predator':'수생동물 포식',
+          'Scavenger':'사체 섭식', 'Vertivore':'고기 섭식 (원자료: 척추동물 섭식)',
+          'Invertivore':'곤충 섭식 (원자료: 무척추동물 섭식)', 'Aquatic predator':'수생동물 포식',
           'Frugivore':'열매 섭식', 'Nectarivore':'꽃꿀 섭식', 'Granivore':'씨앗 섭식',
           'Herbivore terrestrial':'육상 초식',
-          'invertebrate':'무척추동물', 'endotherm_vertebrate':'온혈 척추동물',
-          'ectotherm_vertebrate':'변온 척추동물', 'fish':'물고기',
-          'unknown_vertebrate':'기타 척추동물', 'carrion':'사체', 'fruit':'열매',
+          'invertebrate':'곤충 (원자료: 무척추동물)', 'meat':'고기', 'endotherm_vertebrate':'고기 (온혈 척추동물)',
+          'ectotherm_vertebrate':'고기 (변온 척추동물)', 'fish':'물고기',
+          'unknown_vertebrate':'고기 (기타 척추동물)', 'carrion':'사체', 'fruit':'열매',
           'nectar':'꽃꿀', 'seed':'씨앗', 'other_plant':'기타 식물',
           'ground':'지면', 'understory':'하층', 'midhigh':'중상층', 'mid_high':'중상층',
           'canopy':'수관', 'aerial':'공중', 'water':'수면', 'pelagic':'외해',
           'below_water_surface':'수중', 'around_water_surface':'수면 주변'}
+
+# Values shown under a user-facing name (곤충, 고기): the source category itself is unchanged, and the display
+# keeps it in parentheses (invertebrate also covers non-insect invertebrates). These source names stay searchable.
+SOURCE_CATEGORY = {'Invertebrate': '무척추동물', 'invertebrate': '무척추동물', 'VertFishScav': '척추동물·물고기·사체',
+                   'Invertivore': '무척추동물 섭식', 'Vertivore': '척추동물 섭식', 'endotherm_vertebrate': '온혈 척추동물',
+                   'ectotherm_vertebrate': '변온 척추동물', 'unknown_vertebrate': '기타 척추동물'}
 
 
 CATEGORICAL_TRAITS = frozenset({

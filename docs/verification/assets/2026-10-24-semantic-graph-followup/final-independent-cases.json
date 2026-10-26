@@ -1,0 +1,399 @@
+{
+  "provenance": {
+    "generation": "새로 작성한 독립 비인간 검토용 최종 holdout; 구현 코드·프롬프트·예시·기존 질문 평가파일 및 구현 피드백 문항 미노출",
+    "read_sources": [
+      "AGENTS.md",
+      "docs/verification/assets/2026-10-23-diet-display-alias/inventory.json"
+    ],
+    "human_reviewed": false,
+    "implementation_exposed": false,
+    "primary_metric": "plan_exact_match",
+    "answer_policy": "DB 근거 부족 시 empty/insufficient_data 허용"
+  },
+  "cases": [
+    {
+      "id": "fresh-01",
+      "question": "참새목 안에서 골라 줘. 숲이 서식지로 기록돼 있고 과일도 먹는 새를 찾고 있어.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "참새목",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "fruit"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-02",
+      "question": "습지를 서식지로 쓰는 오리과 새가 궁금해요. 목록으로 볼 수 있을까요?",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "오리과",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-03",
+      "question": "Ardea 속으로 범위를 잡고, 하천에 살면서 먹이 구성에 고기가 조금이라도 들어가는 새를 추려 줘.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Ardea",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Riverine"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "meat"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-04",
+      "question": "참새라는 종의 기록을 확인할래. 씨앗이 먹이에서 차지하는 비율이 0보다 큰 경우를 찾아 줘.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "참새",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "seed"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-05",
+      "question": "Passer domesticus domesticus 아종에서 무척추동물을 먹는다는 기록만 찾아주세요. 먹이 비중은 0 초과면 됩니다.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Passer domesticus domesticus",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "invertebrate"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-06",
+      "question": "분류군 제한 없이 전체 조류를 봐 줘요. 과일이 먹이 구성에 포함된 새가 필요해요.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": null,
+        "rank": null,
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "fruit"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-07",
+      "question": "몸무게 700g 이상인 새를 오리과에서 추려 줄래요?",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "오리과",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gte",
+            "threshold": 700,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-08",
+      "question": "날개 길이가 125mm 이하면 좋겠어. 참새목에 속한 새만 찾아 줘.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "참새목",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lte",
+            "threshold": 125,
+            "unit": "mm"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-09",
+      "question": "까치속 새 중 몸무게가 180g을 넘는 경우를 보여 줘. 180g인 기록은 제외해.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "까치속",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 180,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-10",
+      "question": "청둥오리 종 기록에서 날개 길이 260mm 미만이라는 조건으로 찾아주세요.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "청둥오리",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "threshold": 260,
+            "unit": "mm"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-11",
+      "question": "전체 새를 대상으로 씨앗을 조금이라도 먹고 숲에 사는 경우만 모아 줘. 두 조건을 모두 충족해야 해.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": null,
+        "rank": null,
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "threshold": 0,
+            "value": "seed"
+          },
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-12",
+      "question": "Passer domesticus domesticus 아종 자료 중 몸무게가 35g 이하인 기록을 보고 싶어요.",
+      "category": "supported",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Passer domesticus domesticus",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_lte",
+            "threshold": 35,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fresh-13",
+      "question": "직박구리 말고 다른 새를 찾고 있어. AVONET의 먹이 생태 범주가 직박구리와 같은 새는 뭐가 있어?",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "직박구리",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "fresh-14",
+      "question": "AVONET에서 청둥오리와 동일한 먹이 생태 범주로 묶인 다른 새들을 알려 줘.",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "청둥오리",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "fresh-15",
+      "question": "왜가리를 기준으로 먹이 생태 범주가 같은 새를 볼래요. AVONET 분류를 쓰고 왜가리 자신은 빼 주세요.",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "왜가리",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "fresh-16",
+      "question": "까치랑 AVONET 먹이 생태 범주가 일치하는 다른 조류를 찾아줘요.",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "까치",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "fresh-17",
+      "question": "숲을 서식지로 쓰는 새로 좁혀 줘. 그중 직박구리와 AVONET 먹이 생태 범주가 같은 다른 새가 궁금해.",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "직박구리",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": "Forest"
+      }
+    },
+    {
+      "id": "fresh-18",
+      "question": "청둥오리와 AVONET 먹이 생태 범주가 같은 다른 새 중에서 습지 서식 기록도 있는 새를 보여주세요.",
+      "category": "supported",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "청둥오리",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": "Wetland"
+      }
+    },
+    {
+      "id": "fresh-19",
+      "question": "오리과 중 습지에 살지 않는 새만 골라 줘요.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "negation",
+        "reason": "부정 서식지 조건을 긍정 조건으로 축약하지 말 것"
+      }
+    },
+    {
+      "id": "fresh-20",
+      "question": "숲에 살거나 몸무게가 500g 이상이면 돼. 전체 조류에서 둘 중 하나만 맞아도 찾아 줘.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "or",
+        "reason": "OR 조건을 AND 또는 단일 조건으로 바꾸지 말 것"
+      }
+    },
+    {
+      "id": "fresh-21",
+      "question": "직박구리와 겨울에 먹는 먹이 범주가 같은 새를 찾아줘.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "season",
+        "reason": "계절별 먹이 자료 없는 일반 범주로 대체하지 말 것"
+      }
+    },
+    {
+      "id": "fresh-22",
+      "question": "사람한테 친절하고 깃털이 파란 새를 오리과에서 골라 줘.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "unsupported_trait",
+        "reason": "친절함과 깃털색을 지원 형질로 추정하지 말 것"
+      }
+    },
+    {
+      "id": "fresh-23",
+      "question": "그쪽 분류에 속한 새 중 몸무게 80g 이상인 걸 알려 줘.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "ambiguous_scope",
+        "reason": "그쪽 분류의 지시 대상이 없어 범위를 확인할 것"
+      }
+    },
+    {
+      "id": "fresh-24",
+      "question": "직박구리와 똑같은 식물 종의 열매를 먹는 다른 새를 알려 줘.",
+      "category": "hold",
+      "expected": {
+        "expected_hold": "specific_food_identity",
+        "reason": "AVONET 먹이 생태 범주 일치로 구체 식물 종 동일 섭식을 주장하지 말 것"
+      }
+    },
+    {
+      "id": "fresh-25",
+      "question": "왜가리 어떤 새인지 짧게 소개해 줘.",
+      "category": "preserve",
+      "expected": {
+        "preserve": "general_profile"
+      }
+    },
+    {
+      "id": "fresh-26",
+      "question": "청둥오리의 학명이 뭐야?",
+      "category": "preserve",
+      "expected": {
+        "preserve": "taxon_identity"
+      }
+    },
+    {
+      "id": "fresh-27",
+      "question": "까치랑 직박구리를 비교해서 설명해 줘.",
+      "category": "preserve",
+      "expected": {
+        "preserve": "general_comparison"
+      }
+    },
+    {
+      "id": "fresh-28",
+      "question": "새 관찰을 시작할 때 기록장에는 뭘 적으면 좋을까?",
+      "category": "preserve",
+      "expected": {
+        "preserve": "non_graph_advice"
+      }
+    }
+  ]
+}

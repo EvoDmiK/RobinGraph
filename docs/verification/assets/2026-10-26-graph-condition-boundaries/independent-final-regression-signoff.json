@@ -1,0 +1,37 @@
+{
+  "case_counts": {
+    "pass": 36
+  },
+  "group_counts": {
+    "pass": 12
+  },
+  "classifications": {
+    "supported_answer": 21,
+    "supported_no_matching_results": 8,
+    "negated_condition": 3,
+    "supported_source_no_data": 3,
+    "unsupported_specific_food": 1
+  },
+  "original_failures_recovered": 13,
+  "original_failures_total": 13,
+  "new_regressions": 0,
+  "unsafe_answers": 0,
+  "valid_holds": 4,
+  "http_200": 36,
+  "unique_traces": 36,
+  "exact_mlflow_root_request_verified_per_row": 36,
+  "root_verification_receipt": "regression-root-verification.json",
+  "independent_network_calls": 0,
+  "root_score_identical": true,
+  "runtime_image": "robingraph-api:test-condition-boundaries-1f27f2a42c1e",
+  "source_sha256": "1f27f2a42c1ef038ce45d3695e8b80e67d923a604bf6c45985caafc1fe269363",
+  "gold_sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "responses_sha256": "bfe418e878221f2763846ade35fd0482e47503b41d6d18bf21d68ebcf1a2ad02",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "limits": [
+    "Feedback-exposed regression: not a fresh holdout result.",
+    "Pass includes 21 species-answer responses,8 empty-result responses,3 source-no-data responses and4 legitimate holds.",
+    "Same-request trace readback performed by root; independent review uses preserved artifacts.",
+    "Previous measured attempts remain preserved: 33/36,34/36,33/36."
+  ]
+}

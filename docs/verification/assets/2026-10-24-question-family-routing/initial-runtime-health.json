@@ -1,0 +1,23 @@
+{
+  "source_manifest_matches": true,
+  "health": {
+    "local": {
+      "http": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    },
+    "public": {
+      "http": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    }
+  }
+}

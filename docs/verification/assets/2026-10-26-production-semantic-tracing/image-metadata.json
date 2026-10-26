@@ -1,0 +1,122 @@
+{
+  "buildx.build.provenance/linux/amd64": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/ghcr.io/astral-sh/uv@0.11.26-python3.12-trixie-slim?digest=sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "build-arg:VCS_REF": "834c5353ca45f0640152ca4849548cd48818b266",
+          "label:org.robingraph.source-sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+          "label:org.robingraph.uncommitted-snapshot": "true"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "build-arg:VCS_REF": "834c5353ca45f0640152ca4849548cd48818b266",
+              "label:org.robingraph.source-sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+              "label:org.robingraph.uncommitted-snapshot": "true",
+              "vcs:localdir:context": ".",
+              "vcs:localdir:dockerfile": ".",
+              "vcs:revision": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+              "vcs:source": "https://github.com/EvoDmiK/RobinGraph.git"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.27.0",
+        "platform": "linux/arm64"
+      }
+    }
+  },
+  "buildx.build.provenance/linux/arm64": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/ghcr.io/astral-sh/uv@0.11.26-python3.12-trixie-slim?digest=sha256:0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86\u0026platform=linux%2Farm64",
+        "digest": {
+          "sha256": "0130b1999b49c28d1d9a2a20793825e5ea6b808be1036e979d654196e3c7dc86"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "build-arg:VCS_REF": "834c5353ca45f0640152ca4849548cd48818b266",
+          "label:org.robingraph.source-sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+          "label:org.robingraph.uncommitted-snapshot": "true"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "build-arg:VCS_REF": "834c5353ca45f0640152ca4849548cd48818b266",
+              "label:org.robingraph.source-sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+              "label:org.robingraph.uncommitted-snapshot": "true",
+              "vcs:localdir:context": ".",
+              "vcs:localdir:dockerfile": ".",
+              "vcs:revision": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+              "vcs:source": "https://github.com/EvoDmiK/RobinGraph.git"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.27.0",
+        "platform": "linux/arm64"
+      }
+    }
+  },
+  "buildx.build.ref": "orbstack/orbstack/okx5yj29v6qi75mgbwxmspgxi",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:851bc96d358374f0dce37fa95638e905d79845c5c036a44590b20c57ef22d659",
+    "size": 1609
+  },
+  "containerimage.digest": "sha256:851bc96d358374f0dce37fa95638e905d79845c5c036a44590b20c57ef22d659",
+  "image.name": "ghcr.io/evodmik/robingraph:snapshot-6a95918a5533"
+}

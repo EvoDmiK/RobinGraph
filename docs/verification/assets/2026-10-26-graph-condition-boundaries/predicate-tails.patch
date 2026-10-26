@@ -1,0 +1,49 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -54,6 +54,8 @@
+     r'(?:서식지|서식\s*환경|사는\s*곳)(?:가|는|이|은|도)?\s*(?:같|동일|겹)')
+ _OP_WORD = _OPS
+ _RANGE = r'~|에서|부터|사이|까지'
++# A completed comparison may be nominalised, quoted, or followed by a case particle.
++_PREDICATE_TAIL = r'(?:이라는|이라고|이고|이며|이다|입니다|이면서|인|라는|라고|으로|로|의|은|는|이|가|을|를|에서|에|고|지)'
+ _SHARE_ZERO = r'(?<![\d.])0(?:\.0+)?\s*%?\s*(?:(?:퍼센트|프로)\s*)?(?:초과|넘(?:는|게|고)|보다\s*(?:크|많|높|큰|많은|높은)\S*)'
+ 
+ 
+@@ -305,7 +307,7 @@
+             return False
+         if (span.end < len(question) and re.match(r'[가-힣]', question[span.end:])
+                 and re.search(r'(?:' + _OPS + r')$', span.text)
+-                and not re.match(r'(?:는|고|인|지|이라는|이라고|이고|이며|이다|입니다|이면서)(?=\s|[,.!?]|$)',
++                and not re.match(_PREDICATE_TAIL + r'(?=\s|[,.!?]|$)',
+                                  question[span.end:])):
+             return False  # a comparator prefix must not consume the beginning of another content word
+         ops = [_op(m) for m in re.findall(_OP_WORD, span.text)]
+@@ -650,7 +652,7 @@
+         if spec and spec[1] == 'number' and len(operators) == 1:
+             operator = operators[0]
+             prefix, ending = text.strip()[:operator.end()], text.strip()[operator.end():]
+-            functional = r'(?:인|이라는|이라고|이고|이며|이다|입니다|이면서|이라는\s*조건)'
++            functional = r'(?:' + _PREDICATE_TAIL + r'|이라는\s*조건)'
+             matches = [] if not re.fullmatch(functional, ending) else list(re.finditer(
+                 r'(?<!\w)' + re.escape(prefix).replace(r'\ ', r'\s*')
+                 + r'(?=(?:' + functional + r')?(?:\s|[,.!?]|$))', question))
+--- a/tests/test_graph_predicate_tails.py
++++ b/tests/test_graph_predicate_tails.py
+@@ -0,0 +1,17 @@
++"""Comparison endings share one bounded grammar, preserving content-word and denial guards (mock plans)."""
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphPredicateTailsTest(TestCase):
++    def test_comparison_particle_quotation_matrix(self):
++        rows=[]
++        def plan(surface,op):return dict(kind='taxon_traits',conditions=[dict(trait_name='body_mass',op=op,threshold=200,unit='g',surface=surface)],unresolved=[],unknown_relation=False)
++        for word,op in [('초과','num_gt'),('미만','num_lt'),('이상','num_gte'),('이하','num_lte')]:
++         for tail in ('인','이라는','이라고','이고','이며','이다','입니다','이면서','라는','라고','으로','로','의','은','는','이','가','을','를','에서','에','고','지'):
++          q='체중 200g '+word+tail+' 새를 찾아줘';p=plan('체중 200g '+word,op);gate=execution_gate(q,s.interpret(q,lambda *_:p));assert gate=='answer',(q,gate);rows.append(dict(question=q,gate=gate))
++        for tail in ('라는사과','로빈','으로만드는','의자','는지렁이','지고릴라','이라는내용없는','라는 것은 아니다','라고는 아니야'):
++         q='체중 200g 이상'+tail+' 새를 찾아줘';p=plan('체중 200g 이상','num_gte');gate=execution_gate(q,s.interpret(q,lambda *_:p));assert gate=='clarify',(q,gate);rows.append(dict(question=q,gate=gate))
++        for word,op in [('초과','num_gt'),('미만','num_lt'),('이상','num_gte'),('이하','num_lte')]:
++         q='자료를 펼쳐서 체중200g '+word+'로 새를 찾아줘';p=plan('체중 200g '+word+'이라는',op);candidate,changes=s.reconcile_graph_plan(q,p);gate=execution_gate(q,s.interpret(q,lambda *_:candidate));assert gate=='answer',(q,gate,changes);rows.append(dict(question=q,gate=gate,changes=changes))

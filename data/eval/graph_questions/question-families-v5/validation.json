@@ -1,0 +1,40 @@
+{
+  "reviewed_at": "2026-10-26T07:54:32.884151+00:00",
+  "reviewer": "independent_writer_peer",
+  "result": "PASS",
+  "dataset_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "cases": 12,
+  "families": 4,
+  "classifications": {
+    "supported": 8,
+    "hold": 4
+  },
+  "hold_classes": {
+    "negated_condition": 2,
+    "unsupported_specific_food": 2
+  },
+  "pre_api_corrections": {
+    "scope_rank_fields_corrected": 7,
+    "hold_expected_null_to_empty_object": 4,
+    "question_text_changed": false,
+    "condition_values_changed": false
+  },
+  "review_scope": [
+    "question clarity",
+    "scope rank vs expected target",
+    "equivalent pair same conditions",
+    "contrast distinct expected plan or hold",
+    "biological negation vs query setting",
+    "exact plant-food identity vs shared ecological category"
+  ],
+  "errors": [],
+  "human_reviewed": false,
+  "app_parser_api_tests_traces_patch_read": false,
+  "api_called": false,
+  "questions_shared_with_implementers": false,
+  "limits": [
+    "Model peer review; no human review.",
+    "Static semantic review, not runtime/data availability verification.",
+    "No numeric comparison coverage in this set."
+  ]
+}

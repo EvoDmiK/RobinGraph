@@ -1,0 +1,74 @@
+{
+  "run_id": "60af8189153c4d18849eea3dc606c5c1",
+  "experiment_id": "33",
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/runs/60af8189153c4d18849eea3dc606c5c1",
+  "status": "FINISHED",
+  "metrics": {
+    "regression_supported_answer": 21.0,
+    "fresh_supported_answer": 15.0,
+    "fresh_wrong_hold_reason": 1.0,
+    "fresh_groups_fail": 3.0,
+    "fresh_unsupported_specific_food": 1.0,
+    "regression_groups_pass": 12.0,
+    "regression_unsupported_specific_food": 1.0,
+    "regression_supported_no_matching_results": 8.0,
+    "fresh_cases_pass": 20.0,
+    "fresh_supported_no_matching_results": 2.0,
+    "regression_cases_pass": 36.0,
+    "regression_supported_source_no_data": 3.0,
+    "fresh_groups_pass": 5.0,
+    "fresh_false_hold": 3.0,
+    "regression_negated_condition": 3.0,
+    "fresh_cases_fail": 4.0,
+    "fresh_negated_condition": 2.0
+  },
+  "artifacts_read_back": {
+    "datasets": [
+      "datasets/holdout.json",
+      "datasets/manifest.json",
+      "datasets/regression.json",
+      "datasets/validation.json"
+    ],
+    "evaluation": [
+      "evaluation/fresh-score.json",
+      "evaluation/regression-score.json"
+    ],
+    "same-request-evidence": [
+      "same-request-evidence/fresh-traces.json",
+      "same-request-evidence/regression-traces.json"
+    ],
+    "verification": [
+      "verification/code-freeze.json",
+      "verification/final-runtime-check.json",
+      "verification/fresh-root-verification.json",
+      "verification/health-final.json",
+      "verification/independent-predicate-denial-final-signoff.json",
+      "verification/original-failures-comparison.json",
+      "verification/predicate-denial-final-independent.log",
+      "verification/predicate-denial-safety-finding.json",
+      "verification/regression-root-verification.json",
+      "verification/task-source-scope.json",
+      "verification/unit-full.log",
+      "verification/unit-initial.log",
+      "verification/unit-numeric-boundary-failure.log"
+    ],
+    "evaluator": [
+      "evaluator/evaluate_graph_question_families.py"
+    ],
+    "original-first-attempt": [
+      "original-first-attempt/holdout-score.json"
+    ],
+    "previous-feedback-attempt": [
+      "previous-feedback-attempt/regression-attempt1",
+      "previous-feedback-attempt/regression-attempt2",
+      "previous-feedback-attempt/regression-attempt3"
+    ],
+    "independent-review": [
+      "independent-review/independent-final-regression-score.json",
+      "independent-review/independent-final-regression-signoff.json",
+      "independent-review/independent-fresh-score.json",
+      "independent-review/independent-fresh-signoff.json"
+    ]
+  },
+  "deleted_traces": 0
+}

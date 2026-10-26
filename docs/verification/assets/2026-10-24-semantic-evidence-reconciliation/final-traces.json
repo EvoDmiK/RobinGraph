@@ -1,0 +1,1780 @@
+{
+  "image": "robingraph-api:test-evidence-reconcile-545524582ddc",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "case": "N02",
+      "question": "까마귀속 안에서 숲이 서식지로 기록되어 있고 열매도 먹는 종을 골라 줘.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-fff33d5acff53cf6d74ac572e80d4228",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "600b7aaf1e9125f1",
+          "parent_id": "b5b750dcc3605462",
+          "inputs": null,
+          "outputs": {
+            "kind": null,
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [
+              "other"
+            ],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": null,
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 1,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "plan_validation_rejected",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "3c4df6cd42768457",
+          "parent_id": "600b7aaf1e9125f1",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": null,
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "dbd4006a474831e5",
+          "parent_id": "3c4df6cd42768457",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "326e6dc707e76d83",
+          "parent_id": "dbd4006a474831e5",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "까마귀",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록되어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "열매도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.reconciliation",
+          "span_id": "4410ddba4806f889",
+          "parent_id": "dbd4006a474831e5",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "까마귀",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록되어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "열매도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "까마귀",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록되어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "열매도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "plan_validation",
+            "evidence_reconciliations": []
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "f0a082f3a0ee321f",
+          "parent_id": "dbd4006a474831e5",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "9f62a7c99afcb24d",
+          "parent_id": "dbd4006a474831e5",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "까마귀",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록되어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "열매도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        }
+      ],
+      "passed": true,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "비교할 기준 종과 관계를 하나로 확인하지 못했습니다. 먹이·식성 또는 서식 환경 중 비교 기준을 알려 주세요.",
+        "warnings": [
+          "확인되지 않은 조건을 빼고 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "비교할 기준 종과 관계를 하나로 확인하지 못했습니다. 먹이·식성 또는 서식 환경 중 비교 기준을 알려 주세요."
+        },
+        "entity_resolution": null
+      },
+      "request": {
+        "question": "까마귀속 안에서 숲이 서식지로 기록되어 있고 열매도 먹는 종을 골라 줘.",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "case_spec": {
+        "id": "N02",
+        "category": "supported",
+        "question": "까마귀속 안에서 숲이 서식지로 기록되어 있고 열매도 먹는 종을 골라 줘.",
+        "expected": {
+          "kind": "taxon_traits",
+          "taxon_name": "까마귀속",
+          "rank": "genus",
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest"
+            },
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "value": "fruit",
+              "threshold": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "F02",
+      "question": "참새목에서 숲이 서식지로 기록돼 있으며 열매도 먹는 새를 찾아줘.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-9294f401a140cf6e22698b9e17eff370",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "3cf96bc4ed9db7f3",
+          "parent_id": "8ba0786e3c6c8e4a",
+          "inputs": null,
+          "outputs": {
+            "kind": "order_fruit",
+            "species": [],
+            "rank": {
+              "text": "참새목",
+              "start": 0,
+              "end": 3
+            },
+            "group": null,
+            "diet": "fruit_share",
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [
+              {
+                "text": "숲이",
+                "start": 6,
+                "end": 8
+              },
+              {
+                "text": "서식지로",
+                "start": 9,
+                "end": 13
+              },
+              {
+                "text": "기록돼",
+                "start": 14,
+                "end": 17
+              },
+              {
+                "text": "있으며",
+                "start": 18,
+                "end": 21
+              }
+            ],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [
+              [
+                "diet",
+                {
+                  "text": "열매",
+                  "start": 22,
+                  "end": 24
+                }
+              ]
+            ],
+            "source": "extractor",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "order_fruit",
+            "graph_intent.source": "extractor",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 4,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "unresolved_conditions",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "c7a68910508f3854",
+          "parent_id": "3cf96bc4ed9db7f3",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "extractor",
+            "graph_intent.kind": "order_fruit",
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "3c8a8f49b8ff0b4a",
+          "parent_id": "c7a68910508f3854",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "lexical"
+          }
+        }
+      ],
+      "passed": true,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "‘숲이’, ‘서식지로’, ‘기록돼’ 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요.",
+        "warnings": [
+          "확인되지 않은 조건을 빼고 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "‘숲이’, ‘서식지로’, ‘기록돼’ 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요."
+        },
+        "entity_resolution": null
+      },
+      "request": {
+        "question": "참새목에서 숲이 서식지로 기록돼 있으며 열매도 먹는 새를 찾아줘.",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "case_spec": {
+        "id": "F02",
+        "category": "supported",
+        "question": "참새목에서 숲이 서식지로 기록돼 있으며 열매도 먹는 새를 찾아줘.",
+        "expected": {
+          "kind": "taxon_traits",
+          "taxon_name": "참새목",
+          "rank": "order",
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest"
+            },
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "value": "fruit",
+              "threshold": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "F03",
+      "question": "망고 열매를 먹는 새를 알려줘.",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_kind": "graph_query",
+      "result_status": "insufficient_data",
+      "trace_id": "tr-1b664c40544b0d8d41dbad7a21dbd6c7",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "0d9c44a610be9a93",
+          "parent_id": "003cccae1b6477b2",
+          "inputs": null,
+          "outputs": {
+            "kind": "specific_fruit",
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": {
+              "text": "망고",
+              "start": 0,
+              "end": 2
+            },
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [],
+            "source": "extractor",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "specific_fruit",
+            "graph_intent.source": "extractor",
+            "graph_intent.disposition": "insufficient_data",
+            "graph_intent.template_matches_legacy": false,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "dca58a3b94cd3348",
+          "parent_id": "0d9c44a610be9a93",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "extractor",
+            "graph_intent.kind": "specific_fruit",
+            "graph_intent.disposition": "insufficient_data"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "9fe39a941f453562",
+          "parent_id": "dca58a3b94cd3348",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "lexical"
+          }
+        }
+      ],
+      "passed": true,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "abstain",
+        "answer_text": "특정 식물 열매를 함께 먹는다는 근거 자료가 없어 답할 수 없습니다. 먹이 생태 범주(예: 열매 섭식)가 같은 종을 원하시면 \"같은 먹이 범주를 공유하는 새\"로 질문해 주세요.",
+        "warnings": [
+          "특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "insufficient_data",
+            "title": "특정 열매 공유",
+            "text": "특정 식물 열매를 함께 먹는다는 근거 자료가 없어 답할 수 없습니다. 먹이 생태 범주(예: 열매 섭식)가 같은 종을 원하시면 \"같은 먹이 범주를 공유하는 새\"로 질문해 주세요.",
+            "items": [],
+            "sources": [],
+            "limitations": [
+              "특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."
+            ],
+            "has_more": false
+          }
+        },
+        "entity_resolution": null
+      },
+      "request": {
+        "question": "망고 열매를 먹는 새를 알려줘.",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "case_spec": {
+        "id": "F03",
+        "category": "hold",
+        "question": "망고 열매를 먹는 새를 알려줘.",
+        "expected": {
+          "expected_hold": "specific plant food remains unsupported"
+        }
+      }
+    },
+    {
+      "case": "F04",
+      "question": "까마귀속에서 숲이 서식지로 기록되어 있지 않고 열매도 먹는 종을 골라 줘.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-b6287a3073d6c016aa6c4813f9d2bd4b",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "6c648c1392e0c685",
+          "parent_id": "b12ec2aa4c21a2bf",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "species": [],
+            "rank": {
+              "text": "까마귀속",
+              "start": 0,
+              "end": 4
+            },
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [
+              {
+                "text": "않고",
+                "start": 23,
+                "end": 25
+              }
+            ],
+            "residual": [
+              {
+                "text": "숲이",
+                "start": 7,
+                "end": 9
+              },
+              {
+                "text": "서식지로",
+                "start": 10,
+                "end": 14
+              },
+              {
+                "text": "기록되어",
+                "start": 15,
+                "end": 19
+              },
+              {
+                "text": "있지",
+                "start": 20,
+                "end": 22
+              },
+              {
+                "text": "골라",
+                "start": 36,
+                "end": 38
+              }
+            ],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [],
+            "source": "extractor",
+            "conditions": [
+              [
+                {
+                  "trait_name": "diet_distribution",
+                  "op": "share_gt",
+                  "value": "fruit",
+                  "threshold": 0,
+                  "unit": null,
+                  "qualifier": null
+                },
+                {
+                  "text": "열매",
+                  "start": 26,
+                  "end": 28
+                }
+              ]
+            ],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.source": "extractor",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 1,
+            "graph_intent.residual_count": 5,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "negated_conditions",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "be3bde5e500fd79d",
+          "parent_id": "6c648c1392e0c685",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "extractor",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "66a3655a384fc165",
+          "parent_id": "be3bde5e500fd79d",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "lexical"
+          }
+        }
+      ],
+      "passed": true,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "‘않고’, ‘숲이’, ‘서식지로’ 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요.",
+        "warnings": [
+          "확인되지 않은 조건을 빼고 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "‘않고’, ‘숲이’, ‘서식지로’ 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요."
+        },
+        "entity_resolution": null
+      },
+      "request": {
+        "question": "까마귀속에서 숲이 서식지로 기록되어 있지 않고 열매도 먹는 종을 골라 줘.",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "case_spec": {
+        "id": "F04",
+        "category": "hold",
+        "question": "까마귀속에서 숲이 서식지로 기록되어 있지 않고 열매도 먹는 종을 골라 줘.",
+        "expected": {
+          "expected_hold": "negative habitat cannot become positive condition"
+        }
+      }
+    },
+    {
+      "case": "F05",
+      "question": "Columbidae에서 몸무게가 0.3kg 초과인 새를 찾아줘. 300g인 기록은 제외해.",
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_kind": "graph_query",
+      "result_status": "answer",
+      "trace_id": "tr-b8c317ae09fc0cb3bf483c9d611b927c",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "2106848ce5f6ad77",
+          "parent_id": "32af7ce225f42982",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "species": [],
+            "rank": {
+              "text": "Columbidae",
+              "start": 0,
+              "end": 10
+            },
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [
+              [
+                {
+                  "trait_name": "body_mass",
+                  "op": "num_gt",
+                  "value": null,
+                  "threshold": 300.0,
+                  "unit": "g",
+                  "qualifier": null
+                },
+                {
+                  "text": "몸무게가 0.3kg 초과인",
+                  "start": 13,
+                  "end": 27
+                }
+              ]
+            ],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "answer",
+            "graph_intent.template_matches_legacy": false,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "9aa18a77a9e52c08",
+          "parent_id": "2106848ce5f6ad77",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.disposition": "answer"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "c84501cfa5663a13",
+          "parent_id": "9aa18a77a9e52c08",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "23b978aacc3d72e3",
+          "parent_id": "c84501cfa5663a13",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "Columbidae",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 300,
+                "unit": "g",
+                "surface": "몸무게가 0.3kg 초과인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "300g인 기록은 제외해"
+            ],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.reconciliation",
+          "span_id": "10ce317ea14998d7",
+          "parent_id": "c84501cfa5663a13",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "Columbidae",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 300,
+                "unit": "g",
+                "surface": "몸무게가 0.3kg 초과인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "300g인 기록은 제외해"
+            ],
+            "unknown_relation": false
+          },
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "Columbidae",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 300,
+                "unit": "g",
+                "surface": "몸무게가 0.3kg 초과인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "plan_validation",
+            "evidence_reconciliations": [
+              {
+                "field": "unresolved",
+                "rule": "strict_bound_restatement",
+                "before": [
+                  "300g인 기록은 제외해"
+                ],
+                "after": []
+              }
+            ]
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "4fa0db3c49bb8617",
+          "parent_id": "c84501cfa5663a13",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "d5c7e55d3feae43a",
+          "parent_id": "c84501cfa5663a13",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "Columbidae",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 300,
+                "unit": "g",
+                "surface": "몸무게가 0.3kg 초과인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation"
+          }
+        }
+      ],
+      "passed": true,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "Columbidae 범위에서 조건 자료가 모두 있는 304종 중 89종이 조건(체중 300g 초과)에 모두 맞습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "Columbidae 중 조건에 맞는 종",
+            "text": "Columbidae 범위에서 조건 자료가 모두 있는 304종 중 89종이 조건(체중 300g 초과)에 모두 맞습니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "니코바비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2974",
+                  "scientific_name": "Caloenas nicobarica",
+                  "english_name": "Nicobar Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.law.go.kr/flDownload.do?bylClsCd=200201&flNm=list&flSeq=162188279",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "니코바비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Caloenas > Caloenas nicobarica",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 537.86 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1519&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "부채비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2963",
+                  "scientific_name": "Goura victoria",
+                  "english_name": "Victoria Crowned Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Goura%20victoria",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "부채비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Goura > Goura victoria",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 2384 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1641&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "왕관비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2960",
+                  "scientific_name": "Goura cristata",
+                  "english_name": "Western Crowned Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://grandpark.seoul.go.kr/animal/animalView.do?idx=1066&lang=ko&menu_id=S001002002003",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "왕관비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Goura > Goura cristata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 2000 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1638&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "집비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2703",
+                  "scientific_name": "Columba livia",
+                  "english_name": "Rock Dove",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.worldbirdnames.org/new/ioc-lists/master-list-2/",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "집비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba livia",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 354.2 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1542&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흑비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2653",
+                  "scientific_name": "Columba janthina",
+                  "english_name": "Black Wood Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-138",
+                        "source_rank": "species",
+                        "source_scientific_name": "Columba janthina",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:2654",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Columba janthina janthina",
+                        "source_text": "small islands southwest of South Korea to Ryukyu Islands (southern Japan) and islets off Taiwan",
+                        "source_text_sha256": "61ff7e307e84d42abfb13c05e0138579ca0d0f5357ceb0222404c79b38ba75ca",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "흑비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba janthina",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 397 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2692",
+                  "scientific_name": "Columba unicincta",
+                  "english_name": "Afep Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Afep Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba unicincta",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 389.14 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1557&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2680",
+                  "scientific_name": "Columba arquatrix",
+                  "english_name": "African Olive Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "African Olive Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba arquatrix",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 400 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1530&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2676",
+                  "scientific_name": "Columba palumboides",
+                  "english_name": "Andaman Wood Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Wood Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba palumboides",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 520 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1547&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2671",
+                  "scientific_name": "Columba pulchricollis",
+                  "english_name": "Ashy Wood Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Ashy Wood Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba pulchricollis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 330 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1550&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2544",
+                  "scientific_name": "Patagioenas fasciata",
+                  "english_name": "Band-tailed Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Band-tailed Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Patagioenas > Patagioenas fasciata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 366.3 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1698&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3053",
+                  "scientific_name": "Ducula latrans",
+                  "english_name": "Barking Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Barking Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Ducula > Ducula latrans",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 365.11 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1589&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2455",
+                  "scientific_name": "Turacoena modesta",
+                  "english_name": "Black Cuckoo-Dove",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black Cuckoo-Dove"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Turacoena > Turacoena modesta",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 340 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1834&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3061",
+                  "scientific_name": "Ducula melanochroa",
+                  "english_name": "Black Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Ducula > Ducula melanochroa",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 665 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1591&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2691",
+                  "scientific_name": "Columba bollii",
+                  "english_name": "Bolle's Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bolle's Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba bollii",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 308.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1531&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2990",
+                  "scientific_name": "Gymnophaps mada",
+                  "english_name": "Buru Mountain Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Buru Mountain Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Gymnophaps > Gymnophaps mada",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 334 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1643&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2689",
+                  "scientific_name": "Columba sjostedti",
+                  "english_name": "Cameroon Olive Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Cameroon Olive Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > 비둘기속 (Columba) > Columba sjostedti",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 308.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1553&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2978",
+                  "scientific_name": "Hemiphaga chathamensis",
+                  "english_name": "Chatham Islands Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Chatham Islands Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Hemiphaga > Hemiphaga chathamensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 789 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1646&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3054",
+                  "scientific_name": "Ducula brenchleyi",
+                  "english_name": "Chestnut-bellied Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Chestnut-bellied Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Ducula > Ducula brenchleyi",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 380 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1577&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2441",
+                  "scientific_name": "Zentrygon chiriquensis",
+                  "english_name": "Chiriqui Quail-Dove",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Chiriqui Quail-Dove"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Zentrygon > Zentrygon chiriquensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 308 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1851&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3051",
+                  "scientific_name": "Ducula whartoni",
+                  "english_name": "Christmas Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Christmas Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 비둘기 (Columbidae) > Ducula > Ducula whartoni",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 571.18 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1612&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1519&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1641&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1638&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1542&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1557&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1530&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1547&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1550&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1698&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1589&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1834&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1591&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1531&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1643&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1553&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1646&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1577&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1851&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1612&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:2275",
+              "rank": "family",
+              "scientific_name": "Columbidae",
+              "korean_name": null,
+              "korean_name_source_url": null
+            },
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "label": "체중 300g 초과",
+                "op": "num_gt",
+                "value": null,
+                "threshold": 300.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 304,
+              "scoped": 350,
+              "matched": 89
+            },
+            "paths": [
+              {
+                "text": "범위 확인: Columbidae · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 체중 300g 초과",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "request": {
+        "question": "Columbidae에서 몸무게가 0.3kg 초과인 새를 찾아줘. 300g인 기록은 제외해.",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "case_spec": {
+        "id": "F05",
+        "category": "supported",
+        "question": "Columbidae에서 몸무게가 0.3kg 초과인 새를 찾아줘. 300g인 기록은 제외해.",
+        "expected": {
+          "kind": "taxon_traits",
+          "taxon_name": "Columbidae",
+          "rank": "family",
+          "conditions": [
+            {
+              "trait_name": "body_mass",
+              "op": "num_gt",
+              "threshold": 300,
+              "unit": "g"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

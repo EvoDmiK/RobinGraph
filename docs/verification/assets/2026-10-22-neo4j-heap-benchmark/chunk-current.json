@@ -1,0 +1,133 @@
+{
+  "target": "test",
+  "neo4j_host": "192.168.219.98",
+  "repeats": 10,
+  "question_count": 5,
+  "concurrency": 1,
+  "scope": "warm sequential fixture baseline; embedding generation measured separately",
+  "modes": {
+    "fulltext": {
+      "samples": 50,
+      "p50_ms": 5.453,
+      "p95_ms": 9.535,
+      "max_ms": 10.79,
+      "returned_results_total": 60,
+      "forbidden_result_count": 0,
+      "warning_count": 0,
+      "embedding_latency_excluded": true
+    },
+    "vector": {
+      "samples": 50,
+      "p50_ms": 10.901,
+      "p95_ms": 13.303,
+      "max_ms": 34.378,
+      "returned_results_total": 100,
+      "forbidden_result_count": 0,
+      "warning_count": 0,
+      "embedding_latency_excluded": true
+    },
+    "hybrid": {
+      "samples": 50,
+      "p50_ms": 11.386,
+      "p95_ms": 13.413,
+      "max_ms": 32.196,
+      "returned_results_total": 130,
+      "forbidden_result_count": 0,
+      "warning_count": 0,
+      "embedding_latency_excluded": true
+    }
+  },
+  "embedding": [
+    {
+      "question_id": "SQ-001",
+      "elapsed_ms": 580.601,
+      "ok": true
+    },
+    {
+      "question_id": "SQ-002",
+      "elapsed_ms": 205.487,
+      "ok": true
+    },
+    {
+      "question_id": "SQ-003",
+      "elapsed_ms": 191.941,
+      "ok": true
+    },
+    {
+      "question_id": "SQ-004",
+      "elapsed_ms": 215.069,
+      "ok": true
+    },
+    {
+      "question_id": "SQ-005",
+      "elapsed_ms": 199.967,
+      "ok": true
+    }
+  ],
+  "stage_samples": {
+    "fulltext": {
+      "samples": 50,
+      "p50_ms": 2.297,
+      "p95_ms": 3.06,
+      "max_ms": 3.515
+    },
+    "vector": {
+      "samples": 50,
+      "p50_ms": 4.796,
+      "p95_ms": 5.419,
+      "max_ms": 6.028
+    },
+    "policy_recheck": {
+      "samples": 50,
+      "p50_ms": 2.253,
+      "p95_ms": 2.788,
+      "max_ms": 3.717
+    }
+  },
+  "corpus_before": [
+    {
+      "count": 4,
+      "text_characters": 171,
+      "vector_components": 1024
+    }
+  ],
+  "text_utf8_bytes": 357,
+  "server_memory_config": [
+    {
+      "name": "server.memory.heap.initial_size",
+      "value": "2.00GiB"
+    },
+    {
+      "name": "server.memory.heap.max_size",
+      "value": "4.00GiB"
+    },
+    {
+      "name": "server.memory.pagecache.size",
+      "value": "1.00GiB"
+    }
+  ],
+  "policy": {
+    "candidate_occurrences": 130,
+    "excluded_occurrences": 0,
+    "eligible_embedding_disallowed_occurrences": 0
+  },
+  "corpus_after": [
+    {
+      "count": 4,
+      "text_characters": 171,
+      "vector_components": 1024
+    }
+  ],
+  "corpus_aggregate_unchanged": true,
+  "postgres": {
+    "database": "robingraph_test",
+    "transaction_read_only": true,
+    "extensions": [
+      {
+        "name": "pg_trgm",
+        "default_version": "1.6",
+        "installed_version": null
+      }
+    ]
+  }
+}

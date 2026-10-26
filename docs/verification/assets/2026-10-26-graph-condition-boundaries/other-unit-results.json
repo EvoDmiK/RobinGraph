@@ -1,0 +1,217 @@
+[
+  {
+    "label": "descriptive_comparison",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": []
+  },
+  {
+    "label": "unit_label_only",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "conditions[0].unit",
+        "rule": "original_numeric_unit",
+        "before": "cm",
+        "after": "mm"
+      }
+    ]
+  },
+  {
+    "label": "wrong_threshold_not_repaired",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "wrong_threshold_not_repaired",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_other_measure",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "날개 길이 제한은 두지 않을게."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "unrestricted_conflicting_measure",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_habitat",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "사는 곳은 제한하지 말고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "biological_negation_not_removed",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "category_discourse",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "자료를 펼쳐서",
+          "비율 조건을 뜻하는 건 아니야."
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "rate_denial_not_removed_for_share",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "self_exclusion",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "strict_bound_restatement",
+        "before": [
+          "황조롱이는 빼고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "other_species_exclusion",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "서식환경 제한하지 말고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "서식 환경 제한하지 말고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "사는곳 제한하지 말고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "whitespace_dimension",
+    "gate": "answer",
+    "expected": "answer",
+    "changes": [
+      {
+        "field": "unresolved",
+        "rule": "explicit_query_framing",
+        "before": [
+          "사는 곳 제한하지 말고"
+        ],
+        "after": []
+      }
+    ]
+  },
+  {
+    "label": "ambiguous_dimension_not_proved",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "ratio_explanation_requires_category",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "unrestricted_conflicts_with_relation",
+    "gate": "clarify",
+    "expected": "clarify",
+    "changes": []
+  },
+  {
+    "label": "specific_food",
+    "question": "황조롱이와 같은 식물 종의 열매를 먹는 새는?",
+    "gate": "insufficient_data",
+    "kind": "specific_fruit",
+    "residual": []
+  },
+  {
+    "label": "specific_food",
+    "question": "해안에 사는 새 중 황조롱이와 정확히 같은 식물 종의 열매를 먹는 새는?",
+    "gate": "insufficient_data",
+    "kind": "specific_fruit",
+    "residual": []
+  },
+  {
+    "label": "specific_food",
+    "question": "황조롱이와 같은 식물 종의 열매를 먹지 않는 새는?",
+    "gate": "clarify",
+    "kind": "specific_fruit",
+    "residual": []
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "question": "Turdus merula 종의 영양 단계가 Omnivore로 기록을 조회해 주세요.",
+    "planned_trait": "trophic_niche",
+    "source_trait": "trophic_level",
+    "gate": "answer"
+  },
+  {
+    "question": "Turdus merula 종의 영양 단계 기록값이 Omnivore인지 기록을 조회해 주세요.",
+    "planned_trait": "trophic_niche",
+    "source_trait": "trophic_level",
+    "gate": "answer"
+  },
+  {
+    "question": "Turdus merula 종의 영양 단계가 Omnivore인 기록을 조회해 주세요.",
+    "planned_trait": "trophic_niche",
+    "source_trait": "trophic_level",
+    "gate": "answer"
+  }
+]

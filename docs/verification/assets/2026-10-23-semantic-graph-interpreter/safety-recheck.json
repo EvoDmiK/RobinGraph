@@ -1,0 +1,56 @@
+{
+  "mock_only": true,
+  "live_api_db_calls": false,
+  "repository_changes": false,
+  "records": [
+    {
+      "case_id": "added_habitat",
+      "boundary": "deterministic_handler_with_raw_provider_mock",
+      "provider_calls": 1,
+      "gate": "clarify",
+      "executable_plan": false
+    },
+    {
+      "case_id": "omitted_taxon",
+      "boundary": "deterministic_handler_with_raw_provider_mock",
+      "provider_calls": 1,
+      "gate": "clarify",
+      "executable_plan": false
+    },
+    {
+      "case_id": "omitted_unrecognized_condition",
+      "boundary": "deterministic_handler_with_raw_provider_mock",
+      "provider_calls": 1,
+      "gate": "answer",
+      "executable_plan": true
+    },
+    {
+      "case_id": "omitted_unrecognized_condition",
+      "boundary": "generation_adapter_with_request_mock",
+      "audit_faithful": false,
+      "operations": [
+        "graph_intent",
+        "graph_intent_audit"
+      ],
+      "gate": null,
+      "error": "SemanticIntentError",
+      "meaning": "audit rejection blocks provider output"
+    },
+    {
+      "case_id": "omitted_unrecognized_condition",
+      "boundary": "generation_adapter_with_request_mock",
+      "audit_faithful": true,
+      "operations": [
+        "graph_intent",
+        "graph_intent_audit"
+      ],
+      "gate": "answer",
+      "error": null,
+      "meaning": "audit acceptance is model-dependent"
+    }
+  ],
+  "source_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "6cc5df95bd34fe817f4667c030db014e02f9f502ee008417c98ad025b2fbe9de",
+    "src/robingraph/generation.py": "c961ccaf7f144b280cea292df5871f202bea0ca13bde06edc876899dbedfd121"
+  }
+}

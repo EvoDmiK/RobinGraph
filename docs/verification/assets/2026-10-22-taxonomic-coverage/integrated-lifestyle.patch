@@ -1,0 +1,56 @@
+--- before/src/robingraph/retrieval/graph_condition_extractor.py
++++ src/robingraph/retrieval/graph_condition_extractor.py
+@@ -257,7 +257,7 @@
+ # --- trait conditions (taxon_traits) -------------------------------------------------------
+ # Surfaces are only the existing display vocabulary (species_profile.VALUES/LABELS, HABITATS); nothing invented.
+ # A bare surface shared by several traits (잡식, 사체 섭식) needs its trait named, else it is ambiguous.
+-_LINK = r'(?:성)?(?:\s*범주)?(?:을\s*하는|를\s*하는|하는|인|이고|이며|이면서|면서|이자|의|이|가)?'
++_LINK = r'(?:성)?(?:\s*범주)?(?:을\s*하는|를\s*하는|하는|하면서|하며|하고|인|이고|이며|이면서|면서|이자|의|이|가)?'
+ _TRAIT_LABELS = {**{LABELS[name]: name for name, spec in TRAIT_CONDITIONS.items() if spec[1] == 'text'},
+                  '서식지': 'habitat', '서식지 밀도': 'habitat_density_category', '생활 방식': 'primary_lifestyle',
+                  '먹이 범주': 'trophic_niche'}
+@@ -278,6 +278,8 @@
+     if _spec[1] == 'text' and _name != 'habitat':   # a bare habitat word needs 사는/서식하는 (_HABITAT)
+         for _surface, _value in _trait_surfaces(_name).items():
+             _BARE.setdefault(_surface, []).append((_name, _value))
++            if _surface.endswith(' 생활'):   # 나무 위 생활 -> "나무 위에서 생활하는" (the same display value)
++                _BARE.setdefault(_surface[:-len(' 생활')] + '에서 생활', []).append((_name, _value))
+ _BARE.pop(VALUES['Frugivore'])   # 열매 섭식/과실식 stay with the established fruit criteria
+ _SHARE_WORDS = {VALUES[key]: key for key in TRAIT_CONDITIONS['diet_distribution'][2] if key != 'fruit'}
+ 
+--- before/tests/test_taxon_traits.py
++++ tests/test_taxon_traits.py
+@@ -529,3 +529,33 @@
+             with self.subTest(question=question):
+                 gate, _, found = conditions_of(question)
+                 self.assertEqual((gate, [c.trait_name for c in found]), ('answer', [name]))
++
++
++class LifestylePhrasing(TestCase):
++    """CT-013 (root TEST API: clarify): display values "X 생활" also said "X에서 생활하는"; nothing invented."""
++
++    def test_x_eseo_saenghwal_for_every_lifestyle_value(self):
++        for question, value in (('동박새과 중 나무 위에서 생활하는 새는?', 'Insessorial'),
++                                ('칼새목 중 공중에서 생활하는 새는?', 'Aerial'),
++                                ('꿩과 중 지상에서 생활하는 새', 'Terrestrial'),
++                                ('Picidae 중 나무 위에서 생활하는 새', 'Insessorial'),
++                                ('까마귀과 중 다양한 생활 방식을 하는 새', 'Generalist'),
++                                ('까마귀과 중 나무 위 생활을 하는 새', 'Insessorial'),
++                                ('까마귀과 중 주 생활 방식이 지상 생활인 새', 'Terrestrial')):
++            with self.subTest(question=question):
++                gate, _, found = conditions_of(question)
++                self.assertEqual((gate, found), ('answer', [TraitCondition('primary_lifestyle', 'eq', value)]))
++
++    def test_lifestyle_in_and_combinations(self):
++        gate, intent, found = conditions_of('Picidae 중 나무 위에서 생활하며 무척추동물을 먹는 새')
++        self.assertEqual((gate, found), ('answer', [TraitCondition('primary_lifestyle', 'eq', 'Insessorial'),
++                                                    TraitCondition('diet_distribution', 'share_gt', 'invertebrate', 0)]))
++        gate, intent, found = conditions_of('나무 위에서 생활하고 열매를 먹는 새는?')
++        self.assertEqual((gate, intent.rank, found), ('answer', None, [TraitCondition('primary_lifestyle', 'eq', 'Insessorial'), FRUIT]))
++
++    def test_other_wordings_negation_and_extra_words_still_hold(self):
++        for question in ('오리과 중 물에서 생활하는 새는?', '까마귀과 중 땅에서 생활하는 새', '까마귀과 중 나무에서 생활하는 새',
++                         '까마귀과 중 나무 위에서 생활하지 않는 새', '까마귀과 중 겨울에 나무 위에서 생활하는 새',
++                         '까마귀과 중 나무 위에서 생활하는 큰 새'):
++            with self.subTest(question=question):
++                self.assertEqual(conditions_of(question)[0], 'clarify')

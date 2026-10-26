@@ -1,0 +1,266 @@
+{
+  "focus": "previous fresh24 failures",
+  "focused_cases": [
+    {
+      "id": "E04A",
+      "group": "E04",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Carnivore\"}"
+        ]
+      },
+      "trace_id": "tr-965dac7fa8939de5043c9d1b51952d9e",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E04C",
+      "group": "E04",
+      "role": "contrast",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Larus argentatus",
+        "rank": "species",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Omnivore\"}"
+        ]
+      },
+      "trace_id": "tr-f6df7998c9a90fa8329b67fec79464a1",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E05B",
+      "group": "E05",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_no_matching_results",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Sturnus",
+        "rank": "genus",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"Invertebrate\"}"
+        ]
+      },
+      "trace_id": "tr-7c7c6a5133dfe7e7e2e0de516ac94cdd",
+      "api_disposition": "abstain",
+      "api_status": "empty",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E08B",
+      "group": "E08",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-90d993be60c907812d21b4a9f0d15ac3",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "focused_pass": 4,
+  "focused_fail": 0,
+  "all60": {
+    "pass": 56,
+    "fail": 4
+  },
+  "all60_groups": {
+    "fail": 4,
+    "pass": 16
+  },
+  "other_failed_cases": [
+    {
+      "id": "V2-01B",
+      "group": "V2-01",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "upstream_failure",
+      "errors": [
+        "supported question has no graph result",
+        "upstream failure cannot establish supported execution"
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-685db4b2b05573c190eb4f3ff045e663",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "error",
+        "response_reason": "interpretation_error",
+        "failure_stage": "interpretation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "V2-11C",
+      "group": "V2-11",
+      "role": "contrast",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result",
+        "same-request route retains unresolved restrictions",
+        "relation needs exactly one reference",
+        "relation basis or equality changed",
+        {
+          "same_request_route_mismatch": {
+            "expected": {
+              "kind": "habitat_shared_diet",
+              "reference": "Bubo bubo",
+              "habitat": "Forest",
+              "basis": "trophic_niche",
+              "match": "same",
+              "exclude_reference": true,
+              "species_scope": "all"
+            },
+            "actual": {
+              "kind": null,
+              "reference": null,
+              "habitat": null,
+              "basis": "trophic_niche",
+              "match": "same",
+              "exclude_reference": true,
+              "species_scope": "all"
+            }
+          }
+        }
+      ],
+      "missing_evidence": [
+        "same-request execution_summary missing"
+      ],
+      "observed_signature": null,
+      "trace_id": "tr-ba428f493b6db23957dc34a32ae7cc3b",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E06B",
+      "group": "E06",
+      "role": "equivalent",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result"
+      ],
+      "missing_evidence": [
+        "taxon.scientific_name",
+        "taxon.rank",
+        "conditions"
+      ],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "rank": null,
+        "conditions": []
+      },
+      "trace_id": "tr-193acb09d4a787d1659dd9b22edf85ba",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "E07C",
+      "group": "E07",
+      "role": "contrast",
+      "status": "fail",
+      "classification": "false_hold",
+      "errors": [
+        "supported question has no graph result"
+      ],
+      "missing_evidence": [
+        "same-request execution_summary missing"
+      ],
+      "observed_signature": null,
+      "trace_id": "tr-c62b04eed6e1add61839ac41e332516e",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "overall_RG212_complete": false,
+  "feedback_exposed_regression": true
+}

@@ -1,0 +1,56 @@
+{
+  "artifact": "contract-blind-label-adjudication",
+  "date": "2026-10-26",
+  "scope": "Independent semantic review of category-ratio-unapplied-01/03 against allowed existing static vocabulary; no app modification or execution; no trace/result access. Existing gold and first score remain unchanged.",
+  "human_reviewed": false,
+  "evidence": [
+    {
+      "source": "src/robingraph/retrieval/graph_condition_extractor.py",
+      "constant": "_TRAIT_LABELS",
+      "fact": "Explicit alias 먹이 범주 maps to trophic_niche."
+    },
+    {
+      "source": "src/robingraph/retrieval/species_profile.py",
+      "constant": "LABELS",
+      "fact": "trophic_niche label 먹이 생태 범주; diet_category label 먹이 유형; trophic_level label 영양 단계."
+    },
+    {
+      "source": "src/robingraph/retrieval/graph_questions.py",
+      "constant": "TRAIT_CONDITIONS and referenced _AVONET_TEXT static vocabulary",
+      "fact": "Invertebrate is a diet_category enum; trophic_niche uses Invertivore. Omnivore is valid in diet_category, trophic_niche, and trophic_level."
+    }
+  ],
+  "cases": [
+    {
+      "id": "contract-category-ratio-unapplied-01",
+      "verdict": "label_value_conflict_single_gold_not_established",
+      "reason": "The supplied field phrase 먹이 범주 selects trophic_niche under the existing alias vocabulary, while Invertebrate is an exact enum only for diet_category. The question combines a niche field label with a category field value. Treating the unique enum as stronger than the explicit alias requires an independently specified resolution rule; no such rule is part of the semantic contract. Converting Invertebrate to Invertivore would also alter the stated enum. Therefore the recorded diet_category expectation is a possible intended interpretation, but it was not justified as the sole gold by this wording.",
+      "gold_quality": "ambiguous_or_inconsistent_wording",
+      "non_scoring_disposition": "Flag for future replacement or clarification; preserve original artifact and score."
+    },
+    {
+      "id": "contract-category-ratio-unapplied-03",
+      "verdict": "diet_category_gold_insufficiently_supported",
+      "reason": "Omnivore does not identify a unique trait because all three listed traits accept it. The explicit existing alias 먹이 범주 selects trophic_niche. The wording supplies no diet_category identifier or its established 먹이 유형 label. Thus a diet_category-only gold has insufficient source-backed support; a trophic_niche reading is supported by the existing vocabulary. General-language breadth of 범주 does not justify overriding the known project alias.",
+      "gold_quality": "incorrectly_disambiguated_field",
+      "non_scoring_disposition": "Flag independently; preserve original artifact and score."
+    },
+    {
+      "id": "contract-category-ratio-unapplied-02",
+      "verdict": "explicit_diet_category_condition_is_clear",
+      "reason": "The question explicitly names diet_category and its valid Invertebrate enum, so this case does not have the field-label ambiguity of 01/03.",
+      "gold_quality": "field_and_value_consistent",
+      "non_scoring_disposition": "No change."
+    }
+  ],
+  "cross_case_conclusion": "The ratio sentence explicitly declines a search dimension, rather than asserting biological absence. That distinction remains clear in all three questions. However, the intended equivalent pair 01/02 is not securely equivalent under existing vocabulary, and the intended contrast 03 does not isolate only a value change at a securely held field. The family does not support a clean exact-gold contrast assessment as authored.",
+  "authoring_error": "The initial author inspected TRAIT_CONDITIONS and source-backed taxonomy but did not resolve the imported alias mapping before drafting 먹이 범주 as diet_category. This is an evaluation-authoring limitation, not evidence about application behavior.",
+  "preservation": {
+    "original_gold_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+    "original_gold_modified": false,
+    "score_modified": false,
+    "app_modified": false,
+    "app_api_db_calls": 0,
+    "trace_access": false
+  }
+}

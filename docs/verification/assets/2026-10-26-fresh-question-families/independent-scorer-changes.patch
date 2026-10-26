@@ -1,0 +1,101 @@
+--- scorer-before.py
++++ scripts/evaluate_graph_question_families.py
+@@ -75,7 +75,20 @@
+                 'match': summary.get('match'), 'exclude_reference': summary.get('exclude_reference'),
+                 'species_scope': summary.get('species_scope')}, errors, missing
+     taxon = payload.get('taxon') or {}
+-    missing += ['taxon.' + k for k in ('scientific_name', 'rank') if not taxon.get(k)]
++    if expected['taxon_name'] is None and expected['rank'] is None:
++        if 'taxon' not in payload:
++            missing.append('explicit whole-catalog taxon')
++        elif payload['taxon'] is not None:
++            errors.append('whole-catalog execution must have null taxon')
++        coverage = payload.get('coverage')
++        if not isinstance(coverage, dict) or any(k not in coverage for k in ('scoped', 'evaluable', 'matched')):
++            missing.append('whole-catalog execution coverage')
++        elif (not all(isinstance(coverage[k], int) and not isinstance(coverage[k], bool)
++                      for k in ('scoped', 'evaluable', 'matched')) or
++              not 0 <= coverage['matched'] <= coverage['evaluable'] <= coverage['scoped']):
++            errors.append('invalid whole-catalog execution coverage')
++    else:
++        missing += ['taxon.' + k for k in ('scientific_name', 'rank') if not taxon.get(k)]
+     if 'conditions' not in payload:
+         missing.append('conditions')
+     return {'kind': 'taxon_traits', 'taxon': taxon.get('scientific_name'), 'rank': taxon.get('rank'),
+@@ -153,6 +166,13 @@
+         canonical_plan = attributes.get('canonical_plan', attributes.get('graph_intent.canonical_plan'))
+         if isinstance(canonical_plan, str):
+             canonical_plan = json.loads(canonical_plan)
++        whole_catalog = (case['expected']['kind'] == 'taxon_traits' and
++                         case['expected']['taxon_name'] is None and case['expected']['rank'] is None)
++        if whole_catalog:
++            if not isinstance(canonical_plan, dict) or any(k not in canonical_plan for k in ('rank_name', 'names', 'group')):
++                missing.append('explicit same-request whole-catalog canonical plan')
++            elif canonical_plan['rank_name'] is not None or canonical_plan['names'] != [] or canonical_plan['group'] is not None:
++                errors.append('whole-catalog canonical scope is not unrestricted')
+         if isinstance(canonical_plan, dict):
+             parsed, route_errors = canonical_route_signature(canonical_plan, case['expected'], catalog)
+             errors += route_errors
+@@ -190,6 +210,8 @@
+         elif hold == 'unsupported_specific_food':
+             if payload.get('status') != 'insufficient_data' or not isinstance(intent, dict) or not (intent.get('kind') == 'specific_fruit' or intent.get('unsupported_food')):
+                 errors.append('specific food data gap not distinguished from generic hold')
++        else:
++            errors.append('unsupported or missing expected_hold_class')
+         classification = hold if not errors else ('unsafe_answer' if response.get('disposition') == 'answer' else 'wrong_hold_reason')
+         observed = {'hold': classification}
+     status = 'fail' if errors else 'unverifiable' if missing else 'pass'
+--- scorer-tests-before.py
++++ tests/test_graph_question_family_evaluation.py
+@@ -83,6 +83,51 @@
+         c = case()
+         with self.assertRaises(ValueError): s.evaluate([c], [row(c), row(c)], CATALOG)
+ 
++    def test_unknown_or_missing_hold_contract_cannot_pass_generic_clarification(self):
++        for hold in (None, 'unsupported_relation', 'unsupported_condition'):
++            for reason in ('ambiguous_conditions', 'unsupported_conditions'):
++                c = {**case(), 'category': 'hold', 'expected_hold_class': hold}
++                r = {'response': {'disposition': 'clarify', 'result': {'prompt': '확인해 주세요.'}},
++                     'tags': {'response_reason': reason}}
++                with self.subTest(hold=hold, reason=reason):
++                    self.assertEqual(s.assess(c, r, CATALOG)['status'], 'fail')
++
++    def test_whole_catalog_requires_explicit_execution_and_canonical_scope(self):
++        c = case(); c['expected'].update(taxon_name=None, rank=None)
++        r = row(c); p = r['response']['result']['payload']; p['taxon'] = None
++        p['coverage'] = {'scoped': 100, 'evaluable': 80, 'matched': 20}
++        r['diagnostic_spans'] = [{'name': 'graph_intent.route', 'attributes': {'canonical_plan': {
++            'kind': 'taxon_traits', 'rank_name': None, 'names': [], 'group': None,
++            'conditions': copy.deepcopy(c['expected']['conditions'])}}}]
++        self.assertEqual(s.assess(c, r, CATALOG)['status'], 'pass')
++        for field in ('taxon', 'coverage'):
++            mutated = copy.deepcopy(r); del mutated['response']['result']['payload'][field]
++            with self.subTest(missing=field):
++                self.assertEqual(s.assess(c, mutated, CATALOG)['status'], 'unverifiable')
++        for field in ('rank_name', 'names', 'group'):
++            mutated = copy.deepcopy(r); del mutated['diagnostic_spans'][0]['attributes']['canonical_plan'][field]
++            with self.subTest(missing_plan=field):
++                self.assertEqual(s.assess(c, mutated, CATALOG)['status'], 'unverifiable')
++        mutated = copy.deepcopy(r); del mutated['diagnostic_spans']
++        self.assertEqual(s.assess(c, mutated, CATALOG)['status'], 'unverifiable')
++        for mutation in ('named_taxon', 'empty_taxon', 'conditions', 'bool_count', 'negative_count',
++                         'count_order', 'named_plan', 'extra_names', 'extra_group'):
++            mutated = copy.deepcopy(r); payload = mutated['response']['result']['payload']
++            plan = mutated['diagnostic_spans'][0]['attributes']['canonical_plan']
++            if mutation == 'named_taxon': payload['taxon'] = {'scientific_name': 'Corvidae', 'rank': 'family'}
++            if mutation == 'empty_taxon': payload['taxon'] = {}
++            if mutation == 'conditions': payload['conditions'] = []
++            if mutation == 'bool_count': payload['coverage']['matched'] = True
++            if mutation == 'negative_count': payload['coverage']['matched'] = -1
++            if mutation == 'count_order': payload['coverage']['evaluable'] = 101
++            if mutation == 'named_plan': plan['rank_name'] = '까마귀과'
++            if mutation == 'extra_names': plan['names'] = ['큰까마귀']
++            if mutation == 'extra_group': plan['group'] = '오리'
++            with self.subTest(mutation=mutation):
++                self.assertEqual(s.assess(c, mutated, CATALOG)['status'], 'fail')
++        # A scoped gold cannot be satisfied by valid whole-catalog execution evidence.
++        self.assertNotEqual(s.assess(case(), r, CATALOG)['status'], 'pass')
++
+     def test_missing_member_fails_entire_family(self):
+         cases = [case('A'), case('B'), case('C', 'num_gte', 'contrast')]
+         result = s.evaluate(cases, [row(cases[0]), row(cases[2])], CATALOG)

@@ -1,0 +1,17 @@
+{
+  "dataset_sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "cases": 36,
+  "families": 12,
+  "categories": {
+    "supported": 32,
+    "hold": 4
+  },
+  "catalog_and_conditions_valid": true,
+  "equivalence_and_contrast_valid": true,
+  "v1_exact_normalized_duplicates": [],
+  "parser_executed": false,
+  "api_called": false,
+  "human_reviewed": false,
+  "semantic_review": "Accepted all 36 after one pre-measurement wording clarification; expected contracts unchanged.",
+  "pre_measurement_ambiguity_fixed": true
+}

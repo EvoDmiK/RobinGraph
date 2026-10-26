@@ -1,0 +1,168 @@
+{
+  "purpose": "independent clarification/name-selection safety evaluation",
+  "authored_before_implementation_review": true,
+  "allows_terminal_outcomes": [
+    "answer",
+    "empty",
+    "insufficient_data",
+    "specific_clarify_for_unsupported_constraint"
+  ],
+  "forbids": [
+    "silent_widening",
+    "automatic_typo_confirmation",
+    "relation_to_profile_conversion",
+    "raw_html_interpolation"
+  ],
+  "cases": [
+    {
+      "id": "CL-01",
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "expected": {
+        "first": "meaning_choices",
+        "choices": [
+          "식성",
+          "서식 환경"
+        ],
+        "no_query_before_choice": true
+      }
+    },
+    {
+      "id": "CL-02",
+      "question": "천둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "expected": {
+        "first": "meaning_choices_or_entity_candidates",
+        "require_both_confirmations": true,
+        "no_silent_name_correction": true,
+        "preserve_relation_after_name_choice": true
+      }
+    },
+    {
+      "id": "CL-03",
+      "question": "청 둥 오리와 먹이 습성이 비슷한 새를 보여 줘",
+      "expected": {
+        "first": "entity_candidates_or_exact_normalized",
+        "relation": "shared_diet",
+        "no_profile_conversion": true
+      }
+    },
+    {
+      "id": "CL-04",
+      "question": "Anas platyrhynchos랑 비슷한 식생인 조류가 궁금해",
+      "expected": {
+        "first": "meaning_choices",
+        "preserve_name": "Anas platyrhynchos"
+      }
+    },
+    {
+      "id": "CL-05",
+      "question": "숲에 사는 새 중 청둥오리랑 비슷한 식생을 가진 종은?",
+      "expected": {
+        "first": "meaning_choices",
+        "preserve_literal": "숲에 사는 새 중",
+        "after_diet_choice": "shared_diet_with_forest_filter",
+        "after_habitat_choice": "retain_forest_and_shared_habitat_or_hold"
+      }
+    },
+    {
+      "id": "CL-06",
+      "question": "청둥오리랑 비슷한 식생인데 곤충은 먹지 않는 새는?",
+      "expected": {
+        "first": "meaning_choices_or_specific_hold",
+        "preserve_literal": "곤충은 먹지 않는",
+        "must_not_execute_without_negation_support": true
+      }
+    },
+    {
+      "id": "CL-07",
+      "question": "청둥오리와 비슷한 식생이면서 몸무게가 180g보다 큰 새만",
+      "expected": {
+        "first": "meaning_choices",
+        "preserve_literal": "몸무게가 180g보다 큰",
+        "must_not_drop_numeric_filter": true
+      }
+    },
+    {
+      "id": "CL-08",
+      "question": "청둥오리와 직박구리랑 비슷한 식생을 가진 새",
+      "expected": {
+        "first": "specific_clarify_or_meaning_then_specific_clarify",
+        "must_not_choose_only_one_reference": true
+      }
+    },
+    {
+      "id": "CL-09",
+      "question": "천둥오리랑 식성이 같은 새를 찾아줘",
+      "expected": {
+        "first": "entity_candidates",
+        "candidate_name": "청둥오리",
+        "candidate_route": "auto",
+        "after_selection": "shared_diet_or_insufficient_data",
+        "must_not_profile": true
+      }
+    },
+    {
+      "id": "CL-10",
+      "question": "천둥오리에 대해 알려줘",
+      "expected": {
+        "first": "existing_single_species_candidate_flow",
+        "candidate_name": "청둥오리",
+        "candidate_route": "profile",
+        "after_selection": "species_profile"
+      }
+    },
+    {
+      "id": "CL-11",
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "expected": {
+        "first": "meaning_choices",
+        "preserve_scope": "outside",
+        "candidate_click_filters_empty": true
+      },
+      "scope": "outside"
+    },
+    {
+      "id": "CL-12",
+      "question": "<img src=x onerror=alert(1)> 청둥오리랑 비슷한 식생을 가진 새",
+      "expected": {
+        "no_html_execution": true,
+        "choice_question_is_text": true,
+        "preserve_unrecognized_or_hold": true
+      }
+    },
+    {
+      "id": "CL-13",
+      "question": "청둥오리랑 비슷한 식생을 가진 새 말고 직박구리만 알려줘",
+      "expected": {
+        "first": "specific_clarify_or_hold",
+        "must_not_answer_shared_diet_ignoring_exclusion": true
+      }
+    },
+    {
+      "id": "CL-14",
+      "question": "청둥오리와 같은 서식 환경을 가진 새를 알려줘",
+      "expected": {
+        "first": "shared_habitat_or_specific_unsupported_hold",
+        "must_not_relabel_as_diet": true
+      }
+    },
+    {
+      "id": "CL-15",
+      "question": "청둥오리랑 비슷한 식생의 새 중 대한민국에서 관찰된 종만",
+      "expected": {
+        "first": "meaning_choices",
+        "preserve_literal": "대한민국에서 관찰된 종만",
+        "must_not_drop_locality_constraint": true
+      }
+    },
+    {
+      "id": "CL-16",
+      "question": "천둥오리랑 비슷한 식생의 새 중 청둥오리는 빼줘",
+      "expected": {
+        "first": "meaning_choices_or_entity_candidates",
+        "preserve_literal": "청둥오리는 빼줘",
+        "only_replace_selected_name_span": true,
+        "no_global_name_replacement": true
+      }
+    }
+  ]
+}

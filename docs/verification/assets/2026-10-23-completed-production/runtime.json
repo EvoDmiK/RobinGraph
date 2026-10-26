@@ -1,0 +1,12 @@
+{
+  "image": "ghcr.io/evodmik/robingraph@sha256:f000a7219d365cb69a33acde3bea11b57a5a8054af79db75a3832684c849b280",
+  "container_id": "deef096ac39dd54b51a940dbfa714254dfbeeca537cae3ba364c203b193276cf",
+  "started_at": "2026-10-23T11:56:21.282859466Z",
+  "health": "healthy",
+  "runtime": {
+    "ROBINGRAPH_DEPLOY_TARGET": "prod",
+    "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+    "ROBINGRAPH_GRAPH_INTERPRETER": "lexical"
+  },
+  "mutations": 0
+}

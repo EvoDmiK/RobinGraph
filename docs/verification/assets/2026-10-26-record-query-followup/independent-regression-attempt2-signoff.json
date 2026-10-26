@@ -1,0 +1,47 @@
+{
+  "measurement": "feedback_exposed_regression_attempt2",
+  "case_counts": {
+    "pass": 58,
+    "fail": 2
+  },
+  "group_counts": {
+    "pass": 18,
+    "fail": 2
+  },
+  "image": "robingraph-api:test-record-query-followup-8dd578c3076c",
+  "http200": 60,
+  "unique_trace_ids": 60,
+  "same_request_verified": 60,
+  "reviewer_api_calls": 0,
+  "failures": {
+    "V2-12B": {
+      "classification": "false_hold",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    "E04C": {
+      "classification": "false_hold",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  },
+  "focus_recovered": [
+    "E04A",
+    "E05B",
+    "E08B"
+  ],
+  "unsafe_answers": 0,
+  "E04C": "Proposal contains positive-record surface paraphrase plus one unresolved fragment spanning rank marker, retained condition evidence and record request. Only request-frame containment is supported, so transaction returns raw; audit false then blocks. Whole-union coverage is not currently proved."
+}

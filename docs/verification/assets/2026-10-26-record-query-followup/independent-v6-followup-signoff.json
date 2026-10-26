@@ -1,0 +1,26 @@
+{
+  "measurement": "v6_feedback_exposed_followup",
+  "case_counts": {
+    "pass": 10,
+    "fail": 2
+  },
+  "group_counts": {
+    "pass": 3,
+    "fail": 1
+  },
+  "classifications": {
+    "supported_answer": 6,
+    "false_hold": 2,
+    "negated_condition": 2,
+    "unsupported_specific_food": 2
+  },
+  "image": "robingraph-api:test-record-query-followup-3b4392eb69a2",
+  "http200": 12,
+  "unique_trace_ids": 12,
+  "root_verified_so_far": 12,
+  "reviewer_api_calls": 0,
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "cases_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "first_measurements_unchanged": true,
+  "remaining_failures": "Both are previously flagged conflicting 먹이 범주 vs diet_category gold items. Raw score remains10/12; no gold correction or adjusted score. Explicit canonical category02 and split exact-plant gap02 now pass."
+}

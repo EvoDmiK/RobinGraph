@@ -1,0 +1,44 @@
+{
+  "scope": "read-only pre-production release QA",
+  "time": "2026-10-26T10:15:43.948484+00:00",
+  "test_frozen_image": "robingraph-api:test-record-query-followup-6a95918a5533",
+  "test_source_sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+  "local_source_sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+  "source_identical": true,
+  "release_manifest_exact": true,
+  "release_files": 234,
+  "frozen_application_files": 112,
+  "data_files": 46,
+  "changed_files": [],
+  "added_files": [],
+  "base_git_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+  "uncommitted_snapshot": true,
+  "current_production_runtime_independently_read": false,
+  "prior_production_record": {
+    "build": 8,
+    "revision": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+    "mode": "active/lexical",
+    "source": "docs/verification/assets/2026-10-23-completed-production/final-summary.json",
+    "historical_not_current": true
+  },
+  "required_release_checks": [
+    "Current pipeline checks out main and forces active/lexical; this cannot represent the uncommitted tested snapshot without an explicit immutable snapshot build path.",
+    "Preserve base Git revision as ancestry only and bind actual source manifest SHA to immutable AMD64 image digest; do not mislabel uncommitted bytes as the Git commit content.",
+    "Verify candidate linux/amd64 Django startup and tracing extra installation, then actual Production-target API checks using Production configuration.",
+    "Select active/semantic deliberately; inspect actual running mode after replacement.",
+    "Set tracing enabled and verify a Production-specific experiment. Existing MLFLOW_EXPERIMENT_ID overrides NAME and must not silently point at TEST.",
+    "Capture actual POST /v1/chat root under the Production experiment; match original question, redacted response, disposition/reason/failure_stage and child spans. Configuration enabled alone is insufficient.",
+    "Check health, OpenAPI, Korean/scientific-name lookup, graph trait and shared-diet answer, safe negation hold and exact-food source-no-data. Production data may differ; compare contracts and conditions, not TEST row counts.",
+    "Retain actual prior image/env backup and immutable release receipt; current deployment helper protects DB targets and restores prior environment/image on failure.",
+    "Public browser/API can need browser user-agent to pass edge; do not misdiagnose urllib403 as backend down.",
+    "No DB copy, migrations, backfill, name-vector update, n8n/Neo4j move or TEST restart is required for this app-and-tracing deployment."
+  ],
+  "known_limits": [
+    "Latest TEST regression82/84; remaining V2-07A model audit false hold and V2-10B numeric gate remain unresolved.",
+    "Feedback12 has2 adjudicated frozen-gold conflicts; first fresh8 was5/8 and exposed recheck8/8 is not unseen performance.",
+    "Local field proof is not global completeness; omitted conditions remain dependent on semantic audit.",
+    "Prior production docs show lexical-only release; semantic activation is a meaningful runtime change.",
+    "No live Production/API/MLflow calls, container changes, Git changes or DB writes performed by this reviewer."
+  ],
+  "approval": "Source snapshot matches tested release. Deployment execution and current Production runtime verification remain pending with root."
+}

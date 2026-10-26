@@ -1,0 +1,68 @@
+{
+  "status": "SUCCESS",
+  "jenkins_build": 7,
+  "revision": "54b4cd94cd032b3d2c25a55b796b383ff94e0a20",
+  "image": "ghcr.io/evodmik/robingraph@sha256:dc4974f9d82e4625d8f61361caf82f4bb1b7a841ad8f433d76bc3fdb89f0f91b",
+  "scope": "ecological relation answer UI only; experimental TEST backend excluded",
+  "files_changed": [
+    "src/robingraph/api/static/chat.js",
+    "src/robingraph/api/static/styles.css",
+    "tests/frontend/chat_ui.test.js"
+  ],
+  "python": {
+    "run": 1031,
+    "passed": 992,
+    "skipped": 39,
+    "failed": 0
+  },
+  "frontend": {
+    "passed": 318,
+    "failed": 0,
+    "skipped": 0,
+    "includes": "314 chat + 4 birds"
+  },
+  "amd64_fixture_smoke": true,
+  "preflight": {
+    "scenarios": 4,
+    "actual_api": true,
+    "static_override": true,
+    "first_attempt": "harness missed cache-busting query string, old UI rendered; interception corrected"
+  },
+  "public_browser": {
+    "scenarios": 4,
+    "viewports": [
+      390,
+      1280
+    ],
+    "actual_api": true,
+    "actual_deployed_assets": true,
+    "asset_hashes_match_commit": true,
+    "source_keyboard_checks": 4,
+    "comparison": 1,
+    "dialog": 1,
+    "page_errors": 0,
+    "horizontal_overflow": 0,
+    "physical_mobile": false
+  },
+  "public_api_get": {
+    "passed": true,
+    "requests": 3
+  },
+  "test_unchanged": {
+    "image": "robingraph-api:test-ecology-layout-d1958a21194a",
+    "health": "healthy"
+  },
+  "git": {
+    "main_pushed": true,
+    "sha": "54b4cd94cd032b3d2c25a55b796b383ff94e0a20",
+    "other_branch_mutation": false,
+    "force_push": false
+  },
+  "db_writes": false,
+  "rollback_executed": false,
+  "limitations": [
+    "TEST experimental semantic interpreter and meaning-choice/name clarification backend not promoted",
+    "Physical mobile/Safari/Firefox not tested",
+    "No whole DB checksum audit"
+  ]
+}

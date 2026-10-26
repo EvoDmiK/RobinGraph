@@ -1,0 +1,96 @@
+{
+  "pending_12_sha_unchanged": true,
+  "pending_count": 12,
+  "finalized_rows_so_far": 33,
+  "matched_pending_rows": [
+    {
+      "case": "V2-01A",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-2705f5f15e34c12085c7da4c6c25c214"
+    },
+    {
+      "case": "V2-03A",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-b7fd000ae174a3c010a1449de536557e"
+    },
+    {
+      "case": "V2-02A",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-99f8fc45a3a7e96f22a93967a79a383b"
+    },
+    {
+      "case": "V2-04A",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-2ed27fb077e5bd4fe685aec2abe731e4"
+    },
+    {
+      "case": "V2-02C",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-7fa5ba1fa1c7be1cc695c7e878d6bc7c"
+    },
+    {
+      "case": "V2-04B",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-f49ac5f1148d5a0e52da96f0263619d6"
+    },
+    {
+      "case": "V2-04C",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-9a1cf229bc45791894165e509bdcfdd7"
+    },
+    {
+      "case": "V2-02B",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-54206387b277c2638bda5490f37a881c"
+    },
+    {
+      "case": "V2-01C",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-1d1c95ec0c1a545ecf96613454b22530"
+    },
+    {
+      "case": "V2-03C",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-790f4ca16603b8ac688aca39128f69a9"
+    },
+    {
+      "case": "V2-03B",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-89493841bea95f8015ec7466e2fb25ce"
+    },
+    {
+      "case": "V2-01B",
+      "response_unchanged": true,
+      "http_unchanged": true,
+      "elapsed_unchanged": true,
+      "trace_id": "tr-6809efa10a796ebb3bd907199b8c7378"
+    }
+  ],
+  "before_rows": 10,
+  "before_null_trace_rows": 8,
+  "reviewer_api_calls": 0,
+  "runner_review": "Existing pending file branch reads stored HTTP response; it does not issue urlopen. Only trace search window widened. HTTP send resides exclusively in missing-pending else branch.",
+  "limits": "This file verifies stored response hashes and runner branch behavior; it is not a network packet capture. Final exact-root verification must still pass."
+}

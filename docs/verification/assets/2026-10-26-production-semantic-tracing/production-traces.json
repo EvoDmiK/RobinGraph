@@ -1,0 +1,349 @@
+{
+  "experiment_id": "50",
+  "experiment_name": "robingraph-prod",
+  "rows": [
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 게 있어?",
+      "trace_id": "tr-847473417ac06129045bac78baea2b35",
+      "experiment_id": "50",
+      "tags": {
+        "response_api_disposition": "answer",
+        "selected_intent": "profile",
+        "response_reason": "none",
+        "route_method": "semantic",
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-847473417ac06129045bac78baea2b35/artifacts",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_disposition": "answer",
+        "failure_stage": "none",
+        "mlflow.traceName": "POST /v1/chat"
+      },
+      "span_names": [
+        "POST /v1/chat",
+        "graph_intent.route",
+        "graph_intent.candidates",
+        "jina.embed",
+        "jina.embed",
+        "jina.embed"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 게 있어?",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "참새목에 속하면서 AviList and EltonTraits approved reference bundle 자료의 조건에 맞는 종입니다.",
+        "warnings": [
+          "나무열매만 먹는 종을 구분한 자료는 없습니다. 아래 목록은 나무와 풀을 구분하지 않은 열매 먹이 범주를 참고한 결과입니다.",
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+            "text": "참새목에 속하면서 AviList and EltonTraits approved reference bundle 자료의 조건에 맞는 종입니다.",
+            "items": [
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              },
+              {
+                "taxon": "[truncated]",
+                "paths": "[truncated]"
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              },
+              {
+                "source_name": "[truncated]",
+                "source_url": "[truncated]"
+              }
+            ],
+            "limitations": [
+              "나무열매만 먹는 종을 구분한 자료는 없습니다. 아래 목록은 나무와 풀을 구분하지 않은 열매 먹이 범주를 참고한 결과입니다.",
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "criterion": "diet_distribution"
+          }
+        },
+        "entity_resolution": null
+      },
+      "http_disposition": "answer"
+    },
+    {
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "trace_id": "tr-acc9405e24b09790aaa7f0beaa0245b3",
+      "experiment_id": "50",
+      "tags": {
+        "response_api_disposition": "clarify",
+        "selected_intent": "profile",
+        "response_reason": "ambiguous_conditions",
+        "route_method": "deterministic",
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-acc9405e24b09790aaa7f0beaa0245b3/artifacts",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_disposition": "clarify",
+        "failure_stage": "routing",
+        "mlflow.traceName": "POST /v1/chat"
+      },
+      "span_names": [
+        "POST /v1/chat"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+        "warnings": [
+          "식물 군집 자체의 유사성을 비교하는 자료는 제공하지 않습니다. 선택 전에는 의미나 종을 확정하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+          "choices": [
+            {
+              "label": "식성·먹이 생태 범주",
+              "question": "청둥오리랑 비슷한 식성을 가진 새들을 알려줘"
+            },
+            {
+              "label": "서식 환경",
+              "question": "청둥오리랑 비슷한 서식 환경을 가진 새들을 알려줘"
+            }
+          ]
+        },
+        "entity_resolution": null
+      },
+      "http_disposition": "clarify"
+    },
+    {
+      "question": "숲에 사는 새 중 직박구리와 같은 열매를 먹는 새는?",
+      "trace_id": "tr-5f2ee3fe269d69be99d0cd2122817af5",
+      "experiment_id": "50",
+      "tags": {
+        "response_api_disposition": "abstain",
+        "selected_intent": "profile",
+        "response_reason": "insufficient_data",
+        "route_method": "semantic",
+        "mlflow.artifactLocation": "mlflow-artifacts:/50/traces/tr-5f2ee3fe269d69be99d0cd2122817af5/artifacts",
+        "mlflow.trace.spansLocation": "TRACKING_STORE",
+        "response_disposition": "abstain",
+        "failure_stage": "retrieval",
+        "mlflow.traceName": "POST /v1/chat"
+      },
+      "span_names": [
+        "POST /v1/chat",
+        "graph_intent.route",
+        "graph_intent.interpret",
+        "graph_intent.selection"
+      ],
+      "root_inputs": {
+        "request": {
+          "question": "숲에 사는 새 중 직박구리와 같은 열매를 먹는 새는?",
+          "intent": "auto",
+          "filters": null,
+          "defer_enrichment": true,
+          "defer_discovery": true,
+          "species_scope": "all"
+        }
+      },
+      "root_outputs": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "abstain",
+        "answer_text": "특정 식물 열매를 함께 먹는다는 근거 자료가 없어 답할 수 없습니다. 먹이 생태 범주(예: 열매 섭식)가 같은 종을 원하시면 \"같은 먹이 범주를 공유하는 새\"로 질문해 주세요.",
+        "warnings": [
+          "특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "insufficient_data",
+            "title": "특정 열매 공유",
+            "text": "특정 식물 열매를 함께 먹는다는 근거 자료가 없어 답할 수 없습니다. 먹이 생태 범주(예: 열매 섭식)가 같은 종을 원하시면 \"같은 먹이 범주를 공유하는 새\"로 질문해 주세요.",
+            "items": [],
+            "sources": [],
+            "limitations": [
+              "특정 식물의 열매나 먹이 식물을 종 단위로 기록한 자료가 그래프에 없습니다."
+            ],
+            "has_more": false
+          }
+        },
+        "entity_resolution": null
+      },
+      "http_disposition": "abstain"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "image": "robingraph-api:test-question-family-06489197bcef",
+  "measurement": "feedback-exposed regression final; not fresh holdout",
+  "counts": {
+    "pass": 24
+  },
+  "group_counts": {
+    "pass": 8
+  },
+  "classifications": {
+    "supported_answer": 19,
+    "unsupported_specific_food": 1,
+    "supported_no_matching_results": 1,
+    "negated_condition": 1,
+    "supported_source_no_data": 2
+  },
+  "score_sha256": "c8e7263f484932ecf53327a77e90b3b61bf073a01f2325082599429aaaf3d0df",
+  "responses_sha256": "aa3dccecbc55b43cfe2dda7ddd7f718d8ddcf6aa124871f69cfdf353eaefb475",
+  "frozen_gold_meaning_unchanged": true,
+  "unique_trace_ids": 24,
+  "http_200_all": true,
+  "first_measurements_preserved": {
+    "sealed_holdout": {
+      "cases_pass": 16,
+      "cases_total": 18,
+      "families_pass": 4,
+      "families_total": 6
+    },
+    "regression_attempt1": {
+      "cases_pass": 22,
+      "cases_total": 24,
+      "families_pass": 6,
+      "families_total": 8
+    }
+  },
+  "execution_details": [
+    "All 22 supported cases have exact API scope/conditions or relation execution_summary and matching same-request canonical plan.",
+    "H05A/H05B remain the exact subspecies and explicitly report no direct source data; H05C is independently the parent-species contrast.",
+    "H04C remains explicit negative clarification; T01C remains specific-fruit data unsupported.",
+    "T02C correctly returns no matching records for <=180g, distinct from >180g equivalents.",
+    "H05B terminal_request reconciliation was actually observed; H06C final model returned valid raw evidence, so reference_particle helper is proven by deterministic mocks rather than exercised in this final live call."
+  ],
+  "limits": [
+    "No new API/provider/DB calls by independent reviewer.",
+    "No independent biological record re-query.",
+    "Finite model-authored sample; not evidence that arbitrary paraphrases always succeed."
+  ]
+}

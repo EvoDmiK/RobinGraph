@@ -1,0 +1,979 @@
+{
+  "phase": "shadow",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "case": {
+        "id": "fresh-25",
+        "question": "왜가리 어떤 새인지 짧게 소개해 줘.",
+        "category": "preserve",
+        "expected": {
+          "preserve": "general_profile"
+        }
+      },
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "jev",
+        "disposition": "answer",
+        "answer_text": "왜가리의 서식 환경은 습지이며, 주 생활 방식은 지상 생활입니다. 먹이 정보는 ‘고기·물고기·사체 (원자료: 척추동물·물고기·사체)’입니다. 체중은 1443 g입니다.",
+        "warnings": [],
+        "result": {
+          "kind": "profile",
+          "profile": {
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:5419",
+              "rank": "species",
+              "scientific_name": "Ardea cinerea",
+              "authority": "Linnaeus, C, 1758",
+              "korean_name": "왜가리",
+              "korean_name_status": "source-reference",
+              "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+              "english_name": "Grey Heron",
+              "distribution": {
+                "status": "korea",
+                "geographic_scope": "KR",
+                "basis": "source_record_korea",
+                "evidence": [
+                  {
+                    "source_id": "kos-2025-v2.1",
+                    "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                    "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                    "source_taxon_id": "kos-2025-v2.1:공식목록:row-443",
+                    "source_rank": "species",
+                    "source_scientific_name": "Ardea cinerea",
+                    "source_text": null,
+                    "category": "가-1",
+                    "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                    "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                    "geography_basis": "kos_official_list_wild_record_korea"
+                  }
+                ],
+                "seasonal_status": null,
+                "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+              },
+              "display_name": "왜가리"
+            },
+            "lineage": {
+              "query_scientific_name": "Ardea cinerea",
+              "taxonomy_source": "AviList",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "items": [
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5142",
+                  "rank": "order",
+                  "scientific_name": "Pelecaniformes",
+                  "authority": null,
+                  "korean_name": "사다새목",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q19338",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5239",
+                  "rank": "family",
+                  "scientific_name": "Ardeidae",
+                  "authority": null,
+                  "korean_name": "왜가리과",
+                  "korean_name_status": "community-sourced-reference",
+                  "korean_name_source_url": "https://www.wikidata.org/wiki/Q18789",
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5397",
+                  "rank": "genus",
+                  "scientific_name": "Ardea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": null,
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "english_name": null
+                },
+                {
+                  "taxon_id": "avilist-taxon:v2025b:5419",
+                  "rank": "species",
+                  "scientific_name": "Ardea cinerea",
+                  "authority": "Linnaeus, C, 1758",
+                  "korean_name": "왜가리",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "english_name": "Grey Heron"
+                }
+              ],
+              "query_name": "Ardea cinerea",
+              "resolved_query_scientific_name": "Ardea cinerea",
+              "matched_by": "scientific_name"
+            },
+            "traits": [
+              {
+                "name": "beak_depth",
+                "label": "부리 높이",
+                "value": 25.4,
+                "display": "25.4",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Depth",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "beak_length_culmen",
+                "label": "부리 길이 (전체)",
+                "value": 138.9,
+                "display": "138.9",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Length_Culmen",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "beak_length_nares",
+                "label": "부리 길이 (콧구멍 기준)",
+                "value": 95.5,
+                "display": "95.5",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Length_Nares",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "beak_width",
+                "label": "부리 너비",
+                "value": 18.7,
+                "display": "18.7",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Width",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 1443,
+                "display": "1443",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Mass",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "body_mass",
+                "label": "체중",
+                "value": 1443,
+                "display": "1443",
+                "unit": "g",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_note": "Dunning08",
+                "certainty": "1",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "birdtree_birdlife_avibase_chain",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "diet_category",
+                "label": "먹이 유형",
+                "value": "VertFishScav",
+                "display": "고기·물고기·사체 (원자료: 척추동물·물고기·사체)",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_note": "Ref_1",
+                "certainty": "A",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "birdtree_birdlife_avibase_chain",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "diet_distribution",
+                "label": "먹이 구성",
+                "value": {
+                  "invertebrate": 20,
+                  "endotherm_vertebrate": 10,
+                  "ectotherm_vertebrate": 10,
+                  "fish": 60,
+                  "unknown_vertebrate": 0,
+                  "carrion": 0,
+                  "fruit": 0,
+                  "nectar": 0,
+                  "seed": 0,
+                  "other_plant": 0
+                },
+                "display": "곤충 (원자료: 무척추동물) 20% · 고기 (온혈 척추동물) 10% · 고기 (변온 척추동물) 10% · 물고기 60%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_note": "Ref_1",
+                "certainty": "A",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "birdtree_birdlife_avibase_chain",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "foraging_strata_distribution",
+                "label": "먹이 활동 위치",
+                "value": {
+                  "below_water_surface": 0,
+                  "around_water_surface": 70,
+                  "ground": 30,
+                  "understory": 0,
+                  "mid_high": 0,
+                  "canopy": 0,
+                  "aerial": 0
+                },
+                "display": "수면 주변 70% · 지면 30%",
+                "unit": "percent",
+                "inferred": false,
+                "summary_statistic": null,
+                "source_note": "Ref_1",
+                "certainty": "1",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "birdtree_birdlife_avibase_chain",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "habitat",
+                "label": "서식 환경",
+                "value": "Wetland",
+                "display": "습지",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Habitat",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "habitat_density_category",
+                "label": "서식지 밀도 범주",
+                "value": "open",
+                "display": "개방형",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Habitat.Density",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "nocturnal",
+                "label": "활동 시간",
+                "value": false,
+                "display": "야행성 아님",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": null,
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                "release": "figshare-article-3559887-v1:file-5631081",
+                "license_name": "CC0 1.0",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "birdtree_birdlife_avibase_chain",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "primary_lifestyle",
+                "label": "주 생활 방식",
+                "value": "Terrestrial",
+                "display": "지상 생활",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Primary.Lifestyle",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "tail_length",
+                "label": "꼬리 길이",
+                "value": 169.1,
+                "display": "169.1",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Tail.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "tarsus_length",
+                "label": "다리 길이 (부척)",
+                "value": 137.9,
+                "display": "137.9",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Tarsus.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "trophic_level",
+                "label": "영양 단계",
+                "value": "Carnivore",
+                "display": "육식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Trophic.Level",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "trophic_niche",
+                "label": "먹이 생태 범주",
+                "value": "Aquatic predator",
+                "display": "수생동물 포식",
+                "unit": null,
+                "inferred": false,
+                "summary_statistic": "species_category",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Trophic.Niche",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              },
+              {
+                "name": "wing_length",
+                "label": "접은 날개 길이",
+                "value": 441,
+                "display": "441",
+                "unit": "mm",
+                "inferred": false,
+                "summary_statistic": "species_mean",
+                "source_note": null,
+                "certainty": null,
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Wing.Length",
+                "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                "release": "figshare-article-16586228-v7:file-34480856",
+                "license_name": "CC BY 4.0",
+                "source_name": "AVONET Supplementary dataset 1",
+                "taxonomy_alignment": {
+                  "status": "accepted",
+                  "method": "avibase_id_unique",
+                  "source_scientific_name": "Ardea cinerea",
+                  "target_scientific_name": "Ardea cinerea",
+                  "reason": null
+                }
+              }
+            ],
+            "images": [],
+            "photo_availability": {
+              "status": "pending",
+              "message": "사진을 불러오는 중입니다."
+            },
+            "conservation": {
+              "category": "LC",
+              "category_raw": "LC",
+              "source_name": "IUCN Red List · GBIF public checklist",
+              "source_url": "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
+              "source_id": "gbif-iucn-2026-1",
+              "source_release": "2026-1",
+              "evidence_kind": "red_list_checklist",
+              "assessment_status": "linked_checklist",
+              "independently_verified": false,
+              "assessment_scope": "global",
+              "sis_id": "22696993",
+              "assessment_id": "154525233",
+              "assessment_reference_url": "https://www.iucnredlist.org/species/22696993/154525233",
+              "assessment_citation": "BirdLife International 2019. Ardea cinerea Linnaeus, 1758. The IUCN Red List of Threatened Species 2019: https://doi.org/10.2305/IUCN.UK.2019-3.RLTS.T22696993A154525233.en",
+              "snapshot_sha256": "2ed2c5f75667fa2dee9dc718406b5ba094fa9312e548934916b16c0c509ccb7d",
+              "mapping_method": "exact_avilist_birdlife_sis_and_scientific_name",
+              "taxonomy_release": "v2025b",
+              "concept_set_id": "rg:concept-set:avilist-v2025b",
+              "taxonomy_category_raw": "LC",
+              "authority_match_method": "single_author_initials_omitted",
+              "license_name": "CC BY 4.0",
+              "license_url": "https://creativecommons.org/licenses/by/4.0/",
+              "publisher": "International Union for Conservation of Nature",
+              "citation": "IUCN (2026). The IUCN Red List of Threatened Species. Version 2026-1. https://www.iucnredlist.org. Downloaded on 2026-07-28. https://doi.org/10.15468/0qnb58",
+              "published_at": "2026-07-28",
+              "quality_note": "IUCN의 GBIF 공개 평가목록에 연결된 세계 등급입니다. 자료 버전과 개별 평가 연도는 다르며, 실시간 조회나 평가 원문 전체의 독립 검증은 아닙니다.",
+              "assessment_year": 2019,
+              "label": "관심대상"
+            },
+            "note_evidence": [],
+            "summary": "왜가리의 서식 환경은 습지이며, 주 생활 방식은 지상 생활입니다. 먹이 정보는 ‘고기·물고기·사체 (원자료: 척추동물·물고기·사체)’입니다. 체중은 1443 g입니다.",
+            "sections": [
+              {
+                "key": "basic",
+                "title": "기본 정보",
+                "items": [
+                  {
+                    "text": "학명: Ardea cinerea"
+                  },
+                  {
+                    "name": "body_mass",
+                    "label": "체중",
+                    "value": 1443,
+                    "display": "1443",
+                    "unit": "g",
+                    "inferred": false,
+                    "summary_statistic": "species_mean",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Mass",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "체중: 1443 g"
+                  }
+                ],
+                "empty_text": "확인된 기본 정보가 없습니다."
+              },
+              {
+                "key": "appearance",
+                "title": "외관 특징",
+                "items": [
+                  {
+                    "name": "beak_length_culmen",
+                    "label": "부리 길이 (전체)",
+                    "value": 138.9,
+                    "display": "138.9",
+                    "unit": "mm",
+                    "inferred": false,
+                    "summary_statistic": "species_mean",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Beak.Length_Culmen",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "부리 길이 (전체): 138.9 mm"
+                  },
+                  {
+                    "name": "wing_length",
+                    "label": "접은 날개 길이",
+                    "value": 441,
+                    "display": "441",
+                    "unit": "mm",
+                    "inferred": false,
+                    "summary_statistic": "species_mean",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Wing.Length",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "접은 날개 길이: 441 mm"
+                  },
+                  {
+                    "name": "tail_length",
+                    "label": "꼬리 길이",
+                    "value": 169.1,
+                    "display": "169.1",
+                    "unit": "mm",
+                    "inferred": false,
+                    "summary_statistic": "species_mean",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Tail.Length",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "꼬리 길이: 169.1 mm"
+                  }
+                ],
+                "empty_text": "깃털 색과 생김새를 설명할 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "ecology",
+                "title": "생활과 먹이",
+                "items": [
+                  {
+                    "name": "habitat",
+                    "label": "서식 환경",
+                    "value": "Wetland",
+                    "display": "습지",
+                    "unit": null,
+                    "inferred": false,
+                    "summary_statistic": "species_category",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Habitat",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "서식 환경: 습지"
+                  },
+                  {
+                    "name": "primary_lifestyle",
+                    "label": "주 생활 방식",
+                    "value": "Terrestrial",
+                    "display": "지상 생활",
+                    "unit": null,
+                    "inferred": false,
+                    "summary_statistic": "species_category",
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9413&field=Primary.Lifestyle",
+                    "citation": "Tobias et al. (2022), AVONET; Figshare 16586228 v7",
+                    "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+                    "release": "figshare-article-16586228-v7:file-34480856",
+                    "license_name": "CC BY 4.0",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "avibase_id_unique",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "주 생활 방식: 지상 생활"
+                  },
+                  {
+                    "name": "diet_category",
+                    "label": "먹이 유형",
+                    "value": "VertFishScav",
+                    "display": "고기·물고기·사체 (원자료: 척추동물·물고기·사체)",
+                    "unit": null,
+                    "inferred": false,
+                    "summary_statistic": null,
+                    "source_note": "Ref_1",
+                    "certainty": "A",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                    "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                    "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                    "release": "figshare-article-3559887-v1:file-5631081",
+                    "license_name": "CC0 1.0",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "birdtree_birdlife_avibase_chain",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "먹이 유형: 고기·물고기·사체 (원자료: 척추동물·물고기·사체)"
+                  },
+                  {
+                    "name": "nocturnal",
+                    "label": "활동 시간",
+                    "value": false,
+                    "display": "야행성 아님",
+                    "unit": null,
+                    "inferred": false,
+                    "summary_statistic": null,
+                    "source_note": null,
+                    "certainty": null,
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=5209",
+                    "citation": "Wilman et al. (2014), EltonTraits 1.0",
+                    "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+                    "release": "figshare-article-3559887-v1:file-5631081",
+                    "license_name": "CC0 1.0",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "taxonomy_alignment": {
+                      "status": "accepted",
+                      "method": "birdtree_birdlife_avibase_chain",
+                      "source_scientific_name": "Ardea cinerea",
+                      "target_scientific_name": "Ardea cinerea",
+                      "reason": null
+                    },
+                    "text": "활동 시간: 야행성 아님"
+                  }
+                ],
+                "empty_text": "서식 환경과 먹이 자료를 아직 확인하지 못했습니다."
+              },
+              {
+                "key": "fun_facts",
+                "title": "재미있는 사실",
+                "items": [],
+                "empty_text": "출처로 확인할 수 있는 재미있는 사실을 아직 찾지 못했습니다."
+              }
+            ],
+            "warnings": [],
+            "vegetation_note": "구체적인 식물·식생 목록은 아직 수집되지 않았습니다.",
+            "enrichment_pending": true
+          },
+          "question_answer": null,
+          "similar_species": null,
+          "subspecies": null
+        },
+        "entity_resolution": {
+          "mention": "왜가리",
+          "status": "matched",
+          "method": "graph_exact",
+          "canonical_name": "Ardea cinerea",
+          "taxon_id": "avilist-taxon:v2025b:5419",
+          "concept_set_id": "rg:concept-set:avilist-v2025b",
+          "taxonomy_release": "v2025b",
+          "candidates": []
+        }
+      },
+      "elapsed_ms": 1894
+    },
+    {
+      "case": {
+        "id": "fresh-26",
+        "question": "청둥오리의 학명이 뭐야?",
+        "category": "preserve",
+        "expected": {
+          "preserve": "taxon_identity"
+        }
+      },
+      "response": {
+        "selected_intent": "taxonomy",
+        "route_method": "jev",
+        "disposition": "answer",
+        "answer_text": "분류 계통을 확인했습니다.",
+        "warnings": [],
+        "result": {
+          "kind": "taxonomy",
+          "lineage": {
+            "query_name": "청둥오리",
+            "query_scientific_name": "Anas platyrhynchos",
+            "resolved_query_scientific_name": "Anas platyrhynchos",
+            "matched_by": "korean_name",
+            "taxonomy_source": "AviList",
+            "taxonomy_release": "v2025b",
+            "concept_set_id": "rg:concept-set:avilist-v2025b",
+            "lineage": [
+              {
+                "taxon_id": "avilist-taxon:v2025b:230",
+                "rank": "order",
+                "scientific_name": "Anseriformes",
+                "authority": null,
+                "korean_name": "기러기목",
+                "korean_name_status": "community-sourced-reference",
+                "korean_name_source_url": "https://www.wikidata.org/wiki/Q21651",
+                "english_name": null,
+                "display_name": null
+              },
+              {
+                "taxon_id": "avilist-taxon:v2025b:240",
+                "rank": "family",
+                "scientific_name": "Anatidae",
+                "authority": null,
+                "korean_name": "오리과",
+                "korean_name_status": "community-sourced-reference",
+                "korean_name_source_url": "https://www.wikidata.org/wiki/Q7556",
+                "english_name": null,
+                "display_name": null
+              },
+              {
+                "taxon_id": "avilist-taxon:v2025b:526",
+                "rank": "genus",
+                "scientific_name": "Anas",
+                "authority": "Linnaeus, C, 1758",
+                "korean_name": "오리속",
+                "korean_name_status": "community-sourced-reference",
+                "korean_name_source_url": "https://www.wikidata.org/wiki/Q214264",
+                "english_name": null,
+                "display_name": null
+              },
+              {
+                "taxon_id": "avilist-taxon:v2025b:544",
+                "rank": "species",
+                "scientific_name": "Anas platyrhynchos",
+                "authority": "Linnaeus, C, 1758",
+                "korean_name": "청둥오리",
+                "korean_name_status": "source-reference",
+                "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                "english_name": "Mallard",
+                "display_name": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "elapsed_ms": 1591
+    },
+    {
+      "case": {
+        "id": "fresh-27",
+        "question": "까치랑 직박구리를 비교해서 설명해 줘.",
+        "category": "preserve",
+        "expected": {
+          "preserve": "general_comparison"
+        }
+      },
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "elapsed_ms": 1195
+    },
+    {
+      "case": {
+        "id": "fresh-28",
+        "question": "새 관찰을 시작할 때 기록장에는 뭘 적으면 좋을까?",
+        "category": "preserve",
+        "expected": {
+          "preserve": "non_graph_advice"
+        }
+      },
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "elapsed_ms": 1209
+    }
+  ]
+}

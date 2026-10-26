@@ -1,0 +1,11 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -305,7 +305,7 @@
+             return False
+         if (span.end < len(question) and re.match(r'[가-힣]', question[span.end:])
+                 and re.search(r'(?:' + _OPS + r')$', span.text)
+-                and not re.match(r'(?:는|고|인|이라는|이라고|이고|이며|이다|입니다|이면서)(?=\s|[,.!?]|$)',
++                and not re.match(r'(?:는|고|인|지|이라는|이라고|이고|이며|이다|입니다|이면서)(?=\s|[,.!?]|$)',
+                                  question[span.end:])):
+             return False  # a comparator prefix must not consume the beginning of another content word
+         ops = [_op(m) for m in re.findall(_OP_WORD, span.text)]

@@ -1,0 +1,44 @@
+{
+  "kind": "independent_static_review_and_mock_checks",
+  "time": "2026-10-26T17:53:19.807724",
+  "app_source_changes_by_reviewer": false,
+  "actual_api_calls": 0,
+  "gold_changed_after_freeze": false,
+  "source_sha256": {
+    "src/robingraph/retrieval/graph_condition_extractor.py": "8c6a74cbeaf5478d0c78082e757948cf9d0e68eafb8f5ab51b0fd6e48cd34b55",
+    "src/robingraph/retrieval/semantic_graph_intent.py": "0833fc5d866c8b9e32a973ec8790fef73dd3c1b68a7156d3bd014ce0a74942c8",
+    "scripts/evaluate_graph_question_families.py": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+    "src/robingraph/generation.py": "7014cb63de46710aa3f964934a5fb55b2d6a034682e3de7e62339bb0940aebb0"
+  },
+  "gold_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "review": "scoped_pass_with_declared_model_audit_dependencies",
+  "checks": {
+    "record-assignment-final-current.log": "known_condition_cannot_be_consumed) ... ok\ntest_original_negative_or_absent_fragment_is_not_covered (test_record_union_guards.RecordUnionGuardTests.test_original_negative_or_absent_fragment_is_not_covered) ... ok\ntest_proved_scope_evidence_request_union (test_record_union_guards.RecordUnionGuardTests.test_proved_scope_evidence_request_union) ... ok\n\n----------------------------------------------------------------------\nRan 31 tests in 0.114s\n\nOK\n",
+    "record-assignment-final-boundaries.log": "st_unique_typed_original_assignment_only_changes_evidence (test_record_assignment_guards.RecordAssignmentGuards.test_unique_typed_original_assignment_only_changes_evidence) ... ok\ntest_wrong_value_field_or_cross_binding_never_recovers (test_record_assignment_guards.RecordAssignmentGuards.test_wrong_value_field_or_cross_binding_never_recovers) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.040s\n\nOK\n",
+    "record-assignment-final-prior.log": ". ok\ntest_indirect_question_ending_is_functional_but_not_a_noun_prefix (test_numeric_tail.NumericTailGuards.test_indirect_question_ending_is_functional_but_not_a_noun_prefix) ... ok\ntest_original_copular_denial_survives_numeric_prefix_recovery (test_numeric_tail.NumericTailGuards.test_original_copular_denial_survives_numeric_prefix_recovery) ... ok\n\n----------------------------------------------------------------------\nRan 32 tests in 0.068s\n\nOK\n"
+  },
+  "change_since_attempt1": "Only unique original unresolved fragments wholly contained in an already proved positive record-request span can be consumed. Fresh24 remains sealed; next live regression after source change is feedback-exposed verification, not a blind rerun.",
+  "resolved_review_finding": "Explicit longest source field must equal planned trait for record-query build, reconciliation, frame and retained coverage. Empty unresolved and source-exact surface mismatch are also blocked.",
+  "limitations": [
+    "If provider omits an entire regional condition from its proposal, local completeness alone does not detect all such omissions; independent audit remains mandatory.",
+    "If provider drops an additional original field by narrowing its source surface to only one requested field, current binding verifies that field but does not prove the omitted field was represented; audit remains responsible.",
+    "Shared field code binding and explicit query-metadata parsing do not establish global natural-language completeness."
+  ],
+  "local_findings_resolved": [
+    "Shared enum wrong-field interpretation is rejected regardless of record request verb.",
+    "No explicit field context for shared enum code cannot choose arbitrary trait."
+  ],
+  "new12_sealed_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "new12_body_not_opened_for_implementation_review": true,
+  "final_schema_context_review": {
+    "audit_payload": "Added existing plan_schema to model audit prompt only",
+    "schema_changes": "Descriptions only: numeric value null with threshold; shared-diet habitat in conditions",
+    "required_fields_types_or_runtime_api_changed": false,
+    "audit_acceptance": "Unchanged: faithful exactly True AND issues exactly []",
+    "scoped_approval": true
+  },
+  "latest_repair": "Unique typed source record assignment; preserves absolute offsets and word boundary; cannot repair prohibited 확인/조회/검색하지 마/말 requests. Whole _build and independent audit remain.",
+  "unique_independent_test_methods": 65,
+  "test_count_note": "31 current +32 prior +2 extra boundary methods; assignment7 appears both in current31 and assignment9 run, not counted twice.",
+  "sealed12_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73"
+}

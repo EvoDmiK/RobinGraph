@@ -1,0 +1,36 @@
+{
+  "measurement": "phase2_feedback_exposed_attempt1",
+  "case_counts": {
+    "pass": 80,
+    "fail": 4
+  },
+  "group_counts": {
+    "pass": 25,
+    "fail": 3
+  },
+  "classifications": {
+    "supported_answer": 48,
+    "supported_no_matching_results": 13,
+    "negated_condition": 7,
+    "supported_source_no_data": 5,
+    "false_hold": 4,
+    "unsupported_specific_food": 7
+  },
+  "image": "robingraph-api:test-record-query-followup-083d06b49825",
+  "http200": 84,
+  "unique_trace_ids": 84,
+  "exact_root_verified": 84,
+  "api_calls_by_reviewer": 0,
+  "unsafe_answers": 0,
+  "failure_causes": {
+    "F01B": "Model rewrote original condition evidence into absent canonical-looking surface.",
+    "F01C": "Model rewrote source record predicate into absent nominal surface.",
+    "F04A": "Source-exact short value evidence omits field; strict record field helper rejects.",
+    "V2-10B": "Model sets converted threshold150 but unit cm. Same stored proposal/audit rejected on before/current code. A hypothetical unit-label correction still fails complete-plan numbers/known-words validation."
+  },
+  "gold_sha256": "4d48def64ec66083ec77cae9a9ec86c27181336cbf88f028a76a217bcac28096",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "sealed12_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+  "sealed12_questions_opened_by_reviewer": false,
+  "scope": "No app, gold, scorer or live API changes; review of stored artifacts and injected provider responses only."
+}

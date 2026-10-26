@@ -1,0 +1,47 @@
+{
+  "source_score_sha256": "0faa1e50673eded6fed972d3426a1aea227a20e12a991921a576322124b3deb0",
+  "score_unchanged": true,
+  "api_counts": {
+    "supported": {
+      "pass": 7,
+      "fail": 2
+    },
+    "hold": {
+      "pass": 4
+    }
+  },
+  "breakdown": {
+    "original_three": {
+      "pass": 3
+    },
+    "fresh_supported": {
+      "pass": 4,
+      "fail": 2
+    },
+    "fresh_hold": {
+      "pass": 4
+    }
+  },
+  "failure_classification": [
+    {
+      "id": "N02",
+      "classification": "supported_question_false_hold_before_semantic_stage",
+      "evidence": "Lexical unresolved_conditions / plan_validation; no plan, reconciliation or audit span."
+    },
+    {
+      "id": "N05",
+      "classification": "taxon_name_resolution_data_limitation",
+      "evidence": "API taxon_resolution=not_found; answer explains active taxonomy cannot uniquely resolve 비둘기과. Same-request interpretation preserves exact taxon surface and body_mass num_gt 300g; audit faithful=true; strict_bound_restatement proof removes redundant =300g only. Existing inventory stores Columbidae family with korean_name 비둘기, not 비둘기과.",
+      "scorer_explanation_limit": "Generic echoed scope mismatch is absence of resolved taxon, not observed wrong numeric condition. Plan scorer rank=비둘기과 is an unresolved-catalog sentinel, not observed actual rank. Do not label as numeric normalization failure or successful execution.",
+      "execution": "not_successful",
+      "plan_surface_and_numeric_conditions": "verified",
+      "plan_taxonomy_resolution": "not_verified"
+    }
+  ],
+  "limits": [
+    "First measurement unchanged; no gold or source modifications.",
+    "API pass requires response scope/conditions; trace-observability flag passed is not QA success.",
+    "Original3 are feedback-exposed; new10 first measurement.",
+    "No live requests or database re-query by reviewer."
+  ]
+}

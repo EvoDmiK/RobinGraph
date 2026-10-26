@@ -1,0 +1,96 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -637,6 +637,15 @@
+         text = item.get('surface')
+         if not isinstance(text, str) or span_of(question, text.strip()) is not None:
+             continue
++        # '조건' introduces the same filter; recover its grammatical tail, not a changed biological role.
++        scaffold = re.fullmatch(r'(.+\s조건)(?:인|으로|이고|이며)', text.strip())
++        matches = [] if scaffold is None else list(re.finditer(
++            r'(?<!\w)' + re.escape(scaffold[1]) + r'(?:으로|인|이고|이며)(?=\s|[,.!?]|$)', question))
++        if len(matches) == 1:
++            item['surface'] = matches[0].group()
++            changes.append({'field': f'conditions[{index}].surface', 'rule': 'query_condition_ending',
++                            'before': text, 'after': item['surface']})
++            continue
+         # Only the ending of the same positive existence predicate may change; its content stays verbatim.
+         ending = re.fullmatch(r'(.+\s있)(?:어(?:요)?|다|습니다)', text.strip())
+         matches = [] if ending is None else list(re.finditer(
+@@ -648,6 +657,14 @@
+     text, species = raw.get('relation_text'), raw.get('species')
+     if (raw.get('kind') == 'shared_diet' and isinstance(text, str) and isinstance(species, str)
+             and span_of(question, text.strip()) is None):
++        omitted = re.fullmatch(r'(.+?)\s*(?:\.{3}|…)\s*((?:와|과|랑|이랑|하고)\s+.+)', text.strip())
++        matches = [] if omitted is None or len(re.findall(r'\.{3}|…', text)) != 1 else list(re.finditer(
++            r'(?<!\w)' + re.escape(omitted[1].rstrip()) + r'\s+' + re.escape(species)
++            + r'\s*' + re.escape(omitted[2]) + r'(?=\s|[,.!?]|$)', question))
++        if len(matches) == 1:
++            candidate['relation_text'] = matches[0].group()
++            changes.append({'field': 'relation_text', 'rule': 'exact_reference_placeholder',
++                            'before': text, 'after': candidate['relation_text']})
+         particle = re.fullmatch(r'(?:와|과|랑|이랑|하고)\s+(.+)', text.strip())
+         matches = [] if particle is None else list(re.finditer(
+             r'(?<!\w)' + re.escape(species) + r'(?:와|과|랑|이랑|하고)\s+'
+--- a/src/robingraph/retrieval/graph_condition_extractor.py
++++ b/src/robingraph/retrieval/graph_condition_extractor.py
+@@ -75,7 +75,7 @@
+ _NICHE_SAME = r'같은데|같으면서|같지만|같고|같은|공유하는|동일한'
+ _NICHE_DIFFERENT = r'다르면서|다르지만|다르고|다른|달라'
+ _EAT = r'먹고\s*사는|먹고사는|먹는다|먹는|먹고|먹어|먹을|먹으며'
+-_LATIN = r'(?<![A-Za-z])[A-Z][a-z]+ [a-z]+(?![a-z])'
++_LATIN = r'(?<![A-Za-z])[A-Z][a-z]+ [a-z]+(?:-[a-z]+)?(?: [a-z]+(?:-[a-z]+)?)?(?![a-z])'
+ # An explicit literature/observation request is another route's question, even with graph words in it.
+ _DOCUMENT_REQUEST = r'논문|문헌|연구|기사|출처|인용|관찰\s*기록|관찰|사진|영상'
+ # ...unless it is a second, independent request next to a graph list request: then clarify.
+@@ -585,6 +585,13 @@
+         kind = 'habitat_different_diet' if niches[0][3] == 'different' else 'habitat_shared_diet'
+     else:
+         kind = None
++
++    if (kind == 'specific_fruit' and len(names) == 1
++            and (names[0].text in _taxon_names()[1]
++                 or re.fullmatch(r'[A-Z][a-z]+ [a-z]+(?:-[a-z]+)?(?: [a-z]+(?:-[a-z]+)?)?', names[0].text))
++            and re.search(_SAME_FRUIT, question)):
++        # The reference bird is not a second candidate; retain every other restriction.
++        claims.each(r'(?<![가-힣])다른(?=\s+(?:새|종|조류)(?:들)?(?=[은는이가을를도\s.!?]|$))', 'filler')
+ 
+     ambiguity, evidence = [], []
+     rank_claims = claims.of('rank')
+--- a/tests/test_graph_source_scaffolds.py
++++ b/tests/test_graph_source_scaffolds.py
+@@ -0,0 +1,35 @@
++"""Unique source scaffolds do not authorise changed predicates or extra conditions (mock plans)."""
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval import graph_condition_extractor as e
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphSourceScaffoldsTest(TestCase):
++    def test_unique_evidence_and_mutations(self):
++        rows=[]
++        def check(label,q,raw,want):
++         candidate,changes=s.reconcile_graph_plan(q,raw);actual=execution_gate(q,s.interpret(q,lambda *_:candidate));rows.append(dict(label=label,expected=want,actual=actual,changes=changes));assert actual==want,(label,actual,candidate)
++        raw=dict(kind='taxon_traits',conditions=[dict(trait_name='habitat_density_category',op='eq',value='open',surface='서식지 밀도가 개방형인 open 조건인')],unresolved=[],unknown_relation=False)
++        check('condition_scaffold','서식지 밀도가 개방형인 open 조건으로 새를 찾아줘',raw,'answer')
++        q='서식지 밀도가 개방형인 open 조건으로, 서식지 밀도가 개방형인 open 조건으로 새를 찾아줘'
++        check('repeated_condition_prefix_not_recovered',q,raw,'clarify')
++        wrong={**raw,'conditions':[{**raw['conditions'][0],'surface':'서식지 밀도가 빽빽한 closed 조건인'}]}
++        check('different_content_not_recovered','서식지 밀도가 개방형인 open 조건으로 새를 찾아줘',wrong,'clarify')
++        raw=dict(kind='shared_diet',species='황조롱이',relation_text='먹이 생태 범주가 ... 와 같은',conditions=[],unresolved=['황조롱이는 빼고'],unknown_relation=False)
++        q='황조롱이는 빼고 먹이 생태 범주가 황조롱이와 같은 다른 새를 찾아줘'
++        check('exact_reference_placeholder',q,raw,'answer')
++        check('other_reference_not_substituted',q.replace('황조롱이와','직박구리와'),raw,'clarify')
++        check('new_relation_content_not_ignored',q.replace('황조롱이와','겨울에 황조롱이와'),raw,'clarify')
++        for extra in ('',' 먹지 않는',' 겨울에 사는'):
++         q='해안에 사는 새 중 황조롱이와 정확히 같은 식물 종의 열매를 먹는 다른 새'+extra
++         i=e.extract_graph_intent(q);g=execution_gate(q,i);want='clarify'if extra else'insufficient_data';assert g==want,(q,g,i);rows.append(dict(label='specific_food_other_framing'+extra,actual=g,expected=want))
++        for reference, expected in (('Falco tinnunculus','insufficient_data'),('Falco tinnunculus interstinctus','insufficient_data'),('Falco','clarify')):
++         q=reference+'와 같은 식물 종의 열매를 먹는 다른 새는?'
++         intent=e.extract_graph_intent(q);actual=execution_gate(q,intent);assert actual==expected,(q,actual,intent)
++         if expected == 'insufficient_data': assert intent.species[0].text == reference
++         rows.append(dict(label='scientific_reference_shape',question=q,expected=expected,actual=actual))
++        for extra in (' 먹지 않는',' 겨울에 사는'):
++         q='Falco tinnunculus와 같은 식물 종의 열매를 먹는 다른 새'+extra
++         assert execution_gate(q,e.extract_graph_intent(q))=='clarify'
++         rows.append(dict(label='scientific_reference_extra_condition',question=q,expected='clarify',actual='clarify'))

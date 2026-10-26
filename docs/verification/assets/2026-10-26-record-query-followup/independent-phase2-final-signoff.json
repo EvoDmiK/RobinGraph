@@ -1,0 +1,33 @@
+{
+  "measurement": "phase2_final_regression",
+  "case_counts": {
+    "pass": 80,
+    "fail": 4
+  },
+  "group_counts": {
+    "pass": 24,
+    "fail": 4
+  },
+  "classifications": {
+    "supported_answer": 48,
+    "supported_no_matching_results": 13,
+    "negated_condition": 7,
+    "false_hold": 4,
+    "supported_source_no_data": 5,
+    "unsupported_specific_food": 7
+  },
+  "image": "robingraph-api:test-record-query-followup-ef940d61e5ba",
+  "http200": 84,
+  "unique_trace_ids": 84,
+  "exact_root_verified": 84,
+  "reviewer_api_calls": 0,
+  "gold_sha256": "4d48def64ec66083ec77cae9a9ec86c27181336cbf88f028a76a217bcac28096",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "scores_preserved_without_adjudication_adjustment": true,
+  "failure_causes": {
+    "F04B": "Confirmed code regression: same exact stored value-only Wetland proposal answers on pre-assignment baseline and holds under new record-context field proof. Helper does not accept explicit field-recordvalue-value 조건으로 assignment form.",
+    "V2-07A": "Audit faithful true but nonempty self-correcting issues; same audit rejects on baseline/current.",
+    "V2-10B": "Exact150mm/20mm proposal fails numbers/knownwords on baseline/current; source-evidence truncation shape.",
+    "V2-11B": "Audit wrongly treats no habitat filtering instruction as omitted constraint; same audit rejects on baseline/current."
+  }
+}

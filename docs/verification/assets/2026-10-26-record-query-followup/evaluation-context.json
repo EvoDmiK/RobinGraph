@@ -1,0 +1,47 @@
+{
+  "current_image": "robingraph-api:test-record-query-followup-6a95918a5533",
+  "stages": {
+    "regression": {
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "cases": 84,
+      "feedback_exposed": true,
+      "raw_case_counts": {
+        "pass": 82,
+        "fail": 2
+      }
+    },
+    "followup": {
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "cases": 12,
+      "feedback_exposed": true,
+      "raw_case_counts": {
+        "pass": 10,
+        "fail": 2
+      }
+    },
+    "recheck": {
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "cases": 8,
+      "feedback_exposed": true,
+      "raw_case_counts": {
+        "pass": 8
+      }
+    },
+    "fresh": {
+      "image": "robingraph-api:test-record-query-followup-3b4392eb69a2",
+      "cases": 8,
+      "feedback_exposed": false,
+      "raw_case_counts": {
+        "pass": 5,
+        "fail": 3
+      }
+    }
+  },
+  "unique_trace_ids_across_all_stages": 112,
+  "same_request_evidence_only": true,
+  "gold_human_reviewed": false,
+  "first_blind8_group_limit": "No contrast cases: raw group score 0/4 is structural; equivalent-pair exactness 2/4 first and 4/4 exposed recheck.",
+  "no_new_unseen_evaluation_after_last_extractor_change": true,
+  "production_changed": false,
+  "RG212_complete": false
+}

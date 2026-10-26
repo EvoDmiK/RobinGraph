@@ -1,0 +1,163 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -289,6 +289,51 @@
+ 
+ 
+ 
++_RECORD_STATE = r'기록(?:되어|돼)\s*있(?:는지|는가|습니다|다|음)(?=\s|[.!?,]|$)'
++_RECORD_CONTEXT = r'기록\s*값|' + _RECORD_STATE
++
++
++def _original_record_assignment(question, item):
++    """Recover a unique typed categorical assignment; neither a value alone nor a request verb proves a field."""
++    trait, value, text = item.get('trait_name'), item.get('value'), item.get('surface', '').strip()
++    spec = TRAIT_CONDITIONS.get(trait)
++    if not spec or spec[1] in ('number', 'share') or item.get('op') != 'eq' or not isinstance(value, str):
++        return None
++    aliases = {value} | {word for word, code in _trait_surfaces(trait).items() if code == value}
++    value_pattern = r'(?:' + '|'.join(_pattern(alias) for alias in sorted(aliases, key=len, reverse=True)) + r')(?![A-Za-z0-9_])'
++    if len(list(re.finditer(value_pattern, question))) != 1:
++        return None
++    assignments = []
++    leading = len(question) - len(question.lstrip())
++    for start, end, fields in _field_spans(question.lstrip()):
++        start, end = start + leading, end + leading
++        if start and re.match(r'\w', question[start - 1]):
++            continue
++        if fields != {trait}:
++            continue
++        # Record-value copula, or an explicit positive recorded state: no request-verb grammar.
++        for pattern in (r'\s*기록\s*값(?:이|가|은|는)?\s*' + value_pattern + r'(?:인지|인|이다|입니다)(?=\s|[.!?,]|$)',
++                        r'(?:이|가|은|는)?\s*' + value_pattern + r'(?:으)?로(?=\s*' + _RECORD_STATE + r')'):
++            match = re.match(pattern, question[end:])
++            if match:
++                assignments.append(Span(question[start:end + match.end()], start, end + match.end()))
++    if len(assignments) != 1 or not _record_field_matches(assignments[0].text, trait):
++        return None
++    evidence = assignments[0]
++    original = span_of(question, text)
++    if original is not None:
++        # Expand only a unique original short suffix containing the same value within this proved field assignment.
++        if (question.count(text) == 1 and evidence.start <= original.start and original.end <= evidence.end
++                and re.search(value_pattern, text)):
++            return evidence
++        return None
++    fields = _field_spans(text)
++    if (len(fields) == 1 and fields[0][0] == 0 and fields[0][2] == {trait}
++            and re.fullmatch(r'(?:이|가|은|는)?\s*' + value_pattern + r'인', text[fields[0][1]:])):
++        return evidence
++    return None
++
++
+ def _meta_spans(question):
+     return [Span(m.group(), m.start(), m.end()) for pattern in (_UNRESTRICTED, _DISCOURSE, _RATE_META)
+             for m in pattern.finditer(question)]
+@@ -581,7 +626,7 @@
+             context = {name for _, _, names in _field_spans(_blank(question)) for name in names} & possible
+             if context != {condition.trait_name}:
+                 raise _Reject('shared enum value lacks an unambiguous original field')
+-    if re.search(_RECORD_REQUEST, question) and any(
++    if re.search(_RECORD_CONTEXT, question) and any(
+             not _record_field_matches(span.text, condition.trait_name) for condition, span in pairs):
+         raise _Reject('record predicate field is not proved by its original label')
+     if re.search(_COPULAR_DENIAL, _blank(question)):
+@@ -685,9 +730,6 @@
+     if (not isinstance(items, list) or not all(isinstance(item, dict) and isinstance(item.get('surface'), str) for item in items)
+             or not isinstance(unresolved, list) or not all(isinstance(t, str) for t in unresolved)):
+         return raw, []
+-    if (re.search(_RECORD_REQUEST, question) and any(
+-            not _record_field_matches(item['surface'], item.get('trait_name')) for item in items)):
+-        return raw, []
+     lexical = extract_graph_intent(question)
+     if _lexical_decides(question, lexical):
+         return raw, []
+@@ -702,24 +744,16 @@
+         changes.append({'field': 'taxon', 'rule': 'rank_suffix', 'before': taxon, 'after': rank.text})
+     for index, item in enumerate(candidate['conditions']):
+         text = item.get('surface')
+-        if not isinstance(text, str) or span_of(question, text.strip()) is not None:
+-            continue
+-        # A typed equality can be stated as a positive source-record question, with its field/value unchanged.
+-        spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
+-        value = item.get('value')
+-        if (spec and spec[1] not in ('number', 'share') and item.get('op') == 'eq' and isinstance(value, str)
+-                and _record_field_matches(text, item.get('trait_name'))):
+-            aliases = {value} | {word for word, code in _trait_surfaces(item['trait_name']).items() if code == value}
+-            nominal = re.fullmatch(r'(.+)인', text.strip()) if any(
+-                text.strip().endswith(alias + '인') for alias in aliases) else None
+-            matches = [] if nominal is None else list(re.finditer(
+-                r'(?<!\w)(?P<evidence>' + re.escape(nominal[1]).replace(r'\ ', r'\s*')
+-                + r'(?:으)?로)\s*' + _RECORD_REQUEST + r'(?=\s|[.!?,]|$)', question))
+-            if len(matches) == 1:
+-                item['surface'] = matches[0]['evidence']
+-                changes.append({'field': f'conditions[{index}].surface', 'rule': 'positive_record_equality',
+-                                'before': text, 'after': item['surface']})
+-                continue
++        if not isinstance(text, str):
++            continue
++        evidence = _original_record_assignment(question, item)
++        if evidence is not None and evidence.text != text:
++            item['surface'] = evidence.text
++            changes.append({'field': f'conditions[{index}].surface', 'rule': 'positive_record_equality',
++                            'before': text, 'after': evidence.text})
++            text = evidence.text
++        if span_of(question, text.strip()) is not None:
++            continue
+         # A numeric predicate keeps its exact operand/comparator; only a copular query ending may vary.
+         spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
+         operators = list(re.finditer(_OPS, text.strip()))
+@@ -798,6 +832,9 @@
+             item['unit'] = unit
+             changes.append({'field': f'conditions[{index}].unit', 'rule': 'original_numeric_unit',
+                             'before': before, 'after': unit})
++    if (re.search(_RECORD_CONTEXT, question) and any(
++            not _record_field_matches(item['surface'], item.get('trait_name')) for item in candidate['conditions'])):
++        return raw, []
+     token = tracing.begin_outcome()
+     try:
+         framing = set()
+--- a/tests/test_graph_record_assignments.py
++++ b/tests/test_graph_record_assignments.py
+@@ -0,0 +1,42 @@
++"""Categorical record assignment evidence is independent of request verbs, without changing predicates (mock plans)."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++CASES = [('F01B', '영양 단계 기록값이 Omnivore인지 Turdus merula 종에 대해 확인하고 싶어요.', {'kind': 'taxon_traits', 'taxon': 'Turdus merula', 'species': None, 'conditions': [{'trait_name': 'trophic_level', 'op': 'eq', 'value': 'Omnivore', 'surface': '영양 단계가 Omnivore인'}], 'relation_text': None, 'unresolved': [], 'unknown_relation': False}), ('F01C', 'Turdus merula라는 종의 영양 단계가 Carnivore로 기록되어 있는지 조회해 주세요.', {'kind': 'taxon_traits', 'taxon': 'Turdus merula', 'species': None, 'conditions': [{'trait_name': 'trophic_level', 'op': 'eq', 'value': 'Carnivore', 'surface': '영양 단계가 Carnivore인'}], 'relation_text': None, 'unresolved': [], 'unknown_relation': False}), ('F04A', 'Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Wetland로 기록되어 있는지 확인해 주세요.', {'kind': 'taxon_traits', 'taxon': 'Anas platyrhynchos platyrhynchos', 'species': None, 'conditions': [{'trait_name': 'habitat', 'op': 'eq', 'value': 'Wetland', 'surface': 'Wetland로'}], 'relation_text': None, 'unresolved': [], 'unknown_relation': False})]
++
++
++class GraphRecordAssignmentTest(TestCase):
++    def test_original_field_assignment_and_guard_matrix(self):
++        rows=[]
++        def check(label,q,p,want):
++         before=copy.deepcopy(p);after,changes=s.reconcile_graph_plan(q,p);actual=execution_gate(q,s.interpret(q,lambda *_:after));assert p==before;assert actual==want,(label,q,actual,after,changes);assert [{k:v for k,v in c.items()if k!='surface'}for c in p['conditions']]==[{k:v for k,v in c.items()if k!='surface'}for c in after['conditions']];rows.append(dict(label=label,question=q,actual=actual,changes=changes))
++        for label, question, raw in CASES:
++         check(label,question,raw,"answer")
++        def plan(surface,field='trophic_level',value='Omnivore',scope='Turdus merula'):
++         return dict(kind='taxon_traits',taxon=scope,conditions=[dict(trait_name=field,op='eq',value=value,surface=surface)],unresolved=[],unknown_relation=False)
++        for verb in ('확인해 줘','조회해 주세요','살펴보고 싶어요','알고 싶어','검토 부탁해'):
++         q='Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 '+verb
++         check('request_verb_independent',q,plan('영양 단계가 Omnivore인'),'answer')
++         check('literal_short_expansion',q,plan('Omnivore로'),'answer')
++        q='Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요'
++        for surface in ('Omnivore로','영양 단계가 Omnivore인'):
++         for field in ('trophic_niche','diet_category'):
++          check('wrong_field_same_enum',q,plan(surface,field),'clarify')
++         check('wrong_value',q,plan(surface.replace('Omnivore','Carnivore'),value='Carnivore'),'clarify')
++         check('repeated_value',q+' Omnivore',plan(surface),'clarify')
++         check('new_uncovered_predicate',q+' 겨울에 사는 새만',plan(surface),'clarify')
++         mutated=q.replace('기록되어 있는지','기록해 줘');raw_mutation=plan(surface);assert s.reconcile_graph_plan(mutated,raw_mutation)==(raw_mutation,[]);rows.append(dict(label='mutation_is_not_new_recovery',changes=[]))
++        q='Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있지 않은 새는?'
++        p=plan('영양 단계가 Omnivore인');called=[]
++        def provider(*_):called.append(True);return p
++        intent=s.graph_intent_handler(q,provider=provider);assert execution_gate(q,intent)!='answer'and not called;rows.append(dict(label='negative_record_guard',actual='hold_before_provider'))
++        for q in ('Omnivore로 기록되어 있는지 조회해 줘','영양 단계가 Omnivore로 기록되어 있는지, 먹이 생태 범주가 Omnivore로 기록되어 있는지 조회해 줘'):
++         p=plan('Omnivore로',scope=None);check('missing_or_dual_field',q,p,'clarify')
++        for leading in (' ', '\t', '\n'):
++         question=leading+'Turdus merula 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요'
++         check('absolute_source_offset',question,plan('영양 단계가 Omnivore인'),'answer')
++        for prefix,field,label in (('가짜','trophic_level','영양 단계'),('반','trophic_level','영양 단계'),('유사','diet_category','먹이 유형')):
++         question='Turdus merula 종의 '+prefix+label+'가 Omnivore로 기록되어 있는지 조회해 주세요'
++         check('field_left_word_boundary',question,plan(label+'가 Omnivore인',field=field),'clarify')

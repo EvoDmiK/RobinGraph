@@ -1,0 +1,20 @@
+{
+  "kind": "independent_static_review_and_mock_checks",
+  "time": "2026-10-26T16:04:52.945573",
+  "app_source_changes_by_reviewer": false,
+  "actual_api_calls": 0,
+  "gold_changed_after_freeze": false,
+  "source_sha256": {
+    "src/robingraph/retrieval/graph_condition_extractor.py": "76b26894445ba6e59f20201a74de6c309d483a8ce93d108cf1ee91e0bdc7afa4",
+    "src/robingraph/retrieval/semantic_graph_intent.py": "92772e1c2dfdabbc68d904948108f04ad0c8218dba110e57cad0ea21a9f44c2e",
+    "scripts/evaluate_graph_question_families.py": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+  },
+  "gold_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "review": "pass",
+  "checks": {
+    "guards.log": "test_record_positive_changes_evidence_not_semantics) ... ok\ntest_record_value_trait_scope_and_repeated_original (test_four_guards.FourGuardTests.test_record_value_trait_scope_and_repeated_original) ... ok\ntest_repaired_plan_does_not_bypass_independent_audit (test_four_guards.FourGuardTests.test_repaired_plan_does_not_bypass_independent_audit) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.033s\n\nOK\n",
+    "prior-guards.log": ". ok\ntest_indirect_question_ending_is_functional_but_not_a_noun_prefix (test_numeric_tail.NumericTailGuards.test_indirect_question_ending_is_functional_but_not_a_noun_prefix) ... ok\ntest_original_copular_denial_survives_numeric_prefix_recovery (test_numeric_tail.NumericTailGuards.test_original_copular_denial_survives_numeric_prefix_recovery) ... ok\n\n----------------------------------------------------------------------\nRan 32 tests in 0.060s\n\nOK\n",
+    "recorded-tests.log": "test_original_evidence_and_counterexamples (test_graph_recorded_queries.GraphRecordedQueryTest.test_original_evidence_and_counterexamples) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.024s\n\nOK\n",
+    "fruit-tests.log": "nt_comparison_wording (test_graph_fruit_reference_subject.FruitReferenceSubjectTests.test_known_eater_is_reference_across_plant_comparison_wording) ... ok\ntest_other_restrictions_and_unverified_subjects_remain_visible (test_graph_fruit_reference_subject.FruitReferenceSubjectTests.test_other_restrictions_and_unverified_subjects_remain_visible) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.018s\n\nOK\n"
+  }
+}

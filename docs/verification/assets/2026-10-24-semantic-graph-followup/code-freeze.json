@@ -1,0 +1,12 @@
+{
+  "files": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "3fe9ec8a26f37d51602e09d8337b555093dfa30c7ce0723e83d6a5edf77ab995",
+    "src/robingraph/generation.py": "8e1ace198f23a7e4e342ad4784c7a2f9144d3198afe5cdb9e77451258af762e1",
+    "src/robingraph/retrieval/graph_questions.py": "f21d19ebc91c55dccfaf14da060a0bb019446797fadbaf86e1c55dba883973ab",
+    "tests/test_semantic_restatements.py": "49ae038a9b186bfc1f0c2dccb22c726c27c8a15924826da11e09b28bcdb62757",
+    "tests/test_graph_questions.py": "ed9e59a39a969eddb2e76d6a1b14aab77321dd74d99634c7a0a1376bc45b3bb8"
+  },
+  "independent_questions_viewed_by_implementation": false,
+  "independent_case_sha256": "31b741dde84a9a2fc42a222bd95fe19478d86d54a8befbb0d576fc5a91181790",
+  "note": "activity veto from independent safety probe added before new-case evaluation; new-case baseline contents not inspected"
+}

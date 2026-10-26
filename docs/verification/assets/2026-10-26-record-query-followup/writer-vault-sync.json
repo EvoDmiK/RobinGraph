@@ -1,0 +1,35 @@
+{
+  "task": "2026-10-26-record-query-followup",
+  "synced_at": "2026-10-26T09:42:49.141Z",
+  "scratch_path": "/tmp/2026-10-26-record-query-followup.md",
+  "repository_target": "docs/work-log/2026-10-26-record-query-followup.md",
+  "repository_copy_by": "root after review",
+  "vault_detail": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-26-RG212-기록질의-공통보완-독립평가.md",
+  "sha256": "3bfe2ada00461383b6839c88c27371292a265b2e0c3d1c8bfc48a802710ba0a7",
+  "scratch_vault_raw_equal": true,
+  "detail_characters": 17456,
+  "changed_vault_documents": 3,
+  "index": {
+    "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+    "readback_exact": true,
+    "change": "one new worklog link",
+    "other_content_preserved": true
+  },
+  "backlog": {
+    "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+    "readback_exact": true,
+    "change": "RG-212 summary row only",
+    "status": "in_progress",
+    "other_content_preserved": true
+  },
+  "prior_note_target_verified": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-26-RG212-조건경계-13건보완-신규24평가.md",
+  "results": {
+    "regression": "82/84, 26/28 groups",
+    "first8": "5/8, 2/4 equivalent pairs",
+    "recheck8": "8/8, 4/4 equivalent pairs",
+    "followup12": "10/12, 2 original gold defects preserved",
+    "remaining_implementation_failures": 2
+  },
+  "production_modified": false,
+  "git_modified_by_writer": false
+}

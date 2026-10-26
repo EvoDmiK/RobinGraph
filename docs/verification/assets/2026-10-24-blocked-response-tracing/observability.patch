@@ -1,0 +1,319 @@
+--- before/src/robingraph/tracing.py
++++ after/src/robingraph/tracing.py
+@@ -292,15 +292,19 @@
+     "none", "taxon_not_found", "intent_uncertain", "ambiguous_name", "filter_mismatch",
+     "evidence_not_found", "observations_empty", "handler_unavailable", "upstream_error",
+     "unsupported_question", "unknown",
++    "interpretation_error", "invalid_plan", "semantic_audit_rejected", "plan_validation_rejected",
++    "unresolved_conditions", "unsupported_relation", "unsupported_conditions", "negated_conditions",
++    "ambiguous_conditions", "insufficient_data", "no_matching_results",
+ })
+ FAILURE_STAGES = frozenset({
+     "none", "routing", "name_resolution", "retrieval", "generation", "validation", "unknown",
++    "interpretation", "semantic_audit", "plan_validation",
+ })
+ SELECTED_INTENTS = frozenset({"profile", "taxonomy", "observations", "evidence", "none"})
+ ROUTE_METHODS = frozenset({"semantic", "explicit", "deterministic", "jev", "none"})
+ # Reasons that mean a dependency failed rather than the user's question being
+ # unanswerable; they map to disposition ``error`` even when HTTP is 200.
+-TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error"})
++TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error", "interpretation_error", "invalid_plan"})
+ 
+ _outcome: ContextVar[dict[str, str] | None] = ContextVar("robingraph_trace_outcome", default=None)
+ 
+--- before/src/robingraph/api/services.py
++++ after/src/robingraph/api/services.py
+@@ -834,6 +834,7 @@
+         if request.intent == "auto" and self.graph_intent_mode == "active":
+             choices = ecology_meaning_choices(request.question)
+             if choices:
++                _why("ambiguous_conditions", "routing")
+                 prompt = "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요."
+                 return ChatResponse(
+                     selected_intent="profile", route_method="deterministic", disposition="clarify",
+@@ -849,18 +850,23 @@
+         single_species = species_question or _species_chat_question(request.question)
+         if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
+                 and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
+-            from ..retrieval.graph_intent_schema import execution_gate, to_graph_question, unsupported_food
++            from ..retrieval.graph_intent_schema import GraphIntent, execution_gate, to_graph_question, unsupported_food
+ 
+             with tracing.span("graph_intent.route", tracing.CHAIN) as route_span:
++                # Shadow decisions are observable but must not label the actual response as blocked.
++                shadow_outcome = tracing.begin_outcome() if self.graph_intent_mode == "shadow" else None
+                 try:
+                     handler = (self.graph_plan_handler if self.graph_intent_mode == "active"
+                                and request.intent == "auto" and self.graph_plan_handler is not None
+                                else self.graph_intent_handler)
+                     interpreted = handler(request.question)
+                     if self.graph_intent_mode == "active" and getattr(interpreted, "source", None) not in ("extractor", "semantic"):
++                        _why("invalid_plan", "interpretation")
+                         raise ValueError("Graph interpretation must include extractor evidence")
+                     disposition = execution_gate(request.question, interpreted)
+                     interpreted_question = to_graph_question(request.question, interpreted)
++                    if isinstance(interpreted, GraphIntent):
++                        route_span.set_outputs(asdict(interpreted))
+                     route_span.set_attributes({"graph_intent.mode": self.graph_intent_mode,
+                                                "graph_intent.kind": getattr(interpreted, "kind", None),
+                                                "graph_intent.source": getattr(interpreted, "source", None),
+@@ -876,6 +882,7 @@
+                         graph_method = "semantic" if request.intent == "auto" else "explicit"
+                         foods = unsupported_food(request.question, interpreted)
+                         if foods:
++                            _why("unsupported_conditions", "plan_validation")
+                             # A food with no data key: say so exactly; nothing is queried or broadened.
+                             from ..retrieval.graph_questions import unsupported_food_answer
+ 
+@@ -888,6 +895,15 @@
+                         if disposition not in ("answer", "insufficient_data", "not_graph") or (
+                                 disposition != "not_graph" and graph_question is None) or (
+                                 disposition == "not_graph" and legacy_match):
++                            if not tracing.collected_outcome().get("reason"):
++                                reason = ("unsupported_conditions" if getattr(interpreted, "unsupported", ()) else
++                                          "negated_conditions" if getattr(interpreted, "negation", ()) else
++                                          "unresolved_conditions" if getattr(interpreted, "residual", ()) else
++                                          "ambiguous_conditions" if getattr(interpreted, "ambiguity", ()) else
++                                          "plan_validation_rejected")
++                                _why(reason, "plan_validation")
++                            route_span.set_attributes({"graph_intent.block_reason": tracing.collected_outcome().get("reason"),
++                                                       "graph_intent.block_stage": tracing.collected_outcome().get("stage")})
+                             unresolved = tuple(dict.fromkeys(
+                                 span.text for span in (*getattr(interpreted, "negation", ()),
+                                                        *getattr(interpreted, "residual", ()))
+@@ -905,12 +921,16 @@
+                     logging.getLogger(__name__).warning("Graph intent interpretation failed (%s)", type(error).__name__)
+                     route_span.set_attributes({"graph_intent.failure": type(error).__name__})
+                     if self.graph_intent_mode == "active":
++                        if not tracing.collected_outcome().get("reason"):
++                            _why("interpretation_error", "interpretation")
+                         return ChatResponse(
+                             selected_intent="profile", route_method="semantic" if request.intent == "auto" else "explicit",
+                             disposition="clarify", answer_text="관계 질문의 조건을 현재 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.",
+                             warnings=["해석 실패를 종이나 관계가 없다는 뜻으로 해석하지 마세요."],
+                             result=ChatClarifyResult(prompt="질문을 다시 입력해 주세요."),
+                         )
++                finally:
++                    tracing.end_outcome(shadow_outcome)
+         if graph_question is not None and graph_question.kind == "same_genus" and species_question:
+             graph_question = None  # Preserve the established single-species relation response.
+         if graph_question is not None:
+@@ -918,6 +938,7 @@
+                     isinstance(request.filters, ProfileChatFilters) and (
+                         request.filters.name is None or request.filters.name.strip().casefold()
+                         in {name.casefold() for name in graph_question.names})):
++                _why("filter_mismatch", "validation")
+                 return ChatResponse(
+                     selected_intent="profile", route_method=graph_method, disposition="clarify",
+                     answer_text="관계 탐색은 질문에 종과 조건을 함께 입력하고 개별 종 필터는 비워 주세요.",
+@@ -949,12 +970,14 @@
+                             for candidate in resolution.candidates:
+                                 candidate.question = rewrite_name_candidate(request.question, mention, candidate.scientific_name)
+                                 candidate.route_intent = "auto"
++                            _why("ambiguous_name", "name_resolution")
+                             return ChatResponse(
+                                 selected_intent="profile", route_method=graph_method, disposition="clarify",
+                                 answer_text=f"‘{mention}’을 현재 이름에서 찾지 못했습니다. 기준 새를 후보에서 선택해 주세요.",
+                                 warnings=["후보를 같은 종으로 확정하지 않았습니다. 선택 후 원래 질문의 조건으로 다시 조회합니다."],
+                                 result=ChatClarifyResult(prompt="기준 새를 선택해 주세요."), entity_resolution=resolution,
+                             )
++                        _why("upstream_error" if resolution.status == "unavailable" else "taxon_not_found", "name_resolution")
+                         return ChatResponse(
+                             selected_intent="profile", route_method=graph_method, disposition="clarify",
+                             answer_text=f"‘{mention}’의 이름을 현재 확인할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+@@ -962,6 +985,7 @@
+                             result=ChatClarifyResult(prompt="기준 새 이름을 확인해 주세요."), entity_resolution=resolution,
+                         )
+                     except AmbiguousNameSpanError:
++                        _why("ambiguous_name", "name_resolution")
+                         prompt = "새 이름에 조건이나 다른 이름이 함께 들어 있어 후보로 바꾸지 않았습니다. 기준 새 이름과 조건을 띄어 써 주세요."
+                         return ChatResponse(
+                             selected_intent="profile", route_method=graph_method, disposition="clarify",
+@@ -969,6 +993,7 @@
+                             result=ChatClarifyResult(prompt=prompt),
+                         )
+                     except Exception:
++                        _why("upstream_error", "name_resolution")
+                         return ChatResponse(
+                             selected_intent="profile", route_method=graph_method, disposition="clarify",
+                             answer_text="기준 새 이름의 후보 검색을 현재 사용할 수 없습니다. 정확한 국명이나 학명을 입력해 주세요.",
+@@ -987,6 +1012,7 @@
+                             or not all(isinstance(value, str) for value in payload.get("limitations", []))):
+                         raise ValueError("Invalid graph query result")
+                 except SpeciesNotFoundError:
++                    _why("taxon_not_found", "name_resolution")
+                     return ChatResponse(
+                         selected_intent="profile", route_method=graph_method,
+                         disposition="clarify", answer_text="질문에 입력한 종 이름을 현재 분류에서 확인하지 못했습니다. 정확한 종 이름이나 학명을 입력해 주세요.",
+@@ -994,12 +1020,17 @@
+                         result=ChatClarifyResult(prompt="종 이름이나 학명을 확인한 뒤 관계 질문을 다시 입력해 주세요."),
+                     )
+                 except Exception as error:
++                    _why("upstream_error", "retrieval")
+                     logging.getLogger(__name__).warning("Graph question lookup failed (%s)", type(error).__name__)
+                     payload = None
++            else:
++                _why("handler_unavailable", "retrieval")
+             if payload is None:
+                 payload = {"title": "관계 탐색", "text": "관계 탐색 자료를 현재 확인할 수 없습니다.",
+                            "status": "insufficient_data", "items": [], "paths": [], "sources": [],
+                            "limitations": ["조회 실패를 해당 종이나 관계가 없다는 뜻으로 해석하지 마세요."], "has_more": False}
++            elif payload["status"] != "answer":
++                _why("no_matching_results" if payload["status"] == "empty" else "insufficient_data", "retrieval")
+             return ChatResponse(
+                 selected_intent="profile", route_method=graph_method,
+                 disposition="answer" if payload["status"] == "answer" else "abstain",
+--- before/src/robingraph/generation.py
++++ after/src/robingraph/generation.py
+@@ -160,7 +160,20 @@
+             + json.dumps({'question': question, 'retrieved_examples': examples,
+                           'contract': {k: v for k, v in contract.items() if k not in ('schema', 'instructions')}},
+                          ensure_ascii=False))
+-        plan = _extract_payload(self._request(prompt, schema=contract['schema'], operation='graph_intent'))
++        with tracing.span('graph_intent.plan', attributes={'stage': 'interpretation'}) as plan_span:
++            try:
++                document = self._request(prompt, schema=contract['schema'], operation='graph_intent')
++            except Exception:
++                tracing.note_outcome('interpretation_error', 'interpretation')
++                plan_span.set_attribute('reason', 'interpretation_error')
++                raise
++            try:
++                plan = _extract_payload(document)
++            except GeminiAnswerError:
++                tracing.note_outcome('invalid_plan', 'interpretation')
++                plan_span.set_attribute('reason', 'invalid_plan')
++                raise
++            plan_span.set_outputs(plan)
+         audit_schema = {'type': 'OBJECT', 'properties': {
+             'issues': {'type': 'ARRAY', 'items': {'type': 'STRING'}},
+             'faithful': {'type': 'BOOLEAN'}}, 'required': ['issues', 'faithful']}
+@@ -196,9 +209,28 @@
+             'return faithful=false with short issue descriptions. Do not answer the bird question.\n'
+             + json.dumps({'question': question, 'proposed_plan': plan,
+                           'allowed_vocabulary': contract.get('vocabulary', {})}, ensure_ascii=False))
+-        audit = _extract_payload(self._request(audit_prompt, schema=audit_schema, operation='graph_intent_audit'))
+-        if audit.get('faithful') is not True or audit.get('issues') != []:
+-            raise GeminiAnswerError('Graph interpretation did not pass semantic audit')
++        with tracing.span('graph_intent.audit', attributes={
++                'stage': 'semantic_audit', 'judgment_source': 'model'}) as audit_span:
++            try:
++                document = self._request(audit_prompt, schema=audit_schema, operation='graph_intent_audit')
++            except Exception:
++                tracing.note_outcome('interpretation_error', 'semantic_audit')
++                audit_span.set_attribute('reason', 'interpretation_error')
++                raise
++            try:
++                audit = _extract_payload(document)
++            except GeminiAnswerError:
++                tracing.note_outcome('invalid_plan', 'semantic_audit')
++                audit_span.set_attribute('reason', 'invalid_plan')
++                raise
++            audit_span.set_outputs(audit)
++            if audit.get('faithful') is not True or audit.get('issues') != []:
++                reason = ('semantic_audit_rejected' if isinstance(audit.get('faithful'), bool)
++                          and isinstance(audit.get('issues'), list)
++                          and all(isinstance(issue, str) for issue in audit['issues']) else 'invalid_plan')
++                tracing.note_outcome(reason, 'semantic_audit')
++                audit_span.set_attribute('reason', reason)
++                raise GeminiAnswerError('Graph interpretation did not pass semantic audit')
+         return plan
+ 
+     def english_search_terms(self, question: str) -> str:
+--- before/src/robingraph/retrieval/semantic_graph_intent.py
++++ after/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -20,6 +20,8 @@
+ A failed check yields a GraphIntent the gate turns into a clarify. No Cypher is built here.
+ """
+ import re
++
++from .. import tracing
+ 
+ from .graph_condition_extractor import (
+     _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
+@@ -469,7 +471,7 @@
+             and (not re.match(r'[가-힣]', text) or bounded_korean_name(text)))
+ 
+ 
+-def _build(question, raw):
++def _build(question, raw, trace=tracing.NOOP_SPAN):
+     kind = raw.get('kind')
+     if kind not in KINDS:
+         raise SemanticIntentError('unknown kind')
+@@ -480,10 +482,17 @@
+     taxon, species, relation = _text(raw, 'taxon'), _text(raw, 'species'), _text(raw, 'relation_text')
+     pairs = _conditions(question, raw)
+     if unresolved or raw.get('unknown_relation'):
++        reason = 'unsupported_relation' if raw.get('unknown_relation') else 'unresolved_conditions'
++        tracing.note_outcome(reason, 'plan_validation')
++        trace.set_attributes({'reason': reason, 'unresolved_count': len(unresolved),
++                              'unknown_relation': raw.get('unknown_relation', False)})
+         residual = tuple(s for s in (span_of(question, t.strip()) for t in unresolved) if s is not None)
+         return GraphIntent(None, residual=residual, ambiguity=() if residual else ('other',), source=SOURCE)
+     if kind == 'none':
+         if taxon is not None or species is not None or relation is not None or pairs or _exclusions(question):
++            tracing.note_outcome('plan_validation_rejected', 'plan_validation')
++            trace.set_attributes({'reason': 'plan_validation_rejected',
++                                  'rejection_detail': 'none retains slots or exclusions'})
+             return _HOLD
+         return GraphIntent(None, source=SOURCE)
+     if kind == 'taxon_traits' and taxon is None and species is not None:
+@@ -546,16 +555,32 @@
+ 
+     Raises SemanticIntentError when the provider fails or its output is not the contract's object.
+     """
++    token = tracing.begin_outcome()
+     try:
+         raw = provider(question, list(examples), CONTRACT)
+     except Exception as error:
++        if not tracing.collected_outcome():
++            tracing.note_outcome('interpretation_error', 'interpretation')
+         raise SemanticIntentError(f'provider failed ({type(error).__name__})') from error
+-    if not isinstance(raw, dict) or 'kind' not in raw or not set(raw) <= _KEYS:
+-        raise SemanticIntentError('provider output is not the contract object')
+-    try:
+-        return _build(question, raw)
+-    except _Reject:
+-        return _HOLD
++    finally:
++        outcome = tracing.collected_outcome()
++        tracing.end_outcome(token)
++        if token is not None and outcome:
++            tracing.note_outcome(outcome.get('reason'), outcome.get('stage', 'interpretation'))
++    with tracing.span('graph_intent.validation', attributes={'stage': 'plan_validation'}) as trace:
++        trace.set_inputs(raw)
++        try:
++            if not isinstance(raw, dict) or 'kind' not in raw or not set(raw) <= _KEYS:
++                raise SemanticIntentError('provider output is not the contract object')
++            return _build(question, raw, trace)
++        except SemanticIntentError as error:
++            tracing.note_outcome('invalid_plan', 'plan_validation')
++            trace.set_attributes({'reason': 'invalid_plan', 'rejection_detail': str(error)})
++            raise
++        except _Reject as error:
++            tracing.note_outcome('plan_validation_rejected', 'plan_validation')
++            trace.set_attributes({'reason': 'plan_validation_rejected', 'rejection_detail': str(error)})
++            return _HOLD
+ 
+ 
+ def _examples(question, retrieve):
+@@ -573,10 +598,14 @@
+ 
+ def graph_intent_handler(question, *, provider, retrieve=None):
+     """The extractor's intent when it decides the question, else the verified semantic intent."""
+-    lexical = extract_graph_intent(question)
+-    if not isinstance(question, str) or not question.strip() or _lexical_decides(question, lexical):
+-        return lexical
+-    proposed = interpret(question, provider, _examples(question, retrieve))
+-    if execution_gate(question, proposed) == 'not_graph' and lexical.kind is not None:
+-        return lexical
+-    return proposed
++    with tracing.span('graph_intent.selection') as trace:
++        lexical = extract_graph_intent(question)
++        if not isinstance(question, str) or not question.strip() or _lexical_decides(question, lexical):
++            trace.set_attribute('selected_interpreter', 'lexical')
++            return lexical
++        trace.set_attribute('selected_interpreter', 'semantic')
++        proposed = interpret(question, provider, _examples(question, retrieve))
++        if execution_gate(question, proposed) == 'not_graph' and lexical.kind is not None:
++            trace.set_attribute('selected_interpreter', 'lexical')
++            return lexical
++        return proposed

@@ -1,0 +1,37 @@
+{
+  "target": "test",
+  "catalog_count": 855,
+  "scope": "existing stored name vectors, application fixed Cypher only, no embedding and no full repository preflight; warm sequential concurrency1",
+  "rows": [
+    {
+      "scientific_name": "Nestor notabilis",
+      "self_match_all_calls": true,
+      "neo4j_roundtrip": {
+        "n": 20,
+        "p50_ms": 2.924,
+        "p95_ms": 7.932,
+        "max_ms": 8.213
+      }
+    },
+    {
+      "scientific_name": "Anas zonorhyncha",
+      "self_match_all_calls": true,
+      "neo4j_roundtrip": {
+        "n": 20,
+        "p50_ms": 2.787,
+        "p95_ms": 3.48,
+        "max_ms": 4.379
+      }
+    },
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "self_match_all_calls": true,
+      "neo4j_roundtrip": {
+        "n": 20,
+        "p50_ms": 2.456,
+        "p95_ms": 2.637,
+        "max_ms": 2.73
+      }
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "target": "test",
+  "created_at": "2026-10-22T03:59:46.361805+00:00",
+  "current_heap_initial_GiB": 2,
+  "current_heap_max_GiB": 4,
+  "historical_heap_initial_GiB": 4,
+  "historical_heap_max_GiB": 6,
+  "page_cache_GiB": 1,
+  "baseline_file": "../2026-10-18-rg101/benchmark.json",
+  "comparison_kind": "historical observational; NOT controlled heap A/B",
+  "comparison": [
+    {
+      "mode": "fulltext",
+      "old_p50_ms": 3.945,
+      "current_p50_ms": 5.453,
+      "difference_ms": 1.508,
+      "difference_pct": 38.2,
+      "old_p95_ms": 6.806,
+      "current_p95_ms": 9.535,
+      "samples_each": 50
+    },
+    {
+      "mode": "vector",
+      "old_p50_ms": 8.92,
+      "current_p50_ms": 10.901,
+      "difference_ms": 1.981,
+      "difference_pct": 22.2,
+      "old_p95_ms": 18.262,
+      "current_p95_ms": 13.303,
+      "samples_each": 50
+    },
+    {
+      "mode": "hybrid",
+      "old_p50_ms": 9.504,
+      "current_p50_ms": 11.386,
+      "difference_ms": 1.882,
+      "difference_pct": 19.8,
+      "old_p95_ms": 10.851,
+      "current_p95_ms": 13.413,
+      "samples_each": 50
+    }
+  ],
+  "current_data_counts": {
+    "Taxon": 33694,
+    "TraitClaim": 174843,
+    "Chunk": 4,
+    "TaxonNameVector": 855
+  },
+  "chunk_aggregate_matches_historical": true,
+  "chunk_validation": {
+    "errors": 0,
+    "warnings": 0,
+    "forbidden_results": 0,
+    "aggregate_unchanged": true
+  },
+  "graph_warm_samples": 120,
+  "graph_cypher_queries": 380,
+  "graph_answers_all_stable": true,
+  "name_vector_warm_samples": 60,
+  "name_self_top1_all_passed": true,
+  "heap_after_MiB": 123.0,
+  "heap_observed_start_MiB": 303.9,
+  "heap_mid_MiB": 265.9,
+  "gc_mid_to_after_delta": {
+    "java.lang:name=G1 Young Generation,type=GarbageCollector": {
+      "CollectionTime": 47,
+      "CollectionCount": 4
+    },
+    "java.lang:name=G1 Old Generation,type=GarbageCollector": {
+      "CollectionTime": 0,
+      "CollectionCount": 0
+    },
+    "java.lang:name=G1 Concurrent GC,type=GarbageCollector": {
+      "CollectionTime": 0,
+      "CollectionCount": 0
+    }
+  },
+  "counts_mid_to_after_unchanged": true,
+  "server_start_time_unchanged_mid_to_after": true,
+  "actions": {
+    "config_changes": false,
+    "neo4j_restart": false,
+    "db_writes_by_probes": false,
+    "app_changes": false,
+    "production_actions": false,
+    "git_commit_push": false
+  },
+  "limitations": [
+    "No same-data same-code previous-heap A/B; historical differences cannot be attributed to heap alone.",
+    "Chunk corpus only 4 synthetic fixtures; graph real Taxon/TraitClaim and name vector probes supplement it.",
+    "Warm sequential concurrency1 only; no cold-cache reset, restart, high concurrency or long-running GC soak.",
+    "Heap snapshots are JVM used heap, not process RSS or total host RAM. No page-cache hit ratio exposed.",
+    "Graph total includes PostgreSQL reads/Python but excludes HTTP, classifier and embedding. DB timer includes Bolt/network/client row decoding.",
+    "No historical graph/name-vector latency baseline.",
+    "Runtime-mid snapshot was taken during graph measurement, so GC deltas cover only that later interval.",
+    "Initial name self-check threshold >0.9999 rejected a correct top1 hit with score0.9998698. Changed diagnostic guard to correct top1 ID and scores0..1; no application/index modification."
+  ],
+  "app_source_matches_deployed_previous_snapshot": true,
+  "chunk_probe_script": "scripts/measure_chunk_search.py",
+  "chunk_probe_script_sha256": "7e8f1996db3851e78dbfb0e59e626f2ee2982077fcef97490c82c65de5607499"
+}

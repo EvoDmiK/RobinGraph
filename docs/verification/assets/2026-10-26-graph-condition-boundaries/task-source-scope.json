@@ -1,0 +1,8 @@
+{
+  "app_changed_since_task_start": [
+    "src/robingraph/retrieval/semantic_graph_intent.py",
+    "src/robingraph/retrieval/graph_condition_extractor.py"
+  ],
+  "baseline_snapshot": "/tmp/rg-condition-before",
+  "preexisting_changes_preserved": true
+}

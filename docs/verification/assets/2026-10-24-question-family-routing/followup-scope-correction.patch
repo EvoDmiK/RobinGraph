@@ -1,0 +1,11 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -342,7 +342,7 @@
+         token = question[start:end]
+         # Object + vowel-final connective + auxiliary request is a verb phrase, not a bare taxon.
+         if (re.search(r'[가-힣]+(?:을|를|만)\s+$', question[:start]) and token.endswith(('아', '어', '여'))
+-                and re.match(r'\s+(?:줘(?:요)?|주세요|줄래(?:요)?)(?=[\s,.!?]|$)', question[end:])):
++                and re.match(r'\s+(?:줘(?:요)?|주세요|줄래(?:요)?)(?=[\s.!?]|$)', question[end:])):
+             continue
+         lead = len(token) - len(re.sub(r'^\W+', '', token))
+         start, token = start + lead, re.sub(r'\W+$', '', token[lead:])

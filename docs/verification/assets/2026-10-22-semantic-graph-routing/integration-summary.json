@@ -1,0 +1,39 @@
+{
+  "target": "test",
+  "image": "robingraph-api:test-semantic-graph-b77e26c7e897",
+  "source_manifest_matches": true,
+  "final_mode": "active",
+  "mode_history": [
+    "shadow",
+    "active",
+    "off",
+    "active"
+  ],
+  "api_baseline": 7,
+  "api_shadow": 7,
+  "api_active": 27,
+  "api_off_fallback": 7,
+  "public_chromium": 8,
+  "viewports": [
+    1280,
+    390
+  ],
+  "mlflow_experiment_id": "33",
+  "mlflow_shadow_persisted": true,
+  "mlflow_active_persisted": true,
+  "production_changed": false,
+  "bird_db_writes": 0,
+  "commit_push": false,
+  "human_reviewed": false,
+  "physical_mobile_safari_firefox_tested": false,
+  "cold_warm_resource_sample": "runtime-benchmark.json",
+  "cold_api_ms": 2616.623,
+  "warm_api_ms": [
+    713.723,
+    647.937,
+    781.396,
+    644.603,
+    686.06
+  ],
+  "load_capacity_tested": false
+}

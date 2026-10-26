@@ -1,0 +1,254 @@
+{
+  "case_counts": {
+    "pass": 8
+  },
+  "classifications": {
+    "supported_answer": 4,
+    "negated_condition": 2,
+    "unsupported_specific_food": 2
+  },
+  "group_counts": {
+    "fail": 4
+  },
+  "groups": [
+    {
+      "group": "fresh8-recordtypedfield",
+      "status": "fail",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "fresh8-categoryunusedratio",
+      "status": "fail",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "fresh8-biologicalNOT",
+      "status": "fail",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": false
+    },
+    {
+      "group": "fresh8-plantidentitygap",
+      "status": "fail",
+      "equivalent_pair_exact": true,
+      "contrast_distinguished": false
+    }
+  ],
+  "rows": [
+    {
+      "id": "fresh8-recordtypedfield-01",
+      "group": "fresh8-recordtypedfield",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Carnivore\"}"
+        ]
+      },
+      "trace_id": "tr-e079854ea6ff2c9e06f746af726e5d3b",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-recordtypedfield-02",
+      "group": "fresh8-recordtypedfield",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"trophic_level\", \"value\": \"Carnivore\"}"
+        ]
+      },
+      "trace_id": "tr-ade72d74fdc93e8f0ae4567ed72480fd",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-categoryunusedratio-01",
+      "group": "fresh8-categoryunusedratio",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"PlantSeed\"}"
+        ]
+      },
+      "trace_id": "tr-25c012ab780dfc46a0a6aae863567602",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-categoryunusedratio-02",
+      "group": "fresh8-categoryunusedratio",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "supported_answer",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "kind": "taxon_traits",
+        "taxon": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          "{\"op\": \"eq\", \"trait_name\": \"diet_category\", \"value\": \"PlantSeed\"}"
+        ]
+      },
+      "trace_id": "tr-46683382e8caacfc253f642f843ee263",
+      "api_disposition": "answer",
+      "api_status": "answer",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-biologicalNOT-01",
+      "group": "fresh8-biologicalNOT",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-513ee47724417a5b06926d745a294b5c",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-biologicalNOT-02",
+      "group": "fresh8-biologicalNOT",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "negated_condition",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "negated_condition"
+      },
+      "trace_id": "tr-eaa1a97ac62b71d2cb7f2bd3e4c8a0e6",
+      "api_disposition": "clarify",
+      "api_status": null,
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-plantidentitygap-01",
+      "group": "fresh8-plantidentitygap",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-335bad975c9ed12c3da395dcab6c2be9",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    },
+    {
+      "id": "fresh8-plantidentitygap-02",
+      "group": "fresh8-plantidentitygap",
+      "role": "equivalent",
+      "status": "pass",
+      "classification": "unsupported_specific_food",
+      "errors": [],
+      "missing_evidence": [],
+      "observed_signature": {
+        "hold": "unsupported_specific_food"
+      },
+      "trace_id": "tr-ef80baf69aa9f26797e851cb7b6f3862",
+      "api_disposition": "abstain",
+      "api_status": "insufficient_data",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      }
+    }
+  ],
+  "limits": [
+    "Saved same-request evidence only; no independent database re-query.",
+    "Model-authored gold; not human reviewed.",
+    "Exact-plan source no-data is separate from answer and name failure."
+  ],
+  "split": "holdout",
+  "source": "/Users/kimdove/orca/workspaces/RobinGraph/dev-codex/docs/verification/assets/2026-10-26-record-query-followup/recheck-traces.json",
+  "cases_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+  "responses_sha256": "4eab6d143041434eecf17000ee2629a96256b7fabd815675797e8c21505a08ae"
+}

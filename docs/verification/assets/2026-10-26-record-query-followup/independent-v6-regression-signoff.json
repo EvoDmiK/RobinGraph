@@ -1,0 +1,31 @@
+{
+  "measurement": "v6_feedback_exposed_regression",
+  "case_counts": {
+    "pass": 82,
+    "fail": 2
+  },
+  "group_counts": {
+    "pass": 26,
+    "fail": 2
+  },
+  "classifications": {
+    "supported_answer": 48,
+    "supported_no_matching_results": 14,
+    "negated_condition": 7,
+    "supported_source_no_data": 6,
+    "false_hold": 2,
+    "unsupported_specific_food": 7
+  },
+  "image": "robingraph-api:test-record-query-followup-3b4392eb69a2",
+  "http200": 84,
+  "unique_trace_ids": 84,
+  "root_verified_so_far": 84,
+  "reviewer_api_calls": 0,
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "cases_sha256": "4d48def64ec66083ec77cae9a9ec86c27181336cbf88f028a76a217bcac28096",
+  "first_measurements_unchanged": true,
+  "remaining_failures": {
+    "F03B": "Model changed explicit trophic_niche Invertivore into diet_distribution share_gt invertebrate. Guard correctly refused the wrong proposal. Same stored proposal holds on original and current source.",
+    "V2-10B": "Numbers/knownwords guard rejected truncated original numeric evidence. Same stored proposal holds on original/current source."
+  }
+}

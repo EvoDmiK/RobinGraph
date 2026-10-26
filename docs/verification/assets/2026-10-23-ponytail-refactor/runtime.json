@@ -1,0 +1,9 @@
+{
+  "image": "robingraph-api:test-ponytail-023b4901e54b",
+  "health": "healthy",
+  "runtime": {
+    "ROBINGRAPH_DEPLOY_TARGET": "test",
+    "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+    "ROBINGRAPH_GRAPH_INTERPRETER": "semantic"
+  }
+}

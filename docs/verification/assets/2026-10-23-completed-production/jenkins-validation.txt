@@ -1,0 +1,16 @@
+[Pipeline] { (Checkout)
+[Pipeline] { (Tests)
+Ran 1210 tests in 24.194s
+OK (skipped=39)
+ℹ tests 322
+ℹ pass 322
+ℹ fail 0
+ℹ skipped 0
+[Pipeline] { (Build and publish ARM64 + AMD64)
+[Pipeline] { (AMD64 fixture startup smoke)
+[Pipeline] { (Production approval)
+Deploy verified commit 33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b, image ghcr.io/evodmik/robingraph@sha256:f000a7219d365cb69a33acde3bea11b57a5a8054af79db75a3832684c849b280 to NAS Production with graph routing active / lexical?
+Approved by admin
+[Pipeline] { (Deploy and verify NAS Production)
+[Pipeline] { (Declarative: Post Actions)
+Finished: SUCCESS

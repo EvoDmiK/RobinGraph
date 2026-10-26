@@ -1,0 +1,18 @@
+{
+  "time": "2026-10-26T08:39:56.145749+00:00",
+  "pending_sha256": {
+    "regression-pending-V2-01A.json": "7ab1d76766ee62f993e8102c21ed284aea98fc580d7e79ba8eec42a7485559f9",
+    "regression-pending-V2-03A.json": "5744fcd34f7e0b5dc1b4671b5a6c6967623b4c13cc59610ba817232b2d1d10cd",
+    "regression-pending-V2-02A.json": "b4351b78e5c0257244ee2ae3c3d615e5d01b0d973a59d947644f91bba0c5dce5",
+    "regression-pending-V2-04A.json": "cd1fc06425167d012db588243fd1780fe68ae566a9f7a2b4cedb49eac2066a6c",
+    "regression-pending-V2-02C.json": "de0b38379acf577bed89921ea3fa28caa0146a3c6bdd308ed0562711d1dfa28b",
+    "regression-pending-V2-04B.json": "0706e914d5bf49b79e25a4524a7dffd6fb7a0102a33136f693628c5b9dae7597",
+    "regression-pending-V2-04C.json": "c36d4512a12a1556d8a077ef0ba509106b0040c4b3ab6b84502ddd9cbb9c71ae",
+    "regression-pending-V2-02B.json": "7464e2c53491ebebed91b23e9bcbc75680b887d849e114e1edc530074cc1d24d",
+    "regression-pending-V2-01C.json": "fce1d845963a17e644bc11f75b13cbb6232d9e6fef3d6938d9a5173b71d25716",
+    "regression-pending-V2-03C.json": "c37cd904057c4d985760bd151e8293fe00363190103001c377214a759955da6d",
+    "regression-pending-V2-03B.json": "aea51d846bcb7f551c84a789ee3b6a288bf970c0b828178f2064a492c3ad50a8",
+    "regression-pending-V2-01B.json": "41361a73a3ae387e30e2aae1f73f74e37fb7f6eaf92c9c75e85f45fd40718ee9"
+  },
+  "reason": "TEST container trace timestamps can precede host search lower bound by about 1 second even after 1-second tolerance. Widen read-only trace search window by 10 seconds; exact root question and unique trace checks retained. No completed HTTP response replay."
+}

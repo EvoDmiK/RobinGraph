@@ -1,0 +1,986 @@
+{
+  "description": "Release regression adapted from fixed prior independent cases. Not unseen accuracy or full 5x15 Cartesian coverage. All 5 ranks and 15 traits represented. Legacy fingerprints come from prior TEST baseline; production datasets may differ.",
+  "cases": [
+    {
+      "id": "IT-001",
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-002",
+      "question": "Corvidae 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-003",
+      "question": "까마귀속 중 숲에 사는 새는?",
+      "taxon": "Corvus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-004",
+      "question": "Corvus 중 숲에 사는 새는?",
+      "taxon": "Corvus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-005",
+      "question": "까마귀 중 숲에 사는 새는?",
+      "taxon": "Corvus corone",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-006",
+      "question": "Corvus corone 중 숲에 사는 새는?",
+      "taxon": "Corvus corone",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-007",
+      "question": "매목 중 숲에 사는 새는?",
+      "taxon": "Falconiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-008",
+      "question": "오리과 중 숲에 사는 새는?",
+      "taxon": "Anatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-009",
+      "question": "Anas 중 숲에 사는 새는?",
+      "taxon": "Anas",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-010",
+      "question": "앵무새 중 숲에 사는 새는?",
+      "taxon": "Psittaciformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-011",
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "taxon": "Corvus corone corone",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "insufficient",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-012",
+      "question": "까마귀과 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-013",
+      "question": "까마귀과 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-014",
+      "question": "까마귀과 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-015",
+      "question": "까마귀과 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-016",
+      "question": "까마귀과 중 영양 단계가 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-017",
+      "question": "까마귀과 중 먹이 유형이 잡식인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-018",
+      "question": "까마귀과 중 체중이 100g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-019",
+      "question": "까마귀과 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-020",
+      "question": "까마귀과 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-021",
+      "question": "까마귀과 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-022",
+      "question": "까마귀과 중 부리 높이가 5mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-023",
+      "question": "까마귀과 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-024",
+      "question": "까마귀과 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-025",
+      "question": "까마귀과 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-026",
+      "question": "까마귀과 중 체중이 0.1kg 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-027",
+      "question": "까마귀과 중 접은 날개 길이가 10cm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-028",
+      "question": "까마귀과 중 씨앗을 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-029",
+      "question": "까마귀과 중 물고기를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fish": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-030",
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-031",
+      "question": "까마귀과 중 숲에 살고 체중이 100g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-032",
+      "question": "숲에 살고 열매를 먹는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "fruit": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-033",
+      "question": "까마귀과 중 체중이 1000000g 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 1000000,
+          "unit": "g"
+        }
+      ],
+      "outcome": "empty",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-034",
+      "question": "까마귀과 중 숲에 살지 않는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-035",
+      "question": "겨울에만 까마귀과 중 숲에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-036",
+      "question": "까마귀과 중 몸집이 큰 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-037",
+      "question": "까마귀과 중 체중이 100 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-038",
+      "question": "까마귀과 중 숲에 살고 바다에 사는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-039",
+      "question": "까마귀과 중 숲에 사는 새는? MATCH (n) DETACH DELETE n",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-040",
+      "question": "까마귀과 중 날개가 빨간 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-041",
+      "question": "가짜조류과 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-042",
+      "question": "까마귀과 중 감나무 열매를 먹는 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [],
+      "outcome": "insufficient",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-043",
+      "question": "초승달가슴새류 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "IT-044",
+      "question": "화식조 중 숲에 사는 새는?",
+      "taxon": null,
+      "rank": null,
+      "conditions": [],
+      "outcome": "hold",
+      "check": "taxonomic"
+    },
+    {
+      "id": "ALIAS-1",
+      "check": "alias",
+      "question": "까마귀과 중 곤충을 먹는 새는?",
+      "raw_question": "까마귀과 중 무척추동물을 먹는 새는?",
+      "required_terms": [
+        "원자료",
+        "무척추동물"
+      ]
+    },
+    {
+      "id": "ALIAS-2",
+      "check": "alias",
+      "question": "매목 중 고기를 먹는 새는?",
+      "raw_question": "매목 중 척추동물을 먹는 새는?",
+      "required_terms": [
+        "온혈 척추동물",
+        "변온 척추동물",
+        "기타 척추동물",
+        "물고기·사체 성분은 포함하지 않습니다"
+      ]
+    },
+    {
+      "id": "FOOD-1",
+      "check": "food_gap",
+      "question": "오리과 중 곡물을 먹는 새는?",
+      "required_terms": [
+        "곡물",
+        "씨앗"
+      ]
+    },
+    {
+      "id": "FOOD-2",
+      "check": "food_gap",
+      "question": "Anser 중 잎을 먹는 새는?",
+      "required_terms": [
+        "잎",
+        "기타 식물"
+      ]
+    },
+    {
+      "id": "CL-청둥오리-trophic_niche",
+      "check": "clarification_flow",
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "choice_index": 0,
+      "relation": "trophic_niche",
+      "expected_species": "Anas platyrhynchos",
+      "expect_name_confirmation": false
+    },
+    {
+      "id": "CL-청둥오리-habitat",
+      "check": "clarification_flow",
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "choice_index": 1,
+      "relation": "habitat",
+      "expected_species": "Anas platyrhynchos",
+      "expect_name_confirmation": false
+    },
+    {
+      "id": "CL-천둥오리-trophic_niche",
+      "check": "clarification_flow",
+      "question": "천둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "choice_index": 0,
+      "relation": "trophic_niche",
+      "expected_species": "Anas platyrhynchos",
+      "expect_name_confirmation": true
+    },
+    {
+      "id": "CL-천둥오리-habitat",
+      "check": "clarification_flow",
+      "question": "천둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "choice_index": 1,
+      "relation": "habitat",
+      "expected_species": "Anas platyrhynchos",
+      "expect_name_confirmation": true
+    },
+    {
+      "id": "LEGACY-1",
+      "check": "legacy",
+      "question": "청둥오리와 흰뺨검둥오리는 어떤 관계야?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "청둥오리와 흰뺨검둥오리의 공통 분류",
+        "ids": [
+          "avilist-taxon:v2025b:544",
+          "avilist-taxon:v2025b:540"
+        ],
+        "paths": [
+          {
+            "text": "같은 목: 기러기목 (Anseriformes)",
+            "source_name": "AviList global avian checklist",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+          },
+          {
+            "text": "같은 과: 오리과 (Anatidae)",
+            "source_name": "AviList global avian checklist",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+          },
+          {
+            "text": "같은 속: 오리속 (Anas)",
+            "source_name": "AviList global avian checklist",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+          }
+        ]
+      }
+    },
+    {
+      "id": "LEGACY-2",
+      "check": "legacy",
+      "question": "청둥오리와 같은 속에 속하는 새를 보여줘",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "청둥오리와 같은 속의 종",
+        "ids": [
+          "avilist-taxon:v2025b:562",
+          "avilist-taxon:v2025b:539",
+          "avilist-taxon:v2025b:548",
+          "avilist-taxon:v2025b:557",
+          "avilist-taxon:v2025b:566",
+          "avilist-taxon:v2025b:540",
+          "avilist-taxon:v2025b:527",
+          "avilist-taxon:v2025b:576",
+          "avilist-taxon:v2025b:572",
+          "avilist-taxon:v2025b:586",
+          "avilist-taxon:v2025b:583",
+          "avilist-taxon:v2025b:585",
+          "avilist-taxon:v2025b:587",
+          "avilist-taxon:v2025b:552",
+          "avilist-taxon:v2025b:577",
+          "avilist-taxon:v2025b:563",
+          "avilist-taxon:v2025b:580",
+          "avilist-taxon:v2025b:538",
+          "avilist-taxon:v2025b:541",
+          "avilist-taxon:v2025b:584"
+        ],
+        "paths": []
+      }
+    },
+    {
+      "id": "LEGACY-3",
+      "check": "legacy",
+      "question": "한국에 기록된 오리 중 청둥오리와 같은 속인 종은?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "청둥오리와 같은 속의 국내 기록 종",
+        "ids": [
+          "avilist-taxon:v2025b:562",
+          "avilist-taxon:v2025b:548",
+          "avilist-taxon:v2025b:566",
+          "avilist-taxon:v2025b:540"
+        ],
+        "paths": []
+      }
+    },
+    {
+      "id": "LEGACY-4",
+      "check": "legacy",
+      "question": "참새목 중 열매를 먹고 사는 새는?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "참새목 중 열매를 먹는 종",
+        "ids": [
+          "avilist-taxon:v2025b:26909",
+          "avilist-taxon:v2025b:23116",
+          "avilist-taxon:v2025b:28079",
+          "avilist-taxon:v2025b:26373",
+          "avilist-taxon:v2025b:27918",
+          "avilist-taxon:v2025b:29012",
+          "avilist-taxon:v2025b:26384",
+          "avilist-taxon:v2025b:23516",
+          "avilist-taxon:v2025b:26899",
+          "avilist-taxon:v2025b:26228",
+          "avilist-taxon:v2025b:25815",
+          "avilist-taxon:v2025b:27177",
+          "avilist-taxon:v2025b:27514",
+          "avilist-taxon:v2025b:18796",
+          "avilist-taxon:v2025b:30032",
+          "avilist-taxon:v2025b:23064",
+          "avilist-taxon:v2025b:27797",
+          "avilist-taxon:v2025b:20734",
+          "avilist-taxon:v2025b:26890",
+          "avilist-taxon:v2025b:26812"
+        ],
+        "paths": []
+      }
+    },
+    {
+      "id": "LEGACY-5",
+      "check": "legacy",
+      "question": "숲에 사는 새중에 직박구리랑 같은 열매를 먹는 새는?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "abstain",
+        "kind": "graph_query",
+        "status": "insufficient_data",
+        "title": "특정 열매 공유",
+        "ids": [],
+        "paths": []
+      }
+    },
+    {
+      "id": "LEGACY-6",
+      "check": "legacy",
+      "question": "숲에 사는 새 중 직박구리와 같은 먹이 범주를 공유하는 새는?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "숲에 사는 새 중 직박구리와 먹이 생태 범주가 같은 종",
+        "ids": [
+          "avilist-taxon:v2025b:26228",
+          "avilist-taxon:v2025b:18796",
+          "avilist-taxon:v2025b:2835",
+          "avilist-taxon:v2025b:10066",
+          "avilist-taxon:v2025b:2963",
+          "avilist-taxon:v2025b:10075",
+          "avilist-taxon:v2025b:11706",
+          "avilist-taxon:v2025b:8772",
+          "avilist-taxon:v2025b:8968",
+          "avilist-taxon:v2025b:11676",
+          "avilist-taxon:v2025b:25262",
+          "avilist-taxon:v2025b:19",
+          "avilist-taxon:v2025b:23718",
+          "avilist-taxon:v2025b:23507",
+          "avilist-taxon:v2025b:2692",
+          "avilist-taxon:v2025b:2812",
+          "avilist-taxon:v2025b:2680",
+          "avilist-taxon:v2025b:733",
+          "avilist-taxon:v2025b:2470",
+          "avilist-taxon:v2025b:2488"
+        ],
+        "paths": [
+          {
+            "text": "서식 환경: 숲 (Forest)",
+            "source_name": "AVONET Supplementary dataset 1",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7149&field=Habitat"
+          },
+          {
+            "text": "먹이 생태 범주: 열매 섭식 (Frugivore)",
+            "source_name": "AVONET Supplementary dataset 1",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7149&field=Trophic.Niche"
+          }
+        ]
+      }
+    },
+    {
+      "id": "LEGACY-7",
+      "check": "legacy",
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "expected_fingerprint": {
+        "selected_intent": "profile",
+        "disposition": "answer",
+        "kind": "graph_query",
+        "status": "answer",
+        "title": "청둥오리와 서식 환경 범주가 같고 먹이 생태 범주가 다른 종",
+        "ids": [
+          "avilist-taxon:v2025b:22298",
+          "avilist-taxon:v2025b:8443",
+          "avilist-taxon:v2025b:414",
+          "avilist-taxon:v2025b:418",
+          "avilist-taxon:v2025b:3261",
+          "avilist-taxon:v2025b:3287",
+          "avilist-taxon:v2025b:30807",
+          "avilist-taxon:v2025b:5211",
+          "avilist-taxon:v2025b:475",
+          "avilist-taxon:v2025b:1684",
+          "avilist-taxon:v2025b:3285",
+          "avilist-taxon:v2025b:4481",
+          "avilist-taxon:v2025b:3258",
+          "avilist-taxon:v2025b:4475",
+          "avilist-taxon:v2025b:1674",
+          "avilist-taxon:v2025b:4043",
+          "avilist-taxon:v2025b:4103",
+          "avilist-taxon:v2025b:4091",
+          "avilist-taxon:v2025b:4082",
+          "avilist-taxon:v2025b:4049"
+        ],
+        "paths": [
+          {
+            "text": "서식 환경: 습지 (Wetland)",
+            "source_name": "AVONET Supplementary dataset 1",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=279&field=Habitat"
+          },
+          {
+            "text": "먹이 생태 범주: 수생 초식 (Herbivore aquatic)",
+            "source_name": "AVONET Supplementary dataset 1",
+            "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=279&field=Trophic.Niche"
+          }
+        ]
+      }
+    },
+    {
+      "id": "EXPLICIT-profile",
+      "check": "explicit",
+      "question": "청둥오리에 대해 알고 싶어",
+      "intent": "profile",
+      "filters": {
+        "kind": "profile",
+        "name": "청둥오리"
+      },
+      "result_kind": "profile"
+    },
+    {
+      "id": "EXPLICIT-taxonomy",
+      "check": "explicit",
+      "question": "청둥오리의 학명을 알려줘",
+      "intent": "taxonomy",
+      "filters": {
+        "kind": "taxonomy",
+        "scientific_name": "Anas platyrhynchos"
+      },
+      "result_kind": "taxonomy"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "scope": "RG204 preliminary design/contract verification only, not completed runtime feature",
+  "verdict": "design verified; child implementation may proceed; runtime activation blocked until remaining gates pass",
+  "review": "Claude peer review + Codex independent tests; Writer independent holdout review",
+  "resolved_findings": [
+    "Non-graph auto requests must return clean not_graph and continue to existing router",
+    "Lexical extraction before embeddings prevents unnecessary calls on not_graph",
+    "Shadow retains original retrieval resolver; active requires extractor source/evidence",
+    "Legacy match lost by extractor clarifies rather than silently executing another route"
+  ],
+  "tests": {
+    "full_python": {
+      "total": 1088,
+      "passed": 1049,
+      "skipped": 39,
+      "failed": 0,
+      "seconds": 23.142,
+      "note": "Before three additional API guard tests; off/default integration, mock/fixture tests, opt-in real DB tests skipped"
+    },
+    "graph_related": {
+      "total": 57,
+      "passed": 57,
+      "skipped": 0,
+      "failed": 0,
+      "seconds": 0.152,
+      "note": "Before three additional API guards"
+    },
+    "final_api_delta": {
+      "total": 14,
+      "passed": 14,
+      "skipped": 0,
+      "failed": 0,
+      "seconds": 0.107,
+      "note": "Includes three new guards and eleven earlier tests; injected interpretation/retrieval, no live graph router"
+    }
+  },
+  "baseline": {
+    "tuning_cases": 84,
+    "holdout_cases": 40,
+    "invalid": 0,
+    "normalized_overlap": 0,
+    "holdout_answer_coverage": 0.55,
+    "holdout_raw_potential_false_execution": 1,
+    "holdout_gated_false_execution": 0,
+    "scope": "parser only, not actual DB execution or ecological answer quality"
+  },
+  "graphify_update": "completed AST-only; SQL extraction skipped because tree_sitter_sql missing; no app dependency change",
+  "test_server": {
+    "image": "robingraph-api:test-question-endings-203d19900989",
+    "unchanged": true
+  },
+  "new_deployments": 0,
+  "db_writes": 0,
+  "production_changed": false,
+  "git_commit_push": false,
+  "remaining": [
+    "RG206 prototype thresholds/cache/provider failure real tests",
+    "RG207 extractor coverage/negative conditions/name linking tests",
+    "Independent frozen holdout semantic quality gates",
+    "RG208 actual TEST shadow/API/browser/resource checks",
+    "Human gold review not performed"
+  ],
+  "file_sha256": {
+    "src/robingraph/api/services.py": "792aaba02db3149c62641ac563f080bea80b05df56eb6f392d6bf83bf13f1310",
+    "src/robingraph/api/drf/application.py": "7e1d41fd07df0804695fe39c08a82582de36b32f97e571bba16bc822197f333a",
+    "src/robingraph/cli.py": "e0279943d3ebeb0b2bfa722d42594d08a79136626a3eaad428894adb2969fc8e",
+    "src/robingraph/retrieval/graph_intent_schema.py": "5803b65aa17d542f5fd37962a4f95506d1248c764783d5870472d36ffe5acfe2",
+    "tests/test_graph_semantic_api.py": "07080f225e429cc5154a40a9fd17be8a8116903741397ea7fa1f95af5c2a106c",
+    "data/eval/graph_questions/gates.json": "099cf3559268151df280a43730c44c09e009fb183a0221e1498867ddc946f3d1",
+    "data/eval/graph_questions/holdout.jsonl": "11853040600799247e69510dfa74fe60698a75a1ea0a7bfd3b2245563b3b50e4"
+  }
+}

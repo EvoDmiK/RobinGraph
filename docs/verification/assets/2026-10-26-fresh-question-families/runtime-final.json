@@ -1,0 +1,27 @@
+{
+  "image": "robingraph-api:test-question-family-06489197bcef",
+  "image_unchanged": true,
+  "app_source_unchanged": true,
+  "health": {
+    "local": {
+      "http": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    },
+    "public": {
+      "http": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    }
+  },
+  "app_redeployed": false,
+  "production_changed": false
+}

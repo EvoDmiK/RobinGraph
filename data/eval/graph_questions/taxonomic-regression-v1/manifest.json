@@ -1,0 +1,75 @@
+{
+  "name": "robingraph-taxonomic-regression-v1",
+  "version": "2026-10-22-v1",
+  "records": 496,
+  "suites": {
+    "taxonomic_matrix": 432,
+    "natural_language": 20,
+    "prior_regression": 44
+  },
+  "ranks": {
+    "order": 53,
+    "family": 294,
+    "genus": 50,
+    "species": 49,
+    "subspecies": 44,
+    "None": 6
+  },
+  "trait_counts": {
+    "habitat": 47,
+    "trophic_niche": 60,
+    "primary_lifestyle": 32,
+    "habitat_density_category": 31,
+    "trophic_level": 31,
+    "diet_category": 31,
+    "beak_length_nares": 60,
+    "body_mass": 34,
+    "beak_length_culmen": 31,
+    "beak_width": 31,
+    "beak_depth": 31,
+    "tail_length": 59,
+    "tarsus_length": 31,
+    "wing_length": 31,
+    "diet_distribution": 36
+  },
+  "sources": [
+    {
+      "suite": "taxonomic_matrix",
+      "cases_path": "docs/verification/assets/2026-10-22-taxonomic-coverage/independent-cases.json",
+      "cases_sha256": "914b6fd74343936aa35ba8f6f571e10f9164751e908892c984db044a46949945",
+      "results_path": "docs/verification/assets/2026-10-22-taxonomic-coverage/independent-api-broad-final.json",
+      "results_sha256": "cfeb270219cc726bf42c52096b5bba742bc41c40979e87d08d1edd69b88cc46b",
+      "count": 432
+    },
+    {
+      "suite": "natural_language",
+      "cases_path": "docs/verification/assets/2026-10-22-taxonomic-coverage/natural/independent-cases.json",
+      "cases_sha256": "f210fe2c9976d5983ec1a63e7b019770bc807ecfa15f39053fe361e3040859cc",
+      "results_path": "docs/verification/assets/2026-10-22-taxonomic-coverage/natural/independent-api-natural-public-final.json",
+      "results_sha256": "955a40fa137120b1cacd20c89d8e7143a479f2165435acb68c3ee6e2f11c639e",
+      "count": 20
+    },
+    {
+      "suite": "prior_regression",
+      "cases_path": "docs/verification/assets/2026-10-22-taxonomic-trait-generalization/independent-cases.json",
+      "cases_sha256": "0a21fa14d9d1c327a20de28adfef30c28859931759b7f8e3ef72e44f95ebacc4",
+      "results_path": "docs/verification/assets/2026-10-22-taxonomic-trait-generalization/independent-api-public.json",
+      "results_sha256": "c036e2457f41053bd02909ca1e38d563383d4c0802a4d1dac005468b91f9ef90",
+      "count": 44
+    }
+  ],
+  "human_reviewed": false,
+  "evaluation_role": "regression",
+  "limitations": [
+    "Previously exposed during implementation feedback; not an unseen holdout.",
+    "432 matrix questions use reviewed fixed phrases, not independent natural language.",
+    "Agent expectations are not human-reviewed gold. Observations are stored separately.",
+    "No tests rerun by this upload; observed results reference prior TEST receipts.",
+    "Query outcome allows answer, empty, or insufficient_data depending on direct evidence."
+  ],
+  "files": {
+    "questions.jsonl": "746baf0adb1bda3cd8c0fcdf2c16d045fdc1a39bde7658bad093eed364a8ad58",
+    "questions.csv": "39ea0b080fe4fcaeff064218128fd0e51338765ea49850da5794593df6600e24",
+    "observations.jsonl": "1f5c148c0828999df416649e87fd5b68deb8f1c9aaeff5c226f6cec80a344fb6"
+  }
+}

@@ -1,0 +1,457 @@
+{
+  "provenance": {
+    "created": "2026-10-24",
+    "generation": "독립 비인간 신규 작성; 기존 대화 문맥 및 전일 작업문서 열람 이력 보유; 완전 무맥락 또는 구현 미노출 작성이라고 주장하지 않음",
+    "prior_context": "전일 독립문항 작성·채점 및 제한된 구현/API payload 계약 열람 이력 있음. 이번 문항은 새로 작성했고 이번 구현/가드/프롬프트는 읽지 않음.",
+    "source_scope": "지원범위 문서·명시 제공 형질계약·기존 taxonomy inventory",
+    "before_first_measurement": "정확한 문항은 개발 담당에게 공개하지 않음",
+    "after_feedback_exposure_label": "feedback-exposed regression",
+    "label_policy": "의미상 지원 질의는 원문 가드 실패 예상과 무관하게 supported",
+    "answer_policy": "지원 계획 exact가 전제된 empty/insufficient_data 허용; 관계 기준종 제외; DB 미호출",
+    "human_reviewed": false
+  },
+  "cases": [
+    {
+      "id": "rg212-new-01",
+      "question": "숲이라는 서식 환경이 기록된 새가 필요해요. 딱따구리목 안에서만 찾아주실래요?",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "딱따구리목",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest"
+            }
+          ]
+        },
+        "expected_taxon_rank": "order"
+      },
+      "coverage": [
+        "order",
+        "habitat"
+      ]
+    },
+    {
+      "id": "rg212-new-02",
+      "question": "되새과를 살펴보자. 씨앗이 먹이 구성에 조금이라도 포함된 경우를 모아 줘.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "되새과",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "diet_distribution",
+              "op": "share_gt",
+              "value": "seed",
+              "threshold": 0
+            }
+          ]
+        },
+        "expected_taxon_rank": "family"
+      },
+      "coverage": [
+        "family",
+        "diet_seed"
+      ]
+    },
+    {
+      "id": "rg212-new-03",
+      "question": "날개 길이 210mm를 넘는 새를 찾고 있어. 범위는 매속으로 제한할게.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "매속",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "wing_length",
+              "op": "num_gt",
+              "threshold": 210,
+              "unit": "mm"
+            }
+          ]
+        },
+        "expected_taxon_rank": "genus"
+      },
+      "coverage": [
+        "genus",
+        "numeric_strict_gt"
+      ]
+    },
+    {
+      "id": "rg212-new-04",
+      "question": "멧비둘기 종 자체의 자료에서 체중 250g 이상이라는 조건이 맞는지 확인해 줘.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "멧비둘기",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "body_mass",
+              "op": "num_gte",
+              "threshold": 250,
+              "unit": "g"
+            }
+          ]
+        },
+        "expected_taxon_rank": "species"
+      },
+      "coverage": [
+        "species",
+        "numeric_gte"
+      ]
+    },
+    {
+      "id": "rg212-new-05",
+      "question": "Hirundo rustica gutturalis 아종만 보자. 꼬리 길이가 120mm보다 짧은 기록을 찾아 줘.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "Hirundo rustica gutturalis",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "tail_length",
+              "op": "num_lt",
+              "threshold": 120,
+              "unit": "mm"
+            }
+          ]
+        },
+        "expected_taxon_rank": "subspecies"
+      },
+      "coverage": [
+        "subspecies",
+        "numeric_strict_lt"
+      ]
+    },
+    {
+      "id": "rg212-new-06",
+      "question": "특정 분류군은 정하지 않을게요. 생활 방식이 공중 생활형인 Aerial로 등록된 조류를 찾아주세요.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": null,
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "primary_lifestyle",
+              "op": "eq",
+              "value": "Aerial"
+            }
+          ]
+        },
+        "expected_taxon_rank": null
+      },
+      "coverage": [
+        "all_birds",
+        "lifestyle"
+      ]
+    },
+    {
+      "id": "rg212-new-07",
+      "question": "올빼미목에서 두 조건을 함께 적용해 줘. 숲에 살고 몸무게가 1500g 이하인 경우야.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "올빼미목",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "habitat",
+              "op": "eq",
+              "value": "Forest"
+            },
+            {
+              "trait_name": "body_mass",
+              "op": "num_lte",
+              "threshold": 1500,
+              "unit": "g"
+            }
+          ]
+        },
+        "expected_taxon_rank": "order"
+      },
+      "coverage": [
+        "order",
+        "AND",
+        "numeric_lte"
+      ]
+    },
+    {
+      "id": "rg212-new-08",
+      "question": "수리과 가운데 육식성 영양 단계인 Carnivore로 기록된 새를 부탁해. 먹이 비율 조건은 따로 걸지 않을게.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "taxon_traits",
+          "names": [],
+          "rank_name": "수리과",
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": [
+            {
+              "trait_name": "trophic_level",
+              "op": "eq",
+              "value": "Carnivore"
+            }
+          ]
+        },
+        "expected_taxon_rank": "family"
+      },
+      "coverage": [
+        "family",
+        "trophic_level"
+      ]
+    },
+    {
+      "id": "rg212-new-09",
+      "question": "수리부엉이를 제외한 다른 새 중 먹이 생태 범주가 같은 새를 찾아줄래? AVONET의 대표 범주를 기준으로 해 줘.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "shared_diet",
+          "names": [
+            "수리부엉이"
+          ],
+          "rank_name": null,
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": []
+        }
+      },
+      "coverage": [
+        "relation",
+        "no_habitat",
+        "exclude_reference"
+      ]
+    },
+    {
+      "id": "rg212-new-10",
+      "question": "습지 서식 기록이 있는 새로 좁혀서, 멧비둘기와 AVONET 먹이 생태 범주가 같은 다른 새를 보여 줘.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "habitat_shared_diet",
+          "names": [
+            "멧비둘기"
+          ],
+          "rank_name": null,
+          "habitat": "Wetland",
+          "criterion": null,
+          "group": null,
+          "conditions": []
+        }
+      },
+      "coverage": [
+        "relation",
+        "habitat",
+        "exclude_reference"
+      ]
+    },
+    {
+      "id": "rg212-new-11",
+      "question": "황조롱이와 같은 속에 들어가는 다른 종은 무엇이 있을까?",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "same_genus",
+          "names": [
+            "황조롱이"
+          ],
+          "rank_name": null,
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": []
+        }
+      },
+      "coverage": [
+        "taxonomy",
+        "same_genus"
+      ]
+    },
+    {
+      "id": "rg212-new-12",
+      "question": "매와 황조롱이가 분류 체계에서 어디까지 함께 묶이는지 알려 줘. 두 종의 공통 상위 분류를 보고 싶어.",
+      "category": "supported",
+      "gold": {
+        "supported_graph_question": {
+          "kind": "common_taxonomy",
+          "names": [
+            "매",
+            "황조롱이"
+          ],
+          "rank_name": null,
+          "habitat": null,
+          "criterion": null,
+          "group": null,
+          "conditions": []
+        }
+      },
+      "coverage": [
+        "taxonomy",
+        "common_ancestor"
+      ]
+    },
+    {
+      "id": "rg212-new-13",
+      "question": "되새과에서 밤에 활동하는 새만 골라 줘.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "unsupported_activity"
+      }
+    },
+    {
+      "id": "rg212-new-14",
+      "question": "초원에 살지 않는 수리과 새를 추려 줘.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "negation"
+      }
+    },
+    {
+      "id": "rg212-new-15",
+      "question": "몸무게 100g 미만이거나 날개 길이 300mm 이상인 새를 전체 조류에서 찾아 줘. 둘 중 하나면 돼.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "OR"
+      }
+    },
+    {
+      "id": "rg212-new-16",
+      "question": "매속에서 번식기에만 물고기를 먹는 새가 궁금해.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "seasonal_diet"
+      }
+    },
+    {
+      "id": "rg212-new-17",
+      "question": "멧비둘기와 똑같은 식물 종의 씨앗을 먹는 다른 새를 알려 줘.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "specific_food_identity"
+      }
+    },
+    {
+      "id": "rg212-new-18",
+      "question": "숲에 살면서 사람을 잘 따르는 딱따구리목 새를 찾아줘.",
+      "category": "hold",
+      "gold": {
+        "disposition_contract": {
+          "allowed_dispositions": [
+            "clarify",
+            "abstain"
+          ],
+          "forbidden": "graph_query answer",
+          "parsed_must_be_null": true
+        },
+        "reason": "unsupported_temperament"
+      }
+    },
+    {
+      "id": "rg212-new-19",
+      "question": "새매는 어떤 새인지 간단히 소개해 주세요.",
+      "category": "preserve",
+      "gold": {
+        "baseline_invariant_fields": [
+          "selected_intent",
+          "disposition",
+          "result.kind"
+        ],
+        "baseline": "same-question lexical/shadow API response",
+        "no_graph_interception": true
+      }
+    },
+    {
+      "id": "rg212-new-20",
+      "question": "멧비둘기의 학명을 알려줘요.",
+      "category": "preserve",
+      "gold": {
+        "baseline_invariant_fields": [
+          "selected_intent",
+          "disposition",
+          "result.kind"
+        ],
+        "baseline": "same-question lexical/shadow API response",
+        "no_graph_interception": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1199 @@
+{
+  "review": "independent artifact-only final verification",
+  "time": "2026-10-26T09:38:19.806465+00:00",
+  "reviewer_api_calls": 0,
+  "app_gold_scorer_modified": false,
+  "splits": {
+    "regression": {
+      "case_counts": {
+        "pass": 82,
+        "fail": 2
+      },
+      "classifications": {
+        "supported_answer": 49,
+        "supported_no_matching_results": 13,
+        "negated_condition": 7,
+        "false_hold": 2,
+        "supported_source_no_data": 6,
+        "unsupported_specific_food": 7
+      },
+      "group_counts": {
+        "pass": 26,
+        "fail": 2
+      },
+      "equivalent_pair_exact": 26,
+      "groups_total": 28,
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "rows": 84,
+      "unique_trace_ids": 84,
+      "same_request_checks": [
+        {
+          "id": "E01A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E01B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E01C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E02A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E02B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E02C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E03A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E03B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E03C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E04A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E04B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E04C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E05A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E05B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E05C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E06A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E06B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E06C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E07A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E07B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E07C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E08A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E08B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "E08C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F01A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F01B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F01C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F02A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F02B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F02C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F03A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F03B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F03C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F04A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F04B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F04C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F05A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F05B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F05C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F06A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F06B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F06C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F07A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F07B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F07C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F08A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F08B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "F08C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-01A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-01B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-01C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-02A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-02B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-02C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-03A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-03B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-03C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-04A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-04B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-04C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-05A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-05B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-05C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-06A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-06B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-06C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-07A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-07B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-07C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-08A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-08B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-08C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-09A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-09B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-09C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-10A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-10B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-10C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-11A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-11B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-11C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-12A",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-12B",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "V2-12C",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        }
+      ],
+      "root_score_exactly_reproduced": true,
+      "gold_sha256": "4d48def64ec66083ec77cae9a9ec86c27181336cbf88f028a76a217bcac28096",
+      "responses_sha256": "7e52b3a62f9b26cc5c9d4d3e60ab79feda99f980611abcf814596a7b50a9c418",
+      "failures": [
+        "V2-07A",
+        "V2-10B"
+      ],
+      "feedback_exposed": true
+    },
+    "followup": {
+      "case_counts": {
+        "pass": 10,
+        "fail": 2
+      },
+      "classifications": {
+        "supported_answer": 6,
+        "false_hold": 2,
+        "negated_condition": 2,
+        "unsupported_specific_food": 2
+      },
+      "group_counts": {
+        "pass": 3,
+        "fail": 1
+      },
+      "equivalent_pair_exact": 3,
+      "groups_total": 4,
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "rows": 12,
+      "unique_trace_ids": 12,
+      "same_request_checks": [
+        {
+          "id": "contract-biological-negative-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-biological-negative-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-biological-negative-03",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-category-ratio-unapplied-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-category-ratio-unapplied-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-category-ratio-unapplied-03",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-enum-record-check-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-enum-record-check-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-enum-record-check-03",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-exact-fruit-gap-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-exact-fruit-gap-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "contract-exact-fruit-gap-03",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        }
+      ],
+      "root_score_exactly_reproduced": true,
+      "gold_sha256": "7134f4c197fdc1ada0bc629b673f9c9107ec754992701fb99d4d752a14c35d73",
+      "responses_sha256": "d1e05443e0be62de2be08afff65963d64a5272f290c9c3dc3a502e4996801e86",
+      "failures": [
+        "contract-category-ratio-unapplied-01",
+        "contract-category-ratio-unapplied-03"
+      ],
+      "feedback_exposed": true
+    },
+    "recheck": {
+      "case_counts": {
+        "pass": 8
+      },
+      "classifications": {
+        "supported_answer": 4,
+        "negated_condition": 2,
+        "unsupported_specific_food": 2
+      },
+      "group_counts": {
+        "fail": 4
+      },
+      "equivalent_pair_exact": 4,
+      "groups_total": 4,
+      "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+      "rows": 8,
+      "unique_trace_ids": 8,
+      "same_request_checks": [
+        {
+          "id": "fresh8-biologicalNOT-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-biologicalNOT-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-categoryunusedratio-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-categoryunusedratio-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-plantidentitygap-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-plantidentitygap-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-recordtypedfield-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-recordtypedfield-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        }
+      ],
+      "root_score_exactly_reproduced": true,
+      "gold_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+      "responses_sha256": "4eab6d143041434eecf17000ee2629a96256b7fabd815675797e8c21505a08ae",
+      "failures": [],
+      "feedback_exposed": true
+    },
+    "fresh": {
+      "case_counts": {
+        "pass": 5,
+        "fail": 3
+      },
+      "classifications": {
+        "supported_answer": 4,
+        "negated_condition": 1,
+        "wrong_hold_reason": 3
+      },
+      "group_counts": {
+        "fail": 4
+      },
+      "equivalent_pair_exact": 2,
+      "groups_total": 4,
+      "image": "robingraph-api:test-record-query-followup-3b4392eb69a2",
+      "rows": 8,
+      "unique_trace_ids": 8,
+      "same_request_checks": [
+        {
+          "id": "fresh8-biologicalNOT-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-biologicalNOT-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-categoryunusedratio-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-categoryunusedratio-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-plantidentitygap-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-plantidentitygap-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-recordtypedfield-01",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        },
+        {
+          "id": "fresh8-recordtypedfield-02",
+          "http200": true,
+          "request_question": true,
+          "one_root": true,
+          "root_question": true,
+          "root_output": true,
+          "verified_flag": true
+        }
+      ],
+      "root_score_exactly_reproduced": true,
+      "gold_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+      "responses_sha256": "d4934eb402f9099cb4006399c092dd01dfe5ba091fb7d15ef62ac540f2240df4",
+      "failures": [
+        "fresh8-biologicalNOT-02",
+        "fresh8-plantidentitygap-01",
+        "fresh8-plantidentitygap-02"
+      ],
+      "feedback_exposed": false
+    }
+  },
+  "limits": [
+    "No independent database queries or packet capture.",
+    "Whole omitted conditions still depend on the independent semantic audit.",
+    "No unseen evaluation after the final extractor change.",
+    "Fresh8 lacks contrast cases; equivalent-pair success is separate from complete group success.",
+    "Two frozen feedback12 gold conflicts remain scored failures; no post-hoc correction."
+  ],
+  "focus_F_cases": {
+    "pass": 24,
+    "total": 24
+  },
+  "total_trace_rows": 112,
+  "unique_trace_ids": 112,
+  "readback_score_provenance": [
+    {
+      "folder": "phase2-attempt2",
+      "split": "regression",
+      "case_rows_counts_gold_unchanged": true,
+      "updated_response_hash_matches": true,
+      "old_score_preserved": true
+    },
+    {
+      "folder": "phase2-attempt2",
+      "split": "fresh",
+      "case_rows_counts_gold_unchanged": true,
+      "updated_response_hash_matches": true,
+      "old_score_preserved": true
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "regression",
+      "case_rows_counts_gold_unchanged": true,
+      "updated_response_hash_matches": true,
+      "old_score_preserved": true
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "fresh",
+      "case_rows_counts_gold_unchanged": true,
+      "updated_response_hash_matches": true,
+      "old_score_preserved": true
+    },
+    {
+      "folder": "phase3-first-evaluations",
+      "split": "followup",
+      "case_rows_counts_gold_unchanged": true,
+      "updated_response_hash_matches": true,
+      "old_score_preserved": true
+    }
+  ],
+  "approved72_source_hash_matches": {
+    "src/robingraph/retrieval/graph_condition_extractor.py": true,
+    "src/robingraph/retrieval/semantic_graph_intent.py": true,
+    "scripts/evaluate_graph_question_families.py": true,
+    "src/robingraph/generation.py": true
+  },
+  "independent_mock_methods": 72,
+  "port_recovery_preserved_http": 35,
+  "remaining_implementation_failures": {
+    "V2-07A": "The model audit rejects valid threshold=200,value=null numerical schema; faithful false remains safely blocked.",
+    "V2-10B": "Original numerical evidence validation rejects the stored proposal; faithful true does not bypass deterministic validation."
+  },
+  "unsafe_answer_conclusion": "No unsafe answer identified in these reviewed traces; exact gold conflicts in feedback12 remain disclosed, and this is not a general safety proof.",
+  "scoped_signoff": "Final source still matches 72 approved independent mock checks. Actual same-request artifacts and frozen scorer/gold provenance verified; RG212 remains in progress, Production unchanged."
+}

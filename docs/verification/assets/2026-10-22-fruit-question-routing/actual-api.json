@@ -1,0 +1,54 @@
+{
+  "base": "http://127.0.0.1:8000",
+  "response_mocking": false,
+  "rows": [
+    {
+      "question": "참새목 새중에서 열매를 먹는 새는?",
+      "disposition": "answer",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는?",
+      "disposition": "answer",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 종 중에 열매를 먹는 새는?",
+      "disposition": "answer",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 중 열매를 먹고 사는 새는?",
+      "disposition": "answer",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새중에서 감나무 열매를 먹는 새는?",
+      "disposition": "abstain",
+      "status": "insufficient_data",
+      "title": "특정 열매 공유",
+      "item_count": 0,
+      "passed": true
+    },
+    {
+      "question": "숲에 사는 새중에 직박구리랑 같은 열매를 먹는 새는?",
+      "disposition": "abstain",
+      "status": "insufficient_data",
+      "title": "특정 열매 공유",
+      "item_count": 0,
+      "passed": true
+    }
+  ]
+}

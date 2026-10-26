@@ -1,0 +1,197 @@
+{
+  "provenance": {
+    "created": "2026-10-24",
+    "scope": "three observed failures only; separate new paraphrases and negative boundaries",
+    "human_reviewed": false,
+    "model_authored": true,
+    "prior_context": "Reviewer knows old diagnostics and prior work; no new normalization implementation seen before freezing this file.",
+    "source": "Independent drafting from declared supported vocabulary and fixed query contracts",
+    "do_not_tune_before_first_measurement": true
+  },
+  "cases": [
+    {
+      "id": "N01",
+      "category": "supported",
+      "question": "오리과에서 찾아 줘. 습지가 서식지로 기록돼 있고 씨앗도 먹는 새가 궁금해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "오리과",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "N02",
+      "category": "supported",
+      "question": "까마귀속 안에서 숲이 서식지로 기록되어 있고 열매도 먹는 종을 골라 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "까마귀속",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "N03",
+      "category": "supported",
+      "question": "고니 자신은 제외해. 먹이 생태 범주가 고니랑 같은 다른 새를 알려 줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "고니",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "N04",
+      "category": "supported",
+      "question": "먹이 생태 범주가 원앙과 같은 종을 보고 싶어. 원앙은 제외하고.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "원앙",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true
+      }
+    },
+    {
+      "id": "N05",
+      "category": "supported",
+      "question": "비둘기과 중 몸무게가 0.3kg 초과인 새를 찾아줘. 300g인 기록은 제외해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "비둘기과",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 300,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "N06",
+      "category": "supported",
+      "question": "참새목에서 접은 날개 길이가 90mm 미만인 새를 찾아줘. 90mm인 기록은 제외해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "참새목",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "threshold": 90,
+            "unit": "mm"
+          }
+        ]
+      }
+    },
+    {
+      "id": "N07",
+      "category": "hold",
+      "question": "오리과에서 습지가 서식지로 기록돼 있지 않고 씨앗도 먹는 새를 찾아줘.",
+      "expected": {
+        "expected_hold": "negative habitat must not become positive evidence"
+      }
+    },
+    {
+      "id": "N08",
+      "category": "hold",
+      "question": "까마귀속에서 숲 또는 습지가 서식지로 기록돼 있고 열매도 먹는 종을 알려줘.",
+      "expected": {
+        "expected_hold": "OR must not become one or AND condition"
+      }
+    },
+    {
+      "id": "N09",
+      "category": "hold",
+      "question": "고니와 먹이 생태 범주가 다른 새들을 알려줘.",
+      "expected": {
+        "expected_hold": "different niche without shared habitat unsupported"
+      }
+    },
+    {
+      "id": "N10",
+      "category": "hold",
+      "question": "고니와 먹이 생태 범주가 같은 새 중 원앙은 제외해.",
+      "expected": {
+        "expected_hold": "different reference exclusion unsupported"
+      }
+    },
+    {
+      "id": "N11",
+      "category": "hold",
+      "question": "비둘기과 중 몸무게가 300g 이상인 새를 찾아줘. 300g인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "inclusive condition plus equality exclusion must not be silently upgraded"
+      }
+    },
+    {
+      "id": "N12",
+      "category": "hold",
+      "question": "참새목에서 접은 날개 길이가 90mm 이하인 새를 찾아줘. 90mm인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "inclusive condition plus equality exclusion must not be silently upgraded"
+      }
+    },
+    {
+      "id": "N13",
+      "category": "hold",
+      "question": "비둘기과 중 몸무게가 300g 초과인 새를 찾아줘. 350g인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "different value exclusion not redundant"
+      }
+    },
+    {
+      "id": "N14",
+      "category": "hold",
+      "question": "비둘기과 중 몸무게가 300g 초과인 새를 찾아줘. 부리 길이가 300mm인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "different trait unit exclusion not redundant"
+      }
+    },
+    {
+      "id": "N15",
+      "category": "hold",
+      "question": "참새목에서 접은 날개 길이가 90mm 미만인 새를 찾아줘. 꼬리 길이가 90mm인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "same unit different measurement exclusion not redundant"
+      }
+    },
+    {
+      "id": "N16",
+      "category": "hold",
+      "question": "비둘기과 중 몸무게가 300g 초과인 새를 찾아줘. 300kg인 기록은 제외해.",
+      "expected": {
+        "expected_hold": "incompatible value after unit normalization"
+      }
+    }
+  ]
+}

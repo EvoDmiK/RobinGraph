@@ -1,0 +1,44 @@
+{
+  "run_id": "0295848aaa854d8cb8acc289373daf67",
+  "dataset_id": "d-9b84fb796702487a90cbf57e754995a8",
+  "count": 496,
+  "passed": 496,
+  "failures": [],
+  "baseline_changed": 0,
+  "suites": {
+    "taxonomic_matrix": {
+      "count": 432,
+      "passed": 432
+    },
+    "natural_language": {
+      "count": 20,
+      "passed": 20
+    },
+    "prior_regression": {
+      "count": 44,
+      "passed": 44
+    }
+  },
+  "latency_ms": {
+    "mean": 903.3403205645161,
+    "median": 774.9100000000001
+  },
+  "image": {
+    "image": "robingraph-api:test-taxonomic-traits-eb8169862c0e",
+    "image_id": "sha256:8638ed7a8382b4831d6996d6fa62a5e71806f428fbba48ef4c24e67a530cc3d6",
+    "started_at": "2026-10-22T10:51:55.787337302Z"
+  },
+  "api_target": "https://robingraph-test.dove-nest.com",
+  "response_mocking": false,
+  "concurrency": 1,
+  "new_db_oracle_run": false,
+  "human_reviewed": false,
+  "dataset_modified": false,
+  "production_changed": false,
+  "limitations": [
+    "Regression questions already exposed during implementation; not unseen accuracy.",
+    "Contract and prior coverage comparison; fresh biological evidence audit not performed.",
+    "Sequential API latency includes public network; not load-test or isolated Neo4j latency."
+  ],
+  "run_url": "https://mlflow.dove-nest.com/#/experiments/33/runs/0295848aaa854d8cb8acc289373daf67"
+}

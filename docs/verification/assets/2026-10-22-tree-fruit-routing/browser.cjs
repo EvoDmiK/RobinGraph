@@ -1,0 +1,9 @@
+const {chromium}=require('/tmp/robingraph-browser-qa/node_modules/playwright');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true});const rows=[];try{
+for(const width of [1280,390]){const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+assert.equal((await page.goto('https://robingraph-test.dove-nest.com/chat')).status(),200);
+await page.locator('#question-input').fill('참새목 새 중에서 나무열매를 먹는 새는?');const next=page.waitForResponse(r=>r.url().endsWith('/v1/chat')&&r.request().method()==='POST');await page.locator('#question-input').press('Enter');const response=await next;assert.equal(response.status(),200);const d=await response.json();assert.equal(d.disposition,'answer');assert.ok(d.result.payload.items.length>0);
+await page.waitForFunction(()=>!document.querySelector('#question-input').disabled);const panel=page.locator('.graph-query-answer').last();assert.ok((await panel.innerText()).includes('참새목 중 열매를 먹는 종'));assert.ok((await panel.innerText()).includes('나무·풀 구분 없음'));assert.ok(await panel.locator('.graph-query-species-row').count());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);await panel.evaluate(e=>e.scrollIntoView({block:'start'}));await page.screenshot({path:__dirname+'/fixed-'+width+'.png'});rows.push({width,question:'참새목 새 중에서 나무열매를 먹는 새는?',status:d.disposition,item_count:d.result.payload.items.length,page_errors:0,passed:true});await page.close();}
+fs.writeFileSync(__dirname+'/browser.json',JSON.stringify({response_mocking:false,physical_mobile:false,rows},null,2)+'\n');console.log('Actual public TEST browser:',rows.length,'passed');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,0 +1,261 @@
+{
+  "scope": "read-only review of recovery receipt, stored HTTP files and resumed rows",
+  "saved_http_count": 35,
+  "all_sha_unchanged": true,
+  "all_saved_responses_retained": true,
+  "checks": [
+    {
+      "case": "V2-01A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-10C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-09C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-03A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-07A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-12B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-09B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-10B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-05A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-02A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-11C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-08C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-08B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-04A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-11B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-06A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-02C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-06B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-08A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-04B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-11A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-04C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-06C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-02B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-09A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-10A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-01C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-05B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-07B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-12A",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-03C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-03B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-07C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-05C",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    },
+    {
+      "case": "V2-01B",
+      "pending_sha_unchanged": true,
+      "http_response_same": true,
+      "http_status_same": true,
+      "elapsed_same": true
+    }
+  ],
+  "image_in_current_artifact": "robingraph-api:test-record-query-followup-6a95918a5533",
+  "image_expected": "robingraph-api:test-record-query-followup-6a95918a5533",
+  "image_matches": true,
+  "rows_at_review": 84,
+  "reviewer_api_calls": 0,
+  "replay_review": "Runner uses saved pending branch without HTTP POST for these35 cases; all retained response/status/duration values match. This is not packet-level replay proof.",
+  "cause_limit": "Observed connection-state accumulation and owning process were reported by root. Exact accumulation cause was not independently established; no additional cause inferred.",
+  "time": "2026-10-26T09:38:19.806465+00:00"
+}

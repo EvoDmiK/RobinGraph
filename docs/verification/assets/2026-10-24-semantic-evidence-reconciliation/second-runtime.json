@@ -1,0 +1,9 @@
+{
+  "image": "robingraph-api:test-evidence-reconcile-545524582ddc",
+  "health": "healthy",
+  "target": "test",
+  "graph_intent_mode": "active",
+  "interpreter": "semantic",
+  "tracing": "true",
+  "working_tree_matches_release_manifest": true
+}

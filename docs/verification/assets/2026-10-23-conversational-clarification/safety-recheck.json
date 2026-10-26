@@ -1,0 +1,39 @@
+{
+  "validation": "offline/mock; no live DB/API",
+  "checks": [
+    {
+      "case": "nested_name_graph_API",
+      "passed": true,
+      "rewritten": "물까치와 Pica serica의 공통 분류는?"
+    },
+    {
+      "case": "glued_name_rewrite",
+      "mention": "숲에사는청둥오리",
+      "passed": true
+    },
+    {
+      "case": "glued_name_rewrite",
+      "mention": "청둥오리와직박구리",
+      "passed": true
+    },
+    {
+      "case": "glued_name_rewrite",
+      "mention": "천둥오리와직박구리",
+      "passed": true
+    },
+    {
+      "case": "binomial_cannot_consume_subspecies",
+      "passed": true
+    },
+    {
+      "case": "additional_glued_scope_probe",
+      "mention": "참새목중청둥오리",
+      "passed": true
+    },
+    {
+      "case": "additional_glued_scope_probe",
+      "mention": "대한민국에서관찰된청둥오리",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -22,6 +22,7 @@
+ """
+ from copy import deepcopy
+ import re
++import unicodedata
+ 
+ from .. import tracing
+ 
+@@ -746,6 +747,7 @@
+     try:
+         framing = set()
+         record_frames = []
++        rank_frames = []
+         scope = candidate.get('taxon') if candidate.get('kind') == 'taxon_traits' else candidate.get('species')
+         if isinstance(scope, str):
+             matches = list(re.finditer(r'(?<!\w)' + re.escape(scope) + r'\s+(?P<rank>목|과|속|아종|종)의(?=\s)', question))
+@@ -756,6 +758,7 @@
+             if (len(matches) == 1 and matches[0]['rank'] == rank_word
+                     and question.count(rank_word + '의') == 1):
+                 framing.add(matches[0]['rank'] + '의')
++                rank_frames.append(Span(matches[0].group(), matches[0].start(), matches[0].end()))
+         # Only a positive record-check request immediately attached to retained condition evidence is framing.
+         for item in candidate['conditions']:
+             surface = item.get('surface', '')
+@@ -765,12 +768,16 @@
+                 if match and question.count(match[1]) == 1:
+                     framing.add(match[1])
+                     record_frames.append(Span(match[1], span.end + match.start(1), span.end + match.end(1)))
+-        # A partial unresolved entry is framing only inside a uniquely proved original record request.
++        # Unresolved segmentation is irrelevant: only the union of checked source evidence and framing may cover it.
++        retained = [span for _, span in _conditions(question, candidate) if question.count(span.text) == 1]
++        coverage = rank_frames + retained + record_frames if record_frames else []
+         for text in unresolved:
+             fragment = text.strip().rstrip('.!?')
+             source = span_of(question, fragment) if fragment else None
+-            if (source is not None and question.count(fragment) == 1
+-                    and any(frame.start <= source.start and source.end <= frame.end for frame in record_frames)):
++            if (source is not None and question.count(fragment) == 1 and coverage
++                    and all(char.isspace() or unicodedata.category(char).startswith('P')
++                            or any(frame.start <= offset < frame.end for frame in coverage)
++                            for offset, char in enumerate(question[source.start:source.end], source.start))):
+                 framing.add(fragment)
+         meta = {span.text for span in _meta_spans(question)}
+         meta |= framing
+--- a/tests/test_graph_record_coverage.py
++++ b/tests/test_graph_record_coverage.py
+@@ -0,0 +1,39 @@
++"""Segmentation does not change the proof: every unresolved character needs retained original evidence or framing."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphRecordCoverageTest(TestCase):
++    def test_full_partition_overlap_and_boundary_matrix(self):
++        rows=[]
++        q='Larus argentatus 종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘.'
++        whole='종의 영양 단계가 Omnivore로 기록되어 있는지 확인해 줘';words=whole.split()
++        def plan(parts, surface='영양 단계가 Omnivore인',value='Omnivore'):
++         return dict(kind='taxon_traits',taxon='Larus argentatus',conditions=[dict(trait_name='trophic_level',op='eq',value=value,surface=surface)],unresolved=parts,unknown_relation=False)
++        def check(label,question,raw,want):
++         before=copy.deepcopy(raw);after,changes=s.reconcile_graph_plan(question,raw);actual=execution_gate(question,s.interpret(question,lambda *_:after));assert raw==before;assert actual==want,(label,actual,raw,after,changes);rows.append(dict(label=label,actual=actual,unresolved=raw['unresolved']))
++        for surface in ('영양 단계가 Omnivore인','영양 단계가 Omnivore로'):
++         for mask in range(1 << (len(words)-1)):
++          parts=[];start=0
++          for i in range(len(words)-1):
++           if mask & (1<<i):parts.append(' '.join(words[start:i+1]));start=i+1
++          parts.append(' '.join(words[start:]));check('all_contiguous_partitions',q,plan(parts,surface),'answer')
++         for a in range(len(words)):
++          for b in range(a+1,len(words)+1):
++           check('all_single_contiguous_fragments',q,plan([' '.join(words[a:b])],surface),'answer')
++        check('overlapping_segments',q,plan([' '.join(words[:5]),' '.join(words[2:])]),'answer')
++        check('uncovered_one_character',q+' X',plan([whole+'. X']),'clarify')
++        check('extra_condition',q+' 겨울에만 사는 종.',plan([whole+'. 겨울에만 사는']),'clarify')
++        check('whole_selected_query',q,plan([q.rstrip('.')]),'answer')
++        check('outside_scope_boundary','조건X '+q,plan(['조건X '+q.rstrip('.')]),'clarify')
++        check('value_mismatch',q,plan([whole],surface='영양 단계가 Omnivore로',value='Carnivore'),'clarify')
++        check('source_negative',q.replace('기록되어 있는지','기록되어 있지 않은지'),plan([whole]),'clarify')
++        check('duplicate_unresolved_source',q+' '+whole,plan([whole]),'clarify')
++        check('symbol_is_not_punctuation',q+' +',plan([whole+'. +']),'clarify')
++        for rank_gap in (' ', '\t', '\n', ' , ', ' ; ', ' … '):
++         for record_gap in (' ', '\t', '\n'):
++          question=q.replace('종의 영양', '종의'+rank_gap+'영양').replace('로 기록', '로'+record_gap+'기록')
++          check('whitespace_punctuation_gaps',question,plan([question.rstrip('.')]),'answer')
++        check('one_uncovered_middle_character',q.replace('종의 영양','종의 X 영양'),plan([q.replace('종의 영양','종의 X 영양').rstrip('.')]),'clarify')
+--- a/tests/test_graph_record_fragments.py
++++ b/tests/test_graph_record_fragments.py
+@@ -14,7 +14,8 @@
+          p=plan(parts);original=copy.deepcopy(p);after,changes=s.reconcile_graph_plan(question,p);actual=execution_gate(question,s.interpret(question,lambda *_:after));assert p==original;assert actual==want,(label,actual,after,changes);rows.append(dict(label=label,question=question,unresolved=parts,actual=actual,changes=changes))
+         for fragments in (['확인해 줘'],['기록되어'],['있는지'],['확인해'],['줘'],['기록되어','있는지','확인해 줘'],['종의','확인해 줘']):
+          check('contained_original_fragment',q,fragments,'answer')
+-        for fragments in (['Omnivore로 기록되어'],['확인해 줘. 겨울에 사는'],['확인해 줘. 별도 조건'],['확인해 줘가 아닌']):
++        check('overlap_with_retained_predicate_is_covered',q,['Omnivore로 기록되어'],'answer')
++        for fragments in (['확인해 줘. 겨울에 사는'],['확인해 줘. 별도 조건'],['확인해 줘가 아닌']):
+          check('not_contained_or_not_original',q,fragments,'clarify')
+         check('repeated_fragment_not_removed',q+' 별도로 확인해 줘.', ['확인해 줘'],'clarify')
+         check('negative_record_not_framing',q.replace('기록되어 있는지','기록되어 있지 않은지'),['확인해 줘'],'clarify')

@@ -1,0 +1,28 @@
+{
+  "new_matching_traces": [
+    {
+      "trace_id": "tr-356aa8a1330c20bac8a1dda87ae4743a",
+      "state": "OK",
+      "spans": 10,
+      "span_names": [
+        "POST /v1/chat",
+        "graph_intent.route",
+        "graph_intent.interpret",
+        "jina.embed",
+        "Models.generate_content",
+        "Models._generate_content",
+        "Models.generate_content",
+        "Models._generate_content",
+        "jev_router.classify",
+        "name_relations.lookup"
+      ]
+    }
+  ],
+  "dataset_still_accessible": true,
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "app_restarted": false,
+  "config_changed": false,
+  "search_lower_bound_ms": 1792816561404,
+  "verification_note": "One real TEST greeting request was sent. The first verification stopped at a dataset lookup argument error after the request; HTTP details were not persisted. Read-only follow-up verified its matching OK trace and dataset accessibility without sending a second request."
+}

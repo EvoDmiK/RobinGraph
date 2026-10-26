@@ -1,0 +1,103 @@
+{
+  "measurement": "feedback_exposed_recheck_of_former_fresh8",
+  "first_measurement_preserved": "5/8 and equivalent_pair_exact2/4 in phase3-first-evaluations; no fresh-generalisation claim for current recheck",
+  "case_counts": {
+    "pass": 8
+  },
+  "raw_group_counts": {
+    "fail": 4
+  },
+  "equivalent_pair_exact": {
+    "pass": 4,
+    "total": 4
+  },
+  "group_metric_limit": "All4 groups lack contrast; raw group0/4 remains. Equivalent pairs4/4 is a separate metric, not full contrast success.",
+  "classifications": {
+    "supported_answer": 4,
+    "negated_condition": 2,
+    "unsupported_specific_food": 2
+  },
+  "image": "robingraph-api:test-record-query-followup-6a95918a5533",
+  "http200": 8,
+  "unique_trace_ids": 8,
+  "same_request_checks": [
+    {
+      "id": "fresh8-biologicalNOT-01",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": true,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-biologicalNOT-02",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": true,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-categoryunusedratio-01",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": false,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-categoryunusedratio-02",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": false,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-plantidentitygap-01",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": true,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-plantidentitygap-02",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": true,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-recordtypedfield-01",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": false,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    },
+    {
+      "id": "fresh8-recordtypedfield-02",
+      "request_same_question": true,
+      "one_root": true,
+      "root_question_matches": true,
+      "root_response_matches": false,
+      "verified": true,
+      "root_response_matches_trace_redaction": true
+    }
+  ],
+  "reviewer_api_calls": 0,
+  "unsafe_answers": 0,
+  "approved72_source_sha_matches": true,
+  "gold_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "trace_response_comparison_note": "Direct full-response equality is false for deep answer payloads because tracing.redact truncates depth>4. All8 root outputs are compared against the actual repository redaction function; full original HTTP responses remain saved."
+}

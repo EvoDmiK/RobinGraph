@@ -1,0 +1,8 @@
+{
+  "question": "까치랑 같은 먹이 생태를 가진 새를 알려줘",
+  "gate": "not_graph",
+  "kind": null,
+  "species": [],
+  "residual": [],
+  "embedding_skip_evidence": "cli.py graph_intent_handler returns lexical before classify when gate=not_graph; code-path observation, not a production trace"
+}

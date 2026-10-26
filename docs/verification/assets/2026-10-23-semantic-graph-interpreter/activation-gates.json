@@ -1,0 +1,8 @@
+{
+  "all_passed": true,
+  "shadow_api_verified": true,
+  "gate_scope": "TEST-only experimental activation: tests, legacy shadow parity, audit mutation safety; NOT semantic accuracy acceptance",
+  "semantic_accuracy_accepted": false,
+  "known_false_holds": true,
+  "production_approved": false
+}

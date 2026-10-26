@@ -1,0 +1,10 @@
+{
+  "image": "ghcr.io/evodmik/robingraph@sha256:f000a7219d365cb69a33acde3bea11b57a5a8054af79db75a3832684c849b280",
+  "revision": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+  "previous_image": "ghcr.io/evodmik/robingraph@sha256:dc4974f9d82e4625d8f61361caf82f4bb1b7a841ad8f433d76bc3fdb89f0f91b",
+  "runtime_overrides": {
+    "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+    "ROBINGRAPH_GRAPH_INTERPRETER": "lexical"
+  },
+  "state": "verified"
+}

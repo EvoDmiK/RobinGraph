@@ -1,0 +1,37 @@
+{
+  "run_id": "6e2950e57da947c9a2ced441eb76dae3",
+  "experiment_id": "33",
+  "url": "https://mlflow.dove-nest.com/#/experiments/33/runs/6e2950e57da947c9a2ced441eb76dae3",
+  "status": "FINISHED",
+  "metrics": {
+    "regression_cases_pass": 24.0,
+    "regression_groups_pass": 8.0,
+    "regression_supported_answer": 19.0,
+    "regression_unsupported_specific_food": 1.0,
+    "regression_supported_no_matching_results": 1.0,
+    "regression_negated_condition": 1.0,
+    "regression_supported_source_no_data": 2.0
+  },
+  "artifacts_read_back": {
+    "datasets": [
+      "datasets/manifest.json",
+      "datasets/regression.json",
+      "datasets/validation.json"
+    ],
+    "evaluation": [
+      "evaluation/regression-code-freeze.json",
+      "evaluation/regression-score.json"
+    ],
+    "same-request-evidence": [
+      "same-request-evidence/regression-traces.json"
+    ],
+    "evaluator": [
+      "evaluator/evaluate_graph_question_families.py"
+    ],
+    "previous-feedback-attempt": [
+      "previous-feedback-attempt/regression-score.json",
+      "previous-feedback-attempt/regression-traces.json"
+    ]
+  },
+  "deleted_traces": 0
+}

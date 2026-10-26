@@ -49,6 +49,7 @@ uv run --locked --extra test --extra tracing python -m unittest discover -s test
 node --test tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js
 docker version --format '{{.Server.Arch}}'
 '''
+                stash name: 'production-deploy-helper', includes: 'scripts/deploy_registry_prod.py'
             }
         }
         stage('Build and publish ARM64 + AMD64') {
@@ -96,7 +97,7 @@ done
             when { expression { !params.CHECK_ONLY } }
             steps {
                 input(id: 'approveProduction', submitter: 'admin', ok: 'Deploy to NAS Production',
-                    message: "Deploy verified commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production?")
+                    message: "Deploy verified commit ${env.REVISION}, image ${env.IMMUTABLE_IMAGE} to NAS Production with graph routing active / semantic and MLflow production experiment 50?")
             }
         }
         stage('Deploy and verify NAS Production') {
@@ -107,13 +108,16 @@ done
                 DOCKER_HOST = 'unix:///var/run/docker.sock'
             }
             steps {
+                unstash 'production-deploy-helper'
                 withCredentials([
                     usernamePassword(credentialsId: 'robingraph-ghcr', usernameVariable: 'GHCR_USERNAME', passwordVariable: 'GHCR_TOKEN')
                 ]) {
                     sh '''#!/bin/sh
 set -eu
-python3 /opt/robingraph-deploy/deploy_registry_prod.py --local \
-  --image "$IMMUTABLE_IMAGE" --revision "$REVISION"
+python3 scripts/deploy_registry_prod.py --local \
+  --image "$IMMUTABLE_IMAGE" --revision "$REVISION" \
+  --graph-intent-mode active --graph-interpreter semantic \
+  --mlflow-tracing true --mlflow-experiment-id 50 --mlflow-experiment-name robingraph-prod
 printf '{"revision":"%s","image":"%s","production_verified":true}\n' \
   "$REVISION" "$IMMUTABLE_IMAGE" > production-release.json
 '''

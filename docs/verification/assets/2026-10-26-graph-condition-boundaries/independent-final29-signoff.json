@@ -1,0 +1,22 @@
+{
+  "independent_tests": {
+    "run": 29,
+    "pass": 29
+  },
+  "existing_terminal_tests": {
+    "run": 6,
+    "pass": 6
+  },
+  "repository_numeric_tests": {
+    "run": 1,
+    "pass": 1
+  },
+  "scope": "local synthetic tests against current root modules; these do not replace full repository regression or actual API evidence",
+  "regression_history": "Prior independent28 passed while full repository suite found 8 terminal subtest failures; exact functional \uc9c0 suffix fix reverified with existing terminal suite.",
+  "source_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "86e1226dad8cc27ae77ca7f085c5de55d593c08748cf1ff5a94f47b0b97e769f",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "25a225cf972ef7b08d2cc2fe3a724b28beccf2c658d70d12df004364a663ed71"
+  },
+  "fresh_gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+}

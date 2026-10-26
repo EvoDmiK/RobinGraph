@@ -1,0 +1,287 @@
+{
+  "source": "docs/verification/assets/2026-10-24-semantic-evidence-reconciliation/final-traces.json",
+  "method": "Read saved actual API and same-request MLflow trace artifacts only. No new calls.",
+  "api_counts": {
+    "supported": {
+      "fail": 2,
+      "pass": 1
+    },
+    "hold": {
+      "pass": 2
+    }
+  },
+  "intent_counts": {
+    "supported": {
+      "fail": 2,
+      "pass": 1
+    },
+    "hold": {
+      "not_applicable": 2
+    }
+  },
+  "rows": [
+    {
+      "id": "N02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "expected_kind": "graph_query",
+            "actual_kind": "clarify"
+          },
+          {
+            "unexpected_status": null
+          }
+        ],
+        "limits": [
+          "API has no machine-readable complete executed scope/conditions; separate provider plan is corroboration only."
+        ],
+        "observed": {
+          "kind": "clarify",
+          "status": null,
+          "disposition": "clarify"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "field": "gate",
+            "expected": "answer",
+            "actual": "clarify"
+          },
+          {
+            "field": "kind",
+            "expected": "taxon_traits",
+            "actual": null
+          },
+          {
+            "field": "taxon_scope",
+            "expected": [
+              [
+                "Corvus",
+                "genus"
+              ]
+            ],
+            "actual": []
+          },
+          {
+            "field": "conditions",
+            "missing": [
+              "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+              "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+            ],
+            "extra": []
+          },
+          "Unexpected intent restriction: ambiguity"
+        ]
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-fff33d5acff53cf6d74ac572e80d4228",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    },
+    {
+      "id": "F02",
+      "category": "supported",
+      "api_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "expected_kind": "graph_query",
+            "actual_kind": "clarify"
+          },
+          {
+            "unexpected_status": null
+          }
+        ],
+        "limits": [
+          "API has no machine-readable complete executed scope/conditions; separate provider plan is corroboration only."
+        ],
+        "observed": {
+          "kind": "clarify",
+          "status": null,
+          "disposition": "clarify"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": null,
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "fail",
+        "errors": [
+          {
+            "field": "gate",
+            "expected": "answer",
+            "actual": "clarify"
+          },
+          {
+            "field": "kind",
+            "expected": "taxon_traits",
+            "actual": "order_fruit"
+          },
+          {
+            "field": "conditions",
+            "missing": [
+              "{\"op\": \"eq\", \"trait_name\": \"habitat\", \"value\": \"Forest\"}",
+              "{\"op\": \"share_gt\", \"threshold\": 0.0, \"trait_name\": \"diet_distribution\", \"value\": \"fruit\"}"
+            ],
+            "extra": []
+          },
+          "Unexpected intent restriction: residual"
+        ]
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-9294f401a140cf6e22698b9e17eff370",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "F03",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_status": "insufficient_data",
+      "trace_id": "tr-1b664c40544b0d8d41dbad7a21dbd6c7",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "F04",
+      "category": "hold",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [
+          "Response proves no graph answer; internal DB read execution is not observable."
+        ]
+      },
+      "same_request_intent_verdict": {
+        "status": "not_applicable",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_status": null,
+      "trace_id": "tr-b6287a3073d6c016aa6c4813f9d2bd4b",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "negated_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": null,
+      "observed_audit": null
+    },
+    {
+      "id": "F05",
+      "category": "supported",
+      "api_verdict": {
+        "status": "pass",
+        "errors": [],
+        "limits": [],
+        "observed": {
+          "kind": "graph_query",
+          "status": "answer",
+          "disposition": "answer"
+        },
+        "source_empty_allowed": false,
+        "raw_api_conditions": [
+          {
+            "trait_name": "body_mass",
+            "label": "체중 300g 초과",
+            "op": "num_gt",
+            "value": null,
+            "threshold": 300.0,
+            "unit": "g",
+            "source_name": "AVONET Supplementary dataset 1"
+          }
+        ],
+        "separate_plan_corroboration": "matching separate semantic plan missing"
+      },
+      "same_request_intent_verdict": {
+        "status": "pass",
+        "errors": []
+      },
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_status": "answer",
+      "trace_id": "tr-b8c317ae09fc0cb3bf483c9d611b927c",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "reconciliations": [
+        {
+          "field": "unresolved",
+          "rule": "strict_bound_restatement",
+          "before": [
+            "300g인 기록은 제외해"
+          ],
+          "after": []
+        }
+      ],
+      "observed_audit": {
+        "issues": [],
+        "faithful": true
+      }
+    }
+  ],
+  "limitations": [
+    "Intent exactness is reported separately and never upgrades absent execution_summary to API execution success.",
+    "No independent database record re-query.",
+    "New cases first measurement; original three feedback-exposed regression."
+  ]
+}

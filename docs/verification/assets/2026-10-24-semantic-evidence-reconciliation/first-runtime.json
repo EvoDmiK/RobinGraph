@@ -1,0 +1,14 @@
+{
+  "image": "robingraph-api:test-evidence-reconcile-5432a53d88ea",
+  "health": "healthy",
+  "target": "test",
+  "intent_mode": "active",
+  "interpreter": "semantic",
+  "tracing": "true",
+  "local_health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  }
+}

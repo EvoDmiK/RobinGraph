@@ -1,0 +1,14 @@
+{
+  "all_passed": true,
+  "shadow_api_verified": true,
+  "shadow_requests": 7,
+  "persisted_mlflow_route_spans": 5,
+  "holdout_source": "holdout-actual-embeddings.json",
+  "holdout_answer_coverage": 0.85,
+  "holdout_false_execution": 0,
+  "holdout_condition_loss": 0,
+  "holdout_warm_p95_ms": 378.99,
+  "human_reviewed": false,
+  "test_only": true,
+  "production_authorized": false
+}

@@ -1,0 +1,102 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -252,6 +252,22 @@
+     r'(?:뜻하는|의미하는)\s*(?:건|것은|것이)\s*아니(?:야|다|에요|고)'
+     r'|적용하지\s*(?:마세요|마|말아\s*주세요|말아\s*줘))(?=\s|[.!?,]|$)')
+ _RECORD_REQUEST = r'기록(?:되어|돼)\s*있(?:는지|는가)\s*확인해\s*(?:줘|주세요)'
++
++
++def _record_field_matches(surface, trait):
++    """Only an explicit, longest original field label proves a record-query predicate's dimension."""
++    labels = {**{label: name for name, label in LABELS.items() if name in TRAIT_CONDITIONS},
++              **_MEASURES, **_TRAIT_LABELS}
++    matches = [(match.start(), match.end(), name) for label, name in labels.items()
++               for match in re.finditer(_pattern(label) + r'(?=\s|[은는이가을를의:=：]|$)', surface.strip())]
++    chosen = []
++    for start, end, name in sorted(matches, key=lambda m: (-(m[1] - m[0]), m[0])):
++        if any(start < stop and begin < end for begin, stop, _ in chosen):
++            continue
++        chosen.append((start, end, name))
++    return (len(chosen) == 1 and chosen[0][0] == 0 and chosen[0][2] == trait
++            and {name for start, end, name in matches if (start, end) == chosen[0][:2]} == {trait})
++
+ 
+ 
+ def _meta_spans(question):
+@@ -533,6 +549,9 @@
+         raise SemanticIntentError('bad unresolved/unknown_relation')
+     taxon, species, relation = _text(raw, 'taxon'), _text(raw, 'species'), _text(raw, 'relation_text')
+     pairs = _conditions(question, raw)
++    if re.search(_RECORD_REQUEST, question) and any(
++            not _record_field_matches(span.text, condition.trait_name) for condition, span in pairs):
++        raise _Reject('record predicate field is not proved by its original label')
+     if re.search(_COPULAR_DENIAL, _blank(question)):
+         raise _Reject('explicit denial of a proposed predicate')
+     unrestricted = {_META_DIMENSION_CODES[re.sub(r'\s+', '', m['dimension'])]
+@@ -634,6 +653,9 @@
+     if (not isinstance(items, list) or not all(isinstance(item, dict) and isinstance(item.get('surface'), str) for item in items)
+             or not isinstance(unresolved, list) or not all(isinstance(t, str) for t in unresolved)):
+         return raw, []
++    if (re.search(_RECORD_REQUEST, question) and any(
++            not _record_field_matches(item['surface'], item.get('trait_name')) for item in items)):
++        return raw, []
+     lexical = extract_graph_intent(question)
+     if _lexical_decides(question, lexical):
+         return raw, []
+@@ -653,7 +675,8 @@
+         # A typed equality can be stated as a positive source-record question, with its field/value unchanged.
+         spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
+         value = item.get('value')
+-        if spec and spec[1] not in ('number', 'share') and item.get('op') == 'eq' and isinstance(value, str):
++        if (spec and spec[1] not in ('number', 'share') and item.get('op') == 'eq' and isinstance(value, str)
++                and _record_field_matches(text, item.get('trait_name'))):
+             aliases = {value} | {word for word, code in _trait_surfaces(item['trait_name']).items() if code == value}
+             nominal = re.fullmatch(r'(.+)인', text.strip()) if any(
+                 text.strip().endswith(alias + '인') for alias in aliases) else None
+@@ -763,13 +786,14 @@
+         for item in candidate['conditions']:
+             surface = item.get('surface', '')
+             span = span_of(question, surface.strip())
+-            if span is not None:
++            if span is not None and _record_field_matches(surface, item.get('trait_name')):
+                 match = re.match(r'\s*(' + _RECORD_REQUEST + r')(?=\s|[.!?,]|$)', question[span.end:])
+                 if match and question.count(match[1]) == 1:
+                     framing.add(match[1])
+                     record_frames.append(Span(match[1], span.end + match.start(1), span.end + match.end(1)))
+         # Unresolved segmentation is irrelevant: only the union of checked source evidence and framing may cover it.
+-        retained = [span for _, span in _conditions(question, candidate) if question.count(span.text) == 1]
++        retained = [span for condition, span in _conditions(question, candidate)
++                    if question.count(span.text) == 1 and _record_field_matches(span.text, condition.trait_name)]
+         coverage = rank_frames + retained + record_frames if record_frames else []
+         for text in unresolved:
+             fragment = text.strip().rstrip('.!?')
+--- a/tests/test_graph_record_field_proof.py
++++ b/tests/test_graph_record_field_proof.py
+@@ -0,0 +1,27 @@
++"""Record evidence proves its explicit source field, not merely a shared enum value (mock plans)."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval.graph_intent_schema import execution_gate
++
++
++class GraphRecordFieldProofTest(TestCase):
++    def test_source_planned_field_and_unresolved_matrix(self):
++        rows=[]
++        fields={'trophic_level':'영양 단계','trophic_niche':'먹이 생태 범주','diet_category':'먹이 유형'}
++        for source_field,label in fields.items():
++         q=f'Larus argentatus 종의 {label}가 Omnivore로 기록되어 있는지 확인해 줘.'
++         for planned_field in fields:
++          for unresolved in ([],['종의'],['확인해 줘'],[q[q.index('종의'):].rstrip('.')]):
++           for ending in ('로','인'):
++            raw=dict(kind='taxon_traits',taxon='Larus argentatus',conditions=[dict(trait_name=planned_field,op='eq',value='Omnivore',surface=label+'가 Omnivore'+ending)],unresolved=unresolved,unknown_relation=False)
++            before=copy.deepcopy(raw);candidate,changes=s.reconcile_graph_plan(q,raw);actual=execution_gate(q,s.interpret(q,lambda *_:candidate));want='answer'if planned_field==source_field else'clarify';assert raw==before;assert actual==want,(source_field,planned_field,unresolved,ending,actual,candidate)
++            rows.append(dict(source_field=source_field,planned_field=planned_field,unresolved=unresolved,ending=ending,actual=actual))
++        for label in ('서식지 밀도 범주','서식지 밀도','서식지밀도범주'):
++         q='Larus argentatus 종의 '+label+'가 open으로 기록되어 있는지 확인해 줘.'
++         raw=dict(kind='taxon_traits',taxon='Larus argentatus',conditions=[dict(trait_name='habitat_density_category',op='eq',value='open',surface=label+'가 open으로')],unresolved=[q[q.index('종의'):].rstrip('.')],unknown_relation=False)
++         after,changes=s.reconcile_graph_plan(q,raw);actual=execution_gate(q,s.interpret(q,lambda *_:after));assert actual=='answer',(label,actual,after);rows.append(dict(label=label,actual=actual))
++        for surface in ('Omnivore로','영양 단계가 Omnivore로 먹이 생태 범주가 Omnivore로','영양 단계가 Omnivore로 영양 단계가 Omnivore로'):
++         q='Larus argentatus 종의 '+surface+' 기록되어 있는지 확인해 줘.'
++         raw=dict(kind='taxon_traits',taxon='Larus argentatus',conditions=[dict(trait_name='trophic_level',op='eq',value='Omnivore',surface=surface)],unresolved=['확인해 줘'],unknown_relation=False)
++         after,changes=s.reconcile_graph_plan(q,raw);assert changes==[];assert execution_gate(q,s.interpret(q,lambda *_:after))=='clarify';rows.append(dict(ambiguous_surface=surface,actual='clarify'))

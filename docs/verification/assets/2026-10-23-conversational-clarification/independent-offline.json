@@ -1,0 +1,143 @@
+{
+  "type": "offline/mock/API_guard_review",
+  "cases": [
+    {
+      "id": "CL-01",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-02",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-03",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "None"
+    },
+    {
+      "id": "CL-04",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "None"
+    },
+    {
+      "id": "CL-05",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-06",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "None"
+    },
+    {
+      "id": "CL-07",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-08",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-09",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "None"
+    },
+    {
+      "id": "CL-10",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "None"
+    },
+    {
+      "id": "CL-11",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-12",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-13",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-14",
+      "checks": [
+        "no_ambiguous_menu"
+      ],
+      "passed": true,
+      "parsed": "SpeciesQuestion(name='청둥오리', topic='ecological_related', category='habitat')"
+    },
+    {
+      "id": "CL-15",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    },
+    {
+      "id": "CL-16",
+      "checks": [
+        "literal_replacement_only",
+        "no_retrieval_before_confirmation",
+        "composite_not_bounded_bypass"
+      ],
+      "passed": true
+    }
+  ]
+}

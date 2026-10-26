@@ -1,0 +1,114 @@
+{
+  "scope": "Independent test matrix only; no API or DB executed",
+  "contract": "Exact tag enum strings pending coordinator contract",
+  "cases": [
+    {
+      "id": "audit_rejected",
+      "setup": "Provider proposal succeeds; audit faithful=false or nonempty issues",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "audit rejection distinct from upstream error; proposal and audit spans in same request"
+    },
+    {
+      "id": "proposal_failed",
+      "setup": "Provider proposal raises transport/provider exception",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "generation/proposal failure; no audit/retrieval call"
+    },
+    {
+      "id": "surface_rejected",
+      "setup": "Validated provider returns a condition surface absent from original question",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "source validation rejection distinct from provider failure"
+    },
+    {
+      "id": "unsupported_condition",
+      "setup": "Extractor unsupported predicate",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "unsupported guard; retrieval not called"
+    },
+    {
+      "id": "residual_condition",
+      "setup": "Extractor has remaining unhandled input spans",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "residual guard; retrieval not called"
+    },
+    {
+      "id": "negation_condition",
+      "setup": "Unsupported negative predicate",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "negation guard; retrieval not called"
+    },
+    {
+      "id": "meaning_choice",
+      "setup": "Ambiguous ecology wording produces explicit choice buttons",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "meaning clarification distinct from failure"
+    },
+    {
+      "id": "name_candidate",
+      "setup": "Name vector candidates need explicit user confirmation",
+      "api_disposition_unchanged": "clarify",
+      "required_observation": "name ambiguity; graph not executed"
+    },
+    {
+      "id": "missing_trait",
+      "setup": "Graph executor returns insufficient_data without raising",
+      "api_disposition_unchanged": "abstain",
+      "required_observation": "data unavailable distinct from upstream outage"
+    },
+    {
+      "id": "empty_results",
+      "setup": "Graph executor returns empty matching list",
+      "api_disposition_unchanged": "abstain",
+      "required_observation": "no matching result distinct from absent data and outage"
+    },
+    {
+      "id": "retrieval_outage",
+      "setup": "Graph executor raises exception with secret-like message",
+      "api_disposition_unchanged": "abstain",
+      "required_observation": "technical upstream error; no raw exception string in tags"
+    },
+    {
+      "id": "handler_absent",
+      "setup": "Graph handler not configured",
+      "api_disposition_unchanged": "abstain",
+      "required_observation": "handler unavailable distinct from empty result"
+    },
+    {
+      "id": "graph_answer",
+      "setup": "Graph executor succeeds",
+      "api_disposition_unchanged": "answer",
+      "required_observation": "none/none final cause"
+    },
+    {
+      "id": "delegate_answer",
+      "setup": "Graph interpreter kind none and existing route succeeds",
+      "api_disposition_unchanged": "answer",
+      "required_observation": "no stale graph hold tag"
+    },
+    {
+      "id": "shadow_answer",
+      "setup": "Graph shadow interpreter fails but established route succeeds",
+      "api_disposition_unchanged": "answer",
+      "required_observation": "shadow failure child span; final response none/none"
+    },
+    {
+      "id": "delegate_abstain",
+      "setup": "Graph interpreter kind none and existing route has no evidence",
+      "api_disposition_unchanged": "abstain",
+      "required_observation": "final existing-route reason retained; no stale graph reason"
+    }
+  ],
+  "cross_cutting": [
+    "same request root/children trace correlation",
+    "tracing disabled no MLflow calls and exact HTTP/body equality",
+    "SDK start_span/set_attribute/update_current_trace/export failures preserve body/exception",
+    "barrier-concurrent requests compare request-bound expected reasons, not merely multiset",
+    "post-error next normal request clean outcome",
+    "nested traced route outcome restoration",
+    "only allowlisted tags; arbitrary injected secret values become unknown",
+    "raw exception message is not a response_reason/failure_stage or detailed cause tag",
+    "single no-op/delegation is not tagged as unsupported query",
+    "audit false still blocks; semantic guard/execution behavior unchanged"
+  ]
+}

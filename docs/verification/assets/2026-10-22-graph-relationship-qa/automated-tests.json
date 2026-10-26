@@ -1,0 +1,40 @@
+{
+  "python": {
+    "total": 1056,
+    "passed": 1017,
+    "skipped": 39,
+    "failed": 0,
+    "elapsed_seconds": 22.306,
+    "kind": "offline/mock/fixture; skips include opt-in integrations and unavailable source artifact"
+  },
+  "graph_unit": 18,
+  "graph_api_mock": 7,
+  "initial_failures": {
+    "parser": 3,
+    "schema_union_count": 1,
+    "resolved": true
+  },
+  "production_changed": false,
+  "git_commit_push": false,
+  "integration_review": {
+    "reviewer": "Claude",
+    "explicit_profile_empty_filter_fixed": true,
+    "unknown_species_clarification_fixed": true,
+    "vector_fallback_for_graph_questions": false
+  },
+  "node": {
+    "total": 319,
+    "passed": 319,
+    "failed": 0,
+    "skipped": 0,
+    "new_graph_ui_tests": 2,
+    "kind": "mock DOM / source checks"
+  },
+  "post_ui_drf_contract": {
+    "total": 19,
+    "passed": 19,
+    "skipped": 0,
+    "failed": 0,
+    "elapsed_seconds": 0.81
+  }
+}

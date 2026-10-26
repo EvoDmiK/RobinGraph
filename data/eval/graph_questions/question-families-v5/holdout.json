@@ -1,0 +1,330 @@
+{
+  "schema": "robingraph.graph-question-families.contract-blind.v1",
+  "split": "holdout",
+  "cases": [
+    {
+      "id": "contract-enum-record-check-01",
+      "semantic_group_id": "contract-enum-record-check",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "파랑새목에 속한 종 가운데 서식지 밀도 범주가 dense로 기록된 종을 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat_density_category",
+            "op": "eq",
+            "value": "dense"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "파랑새목에 속한 종 가운데 서식지 밀도 범주가 dense로 기록된 종을 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-enum-record-check-02",
+      "semantic_group_id": "contract-enum-record-check",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "파랑새목에서 habitat_density_category의 기록값이 dense인 종 목록을 보여 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat_density_category",
+            "op": "eq",
+            "value": "dense"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "파랑새목에서 habitat_density_category의 기록값이 dense인 종 목록을 보여 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-enum-record-check-03",
+      "semantic_group_id": "contract-enum-record-check",
+      "role": "contrast",
+      "category": "supported",
+      "question": "파랑새목에 속한 종 가운데 서식지 밀도 범주가 open으로 기록된 종을 확인해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Coraciiformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat_density_category",
+            "op": "eq",
+            "value": "open"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "파랑새목에 속한 종 가운데 서식지 밀도 범주가 open으로 기록된 종을 확인해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-01",
+      "semantic_group_id": "contract-category-ratio-unapplied",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "물총새과에서 먹이 범주가 Invertebrate인 종을 찾아 줘. 이번 검색 설정에서는 먹이 비율을 조건으로 사용하지 않겠어.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Alcedinidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "물총새과에서 먹이 범주가 Invertebrate인 종을 찾아 줘. 이번 검색 설정에서는 먹이 비율을 조건으로 사용하지 않겠어.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-02",
+      "semantic_group_id": "contract-category-ratio-unapplied",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "물총새과 종을 조회하되 diet_category는 Invertebrate로 지정해 줘. 먹이별 비율 차원은 검색 조건에 적용하지 말아 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Alcedinidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "물총새과 종을 조회하되 diet_category는 Invertebrate로 지정해 줘. 먹이별 비율 차원은 검색 조건에 적용하지 말아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-category-ratio-unapplied-03",
+      "semantic_group_id": "contract-category-ratio-unapplied",
+      "role": "contrast",
+      "category": "supported",
+      "question": "물총새과에서 먹이 범주가 Omnivore인 종을 찾아 줘. 이번 검색 설정에서는 먹이 비율을 조건으로 사용하지 않겠어.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Alcedinidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Omnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "물총새과에서 먹이 범주가 Omnivore인 종을 찾아 줘. 이번 검색 설정에서는 먹이 비율을 조건으로 사용하지 않겠어.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-biological-negative-01",
+      "semantic_group_id": "contract-biological-negative",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "비둘기속에 속한 종 중 주된 생활 방식이 Terrestrial이 아닌 종을 찾아 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "비둘기속에 속한 종 중 주된 생활 방식이 Terrestrial이 아닌 종을 찾아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-biological-negative-02",
+      "semantic_group_id": "contract-biological-negative",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "비둘기속에서 primary_lifestyle가 Terrestrial인 종을 제외하고 나머지 종을 보여 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "비둘기속에서 primary_lifestyle가 Terrestrial인 종을 제외하고 나머지 종을 보여 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-biological-negative-03",
+      "semantic_group_id": "contract-biological-negative",
+      "role": "contrast",
+      "category": "supported",
+      "question": "비둘기속에 속한 종 중 주된 생활 방식이 Terrestrial인 종을 찾아 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Columba",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Terrestrial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "비둘기속에 속한 종 중 주된 생활 방식이 Terrestrial인 종을 찾아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-01",
+      "semantic_group_id": "contract-exact-fruit-gap",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "검은이마직박구리가 먹는 열매와 식물 종까지 같은 열매를 먹는 다른 조류 종을 찾아 줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "검은이마직박구리가 먹는 열매와 식물 종까지 같은 열매를 먹는 다른 조류 종을 찾아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-02",
+      "semantic_group_id": "contract-exact-fruit-gap",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "검은이마직박구리와 공통으로 먹는 열매가 있는 다른 새를 알려 줘. 열매를 맺는 식물의 종이 동일한 경우만 포함해 줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "검은이마직박구리와 공통으로 먹는 열매가 있는 다른 새를 알려 줘. 열매를 맺는 식물의 종이 동일한 경우만 포함해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "contract-exact-fruit-gap-03",
+      "semantic_group_id": "contract-exact-fruit-gap",
+      "role": "contrast",
+      "category": "supported",
+      "question": "검은이마직박구리와 대표 먹이 생태 범주인 trophic_niche가 같은 다른 조류 종을 찾아 줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Pycnonotus sinensis",
+        "habitat": null,
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "검은이마직박구리와 대표 먹이 생태 범주인 trophic_niche가 같은 다른 조류 종을 찾아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored_from_user_semantic_contract_and_static_source_catalog",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    }
+  ]
+}

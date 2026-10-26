@@ -1,0 +1,117 @@
+{
+  "case_counts": {
+    "pass": 33,
+    "fail": 3
+  },
+  "group_counts": {
+    "pass": 9,
+    "fail": 3
+  },
+  "original_failed_count": 13,
+  "original_failed_now_pass": 13,
+  "newly_failing_previous_pass_cases": [
+    "V2-07A",
+    "V2-08B",
+    "V2-09B"
+  ],
+  "http_200": 36,
+  "unique_trace_ids": 36,
+  "requests_equal_frozen_gold": true,
+  "root_score_identical": true,
+  "image": "robingraph-api:test-condition-boundaries-4012dfa9aaac",
+  "failures": [
+    {
+      "case": "V2-07A",
+      "question": "황조롱이 종 자체에서 체중 200g 초과라는 조건에 해당하는 자료를 찾아주세요.",
+      "plan": {
+        "kind": "taxon_traits",
+        "taxon": "황조롱이",
+        "species": null,
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 200,
+            "unit": "g",
+            "surface": "체중 200g 초과"
+          }
+        ],
+        "relation_text": null,
+        "unresolved": [],
+        "unknown_relation": false
+      },
+      "validation": [
+        {
+          "stage": "plan_validation",
+          "reason": "plan_validation_rejected",
+          "rejection_detail": "numbers or known words disagree"
+        }
+      ],
+      "trace_id": "tr-7f89f098cee48d3ba1c993d914dd4e29",
+      "classification": "false_hold"
+    },
+    {
+      "case": "V2-08B",
+      "question": "대상은 Hirundo rustica gutturalis 아종 하나야. 꼬리 길이 90mm 이하로 자료를 걸러줘.",
+      "plan": {
+        "kind": "taxon_traits",
+        "taxon": "Hirundo rustica gutturalis",
+        "species": null,
+        "conditions": [
+          {
+            "trait_name": "tail_length",
+            "op": "num_lte",
+            "threshold": 90,
+            "unit": "mm",
+            "surface": "꼬리 길이 90mm 이하"
+          }
+        ],
+        "relation_text": null,
+        "unresolved": [],
+        "unknown_relation": false
+      },
+      "validation": [
+        {
+          "stage": "plan_validation",
+          "reason": "plan_validation_rejected",
+          "rejection_detail": "numbers or known words disagree"
+        }
+      ],
+      "trace_id": "tr-86404b2fcf30aadfb8cd661bd6eb66b6",
+      "classification": "false_hold"
+    },
+    {
+      "case": "V2-09B",
+      "question": "부리 길이의 culmen 기준값을 20mm 이상으로 잡을게요. 매속만 검색해 주세요.",
+      "plan": {
+        "kind": "taxon_traits",
+        "taxon": "매속",
+        "species": null,
+        "conditions": [
+          {
+            "trait_name": "beak_length_culmen",
+            "op": "num_gte",
+            "threshold": 20,
+            "unit": "mm",
+            "surface": "부리 길이의 culmen 기준값을 20mm 이상"
+          }
+        ],
+        "relation_text": null,
+        "unresolved": [],
+        "unknown_relation": false
+      },
+      "validation": [
+        {
+          "stage": "plan_validation",
+          "reason": "plan_validation_rejected",
+          "rejection_detail": "numbers or known words disagree"
+        }
+      ],
+      "trace_id": "tr-c8bda9850486c7d134d301dc930d42f5",
+      "classification": "false_hold"
+    }
+  ],
+  "responses_sha256": "b940bef7266f541a83425c26e789dafc5e8c55c9d9c56c473a0e140c20b8e87b",
+  "changes": "none; artifact-only review",
+  "limits": "Full response-plan verification remains scorer result; no actual request replays or gold edits."
+}

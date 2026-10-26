@@ -1,0 +1,419 @@
+--- before/src/robingraph/api/services.py
++++ after/src/robingraph/api/services.py
+@@ -371,6 +371,41 @@
+     tracing.note_outcome(reason, stage)
+ 
+ 
++def _condition_detail(question: str, spans) -> str:
++    """Quote only source-verified spans, joining adjacent pieces of one phrase."""
++    ranges = sorted({(s.start, s.end) for s in spans
++                     if 0 <= s.start < s.end <= len(question) and question[s.start:s.end] == s.text})
++    merged = []
++    for start, end in ranges:
++        if merged and (start <= merged[-1][1] or not question[merged[-1][1]:start].strip()):
++            merged[-1] = (merged[-1][0], max(end, merged[-1][1]))
++        else:
++            merged.append((start, end))
++    return ", ".join(f"‘{question[start:end]}’" for start, end in merged[:3])
++
++
++def _graph_clarification(question: str, intent) -> str:
++    unsupported = getattr(intent, "unsupported", ())
++    unsupported_labels = {"co_occurrence": "실제 공존", "evolutionary_distance": "진화적 거리",
++                          "predation": "포식 관계", "ranking": "순위"}
++    if unsupported:
++        labels = [unsupported_labels[k] for k in unsupported if k in unsupported_labels]
++        return (("·".join(labels) + " 조건을 포함한 조회는 현재 지원하지 않습니다.") if labels
++                else "현재 자료와 조회 기능으로 확인할 수 없는 조건이 있습니다.")
++    if getattr(intent, "negation", ()):
++        detail = _condition_detail(question, intent.negation)
++        return f"{detail + ' ' if detail else ''}제외 조건을 정확히 적용하지 못했습니다. 제외할 대상과 조건을 구체적으로 알려 주세요."
++    detail = _condition_detail(question, getattr(intent, "residual", ()))
++    if detail:
++        return f"{detail} 부분의 의미를 확인하지 못했습니다. 이 조건을 구체적으로 알려 주세요."
++    ambiguity = getattr(intent, "ambiguity", ())
++    if "name_ambiguous" in ambiguity or "group_unresolved" in ambiguity:
++        return "조회할 새나 분류군을 하나로 확인하지 못했습니다. 정확한 이름이나 학명을 알려 주세요."
++    if getattr(intent, "kind", None) in ("shared_diet", "habitat_shared_diet", "habitat_different_diet") and not intent.species:
++        return "비교 기준이 되는 새를 확인하지 못했습니다. 기준 새의 이름을 알려 주세요."
++    return "질문의 검색 조건을 확정하지 못했습니다. 조회할 새·분류군과 원하는 조건을 나누어 알려 주세요."
++
++
+ def _http_error_tags(status_code: int) -> dict[str, str]:
+     """Tags for routes that signal outcomes by HTTP status (non-chat endpoints)."""
+ 
+@@ -850,7 +885,7 @@
+         single_species = species_question or _species_chat_question(request.question)
+         if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
+                 and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
+-            from ..retrieval.graph_intent_schema import GraphIntent, execution_gate, to_graph_question, unsupported_food
++            from ..retrieval.graph_intent_schema import GraphIntent, canonical_graph_plan, execution_gate, to_graph_question, unsupported_food
+ 
+             with tracing.span("graph_intent.route", tracing.CHAIN) as route_span:
+                 # Shadow decisions are observable but must not label the actual response as blocked.
+@@ -871,6 +906,7 @@
+                                                "graph_intent.kind": getattr(interpreted, "kind", None),
+                                                "graph_intent.source": getattr(interpreted, "source", None),
+                                                "graph_intent.disposition": disposition,
++                                               "graph_intent.canonical_plan": canonical_graph_plan(request.question, interpreted),
+                                                "graph_intent.template_matches_legacy": interpreted_question == graph_question,
+                                                "graph_intent.negation_count": len(getattr(interpreted, "negation", ())),
+                                                "graph_intent.residual_count": len(getattr(interpreted, "residual", ())),
+@@ -904,13 +940,7 @@
+                                 _why(reason, "plan_validation")
+                             route_span.set_attributes({"graph_intent.block_reason": tracing.collected_outcome().get("reason"),
+                                                        "graph_intent.block_stage": tracing.collected_outcome().get("stage")})
+-                            unresolved = tuple(dict.fromkeys(
+-                                span.text for span in (*getattr(interpreted, "negation", ()),
+-                                                       *getattr(interpreted, "residual", ()))
+-                                if request.question[span.start:span.end] == span.text))[:3]
+-                            detail = ", ".join(f"‘{text}’" for text in unresolved)
+-                            prompt = (f"{detail} 부분의 조건이나 관계를 현재 조회 기준으로 확인하지 못했습니다. 비교 기준을 다시 알려 주세요."
+-                                      if detail else "비교할 기준 종과 관계를 하나로 확인하지 못했습니다. 먹이·식성 또는 서식 환경 중 비교 기준을 알려 주세요.")
++                            prompt = _graph_clarification(request.question, interpreted)
+                             return ChatResponse(
+                                 selected_intent="profile", route_method=graph_method, disposition="clarify",
+                                 answer_text=prompt,
+@@ -923,11 +953,16 @@
+                     if self.graph_intent_mode == "active":
+                         if not tracing.collected_outcome().get("reason"):
+                             _why("interpretation_error", "interpretation")
++                        detail = _condition_detail(request.question, getattr(error, "original_spans", ()))
++                        rejected = getattr(error, "reason", None) == "semantic_audit_rejected"
++                        prompt = ((f"{detail} 조건을 해석한 결과가 질문과 일치하는지 확인하지 못했습니다. 이 조건을 구체적으로 알려 주세요."
++                                   if detail else "질문과 해석된 조건이 일치하는지 확인하지 못했습니다. 조회할 새·분류군과 원하는 조건을 나누어 알려 주세요.")
++                                  if rejected else "관계 질문의 조건을 현재 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.")
+                         return ChatResponse(
+                             selected_intent="profile", route_method="semantic" if request.intent == "auto" else "explicit",
+-                            disposition="clarify", answer_text="관계 질문의 조건을 현재 확인할 수 없습니다. 잠시 후 다시 시도해 주세요.",
++                            disposition="clarify", answer_text=prompt,
+                             warnings=["해석 실패를 종이나 관계가 없다는 뜻으로 해석하지 마세요."],
+-                            result=ChatClarifyResult(prompt="질문을 다시 입력해 주세요."),
++                            result=ChatClarifyResult(prompt=prompt),
+                         )
+                 finally:
+                     tracing.end_outcome(shadow_outcome)
+--- before/src/robingraph/cli.py
++++ after/src/robingraph/cli.py
+@@ -322,12 +322,11 @@
+     if graph_interpreter not in ("lexical", "semantic"):
+         raise ValueError("ROBINGRAPH_GRAPH_INTERPRETER must be lexical or semantic")
+     if graph_interpreter == "semantic" and graph_intent_mode != "off":
+-        from .retrieval.semantic_graph_intent import SEMANTIC_PROTOTYPES, graph_intent_handler as interpret_graph
+-        from .retrieval.graph_semantic_router import PROTOTYPES
++        from .retrieval.semantic_graph_intent import verified_semantic_examples, graph_intent_handler as interpret_graph
+ 
+         if answer_generator is None or graph_client is None:
+             raise ValueError("Semantic graph interpretation requires configured generation and embedding clients")
+-        interpretation_router = GraphSemanticRouter(graph_client, prototypes=PROTOTYPES + SEMANTIC_PROTOTYPES)
++        interpretation_router = GraphSemanticRouter(graph_client, prototypes=tuple((row["kind"], row["question"]) for row in verified_semantic_examples()))
+ 
+         def graph_plan_handler(question):
+             lexical = extract_graph_intent(question)
+--- before/src/robingraph/generation.py
++++ after/src/robingraph/generation.py
+@@ -97,6 +97,11 @@
+ 
+ class GeminiAnswerError(RuntimeError):
+     """Raised for any invalid input, blocked, malformed, or transport failure."""
++
++    def __init__(self, message, *, reason=None, original_spans=()):
++        super().__init__(message)
++        self.reason = reason
++        self.original_spans = tuple(original_spans)
+ 
+ 
+ class GeminiAnswerer:
+@@ -174,7 +179,7 @@
+                 plan_span.set_attribute('reason', 'invalid_plan')
+                 raise
+             plan_span.set_outputs(plan)
+-        from .retrieval.semantic_graph_intent import reconcile_graph_plan
++        from .retrieval.semantic_graph_intent import original_issue_spans, reconcile_graph_plan
+ 
+         original_plan = plan
+         with tracing.span('graph_intent.reconciliation', attributes={'stage': 'plan_validation'}) as recovery_span:
+@@ -244,7 +249,8 @@
+                           and all(isinstance(issue, str) for issue in audit['issues']) else 'invalid_plan')
+                 tracing.note_outcome(reason, 'semantic_audit')
+                 audit_span.set_attribute('reason', reason)
+-                raise GeminiAnswerError('Graph interpretation did not pass semantic audit')
++                raise GeminiAnswerError('Graph interpretation did not pass semantic audit', reason=reason,
++                                        original_spans=original_issue_spans(question, plan, audit.get('issues')))
+         return plan
+ 
+     def english_search_terms(self, question: str) -> str:
+--- before/src/robingraph/retrieval/graph_condition_extractor.py
++++ after/src/robingraph/retrieval/graph_condition_extractor.py
+@@ -422,7 +422,7 @@
+         before = claims.q[:match.start()].rstrip()
+         run = re.search(r'[가-힣]+$', before)
+         # Check the whole token before claimed negation can leave a suffix (없는데 -> 데).
+-        if not run or re.fullmatch(r'(?:있|없)(?:고|으며|지만|는데)', run.group()):
++        if not run or re.fullmatch(r'(?:[가-힣]*(?:되|하)(?:고|며|면서|지만|는데)|(?:있|없)(?:고|으며|지만|는데))', run.group()):
+             continue
+         start, end = run.start(), run.end()
+         runs = claims.unclaimed(start, end)
+--- before/src/robingraph/retrieval/graph_intent_schema.py
++++ after/src/robingraph/retrieval/graph_intent_schema.py
+@@ -10,7 +10,7 @@
+ ``unsupported`` and ``not_graph`` are evaluation labels. The API keeps its
+ existing clarify/abstain contract.
+ """
+-from dataclasses import dataclass
++from dataclasses import asdict, dataclass
+ import re
+ 
+ from .graph_questions import FOOD_GAPS, GRAPH_QUESTION_KINDS, HABITATS, GraphQuestion, TraitCondition, checked_conditions
+@@ -331,3 +331,29 @@
+             'ambiguity': bool(intent.ambiguity),
+             'conditions': tuple(sorted((c.trait_name, c.op, c.value or '', c.threshold or 0, c.unit or '', c.qualifier or '')
+                                        for c, _ in intent.conditions))}
++
++
++def canonical_graph_plan(question, intent):
++    """Comparable executable query values, without source wording/spans or provider diagnostics.
++
++    Names remain unresolved source names: aliases are NOT equated here. Compare resolved IDs after execution.
++    Numeric thresholds use the validated query's units; tree-fruit qualification and trophic niche stay distinct.
++    """
++    if execution_gate(question, intent) != 'answer':
++        return None
++    query = to_graph_question(question, intent)
++    plan = asdict(query)
++    plan['names'] = sorted(query.names) if query.kind == 'common_taxonomy' else list(query.names)
++    if query.kind == 'order_fruit':
++        from .graph_condition_extractor import _DIET_CONDITIONS
++        plan.update(kind='taxon_traits', criterion=None, conditions=[asdict(_DIET_CONDITIONS[query.criterion])])
++    elif query.kind == 'habitat_shared_diet':
++        plan.update(kind='shared_diet', habitat=None,
++                    conditions=[asdict(TraitCondition('habitat', 'eq', query.habitat))])
++    plan['conditions'] = sorted((dict(condition) for condition in plan['conditions']),
++                                key=lambda c: (c['trait_name'], c['op'], c['value'] or '',
++                                               c['threshold'] or 0, c['unit'] or '', c['qualifier'] or ''))
++    for condition in plan['conditions']:
++        if condition['threshold'] is not None:
++            condition['threshold'] = float(condition['threshold'])
++    return plan
+--- before/src/robingraph/retrieval/semantic_graph_intent.py
++++ after/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -20,12 +20,13 @@
+ 
+ A failed check yields a GraphIntent the gate turns into a clarify. No Cypher is built here.
+ """
++from copy import deepcopy
+ import re
+ 
+ from .. import tracing
+ 
+ from .graph_condition_extractor import (
+-    _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
++    _ASKS, _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
+     _NICHE_SAME,
+     _NUM, _RESIDENCY, _SAME_HABITAT, _SCIENTIFIC, _SHARE_WORDS, _TRAIT_LABELS, _UNIT, _UNITS, _UNSUPPORTED, GROUP_WORDS,
+     _FILLER, _PUNCT, _op, _pattern, _taxon_names, _tokens, _trait_surfaces, _valid_name, extract_graph_intent)
+@@ -36,6 +37,8 @@
+ 
+ SOURCE = 'semantic'
+ KINDS = ('taxon_traits', 'shared_diet', 'none')
++SEMANTIC_KIND_FAMILIES = {'taxon_traits': ('taxon_traits', 'order_fruit'),
++                          'shared_diet': ('shared_diet', 'habitat_shared_diet')}
+ # Season, activity time and superlative asks have no supported query field.
+ VETO_CUES = (r'겨울|여름|(?<![가-힣])봄|가을|번식기|월동|\d+\s*월(?![가-힣])|가장|제일|최고|'
+              r'야행성|주행성|박명성|활동\s*(?:시간|시기)|(?<![가-힣])(?:밤|낮|새벽)(?:에|만|동안)')
+@@ -82,9 +85,16 @@
+ class SemanticIntentError(ValueError):
+     """The provider failed or returned something that is not the contract's JSON object."""
+ 
++    def __init__(self, message, *, reason=None, original_spans=()):
++        super().__init__(message)
++        self.reason = reason
++        self.original_spans = tuple(original_spans)
++
+ 
+ class _Reject(Exception):
+-    pass
++    def __init__(self, message, spans=()):
++        super().__init__(message)
++        self.spans = tuple(spans)
+ 
+ 
+ _NULLABLE = {'type': 'STRING', 'nullable': True}
+@@ -212,8 +222,10 @@
+                    and all(re.match(r'다른\s+(?:새|종|조류)(?:들)?(?=[은는이가을를도\s.!?]|$)',
+                                     question[span.start:])
+                            for slot, span in lexical.evidence if slot == 'relation'))
+-    residual_order = lexical.kind == 'order_fruit' and lexical.residual and not lexical.ambiguity
+-    if lexical.kind not in (None, 'taxon_traits', 'habitat_shared_diet') and not other_birds and not residual_order:
++    if lexical.kind == 'order_fruit' and (not lexical.residual or lexical.ambiguity):
++        return True
++    supported = {kind for contract_kind in KINDS for kind in SEMANTIC_KIND_FAMILIES.get(contract_kind, ())}
++    if lexical.kind is not None and lexical.kind not in supported and not other_birds:
+         return True   # the other existing kinds stay lexical-only
+     return any(re.search(pattern, blanked) for pattern in _VETOES)
+ 
+@@ -350,7 +362,7 @@
+ 
+ 
+ # These forms express entity exclusion or numeric equality exclusion, never an arbitrary negated predicate.
+-_REMOVE = r'(?:말고|제외(?:하고|한|해(?:요)?|해\s*주세요)?|빼(?:고|\s*줘(?:요)?|\s*주세요)|뺀)(?=[\s.!?]|$)'
++_REMOVE = r'(?:말고|제외(?:하고|한|해(?:요)?|해\s*주세요)?|빼(?:고|\s*줘(?:요)?|\s*주세요)|뺀)(?=[\s,.!?]|$)'
+ _EQUAL_EXCLUSION = re.compile(
+     rf'(?<![\w.])(?P<number>{_NUM})\s*(?P<unit>{_UNIT})\s*(?:인|와\s*같은|에\s*해당하는)\s*'
+     rf'(?:(?:기록|경우|것|새|종)(?:은|는|을|를)?\s*)?{_REMOVE}')
+@@ -382,7 +394,7 @@
+             valid = (kind == 'taxon_traits' and len({c.trait_name for c in numeric}) == 1
+                      and any(c.op in ('num_gt', 'num_lt') and (c.unit, c.threshold) == subject for c in numeric))
+         if not valid:
+-            raise _Reject('exclusion is not implied by the plan')
++            raise _Reject('exclusion is not implied by the plan', (span,))
+         spans.append(span)
+     return spans
+ 
+@@ -489,6 +501,8 @@
+         trace.set_attributes({'reason': reason, 'unresolved_count': len(unresolved),
+                               'unknown_relation': raw.get('unknown_relation', False)})
+         residual = tuple(s for s in (span_of(question, t.strip()) for t in unresolved) if s is not None)
++        if not residual and raw.get('unknown_relation') and relation is not None:
++            residual = tuple(s for s in (span_of(question, relation.strip()),) if s is not None)
+         return GraphIntent(None, residual=residual, ambiguity=() if residual else ('other',), source=SOURCE)
+     if kind == 'none':
+         if taxon is not None or species is not None or relation is not None or pairs or _exclusions(question):
+@@ -542,10 +556,14 @@
+     if kind == 'shared_diet' and named - {'reference-avonet'}:
+         raise _Reject('shared diet is AVONET trophic_niche only')   # not vacuous when there are no conditions
+     if not all(_supported(c, span) for c, span in pairs) or not _taxa_kept(question, names):
+-        raise _Reject('condition without its own support, or a named taxon left out')
++        missing = tuple(Span(question[s:e], s, e) for s, e in _named_taxa(question)
++                        if not any(n.start <= s and e <= n.end or question[s:e] == n.text for n in names))
++        raise _Reject('condition without its own support, or a named taxon left out', missing)
+     restatements = _checked_exclusions(question, kind, names, pairs)
+-    if not _numbers_agree(question, pairs, restatements) or not _known_words_agree(
+-            question, pairs, names, phrase if kind == 'shared_diet' else None):
++    if not _numbers_agree(question, pairs, restatements):
++        spans = tuple(Span(m.group(), m.start(), m.end()) for m in re.finditer(rf'{_NUM}\s*(?:{_UNIT})?', question))
++        raise _Reject('numbers or known words disagree', spans)
++    if not _known_words_agree(question, pairs, names, phrase if kind == 'shared_diet' else None):
+         raise _Reject('numbers or known words disagree')
+     if validate_intent(question, intent):
+         raise _Reject('invalid intent')
+@@ -593,6 +611,16 @@
+                             'before': text, 'after': item['surface']})
+     text, species = raw.get('relation_text'), raw.get('species')
+     if (raw.get('kind') == 'shared_diet' and isinstance(text, str) and isinstance(species, str)
++            and span_of(question, text.strip()) is None):
++        particle = re.fullmatch(r'(?:와|과|랑|이랑|하고)\s+(.+)', text.strip())
++        matches = [] if particle is None else list(re.finditer(
++            r'(?<!\w)' + re.escape(species) + r'(?:와|과|랑|이랑|하고)\s+'
++            + re.escape(particle[1]) + r'(?=\s|[,.!?]|$)', question))
++        if len(matches) == 1:
++            candidate['relation_text'] = matches[0].group()
++            changes.append({'field': 'relation_text', 'rule': 'reference_particle',
++                            'before': text, 'after': candidate['relation_text']})
++    if (raw.get('kind') == 'shared_diet' and isinstance(text, str) and isinstance(species, str)
+             and re.search(_DIET_WORD, text) and not re.search(r'같|동일|일치|공유|비슷|유사', text)
+             and len(list(re.finditer(r'(?<!\w)' + re.escape(text.strip()), question))) == 1):
+         pattern = (r'(?<!\w)' + re.escape(text.strip()) + r'\s+' + re.escape(species)
+@@ -604,6 +632,16 @@
+                             'before': text, 'after': candidate['relation_text']})
+     token = tracing.begin_outcome()
+     try:
++        kept = [text for text in unresolved if not (
++            re.fullmatch(rf'(?:{_ASKS}|\s)+', text.rstrip('.!?'))
++            and re.search(r'(?:줘|줄래|주세요|주실래요|궁금해요|궁금해|궁금합니다|싶어요|싶어)$', text.rstrip('.!?'))
++            and question.count(text.rstrip('.!?')) == 1
++            and re.search(r'(?<!\w)' + re.escape(text) + r'[.!?]*\s*$', question))]
++        if len(kept) != len(unresolved):
++            candidate['unresolved'] = kept
++            changes.append({'field': 'unresolved', 'rule': 'terminal_request',
++                            'before': unresolved, 'after': kept})
++        unresolved = candidate.get('unresolved', [])
+         if unresolved and raw.get('kind') == 'taxon_traits':
+             pairs = _conditions(question, candidate)
+             names = [name] if (name := _taxon_span(question, candidate.get('taxon'))) is not None else []
+@@ -633,7 +671,13 @@
+     except Exception as error:
+         if not tracing.collected_outcome():
+             tracing.note_outcome('interpretation_error', 'interpretation')
+-        raise SemanticIntentError(f'provider failed ({type(error).__name__})') from error
++        spans = tuple(s for s in getattr(error, 'original_spans', ())
++                      if isinstance(s, Span) and 0 <= s.start < s.end <= len(question)
++                      and question[s.start:s.end] == s.text)[:3]
++        reason = getattr(error, 'reason', None)
++        raise SemanticIntentError(f'provider failed ({type(error).__name__})',
++                                  reason=reason if reason == 'semantic_audit_rejected' else None,
++                                  original_spans=spans) from error
+     finally:
+         outcome = tracing.collected_outcome()
+         tracing.end_outcome(token)
+@@ -652,18 +696,65 @@
+         except _Reject as error:
+             tracing.note_outcome('plan_validation_rejected', 'plan_validation')
+             trace.set_attributes({'reason': 'plan_validation_rejected', 'rejection_detail': str(error)})
+-            return _HOLD
++            residual = tuple(s for s in error.spans if isinstance(s, Span)
++                             and 0 <= s.start < s.end <= len(question) and question[s.start:s.end] == s.text)
++            return GraphIntent(None, residual=residual, source=SOURCE) if residual else _HOLD
++
++
++def verified_semantic_examples():
++    """Reviewed local plans that still pass the executable contract; not cached answers or DB evidence."""
++    examples = []
++    token = tracing.begin_outcome()
++    try:
++        for kind, question, plan in _EXAMPLES:
++            if kind not in KINDS or plan.get('kind') != kind:
++                continue
++            full = {'conditions': [], 'unresolved': [], 'unknown_relation': False, **deepcopy(plan)}
++            try:
++                intent = _build(question, full)
++            except (SemanticIntentError, _Reject):
++                continue
++            if execution_gate(question, intent) == 'answer':
++                examples.append({'question': question, 'kind': kind, 'intent': full})
++    finally:
++        tracing.end_outcome(token)
++    return tuple(examples)
++
++
++def original_issue_spans(question, plan, issues):
++    """Only original plan fragments explicitly mentioned in the model's audit issues, never its explanation."""
++    if not isinstance(plan, dict) or not isinstance(issues, list):
++        return ()
++    fragments = [plan.get(key) for key in ('taxon', 'species', 'relation_text')]
++    if isinstance(plan.get('unresolved'), list):
++        fragments += plan['unresolved']
++    if isinstance(plan.get('conditions'), list):
++        fragments += [item.get('surface') for item in plan['conditions'] if isinstance(item, dict)]
++    spans = []
++    for fragment in fragments:
++        if (isinstance(fragment, str) and fragment.strip() and any(
++                isinstance(issue, str) and fragment in issue for issue in issues)):
++            span = span_of(question, fragment.strip())
++            if span is not None and span not in spans:
++                spans.append(span)
++    return tuple(spans[:3])
+ 
+ 
+ def _examples(question, retrieve):
+     if retrieve is None:
+         return []
+     try:
++        verified = {row['question']: row for row in verified_semantic_examples()}
+         found = retrieve(question, limit=5)
+-        return [{'question': r['question'], 'kind': r['kind'],
+-                 **({'intent': _EXAMPLE_INTENTS[r['question']]} if r['question'] in _EXAMPLE_INTENTS else {})}
+-                for r in found or () if isinstance(r, dict) and isinstance(r.get('question'), str)
+-                and isinstance(r.get('kind'), str)]
++        examples = []
++        for row in found or ():
++            example = (verified.get(row.get('question')) if isinstance(row, dict)
++                       and isinstance(row.get('question'), str) else None)
++            if example is not None and row.get('kind') == example['kind'] and example not in examples:
++                examples.append(example)
++            if len(examples) == 5:
++                break
++        return examples
+     except Exception:
+         return []
+ 

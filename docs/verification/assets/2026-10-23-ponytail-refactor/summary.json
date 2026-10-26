@@ -1,0 +1,45 @@
+{
+  "python": {
+    "run": 1210,
+    "pass": 1171,
+    "skip": 39,
+    "fail": 0
+  },
+  "backend_targeted": {
+    "pass": 69,
+    "skip": 0,
+    "fail": 0
+  },
+  "graph_api_targeted": {
+    "pass": 15,
+    "skip": 0,
+    "fail": 0
+  },
+  "test_live_api": {
+    "pass": 61,
+    "fail": 0
+  },
+  "test_live_browser": {
+    "flows": 8,
+    "viewports": [
+      390,
+      1280
+    ],
+    "response_mocking": false
+  },
+  "image": "robingraph-api:test-ponytail-023b4901e54b",
+  "runtime": {
+    "target": "test",
+    "graph_intent_mode": "active",
+    "graph_interpreter": "semantic",
+    "changed_from_previous": false
+  },
+  "changed_app_files": 2,
+  "production_deployed": false,
+  "commit_push": false,
+  "performance_benchmark": false,
+  "node_suite_rerun": false,
+  "reason_node_not_rerun": "No frontend source or API contract changes; actual browser regression performed",
+  "physical_mobile": false,
+  "safari_firefox": false
+}

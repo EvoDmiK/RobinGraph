@@ -1,0 +1,84 @@
+{
+  "target": "test",
+  "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤게 있어?",
+  "before": "clarify, because common _ASK did not support natural interrogative phrases 어떤게 있어",
+  "change": "Expand shared _ASK only; no per-species special casing, no Cypher or UI changes",
+  "supported_endings": [
+    "어떤게 있어",
+    "어떤 게 있어",
+    "어떤 것이 있나요",
+    "어떤 것들이 있어요",
+    "뭐가 있어",
+    "어떤 종이 있을까",
+    "어떤 새들이 있습니까",
+    "알고 싶어요"
+  ],
+  "matrix": {
+    "method": "test_fruit_wording_matrix_and_common_question_endings",
+    "general_fruit_and_tree_or_frugivore": 504,
+    "specific_plant_boundaries": 84,
+    "six_other_graph_shapes": 72,
+    "unrelated_or_additional_intent_rejected": 4,
+    "total_subcases": 664,
+    "not_independent_test_methods": true
+  },
+  "tests": {
+    "command": "uv run --locked --extra test --extra tracing python -m unittest discover -s tests",
+    "total": 1062,
+    "passed": 1023,
+    "skipped": 39,
+    "failed": 0,
+    "duration_seconds": 22.632,
+    "skip_scope": "opt-in integrations and missing RG406 reproduction bundle prerequisite; not all opt-in",
+    "mock_fixture_distinction": "full suite is not all real DB/API; actual checks are below"
+  },
+  "actual_loopback_api": {
+    "total": 28,
+    "passed": 28,
+    "mocked": false,
+    "composition": "12 endings x ordinary/tree-fruit=24 plus 2 specific-fruit insufficient and 2 previous screenshot variants",
+    "all_graph_query_kind": true
+  },
+  "actual_public_browser": {
+    "passed": 2,
+    "widths": [
+      1280,
+      390
+    ],
+    "mocked": false,
+    "question": "exact latest screenshot question",
+    "tree_grass_limit_title_visible": true,
+    "page_errors": 0,
+    "horizontal_overflow": false,
+    "physical_mobile": false
+  },
+  "semantics_preserved": [
+    "tree-fruit results remain general fruit category with visible 나무·풀 구분 없음 limitation",
+    "specific plant/identical fruit claims remain insufficient_data",
+    "additional unrelated predicates are not swallowed as a question ending"
+  ],
+  "deployment": {
+    "image": "robingraph-api:test-question-endings-203d19900989",
+    "source_sha256": "203d199009891d892caecfddd129cd68b5cb9d19611c43f269baf509c6fe750e",
+    "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+    "previous_image": "robingraph-api:test-tree-fruit-b1c6c45cd346",
+    "previous_release": "/Users/kimdove/robingraph-test/releases/tree-fruit-b1c6c45cd346-da9d5c",
+    "release": "/Users/kimdove/robingraph-test/releases/question-endings-203d19900989-1aeccb",
+    "state": "verified",
+    "target": "test",
+    "uncommitted_source_snapshot": true,
+    "production_changed": false,
+    "fixture_network_none_smoke": true,
+    "physical_reboot_tested": false
+  },
+  "source_manifest_matches": true,
+  "graphify_update": "passed",
+  "not_run": [
+    "frontend suite: UI unchanged",
+    "physical mobile/Safari/Firefox",
+    "all possible natural language formulations: bounded deterministic grammar remains"
+  ],
+  "production_actions": false,
+  "db_writes_by_task": false,
+  "git_commit_push": false
+}

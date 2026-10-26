@@ -1,0 +1,18 @@
+{
+  "type": "synthetic scorer-only reproduction; no app/parser/API calls",
+  "observed": {
+    "unsupported_relation": {
+      "status": "pass",
+      "classification": "unsupported_relation"
+    },
+    "unsupported_condition": {
+      "status": "pass",
+      "classification": "unsupported_condition"
+    },
+    "None": {
+      "status": "pass",
+      "classification": null
+    }
+  },
+  "issue": "Unknown/missing hold classes fall through with generic clarification counted as pass."
+}

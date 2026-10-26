@@ -1,0 +1,511 @@
+{
+  "evaluation_type": "feedback-exposed regression",
+  "source": "docs/verification/assets/2026-10-24-semantic-graph-followup/api-final.json",
+  "counts": {
+    "supported": {
+      "fail": 1,
+      "pass": 16,
+      "unverifiable": 1
+    },
+    "hold": {
+      "pass": 6
+    },
+    "preserve": {
+      "pass": 4
+    }
+  },
+  "limits": [
+    "Actual returned taxa and source records are not re-queried against DB.",
+    "No missing response kind or absent executed plan is automatically counted as supported success."
+  ],
+  "rows": [
+    {
+      "id": "fresh-01",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "expected_kind": "graph_query",
+          "actual_kind": "clarify"
+        },
+        {
+          "unexpected_status": null
+        }
+      ],
+      "limits": [
+        "API has no machine-readable complete executed scope/conditions; separate provider plan is corroboration only."
+      ],
+      "observed": {
+        "kind": "clarify",
+        "status": null,
+        "disposition": "clarify"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-02",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "habitat",
+          "label": "서식 환경 습지(Wetland)",
+          "op": "eq",
+          "value": "Wetland",
+          "threshold": null,
+          "unit": null,
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-03",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "empty",
+        "disposition": "abstain"
+      },
+      "source_empty_allowed": true,
+      "raw_api_conditions": [
+        {
+          "trait_name": "habitat",
+          "label": "서식 환경 하천(Riverine)",
+          "op": "eq",
+          "value": "Riverine",
+          "threshold": null,
+          "unit": null,
+          "source_name": "AVONET Supplementary dataset 1"
+        },
+        {
+          "trait_name": "diet_distribution",
+          "label": "먹이 구성에 고기 (온혈 척추동물·변온 척추동물·기타 척추동물) 포함",
+          "op": "share_gt",
+          "value": "meat",
+          "threshold": 0.0,
+          "unit": null,
+          "source_name": "AviList and EltonTraits approved reference bundle"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-04",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "label": "먹이 구성에 씨앗 포함",
+          "op": "share_gt",
+          "value": "seed",
+          "threshold": 0.0,
+          "unit": null,
+          "source_name": "AviList and EltonTraits approved reference bundle"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-05",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "insufficient_data",
+        "disposition": "abstain"
+      },
+      "source_empty_allowed": true,
+      "raw_api_conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "label": "먹이 구성에 곤충 (원자료: 무척추동물) 포함",
+          "op": "share_gt",
+          "value": "invertebrate",
+          "threshold": 0.0,
+          "unit": null,
+          "source_name": "AviList and EltonTraits approved reference bundle"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-06",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "label": "먹이 구성에 열매 포함",
+          "op": "share_gt",
+          "value": "fruit",
+          "threshold": 0.0,
+          "unit": null,
+          "source_name": "AviList and EltonTraits approved reference bundle"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-07",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "body_mass",
+          "label": "체중 700g 이상",
+          "op": "num_gte",
+          "value": null,
+          "threshold": 700.0,
+          "unit": "g",
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-08",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "wing_length",
+          "label": "접은 날개 길이 125mm 이하",
+          "op": "num_lte",
+          "value": null,
+          "threshold": 125.0,
+          "unit": "mm",
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-09",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "body_mass",
+          "label": "체중 180g 초과",
+          "op": "num_gt",
+          "value": null,
+          "threshold": 180.0,
+          "unit": "g",
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-10",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "empty",
+        "disposition": "abstain"
+      },
+      "source_empty_allowed": true,
+      "raw_api_conditions": [
+        {
+          "trait_name": "wing_length",
+          "label": "접은 날개 길이 260mm 미만",
+          "op": "num_lt",
+          "value": null,
+          "threshold": 260.0,
+          "unit": "mm",
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-11",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "label": "먹이 구성에 씨앗 포함",
+          "op": "share_gt",
+          "value": "seed",
+          "threshold": 0.0,
+          "unit": null,
+          "source_name": "AviList and EltonTraits approved reference bundle"
+        },
+        {
+          "trait_name": "habitat",
+          "label": "서식 환경 숲(Forest)",
+          "op": "eq",
+          "value": "Forest",
+          "threshold": null,
+          "unit": null,
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-12",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "insufficient_data",
+        "disposition": "abstain"
+      },
+      "source_empty_allowed": true,
+      "raw_api_conditions": [
+        {
+          "trait_name": "body_mass",
+          "label": "체중 35g 이하",
+          "op": "num_lte",
+          "value": null,
+          "threshold": 35.0,
+          "unit": "g",
+          "source_name": "AVONET Supplementary dataset 1"
+        }
+      ],
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-13",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-14",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-15",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-16",
+      "category": "supported",
+      "status": "unverifiable",
+      "errors": [],
+      "limits": [
+        "Same-request execution_summary missing; returned paths do not prove complete query scope."
+      ],
+      "observed": {
+        "kind": "graph_query",
+        "status": "insufficient_data",
+        "disposition": "abstain"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-17",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-18",
+      "category": "supported",
+      "status": "pass",
+      "errors": [],
+      "limits": [],
+      "observed": {
+        "kind": "graph_query",
+        "status": "answer",
+        "disposition": "answer"
+      },
+      "source_empty_allowed": false,
+      "raw_api_conditions": null,
+      "separate_plan_corroboration": "matching separate semantic plan missing"
+    },
+    {
+      "id": "fresh-19",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-20",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-21",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-22",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-23",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-24",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "limits": [
+        "Response proves no graph answer; internal DB read execution is not observable."
+      ]
+    },
+    {
+      "id": "fresh-25",
+      "category": "preserve",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-26",
+      "category": "preserve",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-27",
+      "category": "preserve",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-28",
+      "category": "preserve",
+      "status": "pass",
+      "errors": []
+    }
+  ]
+}

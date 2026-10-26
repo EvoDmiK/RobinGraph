@@ -1,0 +1,124 @@
+[
+  {
+    "id": "IT-007",
+    "question": "매목 중 숲에 사는 새는?",
+    "taxon": "Falconiformes",
+    "rank": "order",
+    "conditions": [
+      {
+        "trait_name": "habitat",
+        "op": "eq",
+        "value": "Forest",
+        "unit": null
+      }
+    ],
+    "outcome": "query",
+    "check": "taxonomic"
+  },
+  {
+    "id": "IT-001",
+    "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+    "taxon": "Corvidae",
+    "rank": "family",
+    "conditions": [
+      {
+        "trait_name": "diet_distribution",
+        "op": "share_gt",
+        "value": {
+          "fruit": 0
+        },
+        "unit": null
+      }
+    ],
+    "outcome": "query",
+    "check": "taxonomic"
+  },
+  {
+    "id": "IT-003",
+    "question": "까마귀속 중 숲에 사는 새는?",
+    "taxon": "Corvus",
+    "rank": "genus",
+    "conditions": [
+      {
+        "trait_name": "habitat",
+        "op": "eq",
+        "value": "Forest",
+        "unit": null
+      }
+    ],
+    "outcome": "query",
+    "check": "taxonomic"
+  },
+  {
+    "id": "IT-005",
+    "question": "까마귀 중 숲에 사는 새는?",
+    "taxon": "Corvus corone",
+    "rank": "species",
+    "conditions": [
+      {
+        "trait_name": "habitat",
+        "op": "eq",
+        "value": "Forest",
+        "unit": null
+      }
+    ],
+    "outcome": "query",
+    "check": "taxonomic"
+  },
+  {
+    "id": "IT-011",
+    "question": "Corvus corone corone 중 숲에 사는 새는?",
+    "taxon": "Corvus corone corone",
+    "rank": "subspecies",
+    "conditions": [
+      {
+        "trait_name": "habitat",
+        "op": "eq",
+        "value": "Forest",
+        "unit": null
+      }
+    ],
+    "outcome": "insufficient",
+    "check": "taxonomic"
+  },
+  {
+    "id": "ALIAS-1",
+    "check": "alias",
+    "question": "까마귀과 중 곤충을 먹는 새는?",
+    "raw_question": "까마귀과 중 무척추동물을 먹는 새는?",
+    "required_terms": [
+      "원자료",
+      "무척추동물"
+    ]
+  },
+  {
+    "id": "ALIAS-2",
+    "check": "alias",
+    "question": "매목 중 고기를 먹는 새는?",
+    "raw_question": "매목 중 척추동물을 먹는 새는?",
+    "required_terms": [
+      "온혈 척추동물",
+      "변온 척추동물",
+      "기타 척추동물",
+      "물고기·사체 성분은 포함하지 않습니다"
+    ]
+  },
+  {
+    "id": "FOOD-1",
+    "check": "food_gap",
+    "question": "오리과 중 곡물을 먹는 새는?",
+    "required_terms": [
+      "곡물",
+      "씨앗"
+    ]
+  },
+  {
+    "id": "FOOD-2",
+    "check": "food_gap",
+    "question": "Anser 중 잎을 먹는 새는?",
+    "required_terms": [
+      "잎",
+      "기타 식물"
+    ]
+  }
+]

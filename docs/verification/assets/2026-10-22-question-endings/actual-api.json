@@ -1,0 +1,258 @@
+{
+  "base": "http://127.0.0.1:8000",
+  "mocked": false,
+  "rows": [
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤게 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤 게 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤 것이 있나요?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤 것들이 있어요?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 뭐가 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤 종이 있을까?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 어떤 새들이 있습니까?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 알려줘",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 알려 주세요",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 보여줘",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 열매를 먹는 새는 알고 싶어요",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤게 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 게 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 것이 있나요?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 것들이 있어요?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 뭐가 있어?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 종이 있을까?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 어떤 새들이 있습니까?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 알려줘",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 알려 주세요",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 보여줘",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무 열매를 먹는 새는 알고 싶어요",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 감나무 열매를 먹는 새는 어떤게 있어?",
+      "disposition": "abstain",
+      "kind": "graph_query",
+      "status": "insufficient_data",
+      "title": "특정 열매 공유",
+      "item_count": 0,
+      "passed": true
+    },
+    {
+      "question": "숲에 사는 새 중 직박구리랑 같은 열매를 먹는 새는 어떤 게 있어?",
+      "disposition": "abstain",
+      "kind": "graph_query",
+      "status": "insufficient_data",
+      "title": "특정 열매 공유",
+      "item_count": 0,
+      "passed": true
+    },
+    {
+      "question": "참새목 새중에서 열매를 먹는 새는?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종",
+      "item_count": 20,
+      "passed": true
+    },
+    {
+      "question": "참새목 새 중에서 나무열매를 먹는 새는?",
+      "disposition": "answer",
+      "kind": "graph_query",
+      "status": "answer",
+      "title": "참새목 중 열매를 먹는 종 (나무·풀 구분 없음)",
+      "item_count": 20,
+      "passed": true
+    }
+  ]
+}

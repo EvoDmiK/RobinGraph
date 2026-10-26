@@ -1,0 +1,12 @@
+{
+  "tests": 28,
+  "passed": 28,
+  "failed": 0,
+  "mode": "local synthetic tests against integrated root modules; no API calls",
+  "source_sha256": {
+    "src/robingraph/retrieval/semantic_graph_intent.py": "8e31a908f6a0c067b17f505128a01f2fb0df69250647b059bfe6b48d6df4ba09",
+    "src/robingraph/retrieval/graph_condition_extractor.py": "25a225cf972ef7b08d2cc2fe3a724b28beccf2c658d70d12df004364a663ed71"
+  },
+  "gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+}

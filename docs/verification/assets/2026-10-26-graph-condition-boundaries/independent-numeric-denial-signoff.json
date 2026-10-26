@@ -1,0 +1,11 @@
+{
+  "tests": 28,
+  "passed": 28,
+  "mode": "local synthetic proposal guards",
+  "review": "numeric copular-denial boundary approved; ratio-category explanation remains supported",
+  "source_hashes": {
+    "/tmp/rg-numeric-tail-20261026/src/robingraph/retrieval/semantic_graph_intent.py": "8e31a908f6a0c067b17f505128a01f2fb0df69250647b059bfe6b48d6df4ba09",
+    "/tmp/rg-numeric-tail-20261026/src/robingraph/retrieval/graph_condition_extractor.py": "25a225cf972ef7b08d2cc2fe3a724b28beccf2c658d70d12df004364a663ed71"
+  },
+  "fresh_gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30"
+}

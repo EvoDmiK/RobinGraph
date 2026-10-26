@@ -1,0 +1,42 @@
+{
+  "browser": "Chromium",
+  "physical_mobile": false,
+  "rows": [
+    {
+      "width": 390,
+      "question": "까치랑 같은 먹이 생태를 가진 새를 알려줘",
+      "disposition": "abstain",
+      "topic": "ecological_related",
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 390,
+      "question": "직박구리랑 같은 먹이 생태를 가진 새를 알려줘",
+      "disposition": "answer",
+      "topic": "ecological_related",
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 1280,
+      "question": "까치랑 같은 먹이 생태를 가진 새를 알려줘",
+      "disposition": "abstain",
+      "topic": "ecological_related",
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 1280,
+      "question": "직박구리랑 같은 먹이 생태를 가진 새를 알려줘",
+      "disposition": "answer",
+      "topic": "ecological_related",
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    }
+  ]
+}

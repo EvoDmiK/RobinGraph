@@ -1,0 +1,8 @@
+{
+  "app_changed_since_task_start": [
+    "src/robingraph/retrieval/semantic_graph_intent.py",
+    "src/robingraph/retrieval/graph_condition_extractor.py",
+    "src/robingraph/generation.py"
+  ],
+  "preexisting_work_preserved": true
+}

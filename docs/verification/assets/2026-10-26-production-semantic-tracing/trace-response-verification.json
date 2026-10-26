@@ -1,0 +1,27 @@
+{
+  "rows": [
+    {
+      "trace_id": "tr-847473417ac06129045bac78baea2b35",
+      "experiment_50": true,
+      "exact_question_match": true,
+      "redacted_response_match": true,
+      "tags_match": true
+    },
+    {
+      "trace_id": "tr-acc9405e24b09790aaa7f0beaa0245b3",
+      "experiment_50": true,
+      "exact_question_match": true,
+      "redacted_response_match": true,
+      "tags_match": true
+    },
+    {
+      "trace_id": "tr-5f2ee3fe269d69be99d0cd2122817af5",
+      "experiment_50": true,
+      "exact_question_match": true,
+      "redacted_response_match": true,
+      "tags_match": true
+    }
+  ],
+  "new_chat_requests": 0,
+  "unique_trace_ids": 3
+}

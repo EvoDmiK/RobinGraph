@@ -1,0 +1,65 @@
+{
+  "target": "test",
+  "root_cause": "specific_fruit plant group incorrectly captured 새중에서; general order fruit pattern did not accept bird group wording",
+  "changes": [
+    "shared _ORDER_SCOPE accepts 새/새들/종/종들 + 중/중에/중에서 or 에 속하는 새 중에서",
+    "exact full-match general order fruit pattern evaluated before specific plant pattern",
+    "specific plant names retain insufficient_data behavior"
+  ],
+  "source_file": "src/robingraph/retrieval/graph_questions.py",
+  "tests": {
+    "graph_parser_and_api": 27,
+    "semantic_chat": 22,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "unit/API mock retrieval; intentional failure-path logs expected"
+  },
+  "actual_test_api": {
+    "passed": 6,
+    "mocked": false,
+    "general_questions_returned": 20,
+    "specific_fruit_cases_remain_insufficient": 2
+  },
+  "actual_public_browser": {
+    "passed": 2,
+    "widths": [
+      1280,
+      390
+    ],
+    "mocked": false,
+    "page_errors": 0,
+    "horizontal_overflow": false,
+    "physical_mobile": false
+  },
+  "deployment": {
+    "image": "robingraph-api:test-fruit-routing-1a6f00caccaa",
+    "source_sha256": "1a6f00caccaa3acb411b44f4a39171be46decc37716c0481136297099339c135",
+    "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+    "previous_image": "robingraph-api:test-graph-ui-0d36c7d79044",
+    "previous_release": "/Users/kimdove/robingraph-test/releases/graph-ui-0d36c7d79044-6ca51e",
+    "release": "/Users/kimdove/robingraph-test/releases/fruit-routing-1a6f00caccaa-568651",
+    "state": "verified",
+    "target": "test",
+    "uncommitted_source_snapshot": true,
+    "production_changed": false,
+    "fixture_network_none_smoke": true,
+    "physical_reboot_tested": false
+  },
+  "unchanged": [
+    "UI assets",
+    "DB/indexes/data",
+    "Production"
+  ],
+  "not_run": [
+    "full Python suite",
+    "frontend suite (no UI code change)",
+    "physical mobile/Safari/Firefox"
+  ],
+  "initial_checks": [
+    "Before change exact screenshot question returned abstain/insufficient_data/title 특정 열매 공유 via actual loopback TEST API.",
+    "Direct public urllib API call returned HTTP403; public browser POST and local TEST API both passed. No inference of app auth defect."
+  ],
+  "git_commit_push": false,
+  "graphify_update": "passed",
+  "source_manifest_matches": true
+}

@@ -1,0 +1,983 @@
+{
+  "image": "robingraph-api:test-blocked-tracing-54bb05bdd0b2",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "case": "meaning_choice",
+      "question": "청둥오리랑 비슷한 식생을 가진 새들을 알려줘",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-e2acb41e81fa2b0ad729e16e1769c7a9",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "ambiguous_conditions",
+        "failure_stage": "routing",
+        "response_api_disposition": "clarify",
+        "route_method": "deterministic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [],
+      "passed": true
+    },
+    {
+      "case": "missing_filter",
+      "question": "관찰 기록",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "observations",
+      "result_status": null,
+      "trace_id": "tr-c9b19e83a291ce4e866810f63f620395",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "filter_mismatch",
+        "failure_stage": "validation",
+        "response_api_disposition": "clarify",
+        "route_method": "explicit",
+        "selected_intent": "observations"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [],
+      "passed": true
+    },
+    {
+      "case": "normal_diet",
+      "question": "참새목 중 열매를 먹는 새는?",
+      "http_status": 200,
+      "api_disposition": "answer",
+      "result_kind": "graph_query",
+      "result_status": "answer",
+      "trace_id": "tr-c69c7748db012a546e55f30f597646dd",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "answer",
+        "response_reason": "none",
+        "failure_stage": "none",
+        "response_api_disposition": "answer",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "47bb5e763a5ddc5a",
+          "parent_id": "09890ea4e09adc08",
+          "inputs": null,
+          "outputs": {
+            "kind": "order_fruit",
+            "species": [],
+            "rank": {
+              "text": "참새목",
+              "start": 0,
+              "end": 3
+            },
+            "group": null,
+            "diet": "fruit_share",
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [
+              [
+                "diet",
+                {
+                  "text": "열매를",
+                  "start": 6,
+                  "end": 9
+                }
+              ]
+            ],
+            "source": "extractor",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "order_fruit",
+            "graph_intent.source": "extractor",
+            "graph_intent.disposition": "answer",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": "order_fruit"
+          }
+        },
+        {
+          "name": "graph_intent.candidates",
+          "span_id": "5fc5f02defe7f32f",
+          "parent_id": "47bb5e763a5ddc5a",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.status": "ok",
+            "graph_intent.top": "order_fruit",
+            "graph_intent.score": 0.991955,
+            "graph_intent.margin": 0.083909,
+            "graph_intent.elapsed_ms": 2043.9593789633363,
+            "graph_intent.embedding_calls": 1,
+            "graph_intent.prototype_calls": 1,
+            "graph_intent.prototype_requests": 1,
+            "graph_intent.prototype_batches": 2,
+            "graph_intent.model": "jinaai/jina-embeddings-v3",
+            "graph_intent.prototype_version": "graph-rg206-v1"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "empty_numeric",
+      "question": "참새목 중 몸무게가 1000000g을 넘는 새는?",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_kind": "graph_query",
+      "result_status": "empty",
+      "trace_id": "tr-22361744d7bd60ca0c8bfc0aa0688418",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "no_matching_results",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "efb32cdd78cc7f90",
+          "parent_id": "82baf539a19347c3",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "species": [],
+            "rank": {
+              "text": "참새목",
+              "start": 0,
+              "end": 3
+            },
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [
+              [
+                {
+                  "trait_name": "body_mass",
+                  "op": "num_gt",
+                  "value": null,
+                  "threshold": 1000000.0,
+                  "unit": "g",
+                  "qualifier": null
+                },
+                {
+                  "text": "몸무게가 1000000g을 넘는",
+                  "start": 6,
+                  "end": 23
+                }
+              ]
+            ],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "answer",
+            "graph_intent.template_matches_legacy": false,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "a46fdb8dbe92c026",
+          "parent_id": "efb32cdd78cc7f90",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.disposition": "answer"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "fbb544be7d2829fe",
+          "parent_id": "a46fdb8dbe92c026",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "4018c3a1b99a663d",
+          "parent_id": "fbb544be7d2829fe",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 1000000,
+                "unit": "g",
+                "surface": "몸무게가 1000000g을 넘는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "d5fed6ce28ba2182",
+          "parent_id": "fbb544be7d2829fe",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "171e9c07a465061b",
+          "parent_id": "fbb544be7d2829fe",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 1000000,
+                "unit": "g",
+                "surface": "몸무게가 1000000g을 넘는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "missing_reference_data",
+      "question": "까치랑 AVONET 먹이 생태 범주가 일치하는 다른 조류를 찾아줘요.",
+      "http_status": 200,
+      "api_disposition": "abstain",
+      "result_kind": "graph_query",
+      "result_status": "insufficient_data",
+      "trace_id": "tr-aacac05ea3ede93ca44174d9290a01de",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "abstain",
+        "response_reason": "insufficient_data",
+        "failure_stage": "retrieval",
+        "response_api_disposition": "abstain",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "15f94e29cbc8d4f2",
+          "parent_id": "3097b30d69cb57e3",
+          "inputs": null,
+          "outputs": {
+            "kind": "shared_diet",
+            "species": [
+              {
+                "text": "까치",
+                "start": 0,
+                "end": 2
+              }
+            ],
+            "rank": null,
+            "group": null,
+            "diet": "niche",
+            "habitat": null,
+            "relation": "same",
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [
+              [
+                "diet",
+                {
+                  "text": "먹이 생태 범주가 일치하는",
+                  "start": 11,
+                  "end": 25
+                }
+              ],
+              [
+                "relation",
+                {
+                  "text": "먹이 생태 범주가 일치하는",
+                  "start": 11,
+                  "end": 25
+                }
+              ]
+            ],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "shared_diet",
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "answer",
+            "graph_intent.template_matches_legacy": false,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "730dcbbe9748470e",
+          "parent_id": "15f94e29cbc8d4f2",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": "shared_diet",
+            "graph_intent.disposition": "answer"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "e02d2ce06cec0b18",
+          "parent_id": "730dcbbe9748470e",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "31380597466aa8ca",
+          "parent_id": "e02d2ce06cec0b18",
+          "inputs": null,
+          "outputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "까치",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가 일치하는",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "4bff729823d3327e",
+          "parent_id": "e02d2ce06cec0b18",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "bcc47c7203274d32",
+          "parent_id": "e02d2ce06cec0b18",
+          "inputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "까치",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가 일치하는",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "unsupported_activity",
+      "question": "습지에 사는 새를 모아 줘. 단 밤에만 활동하는 종으로.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-8d21778b6d8330ff73a3cd2ccb03094a",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "unresolved_conditions",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "8d2047eeb01039ab",
+          "parent_id": "4c4173df1872bfc8",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "species": [],
+            "rank": {
+              "text": "모아",
+              "start": 10,
+              "end": 12
+            },
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [
+              {
+                "text": "단",
+                "start": 16,
+                "end": 17
+              },
+              {
+                "text": "밤에만",
+                "start": 18,
+                "end": 21
+              },
+              {
+                "text": "활동하는",
+                "start": 22,
+                "end": 26
+              },
+              {
+                "text": "종으로",
+                "start": 27,
+                "end": 30
+              }
+            ],
+            "unsupported": [],
+            "ambiguity": [],
+            "evidence": [],
+            "source": "extractor",
+            "conditions": [
+              [
+                {
+                  "trait_name": "habitat",
+                  "op": "eq",
+                  "value": "Wetland",
+                  "threshold": null,
+                  "unit": null,
+                  "qualifier": null
+                },
+                {
+                  "text": "습지에 사는",
+                  "start": 0,
+                  "end": 6
+                }
+              ]
+            ],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.source": "extractor",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 4,
+            "graph_intent.ambiguity_count": 0,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "unresolved_conditions",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "36737ae6443c898c",
+          "parent_id": "8d2047eeb01039ab",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "extractor",
+            "graph_intent.kind": "taxon_traits",
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "2a7fa66c9d27dcc3",
+          "parent_id": "36737ae6443c898c",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "lexical"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "known_false_hold",
+      "question": "참새목 안에서 골라 줘. 숲이 서식지로 기록돼 있고 과일도 먹는 새를 찾고 있어.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-25a6955f2f714933c5d74765c3b99f6a",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "b21d0a7cb4a3d027",
+          "parent_id": "dcea20516002e616",
+          "inputs": null,
+          "outputs": {
+            "kind": null,
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [
+              "other"
+            ],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": null,
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 1,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "plan_validation_rejected",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "56e7b3c4e49000e4",
+          "parent_id": "b21d0a7cb4a3d027",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": null,
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "73380d4765664d30",
+          "parent_id": "56e7b3c4e49000e4",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "5e842384f61a98b6",
+          "parent_id": "73380d4765664d30",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록돼 있어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "과일도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "feb9592648df7d33",
+          "parent_id": "73380d4765664d30",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "a3c3d98e40de9e1e",
+          "parent_id": "73380d4765664d30",
+          "inputs": {
+            "kind": "taxon_traits",
+            "taxon": "참새목",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "surface": "숲이 서식지로 기록돼 있어"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "surface": "과일도 먹는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "surface not in question"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "shared_reference",
+      "question": "직박구리 말고 먹이 생태 범주가 직박구리와 같은 다른 종을 알려줘.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-8c9a25621398801737055cf40b4f6df8",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "plan_validation_rejected",
+        "failure_stage": "plan_validation",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "23d33d5e20ad9c63",
+          "parent_id": "cf66f0a657e9337d",
+          "inputs": null,
+          "outputs": {
+            "kind": null,
+            "species": [],
+            "rank": null,
+            "group": null,
+            "diet": null,
+            "habitat": null,
+            "relation": null,
+            "scope": null,
+            "specific_plant": null,
+            "negation": [],
+            "residual": [],
+            "unsupported": [],
+            "ambiguity": [
+              "other"
+            ],
+            "evidence": [],
+            "source": "semantic",
+            "conditions": [],
+            "unsupported_food": []
+          },
+          "attributes": {
+            "graph_intent.mode": "active",
+            "graph_intent.kind": null,
+            "graph_intent.source": "semantic",
+            "graph_intent.disposition": "clarify",
+            "graph_intent.template_matches_legacy": true,
+            "graph_intent.negation_count": 0,
+            "graph_intent.residual_count": 0,
+            "graph_intent.ambiguity_count": 1,
+            "graph_intent.legacy_kind": null,
+            "graph_intent.block_reason": "plan_validation_rejected",
+            "graph_intent.block_stage": "plan_validation"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "55becfab8c408e7a",
+          "parent_id": "23d33d5e20ad9c63",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.source": "semantic",
+            "graph_intent.kind": null,
+            "graph_intent.disposition": "clarify"
+          }
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "d002f83a36652a7d",
+          "parent_id": "55becfab8c408e7a",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "f2bae652eb3f68de",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": null,
+          "outputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "직박구리",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "ec2464a423bf453a",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": null,
+          "outputs": {
+            "issues": [],
+            "faithful": true
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model"
+          }
+        },
+        {
+          "name": "graph_intent.validation",
+          "span_id": "5bb94c5db077405f",
+          "parent_id": "d002f83a36652a7d",
+          "inputs": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "직박구리",
+            "conditions": [],
+            "relation_text": "먹이 생태 범주가",
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "outputs": null,
+          "attributes": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "shared_diet evidence"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "numeric_restatement",
+      "question": "까치속에서 몸무게가 180g을 넘는 새를 찾아줘. 180g인 기록은 제외해.",
+      "http_status": 200,
+      "api_disposition": "clarify",
+      "result_kind": "clarify",
+      "result_status": null,
+      "trace_id": "tr-c063baa14f51b7bf0d0cd83c8f8ba916",
+      "trace_state": "OK",
+      "tags": {
+        "response_disposition": "clarify",
+        "response_reason": "semantic_audit_rejected",
+        "failure_stage": "semantic_audit",
+        "response_api_disposition": "clarify",
+        "route_method": "semantic",
+        "selected_intent": "profile"
+      },
+      "found_by_tag_filter": true,
+      "diagnostic_spans": [
+        {
+          "name": "graph_intent.route",
+          "span_id": "4fbc0f2a38c0956f",
+          "parent_id": "199a69516b728c06",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "graph_intent.failure": "SemanticIntentError"
+          }
+        },
+        {
+          "name": "graph_intent.interpret",
+          "span_id": "fd1cd142481c40dd",
+          "parent_id": "4fbc0f2a38c0956f",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {}
+        },
+        {
+          "name": "graph_intent.selection",
+          "span_id": "fa7894223ad77a5e",
+          "parent_id": "fd1cd142481c40dd",
+          "inputs": null,
+          "outputs": null,
+          "attributes": {
+            "selected_interpreter": "semantic"
+          }
+        },
+        {
+          "name": "graph_intent.plan",
+          "span_id": "9a63274409dcaa76",
+          "parent_id": "fa7894223ad77a5e",
+          "inputs": null,
+          "outputs": {
+            "kind": "taxon_traits",
+            "taxon": "까치속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 180,
+                "unit": "g",
+                "surface": "몸무게가 180g을 넘는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "180g인 기록은 제외해"
+            ],
+            "unknown_relation": false
+          },
+          "attributes": {
+            "stage": "interpretation"
+          }
+        },
+        {
+          "name": "graph_intent.audit",
+          "span_id": "c83f985e183c056e",
+          "parent_id": "fa7894223ad77a5e",
+          "inputs": null,
+          "outputs": {
+            "issues": [
+              "The condition '180g인 기록은 제외해' was placed in 'unresolved' instead of being converted into an explicit operator like 'num_gt'."
+            ],
+            "faithful": false
+          },
+          "attributes": {
+            "stage": "semantic_audit",
+            "judgment_source": "model",
+            "reason": "semantic_audit_rejected"
+          }
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

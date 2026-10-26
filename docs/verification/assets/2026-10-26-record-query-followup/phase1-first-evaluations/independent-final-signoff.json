@@ -1,0 +1,21 @@
+{
+  "kind": "independent_static_review_and_mock_checks",
+  "time": "2026-10-26T16:29:11.475011",
+  "app_source_changes_by_reviewer": false,
+  "actual_api_calls": 0,
+  "gold_changed_after_freeze": false,
+  "source_sha256": {
+    "src/robingraph/retrieval/graph_condition_extractor.py": "76b26894445ba6e59f20201a74de6c309d483a8ce93d108cf1ee91e0bdc7afa4",
+    "src/robingraph/retrieval/semantic_graph_intent.py": "48ded9a33351b17f4e182f73cca7d3be9c164b91d9277fd2093c325851c6e0c5",
+    "scripts/evaluate_graph_question_families.py": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495"
+  },
+  "gold_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "review": "pass",
+  "checks": {
+    "field-proof-final-guards.log": "tion_cannot_be_consumed (test_record_union_guards.RecordUnionGuardTests.test_gaps_extra_taxon_and_unknown_condition_cannot_be_consumed) ... ok\ntest_original_negative_or_absent_fragment_is_not_covered (test_record_union_guards.RecordUnionGuardTests.test_original_negative_or_absent_fragment_is_not_covered) ... ok\ntest_proved_scope_evidence_request_union (test_record_union_guards.RecordUnionGuardTests.test_proved_scope_evidence_request_union) ... ok\n\n----------------------------------------------------------------------\nRan 16 tests in 0.072s\n\nOK\n",
+    "field-proof-prior-guards.log": "meric_fields (test_numeric_tail.NumericTailGuards.test_copular_recovery_preserves_numeric_fields) ... ok\ntest_indirect_question_ending_is_functional_but_not_a_noun_prefix (test_numeric_tail.NumericTailGuards.test_indirect_question_ending_is_functional_but_not_a_noun_prefix) ... ok\ntest_original_copular_denial_survives_numeric_prefix_recovery (test_numeric_tail.NumericTailGuards.test_original_copular_denial_survives_numeric_prefix_recovery) ... ok\n\n----------------------------------------------------------------------\nRan 32 tests in 0.059s\n\nOK\n",
+    "field-proof-permanent-tests.log": "ce_planned_field_and_unresolved_matrix (test_graph_record_field_proof.GraphRecordFieldProofTest.test_source_planned_field_and_unresolved_matrix) ... ok\ntest_original_containment_and_counterexamples (test_graph_record_fragments.GraphRecordFragmentsTest.test_original_containment_and_counterexamples) ... ok\ntest_original_evidence_and_counterexamples (test_graph_recorded_queries.GraphRecordedQueryTest.test_original_evidence_and_counterexamples) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 0.321s\n\nOK\n"
+  },
+  "change_since_attempt1": "Only unique original unresolved fragments wholly contained in an already proved positive record-request span can be consumed. Fresh24 remains sealed; next live regression after source change is feedback-exposed verification, not a blind rerun.",
+  "resolved_review_finding": "Explicit longest source field must equal planned trait for record-query build, reconciliation, frame and retained coverage. Empty unresolved and source-exact surface mismatch are also blocked."
+}

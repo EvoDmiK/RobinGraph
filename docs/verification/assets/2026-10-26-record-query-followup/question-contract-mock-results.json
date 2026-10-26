@@ -1,0 +1,130 @@
+[
+  {
+    "setting": "비율 조건을 뜻하는 건 아니야",
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 조건을 뜻하는 건 아니야",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 조건은 적용하지 마세요",
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 조건은 적용하지 마세요",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "먹이 구성 비율은 검색 조건에 넣지 마",
+    "actual": "answer"
+  },
+  {
+    "setting": "먹이 구성 비율은 검색 조건에 넣지 마",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 수치로 걸러 달라는 뜻은 아닙니다",
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 수치로 걸러 달라는 뜻은 아닙니다",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 제한은 적용하지 말아 줘",
+    "actual": "answer"
+  },
+  {
+    "setting": "비율 제한은 적용하지 말아 줘",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "구성비에 관한 조건은 사용하지 않아",
+    "actual": "answer"
+  },
+  {
+    "setting": "구성비에 관한 조건은 사용하지 않아",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "setting": "먹이 비중은 조회 제한에 사용하지 마세요",
+    "actual": "answer"
+  },
+  {
+    "setting": "먹이 비중은 조회 제한에 사용하지 마세요",
+    "provider_called": true,
+    "actual": "answer"
+  },
+  {
+    "extra_condition": "먹이 유형은 잡식이 아닙니다",
+    "actual": "clarify"
+  },
+  {
+    "extra_condition": "곤충을 먹지 않는 새만",
+    "actual": "clarify"
+  },
+  {
+    "extra_condition": "겨울에만 사는 새만",
+    "actual": "clarify"
+  },
+  {
+    "extra_condition": "서울에서 관찰된 종만",
+    "actual": "clarify"
+  },
+  {
+    "extra_condition": "먹이 유형은 잡식이 아닙니다",
+    "provider_not_called": true
+  },
+  {
+    "extra_condition": "곤충을 먹지 않는 새만",
+    "provider_not_called": true
+  },
+  {
+    "extra_condition": "겨울에만 사는 새만",
+    "provider_not_called": true
+  },
+  {
+    "extra_condition": "서울에서 관찰된 종만",
+    "provider_not_called": true
+  },
+  {
+    "share_conflict": true,
+    "actual": "clarify"
+  },
+  {
+    "biological_or_other_dimension": "먹이 비율이 낮지 않은",
+    "meta_not_matched": true
+  },
+  {
+    "biological_or_other_dimension": "먹이 구성 비율 30% 이상인",
+    "meta_not_matched": true
+  },
+  {
+    "biological_or_other_dimension": "구성비가 0인 종은 제외",
+    "meta_not_matched": true
+  },
+  {
+    "biological_or_other_dimension": "먹이 유형을 적용하지 마세요",
+    "meta_not_matched": true
+  },
+  {
+    "literal_original_surface": true,
+    "actual": "answer"
+  },
+  {
+    "invented_surface_rejected": true
+  },
+  {
+    "prompt_schema_contract_inspected": true
+  },
+  {
+    "audit_false_still_blocks": true
+  }
+]

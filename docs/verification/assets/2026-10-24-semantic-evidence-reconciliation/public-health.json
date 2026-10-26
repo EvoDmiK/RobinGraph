@@ -1,0 +1,29 @@
+{
+  "target": "TEST",
+  "checks": [
+    {
+      "user_agent": "Python-urllib/3.9",
+      "http_status": 403
+    },
+    {
+      "user_agent": "Mozilla/5.0",
+      "http_status": 200,
+      "body": {
+        "status": "ok",
+        "mode": "neo4j",
+        "taxonomy_release": "fixture-avlist-2025",
+        "deployment_target": "test"
+      }
+    }
+  ],
+  "final_release_check": {
+    "image": "robingraph-api:test-evidence-reconcile-4ab67ddcd227",
+    "http_status": 200,
+    "body": {
+      "status": "ok",
+      "mode": "neo4j",
+      "taxonomy_release": "fixture-avlist-2025",
+      "deployment_target": "test"
+    }
+  }
+}

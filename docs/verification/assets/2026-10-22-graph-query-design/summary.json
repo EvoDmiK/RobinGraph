@@ -1,0 +1,51 @@
+{
+  "target": "test",
+  "production_changed": false,
+  "git_commit_push": false,
+  "scope": "frontend graph_query design only; prior RG-203 backend unchanged",
+  "frontend": {
+    "command": "node --test tests/frontend/*.test.js",
+    "total": 319,
+    "passed": 319,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 244.42775
+  },
+  "browser": {
+    "response_mocking": false,
+    "passed": 10,
+    "widths": [
+      1280,
+      390
+    ],
+    "checks": [
+      "four real graph API responses per viewport",
+      "native details closed by default",
+      "Enter opens and closes species evidence",
+      "evidence source link visible after opening",
+      "notes toggle works",
+      "insufficient_data message visible",
+      "species button opens profile",
+      "document has no horizontal overflow",
+      "pageerror events absent"
+    ],
+    "console_events_collected": false,
+    "physical_mobile": false,
+    "Safari_Firefox": false
+  },
+  "source_manifest_matches_working_tree": true,
+  "graphify_update": "passed",
+  "python_suite_rerun": false,
+  "reason_python_not_rerun": "JS/CSS presentation change only; browser used actual TEST API",
+  "image": "robingraph-api:test-graph-ui-0d36c7d79044",
+  "source_sha256": "0d36c7d7904463e562473f8829f17ce2f555aa954ff0d274bd0e090f3c3f5d5b",
+  "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+  "uncommitted_source_snapshot": true,
+  "test_health": "verified",
+  "fixture_network_none_smoke": true,
+  "rollback_executed": false,
+  "notes": [
+    "Initial Node pass 319 before CSS; first CSS run 318 pass/1 fail because existing qualitative-box test scans all trailing CSS and matched unrelated user-select:none. Removed unnecessary graph-only declarations; final 319 pass.",
+    "TEST image sequence: 29bfdd0c4bfa (initial CSS), 7fd3009c5eeb (removed unnecessary user-select), 0d36c7d79044 (JS trailing whitespace cleanup only). No rollback or production actions."
+  ]
+}

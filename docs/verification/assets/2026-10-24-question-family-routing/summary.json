@@ -1,0 +1,105 @@
+{
+  "implementation": "validated-example-guided question interpretation and family regression",
+  "test_release": {
+    "image": "robingraph-api:test-question-family-06489197bcef",
+    "source_sha256": "06489197bcef917c5e74615e401398b0692073a9bb3b86f4589b847a2e7254bb",
+    "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+    "previous_image": "robingraph-api:test-question-family-107dc70094d3",
+    "previous_release": "/Users/kimdove/robingraph-test/releases/question-family-107dc70094d3-da2632",
+    "release": "/Users/kimdove/robingraph-test/releases/question-family-06489197bcef-a0b34e",
+    "state": "verified",
+    "target": "test",
+    "graph_intent_mode": "active",
+    "mode_history": [
+      "active"
+    ],
+    "uncommitted_source_snapshot": true,
+    "production_changed": false,
+    "fixture_network_none_smoke": true,
+    "release_source_manifest_verified": true
+  },
+  "source_manifest_matches": true,
+  "unit": {
+    "run": 1286,
+    "passed": 1246,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 24.078
+  },
+  "evaluations": {
+    "tuning": {
+      "case_counts": {
+        "pass": 6
+      },
+      "group_counts": {
+        "pass": 2
+      },
+      "classifications": {
+        "supported_answer": 4,
+        "unsupported_specific_food": 1,
+        "supported_no_matching_results": 1
+      }
+    },
+    "initial_holdout": {
+      "case_counts": {
+        "pass": 16,
+        "fail": 2
+      },
+      "group_counts": {
+        "pass": 4,
+        "fail": 2
+      },
+      "classifications": {
+        "supported_answer": 14,
+        "negated_condition": 1,
+        "supported_source_no_data": 1,
+        "false_hold": 2
+      }
+    },
+    "first_feedback": {
+      "case_counts": {
+        "pass": 22,
+        "fail": 2
+      },
+      "group_counts": {
+        "pass": 6,
+        "fail": 2
+      },
+      "classifications": {
+        "supported_answer": 18,
+        "unsupported_specific_food": 1,
+        "supported_no_matching_results": 1,
+        "negated_condition": 1,
+        "supported_source_no_data": 1,
+        "false_hold": 2
+      }
+    },
+    "final_feedback": {
+      "case_counts": {
+        "pass": 24
+      },
+      "group_counts": {
+        "pass": 8
+      },
+      "classifications": {
+        "supported_answer": 19,
+        "unsupported_specific_food": 1,
+        "supported_no_matching_results": 1,
+        "negated_condition": 1,
+        "supported_source_no_data": 2
+      }
+    }
+  },
+  "production_changed": false,
+  "bird_db_writes": 0,
+  "committed": false,
+  "pushed": false,
+  "limitations": [
+    "Model-authored gold, not human reviewed.",
+    "Final regression cases were exposed during implementation.",
+    "Initial unseen holdout:16/18,4/6families; preserved.",
+    "Specific plant food, unsupported negation and source gaps retain limits.",
+    "Previous Korean name resolution gap for 비둘기과 not changed or retested.",
+    "Physical mobile and browser interaction not tested; no frontend code changed."
+  ]
+}

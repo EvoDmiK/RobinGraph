@@ -1,0 +1,100 @@
+{
+  "source": "docs/verification/assets/2026-10-24-semantic-graph-followup/independent-active.json",
+  "source_sha256": "4d5e6f0a99096d36fa08870bf214914ef7e08a98ce75f511da2644e0e77086f6",
+  "review_method": "Read saved actual API responses only. No new API/DB call or code/gold edit.",
+  "first_measurement_counts": {
+    "supported": {
+      "pass": 7,
+      "fail": 5
+    },
+    "hold": {
+      "pass": 6
+    },
+    "preserve": {
+      "pass": 2
+    }
+  },
+  "failure_classifications": {
+    "supported_question_false_hold": 5,
+    "unsupported_counterexample": 0,
+    "evaluator_false_failure": 0
+  },
+  "rows": [
+    {
+      "id": "rg212-new-04",
+      "meaning_type": "single-species numeric trait condition",
+      "classification": "supported_question_false_hold",
+      "observation": "Generic relation clarification; exact internal rejection stage not observable.",
+      "evidence": {
+        "disposition": "clarify",
+        "result_kind": "clarify",
+        "has_question_answer": false,
+        "has_entity_resolution": false
+      },
+      "unsupported_counterexample": false,
+      "evaluator_false_failure": false
+    },
+    {
+      "id": "rg212-new-06",
+      "meaning_type": "whole-catalog lifestyle condition",
+      "classification": "supported_question_false_hold",
+      "observation": "Generic relation clarification; exact internal rejection stage not observable.",
+      "evidence": {
+        "disposition": "clarify",
+        "result_kind": "clarify",
+        "has_question_answer": false,
+        "has_entity_resolution": false
+      },
+      "unsupported_counterexample": false,
+      "evaluator_false_failure": false
+    },
+    {
+      "id": "rg212-new-08",
+      "meaning_type": "taxon and trophic-level condition",
+      "classification": "supported_question_false_hold",
+      "observation": "Explicit absence of an additional dietary-share condition is described as unconfirmed condition.",
+      "evidence": {
+        "disposition": "clarify",
+        "result_kind": "clarify",
+        "has_question_answer": false,
+        "has_entity_resolution": false
+      },
+      "unsupported_counterexample": false,
+      "evaluator_false_failure": false
+    },
+    {
+      "id": "rg212-new-11",
+      "meaning_type": "same-genus peers excluding reference",
+      "classification": "supported_question_false_hold",
+      "observation": "Other peers wording is described as unconfirmed condition.",
+      "evidence": {
+        "disposition": "clarify",
+        "result_kind": "clarify",
+        "has_question_answer": false,
+        "has_entity_resolution": false
+      },
+      "unsupported_counterexample": false,
+      "evaluator_false_failure": false
+    },
+    {
+      "id": "rg212-new-12",
+      "meaning_type": "two-species common taxonomy",
+      "classification": "supported_question_false_hold",
+      "observation": "Parts of the taxonomy request wording are described as unconfirmed conditions.",
+      "evidence": {
+        "disposition": "clarify",
+        "result_kind": "clarify",
+        "has_question_answer": false,
+        "has_entity_resolution": false
+      },
+      "unsupported_counterexample": false,
+      "evaluator_false_failure": false
+    }
+  ],
+  "limitations": [
+    "Cannot establish exact internal rejection cause for every failure from response alone.",
+    "No independent DB record re-query.",
+    "Complete taxonomy execution metadata would still be needed if taxonomy queries returned answers, but both taxonomy failures actually returned clarify; they are not successful profile routes wrongly scored as failures.",
+    "Keep first measurement unchanged. Do not tune code/gold on these results this turn."
+  ]
+}

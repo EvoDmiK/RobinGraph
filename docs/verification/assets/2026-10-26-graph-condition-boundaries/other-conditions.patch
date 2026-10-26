@@ -1,0 +1,210 @@
+--- a/src/robingraph/retrieval/semantic_graph_intent.py
++++ b/src/robingraph/retrieval/semantic_graph_intent.py
+@@ -28,7 +28,7 @@
+ from .graph_condition_extractor import (
+     _ASKS, _BARE, _COMMON, _DOCUMENT_REQUEST, _EAT, _GENUS, _HABITAT_SUBJECT, _KOREA, _MEASURES, _NEGATION, _NICHE_DIFFERENT,
+     _NICHE_SAME,
+-    _NUM, _RESIDENCY, _SAME_HABITAT, _SCIENTIFIC, _SHARE_WORDS, _TRAIT_LABELS, _UNIT, _UNITS, _UNSUPPORTED, GROUP_WORDS,
++    _NUM, _OPS, _RESIDENCY, _SAME_HABITAT, _SCIENTIFIC, _SHARE_WORDS, _TRAIT_LABELS, _UNIT, _UNITS, _UNSUPPORTED, GROUP_WORDS,
+     _FILLER, _PUNCT, _op, _pattern, _taxon_names, _tokens, _trait_surfaces, _valid_name, extract_graph_intent)
+ from .graph_intent_schema import GraphIntent, Span, execution_gate, span_of, validate_intent
+ from .graph_questions import CONDITION_OPS, TAXON_RANKS, TRAIT_CONDITIONS, TraitCondition, checked_conditions
+@@ -52,7 +52,7 @@
+            _GENUS, VETO_CUES)
+ _SAME_HABITAT_CUES = (_SAME_HABITAT,
+     r'(?:서식지|서식\s*환경|사는\s*곳)(?:가|는|이|은|도)?\s*(?:같|동일|겹)')
+-_OP_WORD = r'이상|이하|초과|미만|넘는|넘고|넘으며|보다\s*(?:큰|무거운|긴|넓은|높은|두꺼운|작은|가벼운|짧은|좁은|낮은|얇은)'
++_OP_WORD = _OPS
+ _RANGE = r'~|에서|부터|사이|까지'
+ _SHARE_ZERO = r'(?<![\d.])0(?:\.0+)?\s*%?\s*(?:(?:퍼센트|프로)\s*)?(?:초과|넘(?:는|게|고)|보다\s*(?:크|많|높|큰|많은|높은)\S*)'
+ 
+@@ -236,8 +236,26 @@
+                r'(?:제한|구분|상관)\s*없이')
+ 
+ 
++# Explicit absence of a dimension restriction is query framing, not biological negation.
++_META_DIMENSIONS = {k: v for k, v in {**_MEASURES, **_TRAIT_LABELS,
++    '서식지': 'habitat', '서식 환경': 'habitat', '사는 곳': 'habitat'}.items() if v is not None}
++_META_DIMENSION_CODES = {re.sub(r'\s+', '', k): v for k, v in _META_DIMENSIONS.items()}
++_UNRESTRICTED = re.compile(r'(?<![가-힣])(?P<dimension>'
++    + '|'.join(_pattern(k) for k in sorted(_META_DIMENSIONS, key=len, reverse=True))
++    + r')(?:은|는|이|가)?\s*제한(?:은|는|을|를)?\s*'
++      r'(?:두지\s*않(?:을게|겠습니다|겠다|고)|하지\s*말고|없(?:이|어|다))(?=\s|[.!?,]|$)')
++_DISCOURSE = re.compile(r'(?<![가-힣])(?:자료|데이터|목록)(?:을|를)?\s*(?:펼쳐서|살펴보고|읽어서|보여\s*줘)(?=\s|[.!?,]|$)')
++_RATE_META = re.compile(r'(?<![가-힣])비율\s*조건(?:을|이)?\s*(?:뜻하는|의미하는)\s*(?:건|것은|것이)\s*아니(?:야|다|에요|고)(?=\s|[.!?,]|$)')
++
++
++def _meta_spans(question):
++    return [Span(m.group(), m.start(), m.end()) for pattern in (_UNRESTRICTED, _DISCOURSE, _RATE_META)
++            for m in pattern.finditer(question)]
++
++
+ def _blank(question):
+     spans = [m.span() for pattern in (_SOURCE_SCOPE, _SCOPE_META) for m in re.finditer(pattern, question, re.I)]
++    spans += [(span.start, span.end) for span in _meta_spans(question)]
+     # Only an explicitly labelled canonical niche value may shadow a predation keyword.
+     # A predator noun or a predation/avoidance request must retain its veto.
+     niche_labels = [label for label, name in _TRAIT_LABELS.items() if name == 'trophic_niche']
+@@ -427,8 +445,11 @@
+ def _known_words_agree(question, pairs, names, relation_span=None):
+     """Every known vocabulary word lies in a name span or in a condition span whose (trait, value) it can mean."""
+     taken = []
++    meta = _meta_spans(question)
+     for pattern, meanings in _KNOWN:
+         for match in pattern.finditer(question):
++            if any(span.start <= match.start() and match.end() <= span.end for span in meta):
++                continue
+             if any(s <= match.start() < e for s, e in taken):
+                 continue   # part of a longer known word
+             taken.append((match.start(), match.end()))
+@@ -495,6 +516,15 @@
+         raise SemanticIntentError('bad unresolved/unknown_relation')
+     taxon, species, relation = _text(raw, 'taxon'), _text(raw, 'species'), _text(raw, 'relation_text')
+     pairs = _conditions(question, raw)
++    unrestricted = {_META_DIMENSION_CODES[re.sub(r'\s+', '', m['dimension'])]
++                    for m in _UNRESTRICTED.finditer(question)}
++    if (any(c.trait_name in unrestricted for c, _ in pairs)
++            or kind == 'shared_diet' and 'trophic_niche' in unrestricted):
++        raise _Reject('condition on explicitly unrestricted dimension')
++    if _RATE_META.search(question) and not (
++            any(c.trait_name == 'diet_category' and c.op == 'eq' for c, _ in pairs)
++            and not any(TRAIT_CONDITIONS[c.trait_name][1] == 'share' for c, _ in pairs)):
++        raise _Reject('ratio explanation is not proved by an explicit category condition')
+     if unresolved or raw.get('unknown_relation'):
+         reason = 'unsupported_relation' if raw.get('unknown_relation') else 'unresolved_conditions'
+         tracing.note_outcome(reason, 'plan_validation')
+@@ -630,8 +660,38 @@
+             candidate['relation_text'] = matches[0].group()
+             changes.append({'field': 'relation_text', 'rule': 'reference_relation',
+                             'before': text, 'after': candidate['relation_text']})
++    for index, item in enumerate(candidate['conditions']):
++        spec = TRAIT_CONDITIONS.get(item.get('trait_name'))
++        surface = item.get('surface', '')
++        if not spec or spec[1] != 'number' or span_of(question, surface.strip()) is None:
++            continue
++        written = list(re.finditer(rf'({_NUM})\s*({_UNIT})', surface))
++        if len(written) != 1 or len(list(re.finditer(_NUM, surface))) != 1:
++            continue
++        match = written[0]
++        unit, factor = _UNITS[match[2]]
++        normalized = round(float(match[1]) * factor, 6)
++        if (unit == spec[2] and item.get('unit') == match[2] and item.get('unit') != unit
++                and not isinstance(item.get('threshold'), bool) and item.get('threshold') == normalized):
++            before = item['unit']
++            item['unit'] = unit
++            changes.append({'field': f'conditions[{index}].unit', 'rule': 'original_numeric_unit',
++                            'before': before, 'after': unit})
+     token = tracing.begin_outcome()
+     try:
++        meta = {span.text for span in _meta_spans(question)}
++        # The denial of a ratio condition is redundant only for an explicit category, never a share query.
++        category_only = any(item.get('trait_name') == 'diet_category' and item.get('op') == 'eq'
++                            for item in candidate['conditions']) and not any(
++                                TRAIT_CONDITIONS.get(item.get('trait_name'), ('', ''))[1] == 'share'
++                                for item in candidate['conditions'])
++        if not category_only:
++            meta -= {m.group() for m in _RATE_META.finditer(question)}
++        kept = [text for text in unresolved if text.strip().rstrip('.!?') not in meta]
++        if len(kept) != len(unresolved):
++            candidate['unresolved'] = kept
++            changes.append({'field': 'unresolved', 'rule': 'explicit_query_framing', 'before': unresolved, 'after': kept})
++        unresolved = candidate.get('unresolved', [])
+         kept = [text for text in unresolved if not (
+             re.fullmatch(rf'(?:{_ASKS}|\s)+', text.rstrip('.!?'))
+             and re.search(r'(?:줘|줄래|주세요|주실래요|궁금해요|궁금해|궁금합니다|싶어요|싶어)$', text.rstrip('.!?'))
+@@ -642,9 +702,9 @@
+             changes.append({'field': 'unresolved', 'rule': 'terminal_request',
+                             'before': unresolved, 'after': kept})
+         unresolved = candidate.get('unresolved', [])
+-        if unresolved and raw.get('kind') == 'taxon_traits':
++        if unresolved and raw.get('kind') in ('taxon_traits', 'shared_diet'):
+             pairs = _conditions(question, candidate)
+-            names = [name] if (name := _taxon_span(question, candidate.get('taxon'))) is not None else []
++            names = [name] if (name := _taxon_span(question, candidate.get('taxon') if raw['kind'] == 'taxon_traits' else candidate.get('species'))) is not None else []
+             redundant = {span.text for span in _checked_exclusions(question, raw['kind'], names, pairs)}
+             kept = [text for text in unresolved if text.strip().rstrip('.!?') not in redundant]
+             if len(kept) != len(unresolved):
+--- a/src/robingraph/retrieval/graph_condition_extractor.py
++++ b/src/robingraph/retrieval/graph_condition_extractor.py
+@@ -64,7 +64,7 @@
+ _HABITAT_SUBJECT = r'(?<![가-힣])(?:서식지|서식\s*환경|사는\s*곳|사는\s*데)(?:가|는|도|이|를|와|은)?'
+ _SAME_HABITAT = r'같은\s*서식지(?:인데|이면서|이고|에서\s*사는|에\s*사는|를\s*공유하는)?'
+ _HABITAT_REL = r'겹치는데|겹치면서|겹치지만|겹치고|겹치는|같은데|같으면서|같지만|같고|같은|동일한|일치하는'
+-_SAME_FRUIT = r'(?:같은|똑같은|동일한)\s*열매'
++_SAME_FRUIT = r'(?:정확히\s*)?(?:같은|똑같은|동일한)\s*(?:식물\s*(?:종)?(?:의)?\s*)?열매'
+ _FRUGIVORE = (r'과실식(?:성)?(?:을|인|이|의|이면서|이고|이며)?(?:\s*하는)?(?:\s*범주(?:인|의|이면서|이고|이며)?)?|'
+               r'열매\s*섭식(?:\s*범주)?(?:인|의|을|하는|이면서|이고|이며|이자)?')
+ _TREE_FRUIT = r'(?<![가-힣])나무\s*열매(?:를|을|는)?'
+@@ -324,8 +324,8 @@
+ # so "-1g", "1,000g", ".5g", "1e3g" stay residual instead of losing a character as filler.
+ _NUM = r'(?<![\d.,\-−+eE])\d+(?:\.\d+)?(?![\d.,eE])'
+ _UNIT = '|'.join(sorted(map(re.escape, _UNITS), key=len, reverse=True))
+-_BIGGER = r'보다\s*(?:큰|무거운|긴|넓은|높은|두꺼운)'
+-_SMALLER = r'보다\s*(?:작은|가벼운|짧은|좁은|낮은|얇은)'
++_BIGGER = r'보다\s*(?:큰|무거운|무겁다는|무겁고|긴|길다는|길고|넓은|높은|두꺼운)'
++_SMALLER = r'보다\s*(?:작은|가벼운|가볍다는|가볍고|짧은|짧다는|짧고|좁은|낮은|얇은)'
+ _OPS = rf'이상|이하|초과|미만|넘는|넘고|넘으며|{_BIGGER}|{_SMALLER}'
+ _MEASURE_RE = '|'.join(_pattern(m) for m in sorted(_MEASURES, key=len, reverse=True))
+ _MEASURE = re.compile(rf'(?P<measure>{_MEASURE_RE})\s*(?:이|가|은|는)?\s*(?:'
+--- a/tests/test_graph_meta_unit_followup.py
++++ b/tests/test_graph_meta_unit_followup.py
+@@ -0,0 +1,59 @@
++"""Original-span query framing, unit labels and redundant exclusions remain fail-closed (mock plans)."""
++import copy
++from unittest import TestCase
++from robingraph.retrieval import semantic_graph_intent as s
++from robingraph.retrieval import graph_condition_extractor as e
++from robingraph.retrieval import graph_intent_schema as schema
++
++
++class GraphMetaUnitFollowupTest(TestCase):
++    def test_original_evidence_and_counterexamples(self):
++        def cond(name,op,surface,**kw):return dict(trait_name=name,op=op,surface=surface,**kw)
++        def tt(*conditions,unresolved=(),taxon=None):return dict(kind='taxon_traits',taxon=taxon,conditions=list(conditions),unresolved=list(unresolved),unknown_relation=False)
++        def gate(q,p):return schema.execution_gate(q,s.interpret(q,lambda *_:p))
++        rows=[]
++        def test(label,q,p,expect):
++         before=copy.deepcopy(p);after,changes=s.reconcile_graph_plan(q,p);actual=gate(q,after);assert p==before
++         rows.append(dict(label=label,gate=actual,expected=expect,changes=changes));assert actual==expect,(label,actual,after,changes)
++        p=tt(cond('body_mass','num_gt','몸무게가 0.2kg보다 무겁다는',threshold=200,unit='g'))
++        test('descriptive_comparison','몸무게가 0.2kg보다 무겁다는 새를 찾아줘',p,'answer')
++        p=tt(cond('beak_width','num_lt','부리 너비 2cm 미만',threshold=20,unit='cm'))
++        test('unit_label_only','자료를 펼쳐서 부리 너비 2cm 미만인 새를 찾아줘',p,'answer')
++        for n in (2,30):
++         p=tt(cond('beak_width','num_lt','부리 너비 2cm 미만',threshold=n,unit='cm'))
++         test('wrong_threshold_not_repaired','자료를 펼쳐서 부리 너비 2cm 미만인 새를 찾아줘',p,'clarify')
++        q='부척 길이가 20mm 이상인 새를 찾아줘. 날개 길이 제한은 두지 않을게.'
++        p=tt(cond('tarsus_length','num_gte','부척 길이가 20mm 이상인',threshold=20,unit='mm'),unresolved=['날개 길이 제한은 두지 않을게.'])
++        test('unrestricted_other_measure',q,p,'answer')
++        p=tt(cond('wing_length','num_gte','날개 길이가 20mm 이상인',threshold=20,unit='mm'),unresolved=['날개 길이 제한은 두지 않을게.'])
++        test('unrestricted_conflicting_measure','날개 길이가 20mm 이상인 새. 날개 길이 제한은 두지 않을게.',p,'clarify')
++        q='사는 곳은 제한하지 말고 몸무게 100g 이상인 새를 찾아줘'
++        p=tt(cond('body_mass','num_gte','몸무게 100g 이상인',threshold=100,unit='g'),unresolved=['사는 곳은 제한하지 말고'])
++        test('unrestricted_habitat',q,p,'answer')
++        p=tt(cond('habitat','eq','숲에 사는',value='Forest'),unresolved=['숲에 살지 않는'])
++        test('biological_negation_not_removed','숲에 사는 새. 숲에 살지 않는',p,'clarify')
++        q='자료를 펼쳐서 먹이 유형이 식물·씨앗인 새를 찾아줘. 비율 조건을 뜻하는 건 아니야.'
++        p=tt(cond('diet_category','eq','먹이 유형이 식물·씨앗인',value='PlantSeed'),unresolved=['자료를 펼쳐서','비율 조건을 뜻하는 건 아니야.'])
++        test('category_discourse',q,p,'answer')
++        p=tt(cond('diet_distribution','share_gt','씨앗을 먹는',value='seed',threshold=0),unresolved=['비율 조건을 뜻하는 건 아니야.'])
++        test('rate_denial_not_removed_for_share','씨앗을 먹는 새. 비율 조건을 뜻하는 건 아니야.',p,'clarify')
++        q='황조롱이와 먹이 생태 범주가 같은 새. 황조롱이는 빼고'
++        p=dict(kind='shared_diet',species='황조롱이',relation_text='먹이 생태 범주가 같은',conditions=[],unresolved=['황조롱이는 빼고'],unknown_relation=False)
++        test('self_exclusion',q,p,'answer')
++        p['unresolved']=['직박구리는 빼고'];test('other_species_exclusion',q.replace('황조롱이는 빼고','직박구리는 빼고'),p,'clarify')
++        for dimension in ('서식환경','서식 환경','사는곳','사는 곳'):
++         q=dimension+' 제한하지 말고 몸무게 100g 이상인 새를 찾아줘'
++         p=tt(cond('body_mass','num_gte','몸무게 100g 이상인',threshold=100,unit='g'),unresolved=[dimension+' 제한하지 말고'])
++         test('whitespace_dimension',q,p,'answer')
++        q='부리 길이는 제한하지 말고 몸무게 100g 이상인 새를 찾아줘'
++        p=tt(cond('body_mass','num_gte','몸무게 100g 이상인',threshold=100,unit='g'),unresolved=['부리 길이는 제한하지 말고'])
++        test('ambiguous_dimension_not_proved',q,p,'clarify')
++        q='숲에 사는 새. 비율 조건을 뜻하는 건 아니야.'
++        p=tt(cond('habitat','eq','숲에 사는',value='Forest'))
++        test('ratio_explanation_requires_category',q,p,'clarify')
++        q='먹이 범주는 제한하지 말고 청둥오리와 같은 먹이 생태 범주를 가진 새'
++        p=dict(kind='shared_diet',species='청둥오리',relation_text='같은 먹이 생태 범주를 가진',conditions=[],unresolved=['먹이 범주는 제한하지 말고'],unknown_relation=False)
++        test('unrestricted_conflicts_with_relation',q,p,'clarify')
++        for q in ('황조롱이와 같은 식물 종의 열매를 먹는 새는?', '해안에 사는 새 중 황조롱이와 정확히 같은 식물 종의 열매를 먹는 새는?', '황조롱이와 같은 식물 종의 열매를 먹지 않는 새는?'):
++         i=e.extract_graph_intent(q);g=schema.execution_gate(q,i);rows.append(dict(label='specific_food',question=q,gate=g,kind=i.kind,residual=[x.text for x in i.residual]))
++         assert g==('clarify'if '않는'in q else'insufficient_data')

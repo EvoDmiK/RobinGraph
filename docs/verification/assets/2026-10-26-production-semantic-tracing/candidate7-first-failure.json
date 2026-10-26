@@ -1,0 +1,16 @@
+{
+  "image": "ghcr.io/evodmik/robingraph@sha256:851bc96d358374f0dce37fa95638e905d79845c5c036a44590b20c57ef22d659",
+  "base_revision": "834c5353ca45f0640152ca4849548cd48818b266",
+  "approved_source_sha256": "6a95918a55332aa0195c07bf4e5a9c60a7cb006b67fd56d255d683f22c72c922",
+  "actual_api": true,
+  "response_mocking": false,
+  "api_cases": [],
+  "published_ports": false,
+  "domain_db_write_commands": false,
+  "mlflow_trace_writes_expected": true,
+  "experiment_id": "50",
+  "experiment_name": "robingraph-prod",
+  "state": "error",
+  "error_type": "TypeError",
+  "live_container_unchanged": true
+}

@@ -1,0 +1,734 @@
+{
+  "evaluation": "immutable first-attempt fresh36, frozen image06489197bcef",
+  "source": "docs/verification/assets/2026-10-26-fresh-question-families/holdout-traces.json",
+  "source_sha256": "9b6a3b2e43e11885a026cc53448d0d8c17a9769cc59c75068ac14ad6cb3bfd1b",
+  "summary": {
+    "cases": 36,
+    "groups": 12,
+    "pass": 23,
+    "fail": 13,
+    "groups_pass": 4,
+    "supported_false_hold": 12,
+    "specific_food_wrong_hold_reason": 1,
+    "unsafe_answers_observed": 0,
+    "wrong_executed_plans_observed": 0,
+    "provider_transport_errors_observed": 0,
+    "genuine_taxonomy_or_name_source_failures_observed": 0
+  },
+  "failure_groups": [
+    {
+      "id": "category_value_misread_as_taxon",
+      "priority": 1,
+      "cases": [
+        "V2-03A",
+        "V2-03B",
+        "V2-03C",
+        "V2-05A",
+        "V2-05B",
+        "V2-05C"
+      ],
+      "classification": "false_hold",
+      "confidence": "high: trace residual + literal regex/code path",
+      "cause": "Capitalized single English category values Omnivore/Invertivore/Terrestrial/Generalist match the scientific-name regex. _named_taxa adds them without catalog validation; _taxa_kept requires them in taxon name spans even though they are condition values. Correct candidate conditions and faithful=true audit are then rejected locally.",
+      "locations": [
+        "src/robingraph/retrieval/graph_condition_extractor.py:211 _SCIENTIFIC",
+        "src/robingraph/retrieval/semantic_graph_intent.py:336 _named_taxa",
+        "src/robingraph/retrieval/semantic_graph_intent.py:358 _taxa_kept",
+        "src/robingraph/retrieval/semantic_graph_intent.py:558 _build"
+      ],
+      "distinction": "Not a genuine taxonomic catalog ambiguity, missing source name, or provider transport error.",
+      "evidence": [
+        {
+          "case": "V2-03A",
+          "trace_id": "tr-7a174a223688a596bc05356dafc21376",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Omnivore",
+              "start": 17,
+              "end": 25
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "개똥지빠귀속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "trophic_niche",
+                "op": "eq",
+                "value": "Omnivore",
+                "surface": "먹이 생태 범주가 Omnivore인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        },
+        {
+          "case": "V2-03B",
+          "trace_id": "tr-5c377565932ee894e6565e9085ebf931",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Omnivore",
+              "start": 25,
+              "end": 33
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "개똥지빠귀속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "trophic_niche",
+                "op": "eq",
+                "value": "Omnivore",
+                "surface": "대표 먹이 생태 범주 Omnivore"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        },
+        {
+          "case": "V2-03C",
+          "trace_id": "tr-6e9c531545a5eaceb1bbaa48e25fe350",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Invertivore",
+              "start": 22,
+              "end": 33
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "개똥지빠귀속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "trophic_niche",
+                "op": "eq",
+                "value": "Invertivore",
+                "surface": "대표 먹이 생태 범주가 Invertivore인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        },
+        {
+          "case": "V2-05A",
+          "trace_id": "tr-6616e03f68f0c71e1f66334b20e8c52b",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Terrestrial",
+              "start": 25,
+              "end": 36
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": null,
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "primary_lifestyle",
+                "op": "eq",
+                "value": "Terrestrial",
+                "surface": "생활 방식이 Terrestrial로"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        },
+        {
+          "case": "V2-05B",
+          "trace_id": "tr-575688c3da3f5480390ec5a8a20c1e27",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Terrestrial",
+              "start": 9,
+              "end": 20
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": null,
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "primary_lifestyle",
+                "op": "eq",
+                "value": "Terrestrial",
+                "surface": "생활 방식 범주 Terrestrial인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        },
+        {
+          "case": "V2-05C",
+          "trace_id": "tr-a00a5b689fd21888f62563f7444533b7",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "Generalist",
+              "start": 18,
+              "end": 28
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": null,
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "primary_lifestyle",
+                "op": "eq",
+                "value": "Generalist",
+                "surface": "생활 방식 범주가 Generalist로"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "condition without its own support, or a named taxon left out"
+          }
+        }
+      ]
+    },
+    {
+      "id": "discourse_meta_restriction_misclassified",
+      "priority": 2,
+      "cases": [
+        "V2-02A",
+        "V2-10C"
+      ],
+      "classification": "false_hold",
+      "confidence": "high for observed unresolved; model-internal reason unobservable",
+      "cause": "Candidate provider leaves discourse or explicit removal of a restriction in unresolved: 자료를 펼쳐서 / 비율 조건을 뜻하는 건 아니야 / 날개 길이 제한은 두지 않을게. Audit says faithful=true, but _build immediately holds unresolved candidates. These phrases do not add a biological negative condition.",
+      "locations": [
+        "src/robingraph/retrieval/semantic_graph_intent.py:488 _build unresolved branch"
+      ],
+      "distinction": "Provider interpretation plus deterministic fail-closed propagation; not source no-data.",
+      "evidence": [
+        {
+          "case": "V2-02A",
+          "trace_id": "tr-f74d9f5d96191b7812660e07c4f07b30",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "unresolved_conditions",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "자료를 펼쳐서",
+              "start": 4,
+              "end": 11
+            },
+            {
+              "text": "비율 조건을 뜻하는 건 아니야.",
+              "start": 39,
+              "end": 56
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "되새과",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "diet_category",
+                "op": "eq",
+                "value": "PlantSeed",
+                "surface": "먹이 유형이 PlantSeed인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "자료를 펼쳐서",
+              "비율 조건을 뜻하는 건 아니야."
+            ],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "unresolved_conditions"
+          }
+        },
+        {
+          "case": "V2-10C",
+          "trace_id": "tr-1be27a52ec4ed7d7b7fe3af658bf407f",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "unresolved_conditions",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "날개 길이 제한은 두지 않을게.",
+              "start": 32,
+              "end": 49
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": null,
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "tarsus_length",
+                "op": "num_gte",
+                "threshold": 20,
+                "unit": "mm",
+                "surface": "부척 길이가 20mm 이상인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [
+              "날개 길이 제한은 두지 않을게."
+            ],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "unresolved_conditions"
+          }
+        }
+      ]
+    },
+    {
+      "id": "comparison_surface_lexicon_gap",
+      "priority": 2,
+      "cases": [
+        "V2-07B"
+      ],
+      "classification": "false_hold",
+      "confidence": "high: exact provider candidate, rejection detail, literal _OP_WORD absence",
+      "cause": "Candidate correctly converts 0.2kg to 200g and uses num_gt. Original evidence surface says 0.2kg보다 무겁다는. _numbers_agree requires a comparison matching _OP_WORD, which lists 보다 무거운 but not 보다 무겁다는. Local rejection is numbers or known words disagree; this is not evidence of failed kg conversion.",
+      "locations": [
+        "src/robingraph/retrieval/semantic_graph_intent.py:55 _OP_WORD",
+        "src/robingraph/retrieval/semantic_graph_intent.py:273 _numbers_agree",
+        "src/robingraph/retrieval/semantic_graph_intent.py:563 _build"
+      ],
+      "evidence": [
+        {
+          "case": "V2-07B",
+          "trace_id": "tr-a1ce2e8659e778a57d7810582187c80e",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "plan_validation_rejected",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "0.2kg",
+              "start": 17,
+              "end": 22
+            }
+          ],
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "황조롱이",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 200,
+                "unit": "g",
+                "surface": "0.2kg보다 무겁다는"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [],
+            "faithful": true
+          },
+          "validation": {
+            "stage": "plan_validation",
+            "reason": "plan_validation_rejected",
+            "rejection_detail": "numbers or known words disagree"
+          }
+        }
+      ]
+    },
+    {
+      "id": "provider_numeric_unit_inconsistency",
+      "priority": 3,
+      "cases": [
+        "V2-09A"
+      ],
+      "classification": "false_hold_safe_rejection",
+      "confidence": "direct candidate/audit trace",
+      "cause": "Candidate uses threshold 20 with unit cm for the original 2cm request, rather than canonical threshold20/mm. Audit faithful=false rejects the inconsistency. The wrong numeric plan did not execute. The audit text discusses converting the erroneous 20cm to200mm; gold remains20mm.",
+      "locations": [
+        "graph_intent.plan span in actual trace",
+        "graph_intent.audit span in actual trace",
+        "src/robingraph/retrieval/semantic_graph_intent.py:663 interpret provider-error handling"
+      ],
+      "distinction": "Provider plan error caught by audit, no infrastructure outage established.",
+      "evidence": [
+        {
+          "case": "V2-09A",
+          "trace_id": "tr-a7ce1aa6844606f80e1ebe920a0ddf72",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "semantic_audit_rejected",
+            "failure_stage": "semantic_audit",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": null,
+          "candidate": {
+            "kind": "taxon_traits",
+            "taxon": "매속",
+            "species": null,
+            "conditions": [
+              {
+                "trait_name": "beak_length_culmen",
+                "op": "num_gte",
+                "threshold": 20,
+                "unit": "cm",
+                "surface": "부리 길이 중 culmen 측정치가 2cm 이상인"
+              }
+            ],
+            "relation_text": null,
+            "unresolved": [],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [
+              "The unit for beak_length_culmen in the allowed vocabulary is mm, but the proposed plan uses threshold 20 with unit cm without converting it to 200 mm."
+            ],
+            "faithful": false
+          },
+          "validation": null
+        }
+      ]
+    },
+    {
+      "id": "no_habitat_restriction_lexical_negation",
+      "priority": 2,
+      "cases": [
+        "V2-11B"
+      ],
+      "classification": "false_hold",
+      "confidence": "direct extractor output; no semantic candidate/audit span in this row",
+      "cause": "사는 곳은 제한하지 말고 expresses absence of habitat filtering. Extractor records 말고 as negation, retains habitat_shared_diet without explicit habitat and returns negated_conditions before semantic planning can recover the unfiltered shared_diet intent.",
+      "locations": [
+        "src/robingraph/retrieval/graph_condition_extractor.py:49 _NEGATION",
+        "src/robingraph/retrieval/graph_condition_extractor.py:496 _extract",
+        "graph_intent.route span in actual trace"
+      ],
+      "distinction": "Meta restriction removal, not a biological negative predicate.",
+      "evidence": [
+        {
+          "case": "V2-11B",
+          "trace_id": "tr-8f11c2e12b0bf79d7c63b8f8b9937792",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "negated_conditions",
+            "failure_stage": "plan_validation",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": [
+            {
+              "text": "사는",
+              "start": 0,
+              "end": 2
+            },
+            {
+              "text": "곳은",
+              "start": 3,
+              "end": 5
+            },
+            {
+              "text": "제한하지",
+              "start": 6,
+              "end": 10
+            },
+            {
+              "text": "AVONET",
+              "start": 22,
+              "end": 28
+            },
+            {
+              "text": "다른",
+              "start": 42,
+              "end": 44
+            }
+          ],
+          "candidate": null,
+          "audit": null,
+          "validation": null
+        }
+      ]
+    },
+    {
+      "id": "reference_exclusion_not_absorbed_by_provider",
+      "priority": 3,
+      "cases": [
+        "V2-12B"
+      ],
+      "classification": "false_hold",
+      "confidence": "direct candidate/audit trace",
+      "cause": "Provider leaves 황조롱이는 빼고 unresolved despite shared_diet self-exclusion semantics. Audit rejects faithful=false for unrepresented exclusion. No local _checked_exclusions execution is evidenced because rejection happened earlier in provider/audit.",
+      "locations": [
+        "graph_intent.plan and graph_intent.audit spans in actual trace",
+        "src/robingraph/retrieval/semantic_graph_intent.py:386 _checked_exclusions (intended downstream contract only)",
+        "src/robingraph/retrieval/semantic_graph_intent.py:663 interpret"
+      ],
+      "evidence": [
+        {
+          "case": "V2-12B",
+          "trace_id": "tr-b7bedd041671ad375dd5c9057933a06d",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "semantic_audit_rejected",
+            "failure_stage": "semantic_audit",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": null,
+          "candidate": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "황조롱이",
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Coastal",
+                "threshold": null,
+                "unit": null,
+                "surface": "해안 서식"
+              }
+            ],
+            "relation_text": "먹이 생태 범주가 황조롱이와 같은",
+            "unresolved": [
+              "황조롱이는 빼고"
+            ],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [
+              "The plan placed the exclusion of the reference species ('황조롱이는 빼고') into the unresolved list instead of applying it as a strict self-exclusion or condition."
+            ],
+            "faithful": false
+          },
+          "validation": null
+        }
+      ]
+    },
+    {
+      "id": "specific_food_gap_not_identified",
+      "priority": 3,
+      "cases": [
+        "V2-12C"
+      ],
+      "classification": "wrong_hold_reason_safe_hold",
+      "confidence": "direct candidate/audit and strict score",
+      "cause": "Provider proposes shared_diet with exact plant species food wording unresolved; audit correctly rejects it as unsupported plant-level identity. API clarifies generically rather than giving the required specific-food insufficient_data path/metadata. Safe hold is observed, but the specific missing-data reason contract fails.",
+      "locations": [
+        "graph_intent.plan and graph_intent.audit spans in actual trace",
+        "scripts/evaluate_graph_question_families.py:183 unsupported_specific_food branch"
+      ],
+      "distinction": "Not an unsafe answer or falsely executed broad dietary relation.",
+      "evidence": [
+        {
+          "case": "V2-12C",
+          "trace_id": "tr-a941fb20a9b0a74fc942c4b58f4c32a9",
+          "tags": {
+            "response_disposition": "clarify",
+            "response_reason": "semantic_audit_rejected",
+            "failure_stage": "semantic_audit",
+            "response_api_disposition": "clarify",
+            "route_method": "semantic",
+            "selected_intent": "profile"
+          },
+          "residual": null,
+          "candidate": {
+            "kind": "shared_diet",
+            "taxon": null,
+            "species": "황조롱이",
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Coastal",
+                "surface": "해안에"
+              }
+            ],
+            "relation_text": "정확히 같은 식물 종의 열매를 먹는",
+            "unresolved": [
+              "정확히 같은 식물 종의 열매를 먹는"
+            ],
+            "unknown_relation": false
+          },
+          "audit": {
+            "issues": [
+              "The question asks for birds eating fruit of the exact same plant species as the kestrel, but the shared_diet kind in the current schema only supports sharing diet categories or food shares, not exact plant species-level matching, leaving this constraint unresolved."
+            ],
+            "faithful": false
+          },
+          "validation": null
+        }
+      ]
+    }
+  ],
+  "valid_nonanswer_results": {
+    "source_no_data": [
+      "V2-08A",
+      "V2-08B",
+      "V2-08C"
+    ],
+    "reason": "Catalog-valid subspecies and exact tail_length plan; response explicitly says no directly attached subspecies data, coverage scoped1/evaluable0/matched0; parent species data not substituted.",
+    "empty": [
+      "V2-01C",
+      "V2-06A",
+      "V2-06B",
+      "V2-07A",
+      "V2-07C",
+      "V2-12A"
+    ],
+    "interpretation": "Exact requested plans with no matching returned rows; not false holds."
+  },
+  "limits": [
+    "Read-only saved same-request traces and source inspection; no parser/semantic function execution, retries, API calls or DB queries.",
+    "No independent biological claim/source truth audit or DB result completeness verification.",
+    "New questions were disclosed only after frozen first measurement; future use is feedback-exposed regression.",
+    "Candidate generation and semantic audit are provider behaviors; local validator causes are distinguished."
+  ]
+}

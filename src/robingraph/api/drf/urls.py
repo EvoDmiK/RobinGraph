@@ -26,7 +26,7 @@ def _page(name: str) -> bytes:
 
 
 def frozen_openapi(*, ingest: bool) -> dict:
-    """The OpenAPI document recorded from the pre-migration application."""
+    """The packaged public contract, with reviewed additive feature updates."""
 
     return json.loads(_page("openapi_ingest.json" if ingest else "openapi.json"))
 

@@ -1,0 +1,245 @@
+{
+  "provider": "mocked deliberately incomplete/malicious raw plans; independent Gemini audit NOT invoked",
+  "scope": "current root semantic module; mock provider; no API/DB/network",
+  "rows": [
+    {
+      "id": "SF-01",
+      "question": "직박구리와 같은 먹이 범주의 새에서 까치를 빼줘",
+      "expected": "must_hold",
+      "rationale": "타종 제외를 자기 제외로 완화 금지",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "semantic",
+      "provider_calls": 2,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "직박구리",
+        "relation_text": "같은 먹이 범주의"
+      }
+    },
+    {
+      "id": "SF-02",
+      "question": "청둥오리랑 먹이 범주가 같지만 청둥오리는 아닌 새",
+      "expected": "may_answer_shared_diet",
+      "rationale": "기준 종 자신 제외만 기본 동작",
+      "gate": "clarify",
+      "direct_build_gate": "answer",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "청둥오리",
+        "relation_text": "먹이 범주가 같지만"
+      }
+    },
+    {
+      "id": "SF-03",
+      "question": "청둥오리 말고 직박구리와 먹이 범주가 같은 새",
+      "expected": "must_hold_or_preserve_distinct_reference",
+      "rationale": "앞 종 제외를 뒤 기준종 자기 제외로 처리 금지",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "semantic",
+      "provider_calls": 2,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "직박구리",
+        "relation_text": "먹이 범주가 같은"
+      }
+    },
+    {
+      "id": "SF-04",
+      "question": "청둥오리와 직박구리와 같은 먹이 범주의 다른 새",
+      "expected": "must_hold",
+      "rationale": "동일 기준 반복 아님: 두 종 의미 유지",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "semantic",
+      "provider_calls": 2,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "청둥오리",
+        "relation_text": "같은 먹이 범주의"
+      }
+    },
+    {
+      "id": "SF-05",
+      "question": "청둥오리와 청둥오리의 먹이 범주가 같지 않은 다른 새",
+      "expected": "must_hold",
+      "rationale": "기준명 반복으로 부정관계 제거 금지",
+      "gate": "not_graph",
+      "direct_build_gate": "answer",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "청둥오리",
+        "relation_text": "먹이 범주가 같지 않은"
+      }
+    },
+    {
+      "id": "SF-06",
+      "question": "오리과 중 몸무게 200g 초과이며 200g은 제외해",
+      "expected": "may_answer_strict_gt",
+      "rationale": "같은 엄격 경계 재진술만 허용",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "taxon_traits",
+        "taxon": "오리과",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "surface": "몸무게 200g 초과",
+            "value": null,
+            "threshold": 200,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SF-07",
+      "question": "오리과 중 몸무게 200g 이상이며 200g은 제외해",
+      "expected": "must_hold_or_propose_strict_gt",
+      "rationale": "gte와 경계제외는 같은 조건 아님",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "taxon_traits",
+        "taxon": "오리과",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gte",
+            "surface": "몸무게 200g 이상",
+            "value": null,
+            "threshold": 200,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SF-08",
+      "question": "오리과 중 몸무게 200g 초과이며 300g은 제외해",
+      "expected": "must_hold",
+      "rationale": "다른 수치 제외를 재진술로 소거 금지",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "taxon_traits",
+        "taxon": "오리과",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "surface": "몸무게 200g 초과",
+            "value": null,
+            "threshold": 200,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SF-09",
+      "question": "오리과 중 몸무게 200g 미만이며 200g도 포함해",
+      "expected": "must_hold",
+      "rationale": "엄격 비교와 경계 포함 모순 소거 금지",
+      "gate": "clarify",
+      "direct_build_gate": "clarify",
+      "source": "semantic",
+      "provider_calls": 2,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "taxon_traits",
+        "taxon": "오리과",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_lt",
+            "surface": "몸무게 200g 미만",
+            "value": null,
+            "threshold": 200,
+            "unit": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "SF-10",
+      "question": "숲에 사는 새를 모아 줘. 단 밤에만 활동하는 종으로",
+      "expected": "must_hold_or_preserve_both_traits",
+      "rationale": "명령형 모아 제거가 활동조건 삭제 허용 아님",
+      "gate": "clarify",
+      "direct_build_gate": "answer",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "taxon_traits",
+        "taxon": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "surface": "숲에 사는",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "SF-11",
+      "question": "모아와 먹이 범주가 같은 새를 알려줘",
+      "expected": "must_preserve_reference_or_specific_hold",
+      "rationale": "실제 이름 위치의 모아를 명령형 취급 금지",
+      "gate": "answer",
+      "direct_build_gate": "answer",
+      "source": "semantic",
+      "provider_calls": 2,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "모아",
+        "relation_text": "먹이 범주가 같은"
+      }
+    },
+    {
+      "id": "SF-12",
+      "question": "청둥오리랑 같은 먹이 범주인 다른 새 중 대한민국에서 관찰된 종만",
+      "expected": "must_hold_or_preserve_locality",
+      "rationale": "다른 새 정상화로 국내관찰 조건 소거 금지",
+      "gate": "not_graph",
+      "direct_build_gate": "answer",
+      "source": "extractor",
+      "provider_calls": 1,
+      "safety_passed": true,
+      "raw_mock_plan": {
+        "kind": "shared_diet",
+        "species": "청둥오리",
+        "relation_text": "같은 먹이 범주인"
+      }
+    }
+  ],
+  "raw_mock_omission_cases": [],
+  "audit_trust_boundary": "Raw mock bypasses compulsory generation transport semantic audit. An accepted raw plan is not proof of an end-to-end production omission. Negative/unsupported cues veto graph_intent_handler before interpretation even when direct interpret accepts a mock."
+}

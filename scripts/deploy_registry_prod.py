@@ -42,6 +42,25 @@ def validate(image, revision):
 def remote_deploy(request):
     image, revision = request['image'], request['revision']
     validate(image, revision)
+    runtime = {}
+    for option, key, allowed in (
+        ('graph_intent_mode', 'ROBINGRAPH_GRAPH_INTENT_MODE', ('off', 'shadow', 'active')),
+        ('graph_interpreter', 'ROBINGRAPH_GRAPH_INTERPRETER', ('lexical', 'semantic')),
+    ):
+        if request.get(option) is not None:
+            if request[option] not in allowed:
+                raise ValueError('Invalid runtime option: ' + option)
+            runtime[key] = request[option]
+    tracing_options = ('mlflow_tracing', 'mlflow_experiment_id', 'mlflow_experiment_name')
+    if any(request.get(option) is not None for option in tracing_options):
+        if (request.get('mlflow_tracing') not in ('true', 'false') or
+                not isinstance(request.get('mlflow_experiment_id'), str) or
+                not re.fullmatch(r'[0-9]+', request['mlflow_experiment_id']) or
+                request.get('mlflow_experiment_name') != 'robingraph-prod'):
+            raise ValueError('Production tracing requires an explicit flag, numeric experiment ID and robingraph-prod name')
+        runtime.update(ROBINGRAPH_MLFLOW_TRACING=request['mlflow_tracing'],
+                       MLFLOW_EXPERIMENT_ID=request['mlflow_experiment_id'],
+                       MLFLOW_EXPERIMENT_NAME=request['mlflow_experiment_name'])
     def inspect(name, image=False, environment=None):
         args = ['docker', 'image', 'inspect', name] if image else ['docker', 'inspect', name]
         return json.loads(subprocess.check_output(args, env=environment))[0]
@@ -87,9 +106,10 @@ def remote_deploy(request):
                 raise RuntimeError('Production health timeout')
             subprocess.run(['docker', 'exec', 'robingraph-api', 'python', 'scripts/verify_api_deployment.py',
                             '--base-url', 'http://127.0.0.1:8000', '--json'], check=True, env=environment)
+        updates = {'ROBINGRAPH_IMAGE': image, 'ROBINGRAPH_VCS_REF': revision, **runtime}
         lines = [line for line in original.decode().splitlines()
-                 if not line.startswith(('ROBINGRAPH_IMAGE=', 'ROBINGRAPH_VCS_REF='))]
-        lines.extend(['ROBINGRAPH_IMAGE=' + image, 'ROBINGRAPH_VCS_REF=' + revision])
+                 if line.partition('=')[0] not in updates]
+        lines.extend(key + '=' + value for key, value in updates.items())
         record_dir = root / '.registry-deployments'
         record_dir.mkdir(mode=0o700, exist_ok=True)
         record_dir.chmod(0o700)
@@ -99,7 +119,7 @@ def remote_deploy(request):
         with os.fdopen(backup_fd, 'wb') as backup:
             backup.write(original)
         receipt = {'image': image, 'revision': revision, 'previous_image': previous['Config']['Image'],
-                   'previous_env_backup': str(backup_path), 'state': 'prepared'}
+                   'previous_env_backup': str(backup_path), 'runtime_overrides': runtime, 'state': 'prepared'}
         def save():
             record_path.write_text(json.dumps(receipt, indent=2) + '\n')
         save()
@@ -123,6 +143,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image')
     parser.add_argument('--revision')
+    parser.add_argument('--graph-intent-mode', choices=('off', 'shadow', 'active'))
+    parser.add_argument('--graph-interpreter', choices=('lexical', 'semantic'))
+    parser.add_argument('--mlflow-tracing', choices=('true', 'false'))
+    parser.add_argument('--mlflow-experiment-id')
+    parser.add_argument('--mlflow-experiment-name')
     parser.add_argument('--local', action='store_true', help='Run on the NAS deployment agent without SSH')
     parser.add_argument('--check-only', action='store_true', help='Read-only NAS context check; requires --local')
     args = parser.parse_args()
@@ -140,6 +165,10 @@ def main():
     # Password and registry token travel in SSH input/environment, never argv.
     request = {'image': args.image, 'revision': args.revision,
                'registry_user': os.environ['GHCR_USERNAME'], 'registry_token': os.environ['GHCR_TOKEN']}
+    for option in ('graph_intent_mode', 'graph_interpreter', 'mlflow_tracing',
+                   'mlflow_experiment_id', 'mlflow_experiment_name'):
+        if getattr(args, option) is not None:
+            request[option] = getattr(args, option)
     if args.local:
         remote_deploy(request)
         return

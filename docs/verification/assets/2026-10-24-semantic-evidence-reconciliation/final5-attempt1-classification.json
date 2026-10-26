@@ -1,0 +1,40 @@
+{
+  "score_sha256": "b919a252fea8e6a83a6972dadfa7dc55c8c2e9104cb6d9cafedd5274f540e643",
+  "measurement": "feedback-exposed regression attempt 1; preserve unchanged",
+  "counts": {
+    "supported": {
+      "pass": 1,
+      "fail": 2
+    },
+    "hold": {
+      "pass": 2
+    }
+  },
+  "classifications": {
+    "N02": {
+      "status": "fail",
+      "reason": "Model taxon 까마귀 omits original genus suffix 속; audit true but deterministic plan validation rejects scope loss. No unsafe query execution."
+    },
+    "F02": {
+      "status": "fail",
+      "reason": "Lexical order_fruit contains unread habitat residual and is kept lexical-only, so semantic provider not reached."
+    },
+    "F03": {
+      "status": "pass",
+      "reason": "Specific fruit mango stays insufficient-data hold."
+    },
+    "F04": {
+      "status": "pass",
+      "reason": "Explicit negation stays clarify."
+    },
+    "F05": {
+      "status": "pass",
+      "reason": "Canonical Columbidae family and body_mass num_gt 300g verified in actual response and same-request route. Diagnostic replacement does not upgrade original N05 name-resolution failure."
+    }
+  },
+  "limits": [
+    "Artifact-only; no new API/provider/DB calls.",
+    "Original first13 unchanged.",
+    "Any subsequent replay is another feedback-exposed regression attempt, not fresh holdout."
+  ]
+}

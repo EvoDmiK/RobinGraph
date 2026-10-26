@@ -1,0 +1,35 @@
+{
+  "task": "RG-203",
+  "state": "TEST verified; Production approval pending",
+  "image": "robingraph-api:test-graph-qa-c298a12f15ef",
+  "source_sha256": "c298a12f15ef7874a01f93dbc15108c2fb4bec95015ce9b1b8cf620ef8602caf",
+  "python": {
+    "total": 1056,
+    "passed": 1017,
+    "skipped": 39,
+    "failed": 0,
+    "elapsed_seconds": 22.306,
+    "kind": "offline/mock/fixture; skips include opt-in integrations and unavailable source artifact"
+  },
+  "node": {
+    "total": 319,
+    "passed": 319,
+    "failed": 0,
+    "skipped": 0,
+    "new_graph_ui_tests": 2,
+    "kind": "mock DOM / source checks"
+  },
+  "actual_test_api_checks": 7,
+  "actual_public_test_browser_checks": 10,
+  "physical_mobile": false,
+  "production_changed": false,
+  "commit_push": false,
+  "db_write_commands": false,
+  "whole_db_checksum": false,
+  "limitations": [
+    "Only directly linked graph claims are included; mapped/supplemented profile traits may be missing.",
+    "No plant-level shared-fruit evidence.",
+    "Each relationship question is independent; conversational follow-ups are not implemented.",
+    "New relationship questions require exact names; existing single-species vector clarification is unchanged."
+  ]
+}

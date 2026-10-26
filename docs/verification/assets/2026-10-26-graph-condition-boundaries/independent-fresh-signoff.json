@@ -1,0 +1,71 @@
+{
+  "first_measurement_preserved": true,
+  "case_counts": {
+    "pass": 20,
+    "fail": 4
+  },
+  "group_counts": {
+    "pass": 5,
+    "fail": 3
+  },
+  "classifications": {
+    "supported_answer": 15,
+    "supported_no_matching_results": 2,
+    "negated_condition": 2,
+    "false_hold": 3,
+    "unsupported_specific_food": 1,
+    "wrong_hold_reason": 1
+  },
+  "http_200": 24,
+  "unique_trace_ids": 24,
+  "exact_mlflow_root_request_verified_per_row": 24,
+  "unsafe_answers": 0,
+  "all_four_gold_holds_remain_held": true,
+  "supported_questions_false_held": 3,
+  "wrong_hold_diagnostic": 1,
+  "evaluator_false_fail_observed": false,
+  "failure_causes": [
+    {
+      "case": "E04A",
+      "class": "false_hold",
+      "cause": "Correct target/trait/value proposed, but condition surface rewritten into text absent from original; audit accepted, exact-source validation rejected.",
+      "stage": "plan_validation"
+    },
+    {
+      "case": "E04C",
+      "class": "false_hold",
+      "cause": "Correct target/trait/value proposed; species framing and record-check request were left unresolved.",
+      "stage": "plan_validation"
+    },
+    {
+      "case": "E05B",
+      "class": "false_hold",
+      "cause": "Category condition preserved, but explicit instruction not to apply a ratio filter was left unresolved.",
+      "stage": "plan_validation"
+    },
+    {
+      "case": "E08B",
+      "class": "wrong_hold_reason",
+      "cause": "Lexical specific-fruit route captured 종까지 as reference instead of actual bird; leftover real reference/plant wording caused generic clarification rather than specific-food data-gap response.",
+      "stage": "plan_validation"
+    }
+  ],
+  "root_score_identical": true,
+  "image": "robingraph-api:test-condition-boundaries-1f27f2a42c1e",
+  "gold_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "responses_sha256": "7912509d278a3cdc56f546ddebca22a0732a5fdf14edea79c607f9c3d4106560",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "post_result_changes": {
+    "app": false,
+    "gold": false,
+    "scorer": false,
+    "api_replays": 0
+  },
+  "runtime_receipt": "final-runtime-check.json",
+  "limits": [
+    "Fresh first attempt, not tuned on these questions; model-authored and independently model-reviewed gold, not human-reviewed.",
+    "20 passed cases comprise15 answers,2 empty results,2 correct negative holds,1 correct exact-food data-gap hold.",
+    "Artifact-only independent analysis; root performed exact HTTP span readback; no independent network calls.",
+    "Safety observed on this 24-case set, not a guarantee across all questions."
+  ]
+}

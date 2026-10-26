@@ -1,0 +1,11 @@
+{
+  "target": "test",
+  "unchanged_in_observed_scope": true,
+  "scope": [
+    "non-pilot ingest pipeline states hash",
+    "pilot run status/counts",
+    "name vector catalog fingerprints/count"
+  ],
+  "whole_database_checksum": false,
+  "writes_requested": false
+}

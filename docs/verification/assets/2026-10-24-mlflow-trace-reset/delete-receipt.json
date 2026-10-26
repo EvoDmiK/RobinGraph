@@ -1,0 +1,28 @@
+{
+  "tracking_uri": "https://mlflow.dove-nest.com",
+  "cutoff_utc": "2026-10-24T04:36:01.404000+00:00",
+  "cutoff_ms": 1792816561404,
+  "method": "explicit inventoried trace IDs",
+  "experiments": [
+    {
+      "id": "33",
+      "name": "robingraph-test",
+      "planned": 5512,
+      "deleted": 5512,
+      "old_trace_remaining": 0,
+      "run_ids_unchanged": true,
+      "experiment_lifecycle": "active"
+    },
+    {
+      "id": "34",
+      "name": "robingraph-local",
+      "planned": 0,
+      "deleted": 0,
+      "old_trace_remaining": 0,
+      "run_ids_unchanged": true,
+      "experiment_lifecycle": "active"
+    }
+  ],
+  "deleted_total": 5512,
+  "experiments_runs_datasets_not_deleted": true
+}

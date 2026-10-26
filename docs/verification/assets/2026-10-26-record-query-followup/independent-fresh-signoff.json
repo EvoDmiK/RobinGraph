@@ -1,0 +1,67 @@
+{
+  "measurement": "fresh_v4_first_attempt",
+  "case_counts": {
+    "pass": 11,
+    "fail": 13
+  },
+  "group_counts": {
+    "fail": 7,
+    "pass": 1
+  },
+  "classifications": {
+    "supported_answer": 6,
+    "false_hold": 9,
+    "supported_no_matching_results": 1,
+    "wrong_hold_reason": 4,
+    "supported_source_no_data": 2,
+    "negated_condition": 1,
+    "unsupported_specific_food": 1
+  },
+  "failure_groups": {
+    "record_evidence_or_framing": [
+      "F01B",
+      "F01C",
+      "F03B",
+      "F04C"
+    ],
+    "query_meta_mistaken_for_restriction": [
+      "F05A",
+      "F05B",
+      "F05C",
+      "F06A",
+      "F06B"
+    ],
+    "negative_graph_query_routed_away": [
+      "F03C"
+    ],
+    "specific_plant_relation_not_classified": [
+      "F07A",
+      "F07B",
+      "F08B"
+    ]
+  },
+  "scorer_false_fail_found": false,
+  "http200": 24,
+  "unique_trace_ids": 24,
+  "same_request_verified": 24,
+  "image": "robingraph-api:test-record-query-followup-aaf802327b68",
+  "unsafe_answers": 0,
+  "reviewer_api_calls": 0,
+  "gold_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "scorer_sha256": "9b9b344ddd321da6f48c693cfb0b077be0e7802ed2ba0666047b6569ee91f495",
+  "design_notes": [
+    "Literal copied evidence must not be replaced with grammatical paraphrase. Separate field/value clauses cannot be represented by inventing a contiguous source span.",
+    "Model prompt clarification does not affect questions blocked before provider selection (F05B lexical negation, F03C missing positive cue despite explicit trait and negation).",
+    "Explicit no-ratio-filter query metadata is not negation of a biological predicate. Preserve actual share thresholds, conditions and unresolved extras.",
+    "Same plant species food relation is unsupported source data and must never become shared trophic-niche relation.",
+    "All 13 failure outcomes were safe holds; 9 blocked supported questions and 4 provided the wrong hold reason. Do not relax hold gold."
+  ],
+  "limit": "This first result must remain immutable after future feedback-exposed implementation changes.",
+  "diagnostic_correction": {
+    "case": "F03C",
+    "previous_hypothesis": "document routing from word 자료",
+    "correction": "Producer exact source reproduction found no document matches; all rank cues false and no positive condition meant no cue, returning GraphNone despite explicit trait negation.",
+    "score_changed": false,
+    "basis": "root/backend static reproduction; initial HTTP trace alone established only empty extractor output, not internal reason."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "image": "ghcr.io/evodmik/robingraph@sha256:f000a7219d365cb69a33acde3bea11b57a5a8054af79db75a3832684c849b280",
+  "revision": "33c0b67ef6a0ab23e3f3d20f6112ee38d43ba83b",
+  "live_container_unchanged": true,
+  "runtime": {
+    "graph_intent_mode": "active",
+    "graph_interpreter": "lexical"
+  },
+  "evaluation_exit": 0,
+  "published_ports": false,
+  "db_change_commands": false
+}
