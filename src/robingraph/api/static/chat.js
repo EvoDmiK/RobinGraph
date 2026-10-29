@@ -646,8 +646,8 @@
   }
 
   var DISTRIBUTION_LABELS = {
-    diet_distribution: { invertebrate: "곤충 (원자료: 무척추동물)", endotherm_vertebrate: "고기 (온혈 척추동물)", ectotherm_vertebrate: "고기 (변온 척추동물)",
-      unknown_vertebrate: "고기 (기타 척추동물)", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" },
+    diet_distribution: { invertebrate: "곤충", endotherm_vertebrate: "고기 · 온혈동물", ectotherm_vertebrate: "고기 · 변온동물",
+      unknown_vertebrate: "기타 고기", fish: "물고기", carrion: "사체", fruit: "열매", nectar: "꽃꿀", seed: "씨앗", other_plant: "기타 식물" },
     foraging_strata_distribution: { ground: "지면", understory: "하층", midhigh: "중상층", mid_high: "중상층", canopy: "수관",
       aerial: "공중", water: "수면", pelagic: "외해", below_water_surface: "수중", around_water_surface: "수면 주변" },
   };
@@ -4377,6 +4377,9 @@
     dialog.addEventListener("pointercancel", function () { backdropPress = null; }, true);
     opener.addEventListener("click", function () {
       backdropPress = null;
+      // Reopen at the initial card size, before measuring the collapsed fit.
+      var toggles = typeof card.querySelectorAll === "function" ? card.querySelectorAll(".card-details-scroll, .species-distribution-values") : [];
+      for (var i = 0; i < toggles.length; i += 1) { toggles[i].open = false; }
       if (card.showFront) { card.showFront(); }
       dialog.showModal();
       startFit();

@@ -1,0 +1,47 @@
+{
+  "release": {
+    "source_sha256": "90f9602f3f610b5ef21dd802685588c4bd7aaa8a17085ffa1391817696f50146",
+    "files": 235,
+    "image": "robingraph-api:test-diet-labels-90f9602f3f61",
+    "image_id": "sha256:f3d418c5c3f31aef07604bd1a3614ce26c4fe0c379a75d13185904b7fa696053",
+    "architecture": "arm64",
+    "release": "/Users/kimdove/robingraph-test/releases/diet-labels-90f9602f3f61-3af927",
+    "previous_release": "/Users/kimdove/robingraph-test/releases/notice-ui-dc72ada65dbf-46b2cc",
+    "state": "verified",
+    "target": "test",
+    "fixture_network_none_smoke": true,
+    "production_changed": false
+  },
+  "changed_source_files": [
+    "src/robingraph/api/static/chat.js",
+    "src/robingraph/retrieval/birdbase.py",
+    "src/robingraph/retrieval/graph_condition_extractor.py",
+    "src/robingraph/retrieval/species_profile.py"
+  ],
+  "environment": {
+    "changed_env_keys": [
+      "ROBINGRAPH_IMAGE"
+    ],
+    "compose_files_preserved": [
+      "compose.mac-test.yml",
+      "compose.nas.yml"
+    ],
+    "signing_key_preserved": true
+  },
+  "verification": {
+    "arm64_build": true,
+    "network_none_read_only_fixture_smoke": true,
+    "health_healthy": true,
+    "manage_verify": true,
+    "release_source_manifest": true
+  },
+  "harness_corrections": [
+    "Initial urllib public request received HTTP403; curl requests succeeded.",
+    "First compose preservation check used nonexistent compose.nas.test.yml; corrected to existing compose.mac-test.yml and compose.nas.yml, both identical."
+  ],
+  "limitations": [
+    "No Production deployment or operational DB writes.",
+    "No physical mobile/Safari/Firefox checks in deployment scope.",
+    "Current MLflow traces not read back."
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-10-29T05:48:31.926Z",
+  "browser": "Chromium headless shell CDP",
+  "data": "actual TEST API; no mocked response",
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "state": {
+        "dialogOpen": true,
+        "face": "back",
+        "rows": [
+          "곤충 · 40%",
+          "고기 (온혈 척추동물) · 0%",
+          "고기 (변온 척추동물) · 10%",
+          "물고기 · 10%",
+          "기타 고기 · 0%",
+          "사체 · 0%",
+          "열매 · 0%",
+          "꽃꿀 · 0%",
+          "씨앗 · 20%",
+          "기타 식물 · 20%"
+        ],
+        "chartText": "100%기록 비율항목·비율곤충 · 40%고기 (온혈 척추동물) · 0%고기 (변온 척추동물) · 10%물고기 · 10%기타 고기 · 0%사체 · 0%열매 · 0%꽃꿀 · 0%씨앗 · 20%기타 식물 · 20%",
+        "dialogFits": true,
+        "documentOverflow": false
+      },
+      "checks": {
+        "popup_open": true,
+        "back_face": true,
+        "insect_clean": true,
+        "other_meat": true,
+        "warm_cold_kept": true,
+        "qualitative_clean": true,
+        "fits": true
+      },
+      "screenshot": "/tmp/robingraph-diet-labels-20261029/screenshots/diet-390.png",
+      "passed": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "mobile": false
+      },
+      "state": {
+        "dialogOpen": true,
+        "face": "back",
+        "rows": [
+          "곤충 · 40%",
+          "고기 (온혈 척추동물) · 0%",
+          "고기 (변온 척추동물) · 10%",
+          "물고기 · 10%",
+          "기타 고기 · 0%",
+          "사체 · 0%",
+          "열매 · 0%",
+          "꽃꿀 · 0%",
+          "씨앗 · 20%",
+          "기타 식물 · 20%"
+        ],
+        "chartText": "100%기록 비율항목·비율곤충 · 40%고기 (온혈 척추동물) · 0%고기 (변온 척추동물) · 10%물고기 · 10%기타 고기 · 0%사체 · 0%열매 · 0%꽃꿀 · 0%씨앗 · 20%기타 식물 · 20%",
+        "dialogFits": true,
+        "documentOverflow": false
+      },
+      "checks": {
+        "popup_open": true,
+        "back_face": true,
+        "insect_clean": true,
+        "other_meat": true,
+        "warm_cold_kept": true,
+        "qualitative_clean": true,
+        "fits": true
+      },
+      "screenshot": "/tmp/robingraph-diet-labels-20261029/screenshots/diet-1280.png",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-29",
+  "repository_file": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-10-29-card-popup-reopen-scale.md",
+  "vault_detail": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-10-29-RG405-팝업재열기-배율복구.md",
+  "vault_index": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+  "detail_sha256": "daa3539d63510369978bc17d155d232e620e8586eacb6b77aef9d305d8f1ec76",
+  "vault_raw_equals_repository": true,
+  "index_readback_equals_expected_single_link_insertion": true,
+  "other_index_content_preserved": true,
+  "changed_vault_notes": 2,
+  "other_backlog_states_changed": false,
+  "production_deployed": false,
+  "git_write": false,
+  "artifact_hashes": {
+    "browser-report.md": "05eb365d0ac16d5d17f84b3d01199bef9420f242531f1cf0250bfbf0591f388a",
+    "root-release-verification.json": "ed7f5bdf07d64d57f7d3b8c652db9915fee4de167f3a7a8d940bf9c6b145d8c5",
+    "popup-browser-resize-results.json": "1d8c61c54bbb4265a46f7bf08a0f0420f9b1eccbfaf2589c6aa6132af7e40007",
+    "reopened-1280.png": "78c81e0a15fb94ef14dff9d7fd42de020b9f6d85f4782d43b26f6e216b3caf0a",
+    "root-ui-tests.log": "f551f34871af4ad304759f595dd9e9ae48b862d0e0c82b409046888e696335cf",
+    "environment-preservation.json": "553bcd81942b5d231ce465150f25e7bcba618850a0a31fe1346d1f3546c212ef",
+    "popup-browser-after-results.json": "8bab68521dac11d4bcb2dade5f6d8295c755093d7059efdf0d1d3ef3bba25b70",
+    "reopened-390.png": "f3daa925160dccd5c792853099755cb4bfdfab2bd009dd96d00295d00267e45c",
+    "reopened-before.png": "de509b35c60d8457d81b88c3361d151de892f7c1b79aabcaef3324cdfcb46a49",
+    "regression-before.log": "a03ee7506ad8962966b1683fee89ed8e03cae1db00aab3e367acedb3d673ecab",
+    "ui.patch": "0f2128c4f5a555e17bad0b04d2f974adda7b9f8f29d0a5fd8befa2117a061198",
+    "popup-browser-results.json": "54a9384baf558e792f66031adc81b8b1a3c61c8b58d749f5dc349fd6c72a0086",
+    "closed-resize-1280.png": "fc6fc2d9fec5b9b7fcefebfac7391978ff108db0321304a985485e040ca8f87b",
+    "test-release.json": "c4be20810690b02dc0ddbadbeb4c79ebe2303e25e5b4a9797fe7d1f96fd885fc"
+  }
+}

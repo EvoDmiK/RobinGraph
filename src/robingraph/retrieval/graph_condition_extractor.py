@@ -276,13 +276,15 @@ def _trait_surfaces(name):
     if name == 'habitat':
         return {**{VALUES[v]: v for v in TRAIT_CONDITIONS[name][2]}, **HABITATS}
     values = TRAIT_CONDITIONS[name][2]
-    # The display ("곤충 (원자료: 무척추동물)"), its source name and its short form when that names one value only
+    # The display, its source name and its short form when that names one value only
     # (곤충 -> invertebrate; 고기 is 'meat' itself, never one of its components).
     short = {}
     for value in values:
         short.setdefault(VALUES[value].split(' (')[0], []).append(value)
     surfaces = {word: found[0] for word, found in short.items() if len(found) == 1}
     surfaces.update({SOURCE_CATEGORY[v]: v for v in values if v in SOURCE_CATEGORY})
+    surfaces.update({f'고기 ({SOURCE_CATEGORY[v]})': v for v in values
+                     if v in ('endotherm_vertebrate', 'ectotherm_vertebrate')})
     return {**surfaces, **{VALUES[v]: v for v in values}}
 
 

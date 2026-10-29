@@ -252,9 +252,9 @@ class AnswerTest(TestCase):
                  {'taxon_id': tid(23698), 'rank': 'species', 'scientific_name': 'Hypsipetes amaurotis'}]
         support = [{'trait_name': 'diet_distribution', 'value_text': None, 'value_json': '{"fruit":70,"seed":0}',
                     'certainty': 'A', 'source_url': 'https://ndownloader.figshare.com/files/5631081#SpecID=1'}]
-        repo = FakeRepository({gq.ORDER_TRAIT_QUERY: [peer(23698, 'Hypsipetes amaurotis', '직박구리', support, nodes)]})
+        repo = FakeRepository({gq.ORDER_DIET_QUERY: [peer(23698, 'Hypsipetes amaurotis', '직박구리', support, nodes)]})
         result = graph_question_answer(repo, resolve, parse_graph_question('참새목 중 열매를 먹고 사는 새는?'), store=FakeStore())
-        params = dict(repo.calls)[gq.ORDER_TRAIT_QUERY]
+        params = dict(repo.calls)[gq.ORDER_DIET_QUERY]
         self.assertEqual(('elton:test', 'elton-r1', 'diet_distribution', None, gq.FRUIT_POSITIVE),
                          (params['dataset_id'], params['release'], params['trait_name'], params['value_text'],
                           params['value_json_pattern']))
@@ -277,7 +277,7 @@ class AnswerTest(TestCase):
                                                      ('{"fruit":20}', 'A', nodes[1:])):
             support = [{'trait_name': 'diet_distribution', 'value_json': value_json, 'certainty': certainty,
                         'source_url': 'https://example.org/elton'}]
-            repo = FakeRepository({gq.ORDER_TRAIT_QUERY: [peer(1, 'Testus one', None, support, lineage_nodes)]})
+            repo = FakeRepository({gq.ORDER_DIET_QUERY: [peer(1, 'Testus one', None, support, lineage_nodes)]})
             with self.subTest(value_json=value_json, certainty=certainty), self.assertRaises(ValueError):
                 graph_question_answer(repo, resolve, GraphQuestion('order_fruit', rank_name='참새목', criterion='fruit_share'),
                                       store=FakeStore())
@@ -417,3 +417,22 @@ class AnswerTest(TestCase):
             graph_question_answer(repo, resolve, GraphQuestion('arbitrary'))
         with self.assertRaises(ValueError):
             graph_question_answer(repo, resolve, GraphQuestion('same_genus', ('청둥오리',)), 'KR')
+
+
+class LegacyFruitRankingTest(TestCase):
+    def test_high_share_beyond_page_boundary_is_ranked_before_limit(self):
+        rows = []
+        for index in range(22):
+            support = [{'trait_name': 'diet_distribution', 'value_json': '{"fruit":%d}' % (90 if index == 21 else 10),
+                        'certainty': 'A', 'source_url': 'https://example.org/elton'}]
+            nodes = [{'taxon_id': tid('o-Passeriformes'), 'rank': 'order', 'scientific_name': 'Passeriformes'},
+                     {'taxon_id': tid(index), 'rank': 'species', 'scientific_name': 'Testus ' + chr(97 + index)}]
+            rows.append(peer(index, 'Testus ' + chr(97 + index), support=support, lineage_nodes=nodes))
+        repo = FakeRepository({gq.ORDER_DIET_QUERY: rows})
+        result = graph_question_answer(repo, resolve, GraphQuestion('order_fruit', rank_name='참새목',
+                                                                  criterion='fruit_share'), store=FakeStore())
+        self.assertEqual([tid(21)] + [tid(i) for i in range(19)],
+                         [item['taxon']['taxon_id'] for item in result['items']])
+        self.assertTrue(result['has_more'])
+        self.assertIn('열매 비율이 높은 순', result['text'])
+        self.assertNotIn('LIMIT', gq.ORDER_DIET_QUERY)

@@ -1,0 +1,45 @@
+[
+  {
+    "query": "Parus cinereus",
+    "taxon_id": "avilist-taxon:v2025b:20751",
+    "traits": [
+      {
+        "name": "diet_category",
+        "value": "Invertebrate",
+        "display": "곤충"
+      }
+    ]
+  },
+  {
+    "query": "Lanius excubitor",
+    "taxon_id": "avilist-taxon:v2025b:19821",
+    "traits": [
+      {
+        "name": "diet_category",
+        "value": "VertFishScav",
+        "display": "고기·물고기·사체"
+      },
+      {
+        "name": "diet_distribution",
+        "value": {
+          "invertebrate": 10,
+          "endotherm_vertebrate": 60,
+          "ectotherm_vertebrate": 10,
+          "fish": 0,
+          "unknown_vertebrate": 0,
+          "carrion": 10,
+          "fruit": 10,
+          "nectar": 0,
+          "seed": 0,
+          "other_plant": 0
+        },
+        "display": "곤충 10% · 고기 (온혈 척추동물) 60% · 고기 (변온 척추동물) 10% · 사체 10% · 열매 10%"
+      },
+      {
+        "name": "trophic_niche",
+        "value": "Vertivore",
+        "display": "고기 섭식"
+      }
+    ]
+  }
+]

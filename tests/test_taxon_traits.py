@@ -66,12 +66,12 @@ class Repo:
         if query is gq.TAXON_BY_NAME_QUERY:
             return [{'taxon_id': taxon_id, 'rank': rank, 'scientific_name': name}
                     for (rank, name), taxon_id in self.taxa.items() if name == params['scientific_name']]
-        if query in (gq.TAXON_TRAITS_QUERY, gq.CATALOG_TRAITS_QUERY):
+        if query in (gq.TAXON_TRAITS_QUERY, gq.CATALOG_TRAITS_QUERY, gq.TAXON_DIET_QUERY, gq.CATALOG_DIET_QUERY):
             return list(self.traits)
         raise AssertionError('unexpected query')
 
     def trait_calls(self):
-        return [(q, p) for q, p in self.calls if q in (gq.TAXON_TRAITS_QUERY, gq.CATALOG_TRAITS_QUERY)]
+        return [(q, p) for q, p in self.calls if q in (gq.TAXON_TRAITS_QUERY, gq.CATALOG_TRAITS_QUERY, gq.TAXON_DIET_QUERY, gq.CATALOG_DIET_QUERY)]
 
 
 class Store:
@@ -110,7 +110,7 @@ class ExactUserQuestion(TestCase):
         payload, repo = answer('까마귀과', repo=repo)
         self.assertEqual(payload['status'], 'answer')
         (query, params), = repo.trait_calls()
-        self.assertIs(query, gq.TAXON_TRAITS_QUERY)
+        self.assertIs(query, gq.TAXON_DIET_QUERY)
         self.assertEqual((params['root_id'], params['root_rank'], params['target_rank']),
                          (TAXA[('family', 'Corvidae')], 'family', 'species'))
         self.assertEqual(params['conditions'][0]['trait_name'], 'diet_distribution')
@@ -164,7 +164,7 @@ class ExactUserQuestion(TestCase):
         self.assertEqual((execution_gate(question, intent), intent.kind, intent.rank), ('answer', 'taxon_traits', None))
         payload, repo = answer(None, repo=Repo([empty_row(stats(11131, 7067, 0))]))
         (query, params), = repo.trait_calls()
-        self.assertIs(query, gq.CATALOG_TRAITS_QUERY)
+        self.assertIs(query, gq.CATALOG_DIET_QUERY)
         self.assertNotIn('root_id', params)
         self.assertIsNone(payload['taxon'])
         self.assertEqual(payload['status'], 'empty')
@@ -593,7 +593,7 @@ class UnsupportedFood(TestCase):
                          (result['status'], result['items'], result['has_more'], result['taxon'], result['coverage'],
                           result['conditions']))
         self.assertIn('벌레만 따로 구분한 기록은 현재 조회하는 먹이 성분 자료로 확인할 수 없습니다', result['text'])
-        self.assertIn('‘곤충 (원자료: 무척추동물)’', result['text'])
+        self.assertIn('‘곤충’', result['text'])
         self.assertIn('“까마귀과 중 곤충을 먹고 체중 100g 이상인 새”', result['text'])   # only the food word changes
         self.assertIn('범주를 바꿔 조회하지 않았습니다.', result['text'])
         self.assertEqual([gq.LIMITATIONS['no_food_key']], result['limitations'])
@@ -660,11 +660,82 @@ class InsectAndMeatAliases(TestCase):
 
     def test_answers_state_what_the_source_category_covers(self):
         insect = TraitCondition('diet_distribution', 'share_gt', 'invertebrate', 0)
-        self.assertEqual('먹이 구성에 곤충 (원자료: 무척추동물) 포함', gq.condition_label(insect))
+        self.assertEqual('먹이 구성에 곤충 포함', gq.condition_label(insect))
         self.assertIn('곤충이 아닌 무척추동물', gq.SHARE_SCOPE['invertebrate'])
         self.assertIn('물고기·사체 성분은 포함하지 않습니다', gq.SHARE_SCOPE['meat'])
-        self.assertEqual('고기·물고기·사체 (원자료: 척추동물·물고기·사체)', gq.VALUES['VertFishScav'])   # never 고기 alone
+        self.assertEqual('고기·물고기·사체', gq.VALUES['VertFishScav'])   # never 고기 alone
         for key, source in (('invertebrate', '무척추동물'), ('endotherm_vertebrate', '온혈 척추동물'),
                             ('ectotherm_vertebrate', '변온 척추동물'), ('unknown_vertebrate', '기타 척추동물'),
                             ('Invertebrate', '무척추동물'), ('Invertivore', '무척추동물 섭식'), ('Vertivore', '척추동물 섭식')):
-            self.assertIn(source, gq.VALUES[key])   # every display keeps its source scope
+            self.assertEqual(source, gq.SOURCE_CATEGORY[key])   # original source scope is preserved
+
+
+class DietRanking(TestCase):
+    def rows(self, compositions, conditions=(FRUIT,)):
+        import json
+        result = []
+        for index, composition in enumerate(compositions):
+            claim = dict(fruit_support(), value_json=json.dumps(composition))
+            support = [claim if c.op == 'share_gt' else
+                       {'trait_name': c.trait_name, 'value_text': c.value, 'source_url': 'https://example.org/avonet'}
+                       for c in conditions]
+            result.append(peer_row(index + 1, 'Testus ' + chr(97 + index), support,
+                                   counts=stats(len(compositions), len(compositions), len(compositions))))
+        return result
+
+    def test_later_high_share_precedes_first_page_and_ties_keep_existing_order(self):
+        rows = self.rows([{'fruit': 10}] * 20 + [{'fruit': 90}, {'fruit': 10}])
+        result, repo = answer(None, repo=Repo(rows))
+        self.assertEqual([tid(21)] + [tid(i) for i in range(1, 20)],
+                         [item['taxon']['taxon_id'] for item in result['items']])
+        self.assertTrue(result['has_more'])
+        self.assertEqual(22, result['coverage']['matched'])
+        query, _ = repo.trait_calls()[0]
+        self.assertNotIn('LIMIT', query)
+        self.assertIn('먹이 비율이 높은 순', result['text'])
+
+    def test_every_food_component_ranks_its_own_share(self):
+        for key in gq.DIET_SHARE_KEYS:
+            with self.subTest(key=key):
+                condition = TraitCondition('diet_distribution', 'share_gt', key, 0)
+                rows = self.rows([{key: 10}, {key: 90}], (condition,))
+                result, _ = answer(None, (condition,), Repo(rows))
+                self.assertEqual([tid(2), tid(1)], [item['taxon']['taxon_id'] for item in result['items']])
+
+    def test_multiple_foods_sum_shares_independent_of_condition_order(self):
+        fish = TraitCondition('diet_distribution', 'share_gt', 'fish', 0)
+        for conditions in ((FRUIT, fish), (fish, FRUIT)):
+            rows = self.rows([{'fruit': 60, 'fish': 10}, {'fruit': 40, 'fish': 50}], conditions)
+            result, _ = answer(None, conditions, Repo(rows))
+            self.assertEqual([tid(2), tid(1)], [item['taxon']['taxon_id'] for item in result['items']])
+
+    def test_overlapping_meat_group_does_not_double_count_or_include_fish_carrion(self):
+        meat = TraitCondition('diet_distribution', 'share_gt', 'meat', 0)
+        warm = TraitCondition('diet_distribution', 'share_gt', 'endotherm_vertebrate', 0)
+        conditions = (meat, warm)
+        rows = self.rows([{'endotherm_vertebrate': 40, 'ectotherm_vertebrate': 0, 'fish': 30, 'carrion': 30},
+                          {'endotherm_vertebrate': 10, 'ectotherm_vertebrate': 20, 'unknown_vertebrate': 20}], conditions)
+        result, _ = answer(None, conditions, Repo(rows))
+        self.assertEqual([tid(2), tid(1)], [item['taxon']['taxon_id'] for item in result['items']])
+
+    def test_additional_category_filters_do_not_become_ranking_scores(self):
+        conditions = (FRUGIVORE, FRUIT)
+        rows = self.rows([{'fruit': 10}, {'fruit': 90}], conditions)
+        result, _ = answer(None, conditions, Repo(rows))
+        self.assertEqual([tid(2), tid(1)], [item['taxon']['taxon_id'] for item in result['items']])
+        result, repo = answer(None, (FRUGIVORE,), Repo(self.rows([{}, {}], (FRUGIVORE,))))
+        self.assertEqual([tid(1), tid(2)], [item['taxon']['taxon_id'] for item in result['items']])
+        self.assertIs(repo.trait_calls()[0][0], gq.CATALOG_TRAITS_QUERY)
+        self.assertNotIn('비율이 높은 순', result['text'])
+
+    def test_invalid_or_conflicting_support_never_becomes_a_rank_score(self):
+        for value in ('not-json', '{"fruit":true}', '{"fruit":NaN}', '{"fruit":101}'):
+            rows = self.rows([{'fruit': 10}])
+            rows[0]['support'][0]['value_json'] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                answer(None, repo=Repo(rows))
+        fish = TraitCondition('diet_distribution', 'share_gt', 'fish', 0)
+        rows = self.rows([{'fruit': 30, 'fish': 10}], (FRUIT, fish))
+        rows[0]['support'][1] = dict(rows[0]['support'][1], value_json='{"fruit":30,"fish":60}')
+        with self.assertRaisesRegex(ValueError, 'Conflicting diet composition'):
+            answer(None, (FRUIT, fish), Repo(rows))

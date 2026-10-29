@@ -18,8 +18,8 @@ HABITAT_LABELS = {'Artificial': '인공·변형 환경', 'Bamboo': '대나무 �
                   'Forest': '숲', 'Grassland': '초지', 'Plains': '평원', 'Riparian': '하천 주변', 'Rocky': '바위 지대',
                   'Savanna': '사바나', 'Sea': '바다', 'Shrub': '관목 지대', 'Wetland': '습지', 'Woodland': '성긴 숲'}
 DIET_LABELS = {'Beeswax': '밀랍', 'Carnivore': '육식', 'Fish': '물고기', 'Fruit': '열매', 'Herbivore': '초식',
-               'Invertebrate': '곤충 (원자료: 무척추동물)', 'Nectar': '꽃꿀', 'Omnivore': '잡식', 'Ovivore': '알',
-               'Plant': '식물', 'Scavenger': '사체 섭식', 'Seed': '씨앗', 'Vertebrate': '고기 (원자료: 척추동물)'}
+               'Invertebrate': '곤충', 'Nectar': '꽃꿀', 'Omnivore': '잡식', 'Ovivore': '알',
+               'Plant': '식물', 'Scavenger': '사체 섭식', 'Seed': '씨앗', 'Vertebrate': '고기'}
 
 
 @lru_cache(maxsize=2)

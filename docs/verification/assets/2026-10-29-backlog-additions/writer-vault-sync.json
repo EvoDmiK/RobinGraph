@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-29",
+  "task": "사용자 요청에 따른 오늘 작업 3건 독립 백로그 등록",
+  "new_ids": [
+    {
+      "id": "RG-214",
+      "count": 1,
+      "status": "in_progress",
+      "display_status": "TEST 완료 · 운영 승인 대기"
+    },
+    {
+      "id": "RG-407",
+      "count": 1,
+      "status": "in_progress",
+      "display_status": "TEST 완료 · 운영 승인 대기"
+    },
+    {
+      "id": "RG-408",
+      "count": 1,
+      "status": "in_progress",
+      "display_status": "TEST 완료 · 운영 승인 대기"
+    }
+  ],
+  "readback": [
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-29-RG210-도감-먹이-표시명-정리.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-29-먹이비율-합산정렬-고기표시명.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-10-29-RG405-팝업재열기-배율복구.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-214.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-407.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-408.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "raw_equals_expected": true,
+      "index_other_content_preserved": true
+    }
+  ],
+  "preallocation_exact_search_matches": {
+    "RG-214": 0,
+    "RG-407": 0,
+    "RG-408": 0
+  },
+  "prior_category_max": {
+    "2xx": "RG-213",
+    "4xx": "RG-406"
+  },
+  "worklog_status_completed_means": "당시 TEST 작업 완료; 새 backlog status는 in_progress이며 운영 승인·배포만 미완료",
+  "existing_task_states_preserved": true,
+  "git_write": false,
+  "app_change": false,
+  "deployment": false,
+  "database_write": false,
+  "changed_vault_notes": 9,
+  "local_files": [
+    {
+      "path": "docs/work-log/2026-10-29-diet-display-labels.md",
+      "sha256": "dc77fce9d549d36e38cfeccda7fbbfb6ab40aa0f0cc64159c827f7b3b87cf30b"
+    },
+    {
+      "path": "docs/work-log/2026-10-29-diet-share-ranking.md",
+      "sha256": "dea6bf25299b981b666cd93e1ae99515901d7ba525f02ba75a37cf46e39e4ffe"
+    },
+    {
+      "path": "docs/work-log/2026-10-29-card-popup-reopen-scale.md",
+      "sha256": "516e4ce59cd2f1a662374af6bb10b262fbb6377e470d0c84223a65af1839c2a4"
+    },
+    {
+      "path": "docs/backlog/RG-214.md",
+      "sha256": "12412335122c5a7370ee08ad550839288e019d5c06ba42fb80751812d0d014a8"
+    },
+    {
+      "path": "docs/backlog/RG-407.md",
+      "sha256": "c8300d36908f350173b9117f815ed129678c6cae44d530f11b0cfb3684c9de76"
+    },
+    {
+      "path": "docs/backlog/RG-408.md",
+      "sha256": "24374fd91e6098217273241f9819d9bc5ec1cc4cc8b0f762f76cde9aa6a24688"
+    }
+  ]
+}

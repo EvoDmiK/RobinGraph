@@ -1919,7 +1919,7 @@ test("donut composition preserves separate vertebrate percentages while icon pol
   const rows = collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null);
   assert.deepEqual(rows.map(n => [n.getAttribute("data-component"), n.getAttribute("data-percent")]), [["fish", "10"], ["endotherm_vertebrate", "20"], ["ectotherm_vertebrate", "30"], ["unknown_vertebrate", "40"]]);
   assert.deepEqual(collectAllNodes(composition).filter(n => n.getAttribute("data-percent") !== null).map(n => n.getAttribute("data-start-percent")), ["0", "10", "30", "60"]);
-  assert.match(collectedText(composition), /고기 \(온혈 척추동물\)/); assert.match(collectedText(composition), /고기 \(변온 척추동물\)/); assert.match(collectedText(composition), /추정값/);
+  assert.match(collectedText(composition), /고기 · 온혈동물/); assert.match(collectedText(composition), /고기 · 변온동물/); assert.match(collectedText(composition), /추정값/);
   assert.match(collectedText(card.sourceMaterial), /원래 한글 구성/);
   assert.ok(chat.dietIconInfo(profile).icons.some(icon => icon.key === "vertebrate" && /90%/.test(icon.text)));
 });
@@ -5559,12 +5559,34 @@ function mobileFitFixture() {
   const popup = chat.buildSpeciesPopup(doc, card, photoProfile()), dialog = popup.children[1];
   const frame = cardPart(popup, "species-card-fit-frame"), surface = cardPart(popup, "species-card-fit-surface");
   surface.style = {}; frame.clientWidth = 280; frame.clientHeight = 500; surface.offsetWidth = 420;
-  Object.defineProperty(surface, "offsetHeight", { get: () => Math.max(naturalHeight, parseFloat(card.style.minHeight) || 0) });
+  Object.defineProperty(surface, "offsetHeight", { configurable: true, get: () => Math.max(naturalHeight, parseFloat(card.style.minHeight) || 0) });
   dialog.showModal = () => { dialog.open = true; }; dialog.close = () => { dialog.open = false; dialog.dispatch("close"); };
   const flush = () => { const pending = [...callbacks.values()]; callbacks.clear(); pending.forEach(fn => fn()); };
   return { card, popup, dialog, frame, surface, win, viewport, handlers, viewportHandlers, observers, callbacks, flush,
     open() { popup.children[0].dispatch("click"); flush(); }, height(h) { naturalHeight = h; }, mobile(value) { mobile = value; } };
 }
+
+test("reopening a popup collapses expanded details and restores its initial scale", () => {
+  for (const mobile of [true, false]) {
+    const f = mobileFitFixture(), toggles = [{ open: false }, { open: false }];
+    f.mobile(mobile);
+    f.card.querySelectorAll = () => toggles;
+    // Expanded content contributes to the shared card height on either face.
+    Object.defineProperty(f.surface, "offsetHeight", { get: () => toggles.some(t => t.open) ? 1800 : 900 });
+    f.open();
+    const initialScale = f.frame.getAttribute("data-fit-scale");
+    for (let attempt = 0; attempt < 3; attempt++) {
+      toggles.forEach(t => { t.open = true; });
+      f.card.dispatch("toggle"); f.flush();
+      assert.equal(f.frame.getAttribute("data-fit-scale"), initialScale, "expanding preserves the current scale");
+      f.dialog.close(); f.open();
+      assert.ok(toggles.every(t => !t.open), "reopening restores collapsed details");
+      assert.equal(f.frame.getAttribute("data-fit-scale"), initialScale, "front face regains its initial size");
+      assert.equal(f.card.getAttribute("data-face"), "front");
+      assert.equal(f.frame.getAttribute("data-fit-scroll"), "false");
+    }
+  }
+});
 
 test("mobile fitting uses stable unscaled dimensions, refits updated content and leaves user pinch enlargement intact", () => {
   const f = mobileFitFixture(); f.open();

@@ -356,6 +356,10 @@ CATALOG_TRAITS_QUERY = _CONCEPT + """MATCH (peer:Taxon:BirdTaxon {rank:'species'
 WHERE """ + _SCOPE_PREDICATE + """
 WITH peer, null AS lineage
 """ + _TRAIT_PEERS
+# JSON diet shares are ranked with the same Python parser used to validate the evidence, before truncation.
+ORDER_DIET_QUERY = ORDER_TRAIT_QUERY.replace('LIMIT $limit\n', '')
+TAXON_DIET_QUERY = TAXON_TRAITS_QUERY.replace('LIMIT $limit\n', '')
+CATALOG_DIET_QUERY = CATALOG_TRAITS_QUERY.replace('LIMIT $limit\n', '')
 
 
 # --- answer assembly -------------------------------------------------------
@@ -624,12 +628,14 @@ def _order_fruit(repository, store, parsed, species_scope):
     source = sources[pipeline]
     taxonomy_source = _taxonomy_source(repository, concept, release)
     trait_name = 'trophic_niche' if criterion == 'frugivore' else 'diet_distribution'
-    rows = repository._run(ORDER_TRAIT_QUERY, concept_set_id=concept, taxonomy_release=release, order_id=order['taxon_id'],
+    rows = repository._run(ORDER_TRAIT_QUERY if criterion == 'frugivore' else ORDER_DIET_QUERY, concept_set_id=concept, taxonomy_release=release, order_id=order['taxon_id'],
                            dataset_id=source['dataset_id'], release=source['release'], trait_name=trait_name,
                            value_text='Frugivore' if criterion == 'frugivore' else None,
                            value_json_pattern=None if criterion == 'frugivore' else FRUIT_POSITIVE,
                            korean_reference_names=_korean_reference_names(), limit=RESULT_LIMIT + 1,
                            **scope_query_parameters(species_scope, concept, release))
+    if criterion != 'frugivore':
+        rows = _rank_diet_rows(rows, (TraitCondition('diet_distribution', 'share_gt', 'fruit', 0),))
     rows, has_more = _limited(rows)
     items = _peer_items(rows, species_scope, concept, release, {trait_name: source['source_name']},
                         taxonomy_source=taxonomy_source, root_id=order['taxon_id'])
@@ -641,8 +647,10 @@ def _order_fruit(repository, store, parsed, species_scope):
     if not items:
         return _payload('empty', title, f'{parsed.rank_name}에서 조건에 맞는 종을 그래프에서 찾지 못했습니다.',
                         limitations=limitations)
-    return _payload('answer', title, f"{parsed.rank_name}에 속하면서 {source['source_name']} 자료의 조건에 맞는 종입니다.",
-                    items, sources_out, limitations, has_more, criterion=trait_name)
+    text = f"{parsed.rank_name}에 속하면서 {source['source_name']} 자료의 조건에 맞는 종입니다."
+    if criterion != 'frugivore':
+        text += ' 열매 비율이 높은 순입니다.'
+    return _payload('answer', title, text, items, sources_out, limitations, has_more, criterion=trait_name)
 
 
 _SCIENTIFIC_TAXON = re.compile(r'[A-Z][a-z]+(?: [a-z]+(?:-[a-z]+)?){0,2}')
@@ -739,6 +747,27 @@ def _support_text(condition, support):
     return text
 
 
+def _rank_diet_rows(rows, conditions):
+    """Stable global ranking; union source keys so overlapping food groups never count twice."""
+    def score(row):
+        support = row.get('support')
+        if not isinstance(support, list) or len(support) != len(conditions):
+            raise ValueError('Invalid graph question peer')
+        shares, composition = {}, None
+        for condition, claim in zip(conditions, support):
+            if condition.op != 'share_gt':
+                continue
+            _support_text(condition, claim)
+            parsed = json.loads(claim['value_json'])
+            if composition is not None and parsed != composition:
+                raise ValueError('Conflicting diet composition for ranking')
+            composition = parsed
+            for key in DIET_SHARE_GROUPS.get(condition.value, (condition.value,)):
+                shares[key] = _fruit_share(claim['value_json'], key) or 0
+        return sum(shares.values())
+    return sorted(rows, key=score, reverse=True)
+
+
 def _taxon_candidates(repository, resolve, surface, concept, release):
     """(taxon or None, reason): the one active taxon the surface names; the rank always comes from the graph node.
 
@@ -827,14 +856,16 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
                             conditions=condition_out, taxon_resolution=reason)
         title = f"{_taxon_display(taxon)} 중 조건에 맞는 종"
     self_scope = taxon is not None and taxon['rank'] in ('species', 'subspecies')
+    rank_diet = any(c.op == 'share_gt' for c in conditions)
     params = dict(concept_set_id=concept, taxonomy_release=release,
                   conditions=[_condition_parameter(c, sources[TRAIT_CONDITIONS[c.trait_name][0]]) for c in conditions],
                   korean_reference_names=_korean_reference_names(), limit=RESULT_LIMIT + 1,
                   **scope_query_parameters(species_scope, concept, release))
     if taxon is None:
-        rows = repository._run(CATALOG_TRAITS_QUERY, **params)
+        rows = repository._run(CATALOG_DIET_QUERY if rank_diet else CATALOG_TRAITS_QUERY, **params)
     else:
-        rows = repository._run(TAXON_TRAITS_QUERY, root_id=taxon['taxon_id'], root_rank=taxon['rank'],
+        rows = repository._run(TAXON_DIET_QUERY if rank_diet else TAXON_TRAITS_QUERY,
+                               root_id=taxon['taxon_id'], root_rank=taxon['rank'],
                                target_rank='subspecies' if taxon['rank'] == 'subspecies' else 'species', **params)
     stats = rows[0].get('stats') if rows else None
     if (not isinstance(stats, dict) or any(not isinstance(stats.get(k), int) or isinstance(stats.get(k), bool)
@@ -842,8 +873,10 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
             or not stats['matched'] <= stats['evaluable'] <= stats['scoped']):
         raise ValueError('Invalid taxon trait statistics')
     peers = [row for row in rows if (row.get('taxon') or {}).get('taxon_id')]
-    if len(peers) != min(stats['matched'], RESULT_LIMIT + 1):
+    if len(peers) != (stats['matched'] if rank_diet else min(stats['matched'], RESULT_LIMIT + 1)):
         raise ValueError('Taxon trait rows disagree with statistics')
+    if rank_diet:
+        peers = _rank_diet_rows(peers, conditions)
     peers, has_more = _limited(peers)
     target_rank = taxon['rank'] if self_scope else 'species'
     items = []
@@ -917,6 +950,9 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
         return _payload('empty', title, text, sources=[taxonomy_source], limitations=limitations, **extra)
     text = (f"{where}은(는) 조건({summary})에 맞습니다." if self_scope else
             f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다.")
+    if rank_diet:
+        text += (' 요청한 먹이 비율의 합이 높은 순입니다.' if sum(c.op == 'share_gt' for c in conditions) > 1
+                 else ' 먹이 비율이 높은 순입니다.')
     return _payload('answer', title, text, items, sources_out, limitations, has_more, **extra)
 
 
