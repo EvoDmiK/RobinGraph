@@ -1,0 +1,159 @@
+{
+  "target": "https://robingraph.dove-nest.com/chat",
+  "verifiedAt": "2026-10-29T09:00:16.012Z",
+  "data": "actual Production /v1/chat API and rendered DOM",
+  "question": "까마귀과 중 열매를 먹는 새는?",
+  "disposition": "answer",
+  "resultKind": "graph_query",
+  "apiItems": [
+    {
+      "scientific_name": "Corvus fuscicapillus"
+    },
+    {
+      "scientific_name": "Corvus validus"
+    },
+    {
+      "scientific_name": "Corvus tristis"
+    },
+    {
+      "scientific_name": "Cyanocorax affinis"
+    },
+    {
+      "scientific_name": "Urocissa caerulea"
+    },
+    {
+      "scientific_name": "Cyanolyca cucullata"
+    },
+    {
+      "scientific_name": "Corvus meeki"
+    },
+    {
+      "scientific_name": "Cyanocorax cayanus"
+    },
+    {
+      "scientific_name": "Corvus nasicus"
+    },
+    {
+      "scientific_name": "Corvus florensis"
+    },
+    {
+      "scientific_name": "Corvus jamaicensis"
+    },
+    {
+      "scientific_name": "Crypsirina temia"
+    },
+    {
+      "scientific_name": "Corvus enca"
+    },
+    {
+      "scientific_name": "Cyanocorax violaceus"
+    },
+    {
+      "scientific_name": "Corvus woodfordi"
+    },
+    {
+      "scientific_name": "Cyanocorax cyanopogon"
+    },
+    {
+      "scientific_name": "Corvus leucognaphalus"
+    },
+    {
+      "scientific_name": "Corvus minutus"
+    },
+    {
+      "scientific_name": "Cyanocorax cristatellus"
+    },
+    {
+      "scientific_name": "Cyanocorax yncas"
+    }
+  ],
+  "fruitRatios": [
+    100,
+    100,
+    70,
+    60,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    50,
+    40,
+    40,
+    40
+  ],
+  "fruitRatiosDescending": true,
+  "dom": [
+    {
+      "latin": "Corvus fuscicapillus"
+    },
+    {
+      "latin": "Corvus validus"
+    },
+    {
+      "latin": "Corvus tristis"
+    },
+    {
+      "latin": "Cyanocorax affinis"
+    },
+    {
+      "latin": "Urocissa caerulea"
+    },
+    {
+      "latin": "Cyanolyca cucullata"
+    },
+    {
+      "latin": "Corvus meeki"
+    },
+    {
+      "latin": "Cyanocorax cayanus"
+    },
+    {
+      "latin": "Corvus nasicus"
+    },
+    {
+      "latin": "Corvus florensis"
+    },
+    {
+      "latin": "Corvus jamaicensis"
+    },
+    {
+      "latin": "Crypsirina temia"
+    },
+    {
+      "latin": "Corvus enca"
+    },
+    {
+      "latin": "Cyanocorax violaceus"
+    },
+    {
+      "latin": "Corvus woodfordi"
+    },
+    {
+      "latin": "Cyanocorax cyanopogon"
+    },
+    {
+      "latin": "Corvus leucognaphalus"
+    },
+    {
+      "latin": "Corvus minutus"
+    },
+    {
+      "latin": "Cyanocorax cristatellus"
+    },
+    {
+      "latin": "Cyanocorax yncas"
+    }
+  ],
+  "apiOrderPreserved": true,
+  "documentOverflow": false,
+  "screenshot": "/tmp/robingraph-prod-release-20261029/screenshots/fruit-ranking-390.png",
+  "evidence_note": "전체 근거 본문 제외, API·DOM 순서·비율 검사 수록."
+}

@@ -5,7 +5,7 @@ project: RobinGraph
 type: worklog
 status: completed
 task_id: RG-214
-backlog_status: in_progress
+backlog_status: completed
 related_tasks: [RG-203, RG-210, RG-407]
 tags: [worklog, robingraph, diet-ranking]
 ---
@@ -14,7 +14,9 @@ tags: [worklog, robingraph, diet-ranking]
 
 ## 요약
 
-2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-214|RG-214]]로 신규 등록했다. 최초에는 RG-203 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 백로그 상태는 **진행 중(TEST 구현·검증 완료, 운영 승인 대기)**다. 작업기록의 completed는 아래 TEST 범위 완료를 뜻한다.
+**현재 상태(2026-10-29 후속):** [[Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-29-승인3항목-운영배포-main병합|PROD #13 운영 배포·실제 검증 완료]]. revision `5056ccb`, dev-codex 커밋·main fast-forward 병합·양쪽 push 완료. 아래 구현·검증·배포 수치는 최초 TEST 단계의 이력이다.
+
+2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-214|RG-214]]로 신규 등록했다. 최초에는 RG-203 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 등록 당시 백로그 상태는 진행 중(TEST 완료·운영 승인 대기)이었다. 이후 같은 날 사용자 승인으로 PROD #13 배포·실제 운영 검증을 마쳐 현재 백로그 상태는 **완료**다.
 
 사용자는 온혈·변온 고기 라벨을 `고기 · 온혈동물`, `고기 · 변온동물`로 표시하고, 먹이 조건에 맞는 질의 결과를 가나다순 대신 해당 먹이 비율이 높은 순서로 보기를 요청했다. 여러 먹이 조건은 최종 사용자 선택에 따라 합산한다. 먼저 언급한 먹이를 우선하는 방식은 철회된 안이며 구현 기준으로 사용하지 않는다.
 
@@ -123,7 +125,7 @@ Chromium headless CDP 390×844에서 실제 TEST API 응답을 사용했다. 청
 
 근거 수집 위치는 `/tmp/robingraph-diet-ranking-20261029`다. mock·fixture와 실제 DB/API·브라우저를 구분한다.
 
-## 5. 배포 및 형상 관리
+## 5. TEST 단계 배포 및 형상 관리 (이력)
 
 | 항목 | 확정 값 |
 | --- | --- |

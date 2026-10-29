@@ -5,7 +5,7 @@ project: RobinGraph
 type: worklog
 status: completed
 task_id: RG-408
-backlog_status: in_progress
+backlog_status: completed
 related_tasks: [RG-405]
 legacy_task_id: RG-015
 tags: [worklog, robingraph, card-popup]
@@ -15,7 +15,9 @@ tags: [worklog, robingraph, card-popup]
 
 ## 요약
 
-2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-408|RG-408]]로 신규 등록했다. 최초에는 RG-405 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 백로그 상태는 **진행 중(TEST 구현·검증 완료, 운영 승인 대기)**다. 작업기록의 completed는 아래 TEST 범위 완료를 뜻한다.
+**현재 상태(2026-10-29 후속):** [[Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-29-승인3항목-운영배포-main병합|PROD #13 운영 배포·실제 검증 완료]]. revision `5056ccb`, dev-codex 커밋·main fast-forward 병합·양쪽 push 완료. 아래 구현·검증·배포 수치는 최초 TEST 단계의 이력이다.
+
+2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-408|RG-408]]로 신규 등록했다. 최초에는 RG-405 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 등록 당시 백로그 상태는 진행 중(TEST 완료·운영 승인 대기)이었다. 이후 같은 날 사용자 승인으로 PROD #13 배포·실제 운영 검증을 마쳐 현재 백로그 상태는 **완료**다.
 
 녹색비둘기 `Treron sieboldii` 도감 뒷면의 항목·비율을 펼친 채 팝업을 닫았다가 다시 열면 앞면 글씨가 작아지는 문제가 실제 TEST 모바일 환경에서 재현됐다. 팝업을 열 때 두 종류의 펼침 상태를 먼저 접어 초기 카드 크기를 측정하도록 최소 수정했다.
 
@@ -83,7 +85,7 @@ tags: [worklog, robingraph, card-popup]
 
 근거 원본은 `/tmp/robingraph-popup-reopen-20261029`, 선별 사본은 `docs/verification/assets/2026-10-29-card-popup-reopen-scale/`에 보관했다. 소스 전체·서명 토큰·인증 값은 복사하지 않았다. 배포 전 재현과 수정 후 검증을 별도 파일로 유지했다.
 
-## 5. 배포 및 형상 관리
+## 5. TEST 단계 배포 및 형상 관리 (이력)
 
 | 항목 | 확정 값 |
 | --- | --- |

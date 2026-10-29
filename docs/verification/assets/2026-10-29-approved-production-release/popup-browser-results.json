@@ -1,0 +1,45 @@
+{
+  "target": "https://robingraph.dove-nest.com/chat",
+  "verifiedAt": "2026-10-29T09:00:28.580Z",
+  "browser": "Chromium headless shell CDP",
+  "data": "actual Production API; no mocked response",
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "state": {
+        "dialogOpen": true,
+        "face": "back",
+        "rows": [
+          "곤충 · 40%",
+          "고기 · 온혈동물 · 0%",
+          "고기 · 변온동물 · 10%",
+          "물고기 · 10%",
+          "기타 고기 · 0%",
+          "사체 · 0%",
+          "열매 · 0%",
+          "꽃꿀 · 0%",
+          "씨앗 · 20%",
+          "기타 식물 · 20%"
+        ],
+        "chartText": "100%기록 비율항목·비율곤충 · 40%고기 · 온혈동물 · 0%고기 · 변온동물 · 10%물고기 · 10%기타 고기 · 0%사체 · 0%열매 · 0%꽃꿀 · 0%씨앗 · 20%기타 식물 · 20%",
+        "dialogFits": true,
+        "documentOverflow": false
+      },
+      "checks": {
+        "popup_open": true,
+        "back_face": true,
+        "insect_clean": true,
+        "other_meat": true,
+        "warm_cold_kept": true,
+        "qualitative_clean": true,
+        "fits": true
+      },
+      "screenshot": "/tmp/robingraph-prod-release-20261029/screenshots/diet-390.png",
+      "passed": true
+    }
+  ]
+}

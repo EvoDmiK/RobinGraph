@@ -5,7 +5,7 @@ project: RobinGraph
 type: worklog
 status: completed
 task_id: RG-407
-backlog_status: in_progress
+backlog_status: completed
 related_tasks: [RG-210]
 tags: [worklog, robingraph, diet-labels, ui]
 ---
@@ -14,11 +14,13 @@ tags: [worklog, robingraph, diet-labels, ui]
 
 ## 요약
 
-2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-407|RG-407]]로 신규 등록했다. 최초에는 RG-210 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 백로그 상태는 **진행 중(TEST 구현·검증 완료, 운영 승인 대기)**다. 작업기록의 completed는 아래 TEST 범위 완료를 뜻한다.
+**현재 상태(2026-10-29 후속):** [[Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-29-승인3항목-운영배포-main병합|PROD #13 운영 배포·실제 검증 완료]]. revision `5056ccb`, dev-codex 커밋·main fast-forward 병합·양쪽 push 완료. 아래 구현·검증·배포 수치는 최초 TEST 단계의 이력이다.
+
+2026-10-29 사용자 요청으로 기존 후속 기록을 독립 백로그 [[Work/RobinGraph/백로그 상세/RG-407|RG-407]]로 신규 등록했다. 최초에는 RG-210 후속으로 기록했으며, 이번 등록을 과거 착수 시점의 신규 번호로 소급하지 않는다. 등록 당시 백로그 상태는 진행 중(TEST 완료·운영 승인 대기)이었다. 이후 같은 날 사용자 승인으로 PROD #13 배포·실제 운영 검증을 마쳐 현재 백로그 상태는 **완료**다.
 
 도감 팝업의 먹이 유형·먹이 생태·먹이 구성에서 원자료 설명 괄호를 제거하고 기타 척추동물 표시를 “기타 고기”로 정리했다. 로컬 변경이 TEST에 배포되지 않아 사용자가 본 화면에 이전 문구가 남아 있었다. 새 ARM64 이미지를 TEST에 반영했고, 실제 정적 파일과 API 네 종에서 새 표시값을 확인했다.
 
-내부 key·원자료 범주·비율과 API 구조는 유지했다. TEST 배포·health·fixture 검증과 실제 Chromium 두 화면 크기의 팝업 검사 14/14가 완료됐다. 10월 28일 로컬 Python 78건·frontend 333건 통과 이력은 오늘 재실행한 검사로 합산하지 않는다. Production 배포와 Git commit·push는 수행하지 않았다.
+내부 key·원자료 범주·비율과 API 구조는 유지했다. TEST 배포·health·fixture 검증과 실제 Chromium 두 화면 크기의 팝업 검사 14/14가 완료됐다. 10월 28일 로컬 Python 78건·frontend 333건 통과 이력은 오늘 재실행한 검사로 합산하지 않는다. 아래 TEST 단계에서는 Production 배포와 Git commit·push를 수행하지 않았으며, 이후 운영 결과는 상단 후속 기록을 따른다.
 
 ## 작업 및 변경 결과 요약
 
@@ -122,7 +124,7 @@ frontend 원본 로그는 `/tmp/robingraph-diet-distribution-frontend.log`에 �
 
 증거는 `docs/verification/assets/2026-10-29-diet-display-labels/`에 수록했다. 프로필 전체 본문과 인증 값은 복사하지 않았고, 일부 JSON 사본은 필요한 배포 메타데이터·표시 결과만 남겼음을 파일에 명시했다.
 
-## 5. 배포 및 형상 관리
+## 5. TEST 단계 배포 및 형상 관리 (이력)
 
 | 항목 | 확정 값 |
 | --- | --- |
