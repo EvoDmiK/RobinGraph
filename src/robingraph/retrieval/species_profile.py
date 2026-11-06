@@ -448,7 +448,7 @@ def species_sections(taxon, traits, notes):
     return sections
 
 
-def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True):
+def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True, recordings=None):
     """Resolve once, collect independent sources, then assemble a sourced response."""
     def resolve_species(query):
         lineage = resolve(query)
@@ -486,6 +486,20 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         except Exception:
             return {'images':[], 'photo_availability':{'status':'provider_unavailable', 'message':PHOTO_MESSAGES['provider_unavailable']},
                     'warnings':['사진 제공처를 현재 조회할 수 없습니다.']}
+    def recording_stage(lineage):
+        # Graph metadata is local to the profile lookup, including the basic/deferred card.
+        try:
+            records = recordings(lineage) if recordings is not None else []
+            if not isinstance(records, list):
+                raise ValueError('Invalid recording result')
+            return {'recordings': records, 'recording_availability': {
+                'status': 'available' if records else 'no_licensed_recording',
+                'message': '출처와 라이선스가 확인된 녹음입니다.' if records else '이 종에 연결된 사용 가능한 녹음 자료가 없습니다.'},
+                'warnings': []}
+        except Exception:
+            return {'recordings': [], 'recording_availability': {'status': 'provider_unavailable',
+                    'message': '녹음 자료를 현재 조회할 수 없습니다. 잠시 후 다시 조회하세요.'},
+                    'warnings': ['녹음 자료를 현재 조회할 수 없습니다.']}
     def trait_stage(lineage):
         try:
             return {'traits':reviewed_magpie_traits(lineage, traits(lineage)), 'warnings':[]}
@@ -524,12 +538,14 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         result = {'taxon':taxon, 'lineage':asdict(lineage),
                 'traits':profile_traits, 'images':state['media']['images'],
                 'photo_availability':state['media']['photo_availability'],
+                'recordings':state['audio']['recordings'],
+                'recording_availability':state['audio']['recording_availability'],
                 'conservation':state['conservation']['conservation'],
                 'note_evidence':[dict(item) for category in ('appearance', 'fun_facts')
                                  for item in state['notes']['notes'].get(category, []) if isinstance(item, dict)],
                 'summary':species_summary(taxon, profile_traits),
                 'sections':species_sections(taxon, profile_traits, state['notes']['notes']),
-                'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'],
+                'warnings':state['traits']['warnings'] + state['media']['warnings'] + state['conservation']['warnings'] + state['notes']['warnings'] + state['reference']['warnings'] + state['audio']['warnings'],
                 'vegetation_note':'구체적인 식물·식생 목록은 아직 수집되지 않았습니다.'}
         if taxon['rank']=='subspecies':
             metadata=state['metadata']
@@ -545,5 +561,5 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             result['enrichment_pending'] = True
         return result
     return (RunnableLambda(resolve_species)
-            | RunnableParallel(lineage=RunnablePassthrough(), traits=RunnableLambda(trait_stage), media=RunnableLambda(image_stage), conservation=RunnableLambda(conservation_stage), notes=RunnableLambda(notes_stage),reference=RunnableLambda(reference_stage),metadata=RunnableLambda(metadata_stage))
+            | RunnableParallel(lineage=RunnablePassthrough(), traits=RunnableLambda(trait_stage), media=RunnableLambda(image_stage), audio=RunnableLambda(recording_stage), conservation=RunnableLambda(conservation_stage), notes=RunnableLambda(notes_stage),reference=RunnableLambda(reference_stage),metadata=RunnableLambda(metadata_stage))
             | RunnableLambda(assemble))

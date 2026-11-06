@@ -85,6 +85,8 @@ from .semantic_router import SemanticRouter
 from ..retrieval.species_scope import SpeciesScope, scope_matches, with_species_scope
 from .jev_router import JevRouter
 from .question_entities import extract_name, rewrite_name_candidate, AmbiguousNameSpanError
+from .followup import (KOREA_LIMITATION, FollowupRejected, extend as extend_followup, followup_text,
+                       info as followup_info, issue as issue_followup, plan_of, read as read_followup)
 
 
 class ApiError(Exception):
@@ -377,7 +379,9 @@ def _taxonomy_answer(question: str, lineage: TaxonomyLineage, species_scope: Spe
 
 def _trace_payload(value: object) -> object:
     if isinstance(value, BaseModel):
-        return value.model_dump(mode="json")
+        value = value.model_dump(mode="json")
+        if value.get("followup_context"):   # a signed capability: traced as present, never as its value
+            value["followup_context"] = "[redacted]"
     return value
 
 
@@ -462,6 +466,7 @@ def _traced_route(name: str) -> Callable[[Callable], Callable]:
                         tracing.set_trace_tags(tracing.resolve_response_tags(None, reason="unknown", stage="unknown"))
                         raise
                     if isinstance(result, ChatResponse):
+                        result._trace_id = span.trace_id
                         span.set_attributes({
                             "robingraph.selected_intent": result.selected_intent or "none",
                             "robingraph.route_method": result.route_method,
@@ -894,12 +899,47 @@ class ApiService:
                     result=ChatClarifyResult(prompt=prompt, choices=list(choices)),
                 )
 
-        graph_question = parse_graph_question(request.question) if request.intent in ("auto", "profile") else None
-        species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
+        followup = base = None   # an accepted follow-up's merged plan, and the verified plan it extends
+        followup_rest = followup_text(request.question)
+        if followup_rest is not None and (request.intent in ("auto", "profile") or request.followup_context):
+            with tracing.span("graph_intent.route", tracing.CHAIN) as route_span:
+                try:
+                    base = read_followup(request.followup_context, request.species_scope)
+                    if request.intent not in ("auto", "profile") or (
+                            request.filters is not None and not (isinstance(request.filters, ProfileChatFilters)
+                                                 and request.filters.name is None)):
+                        # An explicit route or a species filter is never silently dropped for the context plan.
+                        raise FollowupRejected("route_conflict", base)
+                    followup = extend_followup(base, followup_rest, request.species_scope)
+                except FollowupRejected as rejected:
+                    route_span.set_attributes({"graph_followup.status": "rejected", "graph_followup.reason": rejected.reason,
+                                               "graph_followup.root_question": getattr(rejected.plan, "root_question", None)})
+                    _why({"context_missing": "followup_context_missing", "unsupported_addition": "unsupported_conditions",
+                          "unresolved_addition": "unresolved_conditions", "route_conflict": "filter_mismatch"}.get(
+                        rejected.reason, "followup_context_invalid" if rejected.reason.startswith("context_")
+                        else "plan_validation_rejected"), "followup")
+                    prompt = rejected.prompt(request.species_scope)
+                    return ChatResponse(
+                        selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
+                        disposition="clarify", answer_text=prompt,
+                        warnings=["이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."],
+                        result=ChatClarifyResult(prompt=prompt),
+                        followup_context=request.followup_context if rejected.plan else None,
+                        followup=followup_info("rejected", request.species_scope, rejected.plan, rejected.plan,
+                                               rejected.reason),
+                    )
+                route_span.set_attributes({"graph_followup.status": "applied", "graph_followup.root_question": followup.root_question,
+                                           "graph_followup.added": followup.added, "graph_followup.turn": followup.turn,
+                                           "graph_followup.canonical_plan": {**asdict(followup.question()),
+                                                                             "species_scope": followup.species_scope(request.species_scope)}})
+        graph_question = (followup.question() if followup else
+                          parse_graph_question(request.question) if request.intent in ("auto", "profile") else None)
+        species_question = (parse_species_question(request.question)
+                            if request.intent in ("auto", "profile") and not followup else None)
         graph_method = "deterministic" if request.intent == "auto" else "explicit"
         # Established single-species routes need no extra embedding request.
         single_species = species_question or _species_chat_question(request.question)
-        if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
+        if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None and followup is None
                 and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
             from ..retrieval.graph_intent_schema import GraphIntent, canonical_graph_plan, execution_gate, to_graph_question, unsupported_food
 
@@ -1045,7 +1085,9 @@ class ApiService:
             payload = None
             if self.graph_question_handler is not None:
                 try:
-                    payload = self.graph_question_handler(graph_question, species_scope=request.species_scope)
+                    payload = self.graph_question_handler(
+                        graph_question, species_scope=followup.species_scope(request.species_scope)
+                        if followup else request.species_scope)
                     if (not isinstance(payload, dict)
                             or payload.get("status") not in ("answer", "empty", "insufficient_data")
                             or not isinstance(payload.get("text"), str)
@@ -1072,11 +1114,20 @@ class ApiService:
                            "limitations": ["조회 실패를 해당 종이나 관계가 없다는 뜻으로 해석하지 마세요."], "has_more": False}
             elif payload["status"] != "answer":
                 _why("no_matching_results" if payload["status"] == "empty" else "insufficient_data", "retrieval")
+            if followup and followup.scope and KOREA_LIMITATION not in payload.get("limitations", []):
+                payload = {**payload, "limitations": [*payload.get("limitations", []), KOREA_LIMITATION]}
+            # Only a successful condition query is continued; a follow-up miss keeps the last successful plan.
+            plan = followup or (plan_of(request.question, graph_question) if payload["status"] == "answer" else None)
+            context = issue_followup(plan, request.species_scope) if plan and payload["status"] == "answer" else None
+            retained = plan if context else None
+            if followup and context is None:
+                context, retained = request.followup_context, base
             return ChatResponse(
                 selected_intent="profile", route_method=graph_method,
                 disposition="answer" if payload["status"] == "answer" else "abstain",
                 answer_text=payload["text"], warnings=payload.get("limitations", []),
-                result=ChatGraphResult(payload=payload),
+                result=ChatGraphResult(payload=payload), followup_context=context,
+                followup=followup_info("applied", request.species_scope, followup, retained) if followup else None,
             )
 
         # The routing body below predates the service extraction; bind the

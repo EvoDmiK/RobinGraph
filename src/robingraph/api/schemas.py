@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING, Annotated, Callable, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator, model_validator
 
 from ..retrieval.hybrid import HybridResult, HybridSearchOutcome
 from ..retrieval.operational import OperationalObservation, OperationalObservationQuery
@@ -261,6 +261,8 @@ class ChatRequest(_ChatModel):
     defer_enrichment: bool = False
     defer_discovery: bool = False
     species_scope: SpeciesScope = "all"
+    # Opaque signed plan from the previous response of the same conversation; verified, never trusted.
+    followup_context: str | None = Field(default=None, max_length=4_096)
 
     @field_validator("question")
     @classmethod
@@ -348,7 +350,27 @@ ChatResult = Annotated[
 ]
 
 
+class ChatFollowupPlan(_ChatModel):
+    conditions: list[str] = Field(default_factory=list)
+    taxon: str | None = None
+    scope: SpeciesScope   # the species scope the plan runs with (request scope, or korea once added)
+
+
+class ChatFollowupInfo(_ChatModel):
+    status: Literal["applied", "rejected"]
+    reason: Literal["context_missing", "context_invalid", "context_scope_mismatch", "route_conflict",
+                    "unsupported_addition", "unresolved_addition", "multiple_additions", "duplicate_condition",
+                    "conflicting_condition"] | None = None
+    root_question: str | None = None
+    added: str | None = None
+    # The plan this response ran (applied) or kept (rejected); None when no context was verified.
+    plan: ChatFollowupPlan | None = None
+    # The plan `followup_context` carries into the next turn (the last successful one); None = no context.
+    retained: ChatFollowupPlan | None = None
+
+
 class ChatResponse(_ChatModel):
+    _trace_id: str | None = PrivateAttr(default=None)
     selected_intent: ChatIntent | None
     route_method: Literal["semantic", "explicit", "deterministic", "jev"]
     disposition: Literal["answer", "abstain", "clarify"]
@@ -356,3 +378,10 @@ class ChatResponse(_ChatModel):
     warnings: list[str]
     result: ChatResult
     entity_resolution: EntityResolutionResponse | None = None
+    followup_context: str | None = Field(default=None, exclude_if=lambda value: value is None)
+    followup: ChatFollowupInfo | None = Field(default=None, exclude_if=lambda value: value is None)
+
+
+class ChatFeedbackRequest(_ChatModel):
+    token: str = Field(min_length=1, max_length=2048)
+    rating: Literal["helpful", "misunderstood", "incorrect"]

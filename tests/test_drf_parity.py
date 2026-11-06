@@ -209,11 +209,20 @@ class ParityCase(unittest.TestCase):
                 # Keep the migration oracle intact while testing the new
                 # additive graph result separately in OpenApiContractTest.
                 schemas = body["components"]["schemas"]
+                schemas.pop("ChatFeedbackRequest", None)
+                body["paths"].pop("/v1/chat/feedback", None)
+                body["paths"]["/v1/chat"]["post"]["responses"]["200"].pop("headers", None)
                 schemas.pop("ChatGraphResult", None)
                 # Additive confirmation controls are checked against live DTOs below.
                 schemas.pop("ChatClarifyChoice", None)
                 schemas["ChatClarifyResult"]["properties"].pop("choices", None)
                 schemas["EntityCandidateResponse"]["properties"].pop("route_intent", None)
+                # Additive follow-up context fields are checked against live DTOs below.
+                schemas.pop("ChatFollowupInfo", None)
+                schemas.pop("ChatFollowupPlan", None)
+                schemas["ChatRequest"]["properties"].pop("followup_context", None)
+                for key in ("followup_context", "followup"):
+                    schemas["ChatResponse"]["properties"].pop(key, None)
                 result = schemas["ChatResponse"]["properties"]["result"]
                 result["oneOf"] = [entry for entry in result["oneOf"]
                                    if entry.get("$ref") != "#/components/schemas/ChatGraphResult"]
@@ -548,7 +557,7 @@ class NativeRuntimeTest(unittest.TestCase):
         schema = create_django_app().openapi()
         self.assertEqual({"/v1/taxa/name-relations", "/v1/taxa/related", "/v1/taxa/similar",
                           "/v1/taxa/ecological-related", "/v1/taxa/subspecies", "/v1/taxa/profile", "/health",
-                          "/v1/answers", "/v1/chat", "/v1/search", "/v1/observations", "/v1/taxa/lineage"},
+                          "/v1/answers", "/v1/chat", "/v1/chat/feedback", "/v1/search", "/v1/observations", "/v1/taxa/lineage"},
                          set(schema["paths"]))
         self.assertIn("LineageTaxonResponse", schema["components"]["schemas"])
         self.assertEqual(json.loads(json.dumps(schema)), schema)
@@ -565,6 +574,7 @@ def _without_null_defaults(value):
 
 
 PUBLIC_MODELS = (
+    (schemas.ChatFeedbackRequest, "validation"),
     (schemas.ChatRequest, "validation"), (schemas.QuestionRequest, "validation"),
     (schemas.DocumentSearchRequest, "validation"), (schemas.AnswerResponse, "serialization"),
     (schemas.ChatResponse, "serialization"), (schemas.DocumentSearchResponse, "serialization"),

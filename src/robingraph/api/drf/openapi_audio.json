@@ -1,0 +1,539 @@
+{
+  "/internal/v1/audio/targets": {
+    "post": {
+      "summary": "Audio targets",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5,
+                  "default": 5
+                },
+                "after_taxon_id": {
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/discover": {
+    "post": {
+      "summary": "Audio discover",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "scientific_name": {
+                  "type": "string"
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 3,
+                  "default": 3
+                }
+              },
+              "required": [
+                "scientific_name"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/stage": {
+    "post": {
+      "summary": "Audio stage",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "scientific_name": {
+                  "type": "string"
+                },
+                "file_title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "scientific_name",
+                "file_title"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/status": {
+    "post": {
+      "summary": "Audio status",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "candidate_id": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "candidate_id"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/review": {
+    "post": {
+      "summary": "Audio review",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "candidate_id": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "reviewer": {
+                  "type": "string"
+                },
+                "taxon_verified": {
+                  "type": "boolean"
+                },
+                "playback_verified": {
+                  "type": "boolean"
+                },
+                "approved": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "candidate_id",
+                "reviewer",
+                "taxon_verified",
+                "playback_verified",
+                "approved"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/publish": {
+    "post": {
+      "summary": "Audio publish",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "candidate_id": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "candidate_id"
+              ]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Operation completed; review and publish are explicit independent decisions"
+        },
+        "401": {
+          "description": "Internal bearer required"
+        },
+        "409": {
+          "description": "State gate, concurrent collection, or changed active source context"
+        },
+        "422": {
+          "description": "Invalid request or unverified source"
+        },
+        "429": {
+          "description": "Provider-wide cooldown; stop the batch and honor Retry-After",
+          "headers": {
+            "Retry-After": {
+              "schema": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "502": {
+          "description": "Provider unavailable; no publication"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/preview/{candidate_id}": {
+    "get": {
+      "summary": "Private reviewed-file preview",
+      "parameters": [
+        {
+          "name": "candidate_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Range",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Complete audio"
+        },
+        "206": {
+          "description": "Single byte range"
+        },
+        "404": {
+          "description": "File unavailable or unpublished"
+        },
+        "416": {
+          "description": "Invalid or unsatisfiable byte range"
+        }
+      },
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ]
+    },
+    "head": {
+      "summary": "Private reviewed-file preview",
+      "parameters": [
+        {
+          "name": "candidate_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Range",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Complete audio"
+        },
+        "206": {
+          "description": "Single byte range"
+        },
+        "404": {
+          "description": "File unavailable or unpublished"
+        },
+        "416": {
+          "description": "Invalid or unsatisfiable byte range"
+        }
+      },
+      "security": [
+        {
+          "AudioInternalBearer": []
+        }
+      ]
+    }
+  },
+  "/media/audio/{file_name}": {
+    "get": {
+      "summary": "Published immutable audio",
+      "parameters": [
+        {
+          "name": "file_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Range",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Complete audio"
+        },
+        "206": {
+          "description": "Single byte range"
+        },
+        "404": {
+          "description": "File unavailable or unpublished"
+        },
+        "416": {
+          "description": "Invalid or unsatisfiable byte range"
+        }
+      }
+    },
+    "head": {
+      "summary": "Published immutable audio",
+      "parameters": [
+        {
+          "name": "file_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Range",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Complete audio"
+        },
+        "206": {
+          "description": "Single byte range"
+        },
+        "404": {
+          "description": "File unavailable or unpublished"
+        },
+        "416": {
+          "description": "Invalid or unsatisfiable byte range"
+        }
+      }
+    }
+  }
+}

@@ -222,7 +222,26 @@ class ChatView(RobinGraphView):
     request_serializer = serializers.ChatRequestSerializer
 
     def post(self, request):
-        return self.model(self.service.chat(**self.validated(request)), schemas.ChatResponse)
+        from ..feedback import feedback_headers
+
+        result = self.service.chat(**self.validated(request))
+        response = self.model(result, schemas.ChatResponse)
+        for key, value in feedback_headers(result._trace_id).items():
+            response[key] = value
+        if result.followup_context:   # a signed per-conversation capability is never cached
+            response["Cache-Control"] = "no-store"
+        return response
+
+
+class ChatFeedbackView(RobinGraphView):
+    http_method_names = ["post"]
+    request_serializer = serializers.ChatFeedbackRequestSerializer
+
+    def post(self, request):
+        from ..feedback import submit_feedback
+
+        submit_feedback(self.validated(request)["request"])
+        return self.plain({"status": "saved"})
 
 
 class DocumentSearchView(RobinGraphView):

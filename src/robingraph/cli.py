@@ -216,6 +216,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         active_taxonomy_context,
     )
     from .retrieval.species_profile import create_species_flow, read_traits, read_conservation
+    from .retrieval.recordings import read_recordings
 
     def resolve_species(name):
         if any("\uac00" <= char <= "\ud7a3" for char in name):
@@ -351,17 +352,43 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
         lineage_repository, lambda: ingest_store.active_release_context(NAME_RELATIONS_PIPELINE),
     )
 
+    audio_service = None
+    audio_root = os.environ.get('ROBINGRAPH_AUDIO_ROOT')
+    if audio_root:
+        if os.environ.get('ROBINGRAPH_DEPLOY_TARGET') != 'test':
+            raise ValueError('Audio collection is enabled only for an explicitly configured TEST deployment')
+        from .ingest.audio import AudioService
+        from .ingest.audio_store import AudioStore
+        from .api.services import ApiError
+        from .retrieval.species_scope import distribution_for
+
+        def audio_exact_species(scientific_name):
+            lineage = lineage_repository.lineage_for_scientific_name(scientific_name)
+            if lineage is None or lineage.items[-1].rank != 'species' or lineage.items[-1].scientific_name != scientific_name:
+                raise ApiError(422,'A unique active exact species is required')
+            target = lineage.items[-1]
+            if distribution_for({'taxon_id':target.taxon_id,'scientific_name':scientific_name,'rank':target.rank},
+                                lineage.concept_set_id,lineage.taxonomy_release)['status'] != 'korea':
+                raise ApiError(422,'A reviewed Korean wild-record scope is required')
+            return {'taxon_id':target.taxon_id,'concept_set_id':lineage.concept_set_id,
+                    'taxonomy_release':lineage.taxonomy_release}
+
+        audio_service = AudioService(AudioStore(PostgresSettings.from_environment()),audio_root,lineage_repository,
+                                     audio_exact_species,os.environ.get('ROBINGRAPH_INGEST_INTERNAL_TOKEN',''))
+
     summarize_notes = getattr(answer_generator, 'species_notes', None)
     species_flow = create_species_flow(
         resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
         conservation=lambda lineage: read_conservation(lineage_repository, lineage),
         notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
         subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+        recordings=audio_service.recordings if audio_service is not None else lambda lineage: read_recordings(lineage_repository,lineage),
     )
     basic_species_flow = create_species_flow(
         resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
         conservation=lambda lineage: read_conservation(lineage_repository, lineage),
         subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+        recordings=audio_service.recordings if audio_service is not None else lambda lineage: read_recordings(lineage_repository,lineage),
         include_enrichment=False,
     )
     from .retrieval.species_scope import with_species_scope
@@ -399,6 +426,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             graph_intent_mode=graph_intent_mode,
             name_relations_handler=name_relations_repository.for_name,
             subspecies_handler=lambda name: subspecies_for(lineage_repository,resolve_species,name),
+            audio_service=audio_service,
         )
         uvicorn.run(app, host=arguments.host, port=arguments.port)
     finally:

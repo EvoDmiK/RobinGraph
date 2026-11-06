@@ -101,6 +101,8 @@ class Tests(unittest.TestCase):
     with patch.object(tracing,'_mlflow',None):before,_=self.run_case(case,None,http=True)
     sdk=Fake()
     with patch.object(tracing,'_mlflow',sdk):after,expected=self.run_case(case,sdk,http=True)
+    # A signed follow-up token carries its signing time; only its presence must match.
+    self.assertEqual(before.pop('followup_context',None) is None,after.pop('followup_context',None) is None)
     self.assertEqual(before,after);roots=[x for x in sdk.spans if x.root is x];self.assertEqual(1,len(roots));root=roots[0]
     self.assertEqual(expected,tuple(root.tags[k] for k in ('response_disposition','response_reason','failure_stage')))
     self.assertEqual(after['disposition'],root.tags['response_api_disposition']);self.assertNotIn(SECRET,json.dumps(root.tags))
@@ -110,7 +112,9 @@ class Tests(unittest.TestCase):
    with patch.object(tracing,'_mlflow',None):expected,_=self.run_case(case,None)
    for failure in ('start','attribute','tags','end'):
     with self.subTest(case=case,failure=failure),patch.object(tracing,'_mlflow',Fake(failure)):
-     actual,_=self.run_case(case,None);self.assertEqual(expected,actual)
+     actual,_=self.run_case(case,None)
+     self.assertEqual(expected.get('followup_context') is None,actual.get('followup_context') is None)
+     self.assertEqual({**expected,'followup_context':None},{**actual,'followup_context':None})
  def test_concurrent_requests_are_matched_to_their_own_root(self):
   sdk=Fake();cases=['audit','proposal','empty','answer'];barrier=threading.Barrier(len(cases))
   def run(case):
@@ -118,7 +122,8 @@ class Tests(unittest.TestCase):
    try:body,expected=self.run_case(case,sdk,barrier=barrier)
    finally:sdk.requestid.reset(token)
    root=next(s for s in sdk.spans if s.root is s and s.requestid==case)
-   self.assertEqual(body,root.outputs)
+   # The signed follow-up capability is traced only as present.
+   self.assertEqual({**body,**({'followup_context':'[redacted]'} if 'followup_context' in body else {})},root.outputs)
    return root,expected
   with patch.object(tracing,'_mlflow',sdk),ThreadPoolExecutor(max_workers=4) as pool:results=list(pool.map(run,cases))
   self.assertEqual(4,len({id(r) for r,e in results}))

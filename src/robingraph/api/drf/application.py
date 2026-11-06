@@ -99,6 +99,7 @@ def create_django_app(
     taxon_name_resolution_handler: Callable[[str], dict] | None = None,
     static_dir: Path | None = None,
     ingest_store: IngestStore | None = None,
+    audio_service=None,
 ) -> DjangoApiApplication:
     """Create the native Django/DRF API over the shared `ApiService`.
 
@@ -136,4 +137,8 @@ def create_django_app(
     )
     ingest = IngestService(ingest_store) if ingest_store is not None else None
     schema = frozen_openapi(ingest=ingest is not None)
-    return DjangoApiApplication(build_urlconf(service, ingest, schema), schema)
+    if audio_service is not None:
+        import json
+        schema['paths'].update(json.loads(Path(__file__).with_name('openapi_audio.json').read_text()))
+        schema['components'].setdefault('securitySchemes',{})['AudioInternalBearer'] = {'type':'http','scheme':'bearer'}
+    return DjangoApiApplication(build_urlconf(service, ingest, schema, audio_service=audio_service), schema)
