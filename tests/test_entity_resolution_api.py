@@ -6,6 +6,7 @@ from unittest.mock import Mock
 from asgi_client import TestClient
 
 from robingraph.api.drf import create_django_app
+from robingraph.retrieval.graph_condition_extractor import extract_graph_intent
 
 
 PROFILE = {
@@ -85,6 +86,29 @@ class EntityResolutionApiTests(unittest.TestCase):
         self.assertEqual('abstain', body['disposition'])
         self.assertEqual('unavailable', body['entity_resolution']['status'])
         reader.assert_not_called()
+
+    def test_invalid_identity_never_reaches_profile_or_graph_lookup(self):
+        name = '흰뺨검둥오리'
+        invalid = [dict(matched(), **{field: None}) for field in
+                   ('canonical_name', 'taxon_id', 'concept_set_id', 'taxonomy_release')]
+        invalid += [matched('다른새'), matched(method='vector'),
+                    dict(mention=name, status='candidates', method='vector', candidates=[]),
+                    dict(mention=name, status='candidates', method='graph_exact', candidates=[
+                        dict(taxon_id='duck', scientific_name='Anas zonorhyncha', score=.91)])]
+        for question, disposition in ((name + '에 대해 알려줘', 'abstain'),
+                (name + '와 서식지가 겹치면서 먹이가 다른 새는?', 'clarify')):
+            for raw in invalid:
+                with self.subTest(question=question, resolution=raw):
+                    reader, graph, resolver = Mock(), Mock(), Mock(return_value=raw)
+                    client = TestClient(create_django_app(species_profile_handler=reader,
+                        graph_question_handler=graph, taxon_name_resolution_handler=resolver,
+                        graph_intent_mode='active', graph_intent_handler=extract_graph_intent))
+                    response = client.post('/v1/chat', json={'question': question, 'species_scope': 'korea'})
+                    self.assertEqual(200, response.status_code)
+                    self.assertEqual(disposition, response.json()['disposition'])
+                    resolver.assert_called_once_with(name, species_scope='korea')
+                    reader.assert_not_called()
+                    graph.assert_not_called()
 
     def test_explicit_evidence_does_not_attempt_taxon_resolution(self):
         client, resolver, _ = self.client(None)

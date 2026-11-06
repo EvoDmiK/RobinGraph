@@ -533,7 +533,8 @@ class SemanticChatApiTest(unittest.TestCase):
         self.assertIn("route_method", response_schema["required"])
         result_schema = response_schema["properties"]["result"]
         self.assertEqual("kind", result_schema["discriminator"]["propertyName"])
-        self.assertEqual(6, len(result_schema["oneOf"]))
+        self.assertEqual(7, len(result_schema["oneOf"]))
+        self.assertIn("graph_query", result_schema["discriminator"]["mapping"])
         self.assertIn("name_relations", result_schema["discriminator"]["mapping"])
 
 

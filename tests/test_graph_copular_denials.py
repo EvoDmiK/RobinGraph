@@ -1,0 +1,27 @@
+"""Common Korean copular denials remain blocked before and after reconciliation (mock plans)."""
+import re
+from unittest import TestCase
+from robingraph.retrieval import semantic_graph_intent as s
+from robingraph.retrieval import graph_condition_extractor as e
+from robingraph.retrieval.graph_intent_schema import execution_gate
+
+
+class GraphCopularDenialTest(TestCase):
+    def test_negation_and_legitimate_framing_matrix(self):
+        rows=[]
+        for form in ('아니다','아니야','아니에요','아닙니다','아닙니까','아닌','아님','아니라고','아니라는','아니란','아니라며','아니라서','아니라면','아니라도','아니라니','아니고','아니면서','아니지','아니지요','아니지만','아니었다','아니었어','아니었어요','아니었고','아니었으며'):
+         for word,op in [('초과','num_gt'),('미만','num_lt'),('이상','num_gte'),('이하','num_lte')]:
+          q='체중 200g '+word+'이라는 것은 '+form
+          for surface in ('체중 200g '+word,'체중 200g '+word+'인'):
+           raw=dict(kind='taxon_traits',conditions=[dict(trait_name='body_mass',op=op,threshold=200,unit='g',surface=surface)],unresolved=[],unknown_relation=False)
+           candidate,changes=s.reconcile_graph_plan(q,raw)
+           for plan in (raw,candidate):
+            assert execution_gate(q,s.interpret(q,lambda *_:plan))=='clarify',(q,surface)
+           rows.append(dict(question=q,surface=surface,actual='clarify'))
+        category=dict(kind='taxon_traits',conditions=[dict(trait_name='diet_category',op='eq',value='PlantSeed',surface='먹이 유형이 식물·씨앗인')],unresolved=[],unknown_relation=False)
+        q='먹이 유형이 식물·씨앗인 새. 비율 조건을 뜻하는 건 아니야.'
+        assert execution_gate(q,s.interpret(q,lambda *_:category))=='answer';rows.append(dict(question=q,actual='answer'))
+        q+=' 이 조건은 아님';assert execution_gate(q,s.interpret(q,lambda *_:category))=='clarify';rows.append(dict(question=q,actual='clarify'))
+        for word in ('아니라고릴라','아니라는새명사','아님프'):
+         assert re.search(e._COPULAR_DENIAL,word)is None
+         rows.append(dict(content_word=word,not_matched=True))

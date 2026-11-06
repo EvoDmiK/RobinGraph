@@ -76,7 +76,7 @@ class PostgresSettingsTest(unittest.TestCase):
 class PostgresMigrationTest(unittest.TestCase):
     def test_control_plane_migration_contains_required_tables_and_outbox_index(self) -> None:
         migrations = discover_migrations()
-        self.assertEqual(["0001", "0002", "0003", "0004"], [migration.version for migration in migrations])
+        self.assertEqual(["0001", "0002", "0003", "0004", "0005"], [migration.version for migration in migrations])
         sql = migrations[0].sql
         for table in (
             "source_dataset",

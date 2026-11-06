@@ -61,6 +61,41 @@ def _candidate_document(answer_text: str, evidence_ids: list[str]) -> dict:
 
 
 class GeminiRequestShapeTest(unittest.TestCase):
+    def test_structured_graph_intent_uses_supplied_contract_and_untrusted_examples(self):
+        captured = {}
+        payload = {'kind': 'shared_diet', 'species': ['까치']}
+        def opener(request, timeout):
+            body = json.loads(request.data)
+            auditing = 'Independently audit' in body['contents'][0]['parts'][0]['text']
+            if not auditing:
+                captured.update(body)
+            out = {'faithful': True, 'issues': []} if auditing else payload
+            return _Response({'candidates': [{'content': {'parts': [{'text': json.dumps(out)}]}}]})
+        answerer = GeminiAnswerer('test-key', urlopen=opener)
+        schema = {'type': 'OBJECT', 'properties': {'kind': {'type': 'STRING'}}}
+        examples = [{'kind': 'shared_diet', 'question': '직박구리와 식성이 같은 새', 'score': .9}]
+        result = answerer.propose_structured_graph_intent('까치와 식성이 같은 새', examples,
+                    {'schema': schema, 'instructions': 'Keep original species spans.', 'kinds': ['shared_diet']})
+        self.assertEqual(payload, result)
+        self.assertEqual(schema, captured['generationConfig']['responseSchema'])
+        prompt = captured['contents'][0]['parts'][0]['text']
+        self.assertIn('never copy their species', prompt)
+        self.assertIn('까치와 식성이 같은 새', prompt)
+        with self.assertRaises(GeminiAnswerError):
+            answerer.propose_structured_graph_intent('q', [], {})
+
+    def test_structured_graph_intent_cannot_execute_when_independent_audit_fails(self):
+        for audit in ({'faithful': False, 'issues': ['missing constraint']},
+                      {'faithful': True, 'issues': ['invented habitat']}, {}):
+            opener = Mock(side_effect=[
+                _Response({'candidates': [{'content': {'parts': [{'text': '{"kind":"none"}'}]}}]}),
+                _Response({'candidates': [{'content': {'parts': [{'text': json.dumps(audit)}]}}]}),
+            ])
+            with self.subTest(audit=audit), self.assertRaises(GeminiAnswerError):
+                GeminiAnswerer('test-key', urlopen=opener).propose_structured_graph_intent(
+                    '까치와 같은 먹이 생태의 새', [], {'schema': {'type': 'OBJECT'}, 'instructions': ''})
+            self.assertEqual(2, opener.call_count)
+
     def test_service_unavailable_retries_once_and_persistent_failure_stays_bounded(self) -> None:
         for succeeds in [True, False]:
             with self.subTest(succeeds=succeeds), patch("robingraph.generation.time.sleep"):

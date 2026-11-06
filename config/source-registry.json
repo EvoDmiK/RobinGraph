@@ -202,5 +202,22 @@
     "adapter_owner": "RobinGraph traits and conservation references",
     "enabled": true,
     "license_policy_status": "allowed"
+  },
+  {
+    "source_id": "wikimedia-commons-bird-recordings",
+    "name": "Wikimedia Commons reviewed bird recordings",
+    "provider": "Wikimedia Commons contributors",
+    "landing_uri": "https://commons.wikimedia.org/",
+    "access_method": "api",
+    "auth_method": "none",
+    "release_strategy": "dated_snapshot",
+    "incremental_cursor": null,
+    "rate_limit_note": "Pinned reviewed exact-species files and explicitly reviewed stored audio only. Internal collection is sequential and bounded, respects provider-wide Retry-After, and requires file author, CC BY/CC BY-SA license, exact taxon and playback review before publication. Public profile reads never fetch provider audio.",
+    "license_uri": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+    "license_name": "Per-file license; verified before display",
+    "terms_uri": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+    "adapter_owner": "RobinGraph species recordings",
+    "enabled": true,
+    "license_policy_status": "allowed"
   }
 ]

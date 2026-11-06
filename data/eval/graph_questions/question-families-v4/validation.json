@@ -1,0 +1,40 @@
+{
+  "reviewed_at": "2026-10-26T06:59:52.582201+00:00",
+  "reviewer": "independent_writer_peer",
+  "result": "PASS",
+  "dataset_sha256": "cb7259d87a1956c4a776924f1b257e09a35400cb117781f9825f10c3641fd776",
+  "cases": 24,
+  "families": 8,
+  "classifications": {
+    "supported": 18,
+    "hold": 6
+  },
+  "hold_classes": {
+    "negated_condition": 2,
+    "unsupported_specific_food": 4
+  },
+  "review_scope": [
+    "question clarity",
+    "same scope and conditions in equivalent pair",
+    "contrast expected difference",
+    "negation and exact plant-food data-gap class",
+    "taxon rank and request/expected internal consistency"
+  ],
+  "numeric_conditions_present": false,
+  "question_wording_changes_requested": 0,
+  "expected_contract_changes_requested": 0,
+  "errors": [],
+  "human_reviewed": false,
+  "model_authored_model_peer_reviewed": true,
+  "app_parser_api_patch_read": false,
+  "parser_executed": false,
+  "api_called": false,
+  "new_questions_shared_with_developer": false,
+  "catalog_evidence": "QA manifest static catalog identity/rank check; reviewer checks scientific/Korean references and rank coherence from the frozen draft, without application execution",
+  "limitations": [
+    "No data availability or actual runtime result is asserted.",
+    "Record-value questions are evaluated as scoped value-condition lookups; a valid empty or direct-source-gap response must be classified separately from matching answers.",
+    "No numeric comparator or unit coverage in this fresh set.",
+    "No claim of human review or broad domain generalization."
+  ]
+}

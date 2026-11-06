@@ -1,0 +1,759 @@
+{
+  "dataset_id": "question-families-v1-feedback-regression",
+  "split": "regression",
+  "human_reviewed": false,
+  "cases": [
+    {
+      "id": "T01A",
+      "semantic_group_id": "T01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Corvidae 중 숲이 서식지로 기록되고 열매를 먹는 새를 보여줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Corvidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Corvidae 중 숲이 서식지로 기록되고 열매를 먹는 새를 보여줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "T01B",
+      "semantic_group_id": "T01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "까마귀과에서 열매를 먹기도 하면서 숲에 사는 종을 찾아줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Corvidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "까마귀과에서 열매를 먹기도 하면서 숲에 사는 종을 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "T01C",
+      "semantic_group_id": "T01",
+      "role": "contrast",
+      "category": "hold",
+      "question": "까마귀과 중 망고 열매를 먹는 새를 보여줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "까마귀과 중 망고 열매를 먹는 새를 보여줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "T02A",
+      "semantic_group_id": "T02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "청둥오리의 몸무게가 180g 초과인지 확인해줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 180,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "청둥오리의 몸무게가 180g 초과인지 확인해줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "T02B",
+      "semantic_group_id": "T02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anas platyrhynchos의 체중이 0.18kg을 넘는지 알려줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 180,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos의 체중이 0.18kg을 넘는지 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "T02C",
+      "semantic_group_id": "T02",
+      "role": "contrast",
+      "category": "supported",
+      "question": "청둥오리의 몸무게가 180g 이하인지 확인해줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_lte",
+            "threshold": 180,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "청둥오리의 몸무게가 180g 이하인지 확인해줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H01A",
+      "semantic_group_id": "H01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "기러기목에서 습지에 살고 씨앗을 먹는 종을 골라줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "기러기목에서 습지에 살고 씨앗을 먹는 종을 골라줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H01B",
+      "semantic_group_id": "H01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anseriformes에 속하면서 씨앗도 먹고 서식지가 습지인 새는 뭐가 있어?",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anseriformes에 속하면서 씨앗도 먹고 서식지가 습지인 새는 뭐가 있어?",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H01C",
+      "semantic_group_id": "H01",
+      "role": "contrast",
+      "category": "supported",
+      "question": "기러기목에서 숲에 살고 씨앗을 먹는 종을 골라줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest"
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "기러기목에서 숲에 살고 씨앗을 먹는 종을 골라줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H02A",
+      "semantic_group_id": "H02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "오리과에서 날개 길이가 100mm를 초과하는 종이 궁금해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_gt",
+            "threshold": 100,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "오리과에서 날개 길이가 100mm를 초과하는 종이 궁금해.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H02B",
+      "semantic_group_id": "H02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anatidae 중 날개 길이가 10cm보다 긴 새를 찾아줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_gt",
+            "threshold": 100,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anatidae 중 날개 길이가 10cm보다 긴 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H02C",
+      "semantic_group_id": "H02",
+      "role": "contrast",
+      "category": "supported",
+      "question": "오리과에서 날개 길이가 100mm 이상인 종이 궁금해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anatidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_gte",
+            "threshold": 100,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "오리과에서 날개 길이가 100mm 이상인 종이 궁금해.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H03A",
+      "semantic_group_id": "H03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "오리속에서 습지에 사는 새를 알려줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "오리속에서 습지에 사는 새를 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H03B",
+      "semantic_group_id": "H03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anas에 속한 종 중 서식 환경이 습지인 새를 찾아줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas에 속한 종 중 서식 환경이 습지인 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H03C",
+      "semantic_group_id": "H03",
+      "role": "contrast",
+      "category": "supported",
+      "question": "기러기속에서 습지에 사는 새를 알려줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anser",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "기러기속에서 습지에 사는 새를 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H04A",
+      "semantic_group_id": "H04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "댕기흰죽지의 몸무게가 500g보다 무거운지 알려줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Aythya fuligula",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 500,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "댕기흰죽지의 몸무게가 500g보다 무거운지 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H04B",
+      "semantic_group_id": "H04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Aythya fuligula의 체중이 0.5kg 초과인지 확인해줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Aythya fuligula",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "body_mass",
+            "op": "num_gt",
+            "threshold": 500,
+            "unit": "g"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Aythya fuligula의 체중이 0.5kg 초과인지 확인해줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H04C",
+      "semantic_group_id": "H04",
+      "role": "contrast",
+      "category": "hold",
+      "question": "댕기흰죽지 중 몸무게가 500g을 넘지 않는 새를 찾아줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "댕기흰죽지 중 몸무게가 500g을 넘지 않는 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H05A",
+      "semantic_group_id": "H05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anas platyrhynchos platyrhynchos의 날개 길이가 300mm 미만인지 확인해줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "threshold": 300,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos platyrhynchos의 날개 길이가 300mm 미만인지 확인해줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H05B",
+      "semantic_group_id": "H05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anas platyrhynchos platyrhynchos 아종의 날개 길이가 30cm보다 짧은지 궁금해.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "threshold": 300,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos platyrhynchos 아종의 날개 길이가 30cm보다 짧은지 궁금해.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H05C",
+      "semantic_group_id": "H05",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Anas platyrhynchos의 날개 길이가 300mm 미만인지 확인해줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "threshold": 300,
+            "unit": "mm"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos의 날개 길이가 300mm 미만인지 확인해줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H06A",
+      "semantic_group_id": "H06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "왜가리와 같은 먹이 생태 범주인 다른 새를 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Ardea cinerea",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": null,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "왜가리와 같은 먹이 생태 범주인 다른 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H06B",
+      "semantic_group_id": "H06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Ardea cinerea 자신은 빼고, 먹이 생태 범주가 같은 종을 알려줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Ardea cinerea",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": null,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Ardea cinerea 자신은 빼고, 먹이 생태 범주가 같은 종을 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    },
+    {
+      "id": "H06C",
+      "semantic_group_id": "H06",
+      "role": "contrast",
+      "category": "supported",
+      "question": "쇠백로와 같은 먹이 생태 범주인 다른 새를 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Egretta garzetta",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "habitat": null,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "쇠백로와 같은 먹이 생태 범주인 다른 새를 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": true
+      }
+    }
+  ],
+  "note": "Original tuning and first heldout cases after implementation feedback; never counted as unseen holdout."
+}

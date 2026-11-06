@@ -387,6 +387,20 @@
                   "$ref": "#/components/schemas/ChatResponse"
                 }
               }
+            },
+            "headers": {
+              "X-RobinGraph-Trace-Id": {
+                "description": "Trace identifier, when feedback is available.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RobinGraph-Feedback-Token": {
+                "description": "Opaque response-specific capability, valid for up to 24 hours.",
+                "schema": {
+                  "type": "string"
+                }
+              }
             }
           },
           "422": {
@@ -667,6 +681,65 @@
           }
         }
       }
+    },
+    "/v1/chat/feedback": {
+      "post": {
+        "summary": "Submit Chat Feedback",
+        "operationId": "submit_chat_feedback_v1_chat_feedback_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatFeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Feedback saved or identical feedback already present.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "saved"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired feedback capability."
+          },
+          "409": {
+            "description": "A different rating has already been submitted."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Feedback storage or the trace is temporarily unavailable; retry later."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -747,6 +820,14 @@
           "prompt": {
             "type": "string",
             "title": "Prompt"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/ChatClarifyChoice"
+            },
+            "maxItems": 3,
+            "title": "Choices",
+            "type": "array"
           }
         },
         "additionalProperties": false,
@@ -897,6 +978,18 @@
             ],
             "title": "Species Scope",
             "default": "all"
+          },
+          "followup_context": {
+            "anyOf": [
+              {
+                "maxLength": 4096,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followup Context"
           }
         },
         "additionalProperties": false,
@@ -974,6 +1067,9 @@
               },
               {
                 "$ref": "#/components/schemas/ChatNameRelationsResult"
+              },
+              {
+                "$ref": "#/components/schemas/ChatGraphResult"
               }
             ],
             "title": "Result",
@@ -985,7 +1081,8 @@
                 "name_relations": "#/components/schemas/ChatNameRelationsResult",
                 "observations": "#/components/schemas/ChatObservationsResult",
                 "profile": "#/components/schemas/ChatSpeciesResult",
-                "taxonomy": "#/components/schemas/ChatTaxonomyResult"
+                "taxonomy": "#/components/schemas/ChatTaxonomyResult",
+                "graph_query": "#/components/schemas/ChatGraphResult"
               }
             }
           },
@@ -993,6 +1090,27 @@
             "anyOf": [
               {
                 "$ref": "#/components/schemas/EntityResolutionResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "followup_context": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followup Context"
+          },
+          "followup": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChatFollowupInfo"
               },
               {
                 "type": "null"
@@ -1249,6 +1367,15 @@
               }
             ],
             "title": "Question"
+          },
+          "route_intent": {
+            "default": "profile",
+            "enum": [
+              "auto",
+              "profile"
+            ],
+            "title": "Route Intent",
+            "type": "string"
           }
         },
         "additionalProperties": false,
@@ -2170,6 +2297,196 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "ChatGraphResult": {
+        "properties": {
+          "kind": {
+            "const": "graph_query",
+            "default": "graph_query",
+            "title": "Kind",
+            "type": "string"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "title": "Payload",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "payload"
+        ],
+        "title": "ChatGraphResult"
+      },
+      "ChatClarifyChoice": {
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "question": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "question"
+        ],
+        "title": "ChatClarifyChoice",
+        "type": "object"
+      },
+      "ChatFeedbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Token",
+            "type": "string"
+          },
+          "rating": {
+            "enum": [
+              "helpful",
+              "misunderstood",
+              "incorrect"
+            ],
+            "title": "Rating",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token",
+          "rating"
+        ],
+        "title": "ChatFeedbackRequest",
+        "type": "object"
+      },
+      "ChatFollowupInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "applied",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "context_missing",
+                  "context_invalid",
+                  "context_scope_mismatch",
+                  "route_conflict",
+                  "unsupported_addition",
+                  "unresolved_addition",
+                  "multiple_additions",
+                  "duplicate_condition",
+                  "conflicting_condition"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "root_question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Root Question"
+          },
+          "added": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Added"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChatFollowupPlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retained": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChatFollowupPlan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "ChatFollowupInfo",
+        "type": "object"
+      },
+      "ChatFollowupPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "conditions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Conditions",
+            "type": "array"
+          },
+          "taxon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Taxon"
+          },
+          "scope": {
+            "enum": [
+              "all",
+              "korea",
+              "outside",
+              "unknown"
+            ],
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scope"
+        ],
+        "title": "ChatFollowupPlan",
+        "type": "object"
       }
     }
   }

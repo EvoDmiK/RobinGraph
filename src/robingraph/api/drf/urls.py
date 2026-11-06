@@ -26,17 +26,24 @@ def _page(name: str) -> bytes:
 
 
 def frozen_openapi(*, ingest: bool) -> dict:
-    """The OpenAPI document recorded from the pre-migration application."""
+    """The packaged public contract, with reviewed additive feature updates."""
 
     return json.loads(_page("openapi_ingest.json" if ingest else "openapi.json"))
 
 
 def build_urlpatterns(service: ApiService, ingest: IngestService | None = None,
-                      openapi_schema: dict | None = None) -> list:
+                      openapi_schema: dict | None = None, *, audio_service=None) -> list:
     def bind(view_class, **extra):
         return views.threaded(view_class.as_view(service=service, **extra))
 
     patterns = []
+    if audio_service is not None:
+        from .audio_views import AudioOperationView, AudioMediaView
+        patterns += [
+            path('internal/v1/audio/preview/<str:name>', views.threaded(AudioMediaView.as_view(audio=audio_service,private=True))),
+            path('internal/v1/audio/<str:action>', views.threaded(AudioOperationView.as_view(audio=audio_service))),
+            path('media/audio/<str:name>', views.threaded(AudioMediaView.as_view(audio=audio_service))),
+        ]
     if ingest is not None:
         patterns += [
             path("internal/v1/ingest/begin", views.threaded(views.IngestBeginView.as_view(ingest=ingest))),
@@ -58,6 +65,7 @@ def build_urlpatterns(service: ApiService, ingest: IngestService | None = None,
         path("health", bind(views.HealthView)),
         path("v1/answers", bind(views.AnswerView)),
         path("v1/chat", bind(views.ChatView)),
+        path("v1/chat/feedback", bind(views.ChatFeedbackView)),
         path("v1/search", bind(views.DocumentSearchView)),
         path("v1/observations", bind(views.ObservationSearchView)),
         path("v1/taxa/lineage", bind(views.TaxonomyLineageView)),
@@ -119,8 +127,8 @@ class UrlConf:
 
 
 def build_urlconf(service: ApiService, ingest: IngestService | None = None,
-                  openapi_schema: dict | None = None) -> UrlConf:
-    return UrlConf(build_urlpatterns(service, ingest, openapi_schema))
+                  openapi_schema: dict | None = None, *, audio_service=None) -> UrlConf:
+    return UrlConf(build_urlpatterns(service, ingest, openapi_schema, audio_service=audio_service))
 
 
 class _FixturePatterns:

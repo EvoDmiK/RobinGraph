@@ -1,0 +1,23 @@
+{
+  "sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "cases": 24,
+  "families": 8,
+  "supported": 20,
+  "hold": 4,
+  "original_enum12_sha256": "38a46c6170d9c32fe743feea258953bcbedf57c724c5046fc942ced4f8754434",
+  "original12_unchanged": true,
+  "added_coverage": [
+    "nonrestrictive discourse",
+    "unit-comparison morphology",
+    "reference self-exclusion",
+    "exact plant-food gap"
+  ],
+  "parser_executed": false,
+  "api_called": false,
+  "backend_patch_read_before_freeze": false,
+  "human_reviewed": false,
+  "exact_duplicates_vs_v1_v2": 0,
+  "regression_cases": 36,
+  "regression_original_first_attempt": "question-families-v2/holdout.json",
+  "regression_sha256": "4268157a93b36d34b4316b8a964484c536865be32826e957396b6325a9f8b34d"
+}

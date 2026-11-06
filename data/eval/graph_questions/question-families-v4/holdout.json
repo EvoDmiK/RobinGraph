@@ -1,0 +1,676 @@
+{
+  "schema": "graph-question-families-v1",
+  "split": "fresh_four_followup_holdout",
+  "cases": [
+    {
+      "id": "F01A",
+      "semantic_group_id": "F01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Turdus merula라는 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Turdus merula",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Omnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Turdus merula라는 종의 영양 단계가 Omnivore로 기록되어 있는지 조회해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F01B",
+      "semantic_group_id": "F01",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "영양 단계 기록값이 Omnivore인지 Turdus merula 종에 대해 확인하고 싶어요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Turdus merula",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Omnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "영양 단계 기록값이 Omnivore인지 Turdus merula 종에 대해 확인하고 싶어요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F01C",
+      "semantic_group_id": "F01",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Turdus merula라는 종의 영양 단계가 Carnivore로 기록되어 있는지 조회해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Turdus merula",
+        "rank": "species",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Carnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Turdus merula라는 종의 영양 단계가 Carnivore로 기록되어 있는지 조회해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F02A",
+      "semantic_group_id": "F02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Dendrocopos 속의 생활 방식이 Insessorial로 기재된 종을 살펴보고 싶어.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Dendrocopos",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Insessorial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Dendrocopos 속의 생활 방식이 Insessorial로 기재된 종을 살펴보고 싶어.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F02B",
+      "semantic_group_id": "F02",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "생활 방식 기록이 Insessorial인 종을 골라줘. 분류 범위는 Dendrocopos 속이야.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Dendrocopos",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Insessorial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "생활 방식 기록이 Insessorial인 종을 골라줘. 분류 범위는 Dendrocopos 속이야.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F02C",
+      "semantic_group_id": "F02",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Dendrocopos 속의 생활 방식이 Terrestrial로 기재된 종을 살펴보고 싶어.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Dendrocopos",
+        "rank": "genus",
+        "conditions": [
+          {
+            "trait_name": "primary_lifestyle",
+            "op": "eq",
+            "value": "Terrestrial"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Dendrocopos 속의 생활 방식이 Terrestrial로 기재된 종을 살펴보고 싶어.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F03A",
+      "semantic_group_id": "F03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "제비과 자료에서 먹이 생태 범주가 Invertivore로 기록되어 있는 종을 조회해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Hirundinidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_niche",
+            "op": "eq",
+            "value": "Invertivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "제비과 자료에서 먹이 생태 범주가 Invertivore로 기록되어 있는 종을 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F03B",
+      "semantic_group_id": "F03",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Hirundinidae의 먹이 생태 범주를 확인할게요. Invertivore 기록이 있는 종을 보여주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Hirundinidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_niche",
+            "op": "eq",
+            "value": "Invertivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Hirundinidae의 먹이 생태 범주를 확인할게요. Invertivore 기록이 있는 종을 보여주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F03C",
+      "semantic_group_id": "F03",
+      "role": "contrast",
+      "category": "hold",
+      "question": "제비과 자료에서 먹이 생태 범주가 Invertivore가 아닌 종을 조회해 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "제비과 자료에서 먹이 생태 범주가 Invertivore가 아닌 종을 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F04A",
+      "semantic_group_id": "F04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Wetland로 기록되어 있는지 확인해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Wetland로 기록되어 있는지 확인해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F04B",
+      "semantic_group_id": "F04",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "서식 환경 기록값 Wetland 조건으로 Anas platyrhynchos platyrhynchos 아종 하나를 조회해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "서식 환경 기록값 Wetland 조건으로 Anas platyrhynchos platyrhynchos 아종 하나를 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F04C",
+      "semantic_group_id": "F04",
+      "role": "contrast",
+      "category": "supported",
+      "question": "Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Riverine로 기록되어 있는지 확인해 주세요.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anas platyrhynchos platyrhynchos",
+        "rank": "subspecies",
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Riverine"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Anas platyrhynchos platyrhynchos 아종의 서식 환경이 Riverine로 기록되어 있는지 확인해 주세요.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F05A",
+      "semantic_group_id": "F05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "딱따구리목에서 먹이 유형이 Invertebrate인 종을 찾고 싶어. 먹이 구성 비율은 검색 조건에 넣지 마.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Piciformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "딱따구리목에서 먹이 유형이 Invertebrate인 종을 찾고 싶어. 먹이 구성 비율은 검색 조건에 넣지 마.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F05B",
+      "semantic_group_id": "F05",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Piciformes에 먹이 유형 코드 Invertebrate만 적용해 주세요. 비율 수치로 걸러 달라는 뜻은 아닙니다.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Piciformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Invertebrate"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Piciformes에 먹이 유형 코드 Invertebrate만 적용해 주세요. 비율 수치로 걸러 달라는 뜻은 아닙니다.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F05C",
+      "semantic_group_id": "F05",
+      "role": "contrast",
+      "category": "supported",
+      "question": "딱따구리목에서 먹이 유형이 Omnivore인 종을 찾고 싶어. 먹이 구성 비율은 검색 조건에 넣지 마.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Piciformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "Omnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "딱따구리목에서 먹이 유형이 Omnivore인 종을 찾고 싶어. 먹이 구성 비율은 검색 조건에 넣지 마.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F06A",
+      "semantic_group_id": "F06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "Columbidae 자료를 읽어볼게. 먹이 유형이 PlantSeed인 종만 필요해. 비율 제한은 적용하지 말아 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Columbidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "PlantSeed"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "Columbidae 자료를 읽어볼게. 먹이 유형이 PlantSeed인 종만 필요해. 비율 제한은 적용하지 말아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F06B",
+      "semantic_group_id": "F06",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "먹이 유형 코드가 PlantSeed인 Columbidae의 종을 조회해 줘. 구성비에 관한 조건은 사용하지 않아.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Columbidae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "PlantSeed"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "먹이 유형 코드가 PlantSeed인 Columbidae의 종을 조회해 줘. 구성비에 관한 조건은 사용하지 않아.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F06C",
+      "semantic_group_id": "F06",
+      "role": "contrast",
+      "category": "hold",
+      "question": "Columbidae에서 먹이 유형이 PlantSeed가 아닌 종만 조회해 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "Columbidae에서 먹이 유형이 PlantSeed가 아닌 종만 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F07A",
+      "semantic_group_id": "F07",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "큰까마귀가 먹는 열매와 식물의 종까지 똑같은 열매를 먹는 다른 종을 찾아줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "큰까마귀가 먹는 열매와 식물의 종까지 똑같은 열매를 먹는 다른 종을 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F07B",
+      "semantic_group_id": "F07",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "먹는 열매의 식물 종이 큰까마귀가 먹는 것과 정확히 같은 다른 새는 무엇이야?",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "먹는 열매의 식물 종이 큰까마귀가 먹는 것과 정확히 같은 다른 새는 무엇이야?",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F07C",
+      "semantic_group_id": "F07",
+      "role": "contrast",
+      "category": "supported",
+      "question": "큰까마귀와 AVONET 먹이 생태 범주가 동일한 다른 종을 찾아줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Corvus corax",
+        "habitat": null,
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "큰까마귀와 AVONET 먹이 생태 범주가 동일한 다른 종을 찾아줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F08A",
+      "semantic_group_id": "F08",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "숲에 서식하는 다른 새 가운데 Parus major가 먹는 것과 식물 종까지 동일한 열매를 먹는 종이 궁금해.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "숲에 서식하는 다른 새 가운데 Parus major가 먹는 것과 식물 종까지 동일한 열매를 먹는 종이 궁금해.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F08B",
+      "semantic_group_id": "F08",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "Parus major가 먹는 열매와 식물의 종까지 정확히 일치하는 열매를 먹으며 숲에 사는 다른 새를 알려줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "Parus major가 먹는 열매와 식물의 종까지 정확히 일치하는 열매를 먹으며 숲에 사는 다른 새를 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "F08C",
+      "semantic_group_id": "F08",
+      "role": "contrast",
+      "category": "supported",
+      "question": "숲에 서식하며 Parus major와 AVONET 먹이 생태 범주가 동일한 다른 새를 알려줘.",
+      "expected": {
+        "kind": "relation",
+        "reference_taxon_name": "Parus major",
+        "habitat": "Forest",
+        "share_basis": "trophic_niche",
+        "exclude_reference": true,
+        "species_scope": "all"
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "숲에 서식하며 Parus major와 AVONET 먹이 생태 범주가 동일한 다른 새를 알려줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "independent_model_authored",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    }
+  ]
+}

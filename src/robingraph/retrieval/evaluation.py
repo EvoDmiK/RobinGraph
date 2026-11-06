@@ -98,8 +98,7 @@ def evaluate_search(
         if relevant:
             relevant_total += len(relevant)
             relevant_retrieved += len(hits)
-            if reciprocal_rank is not None:
-                reciprocal_ranks.append(reciprocal_rank)
+            reciprocal_ranks.append(reciprocal_rank if reciprocal_rank is not None else 0.0)
     latencies = sorted(case.elapsed_ms for case in cases)
     p95_index = max(0, (len(latencies) * 95 + 99) // 100 - 1)
     return SearchEvaluationReport(

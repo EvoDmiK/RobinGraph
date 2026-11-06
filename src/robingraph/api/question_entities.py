@@ -118,3 +118,32 @@ def _bounded_english_name(value: str) -> bool:
 def _reviewed_names():
     from ..retrieval.name_relations import reviewed_search_terms
     return reviewed_search_terms()
+
+
+class AmbiguousNameSpanError(ValueError):
+    """A suggested name cannot safely replace this source span."""
+
+
+def rewrite_name_candidate(question: str, mention: str, scientific_name: str) -> str:
+    """Replace a standalone source name, never a substring or a collapsed condition/list."""
+    if re.fullmatch(r'[가-힣\s]+', mention):
+        compact = ''.join(mention.split())
+        if re.search(r'에사는|에서사는|서식하는|서식지|먹는|먹고|먹지|살고|않는|아닌|제외|이면서', compact):
+            raise AmbiguousNameSpanError('A condition is embedded in the name')
+        from ..retrieval.graph_condition_extractor import _taxon_names
+        _, known_species = _taxon_names()
+        # An unresolved span containing a complete known name may also contain
+        # modifiers or another entity; replacing the whole span would erase them.
+        if any(len(name) >= 2 and name != compact and name in compact for name in known_species):
+            raise AmbiguousNameSpanError('A known name is embedded in a larger unconfirmed span')
+    name = r'\s+'.join(re.escape(part) for part in mention.split())
+    particles = r'(?:와|과|랑|이랑|하고|의|은|는|이|가|을|를|에서|에게|에|으로|로|만|도|처럼|보다)'
+    boundary = r'(?=$|[^\w]|' + particles + r'(?=$|[^\w]))'
+    pattern = r'(?<!\w)' + name + boundary
+    # A binomial cannot consume the beginning of an unconfirmed trinomial.
+    if re.match(r'[A-Za-z]', mention):
+        pattern += r'(?!\s+[a-z])'
+    rewritten, count = re.subn(pattern, lambda _: scientific_name, question, count=1)
+    if count != 1:
+        raise AmbiguousNameSpanError('No standalone source mention')
+    return rewritten

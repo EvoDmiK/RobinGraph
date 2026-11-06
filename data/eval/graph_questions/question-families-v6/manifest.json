@@ -1,0 +1,19 @@
+{
+  "regression_cases": 84,
+  "regression_original_requests_and_expectations_unchanged": true,
+  "feedback12_cases": 12,
+  "feedback12_first_score_preserved": "8/12",
+  "feedback12_gold_quality_flags": 2,
+  "feedback12_original_gold_unchanged": true,
+  "fresh_cases": 8,
+  "fresh_groups": 4,
+  "fresh_supported": 4,
+  "fresh_hold": 4,
+  "fresh_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+  "fresh_questions_opened_by_implementers": true,
+  "fresh_model_authored": true,
+  "fresh_model_peer_reviewed": true,
+  "fresh_human_reviewed": false,
+  "first_measurement_before_opening": true,
+  "subsequent_8_case_measurements_feedback_exposed": true
+}

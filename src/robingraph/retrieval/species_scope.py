@@ -77,6 +77,8 @@ def _display_name(taxon, species_scope):
     order = (('english_name', 'korean_name') if species_scope == 'outside'
              else ('korean_name', 'english_name'))
     for key in order + ('scientific_name',):
+        if key == 'korean_name' and taxon.get('korean_name_status') == 'machine-translated':
+            continue
         value = taxon.get(key)
         if isinstance(value, str) and value.strip():
             return value

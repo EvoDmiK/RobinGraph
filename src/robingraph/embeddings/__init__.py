@@ -282,6 +282,13 @@ class JinaEmbeddingClient:
         return cls(JinaEmbeddingSettings.from_env(environ), urlopen=urlopen)
 
     def embed_documents(self, texts: Sequence[str]) -> tuple[tuple[float, ...], ...]:
+        return self._embed_many(texts, PASSAGE_TASK)
+
+    def embed_queries(self, texts: Sequence[str]) -> tuple[tuple[float, ...], ...]:
+        """Batch counterpart of ``embed_query`` (query task), with the same batching as documents."""
+        return self._embed_many(texts, QUERY_TASK)
+
+    def _embed_many(self, texts: Sequence[str], task: str) -> tuple[tuple[float, ...], ...]:
         values = _validate_texts(texts)
         self._validate_input_limits(values)
         if not values:
@@ -292,12 +299,12 @@ class JinaEmbeddingClient:
         for text in values:
             if batch and (len(batch) >= self.settings.batch_size or
                           (self.settings.api_format == "birdsnest" and characters + len(text) > 200_000)):
-                vectors.extend(self._embed_batch(batch, PASSAGE_TASK))
+                vectors.extend(self._embed_batch(batch, task))
                 batch, characters = [], 0
             batch.append(text)
             characters += len(text)
         if batch:
-            vectors.extend(self._embed_batch(batch, PASSAGE_TASK))
+            vectors.extend(self._embed_batch(batch, task))
         return tuple(vectors)
 
     def embed_query(self, text: str) -> tuple[float, ...]:

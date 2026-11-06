@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "reviewer": "independent_writer_peer",
+  "reviewed_at": "2026-10-26T09:05:22.141835+00:00",
+  "dataset_sha256": "147fd0710df809805e4687b45f46cb15aabc0434108b52ac23dc47564b67cac5",
+  "cases": 8,
+  "groups": 4,
+  "unique_ids": 8,
+  "supported": 4,
+  "hold": 4,
+  "pre_api_corrections": {
+    "duplicate_case_ids_fixed": 4,
+    "question_or_expected_changes": false
+  },
+  "review_scope": [
+    "explicit trait label/canonical identifier and enum consistency",
+    "taxon rank",
+    "query metadata vs biological negation",
+    "exact plant identity",
+    "equivalent pairs"
+  ],
+  "static_labels_verified": true,
+  "human_reviewed": false,
+  "app_logic_patch_api_tests_traces_accessed": false,
+  "api_calls": 0,
+  "questions_disclosed_to_implementers": false,
+  "errors": [],
+  "limits": [
+    "Model review, not human review.",
+    "Four equivalent pairs only; no within-group contrast member.",
+    "No numeric comparator coverage or actual data-availability assertion."
+  ]
+}

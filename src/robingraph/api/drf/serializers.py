@@ -131,6 +131,10 @@ class ChatRequestSerializer(EndpointRequestSerializer):
     body = ("request", schemas.ChatRequest)
 
 
+class ChatFeedbackRequestSerializer(EndpointRequestSerializer):
+    body = ("request", schemas.ChatFeedbackRequest)
+
+
 class DocumentSearchRequestSerializer(EndpointRequestSerializer):
     body = ("request", schemas.DocumentSearchRequest)
 

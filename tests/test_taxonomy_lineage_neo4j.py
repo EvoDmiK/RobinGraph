@@ -562,3 +562,38 @@ class EnglishNameProjectionTest(unittest.TestCase):
             self.assertIn('englishName.source_release=ancestor.source_release', query)
         for value in (None, '', ' ', 42, []):
             self.assertIsNone(_parse_lineage_items([{**row, 'english_name':value}])[0].english_name)
+
+
+class OutsideReviewedCandidateTest(unittest.TestCase):
+    def setUp(self):
+        with patch('robingraph.retrieval.taxonomy_lineage_neo4j.GraphDatabase.driver'):
+            self.repo = Neo4jTaxonomyLineageRepository(Neo4jSettings('bolt://unused', 'fixture', 'fixture', 'neo4j'))
+        self.repo._active_concept_set = Mock(return_value=('rg:concept-set:avilist-v2025b', 'v2025b'))
+
+    def test_adds_verified_english_and_scientific_text_and_preserves_korean_name(self):
+        korean = {'taxon_id': 'avilist-taxon:v2025b:11283', 'scientific_name': 'Nestor notabilis',
+                  'display_name': '높은산앵무', 'text': '높은산앵무'}
+        english = {**korean, 'display_name': 'Kea', 'text': 'Kea Nestor notabilis'}
+        kiwi = {'taxon_id': 'avilist-taxon:v2025b:32', 'scientific_name': 'Apteryx rowi',
+                'display_name': 'Okarito Kiwi', 'text': 'Okarito Kiwi Apteryx rowi'}
+        self.repo._run = Mock(side_effect=[[korean], [english, kiwi]])
+        rows = self.repo.reviewed_name_candidates()
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], {**korean, 'text': '높은산앵무 Kea Nestor notabilis'})
+        self.assertEqual(rows[1], kiwi)
+        query = self.repo._run.call_args.args[0]
+        parameters = self.repo._run.call_args.kwargs
+        self.assertEqual(len(parameters['names']), 6)
+        for guard in ["policy_status:'allowed'", "status:'source-preferred'", 'en.dataset_id=t.dataset_id',
+                      't.scientific_name=reviewed.scientific_name', 'source_release:$release']:
+            self.assertIn(guard, query)
+
+    def test_missing_allowed_english_source_does_not_fabricate_candidates(self):
+        self.repo._run = Mock(side_effect=[[], []])
+        self.assertEqual(self.repo.reviewed_name_candidates(), [])
+
+    def test_foreign_taxonomy_context_never_loads_pinned_six(self):
+        self.repo._active_concept_set.return_value = ('other', 'v2026')
+        self.repo._run = Mock()
+        self.assertEqual(self.repo.reviewed_name_candidates(), [])
+        self.repo._run.assert_not_called()

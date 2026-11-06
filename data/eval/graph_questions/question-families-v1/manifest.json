@@ -1,0 +1,77 @@
+{
+  "schema": "question-family-eval-v1",
+  "files": {
+    "tuning.json": {
+      "case_count": 6,
+      "group_count": 2,
+      "sha256": "9a038771f3e9db29dd65ef4231f59a7a47ed3d115dc6b63812d477d008df4028",
+      "group_ids": [
+        "T01",
+        "T02"
+      ],
+      "category_counts": {
+        "supported": 5,
+        "hold": 1
+      }
+    },
+    "sealed-holdout.json": {
+      "case_count": 18,
+      "group_count": 6,
+      "sha256": "57ee01561a051c60fc963f5ff35137575e0f620ebbf83499aef0eee92a70d914",
+      "group_ids": [
+        "H01",
+        "H02",
+        "H03",
+        "H04",
+        "H05",
+        "H06"
+      ],
+      "category_counts": {
+        "supported": 17,
+        "hold": 1
+      }
+    }
+  },
+  "split_policy": "Semantic groups kept intact; exact canonical expected-plan signatures disjoint between splits. Similar vocabulary and task types intentionally shared; not a domain-generalization claim.",
+  "coverage": {
+    "sealed_ranks": [
+      "order",
+      "family",
+      "genus",
+      "species",
+      "subspecies"
+    ],
+    "sealed_relations": [
+      "same_trophic_niche"
+    ],
+    "sealed_contrasts": [
+      "habitat_value",
+      "numeric_comparator",
+      "taxonomic_scope",
+      "negation",
+      "species_vs_subspecies",
+      "reference_species"
+    ]
+  },
+  "holdout_policy": "Do not expose sealed questions or expectations to implementation until code freeze; once replayed after diagnosis report feedback-exposed regression.",
+  "assessment": {
+    "sample": "complete same-request execution scope and conditions required; no keyword-only or answer-only success",
+    "equivalence": "both equivalent members must independently pass and canonical actual plans agree",
+    "contrast": "contrast member must pass its distinct expected plan/hold and must not collapse to equivalent signature",
+    "group": "all three case-level results plus equivalence and contrast pass",
+    "separate_failures": [
+      "false_hold",
+      "unsafe_answer",
+      "wrong_plan",
+      "unverifiable_execution",
+      "taxon_resolution_failure",
+      "supported_source_no_data",
+      "upstream_failure"
+    ]
+  },
+  "provenance": {
+    "human_reviewed": false,
+    "origin": "independent_model_authored",
+    "db_or_api_called": false
+  }
+}

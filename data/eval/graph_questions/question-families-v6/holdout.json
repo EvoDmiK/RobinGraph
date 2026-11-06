@@ -1,0 +1,210 @@
+{
+  "schema": "robingraph.graph-question-families.contract-final.v1",
+  "split": "holdout",
+  "cases": [
+    {
+      "id": "fresh8-recordtypedfield-01",
+      "semantic_group_id": "fresh8-recordtypedfield",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "수리과에서 영양 단계의 기록값이 Carnivore인 종들을 보여 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Carnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "수리과에서 영양 단계의 기록값이 Carnivore인 종들을 보여 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-recordtypedfield-02",
+      "semantic_group_id": "fresh8-recordtypedfield",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "수리과 소속 종 가운데 trophic_level 필드에 Carnivore라고 기록된 종을 조회해 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Accipitridae",
+        "rank": "family",
+        "conditions": [
+          {
+            "trait_name": "trophic_level",
+            "op": "eq",
+            "value": "Carnivore"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "수리과 소속 종 가운데 trophic_level 필드에 Carnivore라고 기록된 종을 조회해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-categoryunusedratio-01",
+      "semantic_group_id": "fresh8-categoryunusedratio",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "기러기목에서 먹이 유형이 PlantSeed인 종을 골라 줘. 검색할 때 먹이 비율 차원은 사용하지 않을게.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "PlantSeed"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "기러기목에서 먹이 유형이 PlantSeed인 종을 골라 줘. 검색할 때 먹이 비율 차원은 사용하지 않을게.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-categoryunusedratio-02",
+      "semantic_group_id": "fresh8-categoryunusedratio",
+      "role": "equivalent",
+      "category": "supported",
+      "question": "기러기목에 속하고 diet_category가 PlantSeed인 종을 찾고 싶어. 먹이별 구성 비율은 조회 조건으로 적용하지 말아 줘.",
+      "expected": {
+        "kind": "taxon_traits",
+        "taxon_name": "Anseriformes",
+        "rank": "order",
+        "conditions": [
+          {
+            "trait_name": "diet_category",
+            "op": "eq",
+            "value": "PlantSeed"
+          }
+        ]
+      },
+      "expected_hold_class": null,
+      "request": {
+        "question": "기러기목에 속하고 diet_category가 PlantSeed인 종을 찾고 싶어. 먹이별 구성 비율은 조회 조건으로 적용하지 말아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-biologicalNOT-01",
+      "semantic_group_id": "fresh8-biologicalNOT",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "Alcedo 속에서 서식지가 Marine이 아닌 종을 검색해 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "Alcedo 속에서 서식지가 Marine이 아닌 종을 검색해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-biologicalNOT-02",
+      "semantic_group_id": "fresh8-biologicalNOT",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "Alcedo 속의 종을 찾되, habitat가 Marine인 종은 제외해 줘.",
+      "expected": {},
+      "expected_hold_class": "negated_condition",
+      "request": {
+        "question": "Alcedo 속의 종을 찾되, habitat가 Marine인 종은 제외해 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-plantidentitygap-01",
+      "semantic_group_id": "fresh8-plantidentitygap",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "황여새와 동일한 식물 종의 열매를 먹는 다른 조류 종을 알려 줘. 열매의 식물 종이 일치해야 해.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "황여새와 동일한 식물 종의 열매를 먹는 다른 조류 종을 알려 줘. 열매의 식물 종이 일치해야 해.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    },
+    {
+      "id": "fresh8-plantidentitygap-02",
+      "semantic_group_id": "fresh8-plantidentitygap",
+      "role": "equivalent",
+      "category": "hold",
+      "question": "황여새가 먹는 열매를 맺는 식물과 같은 종의 식물에서 열매를 먹는 다른 새를 찾아 줘.",
+      "expected": {},
+      "expected_hold_class": "unsupported_specific_food",
+      "request": {
+        "question": "황여새가 먹는 열매를 맺는 식물과 같은 종의 식물에서 열매를 먹는 다른 새를 찾아 줘.",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "provenance": {
+        "origin": "fresh_independent_model_authored_from_static_source_catalog_and_explicit_trait_vocabulary",
+        "human_reviewed": false,
+        "implementation_feedback_exposed": false
+      }
+    }
+  ]
+}

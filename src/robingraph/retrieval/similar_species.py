@@ -1,6 +1,8 @@
 """Rank active birds by explicit taxonomy and independently sourced ecology."""
 from dataclasses import asdict
 
+from .species_scope import scope_matches, with_species_scope
+
 from .ecological_relations import _web_url
 from .phylogenetic_relations import phylogenetic_relations, phylogeny_metadata
 from .species_profile import VALUES, SpeciesNotFoundError, read_traits
@@ -73,7 +75,7 @@ RETURN peer.id AS taxon_id,korean_name,min(en.name) AS english_name
 """
 
 
-def similar_species(repository, store, resolve, name):
+def similar_species(repository, store, resolve, name, species_scope="all"):
     lineage = resolve(name)
     if lineage is None or not lineage.items or lineage.items[-1].rank != 'species':
         raise SpeciesNotFoundError(name)
@@ -157,12 +159,14 @@ def similar_species(repository, store, resolve, name):
         if score:
             ranked.append((score,candidate,reasons))
     ranked.sort(key=lambda item:(-item[0], item[1]['scientific_name'], item[1]['taxon_id']))
+    # Normalize phylogeny on the full pool so a toggle cannot change a score.
+    ranked = [entry for entry in ranked if scope_matches(entry[1], species_scope, lineage.concept_set_id, lineage.taxonomy_release)]
     # Score the full active pool first. Only the checked-name candidates and
     # the three score leaders need a name projection to select three peers.
     references = sourced_korean_names()
     name_ids = {candidate['taxon_id'] for _,candidate,_ in ranked
                 if candidate['taxon_id'] in references}
-    name_ids.update(candidate['taxon_id'] for _,candidate,_ in ranked[:3])
+    name_ids.update(candidate['taxon_id'] for _,candidate,_ in (ranked if species_scope == 'outside' else ranked[:3]))
     names = repository._run(NAMES_QUERY, concept_set_id=lineage.concept_set_id,
                             taxonomy_release=lineage.taxonomy_release,
                             taxon_ids=sorted(name_ids),
@@ -171,7 +175,8 @@ def similar_species(repository, store, resolve, name):
         raise ValueError('Invalid selected species name projection')
     labels = {row['taxon_id']:with_korean_display_name({**row, 'rank':'species',
               'scientific_name':candidates[row['taxon_id']]['scientific_name']}) for row in names}
-    top = [entry for entry in ranked if labels.get(entry[1]['taxon_id'], {}).get('korean_name')][:3]
+    priority_name = 'english_name' if species_scope == 'outside' else 'korean_name'
+    top = [entry for entry in ranked if labels.get(entry[1]['taxon_id'], {}).get(priority_name)][:3]
     selected_ids = {candidate['taxon_id'] for _,candidate,_ in top}
     top.extend(entry for entry in ranked[:3] if entry[1]['taxon_id'] not in selected_ids)
     top = top[:3]
@@ -184,15 +189,18 @@ def similar_species(repository, store, resolve, name):
                       'similarity_score':score,'similarity_rank':position,'similarity_reasons':reasons,
                       'score_basis':candidate['score_basis'],'available_weight':candidate['available_weight'],
                       'phylogeny_available':candidate['phylogeny'] is not None}))
-    return {'taxon':asdict(target),'taxonomy_source':lineage.taxonomy_source,
+    items = [with_species_scope(item, species_scope, lineage.concept_set_id, lineage.taxonomy_release) for item in items
+             if scope_matches(item, species_scope, lineage.concept_set_id, lineage.taxonomy_release)]
+    return {'taxon':with_species_scope(asdict(target), species_scope, lineage.concept_set_id, lineage.taxonomy_release),'taxonomy_source':lineage.taxonomy_source,
             'taxonomy_release':lineage.taxonomy_release,'concept_set_id':lineage.concept_set_id,
-            'ranking':{'method':METHOD,'candidate_scope':'active_species','scanned_count':len(candidates),
+            'ranking':{'method':METHOD,'candidate_scope':'active_species' if species_scope == 'all' else 'active_species:' + species_scope,'scanned_count':len(candidates),
                        'eligible_count':len(ranked),'limit':3,'weights':WEIGHTS.copy(),
-                       'priority':'korean_name_then_weighted_score',
+                       'priority':'english_name_then_weighted_score' if species_scope == 'outside' else 'korean_name_then_weighted_score',
+                       'species_scope':species_scope,
                        'phylogeny_normalization':'ordinal_supported_ancestor_levels',
                        'missing_phylogeny':'exclude_and_renormalize_available_weights',
                        'tie_break':'scientific_name,taxon_id',
                        'phylogeny':phylogeny_metadata(lineage.taxonomy_release, lineage.concept_set_id)},
-            'groups':[{'rank':'similarity','label':'한국어 이름 우선 비교 후보 3종','items':items,
+            'groups':[{'rank':'similarity','label':('영어 이름 우선 비교 후보 3종' if species_scope == 'outside' else '한국어 이름 우선 비교 후보 3종'),'items':items,
                        'has_more':len(ranked)>3,'source_url':source['source_url'],'source_name':source['source_name']}],
-            'note':'검증된 한국어 이름이 있는 후보를 먼저 선정하고, 같은 이름 조건 안에서 가중 점수순으로 정렬합니다. 한국어 이름 후보가 3종 미만이면 나머지는 영어 이름 후보로 채웁니다. 계통 50% · 분류 30% · 서식 환경 10% · 먹이 생태 10%를 반영합니다. 계통 자료가 없으면 분류·생태 점수를 100점으로 환산합니다. 점수는 실제 진화 거리를 뜻하지 않습니다.'}
+            'note':('원자료 영어 이름이 있는 후보를 먼저 선정합니다. 국외 분포는 검토된 정상 분포 범위이며 우발적 국내 기록의 부재를 뜻하지 않습니다. ' if species_scope == 'outside' else '') + ('같은 이름 조건 안에서 가중 점수순으로 정렬합니다.' if species_scope == 'outside' else '검증된 한국어 이름이 있는 후보를 먼저 선정하고, 같은 이름 조건 안에서 가중 점수순으로 정렬합니다. 한국어 이름 후보가 3종 미만이면 나머지는 영어 이름 후보로 채웁니다.') + ' 계통 50% · 분류 30% · 서식 환경 10% · 먹이 생태 10%를 반영합니다. 계통 자료가 없으면 분류·생태 점수를 100점으로 환산합니다. 점수는 실제 진화 거리를 뜻하지 않습니다.'}

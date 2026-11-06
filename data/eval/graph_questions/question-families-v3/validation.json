@@ -1,0 +1,41 @@
+{
+  "status": "static_model_peer_review_pass",
+  "dataset_sha256": "14eb0420da9ffb920bc41d93047ab1edabe62907f7a73a5e1fda3031f8263e30",
+  "cases": 24,
+  "families": 8,
+  "supported": 20,
+  "hold": 4,
+  "human_reviewed": false,
+  "reviewer": "fresh_holdout model agent",
+  "checks": {
+    "catalog_scientific_names_and_ranks": "pass",
+    "Korean_aliases_Sturnus_Sitta_Erithacus": "inventory exact match",
+    "condition_literal_vocabulary": "pass; metadata AST literals only",
+    "unit_conversion_and_strict_boundary": "E06A/B 0.3kg=300g num_gt; E06C num_gte retains boundary",
+    "equivalent_pair_contracts": "8/8 pass",
+    "semantic_contrasts": "8/8 meaningful difference",
+    "unsupported_specific_plant_identity": "E08A/B ask identical plant species fruit, not merely AVONET category; E08C intentionally supported category relation",
+    "meta_no_share_restriction": "E05A/B remove composition ratio restriction; neither negates dietary category",
+    "explicit_self_exclusion": "E07A/B same reference exclusion + same Forest filter",
+    "exact_duplicate_v1_v2": []
+  },
+  "duplicate_sources": [
+    "data/eval/graph_questions/question-families-v1/regression.json",
+    "data/eval/graph_questions/question-families-v1/validation.json",
+    "data/eval/graph_questions/question-families-v1/manifest.json",
+    "data/eval/graph_questions/question-families-v1/holdout.json",
+    "data/eval/graph_questions/question-families-v1/tuning.json",
+    "/tmp/rg-fresh-20261026/failure-analysis.json",
+    "/tmp/rg-fresh-20261026/validation.json",
+    "/tmp/rg-fresh-20261026/manifest.json",
+    "/tmp/rg-fresh-20261026/holdout.json"
+  ],
+  "pre_api_changes": [],
+  "issues": [],
+  "limitations": [
+    "Static model review only, no human review.",
+    "No parser/semantic functions, app import, API execution, DB or Git changes.",
+    "Gold means requested query plan, not a claim that matching biological records exist.",
+    "Reviewer has prior project evaluation context; review is not a context-free external biological audit."
+  ]
+}

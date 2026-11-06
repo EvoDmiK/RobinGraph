@@ -39,6 +39,51 @@ class SpeciesQuestionTest(unittest.TestCase):
                   '새끼는 어떤 부모를 닮아?','왜가리 먹이에 대한 문헌 근거 찾아줘'):
             self.assertIsNone(parse_species_question(q))
 
+    def test_same_diet_paraphrases_reuse_the_trophic_niche_relation(self):
+        for q in ('까치랑 같은 먹이 생태를 가진 새를 알려줘', '까치와 같은 먹이 범주를 공유하는 새는?',
+                  '까치와 먹이 생태가 같은 새는?', '까치와 식성이 같은 새는?', '까치와 먹이 범주가 같은 새는?',
+                  '까치와 먹이 습성이 같은 새는?', '까치와 같은 식성의 새', '까치하고 같은 먹이 생태 범주를 지닌 종',
+                  '까치랑 먹이가 비슷한 새를 알려줘', '까치와 먹이 생태가 동일한 새들은?'):
+            with self.subTest(question=q):
+                result = parse_species_question(q)
+                self.assertEqual(('까치', 'ecological_related', 'trophic_niche'),
+                                 (result.name, result.topic, result.category) if result else None)
+        self.assertEqual('직박구리', parse_species_question('직박구리와 같은 먹이 범주를 공유하는 새는?').name)
+        self.assertEqual('흰뺨 검둥오리', parse_species_question('흰뺨 검둥오리와 같은 식성의 새').name)
+
+    def test_same_food_competition_habitat_and_negation_are_not_a_shared_category(self):
+        for q in ('까치랑 같은 먹이를 먹는 새', '까치와 먹이 경쟁하는 새', '까치와 같은 먹이를 두고 경쟁하는 새는?',
+                  '숲에 사는 까치와 먹이가 같은 새는?', '숲에서 사는 까치와 같은 먹이 생태를 가진 새',
+                  '숲에 사는 새 중 까치와 같은 먹이 범주를 공유하는 새는?', '까치와 같은 먹이 생태를 가지지 않은 새',
+                  '까치와 같은 먹이 생태를 가진 숲에 사는 새'):
+            with self.subTest(question=q):
+                self.assertIsNone(parse_species_question(q))
+
+    def test_shared_diet_paraphrases_keep_active_route_and_source_category(self):
+        relations = deepcopy(RELATIONS)
+        relations['groups'] = [
+            {'relation': 'habitat', 'source': SOURCE, 'items': []},
+            {'relation': 'trophic_niche', 'label': '같은 먹이 생태 범주의 새',
+             'value': 'Aquatic predator', 'display': '수생동물 포식', 'source': SOURCE,
+             'items': [{**RELATIONS['groups'][0]['items'][0], 'evidence': SOURCE}]},
+        ]
+        graph = Mock(side_effect=AssertionError('bounded species route must bypass graph interpretation'))
+        router = Mock()
+        router.classify.side_effect = AssertionError('bounded species route must bypass embeddings')
+        client = TestClient(create_django_app(
+            species_profile_handler=lambda _: PROFILE, ecological_relations_handler=lambda _: relations,
+            graph_intent_mode='active', graph_intent_handler=graph, semantic_router=router))
+        for question in ('왜가리랑 같은 먹이 생태를 가진 새를 알려줘',
+                         '왜가리와 같은 먹이 범주를 공유하는 새는?', '왜가리와 식성이 같은 새는?'):
+            result = client.post('/v1/chat', json={'question': question}).json()
+            self.assertEqual('answer', result['disposition'])
+            answer = result['result']['question_answer']
+            self.assertEqual('ecological_related', answer['topic'])
+            self.assertEqual(['trophic_niche'], [g['relation'] for g in answer['relations']['groups']])
+            self.assertEqual('https://example.org/traits', answer['items'][0]['source_url'])
+        graph.assert_not_called()
+        router.classify.assert_not_called()
+
     def test_diet_answers_actual_question_without_embedding_or_relation_click(self):
         profile=Mock(return_value=PROFILE);router=Mock();router.classify.side_effect=AssertionError('must not call embeddings')
         client=TestClient(create_django_app(species_profile_handler=profile,semantic_router=router))

@@ -1,9 +1,7 @@
-import math
-import threading
 import unicodedata
 from types import SimpleNamespace
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from robingraph.retrieval import taxon_name_resolution as module
 from robingraph.retrieval.taxon_name_resolution import TaxonNameResolver, compact_korean_name, normalize_mention
@@ -73,9 +71,6 @@ class FakeEmbeddings:
         return self.queries[text]
 
 
-def vectors(**by_korean):
-    return {f"{korean} {science}": by_korean.get(korean, (0.0, 0.0, 1.0)) for science, (_, korean) in SPECIES.items()}
-
 
 class ResolverCase(TestCase):
     def setUp(self):
@@ -83,8 +78,9 @@ class ResolverCase(TestCase):
         self.context = Mock(return_value=CONTEXT)
         self.load = Mock(side_effect=inventory)
 
-    def resolver(self, embeddings=None):
-        return TaxonNameResolver(self.graph, self.load, embeddings, active_context=self.context)
+    def resolver(self, embeddings=None, search=None):
+        return TaxonNameResolver(self.graph, self.load, embeddings, active_context=self.context,
+                                 candidate_search=search if search is not None else Mock(return_value=[]))
 
 
 class GraphFirstTests(ResolverCase):
@@ -160,221 +156,188 @@ class AvailabilityTests(ResolverCase):
         self.assertEqual(self.resolver().resolve("왜가리")["status"], "unavailable")
 
 
-class VectorSuggestionTests(ResolverCase):
-    def embeddings(self, query=(1.0, 0.0, 0.0), **by_korean):
-        return FakeEmbeddings(vectors(**by_korean), {"왜가리아": query})
+class PersistentVectorSuggestionTests(ResolverCase):
+    def client(self, mention="왜가리아", vector=(1.0, 0.0, 0.0)):
+        return FakeEmbeddings({}, {mention: vector})
 
-    def test_cosine_ranking_returns_verified_candidates_not_a_match(self):
-        embeddings = self.embeddings(왜가리=(0.9, 0.1, 0.0), 중대백로=(0.7, 0.3, 0.0), 쇠백로=(0.6, 0.6, 0.0),
-                                     황새=(0.95, 0.0, 0.2))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual((result["status"], result["method"], result["canonical_name"], result["taxon_id"]),
-                         ("candidates", "vector", None, None))
-        self.assertEqual((result["concept_set_id"], result["taxonomy_release"]), CONTEXT)
-        # cosine to (1,0,0): 왜가리 .994, 황새 .979, 중대백로 .919, 쇠백로 .707 (below floor)
-        self.assertEqual([c["display_name"] for c in result["candidates"]], ["왜가리", "황새", "중대백로"])
-        self.assertEqual(set(result["candidates"][0]), {"taxon_id", "scientific_name", "display_name", "score"})
-        self.assertGreaterEqual(min(c["score"] for c in result["candidates"]), module.SUGGESTION_COSINE_FLOOR)
-        self.assertEqual(embeddings.query_calls, ["왜가리아"])
-        self.assertEqual(len(embeddings.document_calls), 1)
-        # every suggested scientific name was re-resolved through the graph
-        for candidate in result["candidates"]:
-            self.assertIn(candidate["scientific_name"], self.graph.calls)
+    def hits(self, scores):
+        return [{**entry, "score": score} for entry, score in zip(inventory(), scores)]
 
-    def test_below_floor_is_not_found(self):
-        embeddings = self.embeddings(query=(0.0, 1.0, 0.0), 왜가리=(1.0, 0.2, 0.0))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual((result["status"], result["method"], result["candidates"]), ("not_found", "none", []))
+    def test_searches_persistent_index_with_one_query_vector_and_no_document_embedding(self):
+        client = self.client()
+        search = Mock(return_value=self.hits([.9, .8, .7, .6]))
+        resolver = self.resolver(client, search)
+        for _ in range(2):
+            result = resolver.resolve("왜가리아")
+            self.assertEqual((result["status"], result["method"], result["taxon_id"]), ("candidates", "vector", None))
+            self.assertEqual(len(result["candidates"]), 3)
+            self.assertEqual(result["candidates"][0]["score"], .9)
+        self.assertEqual(client.document_calls, [])
+        self.assertEqual(client.query_calls, ["왜가리아", "왜가리아"])
+        self.assertEqual(search.call_count, 2)
+        self.assertEqual(search.call_args.args, ((1.0, 0.0, 0.0), client.profile, CONTEXT, inventory()))
+        self.assertEqual(search.call_args.kwargs, {"limit": 10})
+        self.assertFalse(hasattr(resolver, "_cache"))
 
-    def test_floor_is_suggestion_only_at_calibrated_level(self):
-        self.assertEqual(module.SUGGESTION_COSINE_FLOOR, 0.25)
-        embeddings = self.embeddings(왜가리=(0.3, math.sqrt(1 - 0.09), 0.0), 황새=(0.249, math.sqrt(1 - 0.249 ** 2), 0.0))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual((result["status"], result["method"], result["canonical_name"], result["taxon_id"]),
-                         ("candidates", "vector", None, None))
-        self.assertEqual([(c["display_name"], c["score"]) for c in result["candidates"]], [("왜가리", 0.3)])
-
-    def test_below_calibrated_floor_has_no_candidate(self):
-        embeddings = self.embeddings(왜가리=(0.249, math.sqrt(1 - 0.249 ** 2), 0.0), 황새=(0.2, math.sqrt(0.96), 0.0))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual((result["status"], result["method"], result["candidates"], result["taxon_id"]),
-                         ("not_found", "none", [], None))
-
-    def test_sentences_and_long_mentions_are_never_embedded(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        resolver = self.resolver(embeddings)
-        for mention in ("왜가리아에 대해 알려줘?", "왜가리아 정보 좀 자세히 알려주세요", "가" * (module.MAX_VECTOR_MENTION_CHARS + 1),
-                        "what is the bird called heron"):
-            result = resolver.resolve(mention)
-            self.assertEqual((result["status"], result["method"], result["candidates"]), ("not_found", "none", []), mention)
-        self.assertEqual((embeddings.document_calls, embeddings.query_calls), ([], []))
-        self.load.assert_not_called()
-
-    def test_ties_sort_by_taxon_id(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0), 중대백로=(2.0, 0.0, 0.0), 쇠백로=(3.0, 0.0, 0.0),
-                                     황새=(4.0, 0.0, 0.0))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual([c["taxon_id"] for c in result["candidates"]],
-                         ["avilist-taxon:v2025b:100", "avilist-taxon:v2025b:101", "avilist-taxon:v2025b:102"])
-
-    def test_revoked_rank_changed_or_mismatched_candidates_are_excluded(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0), 중대백로=(0.99, 0.01, 0.0), 쇠백로=(0.98, 0.02, 0.0),
-                                     황새=(0.97, 0.03, 0.0), 까치=(0.96, 0.04, 0.0))
-        self.graph.overrides["Ardea cinerea"] = None  # revoked
-        self.graph.overrides["Ardea alba"] = lineage("Ardea alba", "avilist-taxon:v2025b:101", rank="subspecies")
-        self.graph.overrides["Egretta garzetta"] = lineage("Egretta garzetta", "avilist-taxon:v2025b:999")
-        self.graph.overrides["Ciconia boyciana"] = lineage("Ciconia boyciana", "avilist-taxon:v2025b:103",
-                                                           context=("cs", "v2024"))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual([c["display_name"] for c in result["candidates"]], ["까치"])
-        for excluded in ("100", "101", "102", "103", "999"):
-            self.assertNotIn(f"avilist-taxon:v2025b:{excluded}", repr(result))
-
-    def test_active_context_change_during_suggestion_is_unavailable(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        self.context.side_effect = [CONTEXT, ("rg:concept-set:avilist-v2026a", "v2026a")]
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual((result["status"], result["candidates"]), ("unavailable", []))
-
-    def test_malformed_vectors_are_unavailable(self):
-        bad_vectors = ((float("nan"), 0.0, 0.0), (0.0, 0.0, 0.0), (1.0, 0.0), ("1", 0.0, 0.0), (True, 0.0, 0.0),
-                       "abc", (float("inf"), 0.0, 0.0), (1.7e308, 1.7e308, 1.7e308), (1.0, 0.0, 0.0, 0.0))
-        for bad in bad_vectors:
-            for target in ("query", "document"):
-                self.graph.calls.clear()
-                embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-                if target == "query":
-                    embeddings.queries["왜가리아"] = bad
-                else:
-                    embeddings.documents["황새 Ciconia boyciana"] = bad
-                result = self.resolver(embeddings).resolve("왜가리아")
-                self.assertEqual((result["status"], result["candidates"], result["taxon_id"]),
-                                 ("unavailable", [], None), (bad, target))
-
-    def test_huge_finite_coordinates_do_not_overflow_cosine(self):
-        embeddings = self.embeddings(query=(1e300, 0.0, 0.0), 왜가리=(1e308, 1e307, 0.0), 황새=(1e-300, 0.0, 0.0))
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual(result["status"], "candidates")
-        self.assertEqual([c["display_name"] for c in result["candidates"]], ["황새", "왜가리"])
-        for candidate in result["candidates"]:
-            self.assertTrue(math.isfinite(candidate["score"]) and -1.0 <= candidate["score"] <= 1.0)
-
-    def test_missing_or_invalid_profile_fails_closed_before_embedding(self):
-        profiles = (None, SimpleNamespace(model="m", normalized=True),
-                    SimpleNamespace(model="m", dimensions=None, normalized=True),
-                    SimpleNamespace(model="m", dimensions=True, normalized=True),
-                    SimpleNamespace(model="m", dimensions=0, normalized=True),
-                    SimpleNamespace(model="m", dimensions="3", normalized=True),
-                    SimpleNamespace(model="", dimensions=3, normalized=True),
-                    SimpleNamespace(model=None, dimensions=3, normalized=True),
-                    SimpleNamespace(model="m", dimensions=3, normalized=None),
-                    SimpleNamespace(model="m", dimensions=3, normalized="yes"))
-        for profile in profiles:
-            embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-            embeddings.profile = profile
-            result = self.resolver(embeddings).resolve("왜가리아")
-            self.assertEqual((result["status"], result["candidates"]), ("unavailable", []), profile)
-            self.assertEqual((embeddings.document_calls, embeddings.query_calls), ([], []))
-
-    def test_real_client_profile_shape_is_accepted(self):
-        from robingraph.embeddings import EmbeddingProfile
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        embeddings.profile = EmbeddingProfile("jinaai/jina-embeddings-v3", 3, True)
-        self.assertEqual(self.resolver(embeddings).resolve("왜가리아")["status"], "candidates")
-
-    def test_wrong_document_count_and_embedding_outage_are_unavailable(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        embeddings.embed_documents = Mock(return_value=((1.0, 0.0, 0.0),))
-        self.assertEqual(self.resolver(embeddings).resolve("왜가리아")["status"], "unavailable")
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        embeddings.embed_query = Mock(side_effect=RuntimeError("https://embed.internal token=abc"))
-        result = self.resolver(embeddings).resolve("왜가리아")
+    def test_missing_index_adapter_is_unavailable_without_bulk_embedding(self):
+        client = self.client()
+        result = TaxonNameResolver(self.graph, self.load, client, self.context).resolve("왜가리아")
         self.assertEqual(result["status"], "unavailable")
-        self.assertNotIn("token", repr(result))
+        self.assertEqual((client.query_calls, client.document_calls), ([], []))
 
-    def test_duplicate_or_invalid_inventory_is_unavailable(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        duplicate_id = inventory() + [{**inventory()[0], "scientific_name": "Other name"}]
-        duplicate_name = inventory() + [{**inventory()[0], "taxon_id": "avilist-taxon:v2025b:555"}]
-        missing_field = [{k: v for k, v in inventory()[0].items() if k != "text"}]
-        oversized = inventory() * 0 + [{**inventory()[0], "taxon_id": f"id:{i}", "scientific_name": f"Name {i}"}
-                                       for i in range(module.MAX_INVENTORY + 1)]
-        for bad in (duplicate_id, duplicate_name, missing_field, oversized, "not a list", None, []):
+    def test_database_outage_is_unavailable_not_memory_fallback(self):
+        client = self.client()
+        result = self.resolver(client, Mock(side_effect=RuntimeError("password=secret"))).resolve("왜가리아")
+        self.assertEqual(result["status"], "unavailable")
+        self.assertNotIn("secret", repr(result))
+        self.assertEqual(client.document_calls, [])
+
+    def test_floor_and_stable_ties_preserve_suggestion_policy(self):
+        result = self.resolver(self.client(), Mock(return_value=list(reversed(self.hits([.3, .3, .249, .2]))))).resolve("왜가리아")
+        self.assertEqual([c["display_name"] for c in result["candidates"]], ["왜가리", "중대백로"])
+        self.assertEqual(self.resolver(self.client(), Mock(return_value=self.hits([.249]))).resolve("왜가리아")["status"], "not_found")
+
+    def test_every_candidate_is_reverified_by_active_graph(self):
+        self.graph.overrides["Ardea cinerea"] = None
+        self.graph.overrides["Ardea alba"] = lineage("Ardea alba", "wrong-id")
+        self.graph.overrides["Egretta garzetta"] = lineage("Egretta garzetta", "avilist-taxon:v2025b:102", rank="subspecies")
+        self.graph.overrides["Ciconia boyciana"] = lineage("Ciconia boyciana", "avilist-taxon:v2025b:103", context=("other", "old"))
+        result = self.resolver(self.client(), Mock(return_value=self.hits([.9, .8, .7, .6, .5]))).resolve("왜가리아")
+        self.assertEqual([c["display_name"] for c in result["candidates"]], ["까치"])
+
+    def test_foreign_stale_duplicate_and_malformed_hits_fail_closed(self):
+        good = self.hits([.9])[0]
+        for hits in ([{**good, "text": "changed"}], [{**good, "taxon_id": "foreign"}], [good, good],
+                     [None], "invalid", [{**good, "score": float("nan")}], [{**good, "score": True}],
+                     [{**good, "score": 1.01}], self.hits([.9]) * 11):
+            result = self.resolver(self.client(), Mock(return_value=hits)).resolve("왜가리아")
+            self.assertEqual((result["status"], result["candidates"]), ("unavailable", []), hits)
+
+    def test_context_and_embedding_profile_changes_during_search_fail_closed(self):
+        self.context.side_effect = [CONTEXT, ("changed", "old")]
+        search = Mock(return_value=self.hits([.9]))
+        self.assertEqual(self.resolver(self.client(), search).resolve("왜가리아")["status"], "unavailable")
+        search.assert_not_called()
+        self.context.side_effect = None
+        client = self.client()
+        def changed(*args, **kwargs):
+            client.profile.model = "changed"
+            return self.hits([.9])
+        self.assertEqual(self.resolver(client, Mock(side_effect=changed)).resolve("왜가리아")["status"], "unavailable")
+
+    def test_bad_query_vectors_are_rejected_before_database_search(self):
+        for bad in ((float("nan"), 0, 0), (0, 0, 0), (1, 0), (True, 0, 0), "abc", (float("inf"), 0, 0), (1.7e308,) * 3):
+            search = Mock()
+            self.assertEqual(self.resolver(self.client(vector=bad), search).resolve("왜가리아")["status"], "unavailable")
+            search.assert_not_called()
+
+    def test_invalid_profile_or_inventory_fails_before_query_embedding(self):
+        for profile in (None, SimpleNamespace(model="m", dimensions=True, normalized=False), SimpleNamespace(model="", dimensions=3, normalized=False)):
+            client = self.client()
+            client.profile = profile
+            self.assertEqual(self.resolver(client).resolve("왜가리아")["status"], "unavailable")
+            self.assertEqual(client.query_calls, [])
+        for bad in ([], None, "invalid", inventory() * 2, [{"taxon_id": "a"}], inventory() * 201):
+            client = self.client()
             self.load.side_effect = None
             self.load.return_value = bad
-            self.assertEqual(self.resolver(embeddings).resolve("왜가리아")["status"], "unavailable")
+            self.assertEqual(self.resolver(client).resolve("왜가리아")["status"], "unavailable")
+            self.assertEqual(client.query_calls, [])
 
-    def test_at_most_three_candidates(self):
-        embeddings = self.embeddings(**{korean: (1.0, 0.01 * i, 0.0) for i, (_, korean) in enumerate(SPECIES.values())})
-        result = self.resolver(embeddings).resolve("왜가리아")
-        self.assertEqual(len(result["candidates"]), module.MAX_SUGGESTIONS)
+    def test_whole_sentences_are_never_embedded_or_searched(self):
+        for mention in ("왜가리아에 대해 알려줘?", "왜가리아 정보 좀 자세히 알려주세요", "가" * 41):
+            client = self.client()
+            search = Mock()
+            self.assertEqual(self.resolver(client, search).resolve(mention)["status"], "not_found")
+            search.assert_not_called()
+            self.assertEqual(client.query_calls, [])
 
-    def test_name_vectors_are_cached_per_context_and_bounded(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        resolver = self.resolver(embeddings)
-        resolver.resolve("왜가리아")
-        resolver.resolve("왜가리아")
-        self.assertEqual(len(embeddings.document_calls), 1)
-        self.assertEqual(len(embeddings.query_calls), 2)
-        self.context.return_value = ("rg:concept-set:avilist-v2026a", "v2026a")
-        resolver.resolve("왜가리아")
-        self.assertEqual(len(embeddings.document_calls), 2)
-        self.assertLessEqual(len(resolver._cache), module.CACHE_MAX_ENTRIES)
+    def test_cheondung_spelling_fallback_still_uses_index_scores_and_compacted_query(self):
+        self.load.side_effect = None
+        self.load.return_value = [{"taxon_id": "mallard", "scientific_name": "Anas platyrhynchos", "display_name": "청둥오리", "text": "청둥오리"},
+                                  {"taxon_id": "scoter", "scientific_name": "Melanitta americana", "display_name": "검둥오리", "text": "검둥오리"}]
+        for entry in self.load.return_value:
+            self.graph.overrides[entry["scientific_name"]] = lineage(entry["scientific_name"], entry["taxon_id"])
+        hits = [{**e, "score": s} for e, s in zip(self.load.return_value, [.2138, .2201])]
+        client = self.client("천둥오리")
+        search = Mock(return_value=hits)
+        resolver = self.resolver(client, search)
+        for mention in ("천둥오리", "천둥 오리"):
+            result = resolver.resolve(mention)
+            self.assertEqual(result["mention"], mention)
+            self.assertEqual(result["status"], "candidates")
+            self.assertIsNone(result["taxon_id"])
+            self.assertEqual([(c["display_name"], c["score"]) for c in result["candidates"]], [("청둥오리", .2138)])
+        self.assertEqual(client.query_calls, ["천둥오리", "천둥오리"])
+        self.assertEqual(client.document_calls, [])
 
-    def test_cache_eviction_respects_bound(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        resolver = self.resolver(embeddings)
-        original = module.CACHE_MAX_ENTRIES
-        module.CACHE_MAX_ENTRIES = 3
-        try:
-            resolver.resolve("왜가리아")
-            self.assertEqual(len(resolver._cache), 3)
-        finally:
-            module.CACHE_MAX_ENTRIES = original
 
-    def test_concurrent_cold_cache_embeds_inventory_once(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        original = embeddings.embed_documents
-        started, release = threading.Event(), threading.Event()
+class ScopedRecallTests(ResolverCase):
+    def test_scope_ranking_recovers_candidate_below_global_top_ten(self):
+        rows = [{'taxon_id': f'taxon:{i}', 'scientific_name': f'Example species{i}',
+                 'display_name': f'검증이름{i}', 'text': f'검증이름{i}'} for i in range(11)]
+        self.load = Mock(return_value=rows)
+        self.graph.overrides[rows[-1]['scientific_name']] = lineage(rows[-1]['scientific_name'], rows[-1]['taxon_id'])
+        def search(*args, limit, eligible_taxon_ids=None):
+            ranked = [{**row, 'score': .9-i*.01} for i, row in enumerate(rows)]
+            if eligible_taxon_ids is not None:
+                ranked = [r for r in ranked if r['taxon_id'] in eligible_taxon_ids]
+            return ranked[:limit]
+        search = Mock(side_effect=search)
+        with patch.object(module, 'scope_matches', side_effect=lambda taxon, *args: taxon['taxon_id'] == rows[-1]['taxon_id']):
+            result = self.resolver(FakeEmbeddings({}, {'오타이름': (1.,0.,0.)}), search).resolve('오타이름', 'korea')
+        self.assertEqual(result['status'], 'candidates')
+        self.assertEqual([r['taxon_id'] for r in result['candidates']], ['taxon:10'])
+        self.assertEqual(search.call_args.kwargs, {'limit': 10, 'eligible_taxon_ids': ['taxon:10']})
+        self.assertEqual(len(search.call_args.args[3]), 11)  # full catalog remains intact
 
-        def slow_embed(texts):
-            started.set()
-            self.assertTrue(release.wait(5))
-            return original(texts)
+    def test_empty_scope_never_calls_repository_or_backfills_other_scope(self):
+        search = Mock()
+        with patch.object(module, 'scope_matches', return_value=False):
+            result = self.resolver(FakeEmbeddings({}, {'오타이름': (1.,0.,0.)}), search).resolve('오타이름', 'outside')
+        self.assertEqual(result['candidates'], [])
+        search.assert_not_called()
 
-        embeddings.embed_documents = slow_embed
-        resolver = self.resolver(embeddings)
-        results = []
-        threads = [threading.Thread(target=lambda: results.append(resolver.resolve("왜가리아"))) for _ in range(8)]
-        for thread in threads:
-            thread.start()
-        self.assertTrue(started.wait(5))
-        # every other thread is now blocked on the in-flight fill, not embedding
-        release.set()
-        for thread in threads:
-            thread.join(5)
-        self.assertEqual(len(results), 8)
-        self.assertEqual({r["status"] for r in results}, {"candidates"})
-        self.assertEqual(len(embeddings.document_calls), 1)
-        self.assertEqual(len(embeddings.query_calls), 8)
 
-    def test_failed_fill_is_not_cached_and_next_call_retries(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        original = embeddings.embed_documents
-        embeddings.embed_documents = Mock(side_effect=[RuntimeError("down"), original(list(embeddings.documents))])
-        resolver = self.resolver(embeddings)
-        self.assertEqual(resolver.resolve("왜가리아")["status"], "unavailable")
-        self.assertEqual(len(resolver._cache), 0)
-        self.assertEqual(resolver.resolve("왜가리아")["status"], "candidates")
+    def test_outside_candidate_uses_english_name_from_verified_graph(self):
+        from dataclasses import replace
+        value = lineage('Ardea cinerea', 'avilist-taxon:v2025b:100')
+        self.graph.overrides['Ardea cinerea'] = replace(value, items=(*value.items[:-1],
+            replace(value.items[-1], korean_name='왜가리', english_name='Grey Heron')))
+        search = Mock(return_value=[{**inventory()[0], 'score': .8}])
+        with patch.object(module, 'scope_matches', return_value=True):
+            result = self.resolver(FakeEmbeddings({}, {'왜가리아': (1.,0.,0.)}), search).resolve('왜가리아', 'outside')
+        self.assertEqual(result['candidates'][0]['display_name'], 'Grey Heron')
 
-    def test_concurrent_resolution_is_consistent(self):
-        embeddings = self.embeddings(왜가리=(1.0, 0.0, 0.0))
-        resolver = self.resolver(embeddings)
-        results = []
-        threads = [threading.Thread(target=lambda: results.append(resolver.resolve("왜가리아"))) for _ in range(8)]
-        for thread in threads:
-            thread.start()
-        for thread in threads:
-            thread.join()
-        self.assertEqual({r["status"] for r in results}, {"candidates"})
-        self.assertEqual(len(resolver._cache), len(SPECIES))
+
+class LatinSpellingSupportTests(ResolverCase):
+    def test_one_edit_boundaries(self):
+        for value,name in [('Keaa','Kea'),('Nestor notabilix','Nestor notabilis'),
+                           ('Okarito Kiwx','Okarito Kiwi'),('Kea','Keaa'),('Kxea','Kexa')]:
+            if len(value) >= 4:
+                self.assertTrue(module._one_latin_edit(value,name),(value,name))
+        for value,name in [('Kea','Kea'),('Kex','Kea'),('Kezz','Kea'),('bird','Kea'),('Kea?','Kea')]:
+            self.assertFalse(module._one_latin_edit(value,name),(value,name))
+
+    def test_outside_spelling_candidate_preserves_real_cosine_and_requires_graph(self):
+        from dataclasses import replace
+        row={'taxon_id':'fixture:kea','scientific_name':'Nestor notabilis','display_name':'Kea','text':'Kea Nestor notabilis'}
+        self.load=Mock(return_value=[row])
+        base=lineage(row['scientific_name'],row['taxon_id'])
+        self.graph.overrides[row['scientific_name']]=replace(base,items=(*base.items[:-1],replace(base.items[-1],english_name='Kea')))
+        search=Mock(return_value=[{**row,'score':.1}])
+        embeddings=FakeEmbeddings({}, {'Keaa':(1.,0.,0.),'Kezz':(1.,0.,0.)})
+        resolver=self.resolver(embeddings,search)
+        with patch.object(module,'scope_matches',return_value=True):
+            result=resolver.resolve('Keaa','outside')
+            self.assertEqual(result['status'],'candidates')
+            self.assertEqual(result['candidates'][0]['display_name'],'Kea')
+            self.assertEqual(result['candidates'][0]['score'],.1)
+            embeddings.query_calls.clear()
+            all_result=resolver.resolve('Keaa','all')
+            self.assertEqual(all_result['status'],'candidates')
+            self.assertEqual(all_result['candidates'][0]['display_name'],'Kea')
+            self.assertEqual(embeddings.query_calls,['Keaa'])
+            self.assertEqual(resolver.resolve('Kezz','outside')['status'],'not_found')
+            self.graph.overrides[row['scientific_name']]=None
+            self.assertEqual(resolver.resolve('Keaa','outside')['status'],'not_found')

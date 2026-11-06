@@ -28,6 +28,7 @@ import importlib.util
 import logging
 import os
 import sys
+from threading import Lock
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -61,6 +62,7 @@ class TracingStatus:
     reason: str
     langchain_autolog: bool = False
     gemini_autolog: bool = False
+    experiment_id: str | None = None
 
 
 _mlflow: Any = None
@@ -99,9 +101,9 @@ def configure_tracing(environ: MutableMapping[str, str] | None = None) -> Tracin
         mlflow.set_tracking_uri(tracking_uri)
         experiment_id = env.get("MLFLOW_EXPERIMENT_ID", "").strip()
         if experiment_id:
-            mlflow.set_experiment(experiment_id=experiment_id)
+            experiment = mlflow.set_experiment(experiment_id=experiment_id)
         else:
-            mlflow.set_experiment(env.get("MLFLOW_EXPERIMENT_NAME", "").strip() or DEFAULT_EXPERIMENT_NAME)
+            experiment = mlflow.set_experiment(env.get("MLFLOW_EXPERIMENT_NAME", "").strip() or DEFAULT_EXPERIMENT_NAME)
         mlflow.langchain.autolog(silent=True)
     except Exception as error:
         _LOGGER.warning("MLflow tracing disabled: initialization failed (%s)", type(error).__name__)
@@ -115,7 +117,9 @@ def configure_tracing(environ: MutableMapping[str, str] | None = None) -> Tracin
         except Exception as error:
             _LOGGER.warning("MLflow Gemini autolog unavailable (%s)", type(error).__name__)
     _mlflow = mlflow
-    _status = TracingStatus(enabled=True, reason="enabled", langchain_autolog=True, gemini_autolog=gemini_autolog)
+    _status = TracingStatus(enabled=True, reason="enabled", langchain_autolog=True, gemini_autolog=gemini_autolog,
+                            experiment_id=getattr(experiment, "experiment_id", None)
+                            if isinstance(getattr(experiment, "experiment_id", None), str) else None)
     _LOGGER.info("MLflow tracing enabled (langchain_autolog=True, gemini_autolog=%s)", gemini_autolog)
     return _status
 
@@ -156,6 +160,8 @@ def _google_genai_sdk_available() -> bool:
 
 
 class _NoopSpan:
+    trace_id = None
+
     def set_inputs(self, inputs: Any) -> None:
         pass
 
@@ -180,6 +186,14 @@ class _SafeSpan(_NoopSpan):
 
     def __init__(self, live: Any) -> None:
         self._live = live
+
+    @property
+    def trace_id(self) -> str | None:
+        try:
+            value = self._live.trace_id
+            return value if isinstance(value, str) else None
+        except Exception:
+            return None
 
     def set_inputs(self, inputs: Any) -> None:
         self._call("set_inputs", redact(inputs))
@@ -292,15 +306,20 @@ RESPONSE_REASONS = frozenset({
     "none", "taxon_not_found", "intent_uncertain", "ambiguous_name", "filter_mismatch",
     "evidence_not_found", "observations_empty", "handler_unavailable", "upstream_error",
     "unsupported_question", "unknown",
+    "interpretation_error", "invalid_plan", "semantic_audit_rejected", "plan_validation_rejected",
+    "unresolved_conditions", "unsupported_relation", "unsupported_conditions", "negated_conditions",
+    "ambiguous_conditions", "insufficient_data", "no_matching_results",
+    "followup_context_missing", "followup_context_invalid",
 })
 FAILURE_STAGES = frozenset({
     "none", "routing", "name_resolution", "retrieval", "generation", "validation", "unknown",
+    "interpretation", "semantic_audit", "plan_validation", "followup",
 })
 SELECTED_INTENTS = frozenset({"profile", "taxonomy", "observations", "evidence", "none"})
 ROUTE_METHODS = frozenset({"semantic", "explicit", "deterministic", "jev", "none"})
 # Reasons that mean a dependency failed rather than the user's question being
 # unanswerable; they map to disposition ``error`` even when HTTP is 200.
-TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error"})
+TECHNICAL_REASONS = frozenset({"handler_unavailable", "upstream_error", "interpretation_error", "invalid_plan"})
 
 _outcome: ContextVar[dict[str, str] | None] = ContextVar("robingraph_trace_outcome", default=None)
 
@@ -380,3 +399,56 @@ def set_trace_tags(tags: Mapping[str, str]) -> None:
         mlflow.update_current_trace(tags=dict(tags))
     except Exception as error:
         _LOGGER.debug("MLflow trace tag write failed (%s)", type(error).__name__)
+
+
+class FeedbackConflictError(ValueError):
+    pass
+
+
+class FeedbackTargetError(ValueError):
+    pass
+
+
+_feedback_lock = Lock()
+
+
+def feedback_experiment_id() -> str | None:
+    if (_status.enabled and _status.experiment_id and _mlflow is not None
+            and callable(getattr(_mlflow, "get_trace", None))
+            and callable(getattr(_mlflow, "flush_trace_async_logging", None))
+            and callable(getattr(_mlflow, "log_feedback", None))):
+        return _status.experiment_id
+    return None
+
+
+def record_feedback(trace_id: str, experiment_id: str, rating: str) -> None:
+    """One human vote per chat trace; repeated identical submissions are safe to retry."""
+    if feedback_experiment_id() != experiment_id:
+        raise RuntimeError("Feedback is unavailable")
+    from mlflow.entities import AssessmentSource
+
+    # Feedback requests run on worker threads; serialize the read/write pair.
+    with _feedback_lock:
+        # A partial trace can be readable before its root arrives. Drain exports first.
+        # Only feedback waits; the chat response stays fail-open.
+        _mlflow.flush_trace_async_logging()
+        trace = _mlflow.get_trace(trace_id, silent=True)
+        if trace is None:
+            raise RuntimeError("Trace is not available yet")
+        if str(trace.info.experiment_id) != experiment_id:
+            raise FeedbackTargetError("Feedback target is not in this experiment")
+        roots = [span for span in trace.data.spans if span.parent_id is None]
+        if not roots:
+            raise RuntimeError("Chat trace is not fully exported yet")
+        if len(roots) != 1 or roots[0].name != "POST /v1/chat":
+            raise FeedbackTargetError("Feedback target is not a chat trace")
+        for assessment in trace.info.assessments:
+            source = assessment.source
+            if (assessment.name == "user_feedback" and source.source_type == "HUMAN"
+                    and source.source_id == "robingraph-web"):
+                if assessment.feedback is not None and assessment.feedback.value == rating:
+                    return
+                raise FeedbackConflictError("Feedback already submitted")
+        _mlflow.log_feedback(trace_id=trace_id, name="user_feedback", value=rating,
+                             source=AssessmentSource(source_type="HUMAN", source_id="robingraph-web"),
+                             metadata={"channel": "chat"})

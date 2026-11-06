@@ -121,13 +121,15 @@ class FakeGraph:
                             "normalized": p["normalized"], "concept_set_id": p["concept_set_id"],
                             "taxonomy_release": p["release"], "count": p["count"]}
             return Result([])
-        if query is module._SEARCH:
+        if query in (module._SEARCH, module._SCOPED_SEARCH):
             if not self.allowed(p):
                 return Result([])
             if self.hits is not None:
                 return Result(self.hits)
             rows = []
             for entry in self.entries.values():
+                if query is module._SCOPED_SEARCH and entry["taxon_id"] not in p["eligible_taxon_ids"]:
+                    continue
                 if "TaxonNameVector" not in entry["labels"] or entry["catalog_fingerprint"] != p["fingerprint"]:
                     continue
                 vector = entry["name_vector"]
@@ -438,3 +440,39 @@ class SearchTests(RepositoryCase):
             with self.assertRaises(TaxonNameVectorUnavailable):
                 self.repository.search(vector, profile, CONTEXT, inventory(), limit=limit)
         self.assertEqual(self.graph.queries, [])
+
+
+class ScopedSearchTests(RepositoryCase):
+    def setUp(self):
+        super().setUp()
+        self.apply()
+        self.graph.queries.clear()
+    def test_scope_is_applied_before_limit_with_full_catalog_validation(self):
+        target = inventory()[1]['taxon_id']
+        before = self.graph.state()
+        result = self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(), limit=1,
+                                        eligible_taxon_ids=[target])
+        self.assertEqual([r['taxon_id'] for r in result], [target])
+        self.assertEqual(self.graph.state(), before)
+        self.assertIn(module._SCOPED_SEARCH, self.graph.queries)
+
+    def test_foreign_scoped_id_rejected(self):
+        with self.assertRaises(module.TaxonNameVectorUnavailable):
+            self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(), eligible_taxon_ids=['foreign'])
+
+    def test_empty_scope_returns_no_candidates(self):
+        self.assertEqual(self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(), eligible_taxon_ids=[]), [])
+
+
+    def test_scoped_search_keeps_catalog_staleness_guard(self):
+        self.graph.catalog['fingerprint'] = 'stale'
+        with self.assertRaises(TaxonNameVectorUnavailable):
+            self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(),
+                                   eligible_taxon_ids=[inventory()[1]['taxon_id']])
+
+    def test_scoped_search_rejects_outside_hit_from_faulty_query(self):
+        self.graph.hits = self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(), limit=1)
+        self.graph.hits[0].update(text_hash=module._text_hash(self.graph.hits[0]['text']), score=1.)
+        result = self.repository.search((1.,0.,0.), PROFILE, CONTEXT, inventory(),
+                                        eligible_taxon_ids=[inventory()[1]['taxon_id']])
+        self.assertEqual(result, [])

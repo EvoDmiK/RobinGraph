@@ -8,27 +8,24 @@ scientific names are re-resolved through the graph under the same active
 context.  A suggestion is never a match: the score is a ranking signal, not a
 confidence that the mention names that species.
 
-Nothing here writes to a database or persists aliases/query nodes; the only
-state is a bounded, process-local cache of candidate-name vectors.
+Nothing here writes to a database or persists aliases/query nodes. Candidate
+vectors are indexed separately; the request path embeds only the mention.
 """
 
 from __future__ import annotations
 
-from collections import OrderedDict
-import hashlib
 import math
 import re
-import threading
 import unicodedata
 from typing import Any, Callable, Mapping, Sequence
 
-from .taxonomy_lineage import TaxonomyLineage
+from .taxonomy_lineage import LineageTaxon, TaxonomyLineage
+from .species_scope import scope_matches, with_species_scope
 
 
 MAX_MENTION_CHARS = 80
 MAX_CANDIDATE_TEXT_CHARS = 200
 MAX_INVENTORY = 1000
-CACHE_MAX_ENTRIES = 1000
 MAX_SUGGESTIONS = 3
 # Verify at most this many above-floor candidates through the graph per call.
 MAX_VERIFICATIONS = 10
@@ -37,6 +34,8 @@ MAX_VERIFICATIONS = 10
 # unrelated words at most 0.20). It is not a confidence or probability, and a
 # suggestion above it never becomes a match.
 SUGGESTION_COSINE_FLOOR = 0.25
+# A lower score is usable only as a confirmation candidate with one-jamo spelling support.
+SPELLING_COSINE_FLOOR = 0.20
 # Only short, name-shaped mentions are embedded; a sentence is not a name.
 MAX_VECTOR_MENTION_CHARS = 40
 MAX_VECTOR_TOKENS = 4
@@ -81,6 +80,16 @@ def compact_korean_name(value: str) -> str | None:
     if _KOREAN_NAME.fullmatch(value):
         return re.sub(r"\s+", "", value)
     return None
+
+
+def _one_jamo_substitution(value: str, display_name: str) -> bool:
+    left, right = "".join(value.split()), "".join(display_name.split())
+    # shortcut: only >=4-syllable names with one substituted jamo, not general edit correction.
+    if (not re.fullmatch(r"[가-힣]{4,40}", left) or len(left) != len(right)
+            or not re.fullmatch(r"[가-힣]+", right)):
+        return False
+    left, right = unicodedata.normalize("NFD", left), unicodedata.normalize("NFD", right)
+    return len(left) == len(right) and sum(a != b for a, b in zip(left, right)) == 1
 
 
 def _valid_context(value: Any) -> tuple[str, str] | None:
@@ -129,11 +138,24 @@ def _validate_vector(vector: Any, dimensions: int) -> tuple[float, ...]:
     return unit
 
 
-def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
-    score = math.fsum(a * b for a, b in zip(left, right))
-    if not math.isfinite(score):
-        raise _Unavailable
-    return max(-1.0, min(1.0, score))
+def _one_latin_edit(value: str, canonical: str | None) -> bool:
+    """Confirmation only: one edit in a bounded Latin source name."""
+    if not canonical or len(value) < 4 or len(canonical) < 3:
+        return False
+    if not all(re.fullmatch(r"[A-Za-z]+(?:[ -][A-Za-z]+)*", text) for text in (value, canonical)):
+        return False
+    left, right = value.casefold(), canonical.casefold()
+    if left == right or abs(len(left) - len(right)) > 1:
+        return False
+    if len(left) == len(right):
+        different = [i for i, (a, b) in enumerate(zip(left, right)) if a != b]
+        return (len(different) == 1 or (len(different) == 2
+            and different[1] == different[0] + 1
+            and left[different[0]] == right[different[1]]
+            and left[different[1]] == right[different[0]]))
+    short, long = (left, right) if len(left) < len(right) else (right, left)
+    first = next((i for i, (a, b) in enumerate(zip(short, long)) if a != b), len(short))
+    return short[first:] == long[first + 1:]
 
 
 def _validate_inventory(raw: Any) -> list[dict]:
@@ -167,24 +189,23 @@ class TaxonNameResolver:
     """Resolve a single name mention against the active reference graph."""
 
     def __init__(self, resolve_exact: ResolveExact, load_candidates: LoadCandidates,
-                 embedding_client: Any = None, active_context: ActiveContext | None = None) -> None:
+                 embedding_client: Any = None, active_context: ActiveContext | None = None,
+                 candidate_search: Callable[..., Sequence[Mapping[str, Any]]] | None = None) -> None:
         if not callable(resolve_exact) or not callable(load_candidates) or not callable(active_context):
             raise TypeError("resolve_exact, load_candidates and active_context must be callable")
         self._resolve_exact = resolve_exact
         self._load_candidates = load_candidates
         self._embedding_client = embedding_client
         self._active_context = active_context
-        self._cache: OrderedDict[tuple, tuple[float, ...]] = OrderedDict()
-        self._lock = threading.Lock()
-        self._build_lock = threading.Lock()
+        self._candidate_search = candidate_search
 
-    def resolve(self, mention: Any) -> dict:
+    def resolve(self, mention: Any, species_scope="all") -> dict:
         raw = mention if isinstance(mention, str) else ""
         value = normalize_mention(mention)
         if value is None:
             return _result(raw, "not_found", "none")
         try:
-            return {**self._resolve(value), "mention": raw}
+            return {**self._resolve(value, species_scope), "mention": raw}
         except Exception:
             # Never surface dependency exception details or a guessed taxon.
             return _result(raw, "unavailable", "none")
@@ -205,26 +226,30 @@ class TaxonNameResolver:
             raise _Unavailable
         return target
 
-    def _resolve(self, value: str) -> dict:
+    def _resolve(self, value: str, species_scope="all") -> dict:
         context = self._context()
         target = self._graph(value, context)
         if target is not None:
+            if not scope_matches(vars(target), species_scope, *context):
+                return _result(value, "not_found", "none")
             return _result(value, "matched", "graph_exact", context=context,
                            canonical_name=target.scientific_name, taxon_id=target.taxon_id)
         compact = compact_korean_name(value)
         if compact is not None and compact != value:
             target = self._graph(compact, context)
             if target is not None:
+                if not scope_matches(vars(target), species_scope, *context):
+                    return _result(value, "not_found", "none")
                 return _result(value, "matched", "graph_normalized", context=context,
                                canonical_name=target.scientific_name, taxon_id=target.taxon_id)
         if (len(value) > MAX_VECTOR_MENTION_CHARS or len(value.split()) > MAX_VECTOR_TOKENS
                 or _SENTENCE_MARKS.search(value)):
             return _result(value, "not_found", "none")
-        if self._embedding_client is None:
+        if self._embedding_client is None or not callable(self._candidate_search):
             # The graph has no exact name, but suggestions cannot be checked:
             # report the lookup as incomplete rather than as a confirmed absence.
             return _result(value, "unavailable", "none")
-        candidates = self._suggest(value, context)
+        candidates = self._suggest(compact or value, context, species_scope)
         if not candidates:
             return _result(value, "not_found", "none")
         return _result(value, "candidates", "vector", candidates=candidates, context=context)
@@ -240,69 +265,97 @@ class TaxonNameResolver:
             raise _Unavailable
         return (type(self._embedding_client).__qualname__, model, dimensions, normalized), dimensions
 
-    def _name_vectors(self, inventory: list[dict], context: tuple[str, str],
-                      profile_key: tuple, dimensions: int) -> list[tuple[float, ...]]:
-        keys = [(context, profile_key, entry["taxon_id"],
-                 hashlib.sha256(entry["text"].encode("utf-8")).hexdigest()) for entry in inventory]
-        vectors = self._cached(keys)
-        if len(vectors) == len(keys):
-            return [vectors[index] for index in range(len(keys))]
-        # Single-flight fill: concurrent cold misses wait here and reuse the
-        # vectors the first caller embedded instead of re-embedding them.
-        with self._build_lock:
-            vectors = self._cached(keys)
-            missing = [index for index in range(len(keys)) if index not in vectors]
-            if missing:
-                embedded = self._embedding_client.embed_documents([inventory[i]["text"] for i in missing])
-                if isinstance(embedded, (str, bytes)) or len(embedded) != len(missing):
-                    raise _Unavailable
-                fresh = {index: _validate_vector(vector, dimensions) for index, vector in zip(missing, embedded)}
-                vectors.update(fresh)
-                with self._lock:
-                    for index, vector in fresh.items():
-                        self._cache[keys[index]] = vector
-                        self._cache.move_to_end(keys[index])
-                    while len(self._cache) > CACHE_MAX_ENTRIES:
-                        self._cache.popitem(last=False)
-        return [vectors[index] for index in range(len(keys))]
-
-    def _cached(self, keys: list[tuple]) -> dict[int, tuple[float, ...]]:
-        with self._lock:
-            found = {}
-            for index, key in enumerate(keys):
-                if key in self._cache:
-                    self._cache.move_to_end(key)
-                    found[index] = self._cache[key]
-            return found
-
-    def _suggest(self, value: str, context: tuple[str, str]) -> list[dict]:
+    def _suggest(self, value: str, context: tuple[str, str], species_scope="all",
+                 *, query_vector=None) -> list[dict]:
         profile_key, dimensions = self._profile_key()
         inventory = _validate_inventory(self._load_candidates())
         if not inventory:
             raise _Unavailable  # no reviewed inventory for this context: cannot suggest
-        name_vectors = self._name_vectors(inventory, context, profile_key, dimensions)
-        query = _validate_vector(self._embedding_client.embed_query(value), dimensions)
+        query = _validate_vector(self._embedding_client.embed_query(value)
+                                 if query_vector is None else query_vector, dimensions)
         if self._context() != context:
             raise _Unavailable
-        scored = sorted(((_cosine(query, vector), entry) for vector, entry in zip(name_vectors, inventory)),
-                        key=lambda pair: (-round(pair[0], 6), pair[1]["taxon_id"]))
+        parameters = {}
+        if species_scope != 'all':
+            parameters['eligible_taxon_ids'] = [entry['taxon_id'] for entry in inventory
+                if scope_matches({**entry, 'rank': 'species'}, species_scope, *context)]
+            if not parameters['eligible_taxon_ids']:
+                return []
+        hits = self._candidate_search(query, self._embedding_client.profile, context, inventory,
+                                      limit=MAX_VERIFICATIONS, **parameters)
+        if isinstance(hits, (str, bytes, Mapping)) or not isinstance(hits, Sequence) or len(hits) > MAX_VERIFICATIONS:
+            raise _Unavailable
+        allowed = {entry["taxon_id"]: entry for entry in inventory}
+        scored, seen = [], set()
+        for hit in hits:
+            if not isinstance(hit, Mapping):
+                raise _Unavailable
+            entry = allowed.get(hit.get("taxon_id"))
+            score = hit.get("score")
+            if (entry is None or entry["taxon_id"] in seen
+                    or any(hit.get(key) != entry[key] for key in _CANDIDATE_FIELDS)
+                    or isinstance(score, bool) or not isinstance(score, (int, float))
+                    or not math.isfinite(score) or not -1 <= score <= 1):
+                raise _Unavailable
+            seen.add(entry["taxon_id"])
+            scored.append((float(score), entry))
+        if self._profile_key()[0] != profile_key:
+            raise _Unavailable
+        # Recheck scope defensively even when the repository ranked within it.
+        scored = [(score, entry) for score, entry in scored
+                  if scope_matches({**entry, "rank":"species"}, species_scope, *context)]
+        scored.sort(key=lambda pair: (-round(pair[0], 6), pair[1]["taxon_id"]))
+        eligible = [(score, entry) for score, entry in scored[:MAX_VERIFICATIONS]
+                    if score >= SUGGESTION_COSINE_FLOOR]
+        if not eligible:
+            eligible = [(score, entry) for score, entry in scored[:MAX_VERIFICATIONS]
+                        if score >= SPELLING_COSINE_FLOOR
+                        and _one_jamo_substitution(value, entry["display_name"])]
+        verified = {}
+        # Latin source names in the reviewed outside set may need spelling
+        # support below the vector floor. Keep the measured cosine unchanged.
+        if not eligible and species_scope == 'outside':
+            for score, entry in scored[:MAX_VERIFICATIONS]:
+                target = self._verified_target(entry, context)
+                verified[entry['taxon_id']] = target
+                if target is not None and any(_one_latin_edit(value, name)
+                        for name in (target.english_name, target.scientific_name)):
+                    eligible.append((score, entry))
+        if (not eligible and species_scope == 'all' and len(value) >= 4
+                and re.fullmatch(r"[A-Za-z]+(?:[ -][A-Za-z]+)*", value)):
+            # Reuse the query vector; only the reviewed outside set supplies
+            # this spelling fallback, and all keeps its Korean-first labels.
+            outside = self._suggest(value, context, 'outside', query_vector=query)
+            for candidate in outside:
+                entry = allowed.get(candidate['taxon_id'])
+                if entry is None or entry['scientific_name'] != candidate['scientific_name']:
+                    raise _Unavailable
+                candidate['display_name'] = entry['display_name']
+            if self._profile_key()[0] != profile_key or self._context() != context:
+                raise _Unavailable
+            return outside
         suggestions: list[dict] = []
-        for score, entry in scored[:MAX_VERIFICATIONS]:
-            if score < SUGGESTION_COSINE_FLOOR or len(suggestions) >= MAX_SUGGESTIONS:
+        for score, entry in eligible:
+            if len(suggestions) >= MAX_SUGGESTIONS:
                 break
-            if self._verified_species(entry, context):
+            target = (verified[entry['taxon_id']] if entry['taxon_id'] in verified
+                      else self._verified_target(entry, context))
+            if target is not None:
                 suggestions.append({"taxon_id": entry["taxon_id"], "scientific_name": entry["scientific_name"],
-                                    "display_name": entry["display_name"], "score": round(score, 4)})
+                                    "display_name": (entry["display_name"] if species_scope == "all" else
+                                        with_species_scope({**vars(target), "korean_name":target.korean_name or entry["display_name"]}, species_scope, *context)["display_name"]), "score": round(score, 4)})
         if self._context() != context:
             raise _Unavailable
         return suggestions
 
-    def _verified_species(self, entry: dict, context: tuple[str, str]) -> bool:
+    def _verified_target(self, entry: dict, context: tuple[str, str]) -> LineageTaxon | None:
         lineage = self._resolve_exact(entry["scientific_name"])
         if lineage is None:
-            return False  # revoked or no longer active
+            return None  # revoked or no longer active
         target = _lineage_target(lineage, context)
         if target is None:
-            return False  # stale lineage from another release/concept set
-        return (target.taxon_id == entry["taxon_id"] and target.rank == "species"
-                and target.scientific_name.casefold() == entry["scientific_name"].casefold())
+            return None  # stale lineage from another release/concept set
+        if (target.taxon_id == entry["taxon_id"] and target.rank == "species"
+                and target.scientific_name.casefold() == entry["scientific_name"].casefold()):
+            return target
+        return None

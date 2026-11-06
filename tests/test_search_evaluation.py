@@ -46,6 +46,25 @@ class SearchEvaluationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "positive"):
             evaluate_search((SearchQuestion("x", "q", ("a",)),), lambda question, limit: _outcome(), limit=0)
 
+    def test_mrr_counts_missed_answerable_questions_as_zero(self) -> None:
+        questions = (SearchQuestion("hit", "hit", ("a",)),
+                     SearchQuestion("miss", "miss", ("b",)),
+                     SearchQuestion("empty", "empty", ()))
+        report = evaluate_search(questions, lambda q, limit: _outcome("a") if q == "hit" else _outcome(), limit=3)
+        self.assertEqual(0.5, report.mean_reciprocal_rank)
+        self.assertEqual(0.5, report.recall_at_k)
+        self.assertIsNone(report.cases[1].reciprocal_rank)
+
+    def test_mrr_is_zero_when_all_answerable_questions_miss(self) -> None:
+        report = evaluate_search((SearchQuestion("miss", "miss", ("a",)),),
+                                 lambda q, limit: _outcome(), limit=3)
+        self.assertEqual(0.0, report.mean_reciprocal_rank)
+
+    def test_mrr_is_undefined_without_answerable_questions(self) -> None:
+        report = evaluate_search((SearchQuestion("empty", "empty", ()),),
+                                 lambda q, limit: _outcome(), limit=3)
+        self.assertIsNone(report.mean_reciprocal_rank)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,42 @@
+{
+  "created": "2026-10-26",
+  "schema": "question-family-eval-v1",
+  "sha256": "77881c3c6405d082a10796bb076c6a98a67ed6dc859b35d5b22aa185a83660a6",
+  "cases": 36,
+  "semantic_groups": 12,
+  "equivalent": 24,
+  "contrast": 12,
+  "categories": {
+    "supported": 32,
+    "hold": 4
+  },
+  "human_reviewed": false,
+  "provenance": "Model-authored fresh questions. Author has prior project context and prior evaluation experience. Current parser/semantic functions and API results not read or executed. Existing family artifact consulted for schema; old question strings mechanically used only for duplicate detection. Gold encodes requested query plans, not unsupported biological facts.",
+  "feedback_policy": "After first measurement/implementation exposure, subsequent runs are feedback-exposed regression.",
+  "coverage": [
+    "order",
+    "family",
+    "genus",
+    "species",
+    "subspecies",
+    "all_birds",
+    "diet_share_nectar_fruit",
+    "diet_category",
+    "trophic_niche",
+    "habitat",
+    "primary_lifestyle",
+    "habitat_density",
+    "body_mass",
+    "tail_length",
+    "beak_length_culmen",
+    "beak_length_nares",
+    "tarsus_length",
+    "wing_length",
+    "kg_g_cm_mm_conversion",
+    "strict_inclusive_boundaries",
+    "AND",
+    "shared_diet",
+    "habitat_shared_diet",
+    "4_unrelaxable_hold_contrasts"
+  ]
+}
