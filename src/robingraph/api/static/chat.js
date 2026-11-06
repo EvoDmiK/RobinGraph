@@ -90,6 +90,28 @@
     return trimmed;
   }
 
+  var recordingSourcesSequence = 0;
+
+  function sanitizeAudioUrl(value) {
+    if (typeof value !== "string") { return null; }
+    if (/^\/media\/audio\/[a-f0-9]{64}\.(?:ogg|mp3|wav)$/.test(value)) { return value; }
+    try {
+      var parsed = new URL(value.trim());
+      return parsed.protocol === "https:" && parsed.hostname === "upload.wikimedia.org" &&
+        !parsed.username && !parsed.password && !parsed.port ? parsed.href : null;
+    } catch (error) { return null; }
+  }
+
+  function stopRecording(audio) {
+    if (typeof audio.pause === "function") { audio.pause(); }
+    try { audio.currentTime = 0; } catch (error) { /* Metadata may not be loaded yet. */ }
+  }
+
+  function stopSpeciesRecordings(doc, except) {
+    var players = typeof doc.querySelectorAll === "function" ? doc.querySelectorAll("audio.species-recording-audio") : [];
+    for (var i = 0; i < players.length; i += 1) { if (players[i] !== except) { stopRecording(players[i]); } }
+  }
+
   var DISPOSITION_LABELS = {
     answer: { label: "답변", className: "disposition-answer" },
     abstain: { label: "보류 (근거 부족)", className: "disposition-abstain" },
@@ -201,8 +223,161 @@
     unknown: "한국 분포 근거를 아직 확인하지 못한 종을 표시하며 한국어 이름을 우선합니다. 국외 분포로 판정된 것이 아닙니다.",
   };
 
+  var FOLLOWUP_SCOPE_LABELS = {
+    korea: "국내 기록",
+    outside: "국외 분포",
+    unknown: "한국 분포 미확인",
+  };
+
+  var FOLLOWUP_REASONS = [
+    "context_missing",
+    "context_invalid",
+    "context_scope_mismatch",
+    "route_conflict",
+    "unsupported_addition",
+    "unresolved_addition",
+    "multiple_additions",
+    "duplicate_condition",
+    "conflicting_condition",
+  ];
+
   function normalizeSpeciesScope(value) {
     return typeof value === "string" && SPECIES_SCOPES.indexOf(value) !== -1 ? value : "all";
+  }
+
+  function normalizeFollowupContext(value) {
+    if (typeof value !== "string") { return null; }
+    var trimmed = value.trim();
+    return trimmed && trimmed.length <= 4096 ? trimmed : null;
+  }
+
+  function followupPlanItems(plan) {
+    if (!plan || typeof plan !== "object" || SPECIES_SCOPES.indexOf(plan.scope) === -1) {
+      return [];
+    }
+    var items = [];
+    if (typeof plan.taxon === "string" && plan.taxon.trim()) {
+      var taxon = plan.taxon.trim().slice(0, 200);
+      items.push(taxon.indexOf("분류군:") === 0 ? taxon : "분류군: " + taxon);
+    }
+    (Array.isArray(plan.conditions) ? plan.conditions : []).slice(0, 8).forEach(function (cond) {
+      if (typeof cond === "string" && cond.trim()) {
+        var label = cond.trim().slice(0, 200);
+        if (items.indexOf(label) === -1) { items.push(label); }
+      }
+    });
+    var scopeLabel = FOLLOWUP_SCOPE_LABELS[plan.scope];
+    if (scopeLabel && items.indexOf(scopeLabel) === -1) {
+      items.push(scopeLabel);
+    }
+    return items;
+  }
+
+  function normalizeFollowupSummary(followup) {
+    if (!followup || typeof followup !== "object" || Array.isArray(followup.conditions)) { return null; }
+    var status = followup.status;
+    if (status !== "applied" && status !== "rejected") { return null; }
+    var reason = typeof followup.reason === "string" ? followup.reason.trim() : null;
+    if (reason && FOLLOWUP_REASONS.indexOf(reason) === -1) { return null; }
+    if (followup.plan != null && (!followup.plan || typeof followup.plan !== "object" || SPECIES_SCOPES.indexOf(followup.plan.scope) === -1)) {
+      return null;
+    }
+    if (followup.retained != null && (!followup.retained || typeof followup.retained !== "object" || SPECIES_SCOPES.indexOf(followup.retained.scope) === -1)) {
+      return null;
+    }
+    var planItems = followupPlanItems(followup.plan);
+    if (status === "applied" && !planItems.length) { return null; }
+    return {
+      status: status,
+      reason: reason,
+      root_question: typeof followup.root_question === "string" && followup.root_question.trim()
+        ? followup.root_question.trim().slice(0, 200) : null,
+      added: status === "applied" && typeof followup.added === "string" && followup.added.trim()
+        ? followup.added.trim().slice(0, 200) : null,
+      plan: planItems,
+      retained: followupPlanItems(followup.retained),
+    };
+  }
+
+  function initialGraphItems(payload, speciesScope) {
+    if (!payload || typeof payload !== "object") { return []; }
+    var items = [];
+    var hasConditions = Array.isArray(payload.conditions) && payload.conditions.length > 0;
+    if (hasConditions && payload.taxon && typeof payload.taxon === "object") {
+      var taxonLabel = speciesLabel(payload.taxon) || (typeof payload.taxon.scientific_name === "string" ? payload.taxon.scientific_name.trim() : "");
+      if (taxonLabel) { items.push("분류군: " + taxonLabel); }
+    } else if (hasConditions && typeof payload.taxon === "string" && payload.taxon.trim()) {
+      items.push("분류군: " + payload.taxon.trim());
+    }
+    if (hasConditions) {
+      payload.conditions.slice(0, 8).forEach(function (cond) {
+        var label = cond && typeof cond === "object" && typeof cond.label === "string"
+          ? cond.label.trim()
+          : (typeof cond === "string" ? cond.trim() : "");
+        if (label && items.indexOf(label) === -1) {
+          items.push(label.slice(0, 200));
+        }
+      });
+    } else if (typeof payload.criterion === "string" && payload.criterion.trim() && typeof payload.title === "string" && payload.title.trim()) {
+      items.push(payload.title.trim().slice(0, 200));
+    }
+    if (!items.length) { return []; }
+    var scopeLabel = FOLLOWUP_SCOPE_LABELS[normalizeSpeciesScope(speciesScope)];
+    if (scopeLabel && items.indexOf(scopeLabel) === -1) {
+      items.push(scopeLabel);
+    }
+    return items;
+  }
+
+  function appendConditionGroup(doc, parent, labelText, items, addedText) {
+    var header = doc.createElement("div");
+    header.className = "graph-query-conditions-header";
+    var title = doc.createElement("span");
+    title.className = "graph-query-conditions-label";
+    title.textContent = labelText;
+    header.appendChild(title);
+    if (addedText) {
+      var addedBadge = doc.createElement("span");
+      addedBadge.className = "graph-query-condition-added";
+      addedBadge.textContent = "추가 조건: " + addedText;
+      header.appendChild(addedBadge);
+    }
+    parent.appendChild(header);
+    var list = doc.createElement("ul");
+    list.className = "graph-query-condition-list";
+    items.forEach(function (itemText) {
+      var li = doc.createElement("li");
+      li.className = "graph-query-condition-chip";
+      li.textContent = itemText;
+      list.appendChild(li);
+    });
+    parent.appendChild(list);
+  }
+
+  function buildFollowupSummary(doc, followup, payload, speciesScope) {
+    var summary = normalizeFollowupSummary(followup);
+    if (followup != null && !summary) { return null; }
+    var isAbstain = Boolean(payload && payload.status && payload.status !== "answer");
+    var primaryItems = summary
+      ? (summary.status === "rejected" ? summary.retained : summary.plan)
+      : initialGraphItems(payload, speciesScope);
+    if (!primaryItems.length) { return null; }
+
+    var status = summary ? summary.status : "initial";
+    var box = doc.createElement("div");
+    box.className = "graph-query-conditions";
+    box.setAttribute("data-followup-status", status);
+    box.setAttribute("role", "group");
+    var isRejected = status === "rejected";
+    box.setAttribute("aria-label", isRejected ? "유지된 검색 조건" : "현재 적용 조건");
+
+    var primaryLabel = isRejected ? "유지된 조건" : (summary && isAbstain ? "이번 조회 조건" : "적용 조건");
+    appendConditionGroup(doc, box, primaryLabel, primaryItems, summary ? summary.added : null);
+
+    if (summary && status === "applied" && isAbstain && summary.retained.length) {
+      appendConditionGroup(doc, box, "다음 질문 유지 조건", summary.retained, null);
+    }
+    return box;
   }
 
   function distributionInfo(distribution) {
@@ -222,13 +397,17 @@
   }
 
   /** Build the exact typed body accepted by POST /v1/chat. */
-  function buildChatPayload(question, intent, values, speciesScope) {
+  function buildChatPayload(question, intent, values, speciesScope, followupContext) {
     var payload = { question: question, intent: intent };
     var scope = normalizeSpeciesScope(speciesScope || (values && values.species_scope));
     if (scope !== "all") {
       payload.species_scope = scope;
     }
     values = values || {};
+    var contextToken = normalizeFollowupContext(followupContext);
+    if (contextToken) {
+      payload.followup_context = contextToken;
+    }
     if (intent === "profile") {
       var profileName = typeof values.name === "string" ? values.name.trim() : "";
       payload.filters = profileName ? { kind: "profile", name: profileName } : { kind: "profile" };
@@ -2112,6 +2291,16 @@
       section.appendChild(heading);
     }
 
+    var conditionBox = buildFollowupSummary(
+      doc,
+      options.followup || payload.followup,
+      payload,
+      options.speciesScope
+    );
+    if (conditionBox) {
+      section.appendChild(conditionBox);
+    }
+
     if (payload.status === "insufficient_data" || payload.status === "empty") {
       if (typeof payload.text === "string" && payload.text.trim()) {
         var emptyMsg = doc.createElement("p");
@@ -2121,26 +2310,35 @@
       }
     }
 
-    if ((Array.isArray(payload.limitations) && payload.limitations.length > 0) || (payload.status === "answer" && payload.text)) {
+    var noteListItems = Array.from(new Set(
+      (Array.isArray(payload.limitations) ? payload.limitations : [])
+        .concat(Array.isArray(options.warnings) ? options.warnings : [])
+        .filter(function (note) { return typeof note === "string"; })
+        .map(function (note) { return note.trim(); })
+        .filter(Boolean)
+    ));
+
+    if (noteListItems.length > 0 || (payload.status === "answer" && payload.text)) {
       var noteBox = doc.createElement("details");
       noteBox.className = "species-note graph-query-notes";
       var noteTitle = doc.createElement("summary");
-      noteTitle.textContent = payload.status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
+      var baseTitle = payload.status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
+      noteTitle.textContent = noteListItems.length > 0 ? baseTitle + " (" + noteListItems.length + ")" : baseTitle;
       noteBox.appendChild(noteTitle);
       if (payload.status === "answer" && typeof payload.text === "string" && payload.text.trim()) {
         var queryContext = doc.createElement("p");
         queryContext.textContent = payload.text.trim();
         noteBox.appendChild(queryContext);
       }
-      var noteList = doc.createElement("ul");
-      (Array.isArray(payload.limitations) ? payload.limitations : []).forEach(function (limitation) {
-        if (typeof limitation === "string" && limitation.trim()) {
+      if (noteListItems.length > 0) {
+        var noteList = doc.createElement("ul");
+        noteListItems.forEach(function (limitation) {
           var li = doc.createElement("li");
-          li.textContent = limitation.trim();
+          li.textContent = limitation;
           noteList.appendChild(li);
-        }
-      });
-      noteBox.appendChild(noteList);
+        });
+        noteBox.appendChild(noteList);
+      }
     }
 
     if (Array.isArray(payload.paths) && payload.paths.length > 0) {
@@ -3083,10 +3281,72 @@
     if (profile.enrichment_pending) {
       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
     } else { renderPhotos(profile.images, profile.photo_availability); }
+    var audioControls = doc.createElement("section");
+    audioControls.className = "species-recording-controls";
+    audioControls.setAttribute("aria-label", "새소리 듣기");
+    audioControls.setAttribute("data-card-drag-exempt", "true");
+    front.appendChild(audioControls);
+    var audioArea = doc.createElement("details");
+    audioArea.className = "card-details card-details-scroll species-recordings";
+    audioArea.id = "species-recording-sources-" + (++recordingSourcesSequence);
+    var audioPlayers = [];
+    card.stopRecordings = function () { audioPlayers.forEach(stopRecording); };
+    function renderRecordings(fresh) {
+      card.stopRecordings(); audioPlayers = []; clearNode(audioArea); clearNode(audioControls);
+      var summary = doc.createElement("summary"); summary.textContent = "새소리 출처"; audioArea.appendChild(summary);
+      var records = (Array.isArray(fresh.recordings) ? fresh.recordings : []).filter(function (recording) {
+        return recording && recording.scientific_name === taxon.scientific_name &&
+          ["id", "title", "creator", "license_name"].every(function (key) { return typeof recording[key] === "string" && recording[key].trim(); }) &&
+          sanitizeAudioUrl(recording.audio_url) && sanitizeUrl(recording.source_url) && sanitizeUrl(recording.license_url);
+      });
+      audioControls.hidden = records.length === 0;
+      records.forEach(function (recording) {
+        var entry = doc.createElement("section"); entry.className = "species-recording";
+        entry.setAttribute("data-card-drag-exempt", "true");
+        var title = doc.createElement("p"); title.textContent = recording.title; entry.appendChild(title);
+        var audio = doc.createElement("audio"); audio.className = "species-recording-audio";
+        audio.controls = true; audio.preload = "none"; audio.src = sanitizeAudioUrl(recording.audio_url);
+        audio.setAttribute("aria-label", speciesLabel(taxon) + " 새소리 · " + recording.title);
+        audio.addEventListener("play", function () { stopSpeciesRecordings(doc, audio); });
+        audioControls.appendChild(audio); audioPlayers.push(audio);
+        var sourceButton = doc.createElement("button"); sourceButton.type = "button";
+        sourceButton.className = "species-recording-source-link"; sourceButton.textContent = "출처: 뒷면";
+        sourceButton.setAttribute("aria-controls", audioArea.id);
+        sourceButton.setAttribute("aria-label", recording.title + " · 새소리 출처를 뒷면에서 보기");
+        sourceButton.addEventListener("click", function () {
+          resetFlip(); showFace(true); audioArea.open = true; summary.focus();
+        });
+        audioControls.appendChild(sourceButton);
+        var attribution = doc.createElement("p"); attribution.textContent = "녹음: " + recording.creator + " · ";
+        attribution.appendChild(safeLink(doc, "원문 출처", recording.source_url));
+        attribution.appendChild(doc.createTextNode(" · "));
+        attribution.appendChild(safeLink(doc, recording.license_name, recording.license_url)); entry.appendChild(attribution);
+        [["recording_type", "소리 유형"], ["recorded_at", "녹음일"], ["location", "녹음 지역"]].forEach(function (field) {
+          if (typeof recording[field[0]] === "string" && recording[field[0]].trim()) {
+            var metadata = doc.createElement("p"); metadata.textContent = field[1] + ": " + recording[field[0]]; entry.appendChild(metadata);
+          }
+        });
+        var errorMessage = doc.createElement("p"); errorMessage.setAttribute("role", "status"); errorMessage.hidden = true;
+        errorMessage.textContent = "녹음을 재생하지 못했습니다. 원문 출처에서 확인해 주세요.";
+        audio.addEventListener("error", function () { errorMessage.hidden = false; }); audioControls.appendChild(errorMessage);
+        audioArea.appendChild(entry);
+      });
+      if (!records.length) {
+        var state = fresh.recording_availability && fresh.recording_availability.status;
+        var empty = doc.createElement("p"); empty.className = "species-note";
+        empty.textContent = state === "no_licensed_recording" ? "확인된 새소리 자료가 없습니다." :
+          state === "provider_unavailable" ? "새소리 자료를 불러오지 못했습니다." :
+          state === "pending" ? "새소리 자료를 확인하고 있습니다." : "새소리 자료 확인 상태가 미확인입니다.";
+        audioArea.appendChild(empty);
+      }
+      if (card.requestFit) { card.requestFit(); }
+    }
+    renderRecordings(profile);
     // A photo-only update leaves notes intact; explicit empty sections clear
     // both the visible notes and their detached provenance. Keep profile
     // untouched here so deferred enrichment can compare initial sections.
     card.updateEnrichment = function (fresh) {
+      if (Object.prototype.hasOwnProperty.call(fresh, "recordings")) { renderRecordings(fresh); }
       renderPhotos(fresh.images, fresh.photo_availability);
       if (card.onPhotoPreviewChanged) { card.onPhotoPreviewChanged(fresh); }
       if (Object.prototype.hasOwnProperty.call(fresh, "sections")) {
@@ -3174,6 +3434,7 @@
       measurementsDetails.appendChild(buildCardTraitGrid(doc, remainingGroups, traitSources));
       back.appendChild(measurementsDetails);
     }
+    back.appendChild(audioArea);
     if (traitSources.children.length === 1) { cardSources.removeChild(traitSources); }
     cardSources.appendChild(buildDietLegend(doc, dietInfo));
 
@@ -3367,6 +3628,7 @@
     card.setAttribute("aria-roledescription", "양면 조류 카드");
     card.setAttribute("aria-keyshortcuts", "Enter Space");
     function showFace(showBack) {
+      if (showBack && card.stopRecordings) { card.stopRecordings(); }
       clearDistributionTooltips(card);
       back.hidden = !showBack;
       front.hidden = showBack;
@@ -4236,7 +4498,7 @@
     fitSurface.appendChild(card); fitFrame.appendChild(fitSurface); dialog.appendChild(fitFrame);
     wrapper.appendChild(dialog);
     var view = doc.defaultView;
-    var fitActive = false, fitRaf = null, fitObserver = null;
+    var fitActive = false, fitRaf = null, fitObserver = null, removalObserver = null;
     var collapsedFitHeight = 0;
     var materialMeasureKey = "", materialCanvasHeight = 0;
     function mobileFit() {
@@ -4321,6 +4583,8 @@
       else { fitCard(); }
     }
     function stopFit() {
+      if (card.stopRecordings) { card.stopRecordings(); }
+      if (removalObserver) { removalObserver.disconnect(); removalObserver = null; }
       fitActive = false;
       if (fitRaf !== null && view && view.cancelAnimationFrame) { view.cancelAnimationFrame(fitRaf); }
       fitRaf = null;
@@ -4335,6 +4599,10 @@
       card.resetFitScroll();
       collapsedFitHeight = 0;
       fitActive = true;
+      if (view && typeof view.MutationObserver === "function" && doc.body) {
+        removalObserver = new view.MutationObserver(function () { if (!dialog.isConnected) { stopFit(); } });
+        removalObserver.observe(doc.body, { childList: true, subtree: true });
+      }
       if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
       if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
       card.addEventListener("load", scheduleFit, true); card.addEventListener("toggle", scheduleFit, true);
@@ -4376,6 +4644,7 @@
     }, true);
     dialog.addEventListener("pointercancel", function () { backdropPress = null; }, true);
     opener.addEventListener("click", function () {
+      stopSpeciesRecordings(doc);
       backdropPress = null;
       // Reopen at the initial card size, before measuring the collapsed fit.
       var toggles = typeof card.querySelectorAll === "function" ? card.querySelectorAll(".card-details-scroll, .species-distribution-values") : [];
@@ -4531,6 +4800,7 @@
       return doc.getElementById("species-scope-" + key);
     }).filter(Boolean);
     var scopeNote = doc.getElementById("species-scope-note");
+    var followupBar = doc.getElementById("followup-context-bar");
     var activeSpeciesScope = "all";
     scopeRadios.forEach(function (radio) {
       if (radio.checked) { activeSpeciesScope = normalizeSpeciesScope(radio.value); }
@@ -4549,6 +4819,21 @@
     var enrichmentSections = [];
     var activeChat = null;
     var activeLookups = [];
+    var activeFollowupState = null;
+
+    function setFollowupState(nextState) {
+      activeFollowupState = nextState && nextState.token ? nextState : null;
+      if (!followupBar) { return; }
+      if (!activeFollowupState || !activeFollowupState.labels || activeFollowupState.labels.length === 0) {
+        followupBar.hidden = true;
+        followupBar.textContent = "";
+        return;
+      }
+      followupBar.hidden = false;
+      followupBar.textContent =
+        (activeFollowupState.retainedOnly ? "유지된 조건: " : "현재 적용 조건: ") +
+        activeFollowupState.labels.join(" · ");
+    }
 
     function requestController() {
       var Constructor = win.AbortController || (typeof AbortController !== "undefined" ? AbortController : null);
@@ -4571,6 +4856,7 @@
     }
 
     function cancelEnrichments(includeNotStarted) {
+      stopSpeciesRecordings(doc);
       enrichmentSections = enrichmentSections.filter(function (section) { return !section.cancelEnrichment(includeNotStarted === true); });
     }
     appendComparisonMessage.beforeComparison = cancelEnrichments;
@@ -4700,7 +4986,7 @@
       scrollToLatest();
     }
 
-    function appendAnswerMessage(answer) {
+    function appendAnswerMessage(answer, feedbackToken) {
       var scope = currentSpeciesScope();
       var item = doc.createElement("div");
       item.className = "message message-answer";
@@ -4768,9 +5054,13 @@
           item.appendChild(malformed);
         }
       }
-      if (answer.result && answer.result.kind === "graph_query") {
+      var isGraphQuery = !!(answer.result && answer.result.kind === "graph_query");
+      if (isGraphQuery) {
         var graphQuestionActive = conversationGuard();
         var graphAnswer = buildGraphQueryAnswer(doc, answer.result.payload, {
+          followup: answer.followup,
+          speciesScope: scope,
+          warnings: answer.warnings,
           onQuestion: function (questionText, scientificName) {
             if (!graphQuestionActive() || input.disabled || form.getAttribute("aria-busy") === "true") {
               return;
@@ -4787,6 +5077,38 @@
         if (graphAnswer) {
           item.appendChild(graphAnswer);
         }
+      } else if (answer.followup) {
+        var followupBox = buildFollowupSummary(doc, answer.followup, null, scope);
+        if (followupBox) {
+          item.appendChild(followupBox);
+        }
+      }
+
+      var nextToken = normalizeFollowupContext(answer && answer.followup_context);
+      var followupSummary = normalizeFollowupSummary(answer && answer.followup);
+      if (!nextToken || (answer && answer.followup != null && !followupSummary)) {
+        setFollowupState(null);
+      } else if (followupSummary) {
+        var unrecoverable = followupSummary.status === "rejected"
+          && ["context_missing", "context_invalid", "context_scope_mismatch"].indexOf(followupSummary.reason) !== -1;
+        setFollowupState(!unrecoverable && followupSummary.retained.length ? {
+          token: nextToken,
+          labels: followupSummary.retained,
+          retainedOnly: answer.disposition !== "answer",
+        } : null);
+      } else if (
+        answer.disposition === "answer"
+        && answer.result && answer.result.kind === "graph_query"
+        && answer.result.payload && answer.result.payload.status === "answer"
+      ) {
+        var initialLabels = initialGraphItems(answer.result.payload, scope);
+        setFollowupState(initialLabels.length ? {
+          token: nextToken,
+          labels: initialLabels,
+          retainedOnly: false,
+        } : null);
+      } else {
+        setFollowupState(null);
       }
 
       if (answer.result && answer.result.kind === "clarify" && Array.isArray(answer.result.choices)) {
@@ -4926,7 +5248,7 @@
         }
       }
 
-      var warnings = Array.isArray(answer.warnings) ? answer.warnings : [];
+      var warnings = (!isGraphQuery && Array.isArray(answer.warnings)) ? answer.warnings : [];
       if (warnings.length > 0) {
         var warnList = doc.createElement("ul");
         warnList.className = "warnings";
@@ -4993,6 +5315,75 @@
       if (answerSources) {
         if (answerSources.refreshSources) { answerSources.refreshSources(); }
         item.appendChild(answerSources);
+      }
+
+      if (typeof feedbackToken === "string" && feedbackToken.trim()) {
+        var feedbackActive = conversationGuard();
+        var feedbackBusy = false;
+        var feedbackClosed = false;
+        var feedback = doc.createElement("section");
+        feedback.className = "answer-feedback";
+        feedback.setAttribute("aria-label", "답변 평가");
+        var feedbackButtons = doc.createElement("div");
+        feedbackButtons.className = "answer-feedback-buttons";
+        var feedbackStatus = doc.createElement("p");
+        feedbackStatus.className = "answer-feedback-status";
+        feedbackStatus.setAttribute("role", "status");
+        feedbackStatus.setAttribute("aria-live", "polite");
+        [["helpful", "도움됐어요"], ["misunderstood", "질문을 잘못 이해했어요"], ["incorrect", "답변이 틀렸어요"]].forEach(function (rating) {
+          var button = doc.createElement("button");
+          button.type = "button";
+          button.setAttribute("type", "button");
+          button.className = "answer-feedback-button";
+          button.textContent = rating[1];
+          button.setAttribute("aria-pressed", "false");
+          button.addEventListener("click", function () {
+            if (!feedbackActive() || feedbackBusy || feedbackClosed) { return; }
+            feedbackBusy = true;
+            Array.prototype.forEach.call(feedbackButtons.children, function (node) { node.disabled = true; });
+            feedbackStatus.textContent = "의견을 저장하고 있습니다…";
+            Promise.resolve().then(function () {
+              return win.fetch("/v1/chat/feedback", {
+                method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: feedbackToken, rating: rating[0] }),
+              });
+            }).then(function (response) {
+              if (response.status === 409) { return { alreadySaved: true }; }
+              if (response.status === 400 || response.status === 422) { return { unavailable: true }; }
+              if (!response.ok) { throw new Error("feedback failed"); }
+              return response.json();
+            }).then(function (payload) {
+              if (payload && payload.unavailable === true) {
+                if (!feedbackActive()) { return; }
+                feedbackClosed = true;
+                feedbackStatus.textContent = "이 답변에는 의견을 남길 수 없습니다. 새 답변에서 다시 시도해 주세요.";
+                return;
+              }
+              if (payload && payload.alreadySaved === true) {
+                if (!feedbackActive()) { return; }
+                feedbackClosed = true;
+                feedbackStatus.textContent = "이미 의견이 저장된 답변입니다.";
+                return;
+              }
+              if (!payload || payload.status !== "saved") { throw new Error("feedback failed"); }
+              if (!feedbackActive()) { return; }
+              feedbackClosed = true;
+              button.setAttribute("aria-pressed", "true");
+              feedbackStatus.textContent = "의견을 남겨 주셔서 감사합니다.";
+            }).catch(function () {
+              if (!feedbackActive()) { return; }
+              feedbackStatus.textContent = "의견을 저장하지 못했습니다. 다시 눌러 시도해 주세요.";
+            }).then(function () {
+              if (!feedbackActive()) { return; }
+              feedbackBusy = false;
+              Array.prototype.forEach.call(feedbackButtons.children, function (node) { node.disabled = feedbackClosed; });
+            });
+          });
+          feedbackButtons.appendChild(button);
+        });
+        feedback.appendChild(feedbackButtons);
+        feedback.appendChild(feedbackStatus);
+        item.appendChild(feedback);
       }
 
       history.appendChild(item);
@@ -5071,6 +5462,7 @@
       var submitGen = ++requestGeneration;
       var scopeGen = conversationGeneration;
       var submittedScope = currentSpeciesScope();
+      var submittedFollowup = activeFollowupState ? activeFollowupState.token : null;
       cancelEnrichments();
       setBusy(true);
       setStatus("답변을 불러오는 중입니다…");
@@ -5082,7 +5474,7 @@
           method: "POST",
           credentials: "omit",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(Object.assign(payloadOverride || buildChatPayload(question, intent.value, selectedFilterValues(), submittedScope), { defer_discovery: true })),
+          body: JSON.stringify(Object.assign(payloadOverride || buildChatPayload(question, intent.value, selectedFilterValues(), submittedScope, submittedFollowup), { defer_discovery: true })),
           signal: controller ? controller.signal : undefined,
         })
         .then(function (response) {
@@ -5100,6 +5492,7 @@
             return;
           }
           if (!result.response.ok) {
+            setFollowupState(null);
             // The server's `detail` string is never read here: see
             // sanitizeErrorMessage's fixed, honest per-status messages.
             appendErrorMessage(sanitizeErrorMessage({ kind: "http", status: result.response.status }));
@@ -5113,15 +5506,20 @@
           // message.
           var dispositionInfo = formatDisposition(result.payload && result.payload.disposition);
           if (!dispositionInfo.recognized) {
+            setFollowupState(null);
             appendErrorMessage(sanitizeErrorMessage({ kind: "unsupported-response" }));
             return;
           }
-          appendAnswerMessage(result.payload);
+          var feedbackHeaders = result.response.headers;
+          var feedbackToken = feedbackHeaders && typeof feedbackHeaders.get === "function"
+            ? feedbackHeaders.get("X-RobinGraph-Feedback-Token") : null;
+          appendAnswerMessage(result.payload, feedbackToken);
         })
         .catch(function () {
           if (submitGen !== requestGeneration || scopeGen !== conversationGeneration) {
             return;
           }
+          setFollowupState(null);
           appendErrorMessage(sanitizeErrorMessage({ kind: "network" }));
         })
         .then(function () {
@@ -5193,6 +5591,7 @@
       conversationGeneration += 1;
       requestGeneration += 1;
       abortRequests();
+      setFollowupState(null);
       messages.length = 0;
       setBusy(false);
       clearHistoryNodes();
@@ -5220,6 +5619,7 @@
       conversationGeneration += 1;
       requestGeneration += 1;
       abortRequests();
+      setFollowupState(null);
       messages.length = 0;
       clearHistoryNodes();
       setStatus("대화 기록을 지웠습니다.");
@@ -5267,12 +5667,16 @@
 
   return {
     sanitizeUrl: sanitizeUrl,
+    sanitizeAudioUrl: sanitizeAudioUrl,
     sanitizeImageUrl: sanitizeImageUrl,
     formatDisposition: formatDisposition,
     formatBackendMode: formatBackendMode,
     sanitizeErrorMessage: sanitizeErrorMessage,
     boundedLimit: boundedLimit,
     normalizeSpeciesScope: normalizeSpeciesScope,
+    normalizeFollowupContext: normalizeFollowupContext,
+    normalizeFollowupSummary: normalizeFollowupSummary,
+    buildFollowupSummary: buildFollowupSummary,
     distributionInfo: distributionInfo,
     buildChatPayload: buildChatPayload,
     resultSummaryLines: resultSummaryLines,

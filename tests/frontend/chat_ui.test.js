@@ -142,14 +142,14 @@ test("chat.js wires the fail-closed disposition guard into the /v1/chat success 
   assert.ok(submitMatch, "expected to locate submitQuestion in chat.js");
   const submitBody = submitMatch[0];
   const guardIndex = submitBody.indexOf("dispositionInfo.recognized");
-  const renderIndex = submitBody.indexOf("appendAnswerMessage(result.payload)");
+  const renderIndex = submitBody.indexOf("appendAnswerMessage(result.payload, feedbackToken)");
   assert.ok(guardIndex !== -1 && renderIndex !== -1, "expected both the guard and the render call in submitQuestion");
   assert.ok(guardIndex < renderIndex, "the recognized-disposition guard must run before rendering the answer");
 });
 
 test("chat submission and health checks fetch same-origin /health and /v1/chat", () => {
   const calls = Array.from(jsSource.matchAll(/\.fetch\(\s*"([^"]+)"/g)).map((match) => match[1]);
-  assert.deepEqual(calls.sort(), ["/health", "/v1/chat"]);
+  assert.deepEqual(calls.sort(), ["/health", "/v1/chat", "/v1/chat/feedback"]);
   const provenanceUrls = new Set([
     "https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3",
     "https://www.iucnredlist.org/species/", "https://creativecommons.org/licenses/by/4.0/",
@@ -417,6 +417,7 @@ test("index.html declares every required interactive control and accessibility l
     'id="advanced-settings"',
     'id="profile-controls"',
     'id="profile-name"',
+    'id="followup-context-bar"',
     'type="submit"',
     'type="button"',
   ];
@@ -788,11 +789,13 @@ function createFakeDom(fetchImplementation) {
     "species-scope-outside",
     "species-scope-unknown",
     "species-scope-note",
+    "followup-context-bar",
   ];
   const elementsById = {};
   for (const id of REQUIRED_IDS) {
     elementsById[id] = createFakeElement(id === "chat-form" ? "form" : "div");
   }
+  elementsById["followup-context-bar"].hidden = true;
   elementsById["chat-intent"].value = "auto";
   elementsById["observation-limit"].value = "10";
   elementsById["evidence-limit"].value = "10";
@@ -6928,4 +6931,943 @@ test("focused ecological answer retains prose for missing or stale structured ev
     assert.match(collectedText(answer), /보존할 근거 설명/);
     assert.equal(collectAllNodes(answer).filter(n => (n.className || "").split(" ").includes("ecological-peer")).length, 0);
   }
+});
+
+function feedbackReply(token) {
+  const response = jsonResponse({ disposition: "clarify", answer_text: "질문을 확인해 주세요.", result: { kind: "clarify" }, warnings: [] });
+  response.headers = { get: name => name === "X-RobinGraph-Feedback-Token" ? token : "private-trace" };
+  return response;
+}
+
+test("feedback requires response token, saves once, and never exposes capability or trace", async () => {
+  for (const token of [null, "private-capability"]) {
+    const pending = deferred();
+    const dom = createFakeDom(url => url === "/v1/chat/feedback" ? pending.promise : Promise.resolve(url === "/health" ? jsonResponse({ mode: "fixture" }) : feedbackReply(token)));
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "질문"; pressKey(dom, {}); await settleEventPath();
+    const buttons = collectAllNodes(dom.elementsById.history).filter(n => n.className === "answer-feedback-button");
+    assert.equal(buttons.length, token ? 3 : 0);
+    if (!token) continue;
+    assert.equal(buttons[0].getAttribute("type"), "button");
+    assert.equal(collectedText(dom.elementsById.history).includes(token), false);
+    assert.equal(collectedText(dom.elementsById.history).includes("private-trace"), false);
+    buttons[0].dispatch("click"); buttons[1].dispatch("click"); await settleEventPath();
+    const calls = dom.fetchCalls.filter(c => c.url === "/v1/chat/feedback");
+    assert.equal(calls.length, 1);
+    assert.deepEqual(JSON.parse(calls[0].options.body), { token, rating: "helpful" });
+    assert.equal(dom.elementsById["question-input"].disabled, false);
+    pending.resolve(jsonResponse({ status: "saved" })); await settleEventPath();
+    assert.ok(buttons.every(b => b.disabled));
+    assert.equal(buttons[0].getAttribute("aria-pressed"), "true");
+    assert.match(collectedText(dom.elementsById.history), /감사합니다/);
+    buttons[2].dispatch("click"); await settleEventPath();
+    assert.equal(dom.fetchCalls.filter(c => c.url === "/v1/chat/feedback").length, 1);
+  }
+});
+
+test("feedback failures allow retry without changing answer; cleared conversations ignore completion", async () => {
+  for (const failure of [503, "network"]) {
+    let count = 0;
+    const pending = deferred();
+    const dom = createFakeDom(url => {
+      if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+      if (url !== "/v1/chat/feedback") return Promise.resolve(feedbackReply("secret"));
+      count += 1;
+      if (count === 1) return failure === "network" ? Promise.reject(new Error("private error")) : Promise.resolve(jsonResponse({ detail: "private error" }, failure));
+      return pending.promise;
+    });
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "질문"; pressKey(dom, {}); await settleEventPath();
+    const buttons = collectAllNodes(dom.elementsById.history).filter(n => n.className === "answer-feedback-button");
+    const status = collectAllNodes(dom.elementsById.history).find(n => n.className === "answer-feedback-status");
+    buttons[1].dispatch("click"); await settleEventPath();
+    assert.equal(buttons[1].disabled, false); assert.match(status.textContent, /다시 눌러/);
+    assert.match(collectedText(dom.elementsById.history), /질문을 확인해/);
+    assert.equal(collectedText(dom.elementsById.history).includes("private error"), false);
+    buttons[2].dispatch("click"); await settleEventPath();
+    assert.equal(count, 2);
+    const requests = dom.fetchCalls.filter(c => c.url === "/v1/chat/feedback");
+    assert.equal(JSON.parse(requests[0].options.body).rating, "misunderstood");
+    assert.equal(JSON.parse(requests[1].options.body).rating, "incorrect");
+    dom.elementsById["clear-button"].dispatch("click");
+    const priorStatus = status.textContent;
+    pending.resolve(jsonResponse({ status: "saved" })); await settleEventPath();
+    assert.equal(status.textContent, priorStatus);
+    assert.equal(messageRows(dom.elementsById.history).length, 0);
+    buttons[0].dispatch("click"); await settleEventPath(); assert.equal(count, 2);
+  }
+});
+
+test("feedback conflict disables further votes without guessing the saved rating", async () => {
+  const dom = createFakeDom(url => Promise.resolve(url === "/health" ? jsonResponse({ mode: "fixture" }) : url === "/v1/chat/feedback" ? jsonResponse({ detail: "private conflict" }, 409) : feedbackReply("secret")));
+  chat.init(dom.doc, dom.win);
+  dom.elementsById["question-input"].value = "질문"; pressKey(dom, {}); await settleEventPath();
+  const buttons = collectAllNodes(dom.elementsById.history).filter(n => n.className === "answer-feedback-button");
+  buttons[1].dispatch("click"); await settleEventPath();
+  assert.ok(buttons.every(button => button.disabled));
+  assert.ok(buttons.every(button => button.getAttribute("aria-pressed") === "false"));
+  assert.match(collectedText(dom.elementsById.history), /이미 의견이 저장된 답변입니다\./);
+  assert.equal(collectedText(dom.elementsById.history).includes("private conflict"), false);
+  buttons[0].dispatch("click"); await settleEventPath();
+  assert.equal(dom.fetchCalls.filter(call => call.url === "/v1/chat/feedback").length, 1);
+  assert.equal(dom.elementsById["question-input"].disabled, false);
+});
+
+
+test("invalid or expired feedback capabilities close voting without retrying the same token", async () => {
+  for (const status of [400, 422]) {
+    const dom = createFakeDom(url => Promise.resolve(url === "/health" ? jsonResponse({ mode: "fixture" }) : url === "/v1/chat/feedback" ? jsonResponse({ detail: "private validation error" }, status) : feedbackReply("expired-secret")));
+    chat.init(dom.doc, dom.win);
+    dom.elementsById["question-input"].value = "질문"; pressKey(dom, {}); await settleEventPath();
+    const buttons = collectAllNodes(dom.elementsById.history).filter(n => n.className === "answer-feedback-button");
+    buttons[2].dispatch("click"); await settleEventPath();
+    assert.ok(buttons.every(button => button.disabled));
+    assert.ok(buttons.every(button => button.getAttribute("aria-pressed") === "false"));
+    assert.match(collectedText(dom.elementsById.history), /이 답변에는 의견을 남길 수 없습니다. 새 답변에서 다시 시도해 주세요./);
+    assert.equal(collectedText(dom.elementsById.history).includes("private validation error"), false);
+    buttons[0].dispatch("click"); await settleEventPath();
+    assert.equal(dom.fetchCalls.filter(call => call.url === "/v1/chat/feedback").length, 1);
+    assert.equal(dom.elementsById["question-input"].disabled, false);
+    dom.elementsById["question-input"].value = "새 질문"; pressKey(dom, {}); await settleEventPath();
+    assert.equal(dom.fetchCalls.filter(call => call.url === "/v1/chat").length, 2);
+    const allButtons = collectAllNodes(dom.elementsById.history).filter(n => n.className === "answer-feedback-button");
+    assert.ok(allButtons.slice(3).every(button => !button.disabled));
+  }
+});
+
+test("buildChatPayload attaches bounded followup_context and rejects v1 flat followup payloads", () => {
+  assert.deepEqual(
+    chat.buildChatPayload("그중 한국에서 볼 수 있는 새는?", "auto", {}, "all", " signed-token-1 "),
+    { question: "그중 한국에서 볼 수 있는 새는?", intent: "auto", followup_context: "signed-token-1" }
+  );
+  assert.deepEqual(
+    chat.buildChatPayload("그중 한국에서 볼 수 있는 새는?", "taxonomy", { name: "오리" }, "korea", "signed-token-2"),
+    {
+      question: "그중 한국에서 볼 수 있는 새는?",
+      intent: "taxonomy",
+      species_scope: "korea",
+      followup_context: "signed-token-2",
+      filters: { kind: "taxonomy", name: "오리" },
+    }
+  );
+  assert.deepEqual(
+    chat.buildChatPayload("그중 한국에서 볼 수 있는 새는?", "auto", {}, "all", "   "),
+    { question: "그중 한국에서 볼 수 있는 새는?", intent: "auto" }
+  );
+  assert.deepEqual(
+    chat.buildChatPayload("그중 한국에서 볼 수 있는 새는?", "auto", {}, "all", "x".repeat(4097)),
+    { question: "그중 한국에서 볼 수 있는 새는?", intent: "auto" }
+  );
+  assert.equal(
+    chat.normalizeFollowupSummary({
+      status: "applied",
+      conditions: ["서식 환경 습지(Wetland)"],
+      taxon: null,
+      scope: "korea",
+    }),
+    null,
+    "v1 flat followup object must be rejected"
+  );
+});
+
+test("buildFollowupSummary and buildGraphQueryAnswer render v2 plan/retained chips and outside/unknown scope labels", () => {
+  const doc = {
+    createElement: createFakeElement,
+    createTextNode: text => ({ textContent: text, nodeType: 3, children: [] }),
+  };
+
+  assert.equal(
+    chat.buildFollowupSummary(doc, { status: "rejected", reason: "context_missing", plan: null, retained: null }),
+    null
+  );
+
+  const initialOutsideGraph = chat.buildGraphQueryAnswer(doc, {
+    title: "전체 조류 중 조건에 맞는 종",
+    text: "전체 조류 범위에서 조건에 모두 맞습니다.",
+    status: "answer",
+    conditions: [
+      { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+      { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+    ],
+    items: [
+      { taxon: { taxon_id: "t1", korean_name: "동박새", scientific_name: "Zosterops japonicus" }, paths: [] },
+    ],
+    paths: [],
+    sources: [],
+    limitations: ["그래프에 종과 직접 연결된 형질 주장만 검색합니다."],
+    has_more: true,
+  }, { speciesScope: "outside" });
+  const condBox = collectAllNodes(initialOutsideGraph).find(n => n.className === "graph-query-conditions");
+  assert.ok(condBox);
+  assert.equal(condBox.getAttribute("data-followup-status"), "initial");
+  assert.match(collectedText(condBox), /적용 조건/);
+  assert.match(collectedText(condBox), /서식 환경 숲\(Forest\)/);
+  assert.match(collectedText(condBox), /먹이 구성에 열매 포함/);
+  assert.match(collectedText(condBox), /국외 분포/);
+  assert.equal(initialOutsideGraph.children[initialOutsideGraph.children.length - 1].className, "species-note graph-query-notes");
+
+  const appliedUnknownBox = chat.buildFollowupSummary(doc, {
+    status: "applied",
+    reason: null,
+    root_question: "숲에 사는 열매 먹는 새",
+    added: "체중 100g 이상 <img src=x onerror=alert(1)>",
+    plan: {
+      conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 100g 이상"],
+      taxon: "참새목 (Passeriformes)",
+      scope: "unknown",
+    },
+    retained: {
+      conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 100g 이상"],
+      taxon: "참새목 (Passeriformes)",
+      scope: "unknown",
+    },
+  });
+  assert.ok(appliedUnknownBox);
+  assert.equal(appliedUnknownBox.getAttribute("data-followup-status"), "applied");
+  assert.match(collectedText(appliedUnknownBox), /적용 조건/);
+  assert.match(collectedText(appliedUnknownBox), /추가 조건: 체중 100g 이상 <img src=x onerror=alert\(1\)>/);
+  assert.match(collectedText(appliedUnknownBox), /분류군: 참새목 \(Passeriformes\)/);
+  assert.match(collectedText(appliedUnknownBox), /한국 분포 미확인/);
+  assert.equal(collectAllNodes(appliedUnknownBox).some(n => n.tagName === "img"), false);
+
+  const emptyAbstainBox = chat.buildFollowupSummary(
+    doc,
+    {
+      status: "applied",
+      reason: null,
+      root_question: "숲에 사는 열매 먹는 새",
+      added: "체중 5000g 이상",
+      plan: {
+        conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 5000g 이상"],
+        taxon: "참새목",
+        scope: "korea",
+      },
+      retained: {
+        conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+        taxon: "참새목",
+        scope: "korea",
+      },
+    },
+    { status: "empty", title: "참새목 중 조건에 맞는 종", text: "조건에 맞는 종을 찾지 못했습니다." }
+  );
+  assert.ok(emptyAbstainBox);
+  const groupLabels = collectAllNodes(emptyAbstainBox)
+    .filter(n => n.className === "graph-query-conditions-label")
+    .map(n => n.textContent);
+  assert.deepEqual(groupLabels, ["이번 조회 조건", "다음 질문 유지 조건"]);
+  const groupLists = collectAllNodes(emptyAbstainBox).filter(n => n.className === "graph-query-condition-list");
+  assert.equal(groupLists.length, 2);
+  assert.match(collectedText(groupLists[0]), /체중 5000g 이상/);
+  assert.doesNotMatch(collectedText(groupLists[1]), /체중 5000g 이상/, "retained list in empty result must not include unapplied condition");
+
+  const rejectedBox = chat.buildFollowupSummary(doc, {
+    status: "rejected",
+    reason: "route_conflict",
+    root_question: "숲에 사는 열매 먹는 새",
+    added: null,
+    plan: {
+      conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+      taxon: null,
+      scope: "korea",
+    },
+    retained: {
+      conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+      taxon: null,
+      scope: "korea",
+    },
+  });
+  assert.ok(rejectedBox);
+  assert.equal(rejectedBox.getAttribute("data-followup-status"), "rejected");
+  assert.match(collectedText(rejectedBox), /유지된 조건/);
+  assert.match(collectedText(rejectedBox), /국내 기록/);
+});
+
+test("followup flow v2: initial -> korea -> numeric condition -> new topic transition, preserving feedback and never sending items", async () => {
+  const dom = createFakeDom((url, options) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "neo4j" }));
+    if (url !== "/v1/chat") return Promise.resolve(jsonResponse({ status: "saved" }));
+    const body = JSON.parse(options.body);
+    if (body.question === "숲에 사는 열매 먹는 새") {
+      const res = jsonResponse({
+        selected_intent: "profile",
+        route_method: "deterministic",
+        disposition: "answer",
+        answer_text: "전체 조류 범위에서 45종이 조건에 모두 맞습니다.",
+        warnings: ["그래프에 종과 직접 연결된 형질 주장만 검색합니다."],
+        followup_context: "opaque-signed-token-turn-1",
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "전체 조류 중 조건에 맞는 종",
+            text: "전체 조류 범위에서 45종이 조건에 모두 맞습니다.",
+            status: "answer",
+            conditions: [
+              { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+              { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+            ],
+            items: [
+              { taxon: { taxon_id: "t1", korean_name: "동박새", scientific_name: "Zosterops japonicus" }, paths: [] },
+            ],
+            paths: [],
+            sources: [{ source_name: "AVONET", source_url: "https://doi.org/10.6084/m9.figshare.16586228.v5" }],
+            limitations: ["그래프에 종과 직접 연결된 형질 주장만 검색합니다."],
+            has_more: true,
+          },
+        },
+      });
+      res.headers = { get: name => name === "X-RobinGraph-Feedback-Token" ? "fb-tok-1" : null };
+      return Promise.resolve(res);
+    }
+    if (body.question === "그중 한국에서 볼 수 있는 새는?") {
+      const res = jsonResponse({
+        selected_intent: "profile",
+        route_method: "deterministic",
+        disposition: "answer",
+        answer_text: "전체 조류 범위에서 12종이 조건에 모두 맞습니다.",
+        warnings: ["국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다."],
+        followup_context: "opaque-signed-token-turn-2",
+        followup: {
+          status: "applied",
+          reason: null,
+          root_question: "숲에 사는 열매 먹는 새",
+          added: "국내 기록",
+          plan: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+            taxon: null,
+            scope: "korea",
+          },
+          retained: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+            taxon: null,
+            scope: "korea",
+          },
+        },
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "전체 조류 중 조건에 맞는 종",
+            text: "전체 조류 범위에서 12종이 조건에 모두 맞습니다.",
+            status: "answer",
+            conditions: [
+              { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+              { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+            ],
+            items: [
+              { taxon: { taxon_id: "t1", korean_name: "동박새", scientific_name: "Zosterops japonicus" }, paths: [] },
+            ],
+            paths: [],
+            sources: [],
+            limitations: ["국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다."],
+            has_more: false,
+          },
+        },
+      });
+      res.headers = { get: name => name === "X-RobinGraph-Feedback-Token" ? "fb-tok-2" : null };
+      return Promise.resolve(res);
+    }
+    if (body.question === "그중 체중 100g 이상인 새는?") {
+      const res = jsonResponse({
+        selected_intent: "profile",
+        route_method: "deterministic",
+        disposition: "answer",
+        answer_text: "전체 조류 범위에서 3종이 조건에 모두 맞습니다.",
+        warnings: ["AVONET 수치는 종 단위 측정 요약값입니다."],
+        followup_context: "opaque-signed-token-turn-3",
+        followup: {
+          status: "applied",
+          reason: null,
+          root_question: "숲에 사는 열매 먹는 새",
+          added: "체중 100g 이상",
+          plan: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 100g 이상"],
+            taxon: null,
+            scope: "korea",
+          },
+          retained: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 100g 이상"],
+            taxon: null,
+            scope: "korea",
+          },
+        },
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "전체 조류 중 조건에 맞는 종",
+            text: "전체 조류 범위에서 3종이 조건에 모두 맞습니다.",
+            status: "answer",
+            conditions: [
+              { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+              { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+              { trait_name: "body_mass", label: "체중 100g 이상" },
+            ],
+            items: [
+              { taxon: { taxon_id: "t2", korean_name: "멧비둘기", scientific_name: "Streptopelia orientalis" }, paths: [] },
+            ],
+            paths: [],
+            sources: [],
+            limitations: ["AVONET 수치는 종 단위 측정 요약값입니다."],
+            has_more: false,
+          },
+        },
+      });
+      res.headers = { get: name => name === "X-RobinGraph-Feedback-Token" ? "fb-tok-3" : null };
+      return Promise.resolve(res);
+    }
+    return Promise.resolve(jsonResponse({
+      selected_intent: "profile",
+      route_method: "deterministic",
+      disposition: "answer",
+      answer_text: "청둥오리 요약입니다.",
+      warnings: [],
+      result: { kind: "profile", profile: photoProfile() },
+    }));
+  });
+
+  chat.init(dom.doc, dom.win);
+  const bar = dom.elementsById["followup-context-bar"];
+
+  // Turn 1: initial graph query
+  dom.elementsById["question-input"].value = "숲에 사는 열매 먹는 새";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "현재 적용 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함");
+  assert.equal(collectedText(dom.elementsById.history).includes("opaque-signed-token-turn-1"), false, "opaque token must never appear in visible text");
+
+  // Turn 2: follow-up question adds Korea scope
+  dom.elementsById["question-input"].value = "그중 한국에서 볼 수 있는 새는?";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const turn2Body = JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[1].options.body);
+  assert.deepEqual(turn2Body, {
+    question: "그중 한국에서 볼 수 있는 새는?",
+    intent: "auto",
+    followup_context: "opaque-signed-token-turn-1",
+    defer_discovery: true,
+  });
+  assert.equal(Object.prototype.hasOwnProperty.call(turn2Body, "items"), false, "client must never send or filter prior page items");
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "현재 적용 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함 · 국내 기록");
+
+  // Turn 3: follow-up question adds numeric condition (체중 100g 이상)
+  dom.elementsById["question-input"].value = "그중 체중 100g 이상인 새는?";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const turn3Body = JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[2].options.body);
+  assert.deepEqual(turn3Body, {
+    question: "그중 체중 100g 이상인 새는?",
+    intent: "auto",
+    followup_context: "opaque-signed-token-turn-2",
+    defer_discovery: true,
+  });
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "현재 적용 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함 · 체중 100g 이상 · 국내 기록");
+  const thirdAnswer = messageRows(dom.elementsById.history)[5];
+  assert.match(collectedText(thirdAnswer), /추가 조건: 체중 100g 이상/);
+  assert.equal(collectAllNodes(thirdAnswer).filter(n => n.className === "answer-feedback-button").length, 3, "RG603 feedback buttons remain intact on follow-up answer");
+
+  // Turn 4: new topic clears follow-up context when response has no followup_context
+  dom.elementsById["question-input"].value = "청둥오리에 대해 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  assert.equal(bar.hidden, true);
+  assert.equal(bar.textContent, "");
+
+  // Turn 5: subsequent question after non-graph response omits followup_context
+  dom.elementsById["question-input"].value = "까치에 대해 알려줘";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const chatCallsAfterTurn5 = dom.fetchCalls.filter(c => c.url === "/v1/chat");
+  assert.equal(chatCallsAfterTurn5.length, 5);
+  assert.equal(JSON.parse(chatCallsAfterTurn5[4].options.body).followup_context, undefined);
+});
+
+test("followup context is cleared on clear, scope change, and stale callbacks, and stays isolated per tab instance", async () => {
+  const stalePending = deferred();
+  const makeDom = () => createFakeDom((url, options) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    const body = JSON.parse(options.body);
+    if (body.question === "느린 그래프 질문") return stalePending.promise;
+    return Promise.resolve(jsonResponse({
+      disposition: "answer",
+      answer_text: "조건 결과",
+      warnings: [],
+      followup_context: "ctx-" + body.question,
+      result: {
+        kind: "graph_query",
+        payload: {
+          title: "전체 조류 중 조건에 맞는 종",
+          text: "조건 결과",
+          status: "answer",
+          conditions: [{ trait_name: "habitat", label: "서식 환경 숲(Forest)" }],
+          items: [{ taxon: { taxon_id: "t1", korean_name: "동박새", scientific_name: "Zosterops japonicus" }, paths: [] }],
+          paths: [],
+          sources: [],
+          limitations: [],
+          has_more: false,
+        },
+      },
+    }));
+  });
+
+  const domA = makeDom();
+  const domB = makeDom();
+  const selectA = addScopeControls(domA);
+  chat.init(domA.doc, domA.win);
+  chat.init(domB.doc, domB.win);
+
+  // Tab A gets a followup_context; Tab B must not inherit it
+  domA.elementsById["question-input"].value = "숲에 사는 새";
+  pressKey(domA, {});
+  await settleEventPath();
+
+  domB.elementsById["question-input"].value = "그중 한국에서 볼 수 있는 새는?";
+  pressKey(domB, {});
+  await settleEventPath();
+  const tabBCall = JSON.parse(domB.fetchCalls.find(c => c.url === "/v1/chat").options.body);
+  assert.equal(tabBCall.followup_context, undefined, "separate tab instances must never share followup_context");
+
+  // Clear button in Tab A wipes followup_context and hides the bar
+  const barA = domA.elementsById["followup-context-bar"];
+  assert.equal(barA.hidden, false);
+  domA.elementsById["clear-button"].dispatch("click");
+  assert.equal(barA.hidden, true);
+  assert.equal(barA.textContent, "");
+
+  domA.elementsById["question-input"].value = "다시 숲에 사는 새";
+  pressKey(domA, {});
+  await settleEventPath();
+  const callAfterClear = JSON.parse(domA.fetchCalls.filter(c => c.url === "/v1/chat")[1].options.body);
+  assert.equal(callAfterClear.followup_context, undefined, "question after clear must not carry old followup_context");
+  assert.equal(barA.hidden, false);
+
+  // Start an in-flight request in Tab A, then switch scope to korea before it resolves
+  domA.elementsById["question-input"].value = "느린 그래프 질문";
+  pressKey(domA, {});
+  selectA("korea");
+  assert.equal(barA.hidden, true);
+
+  stalePending.resolve(jsonResponse({
+    disposition: "answer",
+    answer_text: "stale graph",
+    warnings: [],
+    followup_context: "stale-token-must-drop",
+    result: {
+      kind: "graph_query",
+      payload: {
+        title: "이전 범위",
+        text: "stale",
+        status: "answer",
+        conditions: [{ trait_name: "habitat", label: "서식 환경 습지(Wetland)" }],
+        items: [],
+        paths: [],
+        sources: [],
+        limitations: [],
+        has_more: false,
+      },
+    },
+  }));
+  await settleEventPath();
+
+  assert.equal(barA.hidden, true, "stale response after scope change must not restore followup bar");
+  domA.elementsById["question-input"].value = "새 범위 질문";
+  pressKey(domA, {});
+  await settleEventPath();
+  const callAfterScope = JSON.parse(domA.fetchCalls.filter(c => c.url === "/v1/chat")[3].options.body);
+  assert.equal(callAfterScope.followup_context, undefined, "stale response must not leak followup_context into next scope request");
+  assert.equal(callAfterScope.species_scope, "korea");
+});
+
+test("followup v2 error/clarify/abstain: context_missing, route_conflict, empty where retained excludes unapplied numeric condition, and species button reset", async () => {
+  let step = 0;
+  const dom = createFakeDom((url) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    step += 1;
+    if (step === 1) {
+      // 1. No prior context -> context_missing clarify
+      return Promise.resolve(jsonResponse({
+        disposition: "clarify",
+        answer_text: "이어서 조회할 이전 조건을 찾지 못했습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+        warnings: ["이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."],
+        result: { kind: "clarify", prompt: "이어서 조회할 이전 조건을 찾지 못했습니다." },
+        followup: { status: "rejected", reason: "context_missing", root_question: null, added: null, plan: null, retained: null },
+      }));
+    }
+    if (step === 2) {
+      // 2. Successful graph query -> issues tok-base
+      return Promise.resolve(jsonResponse({
+        disposition: "answer",
+        answer_text: "숲에 사는 열매 먹는 새 결과입니다.",
+        warnings: [],
+        followup_context: "tok-base",
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "전체 조류 중 조건에 맞는 종",
+            text: "숲에 사는 열매 먹는 새 결과입니다.",
+            status: "answer",
+            conditions: [
+              { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+              { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+            ],
+            items: [{ taxon: { taxon_id: "t1", korean_name: "동박새", scientific_name: "Zosterops japonicus" }, paths: [] }],
+            paths: [],
+            sources: [],
+            limitations: [],
+            has_more: false,
+          },
+        },
+      }));
+    }
+    if (step === 3) {
+      // 3. route_conflict clarify (e.g. taxonomy route or profile name filter active) -> server keeps tok-base and retained
+      return Promise.resolve(jsonResponse({
+        disposition: "clarify",
+        answer_text: "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        warnings: ["이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."],
+        followup_context: "tok-base",
+        followup: {
+          status: "rejected",
+          reason: "route_conflict",
+          root_question: "숲에 사는 열매 먹는 새",
+          added: null,
+          plan: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+            taxon: null,
+            scope: "all",
+          },
+          retained: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+            taxon: null,
+            scope: "all",
+          },
+        },
+        result: { kind: "clarify", prompt: "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요." },
+      }));
+    }
+    if (step === 4) {
+      // 4. Follow-up abstain (empty result): plan has 체중 5000g 이상, retained does NOT have 체중 5000g 이상
+      return Promise.resolve(jsonResponse({
+        disposition: "abstain",
+        answer_text: "전체 조류 범위에서 조건에 맞는 종을 찾지 못했습니다.",
+        warnings: [],
+        followup_context: "tok-base",
+        followup: {
+          status: "applied",
+          reason: null,
+          root_question: "숲에 사는 열매 먹는 새",
+          added: "체중 5000g 이상",
+          plan: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함", "체중 5000g 이상"],
+            taxon: null,
+            scope: "all",
+          },
+          retained: {
+            conditions: ["서식 환경 숲(Forest)", "먹이 구성에 열매 포함"],
+            taxon: null,
+            scope: "all",
+          },
+        },
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "전체 조류 중 조건에 맞는 종",
+            text: "전체 조류 범위에서 조건에 맞는 종을 찾지 못했습니다.",
+            status: "empty",
+            conditions: [
+              { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
+              { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
+              { trait_name: "body_mass", label: "체중 5000g 이상" },
+            ],
+            items: [],
+            paths: [],
+            sources: [],
+            limitations: [],
+            has_more: false,
+          },
+        },
+      }));
+    }
+    if (step === 5) {
+      // 5. Clicking species button from step 2's graph answer -> profile route without followup_context
+      return Promise.resolve(jsonResponse({
+        disposition: "answer",
+        answer_text: "동박새 프로필입니다.",
+        warnings: [],
+        result: { kind: "profile", profile: photoProfile() },
+      }));
+    }
+    return Promise.resolve(jsonResponse({ detail: "fail" }, 500));
+  });
+
+  chat.init(dom.doc, dom.win);
+  const bar = dom.elementsById["followup-context-bar"];
+
+  // Step 1: no context
+  dom.elementsById["question-input"].value = "그중 한국에서 볼 수 있는 새는?";
+  pressKey(dom, {});
+  await settleEventPath();
+  assert.equal(bar.hidden, true);
+  assert.equal(collectAllNodes(dom.elementsById.history).filter(n => n.className === "graph-query-conditions").length, 0);
+
+  // Step 2: graph success issues tok-base
+  dom.elementsById["question-input"].value = "숲에 사는 열매 먹는 새";
+  pressKey(dom, {});
+  await settleEventPath();
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "현재 적용 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함");
+
+  // Step 3: route_conflict (user selected taxonomy route while asking a demonstrative follow-up)
+  dom.elementsById["chat-intent"].value = "taxonomy";
+  dom.elementsById["chat-intent"].dispatch("change", {});
+  dom.elementsById["question-input"].value = "그중 한국에서 볼 수 있는 새는?";
+  pressKey(dom, {});
+  await settleEventPath();
+  const chatCalls = dom.fetchCalls.filter(c => c.url === "/v1/chat");
+  assert.equal(JSON.parse(chatCalls[2].options.body).followup_context, "tok-base", "followup_context is sent so server can return route_conflict");
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "유지된 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함");
+  const clarifyBubble = messageRows(dom.elementsById.history)[5];
+  assert.match(collectedText(clarifyBubble), /유지된 조건/);
+
+  // Step 4: switch back to auto and ask a follow-up that yields empty result
+  dom.elementsById["chat-intent"].value = "auto";
+  dom.elementsById["chat-intent"].dispatch("change", {});
+  dom.elementsById["question-input"].value = "그중 체중 5000g 이상인 새는?";
+  pressKey(dom, {});
+  await settleEventPath();
+  assert.equal(JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[3].options.body).followup_context, "tok-base");
+  assert.equal(bar.hidden, false);
+  assert.equal(bar.textContent, "유지된 조건: 서식 환경 숲(Forest) · 먹이 구성에 열매 포함", "active bar must come strictly from followup.retained and exclude unapplied 체중 5000g 이상");
+  const abstainBubble = messageRows(dom.elementsById.history)[7];
+  assert.match(collectedText(abstainBubble), /이번 조회 조건/);
+  assert.match(collectedText(abstainBubble), /다음 질문 유지 조건/);
+
+  // Step 5: clicking species button in graph answer sends profile payload without followup_context and clears bar
+  const speciesBtn = collectAllNodes(dom.elementsById.history).find(n => n.className === "entity-candidate-button" && n.textContent === "동박새");
+  assert.ok(speciesBtn);
+  speciesBtn.dispatch("click");
+  await settleEventPath();
+  const profileCall = JSON.parse(dom.fetchCalls.filter(c => c.url === "/v1/chat")[4].options.body);
+  assert.equal(profileCall.intent, "profile");
+  assert.equal(profileCall.followup_context, undefined);
+  assert.equal(bar.hidden, true);
+});
+
+test("buildGraphQueryAnswer consolidates limitations and options.warnings without duplicate entries and counts them", () => {
+  const doc = {
+    createElement: createFakeElement,
+    createTextNode: text => ({ textContent: text, nodeType: 3, children: [] }),
+  };
+  const payload = {
+    title: "공통 분류",
+    text: "조회 설명",
+    status: "answer",
+    limitations: ["진화적 거리를 의미하지 않습니다. ", " 종 단위 기록 자료입니다."],
+  };
+  const section = chat.buildGraphQueryAnswer(doc, payload, {
+    warnings: ["진화적 거리를 의미하지 않습니다.", "추가 경고 항목입니다."],
+  });
+  assert.ok(section);
+  const notesBox = collectAllNodes(section).find(n => n.className === "species-note graph-query-notes");
+  assert.ok(notesBox);
+  assert.equal(notesBox.open, undefined, "notes disclosure must be collapsed by default");
+
+  const summary = collectAllNodes(notesBox).find(n => n.tagName === "summary");
+  assert.ok(summary);
+  assert.equal(summary.textContent, "안내 및 유의사항 (3)");
+
+  const items = collectAllNodes(notesBox).filter(n => n.tagName === "li");
+  assert.equal(items.length, 3);
+  assert.equal(items[0].textContent, "진화적 거리를 의미하지 않습니다.");
+  assert.equal(items[1].textContent, "종 단위 기록 자료입니다.");
+  assert.equal(items[2].textContent, "추가 경고 항목입니다.");
+});
+
+test("appendAssistant merges graph_query warnings inside graph-query-notes and omits external warnings list while keeping non-graph warnings", async () => {
+  const dom = createFakeDom((url, options) => {
+    if (url === "/health") return Promise.resolve(jsonResponse({ mode: "fixture" }));
+    const body = JSON.parse(options.body);
+    if (body.question === "그래프 질문") {
+      return Promise.resolve(jsonResponse({
+        disposition: "answer",
+        answer_text: "그래프 결과",
+        warnings: ["그래프 형질 주의", "추가 주의사항"],
+        result: {
+          kind: "graph_query",
+          payload: {
+            title: "결과 제목",
+            status: "answer",
+            items: [],
+            paths: [],
+            sources: [],
+            limitations: ["그래프 형질 주의"],
+          },
+        },
+      }));
+    }
+    return Promise.resolve(jsonResponse({
+      disposition: "clarify",
+      answer_text: "확인 필요",
+      warnings: ["비그래프 경고 문구"],
+      result: { kind: "clarify" },
+    }));
+  });
+
+  chat.init(dom.doc, dom.win);
+
+  // 1. Graph query response: no outer .warnings list, notes disclosure contains both deduplicated
+  dom.elementsById["question-input"].value = "그래프 질문";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const history = dom.elementsById.history;
+  const graphRow = messageRows(history)[1];
+  assert.ok(graphRow);
+  const outerWarnings = collectAllNodes(graphRow).filter(n => n.className === "warnings");
+  assert.equal(outerWarnings.length, 0, "graph_query must not emit outer .warnings list");
+
+  const notesBox = collectAllNodes(graphRow).find(n => n.className === "species-note graph-query-notes");
+  assert.ok(notesBox);
+  assert.equal(notesBox.open, undefined);
+  const notesText = collectedText(notesBox);
+  assert.ok(notesText.includes("그래프 형질 주의"));
+  assert.ok(notesText.includes("추가 주의사항"));
+
+  // 2. Non-graph response: outer .warnings list is preserved
+  dom.elementsById["question-input"].value = "일반 질문";
+  pressKey(dom, {});
+  await settleEventPath();
+
+  const clarifyRow = messageRows(history)[3];
+  assert.ok(clarifyRow);
+  const clarifyWarnings = collectAllNodes(clarifyRow).filter(n => n.className === "warnings");
+  assert.equal(clarifyWarnings.length, 1, "non-graph responses must retain outer .warnings list");
+  assert.ok(collectedText(clarifyWarnings[0]).includes("비그래프 경고 문구"));
+});
+
+test("recording media URLs allow only credential-free HTTPS Wikimedia uploads", () => {
+  const allowed = "https://upload.wikimedia.org/wikipedia/commons/a/ab/Bird.ogg";
+  assert.equal(chat.sanitizeAudioUrl(allowed), allowed);
+  for (const url of [null, {}, "", "not a URL", "http://upload.wikimedia.org/a.ogg", "//upload.wikimedia.org/a.ogg", "data:audio/ogg;base64,AAA", "javascript:alert(1)", "https://evil.example/a.ogg", "https://upload.wikimedia.org.evil.example/a.ogg", "https://user:password@upload.wikimedia.org/a.ogg", "https://upload.wikimedia.org:8443/a.ogg", "https://thumb.wikimedia.org/a.ogg"]) {
+    assert.equal(chat.sanitizeAudioUrl(url), null, String(url));
+  }
+});
+
+test("recording cache URLs accept only exact content-addressed same-origin paths", () => {
+  const stem = "/media/audio/" + "a".repeat(64);
+  for (const ext of ["ogg", "mp3", "wav"]) assert.equal(chat.sanitizeAudioUrl(stem + "." + ext), stem + "." + ext);
+  for (const url of [stem + ".ogg?x=1", stem + ".ogg#x", " " + stem + ".ogg", "/media/audio/../audio/" + "a".repeat(64) + ".ogg", stem + ".OGG", stem.toUpperCase() + ".ogg", stem + ".html", stem.slice(0, -1) + ".ogg", "//evil.example" + stem + ".ogg", "https://evil.example" + stem + ".ogg", "/media/audio/%61" + "a".repeat(63) + ".ogg"]) assert.equal(chat.sanitizeAudioUrl(url), null, url);
+});
+
+function recordingFixture() {
+  const body = createFakeElement("body"), removals = [];
+  const doc = {
+    body, createTextNode: text => ({ textContent: text, children: [] }),
+    createElement(tag) {
+      const element = createFakeElement(tag);
+      if (tag === "audio") { element.pauseCalls = 0; element.currentTime = 5; element.pause = function () { this.pauseCalls++; }; }
+      return element;
+    },
+    querySelectorAll(selector) {
+      assert.equal(selector, "audio.species-recording-audio");
+      return collectAllNodes(body).filter(n => n.tagName === "audio" && n.className === "species-recording-audio");
+    },
+    defaultView: { MutationObserver: class {
+      constructor(callback) { this.callback = callback; this.disconnected = false; removals.push(this); }
+      observe(target, options) { assert.equal(target, body); assert.deepEqual(options, { childList: true, subtree: true }); }
+      disconnect() { this.disconnected = true; }
+    } },
+  };
+  const recording = { id: "commons:test", scientific_name: photoProfile().taxon.scientific_name, title: "Original title <script>", creator: "Recorder <b>", license_name: "CC BY-SA 4.0", license_url: "https://creativecommons.org/licenses/by-sa/4.0/", source_url: "https://commons.wikimedia.org/wiki/File:Bird.ogg", audio_url: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Bird.ogg", recording_type: "song", recorded_at: "2020-01-01", location: "Original overseas location" };
+  function create(overrides = {}) {
+    const profile = photoProfile({ enrichment_pending: true, recordings: [recording], recording_availability: { status: "available" }, ...overrides });
+    const card = chat.buildSpeciesCard(doc, profile);
+    const popup = chat.buildSpeciesPopup(doc, card, profile), dialog = popup.children[1];
+    dialog.isConnected = true;
+    dialog.showModal = () => { dialog.open = true; };
+    dialog.close = () => { dialog.open = false; dialog.dispatch("close"); };
+    body.appendChild(popup);
+    return { profile, card, popup, dialog, audio: collectAllNodes(card).find(n => n.tagName === "audio"), area: cardPart(card, "card-details card-details-scroll species-recordings"), open() { popup.children[0].dispatch("click"); } };
+  }
+  return { doc, body, recording, create, removals };
+}
+
+test("recordings render independently of photos, retain exact attribution, and fail closed without inventing metadata", () => {
+  const f = recordingFixture(), a = f.create();
+  assert.equal(a.audio.preload, "none"); assert.equal(a.audio.controls, true); assert.equal(a.audio.autoplay, undefined);
+  assert.match(collectedText(a.area), /Recorder <b>/); assert.match(collectedText(a.area), /Original overseas location/);
+  assert.equal(a.area.open, undefined, "recording details begin closed");
+  assert.ok(collectAllNodes(a.area).some(n => n.href === f.recording.source_url));
+  assert.ok(collectAllNodes(a.area).some(n => n.href === f.recording.license_url));
+  assert.match(collectedText(cardPart(a.card, "species-photo-area")), /더 알아보기/);
+  a.card.updateEnrichment({ images: [], photo_availability: { status: "provider_unavailable" } });
+  assert.equal(collectAllNodes(a.card).find(n => n.tagName === "audio"), a.audio, "photo-only updates retain independent recordings");
+  a.audio.dispatch("error");
+  assert.equal(collectAllNodes(cardPart(a.card, "species-recording-controls")).find(n => n.getAttribute && n.getAttribute("role") === "status").hidden, false);
+  const basicRecording = { ...f.recording }; delete basicRecording.location; delete basicRecording.recorded_at; delete basicRecording.recording_type;
+  a.card.updateEnrichment({ images: [], recordings: [basicRecording] });
+  assert.doesNotMatch(collectedText(a.area), /녹음 지역|녹음일|소리 유형/);
+  for (const bad of [{ ...f.recording, scientific_name: "Other species" }, { ...f.recording, audio_url: "https://evil.example/sound.ogg" }, { ...f.recording, license_url: "javascript:alert(1)" }, { ...f.recording, creator: "" }]) {
+    a.card.updateEnrichment({ images: [], recordings: [bad], recording_availability: { status: "available" } });
+    assert.equal(collectAllNodes(a.area).filter(n => n.tagName === "audio").length, 0);
+    assert.match(collectedText(a.area), /미확인/);
+  }
+  for (const [status, expected] of [["no_licensed_recording", /확인된 새소리 자료가 없습니다/], ["provider_unavailable", /불러오지 못했습니다/], ["pending", /확인하고 있습니다/], [undefined, /미확인/]]) {
+    a.card.updateEnrichment({ images: [], recordings: [], recording_availability: { status } });
+    assert.match(collectedText(a.area), expected);
+  }
+});
+
+test("recordings stop other species, preserve native control keys, and stop on leaving the playback face, popup close, disposal and DOM removal", () => {
+  const f = recordingFixture(), a = f.create(), b = f.create();
+  a.open();
+  const previous = a.audio.pauseCalls;
+  b.audio.dispatch("play");
+  assert.equal(a.audio.pauseCalls, previous + 1); assert.equal(a.audio.currentTime, 0);
+  const event = a.card.dispatch("keydown", { key: "Enter", target: a.audio });
+  assert.equal(event.defaultPrevented, false); assert.equal(a.card.getAttribute("data-face"), "front");
+  a.area.open = false;
+  const beforeCollapse = a.audio.pauseCalls; a.area.dispatch("toggle");
+  assert.equal(a.audio.pauseCalls, beforeCollapse, "closing metadata does not hide the front player");
+  a.card.dispatch("keydown", { key: "Enter", target: a.card });
+  assert.equal(a.audio.pauseCalls, beforeCollapse + 1, "leaving the front playback face stops audio");
+  const beforeClose = a.audio.pauseCalls; a.dialog.close();
+  assert.ok(a.audio.pauseCalls > beforeClose); assert.ok(f.removals[0].disconnected);
+  a.open();
+  const observer = f.removals.at(-1), beforeRemove = a.audio.pauseCalls;
+  a.dialog.isConnected = false; f.body.removeChild(a.popup); observer.callback();
+  assert.ok(a.audio.pauseCalls > beforeRemove); assert.ok(observer.disconnected);
+  b.open(); const beforeDispose = b.audio.pauseCalls; b.popup.disposePopup();
+  assert.ok(b.audio.pauseCalls > beforeDispose); assert.ok(f.removals.at(-1).disconnected);
+});
+
+
+test("recording controls occupy the photo-adjacent front face once and source navigation opens the attributed back face", () => {
+  const f = recordingFixture(), a = f.create();
+  const front = cardPart(a.card, "species-card-front"), back = cardPart(a.card, "species-card-back");
+  const controls = cardPart(a.card, "species-recording-controls"), photo = cardPart(a.card, "species-photo-area");
+  assert.equal(controls.parentNode, front); assert.equal(front.children.indexOf(controls), front.children.indexOf(photo) + 1);
+  assert.equal(collectAllNodes(front).filter(n => n.tagName === "audio").length, 1);
+  assert.equal(collectAllNodes(back).filter(n => n.tagName === "audio").length, 0);
+  assert.doesNotMatch(collectedText(controls), /Recorder|CC BY|Original overseas/);
+  assert.match(collectedText(a.area), /Recorder <b>/); assert.match(collectedText(a.area), /CC BY-SA 4.0/);
+  assert.equal(a.audio.preload, "none"); assert.equal(a.audio.controls, true); assert.equal(a.audio.autoplay, undefined);
+  a.open();
+  const link = collectAllNodes(controls).find(n => n.className === "species-recording-source-link");
+  const before = a.audio.pauseCalls;
+  assert.equal(link.getAttribute("aria-controls"), a.area.id);
+  link.dispatch("click");
+  assert.equal(a.card.getAttribute("data-face"), "back"); assert.equal(a.area.open, true);
+  assert.equal(a.area.children[0].focusCalls, 1); assert.ok(a.audio.pauseCalls > before);
+  assert.equal(a.card.getAttribute("aria-busy"), "false", "source navigation leaves no flip animation active");
+  const other = f.create(); assert.notEqual(other.area.id, a.area.id, "repeated species cards have distinct source destinations");
+  a.card.updateEnrichment({ images: [], recordings: [], recording_availability: { status: "no_licensed_recording" } });
+  assert.equal(controls.hidden, true); assert.equal(controls.children.length, 0);
+  assert.match(collectedText(a.area), /확인된 새소리 자료가 없습니다/);
 });
