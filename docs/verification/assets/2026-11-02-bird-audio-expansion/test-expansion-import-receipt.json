@@ -1,0 +1,594 @@
+{
+  "target": "test",
+  "uri": "bolt://192.168.219.98:7687",
+  "database": "neo4j",
+  "concept_set_id": "rg:concept-set:avilist-v2025b",
+  "taxonomy_release": "v2025b",
+  "source_release": "commons-reviewed-2026-11-02",
+  "before": {
+    "taxon_properties_sha256": "46197c700e42f7b144af054df7012470c61082dfb97916bd1a9bb9eff391658c",
+    "recordings": [
+      {
+        "id": "commons-recording:16592315",
+        "release": "commons-reviewed-2026-10-30"
+      },
+      {
+        "id": "commons-recording:186512225",
+        "release": "commons-reviewed-2026-10-30"
+      },
+      {
+        "id": "commons-recording:23927872",
+        "release": "commons-reviewed-2026-10-30"
+      }
+    ],
+    "evidence_units": 3,
+    "has_recording_links": 3,
+    "linked_ranks": [
+      "species"
+    ],
+    "supported_by_links": 3,
+    "other_source_media_evidence_counts": [
+      {
+        "labels": [
+          "EvidenceUnit",
+          "RobinGraph",
+          "Fixture"
+        ],
+        "dataset_id": "",
+        "count": 114
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+        "count": 128331
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 16
+      },
+      {
+        "labels": [
+          "MediaAsset"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 36
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+        "count": 7752
+      }
+    ],
+    "vector_index_identity": [
+      {
+        "id": 40,
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      },
+      {
+        "id": 42,
+        "name": "robingraphTaxonNameVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "TaxonNameVector"
+        ],
+        "properties": [
+          "name_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      }
+    ]
+  },
+  "first_import": {
+    "action": "test-upsert",
+    "recordings": 14,
+    "target": "test",
+    "source_id": "wikimedia-commons-bird-recordings",
+    "source_release": "commons-reviewed-2026-11-02"
+  },
+  "after_first": {
+    "taxon_properties_sha256": "46197c700e42f7b144af054df7012470c61082dfb97916bd1a9bb9eff391658c",
+    "recordings": [
+      {
+        "id": "commons-recording:16329139",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:16592315",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:186512225",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:19012629",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23927872",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23927908",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23929087",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:27404208",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:3116105",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:37809031",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:48121877",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:77528214",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:83204380",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:83210806",
+        "release": "commons-reviewed-2026-11-02"
+      }
+    ],
+    "evidence_units": 14,
+    "has_recording_links": 14,
+    "linked_ranks": [
+      "species"
+    ],
+    "supported_by_links": 14,
+    "other_source_media_evidence_counts": [
+      {
+        "labels": [
+          "EvidenceUnit",
+          "RobinGraph",
+          "Fixture"
+        ],
+        "dataset_id": "",
+        "count": 114
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+        "count": 128331
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 16
+      },
+      {
+        "labels": [
+          "MediaAsset"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 36
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+        "count": 7752
+      }
+    ],
+    "vector_index_identity": [
+      {
+        "id": 40,
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      },
+      {
+        "id": 42,
+        "name": "robingraphTaxonNameVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "TaxonNameVector"
+        ],
+        "properties": [
+          "name_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      }
+    ]
+  },
+  "actual_read_recordings": [
+    {
+      "scientific_name": "Streptopelia orientalis",
+      "taxon_id": "avilist-taxon:v2025b:2612",
+      "recording_id": "commons-recording:3116105",
+      "metadata_sha256": "61c3a358932be69cc63dc77779335def38fa4b3fdf6dc739629a1e6b3ca76f03"
+    },
+    {
+      "scientific_name": "Cuculus canorus",
+      "taxon_id": "avilist-taxon:v2025b:2213",
+      "recording_id": "commons-recording:16329139",
+      "metadata_sha256": "944fb75f5463351543c04e89d0767538e0f7bea1532b980ec7a13858af44e032"
+    },
+    {
+      "scientific_name": "Picus canus",
+      "taxon_id": "avilist-taxon:v2025b:10399",
+      "recording_id": "commons-recording:19012629",
+      "metadata_sha256": "d21a9f3d5f52c7521bc75c065e5c5c72ad3cdeb6655f18f91492b6ab5cc043ff"
+    },
+    {
+      "scientific_name": "Dryocopus martius",
+      "taxon_id": "avilist-taxon:v2025b:10502",
+      "recording_id": "commons-recording:48121877",
+      "metadata_sha256": "eb8fbec9960937193a483e682a5ff96d0ea5e0c01d28fb7ab8b4787445145fcb"
+    },
+    {
+      "scientific_name": "Hirundo rustica",
+      "taxon_id": "avilist-taxon:v2025b:22758",
+      "recording_id": "commons-recording:23929087",
+      "metadata_sha256": "34e5182d6bf42127a797f294c501594b93c3c8e7236b071793e04506e1d529c2"
+    },
+    {
+      "scientific_name": "Motacilla alba",
+      "taxon_id": "avilist-taxon:v2025b:29861",
+      "recording_id": "commons-recording:83210806",
+      "metadata_sha256": "c90940f223f0ba15770028c35da041aeb31e981cd92cdd80fe30b3043bcef869"
+    },
+    {
+      "scientific_name": "Corvus corone",
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "recording_id": "commons-recording:37809031",
+      "metadata_sha256": "83f2067c19917e11540d2c0b1500ff15004e910519590d56b37cb335030216ab"
+    },
+    {
+      "scientific_name": "Ardea cinerea",
+      "taxon_id": "avilist-taxon:v2025b:5419",
+      "recording_id": "commons-recording:77528214",
+      "metadata_sha256": "dca6830a88fe990be31400469c7f6b3d9de5bc5a33d7685dd82984346c892a6b"
+    },
+    {
+      "scientific_name": "Ardea alba",
+      "taxon_id": "avilist-taxon:v2025b:5399",
+      "recording_id": "commons-recording:27404208",
+      "metadata_sha256": "d0579aeed94ceb4bd1a1ccac5cc3dd7c49a1ed1a589b94117772e9b98eb63e79"
+    },
+    {
+      "scientific_name": "Nycticorax nycticorax",
+      "taxon_id": "avilist-taxon:v2025b:5341",
+      "recording_id": "commons-recording:23927908",
+      "metadata_sha256": "04e0f55c683c29f72c59f223e7809ab5bd6f72d1fca1d58ef39c7cd0dc33d1bb"
+    },
+    {
+      "scientific_name": "Fulica atra",
+      "taxon_id": "avilist-taxon:v2025b:3582",
+      "recording_id": "commons-recording:83204380",
+      "metadata_sha256": "96a50f53128f51245a3eebc6e72f6bd498fb8f7faa4b36447295ecaa4cee0a10"
+    },
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "taxon_id": "avilist-taxon:v2025b:544",
+      "recording_id": "commons-recording:23927872",
+      "metadata_sha256": "f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee"
+    },
+    {
+      "scientific_name": "Hypsipetes amaurotis",
+      "taxon_id": "avilist-taxon:v2025b:23698",
+      "recording_id": "commons-recording:186512225",
+      "metadata_sha256": "3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1"
+    },
+    {
+      "scientific_name": "Passer montanus",
+      "taxon_id": "avilist-taxon:v2025b:29772",
+      "recording_id": "commons-recording:16592315",
+      "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+    }
+  ],
+  "actual_subspecies": {
+    "id": "avilist-taxon:v2025b:545",
+    "scientific_name": "Anas platyrhynchos platyrhynchos"
+  },
+  "subspecies_records": 0,
+  "subspecies_links": 0,
+  "original_three_ids_and_payload_fields_unchanged": true,
+  "original_three_source_release_transition": "commons-reviewed-2026-10-30 -> commons-reviewed-2026-11-02",
+  "original_three_public_backup": "original-three-graph-backup.json",
+  "second_import": {
+    "action": "test-upsert",
+    "recordings": 14,
+    "target": "test",
+    "source_id": "wikimedia-commons-bird-recordings",
+    "source_release": "commons-reviewed-2026-11-02"
+  },
+  "after_second": {
+    "taxon_properties_sha256": "46197c700e42f7b144af054df7012470c61082dfb97916bd1a9bb9eff391658c",
+    "recordings": [
+      {
+        "id": "commons-recording:16329139",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:16592315",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:186512225",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:19012629",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23927872",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23927908",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:23929087",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:27404208",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:3116105",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:37809031",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:48121877",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:77528214",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:83204380",
+        "release": "commons-reviewed-2026-11-02"
+      },
+      {
+        "id": "commons-recording:83210806",
+        "release": "commons-reviewed-2026-11-02"
+      }
+    ],
+    "evidence_units": 14,
+    "has_recording_links": 14,
+    "linked_ranks": [
+      "species"
+    ],
+    "supported_by_links": 14,
+    "other_source_media_evidence_counts": [
+      {
+        "labels": [
+          "EvidenceUnit",
+          "RobinGraph",
+          "Fixture"
+        ],
+        "dataset_id": "",
+        "count": 114
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "avonet:figshare-article-16586228-v7:file-34480856",
+        "count": 128331
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 16
+      },
+      {
+        "labels": [
+          "MediaAsset"
+        ],
+        "dataset_id": "gbif-occurrence-kr-aves",
+        "count": 36
+      },
+      {
+        "labels": [
+          "EvidenceUnit"
+        ],
+        "dataset_id": "reference-bundle:avilist-v2025b:eltontraits-v1",
+        "count": 7752
+      }
+    ],
+    "vector_index_identity": [
+      {
+        "id": 40,
+        "name": "robingraphFixtureChunkVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "HybridVectorChunk"
+        ],
+        "properties": [
+          "hybrid_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      },
+      {
+        "id": 42,
+        "name": "robingraphTaxonNameVector",
+        "type": "VECTOR",
+        "entityType": "NODE",
+        "labelsOrTypes": [
+          "TaxonNameVector"
+        ],
+        "properties": [
+          "name_vector"
+        ],
+        "options": {
+          "indexConfig": {
+            "vector.dimensions": 512,
+            "vector.hnsw.m": 16,
+            "vector.quantization.enabled": true,
+            "vector.similarity_function": "COSINE",
+            "vector.hnsw.ef_construction": 100
+          },
+          "indexProvider": "vector-2.0"
+        }
+      }
+    ]
+  },
+  "duplicate_nodes_or_links": 0,
+  "taxon_properties_unchanged": true,
+  "other_source_counts_unchanged": true,
+  "vector_index_identity_unchanged": true,
+  "production_changed": false,
+  "credentials_recorded": false,
+  "original_three_graph_field_transitions": [
+    {
+      "id": "commons-recording:16592315",
+      "media_changed_fields": {
+        "format": {
+          "old": "audio/ogg",
+          "new": "application/ogg"
+        },
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      },
+      "evidence_changed_fields": {
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      }
+    },
+    {
+      "id": "commons-recording:186512225",
+      "media_changed_fields": {
+        "format": {
+          "old": "audio/ogg",
+          "new": "application/ogg"
+        },
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      },
+      "evidence_changed_fields": {
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      }
+    },
+    {
+      "id": "commons-recording:23927872",
+      "media_changed_fields": {
+        "format": {
+          "old": "audio/ogg",
+          "new": "application/ogg"
+        },
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      },
+      "evidence_changed_fields": {
+        "source_release": {
+          "old": "commons-reviewed-2026-10-30",
+          "new": "commons-reviewed-2026-11-02"
+        }
+      }
+    }
+  ]
+}

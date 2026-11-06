@@ -1,0 +1,39 @@
+{
+  "decision": "approved",
+  "additional_changes_requested": false,
+  "api_contract_changed": false,
+  "backend_or_database_changed": false,
+  "metadata_fields_preserved": [
+    "id",
+    "scientific_name",
+    "audio_url",
+    "title",
+    "creator",
+    "source_url",
+    "license_name",
+    "license_url",
+    "recording_type",
+    "recorded_at",
+    "location"
+  ],
+  "checks": {
+    "single_player_on_front_below_photo": true,
+    "native_controls_and_preload_none_preserved": true,
+    "explicit_back_attribution_navigation": true,
+    "unique_aria_controls_and_source_focus": true,
+    "stop_on_leaving_front_playback_face": true,
+    "popup_close_removal_other_play_hooks_preserved": true,
+    "photo_only_update_preserves_recordings": true,
+    "explicit_empty_clears_both_faces": true
+  },
+  "verification_basis": "Independent read-only diff, API/source contract and official CC license review",
+  "reported_by_others": {
+    "ui_agent_frontend_pass": 334,
+    "root_frontend_pass": 338,
+    "root_test_deployment": "completed"
+  },
+  "tests_executed_by_reviewer": 0,
+  "actual_browser_audio_or_physical_mobile_executed_by_reviewer": false,
+  "extra_full_python_suite_required": false,
+  "review_markdown": "/tmp/robingraph-audio-front-20261102/backend-review.md"
+}

@@ -1,0 +1,10 @@
+{
+  "phase": "build",
+  "image": "robingraph-audio-collector:prod-3cfe50a76a47",
+  "image_id": "sha256:375dbedd980550b27103829e96a882e181ef9837208cee5cc0e68dbe7c1d79da",
+  "architecture": "amd64",
+  "public_app_unchanged": true,
+  "public_app_restarted": false,
+  "provider_requests": 0,
+  "graph_publication_requests": 0
+}

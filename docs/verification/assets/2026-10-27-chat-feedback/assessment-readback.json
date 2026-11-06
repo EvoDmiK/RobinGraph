@@ -1,0 +1,126 @@
+{
+  "rows": [
+    {
+      "trace_id": "tr-9f11df10703ca92d2cb7995ae5295e1d",
+      "experiment_id": "33",
+      "question": "청둥오리에 대해 알려줘",
+      "rating": "helpful",
+      "assessment_id": "a-defc0f196bc24ca8881574f714ae79fb",
+      "source_type": "HUMAN",
+      "source_id": "robingraph-web",
+      "matching_assessments": 1,
+      "root_outputs_match": true,
+      "response_reason": "none",
+      "failure_stage": "none"
+    },
+    {
+      "trace_id": "tr-03d9b20aa9391e778c43d932668808c7",
+      "experiment_id": "33",
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "rating": "misunderstood",
+      "assessment_id": "a-ba1ba121939c46e392f2ef1e37628750",
+      "source_type": "HUMAN",
+      "source_id": "robingraph-web",
+      "matching_assessments": 1,
+      "root_outputs_match": true,
+      "response_reason": "none",
+      "failure_stage": "none"
+    },
+    {
+      "trace_id": "tr-06e399b159744f9341f418f11b04be51",
+      "experiment_id": "33",
+      "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+      "rating": "incorrect",
+      "assessment_id": "a-e2259c6389ee4e5ab232eaeb6b889914",
+      "source_type": "HUMAN",
+      "source_id": "robingraph-web",
+      "matching_assessments": 1,
+      "root_outputs_match": true,
+      "response_reason": "ambiguous_conditions",
+      "failure_stage": "routing"
+    },
+    {
+      "trace_id": "tr-4ba299c21905284f122f65c146ce99ee",
+      "experiment_id": "33",
+      "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+      "rating": "helpful",
+      "assessment_id": "a-37cf1affe6884a29917e49cd8f44999d",
+      "source_type": "HUMAN",
+      "source_id": "robingraph-web",
+      "matching_assessments": 1,
+      "root_outputs_match": true,
+      "response_reason": "ambiguous_conditions",
+      "failure_stage": "routing"
+    }
+  ],
+  "prior_test_window_records": [
+    {
+      "trace_id": "tr-9f1d9ccdb8a19f0eaf5af4e4f8db197a",
+      "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+      "ratings": [
+        "incorrect"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-c0546d544a370e873398cdf01f4ad514",
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "ratings": [
+        "misunderstood"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-d5649cd5fe9624a7fdc42905a0d02bbc",
+      "question": "청둥오리에 대해 알려줘",
+      "ratings": [
+        "helpful"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-a82f3fb7c67dd97f91781c49e439aa30",
+      "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+      "ratings": [
+        "helpful"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-f967ef0783ef0c0a815b38bb6a75c929",
+      "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+      "ratings": [
+        "incorrect"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-424e447a15771b2de344b5d3479cccbe",
+      "question": "청둥오리와 서식지가 겹치면서 먹이가 다른 새는?",
+      "ratings": [
+        "misunderstood"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-0e2553b25ee5a8f2e646e8004ff053e9",
+      "question": "청둥오리에 대해 알려줘",
+      "ratings": [
+        "helpful"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    },
+    {
+      "trace_id": "tr-3a66cbde5eae942c8f7447815b3f718e",
+      "question": "청둥오리에 대해 알려줘",
+      "ratings": [
+        "helpful"
+      ],
+      "source": "prior_test_window_feedback_not_acceptance"
+    }
+  ],
+  "new_chat_requests": 0,
+  "new_feedback_posts": 0,
+  "production_experiment_50_untouched": true,
+  "automated_test_feedback_not_human_gold": true
+}

@@ -1,0 +1,30 @@
+{
+  "rating": "incorrect",
+  "label": "답변이 틀렸어요",
+  "question": "청둥오리랑 비슷한 식생을 가진 새는?",
+  "trace_id": "tr-06e399b159744f9341f418f11b04be51",
+  "response": {
+    "selected_intent": "profile",
+    "route_method": "deterministic",
+    "disposition": "clarify",
+    "answer_text": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+    "warnings": [
+      "식물 군집 자체의 유사성을 비교하는 자료는 제공하지 않습니다. 선택 전에는 의미나 종을 확정하지 않았습니다."
+    ],
+    "result": {
+      "kind": "clarify",
+      "prompt": "‘식생’으로 어떤 기준을 말씀하셨나요? 먹이·식성인지 서식 환경인지 선택해 주세요.",
+      "choices": [
+        {
+          "label": "식성·먹이 생태 범주",
+          "question": "청둥오리랑 비슷한 식성을 가진 새는?"
+        },
+        {
+          "label": "서식 환경",
+          "question": "청둥오리랑 비슷한 서식 환경을 가진 새는?"
+        }
+      ]
+    },
+    "entity_resolution": null
+  }
+}

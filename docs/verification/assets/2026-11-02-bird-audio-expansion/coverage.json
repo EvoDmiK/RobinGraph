@@ -1,0 +1,301 @@
+{
+  "verifiedAt": "2026-11-02T08:17:54.789Z",
+  "uniqueSpecies": 14,
+  "metadataPassed": 14,
+  "initialPlaybackPassed": 7,
+  "retryPassed": 5,
+  "retryFailed": 2,
+  "retryNotNeeded": 7,
+  "finalPlaybackPassed": 12,
+  "finalPlaybackUnverified": 2,
+  "neverAttemptedSpecies": 0,
+  "rows": [
+    {
+      "scientific_name": "Passer montanus",
+      "display_name": "참새",
+      "korean_name": "참새",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.439345,
+      "readyState": 4,
+      "decodedBytes": 18470,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg"
+    },
+    {
+      "scientific_name": "Hypsipetes amaurotis",
+      "display_name": "직박구리",
+      "korean_name": "직박구리",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.334373,
+      "readyState": 4,
+      "decodedBytes": 4514,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg"
+    },
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "display_name": "청둥오리",
+      "korean_name": "청둥오리",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.30962,
+      "readyState": 4,
+      "decodedBytes": 8359,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg"
+    },
+    {
+      "scientific_name": "Ardea alba",
+      "display_name": "중대백로",
+      "korean_name": "중대백로",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.421196,
+      "readyState": 4,
+      "decodedBytes": 18067,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_alba_-_Great_Egret_XC131650.ogg"
+    },
+    {
+      "scientific_name": "Ardea cinerea",
+      "display_name": "왜가리",
+      "korean_name": "왜가리",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.535804,
+      "readyState": 4,
+      "decodedBytes": 34560,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_cinerea_-_Grey_Heron_XC432231.mp3"
+    },
+    {
+      "scientific_name": "Dryocopus martius",
+      "display_name": "까막딱다구리",
+      "korean_name": "까막딱다구리",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.549,
+      "readyState": 4,
+      "decodedBytes": 43289,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Black_woodpecker_Dryocopus_martius_female_drumming.ogg"
+    },
+    {
+      "scientific_name": "Cuculus canorus",
+      "display_name": "뻐꾸기",
+      "korean_name": "뻐꾸기",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "pass",
+      "finalPlayback": "pass",
+      "currentTime": 0.55056,
+      "readyState": 4,
+      "decodedBytes": 13306,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Cuculus_canorus.ogg"
+    },
+    {
+      "scientific_name": "Fulica atra",
+      "display_name": "물닭",
+      "korean_name": "물닭",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "pass",
+      "finalPlayback": "pass",
+      "currentTime": 0.31775,
+      "readyState": 4,
+      "decodedBytes": 7722,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Fulica_atra_-_Eurasian_Coot_XC467829.mp3"
+    },
+    {
+      "scientific_name": "Hirundo rustica",
+      "display_name": "제비",
+      "korean_name": "제비",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "pass",
+      "finalPlayback": "pass",
+      "currentTime": 0.356082,
+      "readyState": 4,
+      "decodedBytes": 8760,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg"
+    },
+    {
+      "scientific_name": "Motacilla alba",
+      "display_name": "알락할미새",
+      "korean_name": "알락할미새",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "pass",
+      "finalPlayback": "pass",
+      "currentTime": 0.419921,
+      "readyState": 4,
+      "decodedBytes": 11285,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Motacilla_alba_-_White_Wagtail_XC466458.mp3"
+    },
+    {
+      "scientific_name": "Nycticorax nycticorax",
+      "display_name": "해오라기",
+      "korean_name": "해오라기",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "pass",
+      "finalPlayback": "pass",
+      "currentTime": 0.306352,
+      "readyState": 4,
+      "decodedBytes": 8027,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg"
+    },
+    {
+      "scientific_name": "Picus canus",
+      "display_name": "청딱다구리",
+      "korean_name": "청딱다구리",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "fail",
+      "finalPlayback": "unverified",
+      "currentTime": 0,
+      "readyState": 0,
+      "decodedBytes": null,
+      "reason": "Decoded playback not confirmed. Additional scoped HTTP Range diagnostic returned429, text/html, Retry-After600 at2026-11-02T08:18:43.767Z.",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Picus_canus.ogg",
+      "additionalHttpDiagnostic": "HTTP429_HTML"
+    },
+    {
+      "scientific_name": "Streptopelia orientalis",
+      "display_name": "멧비둘기",
+      "korean_name": "멧비둘기",
+      "metadata": "pass",
+      "firstPlayback": "pass",
+      "retry": "not_needed",
+      "finalPlayback": "pass",
+      "currentTime": 0.549235,
+      "readyState": 4,
+      "decodedBytes": 13748,
+      "reason": null,
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Streptopelia_orientalis.ogg"
+    },
+    {
+      "scientific_name": "Corvus corone",
+      "display_name": "까마귀",
+      "korean_name": "까마귀",
+      "metadata": "pass",
+      "firstPlayback": "fail",
+      "retry": "fail",
+      "finalPlayback": "unverified",
+      "currentTime": 0,
+      "readyState": 0,
+      "decodedBytes": null,
+      "reason": "Decoded playback not confirmed: MediaError4/Chromium ORB. Additional scoped HTTP diagnostic not run because Picus returned429 and the stop rule applied.",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+      "additionalHttpDiagnostic": "not_run_after_429"
+    }
+  ],
+  "updatedAt": "2026-11-02T08:30:01.692Z",
+  "publicSupport": {
+    "verifiedAt": "2026-11-02T08:28:40.513Z",
+    "apiPassed": true,
+    "supportedSpecies": [
+      {
+        "scientific_name": "Passer montanus",
+        "display_name": "참새"
+      },
+      {
+        "scientific_name": "Hypsipetes amaurotis",
+        "display_name": "직박구리"
+      },
+      {
+        "scientific_name": "Anas platyrhynchos",
+        "display_name": "청둥오리"
+      },
+      {
+        "scientific_name": "Ardea alba",
+        "display_name": "중대백로"
+      },
+      {
+        "scientific_name": "Ardea cinerea",
+        "display_name": "왜가리"
+      },
+      {
+        "scientific_name": "Dryocopus martius",
+        "display_name": "까막딱다구리"
+      },
+      {
+        "scientific_name": "Cuculus canorus",
+        "display_name": "뻐꾸기"
+      },
+      {
+        "scientific_name": "Fulica atra",
+        "display_name": "물닭"
+      },
+      {
+        "scientific_name": "Hirundo rustica",
+        "display_name": "제비"
+      },
+      {
+        "scientific_name": "Motacilla alba",
+        "display_name": "알락할미새"
+      },
+      {
+        "scientific_name": "Nycticorax nycticorax",
+        "display_name": "해오라기"
+      },
+      {
+        "scientific_name": "Streptopelia orientalis",
+        "display_name": "멧비둘기"
+      }
+    ],
+    "followupSpecies": [
+      {
+        "scientific_name": "Picus canus",
+        "display_name": "청딱다구리"
+      },
+      {
+        "scientific_name": "Corvus corone",
+        "display_name": "까마귀"
+      }
+    ],
+    "previouslyUnsupported": [
+      "Treron sieboldii"
+    ],
+    "supportedCount": 12,
+    "newSupportedCount": 9,
+    "originalSupportedCount": 3,
+    "reviewedCandidateCount": 14,
+    "initialNewCandidateCount": 11,
+    "followupCount": 2,
+    "verificationMethod": "POST /v1/chat basic profiles with defer_enrichment=true/defer_discovery=true;15 API assertions; no CDN/photograph/playback request"
+  }
+}

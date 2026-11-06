@@ -1,0 +1,13 @@
+--- a/src/robingraph/api/static/styles.css
++++ b/src/robingraph/api/static/styles.css
+@@ -2168,7 +2168,9 @@
+ 
+ .species-recording { margin-block: .65rem; overflow-wrap: anywhere; }
+ .species-recording p { margin-block: .35rem; font-size: .78rem; }
+-.species-recording-audio { display: block; width: 100%; min-width: 0; }
++.species-recording-audio { display: block; width: 100%; min-width: 0; color-scheme: light; background: #e3f2c4; border-radius: 999px; }
++.species-recording-audio::-webkit-media-controls-panel { background-color: #e3f2c4; }
++.species-recording-audio:focus-visible { outline: 2px solid #233d1c; outline-offset: 3px; }
+ 
+ .species-recording-controls { margin-block: .5rem; }
+ .species-recording-source-link { display: block; margin: .2rem 0 .45rem auto; padding: .25rem .4rem; font: inherit; font-size: .72rem; color: inherit; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }

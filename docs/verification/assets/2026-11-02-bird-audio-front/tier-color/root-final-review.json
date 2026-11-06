@@ -1,0 +1,19 @@
+{
+  "scope": "RG409 tier-specific audio CSS",
+  "frontend_pass": 338,
+  "frontend_fail": 0,
+  "frontend_skip": 0,
+  "runtime_manifest_matches": 238,
+  "tier_fixture_cases": 13,
+  "tier_fixture": "deployed CSS with injected class-only DOM; not actual recordings or conservation data",
+  "real_profile_tiers": [
+    "LC",
+    "VU"
+  ],
+  "real_playback_tier": "LC",
+  "visual_review": "all-tier-native-audio-1440.png",
+  "production_changed": false,
+  "database_write": false,
+  "git_operations": false,
+  "physical_device_safari_firefox": "not checked"
+}

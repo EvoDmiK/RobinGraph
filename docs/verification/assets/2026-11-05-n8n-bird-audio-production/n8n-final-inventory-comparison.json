@@ -1,0 +1,45 @@
+{
+  "workflows": {
+    "before_count": 40,
+    "after_count": 43,
+    "missing_old_ids": [],
+    "changed_old_ids": [],
+    "new_items": [
+      {
+        "id": "rgAudioCollectionProd01",
+        "name": "RobinGraph Audio Collection PROD (daily 1 species)",
+        "active": true,
+        "definition_hash": "1c2d4efc04d4ce985f2bfbf5734cdc84"
+      },
+      {
+        "id": "rgAudioCursorFixture20261105",
+        "name": "RobinGraph Audio cursor isolated fixture 20261105",
+        "active": false,
+        "definition_hash": "554df48ebc763c786b94318b391b2dbc"
+      },
+      {
+        "id": "rgAudioTableFixture20261105",
+        "name": "RobinGraph Audio DataTable cursor isolated fixture 20261105",
+        "active": false,
+        "definition_hash": "432668f319aa921c3ab98b315419ce9b"
+      }
+    ]
+  },
+  "credentials": {
+    "before_count": 33,
+    "after_count": 34,
+    "missing_old_ids": [],
+    "changed_old_ids": [
+      "0iMMLWNLRPgXa1S1",
+      "u1JgGQQXk8h6EbcJ"
+    ],
+    "new_items": [
+      {
+        "id": "rgAudioProdHeader01",
+        "name": "RobinGraph Audio PROD collector internal",
+        "type": "httpHeaderAuth",
+        "encrypted_data_hash": "7f6d9a5332b135ecd0c0412632d8f92c"
+      }
+    ]
+  }
+}

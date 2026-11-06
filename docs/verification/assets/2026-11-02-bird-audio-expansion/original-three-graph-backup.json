@@ -1,0 +1,125 @@
+[
+  {
+    "taxon_id": "avilist-taxon:v2025b:29772",
+    "taxon_link": {
+      "taxonomy_release": "v2025b",
+      "concept_set_id": "rg:concept-set:avilist-v2025b"
+    },
+    "media": {
+      "license_uri": "https://creativecommons.org/licenses/by-sa/3.0",
+      "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+      "source_record_id": "commons-recording:16592315",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "redistribution_allowed": true,
+      "policy_status": "allowed",
+      "format": "audio/ogg",
+      "scientific_name": "Passer montanus",
+      "evidence_id": "commons-recording:16592315:c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "landing_uri": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+      "source_release": "commons-reviewed-2026-10-30",
+      "source_scope_kind": "exact_species",
+      "media_type": "sound",
+      "asset_uri": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+      "attribution": "Vladimir Yu. Arkhipov, Arkhivov · CC BY-SA 3.0",
+      "publisher": "Wikimedia Commons",
+      "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d",
+      "id": "commons-recording:16592315",
+      "payload_json": "{\"audio_url\": \"https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg\", \"creator\": \"Vladimir Yu. Arkhipov, Arkhivov\", \"evidence\": {\"metadata_sha256\": \"c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d\", \"page_id\": 16592315, \"retrieved_at\": \"2026-10-30T06:29:17.911783+00:00\", \"revision_id\": 1031017614, \"taxon_match\": \"exact_scientific_name\"}, \"id\": \"commons-recording:16592315\", \"license_name\": \"CC BY-SA 3.0\", \"license_url\": \"https://creativecommons.org/licenses/by-sa/3.0\", \"location\": \"Moscow region, Russia\", \"recorded_at\": \"2011-09-20\", \"recording_type\": \"Calls\", \"scientific_name\": \"Passer montanus\", \"source_url\": \"https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg\", \"title\": \"Passer montanus.ogg\"}"
+    },
+    "evidence_link": {},
+    "evidence": {
+      "license_uri": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source_record_id": "commons-recording:16592315",
+      "source_release": "commons-reviewed-2026-10-30",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "policy_status": "allowed",
+      "id": "commons-recording:16592315:c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d",
+      "content_hash": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "locator": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg"
+    }
+  },
+  {
+    "taxon_id": "avilist-taxon:v2025b:23698",
+    "taxon_link": {
+      "taxonomy_release": "v2025b",
+      "concept_set_id": "rg:concept-set:avilist-v2025b"
+    },
+    "media": {
+      "license_uri": "https://creativecommons.org/licenses/by/4.0",
+      "creator": "karliatje",
+      "source_record_id": "commons-recording:186512225",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "redistribution_allowed": true,
+      "policy_status": "allowed",
+      "format": "audio/ogg",
+      "scientific_name": "Hypsipetes amaurotis",
+      "evidence_id": "commons-recording:186512225:3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "landing_uri": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+      "source_release": "commons-reviewed-2026-10-30",
+      "source_scope_kind": "exact_species",
+      "media_type": "sound",
+      "asset_uri": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+      "attribution": "karliatje · CC BY 4.0",
+      "publisher": "Wikimedia Commons",
+      "metadata_sha256": "3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1",
+      "id": "commons-recording:186512225",
+      "payload_json": "{\"audio_url\": \"https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg\", \"creator\": \"karliatje\", \"evidence\": {\"metadata_sha256\": \"3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1\", \"page_id\": 186512225, \"retrieved_at\": \"2026-10-30T06:29:17.911783+00:00\", \"revision_id\": 1235363806, \"taxon_match\": \"exact_scientific_name\"}, \"id\": \"commons-recording:186512225\", \"license_name\": \"CC BY 4.0\", \"license_url\": \"https://creativecommons.org/licenses/by/4.0\", \"location\": \"Izu, Japan\", \"recorded_at\": \"2025-05-20\", \"recording_type\": null, \"scientific_name\": \"Hypsipetes amaurotis\", \"source_url\": \"https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg\", \"title\": \"Hypsipetes-amaurotis-2025-05-20-282617142.ogg\"}"
+    },
+    "evidence_link": {},
+    "evidence": {
+      "license_uri": "https://creativecommons.org/licenses/by/4.0",
+      "source_record_id": "commons-recording:186512225",
+      "source_release": "commons-reviewed-2026-10-30",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "policy_status": "allowed",
+      "id": "commons-recording:186512225:3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1",
+      "content_hash": "3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "locator": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg"
+    }
+  },
+  {
+    "taxon_id": "avilist-taxon:v2025b:544",
+    "taxon_link": {
+      "taxonomy_release": "v2025b",
+      "concept_set_id": "rg:concept-set:avilist-v2025b"
+    },
+    "media": {
+      "license_uri": "https://creativecommons.org/licenses/by-sa/3.0",
+      "creator": "Jonathon Jongsma",
+      "source_record_id": "commons-recording:23927872",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "redistribution_allowed": true,
+      "policy_status": "allowed",
+      "format": "audio/ogg",
+      "scientific_name": "Anas platyrhynchos",
+      "evidence_id": "commons-recording:23927872:f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "landing_uri": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+      "source_release": "commons-reviewed-2026-10-30",
+      "source_scope_kind": "exact_species",
+      "media_type": "sound",
+      "asset_uri": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+      "attribution": "Jonathon Jongsma · CC BY-SA 3.0",
+      "publisher": "Wikimedia Commons",
+      "metadata_sha256": "f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee",
+      "id": "commons-recording:23927872",
+      "payload_json": "{\"audio_url\": \"https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg\", \"creator\": \"Jonathon Jongsma\", \"evidence\": {\"metadata_sha256\": \"f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee\", \"page_id\": 23927872, \"retrieved_at\": \"2026-10-30T06:29:17.911783+00:00\", \"revision_id\": 1272207943, \"taxon_match\": \"exact_scientific_name\"}, \"id\": \"commons-recording:23927872\", \"license_name\": \"CC BY-SA 3.0\", \"license_url\": \"https://creativecommons.org/licenses/by-sa/3.0\", \"location\": \"Powderhorn Park, Minneapolis, MN\", \"recorded_at\": \"2010-09-14 13:53\", \"recording_type\": null, \"scientific_name\": \"Anas platyrhynchos\", \"source_url\": \"https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg\", \"title\": \"Anas platyrhynchos - Mallard - XC62258.ogg\"}"
+    },
+    "evidence_link": {},
+    "evidence": {
+      "license_uri": "https://creativecommons.org/licenses/by-sa/3.0",
+      "source_record_id": "commons-recording:23927872",
+      "source_release": "commons-reviewed-2026-10-30",
+      "dataset_id": "wikimedia-commons-bird-recordings",
+      "policy_status": "allowed",
+      "id": "commons-recording:23927872:f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee",
+      "content_hash": "f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee",
+      "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+      "locator": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg"
+    }
+  }
+]

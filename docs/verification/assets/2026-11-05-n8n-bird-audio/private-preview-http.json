@@ -1,0 +1,60 @@
+{
+  "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+  "file_sha256": "eb776d11526454947d8a392a5b09f2da657b9c0bd5c6e4297e72016ff191a403",
+  "origin": "http://192.168.219.97:8000",
+  "rows": [
+    {
+      "check": "private_unauthenticated",
+      "status": 401,
+      "content_type": "application/json",
+      "content_length": null,
+      "content_range": null,
+      "cache_control": null,
+      "received_bytes": 25,
+      "ogg_magic": null
+    },
+    {
+      "check": "private_head",
+      "status": 200,
+      "content_type": "audio/ogg",
+      "content_length": "289857",
+      "content_range": null,
+      "cache_control": "private, no-store",
+      "received_bytes": 0,
+      "ogg_magic": null
+    },
+    {
+      "check": "private_range",
+      "status": 206,
+      "content_type": "audio/ogg",
+      "content_length": "128",
+      "content_range": "bytes 0-127/289857",
+      "cache_control": "private, no-store",
+      "received_bytes": 128,
+      "ogg_magic": true
+    },
+    {
+      "check": "unpublished_public_get",
+      "status": 404,
+      "content_type": "application/json",
+      "content_length": null,
+      "content_range": null,
+      "cache_control": null,
+      "received_bytes": 33,
+      "ogg_magic": null
+    },
+    {
+      "check": "unpublished_public_head",
+      "status": 404,
+      "content_type": "application/json",
+      "content_length": null,
+      "content_range": null,
+      "cache_control": null,
+      "received_bytes": 0,
+      "ogg_magic": null
+    }
+  ],
+  "passed": true,
+  "external_cdn_requests": 0,
+  "publication_executed": false
+}

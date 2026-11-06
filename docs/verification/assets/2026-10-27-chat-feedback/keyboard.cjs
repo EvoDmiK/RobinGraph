@@ -1,0 +1,17 @@
+const {chromium}=require('/tmp/rg212-browser-qa/node_modules/playwright');
+const fs=require('fs'),assert=require('node:assert/strict');
+(async()=>{const b=await chromium.launch();try{const p=await b.newPage({viewport:{width:1280,height:960},reducedMotion:'reduce'});
+await p.goto('https://robingraph-test.dove-nest.com/chat');
+const question='청둥오리랑 비슷한 식생을 가진 새는?';
+const chat=p.waitForResponse(r=>r.url().endsWith('/v1/chat')&&r.request().method()==='POST');
+await p.locator('#question-input').fill(question);await p.locator('#question-input').press('Enter');
+const response=await chat,body=await response.json();const trace_id=response.headers()['x-robingraph-trace-id'];
+const button=p.getByRole('button',{name:'도움됐어요',exact:true});await button.waitFor();await button.focus();
+assert.equal(await button.evaluate(e=>document.activeElement===e),true);
+const vote=p.waitForResponse(r=>r.url().endsWith('/v1/chat/feedback')&&r.request().method()==='POST');
+await p.keyboard.press('Enter');const result=await vote;assert.equal(result.status(),200);assert.deepEqual(await result.json(),{status:'saved'});
+await p.waitForFunction(()=>document.querySelector('.answer-feedback-status').textContent.includes('감사'));
+assert.equal(await button.getAttribute('aria-pressed'),'true');
+const row={question,rating:'helpful',trace_id,response:body,chat_status:response.status(),feedback_attempts:[{status:200,body:{status:'saved'}}],keyboard_enter:true,response_mocking:false};
+fs.writeFileSync(__dirname+'/keyboard-results.json',JSON.stringify(row,null,2));console.log(JSON.stringify({keyboard_enter:true,status:200,trace_id}));
+}finally{await b.close();}})().catch(e=>{console.error(e.message);process.exitCode=1});

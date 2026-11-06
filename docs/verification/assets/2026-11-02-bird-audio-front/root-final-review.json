@@ -1,0 +1,20 @@
+{
+  "task_id": "RG-409",
+  "scope": "front audio/back attribution layout follow-up",
+  "role": "root reviewed and integrated delegated UI; no independent feature implementation",
+  "frontend": {
+    "command": "node --test tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js",
+    "passed": 338,
+    "failed": 0,
+    "skipped": 0
+  },
+  "python_tests": "not rerun; no Python/API changes",
+  "runtime_files_match_deployed": 238,
+  "runtime_source_changed_after_deploy": [],
+  "production_changed": false,
+  "database_writes": false,
+  "git_commit_push_merge": false,
+  "graphify": "exit 0; existing missing SQL parser warning",
+  "screenshot_visual_review": "actual-chat-audio-mobile-390.png",
+  "physical_device_or_human_listening": false
+}

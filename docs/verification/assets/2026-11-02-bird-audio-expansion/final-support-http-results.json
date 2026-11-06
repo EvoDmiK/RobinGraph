@@ -1,0 +1,347 @@
+{
+  "checkedAt": "2026-11-02T08:28:40.513Z",
+  "target": "https://robingraph-test.dove-nest.com",
+  "scope": "HTTP basic-profile metadata via POST chat with defer_enrichment=true/defer_discovery=true; no CDN/image/playback request",
+  "rows": [
+    {
+      "name": "Passer montanus",
+      "korean_name": "참새",
+      "display_name": "참새",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:16592315",
+          "scientific_name": "Passer montanus",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": "Calls",
+          "recorded_at": "2011-09-20",
+          "location": "Moscow region, Russia"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Hypsipetes amaurotis",
+      "korean_name": "직박구리",
+      "display_name": "직박구리",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:186512225",
+          "scientific_name": "Hypsipetes amaurotis",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "creator": "karliatje",
+          "license_name": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0",
+          "recording_type": null,
+          "recorded_at": "2025-05-20",
+          "location": "Izu, Japan"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "korean_name": "청둥오리",
+      "display_name": "청둥오리",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:23927872",
+          "scientific_name": "Anas platyrhynchos",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": null,
+          "recorded_at": "2010-09-14 13:53",
+          "location": "Powderhorn Park, Minneapolis, MN"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Ardea alba",
+      "korean_name": "중대백로",
+      "display_name": "중대백로",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:27404208",
+          "scientific_name": "Ardea alba",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_alba_-_Great_Egret_XC131650.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": "call",
+          "recorded_at": "2013-04-27 06:43",
+          "location": "Theodore Wirth Park, Minneapolis, MN"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Ardea cinerea",
+      "korean_name": "왜가리",
+      "display_name": "왜가리",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:77528214",
+          "scientific_name": "Ardea cinerea",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+          "creator": "Joost van Bruggen",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "recording_type": "agitated call, juvenile",
+          "recorded_at": "2018-08-04 02:08",
+          "location": "Área Metropolitana de Sevilla (near  Isla Mayor), Sevilla, Andalucía"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Dryocopus martius",
+      "korean_name": "까막딱다구리",
+      "display_name": "까막딱다구리",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:48121877",
+          "scientific_name": "Dryocopus martius",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+          "creator": "SanoAK: Alexander Kürthy",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "recording_type": "drumming",
+          "recorded_at": "2015-03-08",
+          "location": "Slovakia, Slovenské rudohorie, Volovské vrchy (mnt.), part Zlatý stôl"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Cuculus canorus",
+      "korean_name": "뻐꾸기",
+      "display_name": "뻐꾸기",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:16329139",
+          "scientific_name": "Cuculus canorus",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Cuculus_canorus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": null,
+          "recorded_at": "2009-05-05",
+          "location": "Kaluga region, Russia"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Fulica atra",
+      "korean_name": "물닭",
+      "display_name": "물닭",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:83204380",
+          "scientific_name": "Fulica atra",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+          "creator": "Mikko Heikkinen",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "recording_type": "flight call, nocturnal flight call",
+          "recorded_at": "2019-04-06 22:29",
+          "location": "Söderskog, Espoo, Uusimaa"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Hirundo rustica",
+      "korean_name": "제비",
+      "display_name": "제비",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:23929087",
+          "scientific_name": "Hirundo rustica",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": "twitter-warble song",
+          "recorded_at": "2011-07-17 07:01",
+          "location": "Minnesota Valley NWR, Old Cedar Ave Bridge, Hennepin, MN"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Motacilla alba",
+      "korean_name": "알락할미새",
+      "display_name": "알락할미새",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:83210806",
+          "scientific_name": "Motacilla alba",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+          "creator": "Pascal Christe",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "recording_type": "call, song",
+          "recorded_at": "2019-02-21 08:30",
+          "location": "Yverdon-les-Bains, Vaud"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Nycticorax nycticorax",
+      "korean_name": "해오라기",
+      "display_name": "해오라기",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:23927908",
+          "scientific_name": "Nycticorax nycticorax",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "recording_type": "Calls",
+          "recorded_at": "2012-04-21 08:03",
+          "location": "Palo Alto Baylands, Santa Clara, CA"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Streptopelia orientalis",
+      "korean_name": "멧비둘기",
+      "display_name": "멧비둘기",
+      "expectedSupported": true,
+      "supportClass": "supported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:3116105",
+          "scientific_name": "Streptopelia orientalis",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Streptopelia_orientalis.ogg",
+          "creator": "boppochan",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "recording_type": null,
+          "recorded_at": "2006-11-11",
+          "location": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "Picus canus",
+      "korean_name": "청딱다구리",
+      "display_name": "청딱다구리",
+      "expectedSupported": false,
+      "supportClass": "pending_review",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "no_licensed_recording",
+      "recordings": [],
+      "passed": true
+    },
+    {
+      "name": "Corvus corone",
+      "korean_name": "까마귀",
+      "display_name": "까마귀",
+      "expectedSupported": false,
+      "supportClass": "pending_review",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "no_licensed_recording",
+      "recordings": [],
+      "passed": true
+    },
+    {
+      "name": "Treron sieboldii",
+      "korean_name": "녹색비둘기",
+      "display_name": "녹색비둘기",
+      "expectedSupported": false,
+      "supportClass": "previously_unsupported",
+      "enrichmentPending": true,
+      "httpStatus": 200,
+      "availability": "no_licensed_recording",
+      "recordings": [],
+      "passed": true
+    }
+  ],
+  "supported": 12,
+  "pendingReview": 2,
+  "previouslyUnsupported": 1,
+  "passed": true
+}

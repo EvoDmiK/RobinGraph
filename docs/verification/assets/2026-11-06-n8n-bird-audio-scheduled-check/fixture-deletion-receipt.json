@@ -1,0 +1,27 @@
+{
+  "action": "delete",
+  "checked_at_utc": "2026-11-06T04:15:58.328Z",
+  "deleted": [
+    "rgAudioCursorFixture20261105",
+    "rgAudioTableFixture20261105"
+  ],
+  "absent": [
+    {
+      "id": "rgAudioCursorFixture20261105",
+      "missing": true
+    },
+    {
+      "id": "rgAudioTableFixture20261105",
+      "missing": true
+    }
+  ],
+  "workflow_count_before": 43,
+  "workflow_count_after": 41,
+  "other_workflow_ids_preserved": true,
+  "production_workflow_unchanged": true,
+  "production_active": true,
+  "production_version": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+  "table_or_candidate_changes": 0,
+  "collection_executions_triggered": 0,
+  "credential_writes": 0
+}

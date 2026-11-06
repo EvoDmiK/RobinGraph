@@ -1,0 +1,1280 @@
+[
+  {
+    "label": "chain.base",
+    "question": "숲에 사는 열매 먹는 새",
+    "sent_context": false,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 6898,
+      "scoped": 11131,
+      "matched": 1775
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": null,
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-cad1b804c8e2e72e9a48521735cded51",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "chain.korea",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 48종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 410,
+      "scoped": 592,
+      "matched": 48
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": null,
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "국내 기록",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "8e40330e2dee",
+    "warnings_has_korea_record": true,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-eba5b60d67f39ee6c04a5b8438499ac0",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "chain.number",
+    "question": "그 새들 중 체중 100g 이상인 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 10종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함, 체중 100g 이상)에 모두 맞습니다.",
+    "items": 10,
+    "has_more": false,
+    "coverage": {
+      "evaluable": 410,
+      "scoped": 592,
+      "matched": 10
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함",
+      "체중 100g 이상"
+    ],
+    "taxon": null,
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "체중 100g 이상",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함",
+          "체중 100g 이상"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함",
+          "체중 100g 이상"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "4893714dbd7e",
+    "warnings_has_korea_record": true,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-6d255fbce01962e27ab442357e1cad26",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "rank.order",
+    "question": "그중 참새목 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 3983종 중 1115종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 3983,
+      "scoped": 6705,
+      "matched": 1115
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": "Passeriformes",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "참새목",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "1c769e9af490",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-5c67bf16fc09dd640a752960f0a4e3a6",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "rank.family",
+    "question": "그중 직박구리과 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "직박구리과 (Pycnonotidae) 범위에서 조건 자료가 모두 있는 81종 중 47종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 81,
+      "scoped": 161,
+      "matched": 47
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": "Pycnonotidae",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "직박구리과",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "직박구리과",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "직박구리과",
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "6b1bea7d1b54",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-06d7c3fcd4e015b8c59cc8611fbf15c2",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "rank.genus",
+    "question": "그중 Turdus 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "Turdus 범위에서 조건 자료가 모두 있는 60종 중 51종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 60,
+      "scoped": 105,
+      "matched": 51
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": "Turdus",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "Turdus",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "Turdus",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "Turdus",
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "a28a5526aebb",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-fb03ced4384758659c564d48cf5ccc69",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "rank.species",
+    "question": "그중 Hypsipetes amaurotis에 속하는 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "abstain",
+    "result_kind": "graph_query",
+    "payload_status": "insufficient_data",
+    "answer_text": "Hypsipetes amaurotis의 서식 환경, 먹이 구성 자료가 그래프에 없어 조건을 확인하지 못했습니다.",
+    "items": 0,
+    "has_more": false,
+    "coverage": {
+      "evaluable": 0,
+      "scoped": 1,
+      "matched": 0
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "먹이 구성에 열매 포함"
+    ],
+    "taxon": "Hypsipetes amaurotis",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": "Hypsipetes amaurotis",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": "Hypsipetes amaurotis",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-f9a0b89f5c699ebf44118d4cb36e88d1",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.wetland.base",
+    "question": "습지에 사는 새 알려줘",
+    "sent_context": false,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 9796종 중 590종이 조건(서식 환경 습지(Wetland))에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 9796,
+      "scoped": 11131,
+      "matched": 590
+    },
+    "executed_conditions": [
+      "서식 환경 습지(Wetland)"
+    ],
+    "taxon": null,
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "72b589841155",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-7f556f7b6c72963ddca1f94e8ff474c2",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.wetland.fish",
+    "question": "그중 물고기 먹는 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 172종이 조건(서식 환경 습지(Wetland), 먹이 구성에 물고기 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 6898,
+      "scoped": 11131,
+      "matched": 172
+    },
+    "executed_conditions": [
+      "서식 환경 습지(Wetland)",
+      "먹이 구성에 물고기 포함"
+    ],
+    "taxon": null,
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "습지에 사는 새 알려줘",
+      "added": "먹이 구성에 물고기 포함",
+      "plan": {
+        "conditions": [
+          "서식 환경 습지(Wetland)",
+          "먹이 구성에 물고기 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 습지(Wetland)",
+          "먹이 구성에 물고기 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "9438e6420ef7",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-c260ad5eb38be810b799b2a42cf90563",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.seed.base",
+    "question": "참새목 중 씨앗 먹는 새",
+    "sent_context": false,
+    "request_extra": {
+      "species_scope": "korea"
+    },
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 165종 중 88종이 조건(먹이 구성에 씨앗 포함)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 165,
+      "scoped": 256,
+      "matched": 88
+    },
+    "executed_conditions": [
+      "먹이 구성에 씨앗 포함"
+    ],
+    "taxon": "Passeriformes",
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "ab64dac7762e",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-c0218faa730f5fed7997d145343cc8bf",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.seed.korea_scope_kept",
+    "question": "그중 숲에 사는 새는?",
+    "sent_context": true,
+    "request_extra": {
+      "species_scope": "korea"
+    },
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 164종 중 35종이 조건(먹이 구성에 씨앗 포함, 서식 환경 숲(Forest))에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 164,
+      "scoped": 256,
+      "matched": 35
+    },
+    "executed_conditions": [
+      "먹이 구성에 씨앗 포함",
+      "서식 환경 숲(Forest)"
+    ],
+    "taxon": "Passeriformes",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "참새목 중 씨앗 먹는 새",
+      "added": "서식 환경 숲(Forest)",
+      "plan": {
+        "conditions": [
+          "먹이 구성에 씨앗 포함",
+          "서식 환경 숲(Forest)"
+        ],
+        "taxon": "참새목",
+        "scope": "korea"
+      },
+      "retained": {
+        "conditions": [
+          "먹이 구성에 씨앗 포함",
+          "서식 환경 숲(Forest)"
+        ],
+        "taxon": "참새목",
+        "scope": "korea"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "aec601f15d6e",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-d96623230aa41b4b7cac0d445339e915",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.order_fruit.base",
+    "question": "참새목 중 열매를 먹고 사는 새는?",
+    "sent_context": false,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목에 속하면서 AviList and EltonTraits approved reference bundle 자료의 조건에 맞는 종입니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "842d376c1f48",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-c297be236009a6df67d91124a29a0820",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "indep.order_fruit.wing",
+    "question": "그중 날개 길이 100mm 미만인 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 3978종 중 1015종이 조건(먹이 구성에 열매 포함, 접은 날개 길이 100mm 미만)에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 3978,
+      "scoped": 6705,
+      "matched": 1015
+    },
+    "executed_conditions": [
+      "먹이 구성에 열매 포함",
+      "접은 날개 길이 100mm 미만"
+    ],
+    "taxon": "Passeriformes",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "참새목 중 열매를 먹고 사는 새는?",
+      "added": "접은 날개 길이 100mm 미만",
+      "plan": {
+        "conditions": [
+          "먹이 구성에 열매 포함",
+          "접은 날개 길이 100mm 미만"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "먹이 구성에 열매 포함",
+          "접은 날개 길이 100mm 미만"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "e044a03a80db",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-397a073a613f3398f8a08f7d94493d38",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "ctx.missing",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": false,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이어서 조회할 이전 조건을 찾지 못했습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "context_missing",
+      "root_question": null,
+      "added": null,
+      "plan": null,
+      "retained": null
+    },
+    "token_returned": false,
+    "token_unchanged": false,
+    "token_sha256_12": null,
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-c6d66673a06c646a6a265b6708a1251f",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "ctx.forged",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조회 조건이 만료되었거나 확인되지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "context_invalid",
+      "root_question": null,
+      "added": null,
+      "plan": null,
+      "retained": null
+    },
+    "token_returned": false,
+    "token_unchanged": false,
+    "token_sha256_12": null,
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-4ebf7a96681ff16a45e9d91c8f3cb095",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "ctx.garbage",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조회 조건이 만료되었거나 확인되지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "context_invalid",
+      "root_question": null,
+      "added": null,
+      "plan": null,
+      "retained": null
+    },
+    "token_returned": false,
+    "token_unchanged": false,
+    "token_sha256_12": null,
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-b6d645ee14df3ea06cff8720add44ccf",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "ctx.scope_mismatch",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {
+      "species_scope": "outside"
+    },
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조회와 선택한 종 범위가 달라 조건을 이어받지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "context_scope_mismatch",
+      "root_question": null,
+      "added": null,
+      "plan": null,
+      "retained": null
+    },
+    "token_returned": false,
+    "token_unchanged": false,
+    "token_sha256_12": null,
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-783e1b4d8e0ccf828e77f3259eda04ff",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "ctx.bare",
+    "question": "그중?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "추가할 조건을 확인하지 못했습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 구체적으로 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "unresolved_addition",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-9d9dc8a10fd3e1c10fcf6aa3bce79566",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.negation",
+    "question": "그중 열매 안 먹는 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "제외·비교 조건이나 종 사이 관계는 이전 조건에 이어 붙일 수 없습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "unsupported_addition",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-ee2fbd82b4e6b0230d3fd8f15028dfd4",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.unresolved",
+    "question": "그중 야행성인 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "추가할 조건을 확인하지 못했습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 구체적으로 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "unresolved_addition",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-ddac1506cebb6691f72bc79e63f22d60",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.multiple",
+    "question": "그중 한국에서 볼 수 있는 습지에 사는 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조건에는 조건을 한 번에 하나씩 추가할 수 있습니다. 하나만 먼저 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "multiple_additions",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-ed65ff408e20318d8ef76d8c880a1d94",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.conflict",
+    "question": "그중 습지에 사는 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조건과 함께 적용할 수 없는 조건입니다. 바꾸려면 원하는 조건을 모두 넣어 새로 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "conflicting_condition",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-53b08a46f214fb2fd71d74ce3287a1c1",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.duplicate",
+    "question": "그중 열매 먹는 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이미 적용된 조건입니다. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "duplicate_condition",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-5e066b95cc1475bb98798853c9dc52cf",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "add.route_conflict",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {
+      "filters": {
+        "kind": "profile",
+        "name": "직박구리"
+      }
+    },
+    "status": 200,
+    "disposition": "clarify",
+    "result_kind": "clarify",
+    "payload_status": null,
+    "answer_text": "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+    "items": 0,
+    "has_more": null,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": null,
+    "followup": {
+      "status": "rejected",
+      "reason": "route_conflict",
+      "root_question": "숲에 사는 열매 먹는 새",
+      "added": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "610b0e64d305",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-514c26937fcd3ba20417fcbd9654bcde",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "empty.base",
+    "question": "참새목 중 숲에 사는 새",
+    "sent_context": false,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 5941종 중 3630종이 조건(서식 환경 숲(Forest))에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 5941,
+      "scoped": 6705,
+      "matched": 3630
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)"
+    ],
+    "taxon": "Passeriformes",
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "48480ef48e7d",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-9fe10ce1b06b996949caef25bfc81cec",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "empty.followup",
+    "question": "그중 체중 5000g 이상인 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "abstain",
+    "result_kind": "graph_query",
+    "payload_status": "empty",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 5760종 중 조건(서식 환경 숲(Forest), 체중 5000g 이상)에 맞는 종을 찾지 못했습니다.",
+    "items": 0,
+    "has_more": false,
+    "coverage": {
+      "evaluable": 5760,
+      "scoped": 6705,
+      "matched": 0
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)",
+      "체중 5000g 이상"
+    ],
+    "taxon": "Passeriformes",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "참새목 중 숲에 사는 새",
+      "added": "체중 5000g 이상",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "체중 5000g 이상"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)"
+        ],
+        "taxon": "참새목",
+        "scope": "all"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": true,
+    "token_sha256_12": "48480ef48e7d",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-80b7eb6772a8b1fc5dbfe98b86d679db",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "empty.next_uses_retained",
+    "question": "그중 한국에서 볼 수 있는 새는?",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "참새목 (Passeriformes) 범위에서 조건 자료가 모두 있는 239종 중 109종이 조건(서식 환경 숲(Forest))에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 239,
+      "scoped": 256,
+      "matched": 109
+    },
+    "executed_conditions": [
+      "서식 환경 숲(Forest)"
+    ],
+    "taxon": "Passeriformes",
+    "followup": {
+      "status": "applied",
+      "reason": null,
+      "root_question": "참새목 중 숲에 사는 새",
+      "added": "국내 기록",
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)"
+        ],
+        "taxon": "참새목",
+        "scope": "korea"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)"
+        ],
+        "taxon": "참새목",
+        "scope": "korea"
+      }
+    },
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "c80fd0007820",
+    "warnings_has_korea_record": true,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-2341183759a7916fbf83c6da3bb4a301",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "new.standalone_graph",
+    "question": "습지에 사는 새 알려줘",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 9796종 중 590종이 조건(서식 환경 습지(Wetland))에 모두 맞습니다.",
+    "items": 20,
+    "has_more": true,
+    "coverage": {
+      "evaluable": 9796,
+      "scoped": 11131,
+      "matched": 590
+    },
+    "executed_conditions": [
+      "서식 환경 습지(Wetland)"
+    ],
+    "taxon": null,
+    "followup": null,
+    "token_returned": true,
+    "token_unchanged": false,
+    "token_sha256_12": "b7a505808c18",
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-53f628e911999261da5026a226c2b287",
+      "feedback_token_present": true
+    }
+  },
+  {
+    "label": "new.other_kind",
+    "question": "까치와 같은 속인 새",
+    "sent_context": true,
+    "request_extra": {},
+    "status": 200,
+    "disposition": "answer",
+    "result_kind": "graph_query",
+    "payload_status": "answer",
+    "answer_text": "까치와 같은 까치속 (Pica)에 속하는 종입니다. 분류상 같은 속이며 외형 유사도 순위가 아닙니다.",
+    "items": 6,
+    "has_more": false,
+    "coverage": null,
+    "executed_conditions": [],
+    "taxon": "Pica serica",
+    "followup": null,
+    "token_returned": false,
+    "token_unchanged": false,
+    "token_sha256_12": null,
+    "warnings_has_korea_record": false,
+    "headers": {
+      "cache-control": "no-store",
+      "x-robingraph-trace-id": "tr-8f07bb1faf9752ac0139facc44bbfa82",
+      "feedback_token_present": true
+    }
+  }
+]

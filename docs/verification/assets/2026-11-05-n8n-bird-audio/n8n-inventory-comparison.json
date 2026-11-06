@@ -1,0 +1,36 @@
+{
+  "workflows": {
+    "before_count": 36,
+    "after_count": 38,
+    "missing_old_ids": [],
+    "changed_old_ids": [],
+    "new_items": [
+      {
+        "id": "rgAudioCollectionTest01",
+        "name": "RobinGraph Audio Collection TEST (manual)",
+        "active": false,
+        "definition_hash": "65b86dd2f5a81c8d77167a1216f21abd"
+      },
+      {
+        "id": "rgAudioWaitFixture20261105",
+        "name": "RobinGraph Audio Wait isolated fixture 20261105",
+        "active": false,
+        "definition_hash": "c7885a57825c716da19af17d22e6c5cf"
+      }
+    ]
+  },
+  "credentials": {
+    "before_count": 37,
+    "after_count": 38,
+    "missing_old_ids": [],
+    "changed_old_ids": [],
+    "new_items": [
+      {
+        "id": "rgAudioTestHeader01",
+        "name": "RobinGraph Audio TEST internal",
+        "type": "httpHeaderAuth",
+        "encrypted_data_hash": "27542f96908a56a359c00eb0ec01f322"
+      }
+    ]
+  }
+}

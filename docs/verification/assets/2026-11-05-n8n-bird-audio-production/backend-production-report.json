@@ -1,0 +1,66 @@
+{
+  "scope": "Dedicated Production audio collection sidecar; existing public app remains unchanged",
+  "new_backend_patch": "backend-sidecar.patch",
+  "production_base": {
+    "image": "ghcr.io/evodmik/robingraph@sha256:963b4836ccf77155a8ca94efa105e66c60f799d05e75f6ae6c5b6ce710b05edc",
+    "revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598"
+  },
+  "overlay": {
+    "runtime_files": 8,
+    "manifest": "sidecar-promotion-manifest.json",
+    "no_unrelated_dirty_source": true
+  },
+  "verification": {
+    "own_unit_tests": 23,
+    "isolated_exact_production_source_tests": 3,
+    "actual_image_network_none": "compat-receipt.json",
+    "startup_live": "start-receipt.json",
+    "graphify": "7329 nodes / 16818 edges; SQL5 not extracted because tree_sitter_sql unavailable"
+  },
+  "database": {
+    "target": "192.168.219.99:5433 / robingraph / ingest",
+    "preflight": "migrate-preflight-receipt.json",
+    "applied": "0005_audio_candidates.sql only",
+    "receipt": "migrate-receipt.json",
+    "candidate_rows_after": 0,
+    "existing_ledger_0001_0004_unchanged": true
+  },
+  "new_service": {
+    "name": "robingraph-audio-collector",
+    "image": "robingraph-audio-collector:prod-3cfe50a76a47",
+    "build_receipt": "build-receipt.json",
+    "network": "homelab_default",
+    "host_ports": 0,
+    "user": "10001:10001",
+    "read_only": true,
+    "memory": "512m",
+    "cpus": 0.5,
+    "persistent_root": "/volume3/Birds-Nest/docker-data/robingraph-audio/audio"
+  },
+  "publication": {
+    "enabled": false,
+    "publish_route_status": 404,
+    "public_media_status": 404,
+    "manual_review_route": "Bearer protected; does not publish"
+  },
+  "unchanged_public_app": [
+    "container ID",
+    "started_at",
+    "image ID",
+    "environment hash",
+    "mounts"
+  ],
+  "executed": [
+    "Explicitly approved additive Production schema migration",
+    "Dedicated sidecar creation and health checks"
+  ],
+  "not_executed": [
+    "External Commons discover or download",
+    "Actual source candidate collection",
+    "Graph publication",
+    "Public app restart or image replacement",
+    "Git commit/push/merge"
+  ],
+  "next": "n8n credential/workflow integration by assigned agent; actual collection only on coordinator next signal",
+  "secrets": "Private NAS env created mode0600. No credential values written to these evidence artifacts."
+}

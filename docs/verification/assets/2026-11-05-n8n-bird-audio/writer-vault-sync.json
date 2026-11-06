@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-05",
+  "task_id": "RG-507",
+  "state": "TEST verified; real candidate awaiting_review; no live publication; Production not approved",
+  "local_files": [
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-11-05-n8n-bird-audio.md",
+      "sha256": "8499c8d3463995ce3e39143cb4d6391bdee40cd14fea763b5aa4b702289ffe64"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/backlog/RG-507.md",
+      "sha256": "8ff18e937c19a44f94c6e7de72606877f2073c508dd5ab1367d33bfe8f4e61e4"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/n8n/README.md",
+      "sha256": "6cf7d70a2ce01d259be15f3f15c8442a4d849d4fab445d6c0361626837ea30ca"
+    }
+  ],
+  "vault_notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-05-RG507-n8n-새소리수집검토저장.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null,
+      "characters": 11204
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null,
+      "characters": 2799
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true,
+      "characters": 8635
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true,
+      "characters": 14399
+    }
+  ],
+  "scope": {
+    "vault_notes_changed": 4,
+    "rg409_status_preserved": true,
+    "other_index_content_preserved": true,
+    "git_operations_performed": false
+  },
+  "verification_basis": "MCP raw content readback equal to local worklog/backlog and exact expected index content; SHA256 calculated from equal local bytes",
+  "readme_delta": "/tmp/n8naudio-readme-final.patch"
+}

@@ -1,0 +1,26 @@
+{
+  "phase": "start",
+  "name": "robingraph-audio-collector",
+  "image": "robingraph-audio-collector:prod-3cfe50a76a47",
+  "healthy": true,
+  "host_ports": 0,
+  "network": "homelab_default",
+  "publication_enabled": false,
+  "actual_readback": {
+    "health": {
+      "status": "ok",
+      "service": "audio-collector",
+      "deployment_target": "prod",
+      "publication_enabled": false
+    },
+    "route_checks": {
+      "/internal/v1/audio/status": 401,
+      "/internal/v1/audio/publish": 404,
+      "/media/audio/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.ogg": 404
+    }
+  },
+  "public_app_unchanged": true,
+  "public_app_restarted": false,
+  "provider_requests": 0,
+  "graph_publication_requests": 0
+}

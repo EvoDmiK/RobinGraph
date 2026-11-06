@@ -1,0 +1,27 @@
+{
+  "task_id": "RG-603",
+  "python": {
+    "run": 1340,
+    "passed": 1300,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 25.47
+  },
+  "feedback_api_mock_tests": 13,
+  "frontend": {
+    "passed": 326,
+    "failed": 0,
+    "milliseconds": 248.185875
+  },
+  "actual_browser_ratings_first_post_200": 3,
+  "keyboard_enter_first_post_200": 1,
+  "actual_assessment_matches": 4,
+  "prior_development_feedback_records_not_counted": 8,
+  "test_experiment_id": "33",
+  "production_experiment_writes": 0,
+  "production_deployed": false,
+  "git_commit_push_performed": false,
+  "response_mocking_live_browser": false,
+  "physical_mobile": false,
+  "exactly_once_distributed_guarantee": false
+}

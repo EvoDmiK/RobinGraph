@@ -1,0 +1,16 @@
+{
+  "scope": "RG-409 audio color follow-up",
+  "runtime_changed": [
+    "src/robingraph/api/static/styles.css"
+  ],
+  "frontend_pass": 338,
+  "frontend_fail": 0,
+  "frontend_skip": 0,
+  "runtime_manifest_matches": 238,
+  "visual_review": "actual-chat-audio-mobile-390.png",
+  "test_deployed": true,
+  "production_changed": false,
+  "database_write": false,
+  "git_operations": false,
+  "browser": "Chromium headless; no physical device/Safari/Firefox"
+}

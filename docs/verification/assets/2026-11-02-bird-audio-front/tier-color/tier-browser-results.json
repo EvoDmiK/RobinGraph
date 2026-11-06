@@ -1,0 +1,164 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-11-02T05:17:35.121Z",
+  "browser": "Chromium headless CDP",
+  "fixtureScope": "Actual deployed TEST CSS, injected class-only audio DOM fixtures. These are CSS cases, not real conservation/recording data.",
+  "fixtures": [
+    {
+      "tier": "lc",
+      "expectedBackground": "rgb(227, 242, 196)",
+      "expectedFocus": "rgb(35, 61, 28)",
+      "background": "rgb(227, 242, 196)",
+      "panel": "rgb(227, 242, 196)",
+      "outline": "rgb(35, 61, 28)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "nt",
+      "expectedBackground": "rgb(211, 239, 227)",
+      "expectedFocus": "rgb(18, 56, 44)",
+      "background": "rgb(211, 239, 227)",
+      "panel": "rgb(211, 239, 227)",
+      "outline": "rgb(18, 56, 44)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "vu",
+      "expectedBackground": "rgb(251, 234, 176)",
+      "expectedFocus": "rgb(63, 44, 0)",
+      "background": "rgb(251, 234, 176)",
+      "panel": "rgb(251, 234, 176)",
+      "outline": "rgb(63, 44, 0)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "en",
+      "expectedBackground": "rgb(253, 217, 189)",
+      "expectedFocus": "rgb(67, 24, 0)",
+      "background": "rgb(253, 217, 189)",
+      "panel": "rgb(253, 217, 189)",
+      "outline": "rgb(67, 24, 0)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "cr",
+      "expectedBackground": "rgb(252, 211, 223)",
+      "expectedFocus": "rgb(67, 0, 26)",
+      "background": "rgb(252, 211, 223)",
+      "panel": "rgb(252, 211, 223)",
+      "outline": "rgb(67, 0, 26)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "ew",
+      "expectedBackground": "rgb(228, 216, 250)",
+      "expectedFocus": "rgb(30, 11, 74)",
+      "background": "rgb(228, 216, 250)",
+      "panel": "rgb(228, 216, 250)",
+      "outline": "rgb(30, 11, 74)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "ex",
+      "expectedBackground": "rgb(236, 235, 241)",
+      "expectedFocus": "rgb(59, 59, 68)",
+      "background": "rgb(236, 235, 241)",
+      "panel": "rgb(236, 235, 241)",
+      "outline": "rgb(59, 59, 68)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "dd",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "ne",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "unconfirmed",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "unknown",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "no-class",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    },
+    {
+      "tier": "nested-no-class",
+      "expectedBackground": "rgb(241, 242, 238)",
+      "expectedFocus": "rgb(32, 53, 29)",
+      "background": "rgb(241, 242, 238)",
+      "panel": "rgb(241, 242, 238)",
+      "outline": "rgb(32, 53, 29)",
+      "focusVisible": true,
+      "passed": true
+    }
+  ],
+  "actualProfiles": [
+    {
+      "name": "Passer montanus",
+      "tier": "lc",
+      "recordings": 1,
+      "surface": "#e3f2c4",
+      "focus": "#233d1c"
+    },
+    {
+      "name": "Aythya ferina",
+      "tier": "vu",
+      "recordings": 0,
+      "surface": "#fbeab0",
+      "focus": "#3f2c00"
+    },
+    {
+      "name": "Platalea minor",
+      "tier": "vu",
+      "recordings": 0,
+      "surface": "#fbeab0",
+      "focus": "#3f2c00"
+    }
+  ],
+  "fixtureScreenshot": "/tmp/robingraph-audio-tier-color-20261102/screenshots/all-tier-native-audio-1440.png",
+  "independentColors": true,
+  "passed": true
+}

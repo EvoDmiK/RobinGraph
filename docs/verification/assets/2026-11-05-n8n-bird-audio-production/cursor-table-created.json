@@ -1,0 +1,38 @@
+{
+  "name": "RobinGraph Audio PROD cursor",
+  "id": "J49mL4EifvZ0Pres",
+  "columns": [
+    {
+      "updatedAt": "2026-11-05T02:46:10.578Z",
+      "createdAt": "2026-11-05T02:46:10.578Z",
+      "id": "utLuGg1oxg6TGLzc",
+      "dataTableId": "J49mL4EifvZ0Pres",
+      "name": "cursor_key",
+      "type": "string",
+      "index": 0
+    },
+    {
+      "updatedAt": "2026-11-05T02:46:10.578Z",
+      "createdAt": "2026-11-05T02:46:10.578Z",
+      "id": "1tiyLsz7TziZRE9G",
+      "dataTableId": "J49mL4EifvZ0Pres",
+      "name": "after_taxon_id",
+      "type": "string",
+      "index": 1
+    }
+  ],
+  "project_id": "YvRaBfnmwjtcKmfS",
+  "seed_rows": {
+    "data": [
+      {
+        "cursor_key": "prod",
+        "after_taxon_id": "",
+        "id": 1,
+        "createdAt": "2026-11-05T02:46:10.910Z",
+        "updatedAt": "2026-11-05T02:46:10.910Z"
+      }
+    ],
+    "nextCursor": null
+  },
+  "other_tables_modified": false
+}

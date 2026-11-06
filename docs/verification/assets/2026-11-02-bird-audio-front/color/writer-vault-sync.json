@@ -1,0 +1,59 @@
+{
+  "verified_at": "2026-11-02T01:56:29.296280+00:00",
+  "task_id": "RG-409",
+  "status": "in_progress",
+  "stage": "TEST 색상 후속 검증 완료 / 운영 승인 대기",
+  "documents": [
+    {
+      "local": "docs/work-log/2026-11-02-bird-audio-front.md",
+      "vault": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리앞면컨트롤.md",
+      "sha256": "9de8aff1d97af3c8aea9879c028d5c35c11231fe449eb42147bdc5f564445adf",
+      "raw_equal": true
+    },
+    {
+      "local": "docs/backlog/RG-409.md",
+      "vault": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "sha256": "61003ec39d1c5ea6b8624a47ef7243175e725510e30fb15c15af9123da655143",
+      "raw_equal": true
+    }
+  ],
+  "readbacks": [
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리앞면컨트롤.md",
+      "raw_equal": true,
+      "changed": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "raw_equal": true,
+      "changed": true
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "changed": false
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "raw_equal": true,
+      "changed": true
+    }
+  ],
+  "updated_notes": 3,
+  "readback_notes": 4,
+  "main_backlog_unchanged": true,
+  "previous_execution_history_preserved": true,
+  "production_changed": false,
+  "git_write_performed": false,
+  "artifacts": {
+    "actual-chat-audio-1280.png": "08172988cbcdd705a622bf24373b9b811b557ec2e6ce9d326d229fa50286fab0",
+    "actual-chat-audio-mobile-390.png": "1c835cd2dd031373182cdc3768f8499f7cd76760473a0ebd4882c7efdac6a86c",
+    "browser-report.md": "b60f3b4325511482e5ef3c060da20ab0f4242e524dcae90892b4b8b16c777c45",
+    "chat-browser-results.json": "fee6a02ab0feec4fa98e64411459a15bc8488a6a6252e2f71f67aebf1dfc815d",
+    "graphify.log": "2496be0a5a3a883d9a9dba10525dc1029a859d5fa087d99551055f017d7e3c73",
+    "root-final-review.json": "3a6be932119cd8c6d2b1c83056b5ddbfd7b50ae950f426323f3737507f486545",
+    "root-ui-tests.log": "cd5656562104e16bacaa892e7fc3ac46af279de0fc0d61bc30d67a3f47f02961",
+    "test-release.json": "e142c5f980870a8c90268f3a987abdbab7d0a18dbef778c10883b7b9ad50d31a",
+    "ui.patch": "f40dc328d2bc9bc4349997e367a7033de2366c650c0fe5762fb88401385ccae2"
+  }
+}

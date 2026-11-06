@@ -1,0 +1,149 @@
+{
+  "target": "test",
+  "uri": "bolt://192.168.219.98:7687",
+  "database": "neo4j",
+  "concept_set_id": "rg:concept-set:avilist-v2025b",
+  "taxonomy_release": "v2025b",
+  "before": {
+    "taxon_properties_sha256": "6954d0f4ad400b41b190e1dedd911f2ecd4c9b7679166817ab671800691f6645",
+    "recordings": 0,
+    "evidence_units": 0,
+    "has_recording_links": 0,
+    "linked_ranks": [],
+    "supported_by_links": 0
+  },
+  "first_import": {
+    "action": "test-upsert",
+    "recordings": 3,
+    "target": "test",
+    "source_id": "wikimedia-commons-bird-recordings",
+    "source_release": "commons-reviewed-2026-10-30"
+  },
+  "after_first": {
+    "taxon_properties_sha256": "6954d0f4ad400b41b190e1dedd911f2ecd4c9b7679166817ab671800691f6645",
+    "recordings": 3,
+    "evidence_units": 3,
+    "has_recording_links": 3,
+    "linked_ranks": [
+      "species"
+    ],
+    "supported_by_links": 3
+  },
+  "actual_read_recordings": [
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "taxon_id": "avilist-taxon:v2025b:544",
+      "recording_id": "commons-recording:23927872",
+      "creator": "Jonathon Jongsma",
+      "license_name": "CC BY-SA 3.0",
+      "metadata_sha256": "f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee"
+    },
+    {
+      "scientific_name": "Hypsipetes amaurotis",
+      "taxon_id": "avilist-taxon:v2025b:23698",
+      "recording_id": "commons-recording:186512225",
+      "creator": "karliatje",
+      "license_name": "CC BY 4.0",
+      "metadata_sha256": "3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1"
+    },
+    {
+      "scientific_name": "Passer montanus",
+      "taxon_id": "avilist-taxon:v2025b:29772",
+      "recording_id": "commons-recording:16592315",
+      "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+      "license_name": "CC BY-SA 3.0",
+      "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+    }
+  ],
+  "subspecies_links": 0,
+  "subspecies_reader_returns_empty": true,
+  "second_import": {
+    "action": "test-upsert",
+    "recordings": 3,
+    "target": "test",
+    "source_id": "wikimedia-commons-bird-recordings",
+    "source_release": "commons-reviewed-2026-10-30"
+  },
+  "after_second": {
+    "taxon_properties_sha256": "6954d0f4ad400b41b190e1dedd911f2ecd4c9b7679166817ab671800691f6645",
+    "recordings": 3,
+    "evidence_units": 3,
+    "has_recording_links": 3,
+    "linked_ranks": [
+      "species"
+    ],
+    "supported_by_links": 3
+  },
+  "duplicate_nodes_or_links": 0,
+  "taxon_properties_unchanged": true,
+  "production_changed": false,
+  "credentials_recorded": false,
+  "actual_subspecies_read": {
+    "id": "avilist-taxon:v2025b:545",
+    "scientific_name": "Anas platyrhynchos platyrhynchos",
+    "reader_records": 0,
+    "all_source_subspecies_links": 0
+  },
+  "initial_subspecies_rank_guard_check": "constructed lineage; actual graph subspecies verification follows separately",
+  "actual_test_http_basic_profiles": [
+    {
+      "scientific_name": "Anas platyrhynchos",
+      "http_ms": 517.98325,
+      "status": "pass",
+      "recording_availability": "available",
+      "recording_count": 1,
+      "recording_ids": [
+        "commons-recording:23927872"
+      ],
+      "basic_profile": true,
+      "photos_pending": true,
+      "traits_count": 18,
+      "summary_present": true,
+      "token_recorded": false
+    },
+    {
+      "scientific_name": "Hypsipetes amaurotis",
+      "http_ms": 898.928917,
+      "status": "pass",
+      "recording_availability": "available",
+      "recording_count": 1,
+      "recording_ids": [
+        "commons-recording:186512225"
+      ],
+      "basic_profile": true,
+      "photos_pending": true,
+      "traits_count": 18,
+      "summary_present": true,
+      "token_recorded": false
+    },
+    {
+      "scientific_name": "Passer montanus",
+      "http_ms": 670.0532079999999,
+      "status": "pass",
+      "recording_availability": "available",
+      "recording_count": 1,
+      "recording_ids": [
+        "commons-recording:16592315"
+      ],
+      "basic_profile": true,
+      "photos_pending": true,
+      "traits_count": 18,
+      "summary_present": true,
+      "token_recorded": false
+    },
+    {
+      "scientific_name": "Corvus corone",
+      "http_ms": 650.4807920000002,
+      "status": "pass",
+      "recording_availability": "no_licensed_recording",
+      "recording_count": 0,
+      "recording_ids": [],
+      "basic_profile": true,
+      "photos_pending": true,
+      "traits_count": 18,
+      "summary_present": true,
+      "token_recorded": false
+    }
+  ],
+  "http_harness_correction": "First request expected result.kind=species; corrected to established API discriminator profile. Original request was HTTP200; app unchanged."
+}

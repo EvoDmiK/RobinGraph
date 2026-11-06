@@ -1,0 +1,55 @@
+{
+  "execution": {
+    "id": 76267,
+    "status": "success",
+    "mode": "cli",
+    "startedAt": "2026-11-05T02:33:37.551Z",
+    "stoppedAt": "2026-11-05T02:33:44.462Z",
+    "waitTill": null
+  },
+  "workflow_id": "rgAudioCollectionProd01",
+  "last_node": "Execution summary",
+  "error_present": false,
+  "waiting": false,
+  "completed": true,
+  "summary": [
+    {
+      "action": "collect",
+      "status": "finished",
+      "results": [
+        {
+          "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+          "status": "awaiting_review",
+          "scientific_name": "Passer montanus",
+          "file_title": "File:Passer montanus.ogg",
+          "recording": {
+            "id": "commons-recording:16592315",
+            "title": "Passer montanus.ogg",
+            "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+            "evidence": {
+              "page_id": 16592315,
+              "revision_id": 1031017614,
+              "taxon_match": "exact_scientific_name",
+              "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+              "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+            },
+            "location": "Moscow region, Russia",
+            "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+            "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+            "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+            "recorded_at": "2011-09-20",
+            "license_name": "CC BY-SA 3.0",
+            "recording_type": "Calls",
+            "scientific_name": "Passer montanus"
+          },
+          "file_sha256": "eb776d11526454947d8a392a5b09f2da657b9c0bd5c6e4297e72016ff191a403",
+          "preview_url": "/internal/v1/audio/preview/5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2"
+        }
+      ],
+      "next_cursor": null,
+      "status_after_wait": null,
+      "publication_automatic": false,
+      "cursor_saved": false
+    }
+  ]
+}

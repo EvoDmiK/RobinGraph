@@ -1,0 +1,76 @@
+{
+  "action": "approved additive production migration",
+  "host": "192.168.219.99",
+  "port": 5433,
+  "database": "robingraph",
+  "schema": "ingest",
+  "actual_server": [
+    "robingraph",
+    "ingest",
+    "172.20.0.6/32",
+    5432
+  ],
+  "before_ledger": [
+    {
+      "version": "0001",
+      "name": "0001_ingest_control_plane.sql",
+      "checksum": "8534cb78ca4410612703e128eb492eb08b427b72d61d94a5c638d46f069661ef"
+    },
+    {
+      "version": "0002",
+      "name": "0002_outbox_run_tracking.sql",
+      "checksum": "00e5e743b845a1ad92bb284d8462fdffb632ee38cd985605b08f2aa49f9d86c2"
+    },
+    {
+      "version": "0003",
+      "name": "0003_outbox_claim_leases.sql",
+      "checksum": "e52cd95f603481a0de0b49cd55d1f16bc6e70d2f4cad4f032c3e71ff6931e4ee"
+    },
+    {
+      "version": "0004",
+      "name": "0004_outbox_aggregate_ordering_index.sql",
+      "checksum": "9d85e42b45cb015bab52afd7c4b5e7de50a85d5fce0d7a737dcb9bfd4d2f1c57"
+    }
+  ],
+  "migration": "0005_audio_candidates.sql",
+  "migration_sha256": "669c5ef02f8a0427a0d4b835cb5e46bbe9a36e5b604c1bfcca1f984633f7c322",
+  "writes": "one new table and one index only",
+  "app_restart": false,
+  "graph_writes": 0,
+  "provider_requests": 0,
+  "credentials_recorded": false,
+  "after_ledger": [
+    {
+      "version": "0001",
+      "name": "0001_ingest_control_plane.sql",
+      "checksum": "8534cb78ca4410612703e128eb492eb08b427b72d61d94a5c638d46f069661ef"
+    },
+    {
+      "version": "0002",
+      "name": "0002_outbox_run_tracking.sql",
+      "checksum": "00e5e743b845a1ad92bb284d8462fdffb632ee38cd985605b08f2aa49f9d86c2"
+    },
+    {
+      "version": "0003",
+      "name": "0003_outbox_claim_leases.sql",
+      "checksum": "e52cd95f603481a0de0b49cd55d1f16bc6e70d2f4cad4f032c3e71ff6931e4ee"
+    },
+    {
+      "version": "0004",
+      "name": "0004_outbox_aggregate_ordering_index.sql",
+      "checksum": "9d85e42b45cb015bab52afd7c4b5e7de50a85d5fce0d7a737dcb9bfd4d2f1c57"
+    },
+    {
+      "version": "0005",
+      "name": "0005_audio_candidates.sql",
+      "checksum": "669c5ef02f8a0427a0d4b835cb5e46bbe9a36e5b604c1bfcca1f984633f7c322"
+    }
+  ],
+  "applied": [
+    "0005_audio_candidates.sql"
+  ],
+  "candidate_rows_after": 0,
+  "public_app_unchanged": true,
+  "public_app_restarted": false,
+  "graph_publication_requests": 0
+}

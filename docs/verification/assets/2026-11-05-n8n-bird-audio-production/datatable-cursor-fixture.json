@@ -1,0 +1,108 @@
+{
+  "fixture_id": "rgAudioTableFixture20261105",
+  "samples": [
+    {
+      "workflow": {
+        "id": "rgAudioTableFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76374,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ],
+      "rows": [
+        {
+          "cursor_key": "prod",
+          "after_taxon_id": "",
+          "id": 1,
+          "createdAt": "2026-11-05T02:46:10.910Z",
+          "updatedAt": "2026-11-05T02:46:10.910Z"
+        },
+        {
+          "cursor_key": "fixture",
+          "after_taxon_id": "1",
+          "id": 2,
+          "createdAt": "2026-11-05T02:52:30.082Z",
+          "updatedAt": "2026-11-05T02:52:30.082Z"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioTableFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76375,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76374,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ],
+      "rows": [
+        {
+          "cursor_key": "prod",
+          "after_taxon_id": "",
+          "id": 1,
+          "createdAt": "2026-11-05T02:46:10.910Z",
+          "updatedAt": "2026-11-05T02:46:10.910Z"
+        },
+        {
+          "cursor_key": "fixture",
+          "after_taxon_id": "2",
+          "id": 2,
+          "createdAt": "2026-11-05T02:52:30.082Z",
+          "updatedAt": "2026-11-05T02:52:35.058Z"
+        }
+      ]
+    }
+  ],
+  "final": {
+    "workflow": {
+      "id": "rgAudioTableFixture20261105",
+      "active": false,
+      "staticData": null
+    },
+    "runs": [
+      {
+        "id": 76375,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76374,
+        "status": "success",
+        "mode": "trigger"
+      }
+    ],
+    "rows": [
+      {
+        "cursor_key": "prod",
+        "after_taxon_id": "",
+        "id": 1,
+        "createdAt": "2026-11-05T02:46:10.910Z",
+        "updatedAt": "2026-11-05T02:46:10.910Z"
+      },
+      {
+        "cursor_key": "fixture",
+        "after_taxon_id": "2",
+        "id": 2,
+        "createdAt": "2026-11-05T02:52:30.082Z",
+        "updatedAt": "2026-11-05T02:52:35.058Z"
+      }
+    ]
+  },
+  "external_requests": 0,
+  "passed": true,
+  "old_workflow_changes": 0
+}

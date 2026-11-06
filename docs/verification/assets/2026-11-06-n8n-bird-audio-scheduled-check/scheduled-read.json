@@ -1,0 +1,104 @@
+{
+  "checked_at_utc": "2026-11-06T01:52:41.614Z",
+  "execution": {
+    "id": 77742,
+    "status": "success",
+    "mode": "trigger",
+    "startedAt": "2026-11-05T18:00:00.129Z",
+    "stoppedAt": "2026-11-05T18:00:05.613Z"
+  },
+  "workflow_version": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+  "last_node": "Execution summary",
+  "error_present": false,
+  "executed_nodes": [
+    "Daily 03:00 Korea",
+    "Read scheduled cursor",
+    "Scheduled collection inputs",
+    "Execution inputs",
+    "Verify PROD collector health",
+    "Initialize request",
+    "Prepare request",
+    "Audio API",
+    "Advance state",
+    "Cooldown required",
+    "Finished",
+    "Prepare execution summary",
+    "Checkpoint scheduled success",
+    "Save scheduled cursor",
+    "Execution summary"
+  ],
+  "schedule_nodes": [
+    {
+      "name": "Daily 03:00 Korea",
+      "parameters": {
+        "notice": "",
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "notice": "",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "action": "collect",
+      "status": "finished",
+      "results": [
+        {
+          "candidate_id": "9e84efdf7b2f9a9a951553a460c073f4913d56a12065b67d96134713b17f93ba",
+          "status": "awaiting_review",
+          "scientific_name": "Jynx torquilla",
+          "file_title": "File:Jynx torquilla - Eurasian Wryneck XC561861.mp3",
+          "recording": {
+            "id": "commons-recording:91877997",
+            "title": "Jynx torquilla - Eurasian Wryneck XC561861.mp3",
+            "creator": "Kim Erlend Vidal",
+            "evidence": {
+              "page_id": 91877997,
+              "revision_id": 962980390,
+              "taxon_match": "exact_scientific_name",
+              "retrieved_at": "2026-11-05T18:00:03.889489+00:00",
+              "metadata_sha256": "fb450d4de75b45c7e9f33b7da0c84d5cbc79eadd0795e9d53665a034863b0385"
+            },
+            "location": null,
+            "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+            "source_url": "https://commons.wikimedia.org/wiki/File:Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+            "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+            "recorded_at": "2020-05-23 21:30",
+            "license_name": "CC BY-SA 4.0",
+            "recording_type": null,
+            "scientific_name": "Jynx torquilla"
+          },
+          "file_sha256": "05da5ee5079346626281498a34b0cf38e12daab90beb0547329cf9f4fb777ab1",
+          "preview_url": "/internal/v1/audio/preview/9e84efdf7b2f9a9a951553a460c073f4913d56a12065b67d96134713b17f93ba"
+        }
+      ],
+      "next_cursor": "avilist-taxon:v2025b:10211",
+      "publication_automatic": false,
+      "scheduled": true,
+      "cursor_saved": true
+    }
+  ],
+  "cursor": [
+    {
+      "id": 1,
+      "cursor_key": "prod",
+      "after_taxon_id": "avilist-taxon:v2025b:10211",
+      "createdAt": "2026-11-05T02:46:10.910Z",
+      "updatedAt": "2026-11-05T18:00:05.589Z"
+    }
+  ],
+  "inputs": [
+    {
+      "action": "collect",
+      "limit": 1,
+      "after_taxon_id": "",
+      "scheduled": true
+    }
+  ]
+}

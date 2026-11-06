@@ -1,0 +1,70 @@
+{
+  "method": "WCAG relative luminance of computed CSS colors; native icon appearance visually inspected, not sampled from pixels",
+  "checks": [
+    {
+      "tier": "lc",
+      "focusContrast": 10.12,
+      "blackIconContrast": 17.76
+    },
+    {
+      "tier": "nt",
+      "focusContrast": 10.58,
+      "blackIconContrast": 17.23
+    },
+    {
+      "tier": "vu",
+      "focusContrast": 11.13,
+      "blackIconContrast": 17.5
+    },
+    {
+      "tier": "en",
+      "focusContrast": 11.57,
+      "blackIconContrast": 15.84
+    },
+    {
+      "tier": "cr",
+      "focusContrast": 12.38,
+      "blackIconContrast": 15.52
+    },
+    {
+      "tier": "ew",
+      "focusContrast": 12.9,
+      "blackIconContrast": 15.5
+    },
+    {
+      "tier": "ex",
+      "focusContrast": 9.35,
+      "blackIconContrast": 17.72
+    },
+    {
+      "tier": "dd",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    },
+    {
+      "tier": "ne",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    },
+    {
+      "tier": "unconfirmed",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    },
+    {
+      "tier": "unknown",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    },
+    {
+      "tier": "no-class",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    },
+    {
+      "tier": "nested-no-class",
+      "focusContrast": 11.76,
+      "blackIconContrast": 18.68
+    }
+  ]
+}

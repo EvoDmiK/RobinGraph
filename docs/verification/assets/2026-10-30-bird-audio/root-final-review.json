@@ -1,0 +1,36 @@
+{
+  "task_id": "RG-409",
+  "target": "test",
+  "python": {
+    "tests": 60,
+    "pass": 60,
+    "fail": 0,
+    "skip": 0,
+    "scope": "unit/fixture; root integrated recordings/profile/birdbase/DRF parity"
+  },
+  "frontend": {
+    "tests": 337,
+    "pass": 337,
+    "fail": 0,
+    "skip": 0,
+    "scope": "Node mocked DOM"
+  },
+  "test_http": {
+    "pass": 4,
+    "actual_db": true
+  },
+  "test_browser": {
+    "actual_audio_decoding_species": 3,
+    "natural_chat": "Passer montanus",
+    "mobile_width": 390,
+    "desktop_width": 1280,
+    "human_listening": false,
+    "physical_device": false,
+    "safari_firefox": false
+  },
+  "diff_check": "pass",
+  "runtime_source_manifest_matches": 238,
+  "graphify": "exit 0; SQL parser missing for four SQL files",
+  "production_changed": false,
+  "commit_push_merge": false
+}

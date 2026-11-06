@@ -1,0 +1,29 @@
+{
+  "task_id": "RG-507",
+  "date": "2026-11-06",
+  "scope": "User-requested removal of two inactive fixture workflows; documentation followup",
+  "local_files": [
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-11-06-n8n-bird-audio-scheduled-check.md",
+      "sha256": "97e6453fb5066de7c21c070fc5bead1fb9b47301411d328b9bd4077bd0b87766"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/backlog/RG-507.md",
+      "sha256": "743045351d069f6264b112f4ca7433554dba8ec385aeeb4faead4756532c8672"
+    }
+  ],
+  "vault_notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-06-RG507-첫정기새소리수집점검.md",
+      "raw_equal": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "raw_equal": true
+    }
+  ],
+  "vault_notes_changed": 2,
+  "compact_indexes_unchanged": true,
+  "prior_worklogs_and_rg409_unchanged": true,
+  "git_operations_performed": false
+}

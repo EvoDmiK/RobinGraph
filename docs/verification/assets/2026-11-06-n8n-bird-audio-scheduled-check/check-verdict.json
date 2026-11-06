@@ -1,0 +1,19 @@
+{
+  "result": "passed",
+  "execution_id": 77742,
+  "first_scheduled_run_verified": true,
+  "candidate_saved_and_file_hash_matches": true,
+  "cursor_matches_execution_summary": true,
+  "review_pending_total": 2,
+  "automatic_publication": false,
+  "audit_provider_requests": 0,
+  "audit_application_data_writes": 0,
+  "limitations": [
+    "One daily scheduled execution observed; repeated daily stability not yet verified",
+    "Human audio identification/review and publication not performed"
+  ],
+  "evidence": [
+    "scheduled-read.json",
+    "storage-read.json"
+  ]
+}

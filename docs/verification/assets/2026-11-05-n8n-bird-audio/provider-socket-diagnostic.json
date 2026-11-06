@@ -1,0 +1,17 @@
+{
+  "actual_diagnostic": {
+    "runtime": "TEST container robingraph-api-test",
+    "provider_metadata_requests": 1,
+    "file_downloads": 0,
+    "exception": "OSError",
+    "reason": "[Errno 9] Bad file descriptor"
+  },
+  "confirmed_offline_reproduction": {
+    "kind": "real urllib response from local ThreadingHTTPServer on127.0.0.1",
+    "before_fix": "Bad file descriptor at socket.settimeout after read1 Content-Length EOF",
+    "after_fix": "socket looked up from current response.fp on each iteration; already closed fp has no timeout mutation"
+  },
+  "extra_commons_requests_after_diagnosis": 0,
+  "pg_candidate_rows": 0,
+  "production_changed": false
+}

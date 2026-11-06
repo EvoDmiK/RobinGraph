@@ -1,0 +1,428 @@
+{
+  "original_three_preserved": true,
+  "new_species": [
+    {
+      "scientific_name": "Ardea alba",
+      "taxon_id": "avilist-taxon:v2025b:5399",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_alba_-_Great_Egret_XC131650.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "Jonathon Jongsma",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-438",
+            "source_rank": "species",
+            "source_scientific_name": "Ardea alba",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Ardea cinerea",
+      "taxon_id": "avilist-taxon:v2025b:5419",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+      "license_code": "cc-by-sa-4.0",
+      "creator": "Joost van Bruggen",
+      "mime": "audio/mpeg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-443",
+            "source_rank": "species",
+            "source_scientific_name": "Ardea cinerea",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Dryocopus martius",
+      "taxon_id": "avilist-taxon:v2025b:10502",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+      "license_code": "cc-by-sa-4.0",
+      "creator": "SanoAK: Alexander Kürthy",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-577",
+            "source_rank": "species",
+            "source_scientific_name": "Dryocopus martius",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Cuculus canorus",
+      "taxon_id": "avilist-taxon:v2025b:2213",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Cuculus_canorus.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-127",
+            "source_rank": "species",
+            "source_scientific_name": "Cuculus canorus",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Fulica atra",
+      "taxon_id": "avilist-taxon:v2025b:3582",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+      "license_code": "cc-by-sa-4.0",
+      "creator": "Mikko Heikkinen",
+      "mime": "audio/mpeg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-156",
+            "source_rank": "species",
+            "source_scientific_name": "Fulica atra",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Hirundo rustica",
+      "taxon_id": "avilist-taxon:v2025b:22758",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "Jonathon Jongsma",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_and_range_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-728",
+            "source_rank": "species",
+            "source_scientific_name": "Hirundo rustica",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          },
+          {
+            "source_id": "avilist-v2025b",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+            "source_title": "AviList v2025b (Explorer JSON)",
+            "source_taxon_id": "avilist-taxon:v2025b:22762",
+            "source_rank": "subspecies",
+            "source_scientific_name": "Hirundo rustica gutturalis",
+            "source_text": "breeds eastern Himalayas to northeastern Myanmar, Japan, and Korea; winters from southern and southeastern Asia eastward to coastal northern Australia",
+            "source_text_sha256": "34f9e85e304dfbb0d6f50a8dfff0b888beb576c0d39c3a7bf28f1172879ec0d6",
+            "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+            "geography_basis": "avilist_range_names_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Motacilla alba",
+      "taxon_id": "avilist-taxon:v2025b:29861",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+      "license_code": "cc-by-sa-4.0",
+      "creator": "Pascal Christe",
+      "mime": "audio/mpeg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_and_range_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-975",
+            "source_rank": "species",
+            "source_scientific_name": "Motacilla alba",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          },
+          {
+            "source_id": "avilist-v2025b",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+            "source_title": "AviList v2025b (Explorer JSON)",
+            "source_taxon_id": "avilist-taxon:v2025b:29869",
+            "source_rank": "subspecies",
+            "source_scientific_name": "Motacilla alba leucopsis",
+            "source_text": "breeds central and eastern China, Russian Far East, Korea, and southwestern Japan; winters to northern India and southern Asia",
+            "source_text_sha256": "adc6a0824017cd8562199c8b3dcfd7a3d4aa63512aafb80c19f8ce16e657b894",
+            "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+            "geography_basis": "avilist_range_names_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Nycticorax nycticorax",
+      "taxon_id": "avilist-taxon:v2025b:5341",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "Jonathon Jongsma",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-426",
+            "source_rank": "species",
+            "source_scientific_name": "Nycticorax nycticorax",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Picus canus",
+      "taxon_id": "avilist-taxon:v2025b:10399",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Picus_canus.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_and_range_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-579",
+            "source_rank": "species",
+            "source_scientific_name": "Picus canus",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          },
+          {
+            "source_id": "avilist-v2025b",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+            "source_title": "AviList v2025b (Explorer JSON)",
+            "source_taxon_id": "avilist-taxon:v2025b:10401",
+            "source_rank": "subspecies",
+            "source_scientific_name": "Picus canus jessoensis",
+            "source_text": "eastern Siberia to northeastern China, Korea, Sakhalin, and Hokkaido",
+            "source_text_sha256": "dd8d1a3927393b835e9c07b88aeb10bf73e0772d963a9800fb5967754013e97f",
+            "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+            "geography_basis": "avilist_range_names_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Streptopelia orientalis",
+      "taxon_id": "avilist-taxon:v2025b:2612",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Streptopelia_orientalis.ogg",
+      "license_code": "cc-by-sa-3.0",
+      "creator": "boppochan",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-140",
+            "source_rank": "species",
+            "source_scientific_name": "Streptopelia orientalis",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    },
+    {
+      "scientific_name": "Corvus corone",
+      "taxon_id": "avilist-taxon:v2025b:20280",
+      "source_url": "https://commons.wikimedia.org/wiki/File:XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+      "license_code": "cc-by-sa-4.0",
+      "creator": "Sander Pieterse",
+      "mime": "application/ogg",
+      "identification_review": "Exact scientific name on Commons title; description reviewed for identity uncertainty, source context and optional facts. Active AviList species and Korea evidence verified.",
+      "korea_evidence": {
+        "status": "korea",
+        "geographic_scope": "KR",
+        "basis": "source_record_and_range_korea",
+        "evidence": [
+          {
+            "source_id": "kos-2025-v2.1",
+            "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+            "source_taxon_id": "kos-2025-v2.1:공식목록:row-663",
+            "source_rank": "species",
+            "source_scientific_name": "Corvus corone",
+            "source_text": null,
+            "category": "가-1",
+            "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+            "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+            "geography_basis": "kos_official_list_wild_record_korea"
+          },
+          {
+            "source_id": "avilist-v2025b",
+            "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+            "source_title": "AviList v2025b (Explorer JSON)",
+            "source_taxon_id": "avilist-taxon:v2025b:20286",
+            "source_rank": "subspecies",
+            "source_scientific_name": "Corvus corone orientalis",
+            "source_text": "Iran to northern China, Korea, and Japan",
+            "source_text_sha256": "0ad9dfc5d51ad15dfaa81e17581edcb21816eb93d7f7c0bdd21dd61c3980f4d6",
+            "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+            "geography_basis": "avilist_range_names_korea"
+          }
+        ],
+        "seasonal_status": null,
+        "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+      },
+      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+    }
+  ],
+  "excluded": [
+    {
+      "scientific_name": "Anas crecca",
+      "title": "File:Anas crecca - Eurasian Teal XC467849.mp3",
+      "reason": "Commons description explicitly states Identification uncertain; probably a teal. Not accepted as verified species audio."
+    },
+    {
+      "scientific_name": "Pica serica",
+      "reason": "Pica pica audio not substituted; no verified exact-species file selected."
+    },
+    {
+      "scientific_name": "Parus cinereus",
+      "reason": "Parus minor audio not substituted across taxonomic concepts; no verified exact-species file selected."
+    },
+    {
+      "scientific_name": "Garrulus glandarius",
+      "title": "File:Garrulus glandarius.ogg",
+      "reason": "MIME application/ogg but width=1280,height=720; video dimensions fail the existing pure-audio guard. No substitute fetched after stop instruction."
+    }
+  ],
+  "discovery_error": "Parallel Commons search received HTTP429; search stopped, no repeated search requests. Subsequent file titles checked on official category pages; one metadata batch successfully retrieved 13 candidates.",
+  "approved_total_species": 14,
+  "approved_new_species": 11
+}

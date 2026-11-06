@@ -1,0 +1,15 @@
+{
+  "reviewer": "completed_release_checks",
+  "decision": "PASS",
+  "release_file_hashes_matched": 234,
+  "first_submission_cases_verified": 4,
+  "assessment_matches_verified": 4,
+  "new_api_calls": 0,
+  "new_db_git_writes": 0,
+  "limits": [
+    "Single process lock",
+    "No SDK or distributed exactly-once promise",
+    "Physical mobile untested",
+    "Production not deployed"
+  ]
+}
