@@ -1,0 +1,372 @@
+{
+  "id": "rgAvilistTest01",
+  "name": "RobinGraph AviList reviewed pipeline [TEST daily]",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "Manual TEST run",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "daily",
+      "name": "Daily 06:00 KST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -180
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "prepare",
+      "name": "Prepare pinned AviList",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "retryOnFail": false,
+      "onError": "stopWorkflow",
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.219.97:18001/prepare",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 240000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rgAvilistHeader01",
+          "name": "RobinGraph AviList TEST runner"
+        }
+      }
+    },
+    {
+      "id": "check-prepare",
+      "name": "Check prepare result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "prepare-contract",
+              "leftValue": "={{ $json.projection_performed === false && $json.stage === \"prepare\" && ($json.status === 'prepared' && /^[a-f0-9]{64}$/.test($json.manifest_sha256)) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "verify",
+      "name": "Verify approved artifact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "retryOnFail": false,
+      "onError": "stopWorkflow",
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.219.97:18001/verify",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 240000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rgAvilistHeader01",
+          "name": "RobinGraph AviList TEST runner"
+        }
+      }
+    },
+    {
+      "id": "check-verify",
+      "name": "Check verify result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "verify-contract",
+              "leftValue": "={{ $json.projection_performed === false && $json.stage === \"verify\" && ($json.status === 'verified' && $json.manifest_sha256 === $('Prepare pinned AviList').first().json.manifest_sha256) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "apply",
+      "name": "Apply TEST pilot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        0
+      ],
+      "retryOnFail": false,
+      "onError": "stopWorkflow",
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.219.97:18001/apply",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "options": {
+          "timeout": 240000,
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "rgAvilistHeader01",
+          "name": "RobinGraph AviList TEST runner"
+        }
+      }
+    },
+    {
+      "id": "check-apply",
+      "name": "Check apply result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "apply-contract",
+              "leftValue": "={{ $json.projection_performed === false && $json.stage === \"apply\" && (['applied','already_applied','applied_reconciled'].includes($json.status) && $json.manifest_sha256 === $('Verify approved artifact').first().json.manifest_sha256 && $json.release_id === 'rg:release:avilist-pilot:' + $json.manifest_sha256) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "reject",
+      "name": "Reject unexpected result",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        960,
+        280
+      ],
+      "parameters": {
+        "errorMessage": "AviList TEST stage response did not satisfy the reviewed contract"
+      }
+    }
+  ],
+  "connections": {
+    "Manual TEST run": {
+      "main": [
+        [
+          {
+            "node": "Prepare pinned AviList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare pinned AviList": {
+      "main": [
+        [
+          {
+            "node": "Check prepare result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check prepare result": {
+      "main": [
+        [
+          {
+            "node": "Verify approved artifact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject unexpected result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify approved artifact": {
+      "main": [
+        [
+          {
+            "node": "Check verify result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check verify result": {
+      "main": [
+        [
+          {
+            "node": "Apply TEST pilot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject unexpected result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply TEST pilot": {
+      "main": [
+        [
+          {
+            "node": "Check apply result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check apply result": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Reject unexpected result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 06:00 KST": {
+      "main": [
+        [
+          {
+            "node": "Prepare pinned AviList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "executionTimeout": 900,
+    "timezone": "Asia/Seoul",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "versionId": "9459f86b-b335-5a64-8792-8218cba095d9"
+}
