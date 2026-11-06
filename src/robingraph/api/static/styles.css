@@ -328,6 +328,10 @@ body {
   line-height: 1.4;
 }
 
+.clarification-choices {
+  margin-top: 0.65rem;
+}
+
 .entity-candidate-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -1688,20 +1692,21 @@ body:has(.species-popup[open]) { overflow: hidden; }
   color: var(--color-text);
 }
 .species-scope-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 10px;
   margin-top: 6px;
   min-width: 0;
 }
 .species-scope-option {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
   min-height: 44px;
-  padding: 6px 12px;
+  padding: 10px 14px;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: 12px;
   background: var(--color-surface-subtle, #f6f8f5);
   color: var(--color-text);
   font-size: .88rem;
@@ -1712,6 +1717,10 @@ body:has(.species-popup[open]) { overflow: hidden; }
   overflow-wrap: anywhere;
 }
 .species-scope-option input[type="radio"] {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  min-height: 0;
   margin: 0;
   accent-color: var(--color-accent);
 }
@@ -1771,18 +1780,406 @@ body:has(.species-popup[open]) { overflow: hidden; }
   margin: 0 0 4px;
   font-size: .85rem;
 }
-@media (max-width: 480px) {
-  .species-scope-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .species-scope-option {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-@media (max-width: 340px) {
+@media (max-width: 600px) {
   .species-scope-options {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ==========================================================================
+   RobinGraph Graph Query Result Scoped Styles (rg-graph-design.css)
+   ========================================================================== */
+
+/* 1. Root Container: Clean Cream/White Card on Outer Mint */
+.graph-query-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.65rem;
+  padding: 1rem 1.15rem;
+  background: var(--color-surface, #fffdf8);
+  border: 1px solid var(--color-answer-border, #bfe3cb);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(47, 111, 79, 0.06);
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.graph-query-answer h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text, #2a271f);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+/* 2. Count / Metadata Badge */
+.graph-query-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-muted, #726a56);
+  margin: 0.15rem 0 0.35rem;
+}
+
+/* 3. Species List & Rows: Thin Divider, Highlighting & Generous Spacing */
+.graph-query-species {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.graph-query-species-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.85rem;
+  background: var(--color-bg, #f8f3e7);
+  border: 1px solid var(--color-border, #e3dac4);
+  border-radius: 8px;
+  min-width: 0;
+  max-width: 100%;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.graph-query-species-row:hover {
+  border-color: var(--color-answer-border, #bfe3cb);
+  background: var(--color-surface, #fffdf8);
+}
+
+/* Primary Species Name Highlighting */
+.graph-query-species-row strong,
+.graph-query-species-row .entity-candidate-button {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text, #2a271f);
+}
+
+.graph-query-species-row .entity-candidate-button {
+  align-self: flex-start;
+  margin: 0;
+  padding: 0.3rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-accent, #2f6f4f);
+  background: var(--color-surface, #fffdf8);
+  border: 1px solid var(--color-answer-border, #bfe3cb);
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 38px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.graph-query-species-row .entity-candidate-button:hover {
+  background: var(--color-answer-bg, #eaf5ee);
+  border-color: var(--color-accent, #2f6f4f);
+}
+
+.graph-query-species-row .entity-candidate-button:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+}
+
+/* Latin Scientific Name: Small, Italic, Muted */
+.graph-query-latin {
+  font-style: italic;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: var(--color-muted, #726a56);
+  margin-left: 0;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* Nested Species Paths / Evidence */
+.graph-query-species-row ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.82rem;
+  color: var(--color-muted, #726a56);
+  line-height: 1.45;
+}
+
+.graph-query-species-row li {
+  margin: 0.2rem 0;
+  overflow-wrap: anywhere;
+}
+
+.graph-query-species-row li a {
+  color: var(--color-accent, #2f6f4f);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.graph-query-species-row li a:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 4. Notes & Caveats Disclosure (.graph-query-notes) */
+.graph-query-notes {
+  margin-top: 0.25rem;
+  border: 1px solid var(--color-border, #dcd6c8);
+  border-radius: 8px;
+  background: var(--color-surface, #ffffff);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.graph-query-notes > summary {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-muted, #6e6757);
+  cursor: pointer;
+  min-height: 24px;
+  display: list-item;
+}
+
+.graph-query-notes > summary:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.graph-query-notes ul {
+  margin: 0.35rem 0 0.65rem;
+  padding-left: 1.5rem;
+  padding-right: 0.75rem;
+  color: var(--color-text, #2a271f);
+  line-height: 1.55;
+}
+
+.graph-query-notes li {
+  margin: 0.35rem 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* 5. Sources & Evidence Disclosure (.graph-query-evidence) */
+.graph-query-evidence {
+  margin-top: 0.25rem;
+  border: 1px solid var(--color-border, #e3dac4);
+  border-radius: 8px;
+  background: var(--color-bg, #f8f3e7);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.graph-query-evidence > summary {
+  padding: 0.55rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-accent, #2f6f4f);
+  cursor: pointer;
+  min-height: 24px;
+  display: list-item;
+}
+
+.graph-query-evidence > summary:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.graph-query-evidence p {
+  margin: 0.35rem 0.75rem;
+  line-height: 1.45;
+}
+
+.graph-query-evidence a {
+  color: var(--color-accent, #2f6f4f);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.graph-query-evidence a:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--color-accent));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 6. Mobile & Small Screen Responsiveness */
+@media (max-width: 480px) {
+  .graph-query-species { grid-template-columns: 1fr; }
+
+  .graph-query-answer {
+    padding: 0.85rem 0.9rem;
+    gap: 0.65rem;
+  }
+
+  .graph-query-species-row {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .graph-query-species-row .entity-candidate-button {
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .graph-query-latin {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.15rem;
+  }
+}
+
+.graph-query-answer .graph-query-notes > p { margin: .5rem .75rem; }
+.graph-query-answer .graph-query-evidence > ul { margin: .4rem .75rem .7rem; }
+@media (prefers-reduced-motion: reduce) {
+  .graph-query-species-row, .graph-query-species-row .entity-candidate-button { transition: none; }
+}
+
+/* Focused ecological replies share the existing comparison controls. */
+.species-question-answer[data-ecological="true"] { margin-top: 1rem; padding: 1.15rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-surface); }
+.species-question-answer[data-ecological="true"] > h3 { margin: 0 0 1rem; font-size: 1.15rem; line-height: 1.5; }
+.species-ecological-related[data-inline="true"] { margin: 0; padding: 0; border: 0; }
+.species-ecological-related[data-inline="true"] [role="status"]:empty { display: none; }
+.species-ecological-related[data-inline="true"] .ecological-group + .ecological-group { margin-top: 1.25rem; }
+.species-ecological-related[data-inline="true"] h3 { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .65rem; margin: 0 0 .7rem; font-size: .85rem; font-weight: 500; color: var(--color-muted); }
+.ecological-category { padding: .25rem .6rem; border-radius: 999px; background: var(--color-answer-bg); color: var(--color-accent); font-weight: 700; }
+.species-ecological-related[data-inline="true"] .ecological-peer { margin: .45rem 0; padding: .75rem .85rem; border-color: var(--color-border); background: var(--color-bg); }
+.species-ecological-related[data-inline="true"] .comparison-peer-identity strong { font-size: 1rem; color: var(--color-text); text-transform: none; }
+.species-ecological-related[data-inline="true"] button.comparison-peer-choose { grid-row: 1; background: var(--color-surface); color: var(--color-accent); border-color: var(--color-answer-border); padding-inline: .8rem; }
+.species-ecological-related[data-inline="true"] .ecological-group > .ecological-source { margin-top: .75rem; color: var(--color-muted); }
+.species-ecological-related[data-inline="true"] .ecological-source summary { cursor: pointer; min-height: 32px; display: list-item; }
+.species-ecological-related[data-inline="true"] .ecological-source summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.species-ecological-related[data-inline="true"] .ecological-source .ecological-source { padding-left: .75rem; border-left: 2px solid var(--color-border); }
+.species-ecological-related[data-inline="true"] .species-note { margin: 1rem 0 0; padding-top: .8rem; border-top: 1px solid var(--color-border); font-size: .8rem; line-height: 1.65; color: var(--color-muted); }
+.species-popup-entry[data-ecological-reference="true"] > .species-popup-trigger { margin: .6rem 0 0; padding: .45rem .6rem; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-accent); font-size: .8rem; min-height: 44px; }
+@media (max-width: 480px) {
+  .species-question-answer[data-ecological="true"] { padding: .85rem; }
+  .species-ecological-related[data-inline="true"] .ecological-peer { padding: .65rem; gap: .4rem; }
+  .species-ecological-related[data-inline="true"] button.comparison-peer-choose { padding-inline: .55rem; font-size: .85rem; }
+}
+
+.answer-feedback {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+.answer-feedback-buttons { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.answer-feedback-button {
+  font: inherit;
+  font-size: 0.85rem;
+  min-height: 44px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+.answer-feedback-button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.answer-feedback-button[aria-pressed="true"] { border-color: var(--color-accent); font-weight: 700; }
+.answer-feedback-button:disabled { cursor: default; opacity: 0.7; }
+.answer-feedback-status { margin: 0.45rem 0 0; font-size: 0.85rem; color: var(--color-muted); }
+
+.followup-context-bar {
+  margin: 0 0 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--color-answer-border);
+  border-radius: 0.6rem;
+  background: var(--color-answer-bg);
+  color: var(--color-text);
+  font-size: 0.84rem;
+  line-height: 1.45;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.followup-context-bar[hidden] { display: none; }
+
+.graph-query-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-answer-border);
+  border-radius: 0.65rem;
+  background: var(--color-answer-bg);
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.graph-query-conditions[data-followup-status="rejected"] {
+  border-color: var(--color-abstain-border);
+  background: var(--color-abstain-bg);
+}
+.graph-query-conditions-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+.graph-query-conditions-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+.graph-query-condition-added {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-accent);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.graph-query-condition-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+.graph-query-condition-chip {
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.species-recording { margin-block: .65rem; overflow-wrap: anywhere; }
+.species-recording p { margin-block: .35rem; font-size: .78rem; }
+/* Keep native controls light; EX uses its card face rather than its dark badge. */
+.species-card { --recording-surface: #f1f2ee; --recording-focus: #20351d; }
+.species-card.risk-lc { --recording-surface: #e3f2c4; --recording-focus: #233d1c; }
+.species-card.risk-nt { --recording-surface: #d3efe3; --recording-focus: #12382c; }
+.species-card.risk-vu { --recording-surface: #fbeab0; --recording-focus: #3f2c00; }
+.species-card.risk-en { --recording-surface: #fdd9bd; --recording-focus: #431800; }
+.species-card.risk-cr { --recording-surface: #fcd3df; --recording-focus: #43001a; }
+.species-card.risk-ew { --recording-surface: #e4d8fa; --recording-focus: #1e0b4a; }
+.species-card.risk-ex { --recording-surface: #ecebf1; --recording-focus: #3b3b44; }
+.species-recording-audio { display: block; width: 100%; min-width: 0; color-scheme: light; background: var(--recording-surface, #f1f2ee); border-radius: 999px; }
+.species-recording-audio::-webkit-media-controls-panel { background-color: var(--recording-surface, #f1f2ee); }
+.species-recording-audio:focus-visible { outline: 2px solid var(--recording-focus, #20351d); outline-offset: 3px; }
+
+.species-recording-controls { margin-block: .5rem; }
+.species-recording-source-link { display: block; margin: .2rem 0 .45rem auto; padding: .25rem .4rem; font: inherit; font-size: .72rem; color: inherit; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
