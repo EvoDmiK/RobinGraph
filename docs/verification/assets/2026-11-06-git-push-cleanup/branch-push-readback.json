@@ -1,0 +1,26 @@
+{
+  "scope": "after each branch initial cleanup; before Writer final documentation commit",
+  "remote_refs": [
+    {
+      "sha": "0c05d27786d60ca16b0afbff37f396c916d840a1",
+      "ref": "refs/heads/dev"
+    },
+    {
+      "sha": "e8369b8a18209e28ef7a49150886217df66678b0",
+      "ref": "refs/heads/dev-agy"
+    },
+    {
+      "sha": "b37b5ddea5a94ef7b42858847b1d3f64119f8abf",
+      "ref": "refs/heads/dev-claude"
+    },
+    {
+      "sha": "975190d1a8d07081e7bff287022e708df6cb9ab5",
+      "ref": "refs/heads/dev-codex"
+    },
+    {
+      "sha": "34fbcdc259f066a8dd4e23e50fd18ac46e195818",
+      "ref": "refs/heads/main"
+    }
+  ],
+  "main_modified_by_task": false
+}

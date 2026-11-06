@@ -1,0 +1,64 @@
+{
+  "initial_branch": "dev",
+  "initial_head": "67fea34",
+  "initial_changed_files": 546,
+  "initial_bytes": 134004134,
+  "text_files_scanned": 457,
+  "secret_pattern_candidates": 0,
+  "secret_scan_scope": [
+    "PEM private key",
+    "JWT",
+    "URL user/password",
+    "known token prefixes",
+    "quoted secret assignments"
+  ],
+  "secret_scan_limit": "Heuristic text scan; not a proof of absence of all possible secrets",
+  "permanent_backups": [
+    {
+      "original": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/tests/test_taxon_traits.py",
+      "backup": "/Users/kimdove/orca/git-cleanup-backups/RobinGraph-20261106-writer/tests/test_taxon_traits.py",
+      "sha256": "580f38c5f07e14cfb50844cfaa6d72a4243b66f550c4c03ccaa410fd6c9b628b"
+    },
+    {
+      "original": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/tests/test_taxon_traits_api.py",
+      "backup": "/Users/kimdove/orca/git-cleanup-backups/RobinGraph-20261106-writer/tests/test_taxon_traits_api.py",
+      "sha256": "4708b66d6f9a88403e7e19721749d223463fca256a45f5e0c6fa42218355dcdc"
+    },
+    {
+      "original": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/scratch/readback_generalization_check.py",
+      "backup": "/Users/kimdove/orca/git-cleanup-backups/RobinGraph-20261106-writer/scratch/readback_generalization_check.py",
+      "sha256": "81de9e92ba9165f6a48a0139c80538c51dc5ad6231b0d30918ec839789581e5f"
+    }
+  ],
+  "commits": [
+    {
+      "commit": "8daa0de0623680097207728872e0e177259575c0",
+      "subject": "docs: preserve Ponytail integration review guidance"
+    },
+    {
+      "commit": "39c56fc823215224384406b41d773171b2e56084",
+      "subject": "docs: preserve graph question evaluation records and datasets"
+    },
+    {
+      "commit": "77046e59c8cca23924e23d0eb2f74c9d7f7e233d",
+      "subject": "docs: archive contextual queries and approved diet card releases"
+    },
+    {
+      "commit": "0c05d27786d60ca16b0afbff37f396c916d840a1",
+      "subject": "docs: record bird audio delivery and scheduled collection verification"
+    }
+  ],
+  "pushed_head": "0c05d27786d60ca16b0afbff37f396c916d840a1",
+  "remote_dev_match": true,
+  "clean_after_initial_push": true,
+  "published_dataset_index_manifest_checks": 3,
+  "published_csv_crlf_preserved": true,
+  "whitespace_findings": {
+    "csv_crlf_lines": 497,
+    "historical_document_artifact_lines": 69
+  },
+  "tests_not_rerun_on_writer": "Documentation/data preservation; stale test copies backed up, not introduced",
+  "main_merge": false,
+  "force_push": false,
+  "deployment": false
+}
