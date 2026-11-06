@@ -1,0 +1,14 @@
+{
+  "all_passed": true,
+  "shadow_api_verified": true,
+  "legacy_fingerprints": 7,
+  "candidate_regression_cases": 44,
+  "numeric_boundaries": 17,
+  "independent_db_oracle": true,
+  "candidate_browser": 12,
+  "full_python_total": 1164,
+  "full_python_passed": 1125,
+  "full_python_skipped": 39,
+  "human_reviewed": false,
+  "production_authorized": false
+}

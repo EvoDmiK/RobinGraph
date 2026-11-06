@@ -1,0 +1,3884 @@
+{
+  "response_mocking": false,
+  "count": 17,
+  "passed": 17,
+  "failures": [],
+  "rows": [
+    {
+      "question": "까마귀과 중 체중이 -1g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 −1g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 +1g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 .5g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 1,000g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 1e3g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 NaNg 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 Infinityg 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 1.5.3g 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100cm 이상인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100g 이상 50g 이하인 새는?",
+      "expected_conditions": null,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 0.1kg 이상인 새는?",
+      "expected_conditions": [
+        [
+          "body_mass",
+          "num_gte",
+          100,
+          "g"
+        ]
+      ],
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 100종이 조건(체중 100g 이상)에 모두 맞습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "까마귀과 (Corvidae) 중 조건에 맞는 종",
+            "text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 100종이 조건(체중 100g 이상)에 모두 맞습니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20280",
+                  "scientific_name": "Corvus corone",
+                  "english_name": "Carrion Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-663",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus corone",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20286",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Corvus corone orientalis",
+                        "source_text": "Iran to northern China, Korea, and Japan",
+                        "source_text_sha256": "0ad9dfc5d51ad15dfaa81e17581edcb21816eb93d7f7c0bdd21dd61c3980f4d6",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus corone",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 570 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3479&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "대만파랑까치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19982",
+                  "scientific_name": "Urocissa caerulea",
+                  "english_name": "Taiwan Blue Magpie",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Urocissa%20caerulea",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "대만파랑까치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 청까치속 (Urocissa) > Urocissa caerulea",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 256.98 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "떼까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20249",
+                  "scientific_name": "Corvus frugilegus",
+                  "english_name": "Rook",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-661",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus frugilegus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20251",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Corvus frugilegus pastinator",
+                        "source_text": "eastern Asia from central Siberia and northern Mongolia eastward; winters to Korea, Japan, and southeastern China",
+                        "source_text_sha256": "166a47cd7aa3618f009730de90bc36f5a9c1e7163a347774c2681169a01acf51",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "떼까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus frugilegus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 452.1 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은부리까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19923",
+                  "scientific_name": "Pyrrhocorax pyrrhocorax",
+                  "english_name": "Red-billed Chough",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-656",
+                        "source_rank": "species",
+                        "source_scientific_name": "Pyrrhocorax pyrrhocorax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은부리까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax pyrrhocorax",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 276.68 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "아메리카까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20273",
+                  "scientific_name": "Corvus brachyrhynchos",
+                  "english_name": "American Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Corvus%20brachyrhynchos",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "아메리카까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus brachyrhynchos",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 448.76 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20152",
+                  "scientific_name": "Garrulus glandarius",
+                  "english_name": "Eurasian Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-648",
+                        "source_rank": "species",
+                        "source_scientific_name": "Garrulus glandarius",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20173",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Garrulus glandarius brandtii",
+                        "source_text": "southern Siberia and northern Mongolia eastward through northeastern China, Korean Peninsula, and northern Japan",
+                        "source_text_sha256": "08396779a96b4f844cc1b50b3bba36341c0987dd6697604c6ed48a30d76e39c2",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "어치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 어치속 (Garrulus) > Garrulus glandarius",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 159.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "잣까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20218",
+                  "scientific_name": "Nucifraga caryocatactes",
+                  "english_name": "Northern Nutcracker",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-654",
+                        "source_rank": "species",
+                        "source_scientific_name": "Nucifraga caryocatactes",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20220",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Nucifraga caryocatactes macrorhynchos",
+                        "source_text": "northern and northeastern Asia; irruptions to northern Iran, Korea, and northern China",
+                        "source_text_sha256": "7e2f028317a0c3f2d0828722423a01f4089095001c93dcaedad3985176b65496",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "잣까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Nucifraga > Nucifraga caryocatactes",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 182.51 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "집까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20288",
+                  "scientific_name": "Corvus splendens",
+                  "english_name": "House Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-659",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus splendens",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "집까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus splendens",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 292.55 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20261",
+                  "scientific_name": "Corvus corax",
+                  "english_name": "Northern Raven",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-667",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus corax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus corax",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 927.97 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰부리까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20296",
+                  "scientific_name": "Corvus macrorhynchos",
+                  "english_name": "Large-billed Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-665",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus macrorhynchos",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰부리까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus macrorhynchos",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 513.14 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3495&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흰가슴까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20255",
+                  "scientific_name": "Corvus albus",
+                  "english_name": "Pied Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.law.go.kr/LSW/flDownload.do?bylClsCd=200201&flSeq=148704025#page=3",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "흰가슴까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus albus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 524 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3473&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19919",
+                  "scientific_name": "Pyrrhocorax graculus",
+                  "english_name": "Alpine Chough",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Alpine Chough"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax graculus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 211 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19964",
+                  "scientific_name": "Dendrocitta bayleii",
+                  "english_name": "Andaman Treepie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Treepie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Dendrocitta > Dendrocitta bayleii",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.96 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20197",
+                  "scientific_name": "Pica asirensis",
+                  "english_name": "Asir Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Asir Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까치속 (Pica) > Pica asirensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 200 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20325",
+                  "scientific_name": "Corvus coronoides",
+                  "english_name": "Australian Raven",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Australian Raven"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus coronoides",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 644.3 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3480&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20107",
+                  "scientific_name": "Cyanocorax coeruleus",
+                  "english_name": "Azure Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax coeruleus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 272 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20027",
+                  "scientific_name": "Cyanolyca cucullata",
+                  "english_name": "Azure-hooded Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-hooded Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca cucullata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.33 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20141",
+                  "scientific_name": "Cyanocorax heilprini",
+                  "english_name": "Azure-naped Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-naped Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax heilprini",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 172 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20308",
+                  "scientific_name": "Corvus unicolor",
+                  "english_name": "Banggai Crow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Banggai Crow"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus unicolor",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 175 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20332",
+                  "scientific_name": "Corvus insularis",
+                  "english_name": "Bismarck Crow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bismarck Crow"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus insularis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 507.96 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3491&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3479&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3495&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3473&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3480&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3491&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:19917",
+              "rank": "family",
+              "scientific_name": "Corvidae",
+              "korean_name": "까마귀과",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25565"
+            },
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "label": "체중 100g 이상",
+                "op": "num_gte",
+                "value": null,
+                "threshold": 100.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 117,
+              "scoped": 135,
+              "matched": 100
+            },
+            "paths": [
+              {
+                "text": "범위 확인: 까마귀과 (Corvidae) · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 체중 100g 이상",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100g 초과인 새는?",
+      "expected_conditions": [
+        [
+          "body_mass",
+          "num_gt",
+          100,
+          "g"
+        ]
+      ],
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 98종이 조건(체중 100g 초과)에 모두 맞습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "까마귀과 (Corvidae) 중 조건에 맞는 종",
+            "text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 98종이 조건(체중 100g 초과)에 모두 맞습니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20280",
+                  "scientific_name": "Corvus corone",
+                  "english_name": "Carrion Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-663",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus corone",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20286",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Corvus corone orientalis",
+                        "source_text": "Iran to northern China, Korea, and Japan",
+                        "source_text_sha256": "0ad9dfc5d51ad15dfaa81e17581edcb21816eb93d7f7c0bdd21dd61c3980f4d6",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus corone",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 570 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3479&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "대만파랑까치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19982",
+                  "scientific_name": "Urocissa caerulea",
+                  "english_name": "Taiwan Blue Magpie",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Urocissa%20caerulea",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "대만파랑까치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 청까치속 (Urocissa) > Urocissa caerulea",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 256.98 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "떼까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20249",
+                  "scientific_name": "Corvus frugilegus",
+                  "english_name": "Rook",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-661",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus frugilegus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20251",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Corvus frugilegus pastinator",
+                        "source_text": "eastern Asia from central Siberia and northern Mongolia eastward; winters to Korea, Japan, and southeastern China",
+                        "source_text_sha256": "166a47cd7aa3618f009730de90bc36f5a9c1e7163a347774c2681169a01acf51",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "떼까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus frugilegus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 452.1 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은부리까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19923",
+                  "scientific_name": "Pyrrhocorax pyrrhocorax",
+                  "english_name": "Red-billed Chough",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-656",
+                        "source_rank": "species",
+                        "source_scientific_name": "Pyrrhocorax pyrrhocorax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은부리까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax pyrrhocorax",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 276.68 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "아메리카까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20273",
+                  "scientific_name": "Corvus brachyrhynchos",
+                  "english_name": "American Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Corvus%20brachyrhynchos",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "아메리카까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus brachyrhynchos",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 448.76 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20152",
+                  "scientific_name": "Garrulus glandarius",
+                  "english_name": "Eurasian Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-648",
+                        "source_rank": "species",
+                        "source_scientific_name": "Garrulus glandarius",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20173",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Garrulus glandarius brandtii",
+                        "source_text": "southern Siberia and northern Mongolia eastward through northeastern China, Korean Peninsula, and northern Japan",
+                        "source_text_sha256": "08396779a96b4f844cc1b50b3bba36341c0987dd6697604c6ed48a30d76e39c2",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "어치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 어치속 (Garrulus) > Garrulus glandarius",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 159.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "잣까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20218",
+                  "scientific_name": "Nucifraga caryocatactes",
+                  "english_name": "Northern Nutcracker",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-654",
+                        "source_rank": "species",
+                        "source_scientific_name": "Nucifraga caryocatactes",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20220",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Nucifraga caryocatactes macrorhynchos",
+                        "source_text": "northern and northeastern Asia; irruptions to northern Iran, Korea, and northern China",
+                        "source_text_sha256": "7e2f028317a0c3f2d0828722423a01f4089095001c93dcaedad3985176b65496",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "잣까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Nucifraga > Nucifraga caryocatactes",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 182.51 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "집까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20288",
+                  "scientific_name": "Corvus splendens",
+                  "english_name": "House Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-659",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus splendens",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "집까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus splendens",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 292.55 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20261",
+                  "scientific_name": "Corvus corax",
+                  "english_name": "Northern Raven",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-667",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus corax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus corax",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 927.97 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰부리까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20296",
+                  "scientific_name": "Corvus macrorhynchos",
+                  "english_name": "Large-billed Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-665",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus macrorhynchos",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰부리까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus macrorhynchos",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 513.14 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3495&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흰가슴까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20255",
+                  "scientific_name": "Corvus albus",
+                  "english_name": "Pied Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.law.go.kr/LSW/flDownload.do?bylClsCd=200201&flSeq=148704025#page=3",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "흰가슴까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus albus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 524 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3473&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19919",
+                  "scientific_name": "Pyrrhocorax graculus",
+                  "english_name": "Alpine Chough",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Alpine Chough"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax graculus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 211 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19964",
+                  "scientific_name": "Dendrocitta bayleii",
+                  "english_name": "Andaman Treepie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Treepie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Dendrocitta > Dendrocitta bayleii",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.96 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20197",
+                  "scientific_name": "Pica asirensis",
+                  "english_name": "Asir Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Asir Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까치속 (Pica) > Pica asirensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 200 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20325",
+                  "scientific_name": "Corvus coronoides",
+                  "english_name": "Australian Raven",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Australian Raven"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus coronoides",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 644.3 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3480&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20107",
+                  "scientific_name": "Cyanocorax coeruleus",
+                  "english_name": "Azure Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax coeruleus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 272 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20027",
+                  "scientific_name": "Cyanolyca cucullata",
+                  "english_name": "Azure-hooded Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-hooded Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca cucullata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.33 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20141",
+                  "scientific_name": "Cyanocorax heilprini",
+                  "english_name": "Azure-naped Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-naped Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax heilprini",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 172 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20308",
+                  "scientific_name": "Corvus unicolor",
+                  "english_name": "Banggai Crow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Banggai Crow"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus unicolor",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 175 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20332",
+                  "scientific_name": "Corvus insularis",
+                  "english_name": "Bismarck Crow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bismarck Crow"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus insularis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 507.96 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3491&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3479&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3495&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3473&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3480&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3491&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:19917",
+              "rank": "family",
+              "scientific_name": "Corvidae",
+              "korean_name": "까마귀과",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25565"
+            },
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "label": "체중 100g 초과",
+                "op": "num_gt",
+                "value": null,
+                "threshold": 100.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 117,
+              "scoped": 135,
+              "matched": 98
+            },
+            "paths": [
+              {
+                "text": "범위 확인: 까마귀과 (Corvidae) · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 체중 100g 초과",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100g 미만인 새는?",
+      "expected_conditions": [
+        [
+          "body_mass",
+          "num_lt",
+          100,
+          "g"
+        ]
+      ],
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 17종이 조건(체중 100g 미만)에 모두 맞습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "까마귀과 (Corvidae) 중 조건에 맞는 종",
+            "text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 17종이 조건(체중 100g 미만)에 모두 맞습니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "물까치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19999",
+                  "scientific_name": "Cyanopica cyanus",
+                  "english_name": "Azure-winged Magpie",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-650",
+                        "source_rank": "species",
+                        "source_scientific_name": "Cyanopica cyanus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20000",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Cyanopica cyanus cyanus",
+                        "source_text": "eastern Siberia and Mongolia eastward through northern and eastern China and Korean Peninsula",
+                        "source_text_sha256": "62cd81ebc81aee6c1171928a8c457d4a6d0a71473418b3eb79fb6ae4a41276f1",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "물까치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 물까치속 (Cyanopica) > Cyanopica cyanus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 95.91 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3551&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "아메리카어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20045",
+                  "scientific_name": "Cyanocitta cristata",
+                  "english_name": "Blue Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Cyanocitta%20cristata",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "아메리카어치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocitta > Cyanocitta cristata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 88 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3518&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "회색어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20010",
+                  "scientific_name": "Perisoreus canadensis",
+                  "english_name": "Canada Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Perisoreus%20canadensis",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "회색어치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Perisoreus > Perisoreus canadensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 71.58 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3569&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20187",
+                  "scientific_name": "Garrulus lanceolatus",
+                  "english_name": "Black-headed Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-headed Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 어치속 (Garrulus) > Garrulus lanceolatus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 97.7 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3561&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20023",
+                  "scientific_name": "Cyanolyca pumilo",
+                  "english_name": "Black-throated Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-throated Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca pumilo",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 47 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3546&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20067",
+                  "scientific_name": "Aphelocoma californica",
+                  "english_name": "California Scrub Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "California Scrub Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Aphelocoma > Aphelocoma californica",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 85.74 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3463&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20022",
+                  "scientific_name": "Cyanolyca nanus",
+                  "english_name": "Dwarf Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Dwarf Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca nanus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 41 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3544&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20065",
+                  "scientific_name": "Aphelocoma coerulescens",
+                  "english_name": "Florida Scrub Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Florida Scrub Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Aphelocoma > Aphelocoma coerulescens",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 77.12 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3464&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20113",
+                  "scientific_name": "Cyanocorax yncas",
+                  "english_name": "Green Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Green Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax yncas",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 78.5 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3538&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19998",
+                  "scientific_name": "Cyanopica cooki",
+                  "english_name": "Iberian Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Iberian Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 물까치속 (Cyanopica) > Cyanopica cooki",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 70.4 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3550&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20215",
+                  "scientific_name": "Podoces pleskei",
+                  "english_name": "Iranian Ground Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Iranian Ground Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Podoces > Podoces pleskei",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 87.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3582&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20003",
+                  "scientific_name": "Perisoreus infaustus",
+                  "english_name": "Siberian Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Siberian Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Perisoreus > Perisoreus infaustus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 84.4 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3570&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19960",
+                  "scientific_name": "Dendrocitta occipitalis",
+                  "english_name": "Sumatran Treepie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Sumatran Treepie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Dendrocitta > Dendrocitta occipitalis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 95.3 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3557&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20212",
+                  "scientific_name": "Podoces panderi",
+                  "english_name": "Turkestan Ground Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Turkestan Ground Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Podoces > Podoces panderi",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 91.1 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3581&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20037",
+                  "scientific_name": "Cyanolyca turcosa",
+                  "english_name": "Turquoise Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Turquoise Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca turcosa",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 97.5 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3548&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19962",
+                  "scientific_name": "Dendrocitta leucogastra",
+                  "english_name": "White-bellied Treepie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "White-bellied Treepie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Dendrocitta > Dendrocitta leucogastra",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 99.2 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3556&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20021",
+                  "scientific_name": "Cyanolyca mirabilis",
+                  "english_name": "White-throated Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "White-throated Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca mirabilis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 52.4 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3543&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3551&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3518&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3569&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3561&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3546&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3463&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3544&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3464&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3538&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3550&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3582&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3570&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3557&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3581&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3548&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3556&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3543&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": false,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:19917",
+              "rank": "family",
+              "scientific_name": "Corvidae",
+              "korean_name": "까마귀과",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25565"
+            },
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "label": "체중 100g 미만",
+                "op": "num_lt",
+                "value": null,
+                "threshold": 100.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 117,
+              "scoped": 135,
+              "matched": 17
+            },
+            "paths": [
+              {
+                "text": "범위 확인: 까마귀과 (Corvidae) · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 체중 100g 미만",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 접은 날개 길이가 10cm 미만인 새는?",
+      "expected_conditions": [
+        [
+          "wing_length",
+          "num_lt",
+          100,
+          "mm"
+        ]
+      ],
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "abstain",
+        "answer_text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 119종 중 조건(접은 날개 길이 100mm 미만)에 맞는 종을 찾지 못했습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "empty",
+            "title": "까마귀과 (Corvidae) 중 조건에 맞는 종",
+            "text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 119종 중 조건(접은 날개 길이 100mm 미만)에 맞는 종을 찾지 못했습니다.",
+            "items": [],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": false,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:19917",
+              "rank": "family",
+              "scientific_name": "Corvidae",
+              "korean_name": "까마귀과",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25565"
+            },
+            "conditions": [
+              {
+                "trait_name": "wing_length",
+                "label": "접은 날개 길이 100mm 미만",
+                "op": "num_lt",
+                "value": null,
+                "threshold": 100.0,
+                "unit": "mm",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 119,
+              "scoped": 135,
+              "matched": 0
+            },
+            "paths": [
+              {
+                "text": "범위 확인: 까마귀과 (Corvidae) · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 접은 날개 길이 100mm 미만",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    },
+    {
+      "question": "까마귀과 중 체중이 100g 이상 500g 이하인 새는?",
+      "expected_conditions": [
+        [
+          "body_mass",
+          "num_gte",
+          100,
+          "g"
+        ],
+        [
+          "body_mass",
+          "num_lte",
+          500,
+          "g"
+        ]
+      ],
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 82종이 조건(체중 100g 이상, 체중 500g 이하)에 모두 맞습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "까마귀과 (Corvidae) 중 조건에 맞는 종",
+            "text": "까마귀과 (Corvidae) 범위에서 조건 자료가 모두 있는 117종 중 82종이 조건(체중 100g 이상, 체중 500g 이하)에 모두 맞습니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "대만파랑까치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19982",
+                  "scientific_name": "Urocissa caerulea",
+                  "english_name": "Taiwan Blue Magpie",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Urocissa%20caerulea",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "대만파랑까치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 청까치속 (Urocissa) > Urocissa caerulea",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 256.98 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "떼까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20249",
+                  "scientific_name": "Corvus frugilegus",
+                  "english_name": "Rook",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-661",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus frugilegus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20251",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Corvus frugilegus pastinator",
+                        "source_text": "eastern Asia from central Siberia and northern Mongolia eastward; winters to Korea, Japan, and southeastern China",
+                        "source_text_sha256": "166a47cd7aa3618f009730de90bc36f5a9c1e7163a347774c2681169a01acf51",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "떼까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus frugilegus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 452.1 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은부리까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19923",
+                  "scientific_name": "Pyrrhocorax pyrrhocorax",
+                  "english_name": "Red-billed Chough",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-656",
+                        "source_rank": "species",
+                        "source_scientific_name": "Pyrrhocorax pyrrhocorax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은부리까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax pyrrhocorax",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 276.68 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "아메리카까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20273",
+                  "scientific_name": "Corvus brachyrhynchos",
+                  "english_name": "American Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Corvus%20brachyrhynchos",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "아메리카까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus brachyrhynchos",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 448.76 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20152",
+                  "scientific_name": "Garrulus glandarius",
+                  "english_name": "Eurasian Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-648",
+                        "source_rank": "species",
+                        "source_scientific_name": "Garrulus glandarius",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20173",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Garrulus glandarius brandtii",
+                        "source_text": "southern Siberia and northern Mongolia eastward through northeastern China, Korean Peninsula, and northern Japan",
+                        "source_text_sha256": "08396779a96b4f844cc1b50b3bba36341c0987dd6697604c6ed48a30d76e39c2",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "어치"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 어치속 (Garrulus) > Garrulus glandarius",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 159.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "잣까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20218",
+                  "scientific_name": "Nucifraga caryocatactes",
+                  "english_name": "Northern Nutcracker",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-654",
+                        "source_rank": "species",
+                        "source_scientific_name": "Nucifraga caryocatactes",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20220",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Nucifraga caryocatactes macrorhynchos",
+                        "source_text": "northern and northeastern Asia; irruptions to northern Iran, Korea, and northern China",
+                        "source_text_sha256": "7e2f028317a0c3f2d0828722423a01f4089095001c93dcaedad3985176b65496",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "잣까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Nucifraga > Nucifraga caryocatactes",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 182.51 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "집까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20288",
+                  "scientific_name": "Corvus splendens",
+                  "english_name": "House Crow",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-659",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus splendens",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "집까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus splendens",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 292.55 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19919",
+                  "scientific_name": "Pyrrhocorax graculus",
+                  "english_name": "Alpine Chough",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Alpine Chough"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Pyrrhocorax > Pyrrhocorax graculus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 211 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19964",
+                  "scientific_name": "Dendrocitta bayleii",
+                  "english_name": "Andaman Treepie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Treepie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Dendrocitta > Dendrocitta bayleii",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.96 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20197",
+                  "scientific_name": "Pica asirensis",
+                  "english_name": "Asir Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Asir Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까치속 (Pica) > Pica asirensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 200 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20107",
+                  "scientific_name": "Cyanocorax coeruleus",
+                  "english_name": "Azure Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax coeruleus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 272 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20027",
+                  "scientific_name": "Cyanolyca cucullata",
+                  "english_name": "Azure-hooded Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-hooded Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca cucullata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 101.33 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20141",
+                  "scientific_name": "Cyanocorax heilprini",
+                  "english_name": "Azure-naped Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-naped Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax heilprini",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 172 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20308",
+                  "scientific_name": "Corvus unicolor",
+                  "english_name": "Banggai Crow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Banggai Crow"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까마귀속 (Corvus) > Corvus unicolor",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 175 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20205",
+                  "scientific_name": "Pica hudsonia",
+                  "english_name": "Black-billed Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-billed Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 까치속 (Pica) > Pica hudsonia",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 177.12 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3573&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20138",
+                  "scientific_name": "Cyanocorax affinis",
+                  "english_name": "Black-chested Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-chested Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax affinis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 212 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3520&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20033",
+                  "scientific_name": "Cyanolyca armillata",
+                  "english_name": "Black-collared Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-collared Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanolyca > Cyanolyca armillata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 200 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3541&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20098",
+                  "scientific_name": "Cyanocorax colliei",
+                  "english_name": "Black-throated Magpie-Jay",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black-throated Magpie-Jay"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Cyanocorax > Cyanocorax colliei",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 234 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3525&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19939",
+                  "scientific_name": "Platysmurus aterrimus",
+                  "english_name": "Bornean Black Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bornean Black Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > Platysmurus > Platysmurus aterrimus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 180 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3577&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:19979",
+                  "scientific_name": "Cissa jefferyi",
+                  "english_name": "Bornean Green Magpie",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bornean Green Magpie"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 까마귀과 (Corvidae) > 녹까치속 (Cissa) > Cissa jefferyi",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "체중: 125 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3470&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3587&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3487&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3585&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3475&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3565&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3508&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3584&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3552&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3572&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3524&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3542&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3532&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3512&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3573&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3520&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3541&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3525&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3577&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3470&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": {
+              "taxon_id": "avilist-taxon:v2025b:19917",
+              "rank": "family",
+              "scientific_name": "Corvidae",
+              "korean_name": "까마귀과",
+              "korean_name_source_url": "https://www.wikidata.org/wiki/Q25565"
+            },
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "label": "체중 100g 이상",
+                "op": "num_gte",
+                "value": null,
+                "threshold": 100.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              },
+              {
+                "trait_name": "body_mass",
+                "label": "체중 500g 이하",
+                "op": "num_lte",
+                "value": null,
+                "threshold": 500.0,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 117,
+              "scoped": 135,
+              "matched": 82
+            },
+            "paths": [
+              {
+                "text": "범위 확인: 까마귀과 (Corvidae) · 과 (하위 종 전체)",
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "text": "조건: 체중 100g 이상",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              },
+              {
+                "text": "조건: 체중 500g 이하",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null
+      },
+      "error": null
+    }
+  ]
+}

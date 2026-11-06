@@ -1,0 +1,146 @@
+{
+  "count": 432,
+  "passed": 432,
+  "failures": [],
+  "rank_status": {
+    "order": {
+      "answer": 37,
+      "empty": 9
+    },
+    "family": {
+      "empty": 90,
+      "answer": 161,
+      "insufficient_data": 1
+    },
+    "genus": {
+      "answer": 27,
+      "empty": 17,
+      "insufficient_data": 2
+    },
+    "species": {
+      "empty": 16,
+      "insufficient_data": 7,
+      "answer": 23
+    },
+    "subspecies": {
+      "insufficient_data": 42
+    }
+  },
+  "trait_rank": {
+    "habitat": {
+      "order": 4,
+      "family": 16,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "trophic_niche": {
+      "order": 7,
+      "family": 33,
+      "genus": 6,
+      "species": 6,
+      "subspecies": 6
+    },
+    "primary_lifestyle": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "habitat_density_category": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "trophic_level": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "diet_category": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "beak_length_nares": {
+      "order": 6,
+      "family": 34,
+      "genus": 6,
+      "species": 6,
+      "subspecies": 6
+    },
+    "body_mass": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "beak_length_culmen": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "beak_width": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "beak_depth": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "tail_length": {
+      "order": 6,
+      "family": 33,
+      "genus": 7,
+      "species": 6,
+      "subspecies": 5
+    },
+    "tarsus_length": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 3
+    },
+    "wing_length": {
+      "order": 3,
+      "family": 17,
+      "genus": 3,
+      "species": 3,
+      "subspecies": 2
+    },
+    "diet_distribution": {
+      "order": 3,
+      "family": 16,
+      "genus": 3,
+      "species": 4,
+      "subspecies": 2
+    }
+  },
+  "unique_taxa": 432,
+  "composite_cases": 87,
+  "corvidae_cases": 1,
+  "case_sha256": "914b6fd74343936aa35ba8f6f571e10f9164751e908892c984db044a46949945",
+  "limitations": [
+    "Fixed reviewed phrases crossed with real taxonomy; not unseen natural language accuracy",
+    "All orders/families queried once, sampled genera/species/subspecies; not every taxon by every trait",
+    "Read-only bird DB queries; app telemetry may persist",
+    "TEST lifestyle phrasing fix deployed; no Production changes"
+  ]
+}

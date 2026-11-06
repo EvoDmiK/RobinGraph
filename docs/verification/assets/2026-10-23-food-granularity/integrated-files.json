@@ -1,0 +1,32 @@
+[
+  {
+    "path": "src/robingraph/retrieval/graph_questions.py",
+    "before_sha256": "21315a10afd931ec9992ec273023ff16048ba0b721aacc3f5a21ec7ff1487414",
+    "after_sha256": "32e29681fab992a2eed92731161658a7f09ea2ab97ae077ad000780e8c0d741a"
+  },
+  {
+    "path": "src/robingraph/retrieval/graph_intent_schema.py",
+    "before_sha256": "dd949e3a16f9afbf6f71755dbbce38c46b0e898d4ea9823323d364c7dba6323f",
+    "after_sha256": "ee2f06dbb2571eea4502654825f154ed3c57b7e65cee64da3a630bd7f9753cfd"
+  },
+  {
+    "path": "src/robingraph/retrieval/graph_condition_extractor.py",
+    "before_sha256": "17765013bcd524314fc37c540df89645344285e05ac0ca7681ea214b3dca879b",
+    "after_sha256": "2a437ebf6a9d030beddd53297af4b6e69c6295983ab9f982e43cae11d23422ca"
+  },
+  {
+    "path": "tests/test_taxon_traits.py",
+    "before_sha256": "7c6665d7f1bd79ffb326d73924b2c4c4d6683aa43a8af59a16f96cb5ade6b286",
+    "after_sha256": "f6dbc8631e7590770168dbd08ac3ea4a477b6d366deafc7258ce9af5786b3d7a"
+  },
+  {
+    "path": "src/robingraph/api/services.py",
+    "before_sha256": "a1dac11d2e09660b252233cf6226d320b239d820d18b68094a8500de76481cfa",
+    "after_sha256": "9c60190c0736b0a88f942f69987434643ab4930063f5cf7609b5a59c1c4a26df"
+  },
+  {
+    "path": "tests/test_taxon_traits_api.py",
+    "before_sha256": "4708b66d6f9a88403e7e19721749d223463fca256a45f5e0c6fa42218355dcdc",
+    "after_sha256": "e6fd3cd774b2dffe38df3b548e5265b80d19185486b74a90753e587487f334b0"
+  }
+]

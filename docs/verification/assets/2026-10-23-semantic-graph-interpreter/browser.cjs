@@ -1,0 +1,8 @@
+const {chromium}=require('/tmp/robingraph-browser-qa/node_modules/playwright');
+const fs=require('node:fs'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true}),rows=[];try{
+for(const width of [390,1280]){const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('https://robingraph-test.dove-nest.com/chat');
+for(const [id,question] of [['numeric','몸무게 700g 이상인 새를 오리과에서 추려 줄래요?'],['relation','숲을 서식지로 쓰는 새로 좁혀 줘. 그중 직박구리와 AVONET 먹이 생태 범주가 같은 다른 새가 궁금해.']]){
+ await page.locator('#question-input').fill(question);const pending=page.waitForResponse(r=>r.url().endsWith('/v1/chat')&&r.request().method()==='POST',{timeout:90000});await page.locator('#question-input').press('Enter');const data=await(await pending).json();await page.waitForFunction(()=>!document.querySelector('#question-input').disabled,{timeout:90000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);await page.screenshot({path:__dirname+`/${id}-${width}.png`});rows.push({width,question,disposition:data.disposition,kind:data.result.kind,status:data.result.payload?.status,page_errors:[...errors],overflow:false,response_mocking:false,response:data});}
+ await page.close();}
+fs.writeFileSync(__dirname+'/browser.json',JSON.stringify({browser:'Chromium',physical_mobile:false,rows},null,2)+'\n');console.log(JSON.stringify(rows.map(({width,disposition,kind,status})=>({width,disposition,kind,status}))));}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

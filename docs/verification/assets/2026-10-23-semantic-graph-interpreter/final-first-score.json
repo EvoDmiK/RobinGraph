@@ -1,0 +1,443 @@
+{
+  "source": "final-plans.json",
+  "primary_metric": "supported_plan_exact_semantics",
+  "supported_pass": 7,
+  "supported_total": 18,
+  "hold_pass": 5,
+  "hold_total": 6,
+  "preserve_needs_api_verification": 4,
+  "limitations": [
+    "No actual API/DB execution is established by plan artifacts.",
+    "shared_diet/habitat_shared_diet map to trophic_niche equality excluding reference; executor semantics require separate verification."
+  ],
+  "unexpected_ids": [],
+  "rows": [
+    {
+      "id": "fresh-01",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-02",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-03",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": null
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": "Ardea",
+            "rank": "genus",
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Riverine"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "threshold": 0,
+                "value": "meat"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-04",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": "참새",
+            "rank": "species",
+            "conditions": [
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "threshold": 0,
+                "value": "seed"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-05",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": null
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": "Passer domesticus domesticus",
+            "rank": "subspecies",
+            "conditions": [
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "threshold": 0,
+                "value": "invertebrate"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-06",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "not_graph"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": null,
+            "rank": null,
+            "conditions": [
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "threshold": 0,
+                "value": "fruit"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-07",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-08",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-09",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": "까치속",
+            "rank": "genus",
+            "conditions": [
+              {
+                "trait_name": "body_mass",
+                "op": "num_gt",
+                "threshold": 180,
+                "unit": "g"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-10",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": "청둥오리",
+            "rank": "species",
+            "conditions": [
+              {
+                "trait_name": "wing_length",
+                "op": "num_lt",
+                "threshold": 260,
+                "unit": "mm"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-11",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "taxon_traits",
+            "taxon_name": null,
+            "rank": null,
+            "conditions": [
+              {
+                "trait_name": "diet_distribution",
+                "op": "share_gt",
+                "threshold": 0,
+                "value": "seed"
+              },
+              {
+                "trait_name": "habitat",
+                "op": "eq",
+                "value": "Forest"
+              }
+            ]
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-12",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-13",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "relation",
+            "reference_taxon_name": "직박구리",
+            "share_basis": "trophic_niche",
+            "exclude_reference": true
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-14",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "relation",
+            "reference_taxon_name": "청둥오리",
+            "share_basis": "trophic_niche",
+            "exclude_reference": true
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-15",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": null
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "relation",
+            "reference_taxon_name": "왜가리",
+            "share_basis": "trophic_niche",
+            "exclude_reference": true
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-16",
+      "category": "supported",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "answer",
+          "actual": "clarify"
+        },
+        {
+          "field": "parsed",
+          "expected": {
+            "kind": "relation",
+            "reference_taxon_name": "까치",
+            "share_basis": "trophic_niche",
+            "exclude_reference": true
+          },
+          "actual": null
+        }
+      ]
+    },
+    {
+      "id": "fresh-17",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-18",
+      "category": "supported",
+      "status": "pass",
+      "errors": []
+    },
+    {
+      "id": "fresh-19",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-20",
+      "category": "hold",
+      "status": "fail",
+      "errors": [
+        {
+          "field": "gate",
+          "expected": "explicit non-executing hold",
+          "actual": null
+        }
+      ],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-21",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-22",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-23",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-24",
+      "category": "hold",
+      "status": "pass",
+      "errors": [],
+      "execution_scope": "plan artifact only; actual API/DB execution not observed"
+    },
+    {
+      "id": "fresh-25",
+      "category": "preserve",
+      "status": "needs_api_verification",
+      "errors": [],
+      "reason": "일반 응답 보존은 실제 API 응답 비교가 필요함",
+      "observed_gate": "not_graph",
+      "observed_parsed": null
+    },
+    {
+      "id": "fresh-26",
+      "category": "preserve",
+      "status": "needs_api_verification",
+      "errors": [],
+      "reason": "일반 응답 보존은 실제 API 응답 비교가 필요함",
+      "observed_gate": "not_graph",
+      "observed_parsed": null
+    },
+    {
+      "id": "fresh-27",
+      "category": "preserve",
+      "status": "needs_api_verification",
+      "errors": [],
+      "reason": "일반 응답 보존은 실제 API 응답 비교가 필요함",
+      "observed_gate": null,
+      "observed_parsed": null
+    },
+    {
+      "id": "fresh-28",
+      "category": "preserve",
+      "status": "needs_api_verification",
+      "errors": [],
+      "reason": "일반 응답 보존은 실제 API 응답 비교가 필요함",
+      "observed_gate": "not_graph",
+      "observed_parsed": null
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "scope": "early parser-only smoke against in-progress implementation; not final acceptance",
+  "file_sha256": {
+    "graph_questions": "f305c0bd6e6b1e7ff65604e681ea243869354bb576cd93d887bfabfbda600050",
+    "graph_intent_schema": "c05d269e615ea93d476b70e8097001e371e5f53cb83921b601a0a0d5836395d0",
+    "graph_condition_extractor": "0f1879d00e7cd66c8aba5d87d8aa8e2bcdaa5adff6dbaf59fcd59218d94a55df",
+    "graph_semantic_router": "85a36933dccf68d73c991b61f5fe702bf1654749d88d197683b3ae296b1aa4dc"
+  },
+  "rows": [
+    {
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "kind": "taxon_traits",
+      "gate": "answer",
+      "taxon": "까마귀과",
+      "conditions": "((TraitCondition(trait_name='diet_distribution', op='share_gt', value='fruit', threshold=0, unit=None, qualifier=None), Span(text='열매를', start=7, end=10)),)",
+      "residual": []
+    },
+    {
+      "question": "Corvus 중 숲에 사는 새는?",
+      "kind": null,
+      "gate": "not_graph",
+      "taxon": null,
+      "conditions": "()",
+      "residual": []
+    },
+    {
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "kind": null,
+      "gate": "not_graph",
+      "taxon": null,
+      "conditions": "()",
+      "residual": []
+    },
+    {
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "kind": "taxon_traits",
+      "gate": "clarify",
+      "taxon": "까마귀과",
+      "conditions": "((TraitCondition(trait_name='diet_distribution', op='share_gt', value='fruit', threshold=0, unit=None, qualifier=None), Span(text='열매를', start=13, end=16)),)",
+      "residual": []
+    }
+  ]
+}

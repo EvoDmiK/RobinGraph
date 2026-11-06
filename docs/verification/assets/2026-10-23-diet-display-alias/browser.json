@@ -1,0 +1,66 @@
+{
+  "browser": "Chromium",
+  "physical_mobile": false,
+  "rows": [
+    {
+      "width": 390,
+      "question": "까마귀과 중에서 곤충을 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 390,
+      "question": "까마귀과 중에서 고기를 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 390,
+      "question": "왜가리에 대해 알고 싶어",
+      "diet_labels": [
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%",
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%",
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%"
+      ],
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 1280,
+      "question": "까마귀과 중에서 곤충을 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 1280,
+      "question": "까마귀과 중에서 고기를 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    },
+    {
+      "width": 1280,
+      "question": "왜가리에 대해 알고 싶어",
+      "diet_labels": [
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%",
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%",
+        "먹이: 물고기 60%먹이: 곤충 20%먹이: 고기 20%"
+      ],
+      "page_errors": [],
+      "overflow": false,
+      "response_mocking": false
+    }
+  ]
+}

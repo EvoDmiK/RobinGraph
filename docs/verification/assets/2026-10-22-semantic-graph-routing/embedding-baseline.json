@@ -1,0 +1,13 @@
+{
+  "scope": "Actual TEST self-hosted Jina query embeddings only; no DB or Jev. Five sequential samples; nearest-rank p95 is maximum, not a load-test percentile.",
+  "model": "jinaai/jina-embeddings-v3",
+  "dimensions": 512,
+  "timeout_seconds": 8,
+  "retries": 0,
+  "elapsed_ms": [517.06, 233.43, 213.48, 206.78, 214.58],
+  "successful_calls": 5,
+  "p50_ms": 214.58,
+  "p95_nearest_rank_ms": 517.06,
+  "db_writes": 0,
+  "production_changed": false
+}

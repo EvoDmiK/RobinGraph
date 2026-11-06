@@ -1,0 +1,117 @@
+{
+  "phase": "public",
+  "base": "https://robingraph-test.dove-nest.com",
+  "response_mocking": false,
+  "physical_mobile": false,
+  "browser": "Chromium",
+  "rows": [
+    {
+      "width": 1280,
+      "key": "original",
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "composite",
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "measure",
+      "question": "까마귀과 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "subspecies",
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "negation",
+      "question": "까마귀과 중 숲에 살지 않는 새는?",
+      "status": "clarify",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "label-conflict",
+      "question": "물까마귀과 중 숲에 사는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "original",
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "composite",
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "measure",
+      "question": "까마귀과 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "subspecies",
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "negation",
+      "question": "까마귀과 중 숲에 살지 않는 새는?",
+      "status": "clarify",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "label-conflict",
+      "question": "물까마귀과 중 숲에 사는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    }
+  ]
+}

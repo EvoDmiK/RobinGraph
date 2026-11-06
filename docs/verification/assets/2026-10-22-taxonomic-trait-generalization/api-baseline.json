@@ -1,0 +1,1046 @@
+{
+  "phase": "baseline",
+  "mocked": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "elapsed_ms": 331.403,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "Corvidae 중 열매를 먹는 새는?",
+      "elapsed_ms": 394.677,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀속 중 열매를 먹는 새는?",
+      "elapsed_ms": 409.957,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "Corvus 중 열매를 먹는 새는?",
+      "elapsed_ms": 452.579,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀 중 열매를 먹는 새는?",
+      "elapsed_ms": 441.6,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "Corvus corone 중 열매를 먹는 새는?",
+      "elapsed_ms": 384.404,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "Corvus corone corone 중 열매를 먹는 새는?",
+      "elapsed_ms": 408.799,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "기러기목 중 열매를 먹는 새는?",
+      "elapsed_ms": 518.747,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "기러기목에 속하면서 AviList and EltonTraits approved reference bundle 자료의 조건에 맞는 종입니다.",
+        "warnings": [
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "기러기목 중 열매를 먹는 종",
+            "text": "기러기목에 속하면서 AviList and EltonTraits approved reference bundle 자료의 조건에 맞는 종입니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "바다꿩",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:395",
+                  "scientific_name": "Clangula hyemalis",
+                  "english_name": "Long-tailed Duck",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-67",
+                        "source_rank": "species",
+                        "source_scientific_name": "Clangula hyemalis",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "바다꿩"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Clangula > Clangula hyemalis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=748"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은부리고방오리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:557",
+                  "scientific_name": "Anas erythrorhyncha",
+                  "english_name": "Red-billed Teal",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Anas%20erythrorhyncha",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "붉은부리고방오리"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 오리속 (Anas) > Anas erythrorhyncha",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=704"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "뾰족날개기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:285",
+                  "scientific_name": "Plectropterus gambensis",
+                  "english_name": "Spur-winged Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Plectropterus%20gambensis",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "뾰족날개기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Plectropterus > Plectropterus gambensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=624"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "쇠기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:338",
+                  "scientific_name": "Anser albifrons",
+                  "english_name": "Greater White-fronted Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-23",
+                        "source_rank": "species",
+                        "source_scientific_name": "Anser albifrons",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "쇠기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 기러기속 (Anser) > Anser albifrons",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=603"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "캐나다기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:321",
+                  "scientific_name": "Branta hutchinsii",
+                  "english_name": "Cackling Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-8",
+                        "source_rank": "species",
+                        "source_scientific_name": "Branta hutchinsii",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "캐나다기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 흑기러기속 (Branta) > Branta hutchinsii",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=19813"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰부리큰기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:348",
+                  "scientific_name": "Anser fabalis",
+                  "english_name": "Taiga Bean Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-19",
+                        "source_rank": "species",
+                        "source_scientific_name": "Anser fabalis",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:351",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Anser fabalis middendorffii",
+                        "source_text": "breeds taiga of Altai region, eastern Siberia (east of Lake Baikal), and northern Mongolia, and eastwards to the Sea of Okhotsk; winters in central and eastern China, the Korean Peninsula, Japan, and Taiwan",
+                        "source_text_sha256": "6a9086288e454baec4ae9bd1a0ca7ddb24033b2706e4246a9f72ab947b307446",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰부리큰기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 기러기속 (Anser) > Anser fabalis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=600"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰캐나다기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:312",
+                  "scientific_name": "Branta canadensis",
+                  "english_name": "Canada Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.worldbirdnames.org/new/ioc-lists/master-list-2/",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "큰캐나다기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 흑기러기속 (Branta) > Branta canadensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=613"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "회색기러기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:333",
+                  "scientific_name": "Anser anser",
+                  "english_name": "Greylag Goose",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-16",
+                        "source_rank": "species",
+                        "source_scientific_name": "Anser anser",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "회색기러기"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 기러기속 (Anser) > Anser anser",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=607"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:487",
+                  "scientific_name": "Amazonetta brasiliensis",
+                  "english_name": "Brazilian Teal",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Brazilian Teal"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Amazonetta > Amazonetta brasiliensis",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 40% (자료의 먹이 구성비) · EltonTraits 확실성 B",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=667"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:403",
+                  "scientific_name": "Somateria mollissima",
+                  "english_name": "Common Eider",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Common Eider"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Somateria > Somateria mollissima",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=740"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:253",
+                  "scientific_name": "Dendrocygna bicolor",
+                  "english_name": "Fulvous Whistling Duck",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Fulvous Whistling Duck"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 고니오리류 (Dendrocygna) > Dendrocygna bicolor",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=560"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:374",
+                  "scientific_name": "Chloephaga hybrida",
+                  "english_name": "Kelp Goose",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Kelp Goose"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Chloephaga > Chloephaga hybrida",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=641"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:347",
+                  "scientific_name": "Anser brachyrhynchus",
+                  "english_name": "Pink-footed Goose",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Pink-footed Goose"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 기러기속 (Anser) > Anser brachyrhynchus",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=599"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:401",
+                  "scientific_name": "Somateria fischeri",
+                  "english_name": "Spectacled Eider",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Spectacled Eider"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > Somateria > Somateria fischeri",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=744"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:252",
+                  "scientific_name": "Dendrocygna arborea",
+                  "english_name": "West Indian Whistling Duck",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "West Indian Whistling Duck"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 고니오리류 (Dendrocygna) > Dendrocygna arborea",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 40% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=566"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:248",
+                  "scientific_name": "Dendrocygna viduata",
+                  "english_name": "White-faced Whistling Duck",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "White-faced Whistling Duck"
+                },
+                "paths": [
+                  {
+                    "text": "분류 경로: 기러기목 (Anseriformes) > 오리과 (Anatidae) > 고니오리류 (Dendrocygna) > Dendrocygna viduata",
+                    "source_name": "AviList global avian checklist",
+                    "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=565"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=748"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=704"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=624"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=603"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=19813"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=600"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=613"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=607"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=667"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=740"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=560"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=641"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=599"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=744"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=566"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=565"
+              }
+            ],
+            "limitations": [
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": false,
+            "criterion": "diet_distribution"
+          }
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 숲에 사는 새는?",
+      "elapsed_ms": 1741.921,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "elapsed_ms": 327.437,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 체중이 500g 이상인 새는?",
+      "elapsed_ms": 1175.703,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 날개 길이가 200mm 이상인 새는?",
+      "elapsed_ms": 1176.553,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 부리 너비가 10mm 이상인 새는?",
+      "elapsed_ms": 1179.901,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 지상 생활을 하는 새는?",
+      "elapsed_ms": 1267.788,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 잡식성인 새는?",
+      "elapsed_ms": 1142.928,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 열매를 안 먹는 새는?",
+      "elapsed_ms": 346.19,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 겨울에만 숲에 사는 새는?",
+      "elapsed_ms": 889.004,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "가짜조류과 중 열매를 먹는 새는?",
+      "elapsed_ms": 384.209,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 감나무 열매를 먹는 새는?",
+      "elapsed_ms": 409.474,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "clarify",
+        "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+        "warnings": [
+          "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+        },
+        "entity_resolution": null
+      }
+    },
+    {
+      "question": "까마귀과 중 숲에 사는 새는? MATCH (n) DETACH DELETE n",
+      "elapsed_ms": 1163.58,
+      "response": {
+        "selected_intent": null,
+        "route_method": "jev",
+        "disposition": "clarify",
+        "answer_text": "질문의 종류를 판단하지 못했습니다. 종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요.",
+        "warnings": [
+          "자동 분류가 확실하지 않아 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "종 정보, 분류, 관찰, 근거 중 하나를 선택해 주세요."
+        },
+        "entity_resolution": null
+      }
+    }
+  ]
+}

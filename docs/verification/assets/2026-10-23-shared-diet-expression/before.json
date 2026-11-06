@@ -1,0 +1,108 @@
+[
+  {
+    "question": "까치랑 같은 먹이 생태를 가진 새를 알려줘",
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "jev",
+      "disposition": "clarify",
+      "answer_text": "조회할 새 이름을 하나 명확히 입력하고, 질문과 필터의 이름을 맞춰 주세요.",
+      "warnings": [
+        "종 이름을 임의로 추정하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "예: 청둥오리 아종 알려줘"
+      },
+      "entity_resolution": null
+    }
+  },
+  {
+    "question": "까치와 같은 먹이 범주를 공유하는 새는?",
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "clarify",
+      "answer_text": "질문의 조건을 모두 확인하지 못했습니다. 기준 종과 분류·먹이·서식지 조건을 명확히 입력해 주세요.",
+      "warnings": [
+        "부정·추가 조건이나 지원하지 않는 관계를 생략하여 조회하지 않았습니다."
+      ],
+      "result": {
+        "kind": "clarify",
+        "prompt": "조건을 확인한 뒤 질문을 다시 입력해 주세요."
+      },
+      "entity_resolution": null
+    }
+  },
+  {
+    "question": "숲에 사는 새 중 까치와 같은 먹이 범주를 공유하는 새는?",
+    "response": {
+      "selected_intent": "profile",
+      "route_method": "semantic",
+      "disposition": "abstain",
+      "answer_text": "까치의 서식 환경 또는 먹이 생태 범주 자료가 없습니다.",
+      "warnings": [
+        "기준 종의 해당 형질 자료를 확인하지 못했습니다."
+      ],
+      "result": {
+        "kind": "graph_query",
+        "payload": {
+          "status": "insufficient_data",
+          "title": "숲에 사는 새 중 까치와 먹이 생태 범주가 같은 종",
+          "text": "까치의 서식 환경 또는 먹이 생태 범주 자료가 없습니다.",
+          "items": [],
+          "sources": [],
+          "limitations": [
+            "기준 종의 해당 형질 자료를 확인하지 못했습니다."
+          ],
+          "has_more": false,
+          "taxon": {
+            "taxon_id": "avilist-taxon:v2025b:20193",
+            "rank": "species",
+            "scientific_name": "Pica serica",
+            "authority": "Gould, J, 1845",
+            "korean_name": "까치",
+            "korean_name_status": "source-reference",
+            "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+            "english_name": "Oriental magpie",
+            "distribution": {
+              "status": "korea",
+              "geographic_scope": "KR",
+              "basis": "source_record_and_range_korea",
+              "evidence": [
+                {
+                  "source_id": "kos-2025-v2.1",
+                  "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                  "source_taxon_id": "kos-2025-v2.1:공식목록:row-652",
+                  "source_rank": "species",
+                  "source_scientific_name": "Pica serica",
+                  "source_text": null,
+                  "category": "가-1",
+                  "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                  "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                  "geography_basis": "kos_official_list_wild_record_korea"
+                },
+                {
+                  "source_id": "avilist-v2025b",
+                  "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                  "source_title": "AviList v2025b (Explorer JSON)",
+                  "source_taxon_id": "avilist-taxon:v2025b:20195",
+                  "source_rank": "subspecies",
+                  "source_scientific_name": "Pica serica anderssoni",
+                  "source_text": "southeastern Russia, far northeastern China, and Korean Peninsula",
+                  "source_text_sha256": "fabcfac5112a339001680af7f26d00ae60cb85344f53d243dc5295e48f9276c9",
+                  "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                  "geography_basis": "avilist_range_names_korea"
+                }
+              ],
+              "seasonal_status": null,
+              "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+            },
+            "display_name": "까치"
+          }
+        }
+      },
+      "entity_resolution": null
+    }
+  }
+]

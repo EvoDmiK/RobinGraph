@@ -1,0 +1,50 @@
+{
+  "target": "test",
+  "image": "robingraph-api:test-taxonomic-traits-9adf41538e2e",
+  "source_sha256": "9adf41538e2ee7b577a87a3a74eeb608c78e92f8c3c001bb296c931edabcb679",
+  "runtime_manifest_files": 196,
+  "source_manifest_matches": true,
+  "mode": "active",
+  "mode_history": [
+    "shadow",
+    "active",
+    "off",
+    "active"
+  ],
+  "public_api_regression": 44,
+  "numeric_api_boundaries": 17,
+  "actual_scopes": 4,
+  "public_chromium": 12,
+  "viewports": [
+    1280,
+    390
+  ],
+  "first_independent_api_passed": 42,
+  "first_independent_api_total": 44,
+  "independent_db_exact_scope_counts": 32,
+  "independent_db_condition_supports": 587,
+  "independent_db_unique_taxa": 131,
+  "legacy_shadow_unchanged": 7,
+  "legacy_off_unchanged": 7,
+  "mlflow_shadow_and_active_persisted": true,
+  "python_total": 1164,
+  "python_passed": 1125,
+  "python_skipped": 39,
+  "python_failed": 0,
+  "mock_graph_ui_passed": 4,
+  "cold_api_ms": 2268.416,
+  "warm_api_ms": [
+    504.797,
+    472.135,
+    549.153,
+    491.871,
+    492.694
+  ],
+  "physical_mobile_safari_firefox_tested": false,
+  "load_capacity_tested": false,
+  "production_changed": false,
+  "bird_db_writes": 0,
+  "commit_push": false,
+  "human_gold_reviewed": false,
+  "all_natural_language_supported": false
+}

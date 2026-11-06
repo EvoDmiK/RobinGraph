@@ -1,0 +1,43 @@
+{
+  "scope": "early parser-only smoke against in-progress implementation; not final acceptance",
+  "file_sha256": {
+    "graph_questions": "cce6cfe550538d37db764565489eb04cd588f10036455a9bda75c6fceecda787",
+    "graph_intent_schema": "dd949e3a16f9afbf6f71755dbbce38c46b0e898d4ea9823323d364c7dba6323f",
+    "graph_condition_extractor": "f3673ec5642b4886cda889d9820bfb5c13a7d71daa21849c3e080fbb4c7ea3f2",
+    "graph_semantic_router": "85a36933dccf68d73c991b61f5fe702bf1654749d88d197683b3ae296b1aa4dc"
+  },
+  "rows": [
+    {
+      "question": "까마귀과면서 열매를 먹는 새는 어떤 종이 있어?",
+      "kind": "taxon_traits",
+      "gate": "answer",
+      "taxon": "까마귀과",
+      "conditions": "((TraitCondition(trait_name='diet_distribution', op='share_gt', value='fruit', threshold=0, unit=None, qualifier=None), Span(text='열매를', start=7, end=10)),)",
+      "residual": []
+    },
+    {
+      "question": "Corvus 중 숲에 사는 새는?",
+      "kind": "taxon_traits",
+      "gate": "answer",
+      "taxon": "Corvus",
+      "conditions": "((TraitCondition(trait_name='habitat', op='eq', value='Forest', threshold=None, unit=None, qualifier=None), Span(text='숲에 사는', start=9, end=14)),)",
+      "residual": []
+    },
+    {
+      "question": "Corvus corone corone 중 숲에 사는 새는?",
+      "kind": "taxon_traits",
+      "gate": "answer",
+      "taxon": "Corvus corone corone",
+      "conditions": "((TraitCondition(trait_name='habitat', op='eq', value='Forest', threshold=None, unit=None, qualifier=None), Span(text='숲에 사는', start=23, end=28)),)",
+      "residual": []
+    },
+    {
+      "question": "까마귀과 중 숲에 살고 열매를 먹는 새는?",
+      "kind": "taxon_traits",
+      "gate": "answer",
+      "taxon": "까마귀과",
+      "conditions": "((TraitCondition(trait_name='habitat', op='eq', value='Forest', threshold=None, unit=None, qualifier=None), Span(text='숲에 살고', start=7, end=12)), (TraitCondition(trait_name='diet_distribution', op='share_gt', value='fruit', threshold=0, unit=None, qualifier=None), Span(text='열매를', start=13, end=16)))",
+      "residual": []
+    }
+  ]
+}

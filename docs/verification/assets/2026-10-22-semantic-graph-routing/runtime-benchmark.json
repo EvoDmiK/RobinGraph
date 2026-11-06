@@ -1,0 +1,108 @@
+{
+  "scope": "TEST active, one cold then five warm sequential identical read-only questions; sampled container CPU/memory, not peak or load capacity",
+  "response_mocking": false,
+  "bird_db_writes": 0,
+  "prototype_cache": "process memory only; no answer cache",
+  "rows": [
+    {
+      "phase": "cold",
+      "elapsed_ms": 2616.623,
+      "item_count": 20
+    },
+    {
+      "phase": "warm",
+      "elapsed_ms": 713.723,
+      "item_count": 20
+    },
+    {
+      "phase": "warm",
+      "elapsed_ms": 647.937,
+      "item_count": 20
+    },
+    {
+      "phase": "warm",
+      "elapsed_ms": 781.396,
+      "item_count": 20
+    },
+    {
+      "phase": "warm",
+      "elapsed_ms": 644.603,
+      "item_count": 20
+    },
+    {
+      "phase": "warm",
+      "elapsed_ms": 686.06,
+      "item_count": 20
+    }
+  ],
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0.0,
+      "docker_stats": {
+        "BlockIO": "94.8MB / 0B",
+        "CPUPerc": "1.08%",
+        "Container": "robingraph-api-test",
+        "ID": "2405bf605895",
+        "MemPerc": "1.83%",
+        "MemUsage": "146.8MiB / 7.816GiB",
+        "Name": "robingraph-api-test",
+        "NetIO": "21kB / 11.6kB",
+        "PIDs": "10"
+      }
+    },
+    {
+      "elapsed_seconds": 1.078,
+      "docker_stats": {
+        "BlockIO": "96MB / 0B",
+        "CPUPerc": "21.97%",
+        "Container": "robingraph-api-test",
+        "ID": "2405bf605895",
+        "MemPerc": "2.06%",
+        "MemUsage": "165.3MiB / 7.816GiB",
+        "Name": "robingraph-api-test",
+        "NetIO": "571kB / 172kB",
+        "PIDs": "13"
+      }
+    },
+    {
+      "elapsed_seconds": 3.087,
+      "docker_stats": {
+        "BlockIO": "96MB / 0B",
+        "CPUPerc": "16.81%",
+        "Container": "robingraph-api-test",
+        "ID": "2405bf605895",
+        "MemPerc": "2.00%",
+        "MemUsage": "159.9MiB / 7.816GiB",
+        "Name": "robingraph-api-test",
+        "NetIO": "715kB / 693kB",
+        "PIDs": "17"
+      }
+    },
+    {
+      "elapsed_seconds": 5.096,
+      "docker_stats": {
+        "BlockIO": "96MB / 0B",
+        "CPUPerc": "0.18%",
+        "Container": "robingraph-api-test",
+        "ID": "2405bf605895",
+        "MemPerc": "2.00%",
+        "MemUsage": "159.9MiB / 7.816GiB",
+        "Name": "robingraph-api-test",
+        "NetIO": "799kB / 1.02MB",
+        "PIDs": "16"
+      }
+    }
+  ],
+  "final_snapshot": {
+    "BlockIO": "96MB / 0B",
+    "CPUPerc": "0.14%",
+    "Container": "robingraph-api-test",
+    "ID": "2405bf605895",
+    "MemPerc": "2.00%",
+    "MemUsage": "159.9MiB / 7.816GiB",
+    "Name": "robingraph-api-test",
+    "NetIO": "799kB / 1.02MB",
+    "PIDs": "16"
+  },
+  "production_changed": false
+}

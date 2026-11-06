@@ -1,0 +1,19 @@
+{
+  "candidate_mocking": true,
+  "audit_mocking": false,
+  "bird_db_writes": 0,
+  "rows": [
+    {
+      "id": "unknown-condition-omitted",
+      "result": "audit_rejected"
+    },
+    {
+      "id": "scope-omitted",
+      "result": "audit_rejected"
+    },
+    {
+      "id": "condition-invented",
+      "result": "audit_rejected"
+    }
+  ]
+}

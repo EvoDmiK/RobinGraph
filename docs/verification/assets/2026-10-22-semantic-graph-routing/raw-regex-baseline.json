@@ -1,0 +1,1214 @@
+{
+  "summary": {
+    "scope": "Raw existing regex parser only, no gate/DB/API; independent authored holdout not human reviewed",
+    "cases": 40,
+    "matched": 15,
+    "kind_correct": 22,
+    "unsafe_matches": 1,
+    "p50_ms": 0.005604582838714123,
+    "p95_nearest_rank_ms": 0.013167038559913635
+  },
+  "rows": [
+    {
+      "id": "GGQ-H-001",
+      "question": "박새와 쇠박새의 공통 상위 분류군을 알려 주세요",
+      "expected": {
+        "kind": "common_taxonomy",
+        "disposition": "answer",
+        "species": [
+          "박새",
+          "쇠박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "common_taxonomy",
+        "names": [
+          "박새",
+          "쇠박새"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.34204195253551006,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-002",
+      "question": "쇠오리랑 고방오리의 분류 경로를 비교해 주세요",
+      "expected": {
+        "kind": "common_taxonomy",
+        "disposition": "answer",
+        "species": [
+          "쇠오리",
+          "고방오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "common_taxonomy",
+        "names": [
+          "쇠오리",
+          "고방오리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.008916016668081284,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-003",
+      "question": "흰뺨검둥오리와 청둥오리는 분류상 공통점이 뭐니?",
+      "expected": {
+        "kind": "common_taxonomy",
+        "disposition": "answer",
+        "species": [
+          "흰뺨검둥오리",
+          "청둥오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "common_taxonomy",
+        "names": [
+          "흰뺨검둥오리",
+          "청둥오리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.0063749030232429504,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-004",
+      "question": "까치하고 직박구리는 어떤 관계인지 알고 싶어요",
+      "expected": {
+        "kind": "common_taxonomy",
+        "disposition": "answer",
+        "species": [
+          "까치",
+          "직박구리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "common_taxonomy",
+        "names": [
+          "까치",
+          "직박구리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.007500173524022102,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-005",
+      "question": "박새랑 같은 속에 속하는 새는 어느 종들이 있나요?",
+      "expected": {
+        "kind": "same_genus",
+        "disposition": "answer",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "same_genus",
+        "names": [
+          "박새"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.008666189387440681,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-006",
+      "question": "같은 속인 새를 찾아 줘, 기준은 쇠오리야",
+      "expected": {
+        "kind": "same_genus",
+        "disposition": "answer",
+        "species": [
+          "쇠오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003958120942115784,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-007",
+      "question": "고방오리하고 같은 속인 새들이 궁금해",
+      "expected": {
+        "kind": "same_genus",
+        "disposition": "answer",
+        "species": [
+          "고방오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.008458038792014122,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-008",
+      "question": "국내에 기록된 박새와 같은 속의 종은 뭐가 있어요?",
+      "expected": {
+        "kind": "korea_same_genus",
+        "disposition": "answer",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": "korea",
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "korea_same_genus",
+        "names": [
+          "박새"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.007334165275096893,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-009",
+      "question": "고방오리와 같은 속 중 한국에 기록된 종을 보여 주세요",
+      "expected": {
+        "kind": "korea_same_genus",
+        "disposition": "answer",
+        "species": [
+          "고방오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": "korea",
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "korea_same_genus",
+        "names": [
+          "고방오리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.005834037438035011,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-010",
+      "question": "한국에서 기록된 오리 중 쇠오리하고 같은 속인 종은?",
+      "expected": {
+        "kind": "korea_same_genus",
+        "disposition": "answer",
+        "species": [
+          "쇠오리"
+        ],
+        "rank": null,
+        "group": "오리",
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": "korea",
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "korea_same_genus",
+        "names": [
+          "쇠오리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": "오리"
+      },
+      "elapsed_ms": 0.013167038559913635,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-011",
+      "question": "참새목에서 열매 먹는 새는 어떤 종류가 있는지 알려 주세요",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "answer",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.00900006853044033,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-012",
+      "question": "나무 열매를 먹는 새를 참새목에서 찾아줘",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "answer",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "tree_fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.0037918798625469208,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-013",
+      "question": "참새목에 속하는 과실식 새들이 궁금합니다",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "answer",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "frugivore",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005667097866535187,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-014",
+      "question": "Passeriformes 새 중 열매를 먹고 사는 새를 보여 주세요",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "answer",
+        "species": [],
+        "rank": "Passeriformes",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "order_fruit",
+        "names": [],
+        "rank_name": "Passeriformes",
+        "habitat": null,
+        "criterion": "fruit_share",
+        "group": null
+      },
+      "elapsed_ms": 0.01950003206729889,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-015",
+      "question": "습지에 사는 새 중 쇠오리와 같은 먹이 범주를 공유하는 새 알려 주세요",
+      "expected": {
+        "kind": "habitat_shared_diet",
+        "disposition": "answer",
+        "species": [
+          "쇠오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "Wetland",
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "habitat_shared_diet",
+        "names": [
+          "쇠오리"
+        ],
+        "rank_name": null,
+        "habitat": "Wetland",
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.007832888513803482,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-016",
+      "question": "숲에서 사는 새 가운데 박새랑 식성이 같은 새를 찾아 줘",
+      "expected": {
+        "kind": "habitat_shared_diet",
+        "disposition": "answer",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "Forest",
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003583962097764015,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-017",
+      "question": "직박구리와 먹이가 같은 새 중에서 숲에 사는 종이 궁금해",
+      "expected": {
+        "kind": "habitat_shared_diet",
+        "disposition": "answer",
+        "species": [
+          "직박구리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "Forest",
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005792127922177315,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-018",
+      "question": "고방오리와 서식 환경이 같고 먹이 범주가 다른 새를 보여 주세요",
+      "expected": {
+        "kind": "habitat_different_diet",
+        "disposition": "answer",
+        "species": [
+          "고방오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "target",
+        "relation": "different",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "habitat_different_diet",
+        "names": [
+          "고방오리"
+        ],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.008167000487446785,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-019",
+      "question": "서식지는 쇠오리와 겹치지만 먹이는 다른 새들이 있을까요?",
+      "expected": {
+        "kind": "habitat_different_diet",
+        "disposition": "answer",
+        "species": [
+          "쇠오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "target",
+        "relation": "different",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.006707850843667984,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-020",
+      "question": "박새랑 같은 서식 환경에 살지만 식성이 다른 새가 궁금해",
+      "expected": {
+        "kind": "habitat_different_diet",
+        "disposition": "answer",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "target",
+        "relation": "different",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.004999805241823196,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-021",
+      "question": "참새목 새 중 산수유 열매를 먹는 새는 어느 종이 있나요?",
+      "expected": {
+        "kind": "specific_fruit",
+        "disposition": "insufficient_data",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": "산수유",
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "specific_fruit",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.006916932761669159,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-022",
+      "question": "숲에 사는 새 중 박새랑 같은 열매를 먹는 새를 알려 주세요",
+      "expected": {
+        "kind": "specific_fruit",
+        "disposition": "insufficient_data",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": "Forest",
+        "relation": null,
+        "scope": null,
+        "specific_plant": "같은 열매",
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "specific_fruit",
+        "names": [
+          "박새"
+        ],
+        "rank_name": null,
+        "habitat": "Forest",
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.005542067810893059,
+      "kind_correct": true,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-023",
+      "question": "참새목 중 마가목 열매를 먹고 사는 새는 뭐가 있습니까?",
+      "expected": {
+        "kind": "specific_fruit",
+        "disposition": "insufficient_data",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": "마가목",
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "order_fruit",
+        "names": [],
+        "rank_name": "참새목 중 마가목",
+        "habitat": null,
+        "criterion": "fruit_share",
+        "group": null
+      },
+      "elapsed_ms": 0.006041955202817917,
+      "kind_correct": false,
+      "matched": true,
+      "unsafe_match": true
+    },
+    {
+      "id": "GGQ-H-024",
+      "question": "참새목 중 열매를 안 먹는 새를 알려 주세요",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "clarify",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [
+          "안 먹는"
+        ],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.004916917532682419,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-025",
+      "question": "박새 말고 같은 속인 새가 뭐가 있나요?",
+      "expected": {
+        "kind": "same_genus",
+        "disposition": "clarify",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [
+          "말고"
+        ],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003125052899122238,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-026",
+      "question": "참새목에서 과실식이 아닌 새들이 궁금해",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "clarify",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "frugivore",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [
+          "아닌"
+        ],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005292007699608803,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-027",
+      "question": "참새목 중 겨울에 열매를 먹는 새를 보여 줘",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "clarify",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [
+          "겨울에"
+        ],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": {
+        "kind": "specific_fruit",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null
+      },
+      "elapsed_ms": 0.005166977643966675,
+      "kind_correct": false,
+      "matched": true,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-028",
+      "question": "참새목 중 열매를 먹는 몸집이 작은 새는?",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "clarify",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [
+          "몸집이 작은"
+        ],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005249865353107452,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-029",
+      "question": "숲에 사는 새 중 박새와 먹이가 같은 멸종위기인 새는?",
+      "expected": {
+        "kind": "habitat_shared_diet",
+        "disposition": "clarify",
+        "species": [
+          "박새"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "Forest",
+        "relation": "same",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [
+          "멸종위기인"
+        ],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.004708068445324898,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-030",
+      "question": "고방오리와 서식지가 겹치고 먹이가 다른 텃새는?",
+      "expected": {
+        "kind": "habitat_different_diet",
+        "disposition": "clarify",
+        "species": [
+          "고방오리"
+        ],
+        "rank": null,
+        "group": null,
+        "diet": "niche",
+        "habitat": "target",
+        "relation": "different",
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [
+          "텃새"
+        ],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.006791204214096069,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-031",
+      "question": "박새와 실제로 공존하는 새를 찾아 주세요",
+      "expected": {
+        "kind": null,
+        "disposition": "unsupported",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [
+          "co_occurrence"
+        ],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005540903657674789,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-032",
+      "question": "쇠오리와 진화적으로 가장 가까운 새가 뭐야?",
+      "expected": {
+        "kind": null,
+        "disposition": "unsupported",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [
+          "evolutionary_distance"
+        ],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.005875015631318092,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-033",
+      "question": "직박구리를 잡아먹는 새 종류를 보여줘",
+      "expected": {
+        "kind": null,
+        "disposition": "unsupported",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [
+          "predation"
+        ],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003915978595614433,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-034",
+      "question": "참새목 열매 먹는 새를 많이 먹는 순서로 정렬해줘",
+      "expected": {
+        "kind": "order_fruit",
+        "disposition": "unsupported",
+        "species": [],
+        "rank": "참새목",
+        "group": null,
+        "diet": "fruit_share",
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [
+          "ranking"
+        ],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.0049578957259655,
+      "kind_correct": false,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-035",
+      "question": "박새의 학명이 궁금합니다",
+      "expected": {
+        "kind": null,
+        "disposition": "not_graph",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003791181370615959,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-036",
+      "question": "쇠오리의 서식 환경을 알려 주세요",
+      "expected": {
+        "kind": null,
+        "disposition": "not_graph",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003708992153406143,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-037",
+      "question": "직박구리는 무엇을 먹고 살아?",
+      "expected": {
+        "kind": null,
+        "disposition": "not_graph",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.00400003045797348,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-038",
+      "question": "오늘 서울 날씨는 어때?",
+      "expected": {
+        "kind": null,
+        "disposition": "not_graph",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": []
+      },
+      "parsed": null,
+      "elapsed_ms": 0.0032919924706220627,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-039",
+      "question": "그중에서 먹이가 다른 새는?",
+      "expected": {
+        "kind": null,
+        "disposition": "clarify",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": [
+          "other"
+        ]
+      },
+      "parsed": null,
+      "elapsed_ms": 0.003750203177332878,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    },
+    {
+      "id": "GGQ-H-040",
+      "question": "참새목 새 중 어떤 새가 좋아?",
+      "expected": {
+        "kind": null,
+        "disposition": "clarify",
+        "species": [],
+        "rank": null,
+        "group": null,
+        "diet": null,
+        "habitat": null,
+        "relation": null,
+        "scope": null,
+        "specific_plant": null,
+        "negation": [],
+        "residual": [],
+        "unsupported": [],
+        "ambiguity": [
+          "other"
+        ]
+      },
+      "parsed": null,
+      "elapsed_ms": 0.00462518073618412,
+      "kind_correct": true,
+      "matched": false,
+      "unsafe_match": false
+    }
+  ]
+}

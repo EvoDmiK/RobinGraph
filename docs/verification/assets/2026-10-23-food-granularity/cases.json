@@ -1,0 +1,355 @@
+{
+  "scope": "Requested-food granularity, canonical supported categories, connectors and safety; authored before fix integration. Not human-reviewed gold.",
+  "cases": [
+    {
+      "id": "FG-01",
+      "question": "까마귀과 중에서 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-02",
+      "question": "딱따구리과 중 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-03",
+      "question": "참새목 가운데 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-04",
+      "question": "Corvus 중에서 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-05",
+      "question": "Anas platyrhynchos 중 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-06",
+      "question": "Corvus corone corone 중 곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-07",
+      "question": "곤충을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곤충",
+      "broader_category": "무척추동물"
+    },
+    {
+      "id": "FG-08",
+      "question": "오리과 중에서 곡물을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "곡물",
+      "broader_category": "씨앗"
+    },
+    {
+      "id": "FG-09",
+      "question": "Anser 중 잎을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "잎",
+      "broader_category": "기타 식물"
+    },
+    {
+      "id": "FG-10",
+      "question": "벌새 중 꿀을 먹는 새는?",
+      "outcome": "food_guidance",
+      "requested_food": "꿀",
+      "broader_category": "꽃꿀"
+    },
+    {
+      "id": "FG-11",
+      "question": "까마귀과 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-12",
+      "question": "까마귀과 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-13",
+      "question": "딱따구리과 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Picidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-14",
+      "question": "딱따구리과 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Picidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-15",
+      "question": "참새목 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Passeriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-16",
+      "question": "참새목 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Passeriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-17",
+      "question": "Turdus 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Turdus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-18",
+      "question": "Turdus 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Turdus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-19",
+      "question": "Anas platyrhynchos 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Anas platyrhynchos",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-20",
+      "question": "Anas platyrhynchos 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Anas platyrhynchos",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-21",
+      "question": "Corvus corone corone 중 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Corvus corone corone",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-22",
+      "question": "Corvus corone corone 중에서 무척추동물을 먹는 새는?",
+      "outcome": "query",
+      "taxon": "Corvus corone corone",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "invertebrate": 0
+          },
+          "unit": null
+        }
+      ]
+    },
+    {
+      "id": "FG-23",
+      "question": "오리과 중에서 물고기를 먹는 새는?",
+      "outcome": "supported_food",
+      "trait": "diet_distribution",
+      "value": {
+        "fish": 0
+      }
+    },
+    {
+      "id": "FG-24",
+      "question": "참새과 중에서 씨앗을 먹는 새는?",
+      "outcome": "supported_food",
+      "trait": "diet_distribution",
+      "value": {
+        "seed": 0
+      }
+    },
+    {
+      "id": "FG-25",
+      "question": "Nectarinidae 중에서 꽃꿀을 먹는 새는?",
+      "outcome": "supported_food",
+      "trait": "diet_distribution",
+      "value": {
+        "nectar": 0
+      }
+    },
+    {
+      "id": "FG-26",
+      "question": "직박구리과 중에서 열매를 먹는 새는?",
+      "outcome": "supported_food",
+      "trait": "diet_distribution",
+      "value": {
+        "fruit": 0
+      }
+    },
+    {
+      "id": "FG-27",
+      "question": "까마귀과 중에서 곤충을 안 먹는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-28",
+      "question": "까마귀과 중에서 곤충을 먹지 않는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-29",
+      "question": "겨울에만 까마귀과 중 곤충을 먹는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-30",
+      "question": "까마귀과 중 빨간 곤충을 먹는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-31",
+      "question": "까마귀과 중 곤충을 먹고 먹이 경쟁을 하는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-32",
+      "question": "까마귀과 중 곤충을 먹고 공존하는 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-33",
+      "question": "까마귀과 중 곤충을 먹고 체중이 30cm 이상인 새는?",
+      "outcome": "clarify"
+    },
+    {
+      "id": "FG-34",
+      "question": "까마귀과 중 곤충 말고 열매를 먹는 새는?",
+      "outcome": "clarify"
+    }
+  ]
+}

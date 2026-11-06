@@ -1,0 +1,9 @@
+{
+  "previous_run_id": "765da50a79ba42cd860bd13b5730499f",
+  "previous_api_responses": 24,
+  "error": "MLflow Expectation rejects a top-level None value",
+  "fix": "Wrap unchanged expectations in a non-null contract dictionary for evaluation only",
+  "first_failing_case_index_confirmed": false,
+  "source": "docs/verification/assets/2026-10-22-dataset-evaluation-20261022T113250Z",
+  "run_url": "https://mlflow.dove-nest.com/#/experiments/33/runs/765da50a79ba42cd860bd13b5730499f"
+}

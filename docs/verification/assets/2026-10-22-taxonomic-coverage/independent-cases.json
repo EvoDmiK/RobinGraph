@@ -1,0 +1,7063 @@
+{
+  "author": "Codex stratified real-catalog API matrix; fixed reviewed phrases, not unseen natural language",
+  "cases": [
+    {
+      "id": "BROAD-0001",
+      "question": "Accipitriformes 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Accipitriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0002",
+      "question": "Aegotheliformes 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Aegotheliformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0003",
+      "question": "Anseriformes 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Anseriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0004",
+      "question": "Apodiformes 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Apodiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0005",
+      "question": "Apterygiformes 중 영양 단계가 잡식인 새는?",
+      "taxon": "Apterygiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0006",
+      "question": "Bucerotiformes 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Bucerotiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0007",
+      "question": "Caprimulgiformes 중 체중이 100g 이상인 새는?",
+      "taxon": "Caprimulgiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0008",
+      "question": "Cariamiformes 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Cariamiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0009",
+      "question": "Casuariiformes 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Casuariiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0010",
+      "question": "Cathartiformes 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Cathartiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0011",
+      "question": "Charadriiformes 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Charadriiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0012",
+      "question": "Ciconiiformes 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Ciconiiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0013",
+      "question": "Coliiformes 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Coliiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0014",
+      "question": "Columbiformes 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Columbiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0015",
+      "question": "Coraciiformes 중 씨앗을 먹는 새는?",
+      "taxon": "Coraciiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0016",
+      "question": "Cuculiformes 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Cuculiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0017",
+      "question": "Eurypygiformes 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Eurypygiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0018",
+      "question": "Falconiformes 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Falconiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0019",
+      "question": "Galbuliformes 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Galbuliformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0020",
+      "question": "Galliformes 중 영양 단계가 잡식인 새는?",
+      "taxon": "Galliformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0021",
+      "question": "Gaviiformes 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Gaviiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0022",
+      "question": "Gruiformes 중 체중이 100g 이상인 새는?",
+      "taxon": "Gruiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0023",
+      "question": "Leptosomiformes 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Leptosomiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0024",
+      "question": "Mesitornithiformes 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Mesitornithiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0025",
+      "question": "Musophagiformes 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Musophagiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0026",
+      "question": "Nyctibiiformes 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Nyctibiiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0027",
+      "question": "Opisthocomiformes 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Opisthocomiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0028",
+      "question": "Otidiformes 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Otidiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0029",
+      "question": "Passeriformes 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Passeriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0030",
+      "question": "Pelecaniformes 중 씨앗을 먹는 새는?",
+      "taxon": "Pelecaniformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0031",
+      "question": "Phaethontiformes 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Phaethontiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0032",
+      "question": "Phoenicopteriformes 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Phoenicopteriformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0033",
+      "question": "Piciformes 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Piciformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0034",
+      "question": "Podargiformes 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Podargiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0035",
+      "question": "Podicipediformes 중 영양 단계가 잡식인 새는?",
+      "taxon": "Podicipediformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0036",
+      "question": "Procellariiformes 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Procellariiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0037",
+      "question": "Psittaciformes 중 체중이 100g 이상인 새는?",
+      "taxon": "Psittaciformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0038",
+      "question": "Pterocliformes 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Pterocliformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0039",
+      "question": "Rheiformes 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Rheiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0040",
+      "question": "Sphenisciformes 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Sphenisciformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0041",
+      "question": "Steatornithiformes 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Steatornithiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0042",
+      "question": "Strigiformes 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Strigiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0043",
+      "question": "Struthioniformes 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Struthioniformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0044",
+      "question": "Suliformes 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Suliformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0045",
+      "question": "Tinamiformes 중 씨앗을 먹는 새는?",
+      "taxon": "Tinamiformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0046",
+      "question": "Trogoniformes 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Trogoniformes",
+      "rank": "order",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0047",
+      "question": "Acanthisittidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Acanthisittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0048",
+      "question": "Acanthizidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Acanthizidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0049",
+      "question": "Accipitridae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Accipitridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0050",
+      "question": "Acrocephalidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Acrocephalidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0051",
+      "question": "Aegithalidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Aegithalidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0052",
+      "question": "Aegithinidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Aegithinidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0053",
+      "question": "Aegothelidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Aegothelidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0054",
+      "question": "Alaudidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Alaudidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0055",
+      "question": "Alcedinidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Alcedinidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0056",
+      "question": "Alcidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Alcidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0057",
+      "question": "Anatidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Anatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0058",
+      "question": "Anhimidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Anhimidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0059",
+      "question": "Anhingidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Anhingidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0060",
+      "question": "Anseranatidae 중 씨앗을 먹는 새는?",
+      "taxon": "Anseranatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0061",
+      "question": "Apodidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Apodidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0062",
+      "question": "Apterygidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Apterygidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0063",
+      "question": "Aramidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Aramidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0064",
+      "question": "Ardeidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Ardeidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0065",
+      "question": "Artamidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Artamidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0066",
+      "question": "Atrichornithidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Atrichornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0067",
+      "question": "Balaenicipitidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Balaenicipitidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0068",
+      "question": "Bernieridae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Bernieridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0069",
+      "question": "Bombycillidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Bombycillidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0070",
+      "question": "Brachypteraciidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Brachypteraciidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0071",
+      "question": "Bucconidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Bucconidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0072",
+      "question": "Bucerotidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Bucerotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0073",
+      "question": "Buphagidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Buphagidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0074",
+      "question": "Burhinidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Burhinidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0075",
+      "question": "Cacatuidae 중 씨앗을 먹는 새는?",
+      "taxon": "Cacatuidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0076",
+      "question": "Calcariidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Calcariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0077",
+      "question": "Callaeidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Callaeidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0078",
+      "question": "Calyptomenidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Calyptomenidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0079",
+      "question": "Calyptophilidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Calyptophilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0080",
+      "question": "Campephagidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Campephagidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0081",
+      "question": "Capitonidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Capitonidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0082",
+      "question": "Caprimulgidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Caprimulgidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0083",
+      "question": "Cardinalidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Cardinalidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0084",
+      "question": "Cariamidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Cariamidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0085",
+      "question": "Casuariidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Casuariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0086",
+      "question": "Cathartidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Cathartidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0087",
+      "question": "Certhiidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Certhiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0088",
+      "question": "Cettiidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Cettiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0089",
+      "question": "Chaetopidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Chaetopidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0090",
+      "question": "Charadriidae 중 씨앗을 먹는 새는?",
+      "taxon": "Charadriidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0091",
+      "question": "Chionidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Chionidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0092",
+      "question": "Chloropseidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Chloropseidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0093",
+      "question": "Ciconiidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Ciconiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0094",
+      "question": "Cinclidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Cinclidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0095",
+      "question": "Cinclosomatidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Cinclosomatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0096",
+      "question": "Cisticolidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Cisticolidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0097",
+      "question": "Climacteridae 중 체중이 100g 이상인 새는?",
+      "taxon": "Climacteridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0098",
+      "question": "Cnemophilidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Cnemophilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0099",
+      "question": "Coliidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Coliidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0100",
+      "question": "Columbidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Columbidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0101",
+      "question": "Conopophagidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Conopophagidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0102",
+      "question": "Coraciidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Coraciidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0103",
+      "question": "Corcoracidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Corcoracidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0104",
+      "question": "Corvidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Corvidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0105",
+      "question": "Cotingidae 중 씨앗을 먹는 새는?",
+      "taxon": "Cotingidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0106",
+      "question": "Cracidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Cracidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0107",
+      "question": "Cuculidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Cuculidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0108",
+      "question": "Dasyornithidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Dasyornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0109",
+      "question": "Dicaeidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Dicaeidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0110",
+      "question": "Dicruridae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Dicruridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0111",
+      "question": "Diomedeidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Diomedeidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0112",
+      "question": "Donacobiidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Donacobiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0113",
+      "question": "Dromadidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Dromadidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0114",
+      "question": "Dulidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Dulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0115",
+      "question": "Elachuridae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Elachuridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0116",
+      "question": "Emberizidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Emberizidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0117",
+      "question": "Erythrocercidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Erythrocercidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0118",
+      "question": "Estrildidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Estrildidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0119",
+      "question": "Eulacestomatidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Eulacestomatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0120",
+      "question": "Eupetidae 중 씨앗을 먹는 새는?",
+      "taxon": "Eupetidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0121",
+      "question": "Eurylaimidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Eurylaimidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0122",
+      "question": "Eurypygidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Eurypygidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0123",
+      "question": "Falconidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Falconidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0124",
+      "question": "Falcunculidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Falcunculidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0125",
+      "question": "Formicariidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Formicariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0126",
+      "question": "Fregatidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Fregatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0127",
+      "question": "Fringillidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Fringillidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0128",
+      "question": "Furnariidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Furnariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0129",
+      "question": "Galbulidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Galbulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0130",
+      "question": "Gaviidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Gaviidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0131",
+      "question": "Glareolidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Glareolidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0132",
+      "question": "Grallariidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Grallariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0133",
+      "question": "Gruidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Gruidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0134",
+      "question": "Haematopodidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Haematopodidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0135",
+      "question": "Heliornithidae 중 씨앗을 먹는 새는?",
+      "taxon": "Heliornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0136",
+      "question": "Hemiprocnidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Hemiprocnidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0137",
+      "question": "Hirundinidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Hirundinidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0138",
+      "question": "Hydrobatidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Hydrobatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0139",
+      "question": "Hyliidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Hyliidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0140",
+      "question": "Hyliotidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Hyliotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0141",
+      "question": "Hylocitreidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Hylocitreidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0142",
+      "question": "Hypocoliidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Hypocoliidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0143",
+      "question": "Ibidorhynchidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Ibidorhynchidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0144",
+      "question": "Icteridae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Icteridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0145",
+      "question": "Ifritidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Ifritidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0146",
+      "question": "Indicatoridae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Indicatoridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0147",
+      "question": "Irenidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Irenidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0148",
+      "question": "Jacanidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Jacanidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0149",
+      "question": "Laniidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Laniidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0150",
+      "question": "Laridae 중 씨앗을 먹는 새는?",
+      "taxon": "Laridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0151",
+      "question": "Leiothrichidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Leiothrichidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0152",
+      "question": "Leptosomidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Leptosomidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0153",
+      "question": "Locustellidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Locustellidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0154",
+      "question": "Lybiidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Lybiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0155",
+      "question": "Machaerirhynchidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Machaerirhynchidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0156",
+      "question": "Macrosphenidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Macrosphenidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0157",
+      "question": "Malaconotidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Malaconotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0158",
+      "question": "Maluridae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Maluridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0159",
+      "question": "Megalaimidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Megalaimidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0160",
+      "question": "Megapodiidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Megapodiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0161",
+      "question": "Melampittidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Melampittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0162",
+      "question": "Melanocharitidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Melanocharitidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0163",
+      "question": "Melanopareiidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Melanopareiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0164",
+      "question": "Meliphagidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Meliphagidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0165",
+      "question": "Menuridae 중 씨앗을 먹는 새는?",
+      "taxon": "Menuridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0166",
+      "question": "Meropidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Meropidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0167",
+      "question": "Mesitornithidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Mesitornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0168",
+      "question": "Mimidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Mimidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0169",
+      "question": "Mitrospingidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Mitrospingidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0170",
+      "question": "Modulatricidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Modulatricidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0171",
+      "question": "Mohoidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Mohoidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0172",
+      "question": "Mohouidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Mohouidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0173",
+      "question": "Momotidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Momotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0174",
+      "question": "Monarchidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Monarchidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0175",
+      "question": "Motacillidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Motacillidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0176",
+      "question": "Muscicapidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Muscicapidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0177",
+      "question": "Musophagidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Musophagidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0178",
+      "question": "Nectariniidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Nectariniidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0179",
+      "question": "Neosittidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Neosittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0180",
+      "question": "Nesospingidae 중 씨앗을 먹는 새는?",
+      "taxon": "Nesospingidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0181",
+      "question": "Nicatoridae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Nicatoridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0182",
+      "question": "Notiomystidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Notiomystidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0183",
+      "question": "Numididae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Numididae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0184",
+      "question": "Nyctibiidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Nyctibiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0185",
+      "question": "Oceanitidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Oceanitidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0186",
+      "question": "Odontophoridae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Odontophoridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0187",
+      "question": "Onychorhynchidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Onychorhynchidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0188",
+      "question": "Opisthocomidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Opisthocomidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0189",
+      "question": "Oreoicidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Oreoicidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0190",
+      "question": "Oriolidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Oriolidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0191",
+      "question": "Orthonychidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Orthonychidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0192",
+      "question": "Otididae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Otididae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0193",
+      "question": "Oxyruncidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Oxyruncidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0194",
+      "question": "Pachycephalidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Pachycephalidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0195",
+      "question": "Pandionidae 중 씨앗을 먹는 새는?",
+      "taxon": "Pandionidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0196",
+      "question": "Panuridae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Panuridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0197",
+      "question": "Paradisaeidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Paradisaeidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0198",
+      "question": "Paradoxornithidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Paradoxornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0199",
+      "question": "Paramythiidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Paramythiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0200",
+      "question": "Pardalotidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Pardalotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0201",
+      "question": "Paridae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Paridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0202",
+      "question": "Parulidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Parulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0203",
+      "question": "Passerellidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Passerellidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0204",
+      "question": "Passeridae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Passeridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0205",
+      "question": "Pedionomidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Pedionomidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0206",
+      "question": "Pelecanidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Pelecanidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0207",
+      "question": "Pellorneidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Pellorneidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0208",
+      "question": "Petroicidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Petroicidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0209",
+      "question": "Peucedramidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Peucedramidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0210",
+      "question": "Phaenicophilidae 중 씨앗을 먹는 새는?",
+      "taxon": "Phaenicophilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0211",
+      "question": "Phaethontidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Phaethontidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0212",
+      "question": "Phalacrocoracidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Phalacrocoracidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0213",
+      "question": "Phasianidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Phasianidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0214",
+      "question": "Philepittidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Philepittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0215",
+      "question": "Phoenicopteridae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Phoenicopteridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0216",
+      "question": "Phoeniculidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Phoeniculidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0217",
+      "question": "Phylloscopidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Phylloscopidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0218",
+      "question": "Picathartidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Picathartidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0219",
+      "question": "Picidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Picidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0220",
+      "question": "Pipridae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Pipridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0221",
+      "question": "Pittidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Pittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0222",
+      "question": "Pityriasidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Pityriasidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0223",
+      "question": "Platylophidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Platylophidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0224",
+      "question": "Platysteiridae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Platysteiridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0225",
+      "question": "Ploceidae 중 씨앗을 먹는 새는?",
+      "taxon": "Ploceidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0226",
+      "question": "Pluvianellidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Pluvianellidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0227",
+      "question": "Pluvianidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Pluvianidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0228",
+      "question": "Pnoepygidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Pnoepygidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0229",
+      "question": "Podargidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Podargidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0230",
+      "question": "Podicipedidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Podicipedidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0231",
+      "question": "Polioptilidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Polioptilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0232",
+      "question": "Pomatostomidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Pomatostomidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0233",
+      "question": "Procellariidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Procellariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0234",
+      "question": "Promeropidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Promeropidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0235",
+      "question": "Prunellidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Prunellidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0236",
+      "question": "Psittacidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Psittacidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0237",
+      "question": "Psittaculidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Psittaculidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0238",
+      "question": "Psophiidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Psophiidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0239",
+      "question": "Psophodidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Psophodidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0240",
+      "question": "Pteroclidae 중 씨앗을 먹는 새는?",
+      "taxon": "Pteroclidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0241",
+      "question": "Ptiliogonatidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Ptiliogonatidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0242",
+      "question": "Ptilonorhynchidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Ptilonorhynchidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0243",
+      "question": "Pycnonotidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Pycnonotidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0244",
+      "question": "Rallidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Rallidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0245",
+      "question": "Ramphastidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Ramphastidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0246",
+      "question": "Recurvirostridae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Recurvirostridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0247",
+      "question": "Regulidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Regulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0248",
+      "question": "Remizidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Remizidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0249",
+      "question": "Rhagologidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Rhagologidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0250",
+      "question": "Rheidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Rheidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0251",
+      "question": "Rhinocryptidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Rhinocryptidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0252",
+      "question": "Rhipiduridae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Rhipiduridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0253",
+      "question": "Rhodinocichlidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Rhodinocichlidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0254",
+      "question": "Rhynochetidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Rhynochetidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0255",
+      "question": "Rostratulidae 중 씨앗을 먹는 새는?",
+      "taxon": "Rostratulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0256",
+      "question": "Sagittariidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Sagittariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0257",
+      "question": "Salpornithidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Salpornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0258",
+      "question": "Sapayoidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Sapayoidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0259",
+      "question": "Sarothruridae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Sarothruridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0260",
+      "question": "Scolopacidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Scolopacidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0261",
+      "question": "Scopidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Scopidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0262",
+      "question": "Semnornithidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Semnornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0263",
+      "question": "Sittidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Sittidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0264",
+      "question": "Spheniscidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Spheniscidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0265",
+      "question": "Spindalidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Spindalidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0266",
+      "question": "Steatornithidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Steatornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0267",
+      "question": "Stenostiridae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Stenostiridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0268",
+      "question": "Stercorariidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Stercorariidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0269",
+      "question": "Strigidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Strigidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0270",
+      "question": "Strigopidae 중 씨앗을 먹는 새는?",
+      "taxon": "Strigopidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0271",
+      "question": "Struthionidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Struthionidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0272",
+      "question": "Sturnidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Sturnidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0273",
+      "question": "Sulidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Sulidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0274",
+      "question": "Sylviidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Sylviidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0275",
+      "question": "Teretistridae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Teretistridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0276",
+      "question": "Thamnophilidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Thamnophilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0277",
+      "question": "Thinocoridae 중 체중이 100g 이상인 새는?",
+      "taxon": "Thinocoridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0278",
+      "question": "Thraupidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Thraupidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0279",
+      "question": "Threskiornithidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Threskiornithidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0280",
+      "question": "Tichodromidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Tichodromidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0281",
+      "question": "Timaliidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Timaliidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0282",
+      "question": "Tinamidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Tinamidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0283",
+      "question": "Tityridae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Tityridae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0284",
+      "question": "Todidae 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Todidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0285",
+      "question": "Trochilidae 중 씨앗을 먹는 새는?",
+      "taxon": "Trochilidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0286",
+      "question": "Troglodytidae 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Troglodytidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0287",
+      "question": "Trogonidae 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Trogonidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0288",
+      "question": "Turdidae 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Turdidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0289",
+      "question": "Turnicidae 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Turnicidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0290",
+      "question": "Tyrannidae 중 영양 단계가 잡식인 새는?",
+      "taxon": "Tyrannidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0291",
+      "question": "Tytonidae 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Tytonidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0292",
+      "question": "Upupidae 중 체중이 100g 이상인 새는?",
+      "taxon": "Upupidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0293",
+      "question": "Urocynchramidae 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Urocynchramidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0294",
+      "question": "Vangidae 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Vangidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0295",
+      "question": "Viduidae 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Viduidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0296",
+      "question": "Vireonidae 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Vireonidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0297",
+      "question": "Zeledoniidae 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Zeledoniidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0298",
+      "question": "Zosteropidae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Zosteropidae",
+      "rank": "family",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0299",
+      "question": "Ictinia 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Ictinia",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0300",
+      "question": "Aegotheles 중 씨앗을 먹는 새는?",
+      "taxon": "Aegotheles",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0301",
+      "question": "Lophonetta 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Lophonetta",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0302",
+      "question": "Lamprolaima 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Lamprolaima",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0303",
+      "question": "Apteryx 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Apteryx",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0304",
+      "question": "Lophoceros 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Lophoceros",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0305",
+      "question": "Nyctiphrynus 중 영양 단계가 잡식인 새는?",
+      "taxon": "Nyctiphrynus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0306",
+      "question": "Chunga 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Chunga",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0307",
+      "question": "Dromaius 중 체중이 100g 이상인 새는?",
+      "taxon": "Dromaius",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0308",
+      "question": "Gymnogyps 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Gymnogyps",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0309",
+      "question": "Leucophaeus 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Leucophaeus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0310",
+      "question": "Jabiru 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Jabiru",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0311",
+      "question": "Urocolius 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Urocolius",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0312",
+      "question": "Microgoura 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Microgoura",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0313",
+      "question": "Geobiastes 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Geobiastes",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0314",
+      "question": "Guira 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Guira",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0315",
+      "question": "Rhynochetos 중 씨앗을 먹는 새는?",
+      "taxon": "Rhynochetos",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0316",
+      "question": "Micrastur 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Micrastur",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0317",
+      "question": "Jacamaralcyon 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Jacamaralcyon",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0318",
+      "question": "Margaroperdix 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Margaroperdix",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0319",
+      "question": "Gavia 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Gavia",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0320",
+      "question": "Heliornis 중 영양 단계가 잡식인 새는?",
+      "taxon": "Heliornis",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0321",
+      "question": "Leptosomus 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Leptosomus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0322",
+      "question": "Monias 중 체중이 100g 이상인 새는?",
+      "taxon": "Monias",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0323",
+      "question": "Gallirex 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Gallirex",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0324",
+      "question": "Phyllaemulor 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Phyllaemulor",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0325",
+      "question": "Opisthocomus 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Opisthocomus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0326",
+      "question": "Lissotis 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Lissotis",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0327",
+      "question": "Macrosphenus 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Macrosphenus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0328",
+      "question": "Nyctanassa 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Nyctanassa",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0329",
+      "question": "Phaethon 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Phaethon",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0330",
+      "question": "Phoenicoparrus 중 씨앗을 먹는 새는?",
+      "taxon": "Phoenicoparrus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0331",
+      "question": "Meiglyptes 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Meiglyptes",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0332",
+      "question": "Podargus 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Podargus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0333",
+      "question": "Poliocephalus 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Poliocephalus",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0334",
+      "question": "Oceanites 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Oceanites",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0335",
+      "question": "Myiopsitta 중 영양 단계가 잡식인 새는?",
+      "taxon": "Myiopsitta",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0336",
+      "question": "Syrrhaptes 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Syrrhaptes",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0337",
+      "question": "Rhea 중 체중이 100g 이상인 새는?",
+      "taxon": "Rhea",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0338",
+      "question": "Megadyptes 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Megadyptes",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0339",
+      "question": "Steatornis 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Steatornis",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0340",
+      "question": "Ninox 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Ninox",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0341",
+      "question": "Struthio 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Struthio",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0342",
+      "question": "Nannopterum 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Nannopterum",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0343",
+      "question": "Nothura 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Nothura",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0344",
+      "question": "Harpactes 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Harpactes",
+      "rank": "genus",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0345",
+      "question": "Gyps indicus 중 씨앗을 먹는 새는?",
+      "taxon": "Gyps indicus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0346",
+      "question": "Aegotheles insignis 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Aegotheles insignis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0347",
+      "question": "Cygnus atratus 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Cygnus atratus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0348",
+      "question": "Goldmania bella 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Goldmania bella",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0349",
+      "question": "Apteryx maxima 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Apteryx maxima",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0350",
+      "question": "Ocyceros griseus 중 영양 단계가 잡식인 새는?",
+      "taxon": "Ocyceros griseus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0351",
+      "question": "Caprimulgus stellatus 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Caprimulgus stellatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0352",
+      "question": "Chunga burmeisteri 중 체중이 100g 이상인 새는?",
+      "taxon": "Chunga burmeisteri",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0353",
+      "question": "Casuarius unappendiculatus 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Casuarius unappendiculatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0354",
+      "question": "Coragyps atratus 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Coragyps atratus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0355",
+      "question": "Larus fuscus 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Larus fuscus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0356",
+      "question": "Ephippiorhynchus asiaticus 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Ephippiorhynchus asiaticus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0357",
+      "question": "Colius striatus 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Colius striatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0358",
+      "question": "Otidiphaps nobilis 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Otidiphaps nobilis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0359",
+      "question": "Lacedo pulchella 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Lacedo pulchella",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0360",
+      "question": "Coccyzus pluvialis 중 씨앗을 먹는 새는?",
+      "taxon": "Coccyzus pluvialis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0361",
+      "question": "Rhynochetos jubatus 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Rhynochetos jubatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0362",
+      "question": "Falco naumanni 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Falco naumanni",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0363",
+      "question": "Malacoptila fusca 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Malacoptila fusca",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0364",
+      "question": "Odontophorus erythrops 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Odontophorus erythrops",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0365",
+      "question": "Gavia immer 중 영양 단계가 잡식인 새는?",
+      "taxon": "Gavia immer",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0366",
+      "question": "Laterallus notatus 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Laterallus notatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0367",
+      "question": "Leptosomus discolor 중 체중이 100g 이상인 새는?",
+      "taxon": "Leptosomus discolor",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0368",
+      "question": "Mesitornis variegatus 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Mesitornis variegatus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0369",
+      "question": "Tauraco corythaix 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Tauraco corythaix",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0370",
+      "question": "Nyctibius jamaicensis 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Nyctibius jamaicensis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0371",
+      "question": "Opisthocomus hoazin 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Opisthocomus hoazin",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0372",
+      "question": "Houbaropsis bengalensis 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Houbaropsis bengalensis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0373",
+      "question": "Malimbus ballmanni 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Malimbus ballmanni",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0374",
+      "question": "Egretta tricolor 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Egretta tricolor",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0375",
+      "question": "Phaethon lepturus 중 씨앗을 먹는 새는?",
+      "taxon": "Phaethon lepturus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0376",
+      "question": "Phoenicopterus chilensis 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Phoenicopterus chilensis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0377",
+      "question": "Melanerpes hoffmannii 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Melanerpes hoffmannii",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0378",
+      "question": "Batrachostomus moniliger 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Batrachostomus moniliger",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0379",
+      "question": "Podilymbus gigas 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Podilymbus gigas",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0380",
+      "question": "Procellaria aequinoctialis 중 영양 단계가 잡식인 새는?",
+      "taxon": "Procellaria aequinoctialis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0381",
+      "question": "Necropsittacus rodricanus 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Necropsittacus rodricanus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0382",
+      "question": "Pterocles lichtensteinii 중 체중이 100g 이상인 새는?",
+      "taxon": "Pterocles lichtensteinii",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0383",
+      "question": "Rhea pennata 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Rhea pennata",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0384",
+      "question": "Eudyptes sclateri 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Eudyptes sclateri",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0385",
+      "question": "Steatornis caripensis 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Steatornis caripensis",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0386",
+      "question": "Ninox reyi 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Ninox reyi",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0387",
+      "question": "Struthio molybdophanes 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Struthio molybdophanes",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0388",
+      "question": "Nannopterum auritum 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Nannopterum auritum",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0389",
+      "question": "Nothocercus bonapartei 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Nothocercus bonapartei",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0390",
+      "question": "Trogon ambiguus 중 씨앗을 먹는 새는?",
+      "taxon": "Trogon ambiguus",
+      "rank": "species",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0391",
+      "question": "Ictinaetus malaiensis malaiensis 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Ictinaetus malaiensis malaiensis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0392",
+      "question": "Aegotheles bennettii wiedenfeldi 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Aegotheles bennettii wiedenfeldi",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0393",
+      "question": "Branta hutchinsii leucopareia 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Branta hutchinsii leucopareia",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0394",
+      "question": "Eriocnemis luciani luciani 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Eriocnemis luciani luciani",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0395",
+      "question": "Apteryx australis lawryi 중 영양 단계가 잡식인 새는?",
+      "taxon": "Apteryx australis lawryi",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0396",
+      "question": "Phoeniculus purpureus angolensis 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Phoeniculus purpureus angolensis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0397",
+      "question": "Chordeiles acutipennis crissalis 중 체중이 100g 이상인 새는?",
+      "taxon": "Chordeiles acutipennis crissalis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0398",
+      "question": "Dromaius novaehollandiae diemenensis 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Dromaius novaehollandiae diemenensis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0399",
+      "question": "Cathartes aura ruficollis 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Cathartes aura ruficollis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0400",
+      "question": "Larus occidentalis wymani 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Larus occidentalis wymani",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0401",
+      "question": "Ciconia episcopus episcopus 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Ciconia episcopus episcopus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0402",
+      "question": "Colius striatus mombassicus 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Colius striatus mombassicus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0403",
+      "question": "Pampusana beccarii eichhorni 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Pampusana beccarii eichhorni",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0404",
+      "question": "Megaceryle maxima gigantea 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Megaceryle maxima gigantea",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0405",
+      "question": "Clamator jacobinus pica 중 씨앗을 먹는 새는?",
+      "taxon": "Clamator jacobinus pica",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0406",
+      "question": "Eurypyga helias major 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Eurypyga helias major",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0407",
+      "question": "Falco peregrinus radama 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Falco peregrinus radama",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0408",
+      "question": "Malacoptila panamensis panamensis 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Malacoptila panamensis panamensis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0409",
+      "question": "Lophura nycthemera rongjiangensis 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Lophura nycthemera rongjiangensis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0410",
+      "question": "Gavia arctica viridigularis 중 영양 단계가 잡식인 새는?",
+      "taxon": "Gavia arctica viridigularis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0411",
+      "question": "Lewinia striata gularis 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Lewinia striata gularis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0412",
+      "question": "Leptosomus discolor gracilis 중 체중이 100g 이상인 새는?",
+      "taxon": "Leptosomus discolor gracilis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0413",
+      "question": "Tauraco fischeri fischeri 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Tauraco fischeri fischeri",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0414",
+      "question": "Nyctibius jamaicensis abbotti 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Nyctibius jamaicensis abbotti",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0415",
+      "question": "Eupodotis senegalensis mackenziei 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Eupodotis senegalensis mackenziei",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0416",
+      "question": "Loxia curvirostra guillemardi 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Loxia curvirostra guillemardi",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0417",
+      "question": "Butorides virescens frazari 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Butorides virescens frazari",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0418",
+      "question": "Phaethon lepturus europae 중 접은 날개 길이가 100mm 이상인 새는?",
+      "taxon": "Phaethon lepturus europae",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "wing_length",
+          "op": "gte",
+          "value": 100,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0419",
+      "question": "Phoenicopterus ruber ruber 중 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Phoenicopterus ruber ruber",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0420",
+      "question": "Leuconotopicus villosus orius 중 씨앗을 먹는 새는?",
+      "taxon": "Leuconotopicus villosus orius",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_distribution",
+          "op": "share_gt",
+          "value": {
+            "seed": 0
+          },
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0421",
+      "question": "Batrachostomus septimus septimus 중 숲에 사는 그리고 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Batrachostomus septimus septimus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat",
+          "op": "eq",
+          "value": "Forest",
+          "unit": null
+        },
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0422",
+      "question": "Rollandia rolland morrisoni 중 주 생활 방식이 지상 생활인 새는?",
+      "taxon": "Rollandia rolland morrisoni",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "primary_lifestyle",
+          "op": "eq",
+          "value": "Terrestrial",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0423",
+      "question": "Pelecanoides georgicus georgicus 중 서식지 밀도 범주가 개방형인 새는?",
+      "taxon": "Pelecanoides georgicus georgicus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "habitat_density_category",
+          "op": "eq",
+          "value": "open",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0424",
+      "question": "Lorius lory erythrothorax 중 먹이 생태 범주가 잡식인 새는?",
+      "taxon": "Lorius lory erythrothorax",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_niche",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0425",
+      "question": "Pterocles exustus erlangeri 중 영양 단계가 잡식인 새는?",
+      "taxon": "Pterocles exustus erlangeri",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "trophic_level",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0426",
+      "question": "Rhea americana nobilis 중 먹이 유형이 잡식인 그리고 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Rhea americana nobilis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "diet_category",
+          "op": "eq",
+          "value": "Omnivore",
+          "unit": null
+        },
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0427",
+      "question": "Eudyptula minor variabilis 중 체중이 100g 이상인 새는?",
+      "taxon": "Eudyptula minor variabilis",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "body_mass",
+          "op": "gte",
+          "value": 100,
+          "unit": "g"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0428",
+      "question": "Ninox boobook halmaturina 중 부리 전체 길이가 10mm 이상인 새는?",
+      "taxon": "Ninox boobook halmaturina",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_culmen",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0429",
+      "question": "Struthio camelus massaicus 중 부리 길이 콧구멍 기준이 5mm 이상인 새는?",
+      "taxon": "Struthio camelus massaicus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_length_nares",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0430",
+      "question": "Microcarbo melanoleucos melanoleucos 중 부리 너비가 5mm 이상인 새는?",
+      "taxon": "Microcarbo melanoleucos melanoleucos",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_width",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0431",
+      "question": "Eudromia elegans riojana 중 부리 높이가 5mm 이상인 그리고 꼬리 길이가 50mm 이상인 새는?",
+      "taxon": "Eudromia elegans riojana",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "beak_depth",
+          "op": "gte",
+          "value": 5,
+          "unit": "mm"
+        },
+        {
+          "trait_name": "tail_length",
+          "op": "gte",
+          "value": 50,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    },
+    {
+      "id": "BROAD-0432",
+      "question": "Trogon caligatus concinnus 중 다리 길이 부척이 10mm 이상인 새는?",
+      "taxon": "Trogon caligatus concinnus",
+      "rank": "subspecies",
+      "conditions": [
+        {
+          "trait_name": "tarsus_length",
+          "op": "gte",
+          "value": 10,
+          "unit": "mm"
+        }
+      ],
+      "outcome": "query"
+    }
+  ]
+}

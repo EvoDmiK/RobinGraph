@@ -1,0 +1,112 @@
+{
+  "scope": "Exhaustive resolver test with actual exported taxonomy as a fixture; zero live DB calls, not natural-language accuracy",
+  "counts": {
+    "species:scientific": 11131,
+    "subspecies:scientific": 19879,
+    "genus:scientific": 2376,
+    "family:scientific": 252,
+    "order:scientific": 46,
+    "korean_unique_surfaces": 1201
+  },
+  "holds": [
+    {
+      "name": "물까마귀과",
+      "reason": "rank_conflict",
+      "ranks": [
+        "genus"
+      ]
+    },
+    {
+      "name": "오스트레일리아동고비류",
+      "reason": "ambiguous",
+      "ranks": [
+        "family",
+        "genus"
+      ]
+    },
+    {
+      "name": "초승달가슴새류",
+      "reason": "ambiguous",
+      "ranks": [
+        "genus",
+        "family"
+      ]
+    },
+    {
+      "name": "팔색조속",
+      "reason": "rank_conflict",
+      "ranks": [
+        "family"
+      ]
+    },
+    {
+      "name": "사다새과",
+      "reason": "rank_conflict",
+      "ranks": [
+        "genus"
+      ]
+    },
+    {
+      "name": "군함조과",
+      "reason": "rank_conflict",
+      "ranks": [
+        "genus"
+      ]
+    },
+    {
+      "name": "열대새",
+      "reason": "ambiguous",
+      "ranks": [
+        "species",
+        "genus"
+      ]
+    },
+    {
+      "name": "카구속",
+      "reason": "rank_conflict",
+      "ranks": [
+        "family"
+      ]
+    },
+    {
+      "name": "장다리물떼새과",
+      "reason": "rank_conflict",
+      "ranks": [
+        "genus"
+      ]
+    },
+    {
+      "name": "나팔새류",
+      "reason": "ambiguous",
+      "ranks": [
+        "family",
+        "genus"
+      ]
+    },
+    {
+      "name": "논병아리목",
+      "reason": "rank_conflict",
+      "ranks": [
+        "family"
+      ]
+    },
+    {
+      "name": "레아",
+      "reason": "ambiguous",
+      "ranks": [
+        "genus",
+        "species"
+      ]
+    },
+    {
+      "name": "화식조",
+      "reason": "ambiguous",
+      "ranks": [
+        "species",
+        "genus"
+      ]
+    }
+  ],
+  "failures": [],
+  "elapsed_seconds": 0.438
+}

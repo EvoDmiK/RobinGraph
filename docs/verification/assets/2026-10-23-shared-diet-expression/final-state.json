@@ -1,0 +1,13 @@
+{
+  "target": "test",
+  "image": "robingraph-api:test-taxonomic-traits-6a5ab77e8b13",
+  "health": "healthy",
+  "graph_intent_mode": "active",
+  "release_snapshot_files": 207,
+  "container_source": {
+    "checked_files": 114,
+    "mismatches": []
+  },
+  "production_changed": false,
+  "commit_push": false
+}

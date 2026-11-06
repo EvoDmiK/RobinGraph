@@ -1,0 +1,79 @@
+{
+  "response_mocking": false,
+  "physical_mobile": false,
+  "browser": "Chromium",
+  "rows": [
+    {
+      "width": 1280,
+      "key": "natural",
+      "question": "열매 먹는 참새목 새를 찾아 줘",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "shared",
+      "question": "숲에서 살면서 직박구리와 식성이 같은 새가 궁금해",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "negation",
+      "question": "참새목 중 열매를 안 먹는 새는?",
+      "status": "clarify",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "key": "plant",
+      "question": "참새목 중 감나무 열매를 먹는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "natural",
+      "question": "열매 먹는 참새목 새를 찾아 줘",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "shared",
+      "question": "숲에서 살면서 직박구리와 식성이 같은 새가 궁금해",
+      "status": "answer",
+      "item_count": 20,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "negation",
+      "question": "참새목 중 열매를 안 먹는 새는?",
+      "status": "clarify",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "key": "plant",
+      "question": "참새목 중 감나무 열매를 먹는 새는?",
+      "status": "abstain",
+      "item_count": 0,
+      "page_errors": 0,
+      "passed": true
+    }
+  ]
+}
