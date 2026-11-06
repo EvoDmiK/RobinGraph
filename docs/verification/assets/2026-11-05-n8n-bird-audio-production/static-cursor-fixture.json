@@ -1,0 +1,314 @@
+{
+  "fixture_id": "rgAudioCursorFixture20261105",
+  "samples": [
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76272,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76276,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76272,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76281,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76276,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76272,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76282,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76281,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76276,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76272,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    },
+    {
+      "workflow": {
+        "id": "rgAudioCursorFixture20261105",
+        "active": true,
+        "staticData": null
+      },
+      "runs": [
+        {
+          "id": 76283,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76282,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76281,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76276,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76272,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76271,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76270,
+          "status": "success",
+          "mode": "trigger"
+        },
+        {
+          "id": 76269,
+          "status": "success",
+          "mode": "trigger"
+        }
+      ]
+    }
+  ],
+  "final": {
+    "workflow": {
+      "id": "rgAudioCursorFixture20261105",
+      "active": false,
+      "staticData": null
+    },
+    "runs": [
+      {
+        "id": 76284,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76283,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76282,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76281,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76276,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76272,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76271,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76270,
+        "status": "success",
+        "mode": "trigger"
+      },
+      {
+        "id": 76269,
+        "status": "success",
+        "mode": "trigger"
+      }
+    ]
+  },
+  "external_requests": 0,
+  "passed": false,
+  "old_workflow_changes": 0
+}

@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-06",
+  "task_id": "RG-507",
+  "status": "in_progress",
+  "completed_scope": "First scheduled production collection execution 77742 read-only verification",
+  "pending": "Human review and publication; repeated daily stability",
+  "local_files": [
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-11-06-n8n-bird-audio-scheduled-check.md",
+      "sha256": "fad56bb69a966a8df2227901be19a56bb495658fdea03c3481463f5dd39b26c8"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/backlog/RG-507.md",
+      "sha256": "51ab4fc9743b8faadf350c3621d09d6feb0c7cfd853540cbb4cfb693f842fa51"
+    }
+  ],
+  "vault_notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-06-RG507-첫정기새소리수집점검.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true
+    }
+  ],
+  "prior_2026_11_05_worklogs_preserved": true,
+  "rg409_unchanged": true,
+  "provider_requests_during_check": 0,
+  "application_data_writes_during_check": 0,
+  "git_operations_performed": false
+}

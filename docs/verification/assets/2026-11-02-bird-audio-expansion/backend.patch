@@ -1,0 +1,1403 @@
+--- a/src/robingraph/retrieval/recordings.py
++++ b/src/robingraph/retrieval/recordings.py
+@@ -11,8 +11,8 @@
+ from .species_profile import PlainText
+ 
+ SOURCE_ID = 'wikimedia-commons-bird-recordings'
+-SOURCE_RELEASE = 'commons-reviewed-2026-10-30'
+-ARTIFACT_SHA256 = 'a67f963b27738e445b1d051f0e388336c48bf695ddb6e05c72d8f8c9bb7a0f66'
++SOURCE_RELEASE = 'commons-reviewed-2026-11-02'
++ARTIFACT_SHA256 = 'db2e2308ae90f6c75011963422635bc3526a7ea2ae9045120ef57d8ebe538495'
+ 
+ READ_RECORDINGS = """
+ MATCH (taxon:Taxon:BirdTaxon {id:$taxon_id, rank:'species', scientific_name:$scientific_name,
+@@ -91,7 +91,11 @@
+     if not re.fullmatch(r'cc-by(?:-sa)?-(?:2\.0|2\.5|3\.0|4\.0)', code) or field('Restrictions'):
+         raise ValueError('Recording license is not allowed')
+     kind, version = code.removeprefix('cc-').rsplit('-', 1)
+-    license_url = field('LicenseUrl')
++    license_path = urlsplit(field('LicenseUrl'))
++    if (license_path.scheme not in ('http', 'https') or license_path.netloc != 'creativecommons.org'
++            or license_path.query or license_path.fragment):
++        raise ValueError('Recording license URL mismatch')
++    license_url = license_path._replace(scheme='https').geturl()
+     if license_url.rstrip('/') != f'https://creativecommons.org/licenses/{kind}/{version}':
+         raise ValueError('Recording license URL mismatch')
+     artist = field('Artist')
+@@ -118,15 +122,23 @@
+                          'retrieved_at': retrieved_at, 'taxon_match': 'exact_scientific_name'}}
+ 
+ 
+-@lru_cache(maxsize=1)
+-def reviewed_catalog():
++def _reviewed_data():
+     raw = Path(__file__).with_name('commons_bird_recordings.json').read_bytes()
+     if sha256(raw).hexdigest() != ARTIFACT_SHA256:
+         raise ValueError('Reviewed recording source snapshot differs from its pinned hash')
+-    data = json.loads(raw)
+-    records = [reviewed_record(row, data['retrieved_at']) for row in data['records']]
+-    if len(records) != 3 or len({r['id'] for r in records}) != 3:
+-        raise ValueError('Expected exactly three reviewed recording files')
++    return json.loads(raw)
++
++
++@lru_cache(maxsize=1)
++def reviewed_catalog():
++    data = _reviewed_data()
++    records = [reviewed_record(row, row.get('retrieved_at', data['retrieved_at'])) for row in data['records']]
++    count = data.get('expected_recordings')
++    expected = data.get('expected_species', [])
++    if (type(count) is not int or not 1 <= count <= 20 or len(records) != count
++            or len({r['id'] for r in records}) != count or len({r['scientific_name'] for r in records}) != count
++            or sorted(r['scientific_name'] for r in records) != sorted(expected)):
++        raise ValueError('Recording catalog differs from the reviewed species/count manifest')
+     return {record['id']: record for record in records}
+ 
+ 
+@@ -134,10 +146,12 @@
+     """Validated bounded import rows, no database access or writes."""
+     if not source_allowed():
+         raise ValueError('Recording source is not allowed')
++    data = _reviewed_data()
++    formats = {f"commons-recording:{row['page_id']}": row['imageinfo']['mime'] for row in data['records']}
+     return [{'id': r['id'], 'scientific_name': r['scientific_name'], 'asset_uri': r['audio_url'],
+              'landing_uri': r['source_url'], 'creator': r['creator'], 'publisher': 'Wikimedia Commons',
+              'attribution': r['creator'] + ' · ' + r['license_name'], 'license_uri': r['license_url'],
+-             'format': 'audio/ogg', 'metadata_sha256': r['evidence']['metadata_sha256'],
++             'format': formats[r['id']], 'metadata_sha256': r['evidence']['metadata_sha256'],
+              'retrieved_at': r['evidence']['retrieved_at'],
+              'evidence_id': r['id'] + ':' + r['evidence']['metadata_sha256'],
+              'payload_json': json.dumps(r, ensure_ascii=False, sort_keys=True)} for r in reviewed_catalog().values()]
+--- a/src/robingraph/retrieval/commons_bird_recordings.json
++++ b/src/robingraph/retrieval/commons_bird_recordings.json
+@@ -310,6 +310,1182 @@
+       },
+       "location": "Moscow region, Russia",
+       "recording_type": "Calls"
++    },
++    {
++      "scientific_name": "Ardea alba",
++      "page_id": 27404208,
++      "title": "File:Ardea alba - Great Egret XC131650.ogg",
++      "revision_id": 937586016,
++      "imageinfo": {
++        "size": 166124,
++        "width": 0,
++        "height": 0,
++        "duration": 6.164897959183674,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Ardea_alba_-_Great_Egret_XC131650.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=27404208",
++        "sha1": "5f9a5e2e9e59ce175a22334c73480f2435b974b8",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2013-07-23 19:21:53",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Ardea alba - Great Egret XC131650",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Audio files of Ardeidae|Ardea alba in the United States|Sound files uploaded by Fæ",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "44.977000",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "-93.324000",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "<dl><dd>Two loud guttural calls as the bird was coming down for a landing approximately 10m in front of me.</dd>\n<dd>No filtering.  Recorded with Olympus LS-10S and Sennheiser ME66.</dd>\n<dd>bird-seen:yes</dd>\n<dd>playback-used:no</dd>\n<dd><b>Common name:</b> Great Egret</dd>\n<dd><b>Type:</b> call</dd>\n<dd><b>Genus:</b> Ardea</dd>\n<dd><b>Species:</b> alba</dd>\n<dd><b>Location:</b> Theodore Wirth Park, Minneapolis, MN</dd>\n<dd><b>Elevation:</b> 260 m</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2013-04-27 06:43",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<ul><li><b>Metadata:</b> <a rel=\"nofollow\" class=\"external free\" href=\"http://xeno-canto.org/131650\">http://xeno-canto.org/131650</a></li>\n<li><b>Audio file:</b> <a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/download.php?XC=131650\">http://www.xeno-canto.org/download.php?XC=131650</a></li></ul>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Jonathon Jongsma",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/3.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Theodore Wirth Park, Minneapolis, MN",
++      "recording_type": "call",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Ardea cinerea",
++      "page_id": 77528214,
++      "title": "File:Ardea cinerea - Grey Heron XC432231.mp3",
++      "revision_id": 802112988,
++      "imageinfo": {
++        "size": 546159,
++        "width": 0,
++        "height": 0,
++        "duration": 13.52755,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=77528214",
++        "sha1": "276654a88f59eb25174dafaf670e871bb2cfe94d",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2019-03-23 21:35:53",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Ardea cinerea - Grey Heron XC432231",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Sound files uploaded by Fæ|Audio files of Ardea cinerea",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "37.197600",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "-6.184100",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": ":bird-seen:no\n<dl><dd>playback-used:no</dd>\n<dd><b>Common name:</b> Grey Heron</dd>\n<dd><b>Type:</b> agitated call, juvenile</dd>\n<dd><b>Genus:</b> Ardea</dd>\n<dd><b>Species:</b> cinerea</dd>\n<dd><b>Location:</b> Área Metropolitana de Sevilla (near  Isla Mayor), Sevilla, Andalucía</dd>\n<dd><b>Country:</b> Spain</dd>\n<dd><b>Elevation:</b> 0 m</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2018-08-04 02:08",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<dl><dd>Metadata: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/432231\">https://www.xeno-canto.org/432231</a></dd>\n<dd>Audio file: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/432231/download\">https://www.xeno-canto.org/432231/download</a></dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Joost van Bruggen",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 4.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 4.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/4.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-4.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "audio/mpeg"
++      },
++      "location": "Área Metropolitana de Sevilla (near  Isla Mayor), Sevilla, Andalucía",
++      "recording_type": "agitated call, juvenile",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Dryocopus martius",
++      "page_id": 48121877,
++      "title": "File:Black woodpecker Dryocopus martius female drumming.ogg",
++      "revision_id": 1080160754,
++      "imageinfo": {
++        "size": 223654,
++        "width": 0,
++        "height": 0,
++        "duration": 4.179591836734694,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=48121877",
++        "sha1": "dc7d4443d11c650969bf3277a5c518e94649953e",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2016-04-11 07:39:53",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Black woodpecker Dryocopus martius female drumming",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Self-published work|Files with coordinates missing SDC location of creation|Audio files of Dryocopus martius",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "48.769100",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "20.628600",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "Black woodpecker (Dryocopus martius), female, drumming, Slovakia, Slovenské rudohorie, Volovské vrchy (mnt.), part Zlatý stôl, hill : Suchý vrch, Starovodská dolina, recording uploaded also on <a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/311605\">http://www.xeno-canto.org/311605</a>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2015-03-08",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "<a href=\"//commons.wikimedia.org/wiki/User:SanoAK\" title=\"User:SanoAK\">SanoAK: Alexander Kürthy</a>",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 4.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 4.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/4.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-4.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Slovakia, Slovenské rudohorie, Volovské vrchy (mnt.), part Zlatý stôl",
++      "recording_type": "drumming",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Cuculus canorus",
++      "page_id": 16329139,
++      "title": "File:Cuculus canorus.ogg",
++      "revision_id": 871785155,
++      "imageinfo": {
++        "size": 303595,
++        "width": 0,
++        "height": 0,
++        "duration": 18.47578231292517,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Cuculus_canorus.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=16329139",
++        "sha1": "edcdf01acf67f411778d1b7e567aaa40f1a41aea",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2011-09-04 11:08:45",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Cuculus canorus",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Self-published work|Sounds of birds recorded in Russia|Birds of Kaluga Oblast|May 2009 Russia photographs|Audio files of Cuculus canorus",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "Cuculus canorus, Kaluga region, Russia",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2009-05-05",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "<a href=\"//commons.wikimedia.org/wiki/User:Arkhivov\" title=\"User:Arkhivov\">Vladimir Yu. Arkhipov, Arkhivov</a>",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/3.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Kaluga region, Russia",
++      "recording_type": null,
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Fulica atra",
++      "page_id": 83204380,
++      "title": "File:Fulica atra - Eurasian Coot XC467829.mp3",
++      "revision_id": 1262736512,
++      "imageinfo": {
++        "size": 144684,
++        "width": 0,
++        "height": 0,
++        "duration": 12.051376583691328,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=83204380",
++        "sha1": "f315dad04e56988d5e31fe1f8d4cff98da0c720f",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2019-10-19 11:40:09",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Fulica atra - Eurasian Coot XC467829",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Files with coordinates missing SDC location of creation|Audio files of Fulica atra|Sound files uploaded by Fæ",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "60.184400",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "24.675300",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": ":Nocturnal migrant.\n<dl><dd>Recorded with Audiomoth inside a plastic bag.</dd>\n<dd>High pass -filtered at 1kHz/12dB to remove traffic noise.</dd>\n<dd>bird-seen:no</dd>\n<dd>playback-used:no</dd>\n<dd><b>Common name:</b> Eurasian Coot</dd>\n<dd><b>Type:</b> flight call, nocturnal flight call</dd>\n<dd><b>Genus:</b> Fulica</dd>\n<dd><b>Species:</b> atra</dd>\n<dd><b>Location:</b> Söderskog, Espoo, Uusimaa</dd>\n<dd><b>Country:</b> Finland</dd>\n<dd><b>Elevation:</b> 30 m</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2019-04-06 22:29",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<dl><dd>Metadata: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/467829\">https://www.xeno-canto.org/467829</a></dd>\n<dd>Audio file: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/467829/download\">https://www.xeno-canto.org/467829/download</a></dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Mikko Heikkinen",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 4.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 4.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/4.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-4.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "audio/mpeg"
++      },
++      "location": "Söderskog, Espoo, Uusimaa",
++      "recording_type": "flight call, nocturnal flight call",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Hirundo rustica",
++      "page_id": 23929087,
++      "title": "File:Hirundo rustica - Barn Swallow - XC83449.ogg",
++      "revision_id": 1277429049,
++      "imageinfo": {
++        "size": 295862,
++        "width": 0,
++        "height": 0,
++        "duration": 18.546938775510203,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=23929087",
++        "sha1": "f4f870e63ac7d6b9cb679cc5728bb5c9f9bf2404",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2013-01-17 23:05:24",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Hirundo rustica - Barn Swallow - XC83449",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Hirundo rustica erythrogaster|Xeno-canto|Audio files of Hirundo rustica|Sound files uploaded by Fæ",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "44.829800",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "-93.246200",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "<br>\n<dl><dd><b>Species</b> <span class=\"biota\"><span class=\"vernacular\">Barn Swallow</span> (<i><span class=\"binominal\">Hirundo rustica</span></i>)</span></dd>\n<dd><b>Recordist</b> Jonathon Jongsma</dd>\n<dd><b>Remarks</b> 'twitter-warble song' from a male that landed on a boardwalk over a marshy area, about 10ft from me.</dd>\n<dd><b>Location</b> Minnesota Valley NWR, Old Cedar Ave Bridge, Hennepin, MN</dd>\n<dd><b>Elevation</b> 200 m</dd>\n<dd><b>Country</b> United States</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2011-07-17 07:01",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/83449\">http://www.xeno-canto.org/83449</a>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Jonathon Jongsma",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/3.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Minnesota Valley NWR, Old Cedar Ave Bridge, Hennepin, MN",
++      "recording_type": "twitter-warble song",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Motacilla alba",
++      "page_id": 83210806,
++      "title": "File:Motacilla alba - White Wagtail XC466458.mp3",
++      "revision_id": 966829729,
++      "imageinfo": {
++        "size": 433071,
++        "width": 0,
++        "height": 0,
++        "duration": 26.8109375,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Motacilla_alba_-_White_Wagtail_XC466458.mp3",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=83210806",
++        "sha1": "2f1922499348b04c07f32a38bda156b375c769ba",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2019-10-19 16:06:03",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Motacilla alba - White Wagtail XC466458",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Files with coordinates missing SDC location of creation|Sound files uploaded by Fæ|Audio files of Motacilla alba",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "46.792300",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "6.640200",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": ":bird-seen:yes\n<dl><dd>playback-used:no</dd>\n<dd><b>Common name:</b> White Wagtail</dd>\n<dd><b>Type:</b> call, song</dd>\n<dd><b>Genus:</b> Motacilla</dd>\n<dd><b>Species:</b> alba</dd>\n<dd><b>Location:</b> Yverdon-les-Bains, Vaud</dd>\n<dd><b>Country:</b> Switzerland</dd>\n<dd><b>Elevation:</b> 440 m</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2019-02-21 08:30",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<dl><dd>Metadata: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/466458\">https://www.xeno-canto.org/466458</a></dd>\n<dd>Audio file: <a rel=\"nofollow\" class=\"external free\" href=\"https://www.xeno-canto.org/466458/download\">https://www.xeno-canto.org/466458/download</a></dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Pascal Christe",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 4.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 4.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/4.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-4.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "audio/mpeg"
++      },
++      "location": "Yverdon-les-Bains, Vaud",
++      "recording_type": "call, song",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Nycticorax nycticorax",
++      "page_id": 23927908,
++      "title": "File:Nycticorax nycticorax - Black-crowned Night Heron - XC99573.ogg",
++      "revision_id": 651086454,
++      "imageinfo": {
++        "size": 100096,
++        "width": 0,
++        "height": 0,
++        "duration": 6.791836734693877,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=23927908",
++        "sha1": "b1a5cee96a1af7e6daa7000ca044c730932a2c09",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2013-01-17 23:22:13",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Nycticorax nycticorax - Black-crowned Night Heron - XC99573",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Nycticorax nycticorax in California|Audio files of 2012|Sounds of birds recorded in the United States|Pelecaniformes of Santa Clara County, California|Birds of Baylands Nature Preserve|Audio files from California|Sound files uploaded by Fæ|Audio files of Nycticorax nycticorax",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "37.460000",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "-122.105000",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "<br>\n<dl><dd><b>Species</b> <span class=\"biota\"><span class=\"vernacular\">Black-crowned Night Heron</span> (<i><span class=\"binominal\">Nycticorax nycticorax</span></i>)</span></dd>\n<dd><b>Recordist</b> Jonathon Jongsma</dd>\n<dd><b>Remarks</b> Calls from a perched bird as I walked directly underneath a tree with multiple N. nycticorax nests. Recorded with internal microphone.</dd>\n<dd><b>Location</b> Palo Alto Baylands, Santa Clara, CA</dd>\n<dd><b>Elevation</b> 2 m</dd>\n<dd><b>Country</b> United States</dd></dl>",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2012-04-21 08:03",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/99573\">http://www.xeno-canto.org/99573</a>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Jonathon Jongsma",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/3.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Palo Alto Baylands, Santa Clara, CA",
++      "recording_type": "Calls",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Picus canus",
++      "page_id": 19012629,
++      "title": "File:Picus canus.ogg",
++      "revision_id": 795887325,
++      "imageinfo": {
++        "size": 335000,
++        "width": 0,
++        "height": 0,
++        "duration": 12.75796875,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Picus_canus.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=19012629",
++        "sha1": "a94997b35cb4c855acfb7bbc53c92abc4472cee0",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2012-04-08 17:58:49",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Picus canus",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "March 2012 in Russia|Self-published work|Sounds of birds recorded in Russia|Birds of Bryansk Oblast|Piciformes of Russia|Audio files of Picus canus",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "Call of Grey-headed Woodpecker, Bryansk region, Russia",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2012-03-19",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "<a href=\"//commons.wikimedia.org/wiki/User:Arkhivov\" title=\"User:Arkhivov\">Vladimir Yu. Arkhipov, Arkhivov</a>",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/3.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": "Bryansk region, Russia",
++      "recording_type": "Call",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Streptopelia orientalis",
++      "page_id": 3116105,
++      "title": "File:Streptopelia orientalis.ogg",
++      "revision_id": 476682039,
++      "imageinfo": {
++        "size": 199102,
++        "width": 0,
++        "height": 0,
++        "duration": 11.795736961451247,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Streptopelia_orientalis.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=3116105",
++        "sha1": "e0f7658041e4ccfaae3560fe97f846ac10c4986e",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2007-11-19 02:41:16",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "Streptopelia orientalis",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Streptopelia orientalis|GFDL|User-created GFDL images|License migration completed|Self-published work",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "キジバトの鳴き声",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2006-11-11",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "自己録音",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "boppochan",
++            "source": "commons-desc-page"
++          },
++          "Permission": {
++            "value": "GFDL-user-w/ja/Japanese Wikipedia/boppochan",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 3.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 3.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Attribution": {
++            "value": "<a href=\"https://ja.wikipedia.org/wiki/User:boppochan\" class=\"extiw\" title=\"ja:User:boppochan\">boppochan</a>",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "http://creativecommons.org/licenses/by-sa/3.0/",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-3.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": null,
++      "recording_type": null,
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
++    },
++    {
++      "scientific_name": "Corvus corone",
++      "page_id": 37809031,
++      "title": "File:XC24828 - Zwarte Kraai - Corvus corone.ogg",
++      "revision_id": 1223628334,
++      "imageinfo": {
++        "size": 87388,
++        "width": 0,
++        "height": 0,
++        "duration": 8.698775510204081,
++        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
++        "descriptionurl": "https://commons.wikimedia.org/wiki/File:XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
++        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=37809031",
++        "sha1": "81aaa068e33ecb7ff915bd027697a958252fb726",
++        "extmetadata": {
++          "DateTime": {
++            "value": "2015-01-11 16:24:19",
++            "source": "mediawiki-metadata",
++            "hidden": ""
++          },
++          "ObjectName": {
++            "value": "XC24828 - Zwarte Kraai - Corvus corone",
++            "source": "mediawiki-metadata"
++          },
++          "CommonsMetadataExtension": {
++            "value": 1.2,
++            "source": "extension",
++            "hidden": ""
++          },
++          "Categories": {
++            "value": "Xeno-canto|Audio files of Corvus|Audio files of Corvus corone",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "Assessments": {
++            "value": "",
++            "source": "commons-categories",
++            "hidden": ""
++          },
++          "GPSLatitude": {
++            "value": "52.086700",
++            "source": "commons-desc-page"
++          },
++          "GPSLongitude": {
++            "value": "4.263100",
++            "source": "commons-desc-page"
++          },
++          "GPSMapDatum": {
++            "value": "WGS-84",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "ImageDescription": {
++            "value": "Zwarte Kraai (Corvus corone) · call",
++            "source": "commons-desc-page"
++          },
++          "DateTimeOriginal": {
++            "value": "2008-11-02",
++            "source": "commons-desc-page"
++          },
++          "Credit": {
++            "value": "<a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/24828\">http://www.xeno-canto.org/24828</a>",
++            "source": "commons-desc-page"
++          },
++          "Artist": {
++            "value": "Sander Pieterse",
++            "source": "commons-desc-page"
++          },
++          "LicenseShortName": {
++            "value": "CC BY-SA 4.0",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "UsageTerms": {
++            "value": "Creative Commons Attribution-Share Alike 4.0",
++            "source": "commons-desc-page"
++          },
++          "AttributionRequired": {
++            "value": "true",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "LicenseUrl": {
++            "value": "https://creativecommons.org/licenses/by-sa/4.0",
++            "source": "commons-desc-page"
++          },
++          "Copyrighted": {
++            "value": "True",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "Restrictions": {
++            "value": "",
++            "source": "commons-desc-page",
++            "hidden": ""
++          },
++          "License": {
++            "value": "cc-by-sa-4.0",
++            "source": "commons-templates",
++            "hidden": ""
++          }
++        },
++        "mime": "application/ogg"
++      },
++      "location": null,
++      "recording_type": "call",
++      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+     }
++  ],
++  "expected_recordings": 14,
++  "expected_species": [
++    "Anas platyrhynchos",
++    "Ardea alba",
++    "Ardea cinerea",
++    "Corvus corone",
++    "Cuculus canorus",
++    "Dryocopus martius",
++    "Fulica atra",
++    "Hirundo rustica",
++    "Hypsipetes amaurotis",
++    "Motacilla alba",
++    "Nycticorax nycticorax",
++    "Passer montanus",
++    "Picus canus",
++    "Streptopelia orientalis"
+   ]
+ }
+--- a/scripts/import_reviewed_recordings.py
++++ b/scripts/import_reviewed_recordings.py
+@@ -1,4 +1,4 @@
+-"""Dry-run by default. Explicit TEST-only import of three reviewed Commons audio records."""
++"""Dry-run by default. Explicit TEST-only import of the pinned, bounded Commons audio catalog."""
+ import argparse
+ import json
+ import os
+@@ -17,6 +17,7 @@
+     parser.add_argument('--expect-database')
+     parser.add_argument('--expect-concept-set')
+     parser.add_argument('--expect-taxonomy-release')
++    parser.add_argument('--expect-recordings', type=int)
+     args = parser.parse_args()
+     rows = graph_rows()
+     if not args.apply_test:
+@@ -26,6 +27,8 @@
+     expected = (args.expect_uri, args.expect_database, args.expect_concept_set, args.expect_taxonomy_release)
+     if os.environ.get('ROBINGRAPH_DEPLOY_TARGET') != 'test' or not all(expected):
+         parser.error('TEST target and all four explicit expected context flags are required')
++    if args.expect_recordings != len(rows):
++        parser.error('Explicit expected recording count differs from the pinned catalog')
+     settings = Neo4jSettings.from_environment()
+     if (settings.uri, settings.database) != expected[:2]:
+         parser.error('Neo4j target differs from the confirmed TEST target')
+@@ -42,11 +45,11 @@
+ RETURN name, count(taxon) AS matches
+ """, concept_set_id=args.expect_concept_set, taxonomy_release=args.expect_taxonomy_release,
+             names=[row['scientific_name'] for row in rows]).data()
+-        if len(matches) != 3 or any(row['matches'] != 1 for row in matches):
+-            raise ValueError('Three unique exact-species targets must be present; no writes applied')
++        if len(matches) != len(rows) or any(row['matches'] != 1 for row in matches):
++            raise ValueError('Every reviewed exact-species target must be unique and present; no writes applied')
+         result = tx.run(UPSERT_RECORDINGS, rows=rows, dataset_id=SOURCE_ID, source_release=SOURCE_RELEASE,
+                         concept_set_id=args.expect_concept_set, taxonomy_release=args.expect_taxonomy_release).single()
+-        if result is None or result['recordings'] != 3:
++        if result is None or result['recordings'] != len(rows):
+             raise ValueError('Unexpected recording import count; transaction rolled back')
+         return result['recordings']
+     with GraphDatabase.driver(settings.uri, auth=(settings.username, settings.password)) as driver:
+--- a/tests/test_recordings.py
++++ b/tests/test_recordings.py
+@@ -15,18 +15,90 @@
+         self.data = json.loads(Path(audio.__file__).with_name('commons_bird_recordings.json').read_text())
+         self.row = copy.deepcopy(self.data['records'][0])
+ 
+-    def test_three_actual_reviewed_files_have_file_specific_rights_and_optional_facts(self):
++    def test_reviewed_catalog_preserves_original_files_and_their_optional_facts(self):
+         records = audio.reviewed_catalog()
+-        self.assertEqual({'Anas platyrhynchos', 'Passer montanus', 'Hypsipetes amaurotis'},
+-                         {record['scientific_name'] for record in records.values()})
++        self.assertTrue({'Anas platyrhynchos', 'Passer montanus', 'Hypsipetes amaurotis'} <=
++                        {record['scientific_name'] for record in records.values()})
+         self.assertTrue(audio.source_allowed())
+-        self.assertEqual(3, len(audio.graph_rows()))
++        self.assertEqual(14, len(audio.graph_rows()))
+         mallard = next(r for r in records.values() if r['scientific_name'] == 'Anas platyrhynchos')
+         self.assertEqual('Jonathon Jongsma', mallard['creator'])
+         self.assertEqual('2010-09-14 13:53', mallard['recorded_at'])
+         self.assertEqual('Powderhorn Park, Minneapolis, MN', mallard['location'])
+         self.assertIsNone(mallard['recording_type'])
+         self.assertNotIn('utm_', mallard['audio_url'])
++
++    def test_catalog_matches_reviewed_domestic_species_manifest_and_original_provenance(self):
++        expected = {'Anas platyrhynchos', 'Hypsipetes amaurotis', 'Passer montanus', 'Ardea alba',
++                    'Ardea cinerea', 'Dryocopus martius', 'Cuculus canorus', 'Fulica atra', 'Hirundo rustica',
++                    'Motacilla alba', 'Nycticorax nycticorax', 'Picus canus', 'Streptopelia orientalis', 'Corvus corone'}
++        catalog = audio.reviewed_catalog()
++        self.assertEqual(expected, {record['scientific_name'] for record in catalog.values()})
++        self.assertEqual(14, len(catalog))
++        original = {'commons-recording:23927872': 'f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee',
++                    'commons-recording:186512225': '3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1',
++                    'commons-recording:16592315': 'c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d'}
++        for record_id, digest in original.items():
++            self.assertEqual(digest, catalog[record_id]['evidence']['metadata_sha256'])
++            self.assertEqual('2026-10-30T06:29:17.911783+00:00', catalog[record_id]['evidence']['retrieved_at'])
++        for record in catalog.values():
++            self.assertEqual({'id','scientific_name','audio_url','source_url','creator','license_name','license_url',
++                              'title','recording_type','recorded_at','location','evidence'}, set(record))
++            if record['id'] not in original:
++                self.assertTrue(record['evidence']['retrieved_at'].startswith('2026-11-02'))
++        formats = {f"commons-recording:{row['page_id']}": row['imageinfo']['mime'] for row in self.data['records']}
++        self.assertEqual(formats, {row['id']: row['format'] for row in audio.graph_rows()})
++        self.assertIn('audio/mpeg', formats.values())
++
++    def test_empty_duplicate_species_duplicate_ids_and_wrong_manifest_are_rejected(self):
++        invalid = []
++        empty = copy.deepcopy(self.data); empty['records'] = []; empty['expected_recordings'] = 0; empty['expected_species'] = []
++        invalid.append(empty)
++        for different_id in (False, True):
++            duplicate = copy.deepcopy(self.data); extra = copy.deepcopy(duplicate['records'][0])
++            if different_id:
++                extra['page_id'] += 1
++            duplicate['records'].append(extra); duplicate['expected_recordings'] += 1
++            duplicate['expected_species'].append(extra['scientific_name']); invalid.append(duplicate)
++        wrong = copy.deepcopy(self.data); wrong['expected_species'][0] = 'Anas crecca'; invalid.append(wrong)
++        try:
++            for data in invalid:
++                audio.reviewed_catalog.cache_clear()
++                with self.subTest(count=data['expected_recordings']), patch.object(audio, '_reviewed_data', return_value=data), self.assertRaises(ValueError):
++                    audio.reviewed_catalog()
++        finally:
++            audio.reviewed_catalog.cache_clear()
++
++    def test_only_canonical_official_http_license_links_are_upgraded(self):
++        row = copy.deepcopy(self.row)
++        row['imageinfo']['extmetadata']['LicenseUrl']['value'] = 'http://creativecommons.org/licenses/by-sa/3.0/'
++        record = audio.reviewed_record(row, self.data['retrieved_at'])
++        self.assertEqual('https://creativecommons.org/licenses/by-sa/3.0/', record['license_url'])
++        for url in ('http://creativecommons.org.evil.invalid/licenses/by-sa/3.0/',
++                    'https://user@creativecommons.org/licenses/by-sa/3.0/',
++                    'https://creativecommons.org:8443/licenses/by-sa/3.0/',
++                    'https://creativecommons.org/licenses/by-nc/3.0/'):
++            row['imageinfo']['extmetadata']['LicenseUrl']['value'] = url
++            with self.subTest(url=url), self.assertRaises(ValueError):
++                audio.reviewed_record(row, self.data['retrieved_at'])
++
++    def test_importer_rejects_a_count_outside_the_reviewed_manifest_before_connecting(self):
++        import os
++        import subprocess
++        import sys
++        script = Path(__file__).resolve().parents[1] / 'scripts' / 'import_reviewed_recordings.py'
++        result = subprocess.run([sys.executable, str(script), '--apply-test', '--expect-uri', 'bolt://example.invalid',
++                                 '--expect-database', 'neo4j', '--expect-concept-set', 'confirmed-test',
++                                 '--expect-taxonomy-release', 'v2025b', '--expect-recordings', '13'],
++                                env={**os.environ, 'ROBINGRAPH_DEPLOY_TARGET': 'test'},
++                                capture_output=True, text=True)
++        self.assertEqual(2, result.returncode)
++        self.assertIn('expected recording count differs', result.stderr)
++
++    def test_video_dimensions_are_not_accepted_as_an_ogg_recording(self):
++        row = copy.deepcopy(self.row); row['imageinfo'].update(width=1280, height=720)
++        with self.assertRaises(ValueError):
++            audio.reviewed_record(row, self.data['retrieved_at'])
+ 
+     def test_pinned_snapshot_rejects_unreviewed_bundle_changes(self):
+         audio.reviewed_catalog.cache_clear()
+--- a/config/source-registry.json
++++ b/config/source-registry.json
+@@ -212,7 +212,7 @@
+     "auth_method": "none",
+     "release_strategy": "dated_snapshot",
+     "incremental_cursor": null,
+-    "rate_limit_note": "Three manually reviewed exact-species files only. Import pinned imageinfo metadata after checking each file author, CC BY/CC BY-SA license and taxon. No runtime provider fetch.",
++    "rate_limit_note": "Only exact-species files in the pinned reviewed species/count manifest. Import pinned imageinfo metadata after checking each file author, CC BY/CC BY-SA license and taxon. No runtime provider fetch.",
+     "license_uri": "https://commons.wikimedia.org/wiki/Commons:Licensing",
+     "license_name": "Per-file license; verified before display",
+     "terms_uri": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",

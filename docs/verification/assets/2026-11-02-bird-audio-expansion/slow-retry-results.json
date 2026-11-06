@@ -1,0 +1,315 @@
+{
+  "startedAt": "2026-11-02T08:13:47.304Z",
+  "scope": "Failed species only; one native audio at a time in about:blank; no images/profile requests; 20-second interval; stop on any HTTP429; unchanged actual API URLs.",
+  "retryWindow": {
+    "basis": "Conservative post-response file mtime: the result was written immediately after reading the HTTP response, and the file has not been rewritten.",
+    "responseRecordedAtUtc": "2026-11-02T08:03:03.962Z",
+    "retryAfterSeconds": 600,
+    "earliestSafeRetryAtUtc": "2026-11-02T08:13:03.962Z"
+  },
+  "results": [
+    {
+      "name": "Cuculus canorus",
+      "at": "2026-11-02T08:13:50.883Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+      "state": {
+        "paused": false,
+        "time": 0.55056,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+        "decodedBytes": 13306
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [
+        {
+          "type": "Media",
+          "errorText": "net::ERR_ABORTED"
+        }
+      ],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": true
+    },
+    {
+      "name": "Fulica atra",
+      "at": "2026-11-02T08:14:11.659Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+      "state": {
+        "paused": false,
+        "time": 0.31775,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+        "decodedBytes": 7722
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+          "status": 206,
+          "contentType": "audio/mpeg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": true
+    },
+    {
+      "name": "Hirundo rustica",
+      "at": "2026-11-02T08:14:33.700Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+      "state": {
+        "paused": false,
+        "time": 0.356082,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+        "decodedBytes": 8760
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [
+        {
+          "type": "Media",
+          "errorText": "net::ERR_ABORTED"
+        }
+      ],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": true
+    },
+    {
+      "name": "Motacilla alba",
+      "at": "2026-11-02T08:14:54.980Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+      "state": {
+        "paused": false,
+        "time": 0.419921,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+        "decodedBytes": 11285
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+          "status": 206,
+          "contentType": "audio/mpeg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": true
+    },
+    {
+      "name": "Nycticorax nycticorax",
+      "at": "2026-11-02T08:15:15.750Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+      "state": {
+        "paused": false,
+        "time": 0.306352,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+        "decodedBytes": 8027
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": true
+    },
+    {
+      "name": "Picus canus",
+      "at": "2026-11-02T08:15:56.003Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+      "state": {
+        "paused": false,
+        "time": 0,
+        "ready": 0,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+        "decodedBytes": null
+      },
+      "responses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+          "status": 206,
+          "contentType": "application/ogg",
+          "retryAfter": null
+        }
+      ],
+      "networkFailures": [
+        {
+          "type": "Media",
+          "errorText": "net::ERR_ABORTED"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        },
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": false
+    },
+    {
+      "name": "Corvus corone",
+      "at": "2026-11-02T08:16:16.272Z",
+      "audio_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+        "decodedBytes": null
+      },
+      "responses": [],
+      "networkFailures": [
+        {
+          "type": "Media",
+          "errorText": "net::ERR_BLOCKED_BY_ORB"
+        }
+      ],
+      "rateLimit": null,
+      "sourceMatches": true,
+      "passed": false
+    }
+  ],
+  "stoppedFor429": false,
+  "updatedAt": "2026-11-02T08:16:16.273Z",
+  "finishedAt": "2026-11-02T08:16:16.274Z"
+}

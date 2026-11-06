@@ -1,0 +1,43 @@
+{
+  "action": "independent final read-only state verification",
+  "pg_target": {
+    "host": "192.168.219.99",
+    "port": 5433,
+    "database": "robingraph_test",
+    "schema": "ingest"
+  },
+  "candidate_counts": [
+    {
+      "status": "awaiting_review",
+      "count": 1
+    }
+  ],
+  "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+  "scientific_name": "Passer montanus",
+  "status": "awaiting_review",
+  "review_field_absent": true,
+  "published_candidates": 0,
+  "metadata_fetched_at": "2026-11-05T01:40:17.323534+00:00",
+  "candidate_updated_at": "2026-11-05 10:40:18.676523+09:00",
+  "first_execution": 18183,
+  "repeat_execution": 18184,
+  "repeat_returned_identical_candidate": true,
+  "metadata_and_row_timestamps_precede_repeat": true,
+  "timestamp_note": "No assumption of sub-second clock synchronization between n8n and app hosts. Persisted metadata/row timestamps precede repeat execution.",
+  "original_pinned_raw_record_and_normalized_provenance_unchanged": true,
+  "stored_file": {
+    "size": 289857,
+    "sha256": "eb776d11526454947d8a392a5b09f2da657b9c0bd5c6e4297e72016ff191a403",
+    "sha1": "567d1d15730a6f75c9ed6cf2d6031780e88ca28f",
+    "magic": "OggS"
+  },
+  "stored_graph_recordings": 0,
+  "stored_graph_evidence": 0,
+  "existing_active_pinned_recordings": 12,
+  "provider_requests_during_verification": 0,
+  "review_requests": 0,
+  "publish_requests": 0,
+  "database_writes": 0,
+  "production_changed": false,
+  "credentials_recorded": false
+}

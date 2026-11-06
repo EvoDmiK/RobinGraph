@@ -178,3 +178,38 @@ LIMIT 100;
 | `n8n/candidates/terra-operational-ingest.json` | Terra 후보 원본, SSH/CLI 중심이라 배포하지 않음 |
 
 GBIF API 계약은 [GBIF Occurrence API](https://techdocs.gbif.org/en/openapi/v1/occurrence)를 따른다. Neo4j 전용 노드의 입력과 반환 형식은 [community node 소스](https://github.com/Kurea/n8n-nodes-neo4j/blob/main/src/nodes/Neo4j/Neo4j.node.ts)를 기준으로 확인했다.
+
+## RG-507 새소리 수집·검토·저장 (TEST 전용)
+
+산출물은 `n8n/robingraph-audio-collection-test.json`, 생성기는 `scripts/generate_n8n_audio_collection.py`, TEST 관리 CLI는 `scripts/manage_n8n_audio.py`다. 기존 GBIF·AviList workflow의 실행 이력과 별개이며, 상세 실행 근거는 [RG-507 작업기록](../work-log/2026-11-05-n8n-bird-audio.md)을 따른다.
+
+```sh
+python3 scripts/generate_n8n_audio_collection.py --check
+python3 scripts/manage_n8n_audio.py inspect
+python3 scripts/manage_n8n_audio.py audit
+```
+
+n8n의 앱 origin은 고정 TEST LAN `http://192.168.219.97:8000`이다. 실행 전 health 응답의 TEST 대상을 확인하며 임의 origin으로 내부 인증을 전송하지 않는다. 공개 HTTPS 경로에서 Cloudflare 502·인증 status 403이 관측돼 내부 경로로 전환했다. 내부 bearer 인증은 신뢰하는 LAN의 HTTP로 전송되며 이 구간에 TLS는 없다. 이 게이트웨이 오류를 음원 제공자의 429로 분류하지 않는다.
+
+수동 입력은 `action=collect`, `limit=1`이 기본이며 최대5다. `after_taxon_id`를 명시하고 결과의 `next_cursor`를 다음 batch에 넣는다. CLI 수동 실행의 staticData 저장에 cursor 진행을 의존하지 않는다. 필요하면 JSON 설정 파일을 `import --config <config.json> --apply`로 반영하고 `execute --apply`로 수동 실행한다. `--apply`는 TEST 변경·실행이므로 대상과 설정을 검토한 뒤 사용한다.
+
+- **collect**: targets → discover → stage → status. 수집 자체는 검토 승인이나 공개를 수행하지 않는다.
+- **status**: 후보 상태·저장 정보·대기 시각을 조회한다.
+- **review**: 실제 검토자가 정확한 종과 비공개 preview 재생을 확인한 뒤 reviewer·taxon_verified·playback_verified·approved를 명시한다. 자동 디코딩 검사는 사람의 청취·승인을 대신하지 않는다.
+- **publish**: 검토와 별도 명시 실행이다. 승인·저장·graph 공개 gate를 통과해야 제공한다. 실제 수집의 미검토 후보는 `awaiting_review`로 남긴다.
+
+429는 남은 batch 중단 → Retry-After만큼 Wait → 가능한 후보 status 1회 조회 → deferred 종료다. 자동 원격 재시도는 하지 않고 다음 수동 실행에서 재개한다. Manual Trigger 기본이며 주기 스케줄·자동 승인·자동 공개는 꺼둔다.
+
+파일은 TEST 앱이 있는 .97 M4의 전용 영구 volume `/var/lib/robingraph/audio`에 저장한다. 원문 출처·라이선스·metadata와 저장 hash를 보존한다. 내부 인증 토큰은 n8n 저장 credential에만 연결하며 workflow JSON·명령 인자·실행 증거에 값 자체를 넣지 않는다. credential 설치가 필요하면 권한0600의 비공개 env 파일을 `install-credential --token-env <private.env> --apply`로 지정한다. 기존 credential을 재사용·변경하는 작업으로 확대하지 않는다.
+
+현재 실제 수집 후보는 참새 1개 `awaiting_review`이며 review/publish를 실행하지 않았다. 검증 범위는 작업기록의 최종 영수증으로 확인한다. 미검토 실자료를 승인된 fixture 결과와 혼동하지 않는다. Production API·DB·NAS 파일 서비스·운영 n8n 활성화는 이 런북의 TEST 실행 범위가 아니다.
+
+## RG-507 운영 수집 (2026-11-05 적용)
+
+[운영 workflow](https://workflow.dove-nest.com/workflow/rgAudioCollectionProd01)는 매일 **03:00 Asia/Seoul·1종** 수집으로 활성화했다. 공개 앱과 분리된 NAS `robingraph-audio-collector`를 사용하며 후보는 `awaiting_review`로 저장한다. 자동 승인·공개는 없고 sidecar의 publish/public media 경로도 비활성이다. 앞선 TEST 전용 절차와 별도 승인·환경이다.
+
+진행 cursor는 n8n Data Table `RobinGraph Audio PROD cursor`(`J49mL4EifvZ0Pres`)의 `cursor_key=prod` 행에 저장한다. staticData는 실제 반복 trigger에서 영속화되지 않아 사용하지 않는다. 정상 처리 또는 명시적인 422 skip은 다음 대상으로 진행하지만 429·5xx는 cursor를 진행시키지 않는다. 스케줄 입력은 collect·limit 1로 고정하고 수동 검토·공개 입력을 상속하지 않는다.
+
+운영 수동 수집/중복 실행과 Data Table trigger 간 저장은 검증했다. 첫 정기 수집은 **2026-11-06 03:00 KST 예정**이며 배포 당일에는 아직 실행되지 않았다. 운영 후보 1개는 사람의 청취·동정 검토가 남았고 실제 공개는 하지 않았다. 내부 서비스 인증은 저장 credential과 비공개 env를 사용한다. 값 자체를 workflow JSON·문서·명령에 남기지 않는다.
+
+공개 앱 revision `5056ccba9e75a891cc133a6f371b49deb5dbc598`과 TEST 환경은 유지했다. RG-409 도감 UI의 운영 반영이나 TEST 12종 음원의 운영 공개를 뜻하지 않는다. 배포·실행 ID·검증 및 실패 이력은 [운영 후속 기록](../work-log/2026-11-05-n8n-bird-audio-production.md)을 따른다.

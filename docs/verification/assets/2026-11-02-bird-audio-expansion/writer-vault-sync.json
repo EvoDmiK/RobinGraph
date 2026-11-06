@@ -1,0 +1,78 @@
+{
+  "verified_at": "2026-11-02T08:32:22.488976+00:00",
+  "task_id": "RG-409",
+  "status": "in_progress",
+  "stage": "12종 TEST 검증 완료 / 2종 가용성 후속 / 운영 승인 대기",
+  "documents": [
+    {
+      "local": "docs/work-log/2026-11-02-bird-audio-expansion.md",
+      "vault": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리지원종확대.md",
+      "sha256": "4b573096ecca8f96d04f059d15e30f3275074ba1088f4b5ccb3d56b5e8aef008",
+      "raw_equal": true
+    },
+    {
+      "local": "docs/backlog/RG-409.md",
+      "vault": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "sha256": "beb0c5c245e9ee31e8d3f87245d366b28b86b046ea490321803f10e4fd8a36d4",
+      "raw_equal": true
+    }
+  ],
+  "readbacks": [
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리지원종확대.md",
+      "raw_equal": true,
+      "other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "raw_equal": true,
+      "other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "raw_equal": true,
+      "other_content_preserved": true
+    }
+  ],
+  "notes_updated": 4,
+  "notes_readback": 4,
+  "prior_worklogs_preserved": true,
+  "production_changed": false,
+  "git_write_performed": false,
+  "artifacts": {
+    "actual-chat-audio-mobile-390.png": "320336f35ed79066334ec25f60d88bd2a5aaebffe741c741490e9cc58a9b719d",
+    "actual-chat-source-back-390.png": "326a931ca4618f2a3402efee376d921022ea6c9f169ab56b21c463d1eb198972",
+    "backend.patch": "6f641a959ff1b2a183e230cc7605422b701d02f8be70250522cf385229a55f1f",
+    "browser-first-pass-results.json": "c1a60bcfb8799bfa204914f4da3d78001bebf127a810db5a4e24ba9bca922630",
+    "browser-report.md": "14596ee184e5c7bf5fabe9e8502c7fd010cf4723c6be8eac9acc630c911cd7c0",
+    "catalog-review-ui.json": "91adcb293210a988c9fea2cfe1350f49e87442faae5f2d5d6b41c949488aafa4",
+    "chat-browser-results.json": "7eaae9a3ff857837363742c6adf0a64ed9fc2fb6ffd5858c635689094575da83",
+    "coverage.json": "79ac48783042178786c49356ada022913a2c701a7a0c44283f9c4b6e568f21fe",
+    "coverage.md": "a152bf228dd181a4792c827e36d2b428ca8e52d3ce858b14ea5a48c13f344838",
+    "expansion-verified-followup.patch": "e0d749c203ec1fbe5f6e78b0bfe5228955672332e74001ec7b3da8d595f086ad",
+    "final-support-http-results.json": "c48ec89ef350c6ba103242f00705ccfa27ac1dbc14a434ca9014513ce9bf24b3",
+    "graphify-verified12.log": "61a8be6cf5400ebab231b03d93fc09691623eec71629497a280eb41c398eef52",
+    "independent-metadata-comparison.json": "e8aa5501e76c6ccc4ce25b5db45759883194c08ae25c8a95573b147e455c4ece",
+    "original-three-graph-backup.json": "e53a1e6a2f2f428d3087db5ee8c9fdad2418edad970f2c52c913397ae2a716c9",
+    "remaining-two-range-diagnostic.json": "01e13058f73d010079fdffef5b1758f29d73023d17cea330fa98d193d5774bf1",
+    "reviewed-target-manifest.json": "f5629940c466097c41640fed2e179532b051c3920bef5ad09b0f7161401c5fc3",
+    "reviewed-verified-target-manifest.json": "4b31c8ea4d7cbad2c9ca3926af68e8b6737873d4c54eca3c1b05274854c0bc04",
+    "root-final-review.json": "f1bde4a47366c69fffc14aba10027fe2f85c929acf558f34f430e18ccc99a6eb",
+    "root-python-tests-verified12.log": "ebaeb5ddebf7d730d4e754e63d8ef08a9da2e34c211acc53f87bf4558eacab96",
+    "root-python-tests.log": "f7542cba47746661276023354dddff69526d8aaffa81fa294861430d3284a91b",
+    "single-cdn-response.json": "e4aed6a7c7e5792ed9b8c1e6409464a74603918ab77e02fe0fccabb0e67fcc5d",
+    "slow-retry-results.json": "d8db116a303de079eb0ff651f1d5231532a6861302a41a0be8303a0d156fee82",
+    "source-fetch-receipt.json": "0afd59082fbc105f6089c2375fb96f19ee957cb3acae8989d195a75f3a483ac5",
+    "source-review.json": "90db41244e618de9f8865d533b69ce1ff5035a200b94e93b059610981bbc31c1",
+    "test-expansion-import-receipt.json": "0bf046b683291d1899be72f13a7fb9a8b36aefad48ea1ede6775ea3bf886e6b3",
+    "test-release-candidate14.json": "c7fe29f4c5d67cd014c6ccc532051a841a9559c99147e1b84093ab773e853dea",
+    "test-release.json": "76b02b0f9421dc31559bd2d1aad72f66143f02d5e9ee480d932cc2ecc45a8ece",
+    "test-verified-expansion-import-receipt.json": "6d6af3e0c48811c3a79eb77713f72c45c4cbdafb188cc0f48d9134897920e158",
+    "verified-fourteen-graph-backup.json": "dd3086247f0b26fdfc5dfd402278ae93c106916e6e44dae92971cb2ee781239c"
+  }
+}

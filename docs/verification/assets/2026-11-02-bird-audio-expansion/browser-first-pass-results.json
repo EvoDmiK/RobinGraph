@@ -1,0 +1,953 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-11-02T07:58:18.751Z",
+  "browser": "Chromium headless CDP",
+  "data": "Actual TEST GET profiles; existing deployed card/popup renderer; no mocked API or media",
+  "species": [
+    {
+      "name": "Passer montanus",
+      "korean_name": "참새",
+      "display_name": "참새",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:16592315",
+          "title": "Passer montanus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "recording_type": "Calls",
+          "recorded_at": "2011-09-20",
+          "location": "Moscow region, Russia"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Passer montanus.ogg녹음: Vladimir Yu. Arkhipov, Arkhivov · 원문 출처 · CC BY-SA 3.0소리 유형: Calls녹음일: 2011-09-20녹음 지역: Moscow region, Russia",
+      "profilePass": true
+    },
+    {
+      "name": "Hypsipetes amaurotis",
+      "korean_name": "직박구리",
+      "display_name": "직박구리",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:186512225",
+          "title": "Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "creator": "karliatje",
+          "license_name": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "recording_type": null,
+          "recorded_at": "2025-05-20",
+          "location": "Izu, Japan"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Hypsipetes-amaurotis-2025-05-20-282617142.ogg녹음: karliatje · 원문 출처 · CC BY 4.0녹음일: 2025-05-20녹음 지역: Izu, Japan",
+      "profilePass": true
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "korean_name": "청둥오리",
+      "display_name": "청둥오리",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:23927872",
+          "title": "Anas platyrhynchos - Mallard - XC62258.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "recording_type": null,
+          "recorded_at": "2010-09-14 13:53",
+          "location": "Powderhorn Park, Minneapolis, MN"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Anas platyrhynchos - Mallard - XC62258.ogg녹음: Jonathon Jongsma · 원문 출처 · CC BY-SA 3.0녹음일: 2010-09-14 13:53녹음 지역: Powderhorn Park, Minneapolis, MN",
+      "profilePass": true
+    },
+    {
+      "name": "Ardea alba",
+      "korean_name": "중대백로",
+      "display_name": "중대백로",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:27404208",
+          "title": "Ardea alba - Great Egret XC131650.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_alba_-_Great_Egret_XC131650.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+          "recording_type": "call",
+          "recorded_at": "2013-04-27 06:43",
+          "location": "Theodore Wirth Park, Minneapolis, MN"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Ardea alba - Great Egret XC131650.ogg녹음: Jonathon Jongsma · 원문 출처 · CC BY-SA 3.0소리 유형: call녹음일: 2013-04-27 06:43녹음 지역: Theodore Wirth Park, Minneapolis, MN",
+      "profilePass": true
+    },
+    {
+      "name": "Ardea cinerea",
+      "korean_name": "왜가리",
+      "display_name": "왜가리",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:77528214",
+          "title": "Ardea cinerea - Grey Heron XC432231.mp3",
+          "creator": "Joost van Bruggen",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+          "recording_type": "agitated call, juvenile",
+          "recorded_at": "2018-08-04 02:08",
+          "location": "Área Metropolitana de Sevilla (near  Isla Mayor), Sevilla, Andalucía"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Ardea cinerea - Grey Heron XC432231.mp3녹음: Joost van Bruggen · 원문 출처 · CC BY-SA 4.0소리 유형: agitated call, juvenile녹음일: 2018-08-04 02:08녹음 지역: Área Metropolitana de Sevilla (near  Isla Mayor), Sevilla, Andalucía",
+      "profilePass": true
+    },
+    {
+      "name": "Dryocopus martius",
+      "korean_name": "까막딱다구리",
+      "display_name": "까막딱다구리",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:48121877",
+          "title": "Black woodpecker Dryocopus martius female drumming.ogg",
+          "creator": "SanoAK: Alexander Kürthy",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+          "recording_type": "drumming",
+          "recorded_at": "2015-03-08",
+          "location": "Slovakia, Slovenské rudohorie, Volovské vrchy (mnt.), part Zlatý stôl"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Black woodpecker Dryocopus martius female drumming.ogg녹음: SanoAK: Alexander Kürthy · 원문 출처 · CC BY-SA 4.0소리 유형: drumming녹음일: 2015-03-08녹음 지역: Slovakia, Slovenské rudohorie, Volovské vrchy (mnt.), part Zlatý stôl",
+      "profilePass": true
+    },
+    {
+      "name": "Cuculus canorus",
+      "korean_name": "뻐꾸기",
+      "display_name": "뻐꾸기",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:16329139",
+          "title": "Cuculus canorus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Cuculus_canorus.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "recording_type": null,
+          "recorded_at": "2009-05-05",
+          "location": "Kaluga region, Russia"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Cuculus canorus.ogg녹음: Vladimir Yu. Arkhipov, Arkhivov · 원문 출처 · CC BY-SA 3.0녹음일: 2009-05-05녹음 지역: Kaluga region, Russia",
+      "profilePass": true
+    },
+    {
+      "name": "Fulica atra",
+      "korean_name": "물닭",
+      "display_name": "물닭",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:83204380",
+          "title": "Fulica atra - Eurasian Coot XC467829.mp3",
+          "creator": "Mikko Heikkinen",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+          "recording_type": "flight call, nocturnal flight call",
+          "recorded_at": "2019-04-06 22:29",
+          "location": "Söderskog, Espoo, Uusimaa"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Fulica atra - Eurasian Coot XC467829.mp3녹음: Mikko Heikkinen · 원문 출처 · CC BY-SA 4.0소리 유형: flight call, nocturnal flight call녹음일: 2019-04-06 22:29녹음 지역: Söderskog, Espoo, Uusimaa",
+      "profilePass": true
+    },
+    {
+      "name": "Hirundo rustica",
+      "korean_name": "제비",
+      "display_name": "제비",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:23929087",
+          "title": "Hirundo rustica - Barn Swallow - XC83449.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+          "recording_type": "twitter-warble song",
+          "recorded_at": "2011-07-17 07:01",
+          "location": "Minnesota Valley NWR, Old Cedar Ave Bridge, Hennepin, MN"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Hirundo rustica - Barn Swallow - XC83449.ogg녹음: Jonathon Jongsma · 원문 출처 · CC BY-SA 3.0소리 유형: twitter-warble song녹음일: 2011-07-17 07:01녹음 지역: Minnesota Valley NWR, Old Cedar Ave Bridge, Hennepin, MN",
+      "profilePass": true
+    },
+    {
+      "name": "Motacilla alba",
+      "korean_name": "알락할미새",
+      "display_name": "알락할미새",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:83210806",
+          "title": "Motacilla alba - White Wagtail XC466458.mp3",
+          "creator": "Pascal Christe",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+          "recording_type": "call, song",
+          "recorded_at": "2019-02-21 08:30",
+          "location": "Yverdon-les-Bains, Vaud"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Motacilla alba - White Wagtail XC466458.mp3녹음: Pascal Christe · 원문 출처 · CC BY-SA 4.0소리 유형: call, song녹음일: 2019-02-21 08:30녹음 지역: Yverdon-les-Bains, Vaud",
+      "profilePass": true
+    },
+    {
+      "name": "Nycticorax nycticorax",
+      "korean_name": "해오라기",
+      "display_name": "해오라기",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:23927908",
+          "title": "Nycticorax nycticorax - Black-crowned Night Heron - XC99573.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+          "recording_type": "Calls",
+          "recorded_at": "2012-04-21 08:03",
+          "location": "Palo Alto Baylands, Santa Clara, CA"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Nycticorax nycticorax - Black-crowned Night Heron - XC99573.ogg녹음: Jonathon Jongsma · 원문 출처 · CC BY-SA 3.0소리 유형: Calls녹음일: 2012-04-21 08:03녹음 지역: Palo Alto Baylands, Santa Clara, CA",
+      "profilePass": true
+    },
+    {
+      "name": "Picus canus",
+      "korean_name": "청딱다구리",
+      "display_name": "청딱다구리",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:19012629",
+          "title": "Picus canus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Picus_canus.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+          "recording_type": "Call",
+          "recorded_at": "2012-03-19",
+          "location": "Bryansk region, Russia"
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Picus canus.ogg녹음: Vladimir Yu. Arkhipov, Arkhivov · 원문 출처 · CC BY-SA 3.0소리 유형: Call녹음일: 2012-03-19녹음 지역: Bryansk region, Russia",
+      "profilePass": true
+    },
+    {
+      "name": "Streptopelia orientalis",
+      "korean_name": "멧비둘기",
+      "display_name": "멧비둘기",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:3116105",
+          "title": "Streptopelia orientalis.ogg",
+          "creator": "boppochan",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Streptopelia_orientalis.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+          "recording_type": null,
+          "recorded_at": "2006-11-11",
+          "location": null
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처Streptopelia orientalis.ogg녹음: boppochan · 원문 출처 · CC BY-SA 3.0녹음일: 2006-11-11",
+      "profilePass": true
+    },
+    {
+      "name": "Corvus corone",
+      "korean_name": "까마귀",
+      "display_name": "까마귀",
+      "name_source": null,
+      "status": "available",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [
+        {
+          "id": "commons-recording:37809031",
+          "title": "XC24828 - Zwarte Kraai - Corvus corone.ogg",
+          "creator": "Sander Pieterse",
+          "license_name": "CC BY-SA 4.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+          "recording_type": "call",
+          "recorded_at": "2008-11-02",
+          "location": null
+        }
+      ],
+      "rendered": 1,
+      "frontAudio": 1,
+      "backAudio": 0,
+      "controlsHidden": false,
+      "text": "새소리 출처XC24828 - Zwarte Kraai - Corvus corone.ogg녹음: Sander Pieterse · 원문 출처 · CC BY-SA 4.0소리 유형: call녹음일: 2008-11-02",
+      "profilePass": true
+    },
+    {
+      "name": "Treron sieboldii",
+      "korean_name": "녹색비둘기",
+      "display_name": "녹색비둘기",
+      "name_source": null,
+      "status": "no_licensed_recording",
+      "tier": "lc",
+      "surface": "#e3f2c4",
+      "recordings": [],
+      "rendered": 0,
+      "frontAudio": 0,
+      "backAudio": 0,
+      "controlsHidden": true,
+      "text": "새소리 출처확인된 새소리 자료가 없습니다.",
+      "profilePass": true
+    }
+  ],
+  "limitations": [
+    "No human listening confirmation",
+    "No physical mobile device or Safari/Firefox"
+  ],
+  "checks": {
+    "noAudioDownloadBeforePlay": true,
+    "allSupportedSpecies": true,
+    "playersOnlyInFront": true,
+    "unsupportedExplicit": true,
+    "metadataExact": true,
+    "noAutoplayPreloadNone": true
+  },
+  "prePlayRequests": 0,
+  "playbacks": [
+    {
+      "name": "Passer montanus",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        },
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.439345,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 18470,
+        "network": 1,
+        "duration": 11.001333
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 31541,
+        "network": 1,
+        "duration": 11.001333
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Hypsipetes amaurotis",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.334373,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 4514,
+        "network": 1,
+        "duration": 5.42125
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 6536,
+        "network": 1,
+        "duration": 5.42125
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.30962,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 8359,
+        "network": 1,
+        "duration": 3.468277
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 11773,
+        "network": 1,
+        "duration": 3.468277
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Ardea alba",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.421196,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 18067,
+        "network": 1,
+        "duration": 6.1678
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ardea_alba_-_Great_Egret_XC131650.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 24223,
+        "network": 1,
+        "duration": 6.1678
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Ardea cinerea",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+          "mimeType": "audio/mpeg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.535804,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 34560,
+        "network": 1,
+        "duration": 13.488
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Ardea_cinerea_-_Grey_Heron_XC432231.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 45120,
+        "network": 1,
+        "duration": 13.488
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Dryocopus martius",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.549,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 43289,
+        "network": 1,
+        "duration": 4.182494
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/5/54/Black_woodpecker_Dryocopus_martius_female_drumming.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 56274,
+        "network": 1,
+        "duration": 4.182494
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Cuculus canorus",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0,
+        "ready": 0,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 2,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/0/01/Cuculus_canorus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 2,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Fulica atra",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Fulica_atra_-_Eurasian_Coot_XC467829.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Hirundo rustica",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Hirundo_rustica_-_Barn_Swallow_-_XC83449.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Motacilla alba",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/a/af/Motacilla_alba_-_White_Wagtail_XC466458.mp3",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Nycticorax nycticorax",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nycticorax_nycticorax_-_Black-crowned_Night_Heron_-_XC99573.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Picus canus",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Streptopelia orientalis",
+      "mediaResponses": [
+        {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+          "mimeType": "application/ogg",
+          "status": 206
+        }
+      ],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.549235,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 13748,
+        "network": 1,
+        "duration": 11.798639
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/3/31/Streptopelia_orientalis.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": 18082,
+        "network": 1,
+        "duration": 11.798639
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Corvus corone",
+      "mediaResponses": [],
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "passed": false,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 0,
+        "error": 4,
+        "currentSrc": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+        "oggSupport": "maybe",
+        "mp3Support": "probably",
+        "decodedBytes": null,
+        "network": 3,
+        "duration": null
+      },
+      "stoppedOnClose": true
+    }
+  ],
+  "screenshot": "/tmp/robingraph-audio-expansion-20261102/screenshots/audio-mobile-390.png",
+  "passed": false
+}

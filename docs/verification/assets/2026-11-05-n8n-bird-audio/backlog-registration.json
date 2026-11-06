@@ -1,0 +1,40 @@
+{
+  "task_id": "RG-507",
+  "status": "in_progress",
+  "stage": "구현·TEST 검증 진행 / 운영 미승인",
+  "registration_approved_by": "Codex task coordinator after explicit user implementation request",
+  "next_id_evidence": {
+    "category": "5xx 데이터·분류·이름",
+    "existing_ids": [
+      501,
+      502,
+      503,
+      504,
+      505,
+      506
+    ],
+    "exact_rg507_search_before": 0
+  },
+  "rg409_unchanged": true,
+  "schedule_enabled": false,
+  "schedule_note": "별도 명시 활성화 전까지 주기 자동 수집 미포함",
+  "readbacks": [
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "exact_readback": true,
+      "other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "exact_readback": true,
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "exact_readback": true,
+      "other_content_preserved": true
+    }
+  ],
+  "detail_sha256": "ba35125a42d59b6b337e0d5b7badb441a04bd5ea83c8ad4c2b69685b2121eebf",
+  "verified_at": "2026-11-05T01:11:39.186484+00:00"
+}

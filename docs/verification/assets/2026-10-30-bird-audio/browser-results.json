@@ -1,0 +1,170 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-10-30T06:43:32.723Z",
+  "browser": "Chromium headless CDP",
+  "data": "Actual TEST GET profiles; existing deployed card/popup renderer; no mocked API or media",
+  "species": [
+    {
+      "name": "Passer montanus",
+      "status": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:16592315",
+          "title": "Passer montanus.ogg",
+          "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+          "recording_type": "Calls",
+          "recorded_at": "2011-09-20",
+          "location": "Moscow region, Russia"
+        }
+      ],
+      "rendered": 1,
+      "text": "새소리 듣기Passer montanus.ogg녹음: Vladimir Yu. Arkhipov, Arkhivov · 원문 출처 · CC BY-SA 3.0소리 유형: Calls녹음일: 2011-09-20녹음 지역: Moscow region, Russia녹음을 재생하지 못했습니다. 원문 출처에서 확인해 주세요."
+    },
+    {
+      "name": "Hypsipetes amaurotis",
+      "status": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:186512225",
+          "title": "Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "creator": "karliatje",
+          "license_name": "CC BY 4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+          "recording_type": null,
+          "recorded_at": "2025-05-20",
+          "location": "Izu, Japan"
+        }
+      ],
+      "rendered": 1,
+      "text": "새소리 듣기Hypsipetes-amaurotis-2025-05-20-282617142.ogg녹음: karliatje · 원문 출처 · CC BY 4.0녹음일: 2025-05-20녹음 지역: Izu, Japan녹음을 재생하지 못했습니다. 원문 출처에서 확인해 주세요."
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "status": "available",
+      "recordings": [
+        {
+          "id": "commons-recording:23927872",
+          "title": "Anas platyrhynchos - Mallard - XC62258.ogg",
+          "creator": "Jonathon Jongsma",
+          "license_name": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "audio_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg",
+          "recording_type": null,
+          "recorded_at": "2010-09-14 13:53",
+          "location": "Powderhorn Park, Minneapolis, MN"
+        }
+      ],
+      "rendered": 1,
+      "text": "새소리 듣기Anas platyrhynchos - Mallard - XC62258.ogg녹음: Jonathon Jongsma · 원문 출처 · CC BY-SA 3.0녹음일: 2010-09-14 13:53녹음 지역: Powderhorn Park, Minneapolis, MN녹음을 재생하지 못했습니다. 원문 출처에서 확인해 주세요."
+    },
+    {
+      "name": "Treron sieboldii",
+      "status": "no_licensed_recording",
+      "recordings": [],
+      "rendered": 0,
+      "text": "새소리 듣기확인된 새소리 자료가 없습니다."
+    }
+  ],
+  "limitations": [
+    "No human listening confirmation",
+    "No physical mobile device or Safari/Firefox"
+  ],
+  "checks": {
+    "noAudioDownloadBeforePlay": true,
+    "threeSupportedSpecies": true,
+    "unsupportedExplicit": true,
+    "metadataExact": true,
+    "noAutoplayPreloadNone": true,
+    "singlePlayback": true,
+    "stopsOnFlip": true,
+    "stopsOnDomRemoval": true,
+    "stopsOnConversationClear": true
+  },
+  "prePlayRequests": 0,
+  "playbacks": [
+    {
+      "name": "Passer montanus",
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.535275,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 21287,
+        "network": 1,
+        "duration": 11.001333
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 33646,
+        "network": 1,
+        "duration": 11.001333
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Hypsipetes amaurotis",
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.362356,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 4816,
+        "network": 1,
+        "duration": 5.42125
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 6681,
+        "network": 1,
+        "duration": 5.42125
+      },
+      "stoppedOnClose": true
+    },
+    {
+      "name": "Anas platyrhynchos",
+      "method": "CDP native control mouse click",
+      "state": {
+        "paused": false,
+        "time": 0.324642,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 8671,
+        "network": 1,
+        "duration": 3.468277
+      },
+      "passed": true,
+      "noOverflow": true,
+      "closed": {
+        "paused": true,
+        "time": 0,
+        "ready": 4,
+        "error": null,
+        "decodedBytes": 12085,
+        "network": 1,
+        "duration": 3.468277
+      },
+      "stoppedOnClose": true
+    }
+  ],
+  "screenshot": "/tmp/robingraph-bird-audio-20261030/screenshots/audio-mobile-390.png",
+  "passed": true
+}

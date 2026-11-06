@@ -1,0 +1,21 @@
+{
+  "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+  "origin": "http://192.168.219.97:8000",
+  "loaded": {
+    "status": 200,
+    "mime": "audio/ogg",
+    "bytes": 289857,
+    "preload": "none",
+    "autoplay": false
+  },
+  "playback": {
+    "current_time": 0,
+    "duration": 11.001333,
+    "paused": false,
+    "ready_state": 4,
+    "error_code": null
+  },
+  "passed": false,
+  "cdn_requests": 0,
+  "scope": "actual authenticated TEST cached bytes, isolated native Chromium controls; no human listening; no publication"
+}

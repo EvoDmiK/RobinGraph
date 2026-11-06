@@ -1,0 +1,93 @@
+{
+  "base_image": "ghcr.io/evodmik/robingraph@sha256:963b4836ccf77155a8ca94efa105e66c60f799d05e75f6ae6c5b6ce710b05edc",
+  "base_revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+  "runtime_overlay": [
+    {
+      "path": "src/robingraph/ingest/audio_collector.py",
+      "sha256": "59d9a09363cde0c467675291b77142ea641b5b880343c3d3066fffea4abc4a11"
+    },
+    {
+      "path": "src/robingraph/ingest/audio.py",
+      "sha256": "12f941606a3b3a49f6f374222edb22fa291685c78e1664406ed8a0a26e9786dc"
+    },
+    {
+      "path": "src/robingraph/ingest/audio_store.py",
+      "sha256": "abb6a6e22333a3bb2a2b59f4d5b6a8d7d4c52edb52ca764b4393e7d02f4c4128"
+    },
+    {
+      "path": "src/robingraph/api/drf/audio_views.py",
+      "sha256": "5e5263a6c3025fd8b00d1c92ee9f94770bddaed2dafcf1656c1b8ec6ee3f4188"
+    },
+    {
+      "path": "src/robingraph/retrieval/recordings.py",
+      "sha256": "266f39048ce6afeab389ef6e256ecc9a906432ce8fd45f12c402172931696887"
+    },
+    {
+      "path": "src/robingraph/retrieval/commons_bird_recordings.json",
+      "sha256": "11005050c3247a7440d6c2a57320b05f1fa879a30f05ca1a13c164ca00120958"
+    },
+    {
+      "path": "src/robingraph/ingest/migrations/0005_audio_candidates.sql",
+      "sha256": "669c5ef02f8a0427a0d4b835cb5e46bbe9a36e5b604c1bfcca1f984633f7c322"
+    },
+    {
+      "path": "config/source-registry.json",
+      "source_artifact": "source-registry.production-audio.json",
+      "sha256": "ac954e15429b73cc98a61700bd04487c3ef0aaabbe73d6a0b2cd7a08569bae09"
+    }
+  ],
+  "entrypoint": [
+    "python",
+    "-m",
+    "robingraph.ingest.audio_collector"
+  ],
+  "environment": {
+    "ROBINGRAPH_DEPLOY_TARGET": "prod",
+    "ROBINGRAPH_AUDIO_COLLECTOR_ENABLED": "true",
+    "ROBINGRAPH_AUDIO_ROOT": "/var/lib/robingraph/audio",
+    "ROBINGRAPH_DJANGO_ALLOWED_HOSTS": "robingraph-audio-collector,localhost,127.0.0.1"
+  },
+  "required_secret": "ROBINGRAPH_INGEST_INTERNAL_TOKEN via private env and n8n saved credential; never in workflow JSON",
+  "existing_database_credentials": "Copy only selected existing PG/Neo4j deployment values to dedicated private env; do not change public app env",
+  "health": {
+    "status": "ok",
+    "service": "audio-collector",
+    "deployment_target": "prod",
+    "publication_enabled": false
+  },
+  "routes": [
+    "GET/HEAD /health",
+    "POST /internal/v1/audio/targets",
+    "POST /internal/v1/audio/discover",
+    "POST /internal/v1/audio/stage",
+    "POST /internal/v1/audio/status",
+    "POST /internal/v1/audio/review",
+    "GET/HEAD /internal/v1/audio/preview/<candidate_id>"
+  ],
+  "disabled_routes": [
+    "/internal/v1/audio/publish",
+    "/media/audio/*",
+    "public app/profile/UI routes"
+  ],
+  "database_change": "0005 only: 1 additive candidate table + 1 index, existing rows/tables unchanged",
+  "public_app_changed": false,
+  "all_other_source_files": "remain byte-identical to pinned existing Production image",
+  "production_mutations_performed": 0,
+  "overlay_sha256": "3cfe50a76a47e2ba4713f1f7158b610eaa181e856acffed441b7cc1891866d1c",
+  "unchanged_base_source_hashes": {
+    "src/robingraph/cli.py": "7813efeae190683ea7a875d9ef9eb772cdc712b8ff8e69b2b35e252b8e2db11c",
+    "src/robingraph/ingest/postgres.py": "f1cd272757a08adef52800d2d330fa3e2799ecda45f5efbe7d17fff8de56cb34",
+    "src/robingraph/ingest/store.py": "ca0250d57a931fcf0ffab483b475a949165c7c16d1109a6ca41788141105758c",
+    "src/robingraph/api/drf/application.py": "f20aa78e97f4edd60a8a9d771484cdbfb3bd1b42144cf9d32fbf7a846fbd8e8c",
+    "src/robingraph/api/drf/views.py": "5c1faa9a0d9c2b6d070f449e0b4f94def94d34d6bb5b546c54ce721b1a552b4b",
+    "src/robingraph/api/drf/urls.py": "cc7e9fc52ddb9b6c5eb04963f163a790cc458211159d17ae17d7ca6189761760",
+    "src/robingraph/retrieval/species_profile.py": "becfee2dd16395d5e004a547a712779fc2c1626d95cf8165e65e7f44c06ba8dc",
+    "src/robingraph/retrieval/species_scope.py": "83a126193103d408c5b7fcd817358db7297fbd2b26536393f8719bb0ee53b465",
+    "src/robingraph/retrieval/species_distribution.json": "875d157ebb044f640d868b1e718dfe42592b01c97fcf534b673f2c9eeeac82d7"
+  },
+  "build_artifacts": {
+    "Dockerfile": "28eb28e615468129cec65146ebb4206a2c7d4827ad3b80a28d3f7f4291b4cd49",
+    "compat_image.py": "b9f1b57ade02a95b2f43f21395d69b09d858a255b84fffbc4ededfb229ae8e64",
+    "migrate_production_audio.py": "b9e514dabef256fd751bee8a746e073a8d124bd90edafd24c2f029e158589b3e"
+  }
+}

@@ -1,0 +1,282 @@
+--- a/src/robingraph/retrieval/recordings.py
++++ b/src/robingraph/retrieval/recordings.py
+@@ -11,8 +11,8 @@
+ from .species_profile import PlainText
+ 
+ SOURCE_ID = 'wikimedia-commons-bird-recordings'
+-SOURCE_RELEASE = 'commons-reviewed-2026-11-02'
+-ARTIFACT_SHA256 = 'db2e2308ae90f6c75011963422635bc3526a7ea2ae9045120ef57d8ebe538495'
++SOURCE_RELEASE = 'commons-reviewed-2026-11-02-verified'
++ARTIFACT_SHA256 = '11005050c3247a7440d6c2a57320b05f1fa879a30f05ca1a13c164ca00120958'
+ 
+ READ_RECORDINGS = """
+ MATCH (taxon:Taxon:BirdTaxon {id:$taxon_id, rank:'species', scientific_name:$scientific_name,
+--- a/src/robingraph/retrieval/commons_bird_recordings.json
++++ b/src/robingraph/retrieval/commons_bird_recordings.json
+@@ -1163,101 +1163,6 @@
+       "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+     },
+     {
+-      "scientific_name": "Picus canus",
+-      "page_id": 19012629,
+-      "title": "File:Picus canus.ogg",
+-      "revision_id": 795887325,
+-      "imageinfo": {
+-        "size": 335000,
+-        "width": 0,
+-        "height": 0,
+-        "duration": 12.75796875,
+-        "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+-        "descriptionurl": "https://commons.wikimedia.org/wiki/File:Picus_canus.ogg",
+-        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=19012629",
+-        "sha1": "a94997b35cb4c855acfb7bbc53c92abc4472cee0",
+-        "extmetadata": {
+-          "DateTime": {
+-            "value": "2012-04-08 17:58:49",
+-            "source": "mediawiki-metadata",
+-            "hidden": ""
+-          },
+-          "ObjectName": {
+-            "value": "Picus canus",
+-            "source": "mediawiki-metadata"
+-          },
+-          "CommonsMetadataExtension": {
+-            "value": 1.2,
+-            "source": "extension",
+-            "hidden": ""
+-          },
+-          "Categories": {
+-            "value": "March 2012 in Russia|Self-published work|Sounds of birds recorded in Russia|Birds of Bryansk Oblast|Piciformes of Russia|Audio files of Picus canus",
+-            "source": "commons-categories",
+-            "hidden": ""
+-          },
+-          "Assessments": {
+-            "value": "",
+-            "source": "commons-categories",
+-            "hidden": ""
+-          },
+-          "ImageDescription": {
+-            "value": "Call of Grey-headed Woodpecker, Bryansk region, Russia",
+-            "source": "commons-desc-page"
+-          },
+-          "DateTimeOriginal": {
+-            "value": "2012-03-19",
+-            "source": "commons-desc-page"
+-          },
+-          "Credit": {
+-            "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+-            "source": "commons-desc-page"
+-          },
+-          "Artist": {
+-            "value": "<a href=\"//commons.wikimedia.org/wiki/User:Arkhivov\" title=\"User:Arkhivov\">Vladimir Yu. Arkhipov, Arkhivov</a>",
+-            "source": "commons-desc-page"
+-          },
+-          "LicenseShortName": {
+-            "value": "CC BY-SA 3.0",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "UsageTerms": {
+-            "value": "Creative Commons Attribution-Share Alike 3.0",
+-            "source": "commons-desc-page"
+-          },
+-          "AttributionRequired": {
+-            "value": "true",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "LicenseUrl": {
+-            "value": "https://creativecommons.org/licenses/by-sa/3.0",
+-            "source": "commons-desc-page"
+-          },
+-          "Copyrighted": {
+-            "value": "True",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "Restrictions": {
+-            "value": "",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "License": {
+-            "value": "cc-by-sa-3.0",
+-            "source": "commons-templates",
+-            "hidden": ""
+-          }
+-        },
+-        "mime": "application/ogg"
+-      },
+-      "location": "Bryansk region, Russia",
+-      "recording_type": "Call",
+-      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+-    },
+-    {
+       "scientific_name": "Streptopelia orientalis",
+       "page_id": 3116105,
+       "title": "File:Streptopelia orientalis.ogg",
+@@ -1361,122 +1266,13 @@
+       "location": null,
+       "recording_type": null,
+       "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+-    },
+-    {
+-      "scientific_name": "Corvus corone",
+-      "page_id": 37809031,
+-      "title": "File:XC24828 - Zwarte Kraai - Corvus corone.ogg",
+-      "revision_id": 1223628334,
+-      "imageinfo": {
+-        "size": 87388,
+-        "width": 0,
+-        "height": 0,
+-        "duration": 8.698775510204081,
+-        "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+-        "descriptionurl": "https://commons.wikimedia.org/wiki/File:XC24828_-_Zwarte_Kraai_-_Corvus_corone.ogg",
+-        "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=37809031",
+-        "sha1": "81aaa068e33ecb7ff915bd027697a958252fb726",
+-        "extmetadata": {
+-          "DateTime": {
+-            "value": "2015-01-11 16:24:19",
+-            "source": "mediawiki-metadata",
+-            "hidden": ""
+-          },
+-          "ObjectName": {
+-            "value": "XC24828 - Zwarte Kraai - Corvus corone",
+-            "source": "mediawiki-metadata"
+-          },
+-          "CommonsMetadataExtension": {
+-            "value": 1.2,
+-            "source": "extension",
+-            "hidden": ""
+-          },
+-          "Categories": {
+-            "value": "Xeno-canto|Audio files of Corvus|Audio files of Corvus corone",
+-            "source": "commons-categories",
+-            "hidden": ""
+-          },
+-          "Assessments": {
+-            "value": "",
+-            "source": "commons-categories",
+-            "hidden": ""
+-          },
+-          "GPSLatitude": {
+-            "value": "52.086700",
+-            "source": "commons-desc-page"
+-          },
+-          "GPSLongitude": {
+-            "value": "4.263100",
+-            "source": "commons-desc-page"
+-          },
+-          "GPSMapDatum": {
+-            "value": "WGS-84",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "ImageDescription": {
+-            "value": "Zwarte Kraai (Corvus corone) · call",
+-            "source": "commons-desc-page"
+-          },
+-          "DateTimeOriginal": {
+-            "value": "2008-11-02",
+-            "source": "commons-desc-page"
+-          },
+-          "Credit": {
+-            "value": "<a rel=\"nofollow\" class=\"external free\" href=\"http://www.xeno-canto.org/24828\">http://www.xeno-canto.org/24828</a>",
+-            "source": "commons-desc-page"
+-          },
+-          "Artist": {
+-            "value": "Sander Pieterse",
+-            "source": "commons-desc-page"
+-          },
+-          "LicenseShortName": {
+-            "value": "CC BY-SA 4.0",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "UsageTerms": {
+-            "value": "Creative Commons Attribution-Share Alike 4.0",
+-            "source": "commons-desc-page"
+-          },
+-          "AttributionRequired": {
+-            "value": "true",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "LicenseUrl": {
+-            "value": "https://creativecommons.org/licenses/by-sa/4.0",
+-            "source": "commons-desc-page"
+-          },
+-          "Copyrighted": {
+-            "value": "True",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "Restrictions": {
+-            "value": "",
+-            "source": "commons-desc-page",
+-            "hidden": ""
+-          },
+-          "License": {
+-            "value": "cc-by-sa-4.0",
+-            "source": "commons-templates",
+-            "hidden": ""
+-          }
+-        },
+-        "mime": "application/ogg"
+-      },
+-      "location": null,
+-      "recording_type": "call",
+-      "retrieved_at": "2026-11-02T07:45:47.514604+00:00"
+     }
+   ],
+-  "expected_recordings": 14,
++  "expected_recordings": 12,
+   "expected_species": [
+     "Anas platyrhynchos",
+     "Ardea alba",
+     "Ardea cinerea",
+-    "Corvus corone",
+     "Cuculus canorus",
+     "Dryocopus martius",
+     "Fulica atra",
+@@ -1485,7 +1281,6 @@
+     "Motacilla alba",
+     "Nycticorax nycticorax",
+     "Passer montanus",
+-    "Picus canus",
+     "Streptopelia orientalis"
+   ]
+ }
+--- a/tests/test_recordings.py
++++ b/tests/test_recordings.py
+@@ -20,7 +20,7 @@
+         self.assertTrue({'Anas platyrhynchos', 'Passer montanus', 'Hypsipetes amaurotis'} <=
+                         {record['scientific_name'] for record in records.values()})
+         self.assertTrue(audio.source_allowed())
+-        self.assertEqual(14, len(audio.graph_rows()))
++        self.assertEqual(12, len(audio.graph_rows()))
+         mallard = next(r for r in records.values() if r['scientific_name'] == 'Anas platyrhynchos')
+         self.assertEqual('Jonathon Jongsma', mallard['creator'])
+         self.assertEqual('2010-09-14 13:53', mallard['recorded_at'])
+@@ -31,10 +31,10 @@
+     def test_catalog_matches_reviewed_domestic_species_manifest_and_original_provenance(self):
+         expected = {'Anas platyrhynchos', 'Hypsipetes amaurotis', 'Passer montanus', 'Ardea alba',
+                     'Ardea cinerea', 'Dryocopus martius', 'Cuculus canorus', 'Fulica atra', 'Hirundo rustica',
+-                    'Motacilla alba', 'Nycticorax nycticorax', 'Picus canus', 'Streptopelia orientalis', 'Corvus corone'}
++                    'Motacilla alba', 'Nycticorax nycticorax', 'Streptopelia orientalis'}
+         catalog = audio.reviewed_catalog()
+         self.assertEqual(expected, {record['scientific_name'] for record in catalog.values()})
+-        self.assertEqual(14, len(catalog))
++        self.assertEqual(12, len(catalog))
+         original = {'commons-recording:23927872': 'f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee',
+                     'commons-recording:186512225': '3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1',
+                     'commons-recording:16592315': 'c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d'}
+@@ -89,7 +89,7 @@
+         script = Path(__file__).resolve().parents[1] / 'scripts' / 'import_reviewed_recordings.py'
+         result = subprocess.run([sys.executable, str(script), '--apply-test', '--expect-uri', 'bolt://example.invalid',
+                                  '--expect-database', 'neo4j', '--expect-concept-set', 'confirmed-test',
+-                                 '--expect-taxonomy-release', 'v2025b', '--expect-recordings', '13'],
++                                 '--expect-taxonomy-release', 'v2025b', '--expect-recordings', '11'],
+                                 env={**os.environ, 'ROBINGRAPH_DEPLOY_TARGET': 'test'},
+                                 capture_output=True, text=True)
+         self.assertEqual(2, result.returncode)

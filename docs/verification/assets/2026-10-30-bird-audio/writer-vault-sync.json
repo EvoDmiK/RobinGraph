@@ -1,0 +1,62 @@
+{
+  "verified_at": "2026-10-30T06:50:22.258116+00:00",
+  "task_id": "RG-409",
+  "backlog_status": "in_progress",
+  "stage": "TEST 구현·검증 완료 / 운영 승인 대기",
+  "documents": [
+    {
+      "local": "docs/work-log/2026-10-30-bird-audio.md",
+      "vault": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-10-30-RG409-출처기반-도감새소리.md",
+      "sha256": "f63ee5450f6c012a44cec76f775f94a0ba5f99298cec352fd5e0d943f38a61b8",
+      "raw_equal": true
+    },
+    {
+      "local": "docs/backlog/RG-409.md",
+      "vault": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "sha256": "97867489f3ed4cb362ddff19b3d2e3c3186c696a68ced7411601daa5ee590551",
+      "raw_equal": true
+    }
+  ],
+  "vault_readback": [
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-10-30-RG409-출처기반-도감새소리.md",
+      "exact_readback": true,
+      "other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "exact_readback": true,
+      "other_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "exact_readback": true,
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "exact_readback": true,
+      "other_content_preserved": true
+    }
+  ],
+  "vault_notes_updated": 4,
+  "other_backlog_content_preserved": true,
+  "production_changed": false,
+  "git_write_performed": false,
+  "artifacts": {
+    "actual-chat-audio-1280.png": "a6480aa7b3c4d33a094f7a44492fa71393bdb5a14b8b553af68bce47783b7edf",
+    "actual-chat-audio-mobile-390.png": "d10218a7d5b85853b6a396b1cc70fa429e92ad9205651c9012602dd8e5eb77b0",
+    "backlog-registration.json": "b1e64fbf0d9bae1f6b5f5aa9c7f9fe7a36513098d8f61064f1ad89e8e11665f2",
+    "browser-report.md": "8c6cd93f030e21249a1fc1a0df580c06bb45dccb18267b58fcb7b515bd45ad99",
+    "browser-results.json": "c67a4dcecd5f2faa3d71db3a6fb9332305614a8a27f8dbba9c42160b8bdc4f37",
+    "chat-browser-results.json": "5b30a721bcfe37fc3100de29a3ad2f171fff379bfcf4b064b9153ed201876e20",
+    "commons-audio-source-report.json": "b516c0bb5baebab70d4b3e53885c349aa5e18a88baf0d0d428e2629da8b3f27c",
+    "root-final-review.json": "e12e2eef105a0f9f777a88924038805a6d803f884806275d3b26b4522cb95299",
+    "root-python-tests-final.log": "698837a2406c998cb4dd08eed828df4b70d17b017bd9d349d78518e942162d86",
+    "root-ui-tests.log": "804210ff44963d344a8d121b4568fa4c3d274e8a2b7fdfcc36148d91f2f1c1ef",
+    "test-live-basic-profile.json": "8a314959e593ea129063a6eeb73893ffe0d5daf2af494342583a9c740e908344",
+    "test-recordings-import-receipt.json": "6e13f13bbdac9f8b295f9a9db5950193d2d1c91f10e91f3ca9e79911b0fa541f",
+    "test-release.json": "5e38f4ecc331e62e931e88e7f4b57bbdddaaa1540c8d3f9622ef3a9bc2fb7274",
+    "test-target-readonly.json": "779a94ca429b3c77c215b376df64199a2edde2711f67f76bd3440ec93971bc8a"
+  }
+}

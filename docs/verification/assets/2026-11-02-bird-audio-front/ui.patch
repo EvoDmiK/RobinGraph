@@ -1,0 +1,144 @@
+--- a/src/robingraph/api/static/chat.js
++++ b/src/robingraph/api/static/chat.js
+@@ -89,6 +89,8 @@
+     }
+     return trimmed;
+   }
++
++  var recordingSourcesSequence = 0;
+ 
+   function sanitizeAudioUrl(value) {
+     if (typeof value !== "string") { return null; }
+@@ -3289,19 +3291,25 @@
+     if (profile.enrichment_pending) {
+       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
+     } else { renderPhotos(profile.images, profile.photo_availability); }
++    var audioControls = doc.createElement("section");
++    audioControls.className = "species-recording-controls";
++    audioControls.setAttribute("aria-label", "새소리 듣기");
++    audioControls.setAttribute("data-card-drag-exempt", "true");
++    front.appendChild(audioControls);
+     var audioArea = doc.createElement("details");
+     audioArea.className = "card-details card-details-scroll species-recordings";
++    audioArea.id = "species-recording-sources-" + (++recordingSourcesSequence);
+     var audioPlayers = [];
+     card.stopRecordings = function () { audioPlayers.forEach(stopRecording); };
+-    audioArea.addEventListener("toggle", function () { if (!audioArea.open) { card.stopRecordings(); } });
+     function renderRecordings(fresh) {
+-      card.stopRecordings(); audioPlayers = []; clearNode(audioArea);
+-      var summary = doc.createElement("summary"); summary.textContent = "새소리 듣기"; audioArea.appendChild(summary);
++      card.stopRecordings(); audioPlayers = []; clearNode(audioArea); clearNode(audioControls);
++      var summary = doc.createElement("summary"); summary.textContent = "새소리 출처"; audioArea.appendChild(summary);
+       var records = (Array.isArray(fresh.recordings) ? fresh.recordings : []).filter(function (recording) {
+         return recording && recording.scientific_name === taxon.scientific_name &&
+           ["id", "title", "creator", "license_name"].every(function (key) { return typeof recording[key] === "string" && recording[key].trim(); }) &&
+           sanitizeAudioUrl(recording.audio_url) && sanitizeUrl(recording.source_url) && sanitizeUrl(recording.license_url);
+       });
++      audioControls.hidden = records.length === 0;
+       records.forEach(function (recording) {
+         var entry = doc.createElement("section"); entry.className = "species-recording";
+         entry.setAttribute("data-card-drag-exempt", "true");
+@@ -3310,7 +3318,15 @@
+         audio.controls = true; audio.preload = "none"; audio.src = sanitizeAudioUrl(recording.audio_url);
+         audio.setAttribute("aria-label", speciesLabel(taxon) + " 새소리 · " + recording.title);
+         audio.addEventListener("play", function () { stopSpeciesRecordings(doc, audio); });
+-        entry.appendChild(audio); audioPlayers.push(audio);
++        audioControls.appendChild(audio); audioPlayers.push(audio);
++        var sourceButton = doc.createElement("button"); sourceButton.type = "button";
++        sourceButton.className = "species-recording-source-link"; sourceButton.textContent = "출처: 뒷면";
++        sourceButton.setAttribute("aria-controls", audioArea.id);
++        sourceButton.setAttribute("aria-label", recording.title + " · 새소리 출처를 뒷면에서 보기");
++        sourceButton.addEventListener("click", function () {
++          resetFlip(); showFace(true); audioArea.open = true; summary.focus();
++        });
++        audioControls.appendChild(sourceButton);
+         var attribution = doc.createElement("p"); attribution.textContent = "녹음: " + recording.creator + " · ";
+         attribution.appendChild(safeLink(doc, "원문 출처", recording.source_url));
+         attribution.appendChild(doc.createTextNode(" · "));
+@@ -3322,7 +3338,7 @@
+         });
+         var errorMessage = doc.createElement("p"); errorMessage.setAttribute("role", "status"); errorMessage.hidden = true;
+         errorMessage.textContent = "녹음을 재생하지 못했습니다. 원문 출처에서 확인해 주세요.";
+-        audio.addEventListener("error", function () { errorMessage.hidden = false; }); entry.appendChild(errorMessage);
++        audio.addEventListener("error", function () { errorMessage.hidden = false; }); audioControls.appendChild(errorMessage);
+         audioArea.appendChild(entry);
+       });
+       if (!records.length) {
+@@ -3622,7 +3638,7 @@
+     card.setAttribute("aria-roledescription", "양면 조류 카드");
+     card.setAttribute("aria-keyshortcuts", "Enter Space");
+     function showFace(showBack) {
+-      if (!showBack && card.stopRecordings) { card.stopRecordings(); }
++      if (showBack && card.stopRecordings) { card.stopRecordings(); }
+       clearDistributionTooltips(card);
+       back.hidden = !showBack;
+       front.hidden = showBack;
+--- a/src/robingraph/api/static/styles.css
++++ b/src/robingraph/api/static/styles.css
+@@ -2169,3 +2169,6 @@
+ .species-recording { margin-block: .65rem; overflow-wrap: anywhere; }
+ .species-recording p { margin-block: .35rem; font-size: .78rem; }
+ .species-recording-audio { display: block; width: 100%; min-width: 0; }
++
++.species-recording-controls { margin-block: .5rem; }
++.species-recording-source-link { display: block; margin: .2rem 0 .45rem auto; padding: .25rem .4rem; font: inherit; font-size: .72rem; color: inherit; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
+--- a/tests/frontend/chat_ui.test.js
++++ b/tests/frontend/chat_ui.test.js
+@@ -7803,7 +7803,7 @@
+   a.card.updateEnrichment({ images: [], photo_availability: { status: "provider_unavailable" } });
+   assert.equal(collectAllNodes(a.card).find(n => n.tagName === "audio"), a.audio, "photo-only updates retain independent recordings");
+   a.audio.dispatch("error");
+-  assert.equal(collectAllNodes(a.area).find(n => n.getAttribute && n.getAttribute("role") === "status").hidden, false);
++  assert.equal(collectAllNodes(cardPart(a.card, "species-recording-controls")).find(n => n.getAttribute && n.getAttribute("role") === "status").hidden, false);
+   const basicRecording = { ...f.recording }; delete basicRecording.location; delete basicRecording.recorded_at; delete basicRecording.recording_type;
+   a.card.updateEnrichment({ images: [], recordings: [basicRecording] });
+   assert.doesNotMatch(collectedText(a.area), /녹음 지역|녹음일|소리 유형/);
+@@ -7818,7 +7818,7 @@
+   }
+ });
+ 
+-test("recordings stop other species, preserve native control keys, and stop on collapse, popup close, disposal and DOM removal", () => {
++test("recordings stop other species, preserve native control keys, and stop on leaving the playback face, popup close, disposal and DOM removal", () => {
+   const f = recordingFixture(), a = f.create(), b = f.create();
+   a.open();
+   const previous = a.audio.pauseCalls;
+@@ -7828,7 +7828,9 @@
+   assert.equal(event.defaultPrevented, false); assert.equal(a.card.getAttribute("data-face"), "front");
+   a.area.open = false;
+   const beforeCollapse = a.audio.pauseCalls; a.area.dispatch("toggle");
+-  assert.equal(a.audio.pauseCalls, beforeCollapse + 1);
++  assert.equal(a.audio.pauseCalls, beforeCollapse, "closing metadata does not hide the front player");
++  a.card.dispatch("keydown", { key: "Enter", target: a.card });
++  assert.equal(a.audio.pauseCalls, beforeCollapse + 1, "leaving the front playback face stops audio");
+   const beforeClose = a.audio.pauseCalls; a.dialog.close();
+   assert.ok(a.audio.pauseCalls > beforeClose); assert.ok(f.removals[0].disconnected);
+   a.open();
+@@ -7838,3 +7840,28 @@
+   b.open(); const beforeDispose = b.audio.pauseCalls; b.popup.disposePopup();
+   assert.ok(b.audio.pauseCalls > beforeDispose); assert.ok(f.removals.at(-1).disconnected);
+ });
++
++
++test("recording controls occupy the photo-adjacent front face once and source navigation opens the attributed back face", () => {
++  const f = recordingFixture(), a = f.create();
++  const front = cardPart(a.card, "species-card-front"), back = cardPart(a.card, "species-card-back");
++  const controls = cardPart(a.card, "species-recording-controls"), photo = cardPart(a.card, "species-photo-area");
++  assert.equal(controls.parentNode, front); assert.equal(front.children.indexOf(controls), front.children.indexOf(photo) + 1);
++  assert.equal(collectAllNodes(front).filter(n => n.tagName === "audio").length, 1);
++  assert.equal(collectAllNodes(back).filter(n => n.tagName === "audio").length, 0);
++  assert.doesNotMatch(collectedText(controls), /Recorder|CC BY|Original overseas/);
++  assert.match(collectedText(a.area), /Recorder <b>/); assert.match(collectedText(a.area), /CC BY-SA 4.0/);
++  assert.equal(a.audio.preload, "none"); assert.equal(a.audio.controls, true); assert.equal(a.audio.autoplay, undefined);
++  a.open();
++  const link = collectAllNodes(controls).find(n => n.className === "species-recording-source-link");
++  const before = a.audio.pauseCalls;
++  assert.equal(link.getAttribute("aria-controls"), a.area.id);
++  link.dispatch("click");
++  assert.equal(a.card.getAttribute("data-face"), "back"); assert.equal(a.area.open, true);
++  assert.equal(a.area.children[0].focusCalls, 1); assert.ok(a.audio.pauseCalls > before);
++  assert.equal(a.card.getAttribute("aria-busy"), "false", "source navigation leaves no flip animation active");
++  const other = f.create(); assert.notEqual(other.area.id, a.area.id, "repeated species cards have distinct source destinations");
++  a.card.updateEnrichment({ images: [], recordings: [], recording_availability: { status: "no_licensed_recording" } });
++  assert.equal(controls.hidden, true); assert.equal(controls.children.length, 0);
++  assert.match(collectedText(a.area), /확인된 새소리 자료가 없습니다/);
++});

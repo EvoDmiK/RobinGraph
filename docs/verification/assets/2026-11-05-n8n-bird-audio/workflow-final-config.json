@@ -1,0 +1,25 @@
+{
+  "workflow_id": "rgAudioCollectionTest01",
+  "name": "RobinGraph Audio Collection TEST (manual)",
+  "active": false,
+  "origin": "http://192.168.219.97:8000",
+  "manual_inputs": {
+    "action": "collect",
+    "limit": 1,
+    "after_taxon_id": "",
+    "scientific_name": "",
+    "file_title": "",
+    "candidate_id": "",
+    "reviewer": "",
+    "taxon_verified": false,
+    "playback_verified": false,
+    "approved": false
+  },
+  "canonical_inputs_match": true,
+  "executed_after_restore": false,
+  "cursor_continuation": "Copy next_cursor from previous result into after_taxon_id for the next explicit manual run; no staticData persistence",
+  "batch_limit_maximum": 5,
+  "stage_files_per_species": 1,
+  "automatic_approval": false,
+  "automatic_publication": false
+}

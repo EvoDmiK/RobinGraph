@@ -1,0 +1,36 @@
+{
+  "credentials": [
+    {
+      "id": "u1JgGQQXk8h6EbcJ",
+      "type": "googleDriveOAuth2Api",
+      "updatedAt": "2026-11-05T02:41:48.835Z"
+    },
+    {
+      "id": "0iMMLWNLRPgXa1S1",
+      "type": "gmailOAuth2",
+      "updatedAt": "2026-11-05T02:37:56.778Z"
+    }
+  ],
+  "workflow_ids": [
+    "igIrjieP1O9IM1GX",
+    "lAhoIgivFiB59z8p",
+    "ujJyzlLbBQSHWcd0",
+    "DMJfvlleqFHWL6Wq"
+  ],
+  "executions": [
+    {
+      "id": 76252,
+      "workflowId": "lAhoIgivFiB59z8p",
+      "status": "success",
+      "mode": "trigger",
+      "startedAt": "2026-11-05T02:31:24.031Z"
+    },
+    {
+      "id": 76200,
+      "workflowId": "lAhoIgivFiB59z8p",
+      "status": "success",
+      "mode": "trigger",
+      "startedAt": "2026-11-05T02:23:57.297Z"
+    }
+  ]
+}

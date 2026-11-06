@@ -1,0 +1,16 @@
+test_batch_cursor_and_one_file_per_species (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_collection_never_auto_publishes (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_discovery_429_has_no_status_candidate (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_generated_artifact_and_security (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_guards_and_explicit_review (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_import_ownership_allows_only_exact_previous_test_origin (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_production_cursor_is_saved_only_for_successful_schedule_and_wraps (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_production_permanent_source422_skips_once_but_provider_failure_stops (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_production_schedule_cannot_inherit_manual_review_or_publish (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_stage_429_stops_batch_waits_exactly_then_status_only (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+test_transport_and_cross_species_fail_closed (test_n8n_audio_collection.AudioWorkflowTests) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.560s
+
+OK

@@ -1,0 +1,337 @@
+{
+  "action": "inspect",
+  "checked_at_utc": "2026-11-06T04:15:45.124Z",
+  "backups": [
+    {
+      "updatedAt": "2026-11-05T02:33:56.120Z",
+      "createdAt": "2026-11-05T02:33:56.120Z",
+      "id": "rgAudioCursorFixture20261105",
+      "name": "RobinGraph Audio cursor isolated fixture 20261105",
+      "description": null,
+      "active": false,
+      "isArchived": false,
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 5
+                }
+              ]
+            }
+          },
+          "id": "bce85de1-efc8-58a8-9d91-7cb40bc9cbc9",
+          "name": "Isolated schedule",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.2,
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "jsCode": "const s=$getWorkflowStaticData('global');s.counter=Math.min(2,(s.counter||0)+1);s.last_saved_at=new Date().toISOString();return [{json:{fixture:true,counter:s.counter,external_requests:0}}];"
+          },
+          "id": "e36ac850-38c5-5c8a-b7c0-59edce25bcc9",
+          "name": "Increment isolated cursor",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            240,
+            0
+          ]
+        }
+      ],
+      "connections": {
+        "Isolated schedule": {
+          "main": [
+            [
+              {
+                "node": "Increment isolated cursor",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "settings": {
+        "executionOrder": "v1",
+        "timezone": "Asia/Seoul",
+        "saveDataSuccessExecution": "all",
+        "saveDataErrorExecution": "all",
+        "executionTimeout": 60
+      },
+      "staticData": null,
+      "meta": null,
+      "pinData": {},
+      "versionId": "b23f3323-e2bb-41a4-8132-3d77cc347cf6",
+      "activeVersionId": null,
+      "versionCounter": 1,
+      "triggerCount": 1,
+      "shared": [
+        {
+          "updatedAt": "2026-11-05T02:33:56.120Z",
+          "createdAt": "2026-11-05T02:33:56.120Z",
+          "role": "workflow:owner",
+          "workflowId": "rgAudioCursorFixture20261105",
+          "projectId": "YvRaBfnmwjtcKmfS",
+          "project": {
+            "updatedAt": "2026-06-02T22:56:13.454Z",
+            "createdAt": "2026-06-02T22:54:34.888Z",
+            "id": "YvRaBfnmwjtcKmfS",
+            "name": "Dove Kim <kimdove.claw@gmail.com>",
+            "type": "personal",
+            "icon": null,
+            "description": null,
+            "creatorId": "fc9be268-d194-4287-ac65-3a8d51fb4251"
+          }
+        }
+      ],
+      "tags": [],
+      "activeVersion": null
+    },
+    {
+      "updatedAt": "2026-11-05T02:52:25.441Z",
+      "createdAt": "2026-11-05T02:52:25.441Z",
+      "id": "rgAudioTableFixture20261105",
+      "name": "RobinGraph Audio DataTable cursor isolated fixture 20261105",
+      "description": null,
+      "active": false,
+      "isArchived": false,
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "seconds",
+                  "secondsInterval": 5
+                }
+              ]
+            }
+          },
+          "id": "bce85de1-efc8-58a8-9d91-7cb40bc9cbc9",
+          "name": "Isolated schedule",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.2,
+          "position": [
+            0,
+            0
+          ]
+        },
+        {
+          "parameters": {
+            "resource": "row",
+            "dataTableId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "J49mL4EifvZ0Pres"
+            },
+            "matchType": "allConditions",
+            "filters": {
+              "conditions": [
+                {
+                  "keyName": "cursor_key",
+                  "condition": "eq",
+                  "keyValue": "fixture"
+                }
+              ]
+            },
+            "operation": "get",
+            "returnAll": false,
+            "limit": 1
+          },
+          "id": "6d587c25-dea3-58ac-939f-c329032bb215",
+          "name": "Read fixture cursor",
+          "type": "n8n-nodes-base.dataTable",
+          "typeVersion": 1.1,
+          "position": [
+            200,
+            0
+          ],
+          "alwaysOutputData": true
+        },
+        {
+          "parameters": {
+            "mode": "runOnceForAllItems",
+            "jsCode": "const j=$input.first().json;return [{json:{after_taxon_id:String(Math.min(2,Number(j.after_taxon_id||0)+1))}}];"
+          },
+          "id": "68014c6b-7bd7-5a28-b989-1f12e27e7e75",
+          "name": "Advance fixture cursor",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            400,
+            0
+          ]
+        },
+        {
+          "parameters": {
+            "resource": "row",
+            "dataTableId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "J49mL4EifvZ0Pres"
+            },
+            "matchType": "allConditions",
+            "filters": {
+              "conditions": [
+                {
+                  "keyName": "cursor_key",
+                  "condition": "eq",
+                  "keyValue": "fixture"
+                }
+              ]
+            },
+            "operation": "upsert",
+            "columns": {
+              "mappingMode": "defineBelow",
+              "value": {
+                "cursor_key": "fixture",
+                "after_taxon_id": "={{ $json.after_taxon_id }}"
+              }
+            },
+            "options": {
+              "dryRun": false
+            }
+          },
+          "id": "bd699090-0a1a-5acc-947d-bbab65ed81be",
+          "name": "Save fixture cursor",
+          "type": "n8n-nodes-base.dataTable",
+          "typeVersion": 1.1,
+          "position": [
+            600,
+            0
+          ]
+        }
+      ],
+      "connections": {
+        "Isolated schedule": {
+          "main": [
+            [
+              {
+                "node": "Read fixture cursor",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Read fixture cursor": {
+          "main": [
+            [
+              {
+                "node": "Advance fixture cursor",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Advance fixture cursor": {
+          "main": [
+            [
+              {
+                "node": "Save fixture cursor",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "settings": {
+        "executionOrder": "v1",
+        "timezone": "Asia/Seoul",
+        "saveDataSuccessExecution": "all",
+        "saveDataErrorExecution": "all",
+        "executionTimeout": 60
+      },
+      "staticData": null,
+      "meta": null,
+      "pinData": {},
+      "versionId": "102127e4-3324-4f27-aca7-2ab3e41edbc6",
+      "activeVersionId": null,
+      "versionCounter": 1,
+      "triggerCount": 1,
+      "shared": [
+        {
+          "updatedAt": "2026-11-05T02:52:25.441Z",
+          "createdAt": "2026-11-05T02:52:25.441Z",
+          "role": "workflow:owner",
+          "workflowId": "rgAudioTableFixture20261105",
+          "projectId": "YvRaBfnmwjtcKmfS",
+          "project": {
+            "updatedAt": "2026-06-02T22:56:13.454Z",
+            "createdAt": "2026-06-02T22:54:34.888Z",
+            "id": "YvRaBfnmwjtcKmfS",
+            "name": "Dove Kim <kimdove.claw@gmail.com>",
+            "type": "personal",
+            "icon": null,
+            "description": null,
+            "creatorId": "fc9be268-d194-4287-ac65-3a8d51fb4251"
+          }
+        }
+      ],
+      "tags": [],
+      "activeVersion": null
+    }
+  ],
+  "workflow_count": 43,
+  "workflow_ids": [
+    "hmtl20260719a7b2",
+    "XVx9VP7t74GElB0p",
+    "ujJyzlLbBQSHWcd0",
+    "Aofvp7nvJxHuvmCZ",
+    "lAhoIgivFiB59z8p",
+    "NbuvdYcU7vd5pRnp",
+    "5mkkZfHRh1zFGuZZ",
+    "vtOMX12kZzpS6Uwc",
+    "smy9xPoHICCO69JF",
+    "Kt26XhwQEO2SuRtt",
+    "twkxBUkux7XRIDQ2",
+    "G4kqFwe7yvar6xPz",
+    "Zx3zgylR2bgLMgSR",
+    "rgAudioCollectionProd01",
+    "vFB6xpsfgt8PH19b",
+    "hBN54KLrn7cS0HMi",
+    "dCbBMUJlGpRFERN5",
+    "DhNZOZezIIfM08cY",
+    "n6itxrlhs6pJJITM",
+    "8sWGNKpFL5SGG3SY",
+    "DMJfvlleqFHWL6Wq",
+    "j0w6SadSNCPN0ZAv",
+    "mFzE6JOrFpNf0ZVI",
+    "rgAudioTableFixture20261105",
+    "3tMvIoE0ALerApXh",
+    "Hmjfi1zAIOKR5YE5",
+    "7qGNon9dw6Bo4USU",
+    "dZBL2ifx5JwC9tHZ",
+    "Hy2GZ7WQ0n61ybOi",
+    "QDVAfmynJOfA7uUZ",
+    "33Tc3h1hZBj0RqA5",
+    "nuIEsSkPxmrpaIEi",
+    "Mw9tbGM9vyzu6X1F",
+    "mEf3EuZA4PQ6QcZ0",
+    "rgAudioCursorFixture20261105",
+    "yAtHuG3UFEUvawEH",
+    "nxAeghXMFHT5anUW",
+    "TeCIOlWwUm6HTX2R",
+    "euLDxI0eOCEs4z2D",
+    "M5hYT97EylZ00Wjk",
+    "szSDVIWtpHDHYIuT",
+    "igIrjieP1O9IM1GX",
+    "zyUU1muulSw9P00D"
+  ],
+  "production": {
+    "id": "rgAudioCollectionProd01",
+    "active": true,
+    "version": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+    "sha256": "3ffd6887e2d39f9984ae724ba7fd9b16bbad0fb8e67477557c9c51abfdf8c40d"
+  }
+}

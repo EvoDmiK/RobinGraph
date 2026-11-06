@@ -1,0 +1,48 @@
+--- a/scripts/generate_n8n_audio_collection.py
++++ b/scripts/generate_n8n_audio_collection.py
+@@ -4,7 +4,7 @@
+ import json
+ from pathlib import Path
+ from uuid import NAMESPACE_URL, uuid5
+-from generate_n8n_reference_ingest import node, code, boolean_if, edge
++from generate_n8n_reference_ingest import node, node_id, code, boolean_if, edge
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ OUTPUT = ROOT / 'n8n/robingraph-audio-collection-test.json'
+@@ -156,6 +156,7 @@
+             for target in branch:
+                 if target['node']=='Verify TEST health': target['node']='Verify PROD collector health'
+     by_name['Execution summary']['name']='Prepare execution summary'
++    by_name['Execution summary']['id']=node_id('Prepare execution summary')
+     by_name['Execution summary']['parameters']['jsCode']="""const s=$input.first().json.state;
+ return [{json:{action:s.action,status:s.deferred?'deferred':'finished',results:s.results,next_cursor:s.next_cursor,status_after_wait:s.status_after_wait||null,publication_automatic:false,scheduled:s.config.scheduled===true}}];"""
+     for outputs in c.values():
+--- a/tests/test_n8n_audio_collection.py
++++ b/tests/test_n8n_audio_collection.py
+@@ -56,6 +56,8 @@
+ 
+     def test_production_schedule_cannot_inherit_manual_review_or_publish(self):
+         w=audio.workflow('prod');nodes={n['name']:n for n in w['nodes']}
++        ids=[n['id'] for n in w['nodes']]
++        self.assertEqual(len(ids),len(set(ids)))
+         self.assertFalse(w['active'])
+         self.assertEqual(nodes['Daily 03:00 Korea']['parameters']['rule']['interval'][0]['expression'],'0 3 * * *')
+         for action in ['review','publish']:
+--- a/n8n/robingraph-audio-collection-prod.json
++++ b/n8n/robingraph-audio-collection-prod.json
+@@ -244,7 +244,7 @@
+         "mode": "runOnceForAllItems",
+         "jsCode": "const s=$input.first().json.state;\nreturn [{json:{action:s.action,status:s.deferred?'deferred':'finished',results:s.results,next_cursor:s.next_cursor,status_after_wait:s.status_after_wait||null,publication_automatic:false,scheduled:s.config.scheduled===true}}];"
+       },
+-      "id": "c4eda4ff-359d-52b7-b7ee-78a27161f1af",
++      "id": "a106de34-39e7-5a8f-afef-7e80d0d8388a",
+       "name": "Prepare execution summary",
+       "type": "n8n-nodes-base.code",
+       "typeVersion": 2,
+@@ -652,5 +652,5 @@
+     "executionTimeout": 86400
+   },
+   "pinData": {},
+-  "versionId": "89759eb9-c7c1-5a52-8778-56035bcaa95b"
++  "versionId": "b97177d4-2ffc-503d-ac77-fcb6f5794987"
+ }

@@ -1,0 +1,20 @@
+[
+  {
+    "id": 18180,
+    "status": "success",
+    "mode": "cli",
+    "startedAt": "2026-11-05T01:28:24.874Z",
+    "stoppedAt": "2026-11-05T01:29:36.823Z",
+    "waitTill": null,
+    "result": {
+      "fixture": true,
+      "status": "deferred",
+      "retry_after_seconds": 70,
+      "started_at": "2026-11-05T01:28:25.386Z",
+      "external_requests": 0,
+      "resumed_at": "2026-11-05T01:29:36.821Z",
+      "elapsed_seconds": 71.435,
+      "remote_retries": 0
+    }
+  }
+]

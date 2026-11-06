@@ -1,0 +1,46 @@
+{
+  "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+  "request_url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo%7Crevisions&titles=File%3APasser+montanus.ogg%7CFile%3AHypsipetes-amaurotis-2025-05-20-282617142.ogg%7CFile%3AAnas+platyrhynchos+-+Mallard+-+XC62258.ogg&iiprop=url%7Cextmetadata%7Cmime%7Csize%7Csha1&rvprop=ids%7Ctimestamp",
+  "response_sha256": "df5d648d5666f9f6f9705a9ab5680871a086831d248b247e77199171759e8021",
+  "pages": [
+    {
+      "title": "File:Anas platyrhynchos - Mallard - XC62258.ogg",
+      "pageid": 23927872,
+      "revision": {
+        "revid": 1272207943,
+        "parentid": 1229185560,
+        "timestamp": "2026-09-04T16:09:09Z"
+      },
+      "file_sha1": "9de23b37b92be4f03903b7f13f3113fa631e6c26",
+      "mime": "application/ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Anas_platyrhynchos_-_Mallard_-_XC62258.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "metadata_sha256": "f7a7f6584afe2ccd18758e2e8da4a7653f16886ccd120f7ef6e96943b3ccc9ee"
+    },
+    {
+      "title": "File:Hypsipetes-amaurotis-2025-05-20-282617142.ogg",
+      "pageid": 186512225,
+      "revision": {
+        "revid": 1235363806,
+        "parentid": 1185370677,
+        "timestamp": "2026-06-21T07:28:21Z"
+      },
+      "file_sha1": "b57aa3955722a01c913324208b8e0590958b3220",
+      "mime": "application/ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hypsipetes-amaurotis-2025-05-20-282617142.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "metadata_sha256": "3e4eb39f678379fc13a9a27f28e986f743353e2beccb63dad63a0e26d2622ce1"
+    },
+    {
+      "title": "File:Passer montanus.ogg",
+      "pageid": 16592315,
+      "revision": {
+        "revid": 1031017614,
+        "parentid": 548521877,
+        "timestamp": "2025-05-12T04:59:50Z"
+      },
+      "file_sha1": "567d1d15730a6f75c9ed6cf2d6031780e88ca28f",
+      "mime": "application/ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+    }
+  ]
+}

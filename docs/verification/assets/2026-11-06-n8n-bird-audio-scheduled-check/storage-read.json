@@ -1,0 +1,46 @@
+{
+  "pg_target": {
+    "database": "robingraph",
+    "schema": "ingest"
+  },
+  "health": {
+    "status": "ok",
+    "service": "audio-collector",
+    "deployment_target": "prod",
+    "publication_enabled": false
+  },
+  "candidate_counts": [
+    {
+      "status": "awaiting_review",
+      "count": 2
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+      "scientific_name": "Passer montanus",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-05 11:33:42.529568+09:00",
+      "review_field_present": false,
+      "file_exists": true,
+      "file_bytes": 289857,
+      "file_sha256_matches": true,
+      "metadata_fetched_at": "2026-11-05T02:33:43.046130+00:00"
+    },
+    {
+      "candidate_id": "9e84efdf7b2f9a9a951553a460c073f4913d56a12065b67d96134713b17f93ba",
+      "scientific_name": "Jynx torquilla",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-06 03:00:03.268208+09:00",
+      "review_field_present": false,
+      "file_exists": true,
+      "file_bytes": 1766350,
+      "file_sha256_matches": true,
+      "metadata_fetched_at": "2026-11-05T18:00:03.889489+00:00"
+    }
+  ],
+  "provider_requests": 0,
+  "data_writes": 0,
+  "review_operations": 0,
+  "publication_operations": 0
+}

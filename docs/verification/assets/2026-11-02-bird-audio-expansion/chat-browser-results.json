@@ -1,0 +1,231 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-11-02T07:58:29.170Z",
+  "data": "Actual chat question and natural deployed popup; no renderer injection and no mocked response",
+  "question": "참새에 대해 알려줘",
+  "initial": {
+    "face": "front",
+    "frontAudio": 1,
+    "backAudio": 0,
+    "frontControlsVisible": true,
+    "controlsAfterPhoto": true,
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": true,
+    "currentTime": 0,
+    "ready": 0,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "playing": {
+    "face": "front",
+    "frontAudio": 1,
+    "backAudio": 0,
+    "frontControlsVisible": true,
+    "controlsAfterPhoto": true,
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": false,
+    "currentTime": 0.320523,
+    "ready": 4,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "afterFlip": {
+    "face": "back",
+    "frontAudio": 1,
+    "backAudio": 0,
+    "frontControlsVisible": true,
+    "controlsAfterPhoto": true,
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": true,
+    "currentTime": 0,
+    "ready": 4,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "screenshot": "/tmp/robingraph-audio-expansion-20261102/screenshots/actual-chat-audio-mobile-390.png",
+  "checks": {
+    "keyboardSourceFocus": true,
+    "naturalChatAudio": true,
+    "decodedPlayback": true,
+    "noVisibleError": true,
+    "activePlaybackStopsOnSourceNavigation": true
+  },
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "baseline": {
+        "face": "front",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "expanded": {
+        "face": "back",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          true,
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "reopened": {
+        "face": "front",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "passed": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "mobile": false
+      },
+      "baseline": {
+        "face": "front",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.7646454265159301,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "expanded": {
+        "face": "back",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.7646454265159301,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          true,
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "reopened": {
+        "face": "front",
+        "frontAudio": 1,
+        "backAudio": 0,
+        "frontControlsVisible": true,
+        "controlsAfterPhoto": true,
+        "scale": 0.7646454265159301,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

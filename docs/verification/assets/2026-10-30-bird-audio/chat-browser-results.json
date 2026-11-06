@@ -1,0 +1,194 @@
+{
+  "target": "https://robingraph-test.dove-nest.com/chat",
+  "verifiedAt": "2026-10-30T06:44:59.442Z",
+  "data": "Actual chat question and natural deployed popup; no renderer injection and no mocked response",
+  "question": "참새에 대해 알려줘",
+  "initial": {
+    "face": "front",
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": true,
+    "currentTime": 0,
+    "ready": 0,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "playing": {
+    "face": "back",
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": false,
+    "currentTime": 0.302853,
+    "ready": 4,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "afterFlip": {
+    "face": "front",
+    "scale": 0.8333333333333334,
+    "audioPresent": true,
+    "paused": true,
+    "currentTime": 0,
+    "ready": 4,
+    "visibleErrors": [],
+    "fits": true,
+    "overflow": false,
+    "toggles": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "screenshot": "/tmp/robingraph-bird-audio-20261030/screenshots/actual-chat-audio-mobile-390.png",
+  "checks": {
+    "naturalChatAudio": true,
+    "decodedPlayback": true,
+    "noVisibleError": true,
+    "activePlaybackStopsOnFlip": true
+  },
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "baseline": {
+        "face": "front",
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "expanded": {
+        "face": "back",
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          true,
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "reopened": {
+        "face": "front",
+        "scale": 0.8333333333333334,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "passed": true
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "mobile": false
+      },
+      "baseline": {
+        "face": "front",
+        "scale": 0.7856388595564942,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "expanded": {
+        "face": "back",
+        "scale": 0.7856388595564942,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          true,
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "reopened": {
+        "face": "front",
+        "scale": 0.7856388595564942,
+        "audioPresent": true,
+        "paused": true,
+        "currentTime": 0,
+        "ready": 4,
+        "visibleErrors": [],
+        "fits": true,
+        "overflow": false,
+        "toggles": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

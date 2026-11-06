@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-05",
+  "task_id": "RG-507",
+  "status": "in_progress",
+  "completed_scope": "Production collection sidecar, manual source collection, daily schedule activation and native cursor persistence validation",
+  "pending": "Human review/publication and first scheduled real collection on 2026-11-06 03:00 KST",
+  "local_files": [
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-11-05-n8n-bird-audio-production.md",
+      "sha256": "dcb25ba3a32f12e2dd613400573506911fabc8066c5ae86423851a2d37ca144c"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/backlog/RG-507.md",
+      "sha256": "4737f9126c5df69a58799caa7c6b85cd5a4f351e8a9d8a78d3b9bcb550c4e87b"
+    },
+    {
+      "path": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/n8n/README.md",
+      "sha256": "aa636e81baae9e7a84dfb551585859daab456125918ca8dcccf52d0841ae6bb1"
+    }
+  ],
+  "vault_notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-05-RG507-운영새소리일일수집.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "raw_equal": true,
+      "unrelated_content_preserved": true
+    }
+  ],
+  "other_notes_preserved": true,
+  "rg409_unchanged": true,
+  "prior_test_worklog_unchanged": true,
+  "git_operations_performed": false
+}

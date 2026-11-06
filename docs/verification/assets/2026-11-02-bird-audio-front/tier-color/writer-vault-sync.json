@@ -1,0 +1,62 @@
+{
+  "verified_at": "2026-11-02T05:19:31.646147+00:00",
+  "task_id": "RG-409",
+  "status": "in_progress",
+  "stage": "TEST 등급별 팔레트 검증 완료 / 운영 승인 대기",
+  "documents": [
+    {
+      "local": "docs/work-log/2026-11-02-bird-audio-front.md",
+      "vault": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리앞면컨트롤.md",
+      "sha256": "542ad1b009bf47b7eb1e93d615d5b50cd2c698efcdabf82bfa6805b9de2d2415",
+      "raw_equal": true
+    },
+    {
+      "local": "docs/backlog/RG-409.md",
+      "vault": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "sha256": "442ce1ef21fa56fcf305aadd6a086e363a1674dd8ec9fd337bd9540007ad4baf",
+      "raw_equal": true
+    }
+  ],
+  "readbacks": [
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-11-02-RG409-새소리앞면컨트롤.md",
+      "raw_equal": true,
+      "changed": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-409.md",
+      "raw_equal": true,
+      "changed": true
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equal": true,
+      "changed": false
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "raw_equal": true,
+      "changed": true
+    }
+  ],
+  "notes_updated": 3,
+  "notes_readback": 4,
+  "main_backlog_unchanged": true,
+  "prior_lc_only_verification_history_preserved": true,
+  "production_changed": false,
+  "git_write_performed": false,
+  "artifacts": {
+    "actual-chat-audio-1280.png": "3765f1280783e868a912d4af6652e3bb20c49447e43abc55251f1820c15dd6c7",
+    "actual-chat-audio-mobile-390.png": "a5c45da7994705168f75dacd4ba2321bb66c85c945940c5a4fcecca2a9931afd",
+    "all-tier-native-audio-1440.png": "79b22439b75c33928d7d0c04a938ed795a60fc070ecd10b35cf625bbae2626fe",
+    "browser-report.md": "b90bba3d3e19782d28506da4bd0c1afa1e1d3e26e059f1fed023b6c7431e6336",
+    "chat-browser-results.json": "5c4eb28056b22f77db7be55998697adb8179ae0fe2a51790b0ce6b6e170cd574",
+    "contrast-results.json": "78fbb1b6433d425ae2baa2f4b4cdffb4b4f08d223cb94c160eea525c624fb717",
+    "graphify.log": "38b32b7229e91c13b1e7bf3a44530c7fc36e7e3215dd0550d453dc329ee46f8b",
+    "root-final-review.json": "17ea46a8d9aeff092c5f1b021c0638a8c072d0285f4623a5cf255e7397f5b137",
+    "root-ui-tests.log": "3738da23e5d9a06fc3d3426a2e276e812eb7bd98d7ff19391e27b27675596c3e",
+    "test-release.json": "a3e947d3949c3046a5de2bbd6a574087be4b39b57388ffa837fedb91db1ffe43",
+    "tier-browser-results.json": "464932afb39d35bea29bda29e6870fbdbb4dc3447a0d2a4ec4c644e3d42c5308",
+    "ui.patch": "1e58515309b1b88fef6a9e72f831a3dca75ce924d4cb65f50050f3a2e433d2fc"
+  }
+}

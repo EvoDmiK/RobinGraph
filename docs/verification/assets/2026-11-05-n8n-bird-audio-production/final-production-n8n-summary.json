@@ -1,0 +1,65 @@
+{
+  "workflow_id": "rgAudioCollectionProd01",
+  "workflow_url": "https://workflow.dove-nest.com/workflow/rgAudioCollectionProd01",
+  "active": true,
+  "schedule": {
+    "cron": "0 3 * * *",
+    "timezone": "Asia/Seoul",
+    "daily_species": 1,
+    "manual_batch_maximum": 5,
+    "next_time_calculated_kst": "2026-11-06T03:00:00+09:00",
+    "scheduled_real_collection_already_executed": false
+  },
+  "active_version_verified": true,
+  "published_nodes_connections_canonical": true,
+  "runtime_settings_canonical": true,
+  "cursor": {
+    "table_id": "J49mL4EifvZ0Pres",
+    "name": "RobinGraph Audio PROD cursor",
+    "prod_key": "prod",
+    "value": "",
+    "unchanged_through_manual_status_and_activation": true,
+    "native_schedule_fixture_passed": true,
+    "static_data_attempt_failed_and_preserved": true
+  },
+  "manual_collect_execution": 76267,
+  "repeat_execution": 76280,
+  "new_graph_manual_status_execution": 76393,
+  "candidate_count": 1,
+  "candidate_status": "awaiting_review",
+  "actual_review_performed": false,
+  "actual_publication_performed": false,
+  "public_app_unchanged": true,
+  "stored_graph_recordings": 0,
+  "old_workflows": {
+    "count": 40,
+    "changes": 0,
+    "missing": 0
+  },
+  "old_credentials": {
+    "count": 33,
+    "identity_metadata_changes": 0,
+    "missing": 0,
+    "encrypted_hash_unchanged_count": 31,
+    "encrypted_hash_changed_oauth_count": 2,
+    "cause": "OAuth token refresh is plausible given existing trigger executions; not established from metadata alone",
+    "task_operations": "Only new dedicated credential imported and existing self n8n API credential read privately; changed OAuth credentials were not decrypted or written"
+  },
+  "new_resources": {
+    "workflow_count": 3,
+    "production_active": 1,
+    "fixtures_inactive": 2,
+    "credential_count": 1,
+    "data_table_count": 1
+  },
+  "git_operations_performed": false,
+  "ssh_operations_complete": true,
+  "secret_output": false,
+  "limitations": [
+    "Only one pinned actual species collected; automatic discovery not mass tested",
+    "Actual first daily 03:00 collection remains future; native DataTable trigger persistence separately proved",
+    "Review/publication remain manual; collector has no publication routes",
+    "Single first candidate per species; permanent stage422 recorded and skipped; 429/provider failures preserve cursor",
+    "n8n history has no settings snapshot; published history nodes/connections and active runtime settings verified separately"
+  ]
+}

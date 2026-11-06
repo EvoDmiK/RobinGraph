@@ -1,0 +1,32 @@
+{
+  "workflow_id": "rgAudioCollectionProd01",
+  "active": true,
+  "version_id": "45fee2c2-a0ea-46e0-8a43-a8d5c65f4dec",
+  "active_version_id": "45fee2c2-a0ea-46e0-8a43-a8d5c65f4dec",
+  "published_nodes_match_canonical": true,
+  "published_connections_match_canonical": true,
+  "active_runtime_settings_match_canonical": true,
+  "history_has_settings_snapshot": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all",
+    "executionTimeout": 86400
+  },
+  "node_count": 19,
+  "unique_node_ids": true,
+  "project_id": "YvRaBfnmwjtcKmfS",
+  "cursor_table_project_id": "YvRaBfnmwjtcKmfS",
+  "fixtures": [
+    {
+      "id": "rgAudioTableFixture20261105",
+      "active": false
+    },
+    {
+      "id": "rgAudioCursorFixture20261105",
+      "active": false
+    }
+  ],
+  "workflow_url": "https://workflow.dove-nest.com/workflow/rgAudioCollectionProd01"
+}

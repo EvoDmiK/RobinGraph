@@ -1,0 +1,18 @@
+{
+  "scope": "One HTTP Range 0-127 request each, stop on first429; no playback retries",
+  "rows": [
+    {
+      "name": "Picus canus",
+      "at": "2026-11-02T08:18:43.767Z",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Picus_canus.ogg",
+      "status": 429,
+      "contentType": "text/html; charset=utf-8",
+      "contentRange": null,
+      "retryAfter": "600",
+      "first128Hex": "3c21444f43545950452068746d6c3e0a3c68746d6c206c616e673d22656e223e0a3c6d65746120636861727365743d227574662d38223e0a3c7469746c653e57696b696d65646961204572726f723c2f7469746c653e0a3c7374796c653e0a2a207b206d617267696e3a20303b2070616464696e673a20303b207d0a626f6479",
+      "signature": "<!DO",
+      "format": "HTML"
+    }
+  ],
+  "stoppedFor429": true
+}
