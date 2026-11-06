@@ -1,0 +1,215 @@
+{
+  "verifiedAt": "2026-10-28T08:09:13.841Z",
+  "targetUrl": "https://robingraph-test.dove-nest.com/chat",
+  "browser": "chromium headless shell (CDP)",
+  "chatJsSha256": "35ee4383c8bc80d828a1a213d1efb2b5250accaa71895ea129120dea09421d6a",
+  "mobile_390x844": {
+    "viewport": {
+      "name": "mobile_390x844",
+      "width": 390,
+      "height": 844,
+      "mobile": true
+    },
+    "method": "tap",
+    "chatRequests": [
+      {
+        "question": "숲에 사는 열매 먹는 새",
+        "has_followup_context": false
+      }
+    ],
+    "response": {
+      "disposition": "answer",
+      "result_kind": "graph_query",
+      "payload_status": "answer",
+      "limitations": 5,
+      "warnings": 5,
+      "raw_total": 10,
+      "expected_unique": 5,
+      "followup_context_returned": true
+    },
+    "expected": [
+      "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+      "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+      "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+      "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+      "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+    ],
+    "collapsed": {
+      "lastIsAssistant": true,
+      "lastClass": "message message-answer",
+      "notesCount": 1,
+      "open": false,
+      "summary": "안내 및 유의사항 (5)",
+      "contextParagraph": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+      "warningsListsInMessage": 0,
+      "items": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+      ],
+      "itemsVisible": false,
+      "wrappedItems": 5,
+      "itemOverflow": 0,
+      "notesFitsViewport": true,
+      "docHorizontalOverflow": false,
+      "feedbackButtons": [
+        "도움됐어요",
+        "질문을 잘못 이해했어요",
+        "답변이 틀렸어요"
+      ],
+      "activeIsSummary": false,
+      "screenshot": "/tmp/robingraph-notice-ui-20261028/screenshots/mobile_390x844-1-collapsed.png"
+    },
+    "expanded": {
+      "lastIsAssistant": true,
+      "lastClass": "message message-answer",
+      "notesCount": 1,
+      "open": true,
+      "summary": "안내 및 유의사항 (5)",
+      "contextParagraph": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+      "warningsListsInMessage": 0,
+      "items": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+      ],
+      "itemsVisible": true,
+      "wrappedItems": 5,
+      "itemOverflow": 0,
+      "notesFitsViewport": true,
+      "docHorizontalOverflow": false,
+      "feedbackButtons": [
+        "도움됐어요",
+        "질문을 잘못 이해했어요",
+        "답변이 틀렸어요"
+      ],
+      "activeIsSummary": true,
+      "screenshot": "/tmp/robingraph-notice-ui-20261028/screenshots/mobile_390x844-2-expanded-top.png",
+      "screenshotEnd": "/tmp/robingraph-notice-ui-20261028/screenshots/mobile_390x844-3-expanded-end.png"
+    },
+    "checks": {
+      "answer_graph_query": true,
+      "request_without_context": true,
+      "notes_single_in_last_assistant": true,
+      "collapsed_by_default": true,
+      "no_warnings_list_outside_card": true,
+      "expanded_by_interaction": true,
+      "items_unique": true,
+      "items_match_response_trim_unique": true,
+      "summary_count_matches": true,
+      "items_wrap_no_overflow": true,
+      "notes_fit_viewport": true,
+      "feedback_buttons_rendered": true
+    },
+    "passed": true
+  },
+  "desktop_1280x800": {
+    "viewport": {
+      "name": "desktop_1280x800",
+      "width": 1280,
+      "height": 800,
+      "mobile": false
+    },
+    "method": "keyboard Enter",
+    "chatRequests": [
+      {
+        "question": "숲에 사는 열매 먹는 새",
+        "has_followup_context": false
+      }
+    ],
+    "response": {
+      "disposition": "answer",
+      "result_kind": "graph_query",
+      "payload_status": "answer",
+      "limitations": 5,
+      "warnings": 5,
+      "raw_total": 10,
+      "expected_unique": 5,
+      "followup_context_returned": true
+    },
+    "expected": [
+      "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+      "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+      "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+      "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+      "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+    ],
+    "collapsed": {
+      "lastIsAssistant": true,
+      "lastClass": "message message-answer",
+      "notesCount": 1,
+      "open": false,
+      "summary": "안내 및 유의사항 (5)",
+      "contextParagraph": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+      "warningsListsInMessage": 0,
+      "items": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+      ],
+      "itemsVisible": false,
+      "wrappedItems": 4,
+      "itemOverflow": 0,
+      "notesFitsViewport": true,
+      "docHorizontalOverflow": false,
+      "feedbackButtons": [
+        "도움됐어요",
+        "질문을 잘못 이해했어요",
+        "답변이 틀렸어요"
+      ],
+      "activeIsSummary": false,
+      "screenshot": "/tmp/robingraph-notice-ui-20261028/screenshots/desktop_1280x800-1-collapsed.png"
+    },
+    "expanded": {
+      "lastIsAssistant": true,
+      "lastClass": "message message-answer",
+      "notesCount": 1,
+      "open": true,
+      "summary": "안내 및 유의사항 (5)",
+      "contextParagraph": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다.",
+      "warningsListsInMessage": 0,
+      "items": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+      ],
+      "itemsVisible": true,
+      "wrappedItems": 4,
+      "itemOverflow": 0,
+      "notesFitsViewport": true,
+      "docHorizontalOverflow": false,
+      "feedbackButtons": [
+        "도움됐어요",
+        "질문을 잘못 이해했어요",
+        "답변이 틀렸어요"
+      ],
+      "activeIsSummary": true,
+      "screenshot": "/tmp/robingraph-notice-ui-20261028/screenshots/desktop_1280x800-2-expanded-top.png",
+      "screenshotEnd": "/tmp/robingraph-notice-ui-20261028/screenshots/desktop_1280x800-3-expanded-end.png"
+    },
+    "checks": {
+      "answer_graph_query": true,
+      "request_without_context": true,
+      "notes_single_in_last_assistant": true,
+      "collapsed_by_default": true,
+      "no_warnings_list_outside_card": true,
+      "expanded_by_interaction": true,
+      "items_unique": true,
+      "items_match_response_trim_unique": true,
+      "summary_count_matches": true,
+      "items_wrap_no_overflow": true,
+      "notes_fit_viewport": true,
+      "feedback_buttons_rendered": true,
+      "keyboard_focus_on_summary": true
+    },
+    "passed": true
+  }
+}

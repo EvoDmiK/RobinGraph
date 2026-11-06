@@ -1,0 +1,144 @@
+{
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "test"
+  },
+  "api_cases": [
+    {
+      "case": "single-fruit-global",
+      "http_ms": 2526.8993449863046,
+      "status": "pass",
+      "items": 20,
+      "has_more": true,
+      "top3": [
+        "Treron sieboldii",
+        "Ara militaris",
+        "Anodorhynchus hyacinthinus"
+      ]
+    },
+    {
+      "case": "family-fruit",
+      "http_ms": 330.4100390523672,
+      "status": "pass",
+      "items": 20,
+      "has_more": true,
+      "top3": [
+        "Corvus fuscicapillus",
+        "Corvus validus",
+        "Corvus tristis"
+      ]
+    },
+    {
+      "case": "fruit-insect-union",
+      "http_ms": 991.8823989573866,
+      "status": "pass",
+      "items": 20,
+      "has_more": true,
+      "top3": [
+        "Cuculus micropterus",
+        "Oenanthe pleschanka",
+        "Turdus cardis"
+      ]
+    },
+    {
+      "case": "meat-group",
+      "http_ms": 765.5301089398563,
+      "status": "pass",
+      "items": 20,
+      "has_more": true,
+      "top3": [
+        "Tyto longimembris",
+        "Stephanoaetus coronatus",
+        "Surnia ulula"
+      ]
+    },
+    {
+      "case": "legacy-order-fruit",
+      "http_ms": 797.5884291809052,
+      "status": "pass",
+      "items": 20,
+      "has_more": true,
+      "top3": [
+        "Thraupis cyanoptera",
+        "Pipreola intermedia",
+        "Streptocitta albertinae"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "name": "Corvus corone",
+      "traits": [
+        {
+          "name": "diet_category",
+          "value": "VertFishScav",
+          "display": "고기·물고기·사체"
+        },
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 30,
+            "endotherm_vertebrate": 20,
+            "ectotherm_vertebrate": 20,
+            "fish": 0,
+            "unknown_vertebrate": 0,
+            "carrion": 20,
+            "fruit": 0,
+            "nectar": 0,
+            "seed": 10,
+            "other_plant": 0
+          },
+          "display": "곤충 30% · 고기 · 온혈동물 20% · 고기 · 변온동물 20% · 사체 20% · 씨앗 10%"
+        },
+        {
+          "name": "trophic_niche",
+          "value": "Omnivore",
+          "display": "잡식"
+        }
+      ]
+    },
+    {
+      "name": "Lanius excubitor",
+      "traits": [
+        {
+          "name": "diet_category",
+          "value": "VertFishScav",
+          "display": "고기·물고기·사체"
+        },
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 10,
+            "endotherm_vertebrate": 60,
+            "ectotherm_vertebrate": 10,
+            "fish": 0,
+            "unknown_vertebrate": 0,
+            "carrion": 10,
+            "fruit": 10,
+            "nectar": 0,
+            "seed": 0,
+            "other_plant": 0
+          },
+          "display": "곤충 10% · 고기 · 온혈동물 60% · 고기 · 변온동물 10% · 사체 10% · 열매 10%"
+        },
+        {
+          "name": "trophic_niche",
+          "value": "Vertivore",
+          "display": "고기 섭식"
+        }
+      ]
+    }
+  ],
+  "container_removed": true,
+  "image": "robingraph-api:prod-candidate-20261029",
+  "existing_test_changed": false,
+  "mlflow_disabled": true,
+  "published_ports": false,
+  "existing_test_image_verified": "robingraph-api:test-popup-reopen-4b7da236983b",
+  "existing_test_health": "healthy",
+  "scope_feedback_followup_modules_absent": true,
+  "scope_followup_contract_absent": true,
+  "scope_feedback_route_absent": true
+}

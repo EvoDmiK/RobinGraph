@@ -1,0 +1,111 @@
+{
+  "target": "https://robingraph.dove-nest.com/chat",
+  "verifiedAt": "2026-10-29T09:00:08.516Z",
+  "browser": "Chromium headless shell CDP",
+  "data": "actual Production API; no mocked response",
+  "viewports": [
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "baseline": {
+        "scale": 0.8333333333333334,
+        "face": "back",
+        "height": 955,
+        "toggles": [
+          false,
+          false
+        ],
+        "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+      },
+      "cycles": [
+        {
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "face": "back",
+            "height": 1137,
+            "toggles": [
+              true,
+              true
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "reopened": {
+            "scale": 0.8333333333333334,
+            "face": "front",
+            "height": 955,
+            "toggles": [
+              false,
+              false
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "scaleRestored": true,
+          "togglesClosed": true,
+          "frontRestored": true,
+          "keyboardFlip": true
+        },
+        {
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "face": "back",
+            "height": 1137,
+            "toggles": [
+              true,
+              true
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "reopened": {
+            "scale": 0.8333333333333334,
+            "face": "front",
+            "height": 955,
+            "toggles": [
+              false,
+              false
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "scaleRestored": true,
+          "togglesClosed": true,
+          "frontRestored": true,
+          "keyboardFlip": true
+        },
+        {
+          "expanded": {
+            "scale": 0.8333333333333334,
+            "face": "back",
+            "height": 1137,
+            "toggles": [
+              true,
+              true
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "reopened": {
+            "scale": 0.8333333333333334,
+            "face": "front",
+            "height": 955,
+            "toggles": [
+              false,
+              false
+            ],
+            "text": "조류 도감녹색비둘기White-bellied Green PigeonTreron sieboldiiIUCN 적색목록 관심대상 (LC) · 2024 평가 · 공개 평가목록 기준사진을 불러오지 못했습니다.사진 다시 불러오기먹"
+          },
+          "scaleRestored": true,
+          "togglesClosed": true,
+          "frontRestored": true,
+          "keyboardFlip": true
+        }
+      ],
+      "bounds": {
+        "fits": true,
+        "overflow": false
+      },
+      "screenshot": "/tmp/robingraph-prod-release-20261029/screenshots/reopened-390.png",
+      "passed": true
+    }
+  ]
+}

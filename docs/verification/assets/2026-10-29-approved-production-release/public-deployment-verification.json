@@ -1,0 +1,15 @@
+{
+  "release": {
+    "revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+    "image": "ghcr.io/evodmik/robingraph@sha256:963b4836ccf77155a8ca94efa105e66c60f799d05e75f6ae6c5b6ce710b05edc",
+    "production_verified": true
+  },
+  "health": {
+    "status": "ok",
+    "mode": "neo4j",
+    "taxonomy_release": "fixture-avlist-2025",
+    "deployment_target": "prod"
+  },
+  "public_chat_js_sha256": "48e0e008bac6e6124441d69f54c94227487e5f6da185f00fb301b455f8cdfeb2",
+  "public_js_matches_release_commit": true
+}

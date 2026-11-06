@@ -1,0 +1,746 @@
+[
+  {
+    "label": "chain.base",
+    "trace_id": "tr-cad1b804c8e2e72e9a48521735cded51",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "chain.korea",
+    "trace_id": "tr-eba5b60d67f39ee6c04a5b8438499ac0",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "국내 기록",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "korea"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "chain.number",
+    "trace_id": "tr-6d255fbce01962e27ab442357e1cad26",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "체중 100g 이상",
+      "graph_followup.turn": 2,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "body_mass",
+            "op": "num_gte",
+            "value": null,
+            "threshold": 100.0,
+            "unit": "g",
+            "qualifier": null
+          }
+        ],
+        "species_scope": "korea"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "rank.order",
+    "trace_id": "tr-5c67bf16fc09dd640a752960f0a4e3a6",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "참새목",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "rank.family",
+    "trace_id": "tr-06d7c3fcd4e015b8c59cc8611fbf15c2",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "직박구리과",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "직박구리과",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "rank.genus",
+    "trace_id": "tr-fb03ced4384758659c564d48cf5ccc69",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "Turdus",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "Turdus",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "rank.species",
+    "trace_id": "tr-f9a0b89f5c699ebf44118d4cb36e88d1",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새",
+      "graph_followup.added": "Hypsipetes amaurotis",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "Hypsipetes amaurotis",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "insufficient_data",
+    "failure_stage": "retrieval"
+  },
+  {
+    "label": "indep.wetland.base",
+    "trace_id": "tr-7f556f7b6c72963ddca1f94e8ff474c2",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "indep.wetland.fish",
+    "trace_id": "tr-c260ad5eb38be810b799b2a42cf90563",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "습지에 사는 새 알려줘",
+      "graph_followup.added": "먹이 구성에 물고기 포함",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": null,
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Wetland",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fish",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "indep.seed.base",
+    "trace_id": "tr-c0218faa730f5fed7997d145343cc8bf",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "indep.seed.korea_scope_kept",
+    "trace_id": "tr-d96623230aa41b4b7cac0d445339e915",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "참새목 중 씨앗 먹는 새",
+      "graph_followup.added": "서식 환경 숲(Forest)",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "seed",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "korea"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "indep.order_fruit.base",
+    "trace_id": "tr-c297be236009a6df67d91124a29a0820",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "indep.order_fruit.wing",
+    "trace_id": "tr-397a073a613f3398f8a08f7d94493d38",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "참새목 중 열매를 먹고 사는 새는?",
+      "graph_followup.added": "접은 날개 길이 100mm 미만",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "diet_distribution",
+            "op": "share_gt",
+            "value": "fruit",
+            "threshold": 0,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "wing_length",
+            "op": "num_lt",
+            "value": null,
+            "threshold": 100.0,
+            "unit": "mm",
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "ctx.missing",
+    "trace_id": "tr-c6d66673a06c646a6a265b6708a1251f",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": null,
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "context_missing",
+      "graph_followup.root_question": null
+    },
+    "response_reason": "followup_context_missing",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "ctx.forged",
+    "trace_id": "tr-4ebf7a96681ff16a45e9d91c8f3cb095",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": null,
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "context_invalid",
+      "graph_followup.root_question": null
+    },
+    "response_reason": "followup_context_invalid",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "ctx.garbage",
+    "trace_id": "tr-b6d645ee14df3ea06cff8720add44ccf",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": null,
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "context_invalid",
+      "graph_followup.root_question": null
+    },
+    "response_reason": "followup_context_invalid",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "ctx.scope_mismatch",
+    "trace_id": "tr-783e1b4d8e0ccf828e77f3259eda04ff",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": null,
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "context_scope_mismatch",
+      "graph_followup.root_question": null
+    },
+    "response_reason": "followup_context_invalid",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "ctx.bare",
+    "trace_id": "tr-9d9dc8a10fd3e1c10fcf6aa3bce79566",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "unresolved_addition",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "unresolved_conditions",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.negation",
+    "trace_id": "tr-ee2fbd82b4e6b0230d3fd8f15028dfd4",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "unsupported_addition",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "unsupported_conditions",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.unresolved",
+    "trace_id": "tr-ddac1506cebb6691f72bc79e63f22d60",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "unresolved_addition",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "unresolved_conditions",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.multiple",
+    "trace_id": "tr-ed65ff408e20318d8ef76d8c880a1d94",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "multiple_additions",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "plan_validation_rejected",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.conflict",
+    "trace_id": "tr-53b08a46f214fb2fd71d74ce3287a1c1",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "conflicting_condition",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "plan_validation_rejected",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.duplicate",
+    "trace_id": "tr-5e066b95cc1475bb98798853c9dc52cf",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "duplicate_condition",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "plan_validation_rejected",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "add.route_conflict",
+    "trace_id": "tr-514c26937fcd3ba20417fcbd9654bcde",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "rejected",
+      "graph_followup.reason": "route_conflict",
+      "graph_followup.root_question": "숲에 사는 열매 먹는 새"
+    },
+    "response_reason": "filter_mismatch",
+    "failure_stage": "followup"
+  },
+  {
+    "label": "empty.base",
+    "trace_id": "tr-9fe10ce1b06b996949caef25bfc81cec",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": null,
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "empty.followup",
+    "trace_id": "tr-80b7eb6772a8b1fc5dbfe98b86d679db",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "참새목 중 숲에 사는 새",
+      "graph_followup.added": "체중 5000g 이상",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          },
+          {
+            "trait_name": "body_mass",
+            "op": "num_gte",
+            "value": null,
+            "threshold": 5000.0,
+            "unit": "g",
+            "qualifier": null
+          }
+        ],
+        "species_scope": "all"
+      }
+    },
+    "response_reason": "no_matching_results",
+    "failure_stage": "retrieval"
+  },
+  {
+    "label": "empty.next_uses_retained",
+    "trace_id": "tr-2341183759a7916fbf83c6da3bb4a301",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {
+      "graph_followup.status": "applied",
+      "graph_followup.root_question": "참새목 중 숲에 사는 새",
+      "graph_followup.added": "국내 기록",
+      "graph_followup.turn": 1,
+      "graph_followup.canonical_plan": {
+        "kind": "taxon_traits",
+        "names": [],
+        "rank_name": "참새목",
+        "habitat": null,
+        "criterion": null,
+        "group": null,
+        "conditions": [
+          {
+            "trait_name": "habitat",
+            "op": "eq",
+            "value": "Forest",
+            "threshold": null,
+            "unit": null,
+            "qualifier": null
+          }
+        ],
+        "species_scope": "korea"
+      }
+    },
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "new.standalone_graph",
+    "trace_id": "tr-53f628e911999261da5026a226c2b287",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": "[redacted]",
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  },
+  {
+    "label": "new.other_kind",
+    "trace_id": "tr-8f07bb1faf9752ac0139facc44bbfa82",
+    "experiment_id": "33",
+    "token_in_trace": false,
+    "input_question_matches": true,
+    "input_context": "[redacted]",
+    "output_context": null,
+    "graph_followup": {},
+    "response_reason": "none",
+    "failure_stage": "none"
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "static": {
+    "static_sha256": "26a2be811fd1717eed2cb5144177e7b651725a0dc5d465a40297744adbab4466",
+    "static_matches_root": true,
+    "static_invertebrate_clean": true,
+    "static_other_meat_clean": true
+  },
+  "profiles": [
+    {
+      "query": "Anas platyrhynchos",
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:544",
+        "rank": "species",
+        "scientific_name": "Anas platyrhynchos",
+        "korean_name": "청둥오리"
+      },
+      "traits": [
+        {
+          "name": "diet_category",
+          "value": "Omnivore",
+          "display": "잡식"
+        },
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 40,
+            "endotherm_vertebrate": 0,
+            "ectotherm_vertebrate": 10,
+            "fish": 10,
+            "unknown_vertebrate": 0,
+            "carrion": 0,
+            "fruit": 0,
+            "nectar": 0,
+            "seed": 20,
+            "other_plant": 20
+          },
+          "display": "곤충 40% · 고기 (변온 척추동물) 10% · 물고기 10% · 씨앗 20% · 기타 식물 20%"
+        },
+        {
+          "name": "trophic_niche",
+          "value": "Herbivore aquatic",
+          "display": "수생 초식"
+        }
+      ]
+    },
+    {
+      "query": "Corvus corone",
+      "taxon": {
+        "taxon_id": "avilist-taxon:v2025b:20280",
+        "rank": "species",
+        "scientific_name": "Corvus corone",
+        "korean_name": "까마귀"
+      },
+      "traits": [
+        {
+          "name": "diet_category",
+          "value": "VertFishScav",
+          "display": "고기·물고기·사체"
+        },
+        {
+          "name": "diet_distribution",
+          "value": {
+            "invertebrate": 30,
+            "endotherm_vertebrate": 20,
+            "ectotherm_vertebrate": 20,
+            "fish": 0,
+            "unknown_vertebrate": 0,
+            "carrion": 20,
+            "fruit": 0,
+            "nectar": 0,
+            "seed": 10,
+            "other_plant": 0
+          },
+          "display": "곤충 30% · 고기 (온혈 척추동물) 20% · 고기 (변온 척추동물) 20% · 사체 20% · 씨앗 10%"
+        },
+        {
+          "name": "trophic_niche",
+          "value": "Omnivore",
+          "display": "잡식"
+        }
+      ]
+    }
+  ],
+  "evidence_note": "도감 전체 본문과 상세 출처 payload는 원본에 보존하고 표시 확인에 필요한 taxon/traits만 수록한다."
+}

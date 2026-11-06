@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-29",
+  "release_revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+  "jenkins_build": 13,
+  "jenkins_result": "SUCCESS",
+  "completed_ids": [
+    "RG-214",
+    "RG-407",
+    "RG-408"
+  ],
+  "readback": [
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-29-RG210-도감-먹이-표시명-정리.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-29-먹이비율-합산정렬-고기표시명.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/2026-10-29-RG405-팝업재열기-배율복구.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-214.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-407.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-408.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/7xx 배포·인프라/2026-10-29-승인3항목-운영배포-main병합.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "raw_equals_expected": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/7xx 배포·인프라/작업 백로그.md",
+      "raw_equals_expected": true
+    }
+  ],
+  "index_preservation": [
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/4xx 채팅 UI·카드/작업 백로그.md",
+      "other_content_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/7xx 배포·인프라/작업 백로그.md",
+      "other_content_preserved": true
+    }
+  ],
+  "changed_vault_notes": 11,
+  "other_task_states_preserved": true,
+  "history_test_results_preserved": true,
+  "writer_git_write": false,
+  "local_document_sha256": {
+    "docs/work-log/2026-10-29-approved-production-release.md": "5c0f2d7cf91063e9c7cd1759383bbea2cf2fa2ec8f972fba5dcb54aaa80db5c2",
+    "docs/work-log/2026-10-29-diet-display-labels.md": "4d6ba7ce5256d3c14d18c377376bbe5259378413861d538daffcd722c4067f25",
+    "docs/work-log/2026-10-29-diet-share-ranking.md": "d8c3e6a9193b2fec6779bda5943e723d2ae81b092f9cf910a70d26beb4d2f8ea",
+    "docs/work-log/2026-10-29-card-popup-reopen-scale.md": "842f5c8a3c59a870c844fa3efc6b44e1fbf121135ca833ddf1e9b3e06d897818",
+    "docs/backlog/RG-214.md": "3194cb53f2acf5913e234eccc2d76f57d20329e6b39ade8b0b432bfbd4d0bb75",
+    "docs/backlog/RG-407.md": "b7b38e5b2226a8badeac82623dd308935ad9064eafa547cc12291fdde99f1aaa",
+    "docs/backlog/RG-408.md": "3bf76c20d2af05af528f95700c97157b0f0212b2546aef83da5b2656023bec99"
+  },
+  "evidence_sha256": {
+    "fruit-ranking-390.png": "9415f52a033c874beec2480cab54b912a4472182c7f5b3099d9869413ba34c81",
+    "browser-report.md": "6fe0bcf90101b9d0cf33ad84f0bffd0255464987f7016398553606f53964b495",
+    "build-status.json": "1637fc8f4de0ebee60852a155960d5637d4e812a637703a559d3b36bf6147fe2",
+    "ranking-browser-results.json": "5f6fa639ce726170ed937fe5126f5678881f49bc12f42995ef6d8aeee8032cb5",
+    "isolated-candidate-live-api.json": "0e9e144455886588a8bbbb9fce27d14a457f133fcfc6bd5cfd7ed3f6e28da530",
+    "production-release.json": "5498eb5c69d7fac582a08960a4f057c7f0e05c0987c21ee274a108d4255b338e",
+    "diet-390.png": "69bb58685d5de1badba216a6ff76df53743a9e0587289e1841fd0f9136363ceb",
+    "popup-browser-after-results.json": "fa7d77d5681cbb77b735ed48d6a6f7f841bdc98eef149b616b4b5e57acb45da5",
+    "nas-deployment-receipt.json": "74797bf555ed785156f3b0b9393d979836762ad7381db100ee5ca880319c12cf",
+    "reopened-390.png": "252e28df2cd4f2c6b30812284bcc725b0b34c9b954ecafdf2ad987556cc4fd7a",
+    "production-api-checks.json": "ecc060fb58153a3a1790b950c2fb7d916c7389ae794ffb82159a773faf5b7581",
+    "popup-browser-results.json": "5679e6bd55a4d64abb2bb901382622b94aba3cb31cf352f9cbda9bb9dcbb8367",
+    "public-deployment-verification.json": "4ccdca0c977328a2da405d1dd9d9c96e383c92de3f77db2ecc183fead768c7de",
+    "validation-summary.json": "5dfb6421af7404c55fc0e4658163f153d21bf37c5f11925149e9eb45b66f797a"
+  }
+}

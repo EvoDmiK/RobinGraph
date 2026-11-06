@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-29",
+  "repository_file": "/Users/kimdove/orca/workspaces/RobinGraph/main-2/docs/work-log/2026-10-29-diet-display-labels.md",
+  "vault_detail": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/2026-10-29-RG210-도감-먹이-표시명-정리.md",
+  "vault_index": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+  "detail_sha256": "02ccfda0987df7a38151be9d495f0b66da257db9c0ec0e3c3f01054fc75b3227",
+  "vault_raw_equals_repository": true,
+  "index_readback_equals_expected_single_link_insertion": true,
+  "other_index_content_preserved": true,
+  "vault_notes_changed": 2,
+  "main_backlog_and_other_task_states_changed": false,
+  "production_deployed": false,
+  "git_write": false,
+  "evidence_files_before_receipt": 10,
+  "artifacts": {
+    "browser-report.md": "09d469d1d88dcfa8e4d6cc11858a139071499fc02fe3be5fcfbad51674dd9473",
+    "diet-1280.png": "72ee5a2a2462aa99c9e7cc13e6054995e6df4f0a6d366c1e0216a29390839ed8",
+    "additional-live-profiles.json": "3f3297e7723b3638a7d6943c8bce45ee683ef868198b326b6c053444515d2a72",
+    "diet-390.png": "7dc0f79624d28535874b100a4d8ec5e54974003c9beddbe82e3f5de4f6e139a2",
+    "environment-preservation.json": "abed1a744bfe928eecb4fdba0b1f8b58ecb66e925a3c2f1553dcd8c9699237ea",
+    "browser-results.json": "2d24662dc53dd8a497f4e126589b0291882f6087e4c65561b82cb69191e852de",
+    "live-api-static.json": "0f365d2987358b5702223eb70cde3a081351313e178abebab4885732af201bad",
+    "deployment-verification.json": "20f44304378c8c2ef6e1c24261820a22fc98a3cf4b95f3269c41a3186b320601",
+    "source-comparison.json": "8cdd883a4bdc1512ae30508a25212fb3395babaa2e1669e38ee3add6bca54e20",
+    "test-release.json": "8cd7854460596f8c9f3ce006446950ceec4073bc205b08c453e7dbb1a6162f70"
+  },
+  "parent_review_correction_synced_and_readback": true
+}

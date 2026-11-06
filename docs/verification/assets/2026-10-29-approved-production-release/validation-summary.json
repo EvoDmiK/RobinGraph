@@ -1,0 +1,44 @@
+{
+  "candidate_python": {
+    "run": 1334,
+    "passed": 1294,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 25.637
+  },
+  "candidate_ui": {
+    "passed": 323,
+    "milliseconds": 284.195
+  },
+  "jenkins_python": {
+    "run": 1334,
+    "passed": 1294,
+    "skipped": 40,
+    "failed": 0,
+    "seconds": 24.974
+  },
+  "jenkins_ui_passed": 323,
+  "amd64_fixture_smoke": true,
+  "django_check": "no issues",
+  "isolated_arm_actual_api": {
+    "passed": 7,
+    "mock": false
+  },
+  "initial_archive_packaging_failures": 7,
+  "initial_failure_cause": "candidate had no Git HEAD; temporary candidate repository initialized and same full suite passed",
+  "production_commit": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+  "source_files": 5,
+  "test_files": 4,
+  "commit_files": 57,
+  "test_app_changed": false,
+  "db_migration": false,
+  "excluded_uncommitted": [
+    "RG-603 feedback",
+    "RG-213 followup",
+    "notice UI"
+  ],
+  "staged_credentials_absent": true,
+  "source_diff_check_pass": true,
+  "patch_artifact_context_whitespace_preserved": true,
+  "dev_codex_commit_main_ff_both_pushed": true
+}

@@ -1,0 +1,28 @@
+{
+  "source_sha256": "90f9602f3f610b5ef21dd802685588c4bd7aaa8a17085ffa1391817696f50146",
+  "current_source_sha256": "dc72ada65dbff3b6283851b105b21209fd099b7d904abfa58ea615f5b28d9594",
+  "current_release": "/Users/kimdove/robingraph-test/releases/notice-ui-dc72ada65dbf-46b2cc",
+  "changed_files": [
+    {
+      "path": "src/robingraph/api/static/chat.js",
+      "old": "35ee4383c8bc80d828a1a213d1efb2b5250accaa71895ea129120dea09421d6a",
+      "new": "26a2be811fd1717eed2cb5144177e7b651725a0dc5d465a40297744adbab4466"
+    },
+    {
+      "path": "src/robingraph/retrieval/birdbase.py",
+      "old": "e87fd34aa0aa93cc1a77f985e5fe307f913bd8c4a5269eac1fe2226eecea04bd",
+      "new": "eabe4a94c3d42248077aea974f06934e47406986ca497d4f36808a1d430cf2b3"
+    },
+    {
+      "path": "src/robingraph/retrieval/graph_condition_extractor.py",
+      "old": "e4c4c7b3cba72b7ec978d04f10d03bfe39ed7c1c3b50b67e9e42773e461abd28",
+      "new": "0077edb54752e840c0f40628fc70188f6342ddca4b87336c587e66e35c18ae56"
+    },
+    {
+      "path": "src/robingraph/retrieval/species_profile.py",
+      "old": "6aa3b6c318d4c569f5eda18c65a6f2102a7bc8d98da63cfe6c55994c02d936ff",
+      "new": "442210e3473312fea6994198db8296a0bb8568a93aed3cc067504eb6e98d3d9b"
+    }
+  ],
+  "files": 235
+}

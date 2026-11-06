@@ -1,0 +1,10 @@
+{
+  "changed_env_keys": [
+    "ROBINGRAPH_IMAGE"
+  ],
+  "compose_files_preserved": [
+    "compose.mac-test.yml",
+    "compose.nas.yml"
+  ],
+  "signing_key_preserved": true
+}

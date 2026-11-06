@@ -1,0 +1,77 @@
+{
+  "responses": [
+    {
+      "case": "base",
+      "http": 200,
+      "disposition": "answer",
+      "payload_status": "answer",
+      "followup_status": null,
+      "followup_reason": null,
+      "plan": null,
+      "retained": null,
+      "warnings": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+      ],
+      "warnings_unique": true,
+      "token_returned": true,
+      "token_sha256_12": "57d9c784de43",
+      "sent_token_sha256_12": null,
+      "cache_control": "no-store",
+      "trace_id": "tr-15c914c3e87d463da5f6952c089ed9c9",
+      "feedback_token_present": true
+    },
+    {
+      "case": "followup.korea",
+      "http": 200,
+      "disposition": "answer",
+      "payload_status": "answer",
+      "followup_status": "applied",
+      "followup_reason": null,
+      "plan": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      },
+      "retained": {
+        "conditions": [
+          "서식 환경 숲(Forest)",
+          "먹이 구성에 열매 포함"
+        ],
+        "taxon": null,
+        "scope": "korea"
+      },
+      "warnings": [
+        "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+        "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+        "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+        "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+        "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+        "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+      ],
+      "warnings_unique": true,
+      "token_returned": true,
+      "token_sha256_12": "70db575f0bb3",
+      "sent_token_sha256_12": "57d9c784de43",
+      "cache_control": "no-store",
+      "trace_id": "tr-7f27946c4ddc68d7a4dc569f54824cd7",
+      "feedback_token_present": true
+    }
+  ],
+  "checks": {
+    "base_answer_with_token": true,
+    "followup_applied_answer": true,
+    "followup_plan_korea_kept_conditions": true,
+    "followup_new_token": true,
+    "korea_record_warning": true,
+    "no_store_with_token": true,
+    "feedback_headers_kept": true,
+    "warnings_unique": true
+  }
+}

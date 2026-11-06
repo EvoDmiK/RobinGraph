@@ -1,0 +1,17 @@
+{
+  "receipt": {
+    "image": "ghcr.io/evodmik/robingraph@sha256:963b4836ccf77155a8ca94efa105e66c60f799d05e75f6ae6c5b6ce710b05edc",
+    "revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+    "previous_image": "ghcr.io/evodmik/robingraph@sha256:d1077581143bbb59bb47ea2723c140af66b20a59e4df8cd3a1bae5f6985670f5",
+    "runtime_overrides": {
+      "ROBINGRAPH_GRAPH_INTENT_MODE": "active",
+      "ROBINGRAPH_GRAPH_INTERPRETER": "semantic",
+      "ROBINGRAPH_MLFLOW_TRACING": "true",
+      "MLFLOW_EXPERIMENT_ID": "50",
+      "MLFLOW_EXPERIMENT_NAME": "robingraph-prod"
+    },
+    "state": "verified"
+  },
+  "excluded_unit_fixture_receipts": 2,
+  "evidence_note": "환경 백업 경로 제외, 실제 revision 일치 영수증만 수록. 단위 fixture 2개 제외."
+}
