@@ -2,6 +2,7 @@
 
 # Manifest hashes cover the exact UTF-8 bytes, including line endings.
 data/eval/** text eol=lf
+data/eval/graph_questions/taxonomic-regression-v1/questions.csv -text
 *.py text eol=lf
 *.yml text eol=lf
 *.sh text eol=lf
