@@ -15,7 +15,7 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 정원사가 뒤집은 흙에서 먹이를 발견하는 꼬까울새처럼, 새에 관한 작은 질문을 따라 새로운 지식과 연결을 발견하기를 바라는 마음을 이름에 담았습니다.
 
-현재 구현 설명은 **2026-10-12 기준**입니다. 실제 종 데이터가 적재된 개인 서버에서 기능을 검증하고 있습니다. 로컬 합성 fixture는 DB·외부 API 없이 기본 응답과 UI를 확인하는 용도이며, 실제 종 데이터 환경과 제공 범위가 다릅니다.
+현재 소스와 작업 기록은 **2026-11-14 기준**으로 정리했습니다. 배포 상태는 각 작업 기록의 검증 시점 기준이며 현재 서버 상태를 보증하지 않습니다. 실제 종 데이터가 적재된 개인 서버에서 기능을 검증하고 있습니다. 로컬 합성 fixture는 DB·외부 API 없이 기본 응답과 UI를 확인하는 용도이며, 실제 종 데이터 환경과 제공 범위가 다릅니다.
 
 ## 목차
 
@@ -48,6 +48,13 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 확인된 자료로 답변하고, 자료가 없는 내용은 추측하지 않습니다. 카드의 사진·라이선스·형질 출처와 자료 기준은 설명창의 `답변 출처 보기`에 중복을 줄여 모읍니다.
 - <b>한국어 이름 우선 표시</b>  
 한국조류학회 목록과 학명을 대조한 보충 자료를 사용합니다. 검증된 한국어 이름이 없으면 영어 이름을 표시하며 자동 번역명을 만들지 않습니다. 카드에는 한국어 이름과 작은 영어 이름, 학명을 함께 표시합니다.
+
+### 조건으로 새 찾기와 피드백
+
+- **새 탐색기**: `/explore`에서 국내·전체 범위, 목·과·속, 서식지와 먹이 조건을 조합해 종을 찾습니다. 결과는 자료 범위와 출처를 함께 표시하며, 페이지 이동과 조건이 담긴 URL 공유를 지원합니다. 결과에서 같은 범위의 도감 카드를 열 수 있습니다. 조건이 없는 자료는 불일치로 단정하지 않습니다.
+- **도감과 캐시**: 기본 프로필과 사진·설명을 나누어 불러오며, 설정 시 공개 사진·설명 메타데이터를 캐시합니다. `ROBINGRAPH_SPECIES_CACHE_ROOT`는 선택 사항입니다.
+- **후속 질문과 피드백**: 지원하는 그래프 질의에서 앞선 조건에 단일 조건을 추가할 수 있습니다. 답변별 피드백은 설정된 MLflow 추적과 연결됩니다. 지원 범위와 검증 내용은 [운영 검증 기록](docs/work-log/2026-11-12-followup-feedback-production.md)을 참고합니다.
+- **음원 수집·검토**: 소스에는 음원 후보 수집, 인증된 `/audio-review` 화면, 미리듣기와 후보별 의견 저장이 있습니다. 검토 의견은 공개 승인이 아니며, 관련 설정과 저장소가 준비된 환경에서만 사용할 수 있습니다. 음원 검토 화면·의견 저장은 TEST 검증 기록이며, 11월 11일 운영 기능 배포에서는 새소리 기능을 제외했습니다. [음원 검토](docs/work-log/2026-11-09-bird-audio-review.md) · [의견 저장](docs/work-log/2026-11-10-bird-audio-assessment.md) · [운영 배포 범위](docs/work-log/2026-11-11-approved-non-audio-production.md)
 
 ### PC·모바일 도감 카드
 <p align='center'>
@@ -112,7 +119,7 @@ TEST에서 `흰뺨검둥오리에 대해 알려줘`, `청둥오리와 비슷한 
 
 ## 기술 스택
 
-2026-10-20 기준 소스·TEST·Production 배포에 사용하는 구성입니다. Python 의존성 범위는 [pyproject.toml](pyproject.toml), 정확한 설치 버전은 [uv.lock](uv.lock)에서 관리합니다.
+현재 소스의 구성입니다. 실제 TEST·Production 구성과 배포 상태는 각 환경의 검증 기록에서 확인합니다. Python 의존성 범위는 [pyproject.toml](pyproject.toml), 정확한 설치 버전은 [uv.lock](uv.lock)에서 관리합니다.
 
 | 영역 | 기술 | 역할 |
 | --- | --- | --- |
@@ -157,10 +164,11 @@ Neo4j에 종과 자료의 관계를, PostgreSQL에 수집 작업·활성 스냅�
 
 ```sh
 uv run --locked robingraph verify-neo4j
-uv run --locked robingraph migrate-postgres
 uv run --locked robingraph verify-postgres
 uv run --locked robingraph serve-neo4j
 ```
+
+PostgreSQL 스키마가 아직 준비되지 않은 경우에는 대상과 변경 범위를 확인한 뒤 별도로 `robingraph migrate-postgres`를 실행합니다. 운영 DB 변경에는 별도 사용자 승인이 필요합니다.
 
 CLI는 **실행 디렉터리의 `.env`**를 읽으며, 이미 설정된 환경 변수가 같은 키를 우선합니다. `.env`와 인증 정보는 Git에 넣지 않습니다. PostgreSQL 연결 변수는 [.env.nas.example](.env.nas.example)과 [개발 가이드](docs/development.md)를 참고합니다. `/health`의 `mode: neo4j`는 백엔드 모드이며 특정 종 데이터나 활성 분류판 검증을 대신하지 않습니다.
 
@@ -219,7 +227,10 @@ Neo4j: 그래프·문헌·벡터   PostgreSQL: 수집·활성 스냅샷
 | 경로 | 용도 |
 | --- | --- |
 | `GET /`, `GET /chat`, `GET /static/*` | 같은 서버에서 제공하는 한국어 UI·정적 자산 |
-| `GET /health` | 백엔드 모드·서비스 상태 |
+| `GET /health` | 백엔드 모드·서비스 상태. DB 연결이나 활성 자료 검증을 대신하지 않음 |
+| `GET /birds`, `GET /explore` | 도감·조건 검색 화면 |
+| `GET /v1/taxa/explore` | 종 범위·분류군·서식지·먹이 조건 검색과 페이지네이션 |
+| `POST /v1/chat/feedback` | 설정된 추적 경로의 답변별 피드백 |
 | `POST /v1/chat` | 의도별 채팅 답변·구조화된 결과 |
 | `GET /v1/taxa/profile`, `GET /v1/taxa/related` | 종 프로필·관련 종 탐색 |
 | `POST /v1/search` | 문헌 청크·점수·출처 검색. 채팅 답변 생성과 구분 |
@@ -260,9 +271,13 @@ curl -X POST http://127.0.0.1:8000/v1/search \
 
 [Dockerfile](Dockerfile)은 API와 UI를 함께 묶습니다. [compose.nas.yml](compose.nas.yml)은 기존 Neo4j·PostgreSQL·외부 Docker 네트워크·프록시를 사용하는 **NAS 운영용 구성**이며, 처음 설치하는 사용자를 위한 전체 DB 포함 설치 구성이 아닙니다. [package_nas_release.sh](scripts/package_nas_release.sh)는 커밋 기준 런타임 소스 아카이브와 해시 manifest를 만듭니다. DB 데이터와 인증 정보는 포함하지 않습니다.
 
-배포·검증·복구는 [NAS 런북](docs/nas-deployment.md)을 따릅니다. Git push·CI 통과가 NAS 자동 배포를 뜻하지 않습니다. 최신 카드 동작의 NAS TEST 검증은 [PC 무스크롤·모바일 테두리 기록](docs/verification/2026-10-09-rg015-pc-no-scroll-mobile-border.md)에 있으며, 해당 작업의 PROD 배포는 수행하지 않았습니다.
+배포·검증·복구는 [NAS 런북](docs/nas-deployment.md)을 따릅니다. Git push·CI 통과가 NAS 자동 배포를 뜻하지 않습니다. 이전 카드 동작의 NAS TEST 검증은 [PC 무스크롤·모바일 테두리 기록](docs/verification/2026-10-09-rg015-pc-no-scroll-mobile-border.md)에 있습니다. 이후 배포 여부는 최신 작업 기록을 확인합니다.
 
-독립형 Docker 설치 번들·공개 패키지 배포·HippoRAG 스타일 검색 전환·한국 서식종 토글은 현재 제공 기능에 포함되지 않습니다.
+2026-11-11에는 새소리를 제외한 조건 검색·도감·캐시 등 기능이 별도 스냅샷으로 운영 배포됐습니다. 음원 검토·의견 저장은 별도의 TEST 검증 범위입니다. 상세 근거는 [운영 배포 기록](docs/work-log/2026-11-11-approved-non-audio-production.md)을 참고합니다.
+
+운영 반영과 운영 컨테이너 재시작·이미지 교체·DB 변경·롤백은 사용자가 결과를 확인하고 명시적으로 승인한 뒤에만 수행합니다. TEST·운영 서버에서 이미지를 빌드한 뒤에는 사용하지 않는 빌드 캐시와 이미지를 점검해 정리하되, 실행 중인 이미지와 롤백에 필요한 이미지는 보존합니다.
+
+독립형 Docker 설치 번들·공개 패키지 배포·HippoRAG 스타일 검색 전환은 현재 제공 기능에 포함되지 않습니다.
 
 ## 테스트
 
@@ -282,6 +297,7 @@ GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/
 
 | 분야 | 문서 |
 | --- | --- |
+| 탐색·검토 | [새 탐색기](docs/work-log/2026-11-10-bird-explorer.md) · [음원 검토](docs/work-log/2026-11-09-bird-audio-review.md) · [음원 의견 저장](docs/work-log/2026-11-10-bird-audio-assessment.md) · [후속 질문·피드백](docs/work-log/2026-11-12-followup-feedback-production.md) |
 | 화면·질문 | [채팅 UI](docs/chat-ui.md) · [질문 처리·근거 정책](docs/species-questions.md) · [분류 계보 API](docs/taxonomy-lineage-api.md) |
 | 이름·관계 | [국명 정책](docs/korean-display-names.md) · [생태 관계](docs/ecological-relations.md) · [아종](docs/subspecies-cards.md) · [통칭·가축형](docs/name-relations.md) · [관계 조사 목록](docs/name-relations-coverage.md) |
 | 설계·데이터 | [시스템 설계](docs/system-design.md) · [그래프 스키마](docs/graph-database-schema.md) · [데이터 계약](docs/data-contracts.md) · [수집 포인트](docs/collection-points.md) · [기술 결정](docs/decisions/) |
