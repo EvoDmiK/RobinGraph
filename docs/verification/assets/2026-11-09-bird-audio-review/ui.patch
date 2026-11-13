@@ -1,0 +1,487 @@
+diff --git a/src/robingraph/api/static/audio-review.html b/src/robingraph/api/static/audio-review.html
+new file mode 100644
+index 0000000..527b239
+--- /dev/null
++++ b/src/robingraph/api/static/audio-review.html
+@@ -0,0 +1,61 @@
++<!DOCTYPE html>
++<html lang="ko">
++<head>
++  <meta charset="utf-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <meta name="referrer" content="no-referrer" />
++  <title>음원 검토 · RobinGraph</title>
++  <link rel="icon" href="/favicon.ico" sizes="any" />
++  <link rel="stylesheet" href="/static/styles.css" />
++  <link rel="stylesheet" href="/static/audio-review.css" />
++  <script src="/static/audio-review.js" defer></script>
++</head>
++<body>
++  <main class="page audio-review-page">
++    <header class="app-header">
++      <p class="brand">RobinGraph · Audio library</p>
++      <h1>수집된 새소리 살펴보기</h1>
++      <p class="tagline">음원을 듣고 원본 출처와 검토 상태를 함께 확인하세요.</p>
++    </header>
++
++    <section class="review-access" aria-labelledby="access-title">
++      <div>
++        <h2 id="access-title">검토 전용 접속</h2>
++        <p id="access-help">접속키는 현재 탭의 메모리에만 보관하며, 연결을 해제하거나 페이지를 떠나면 지워집니다.</p>
++      </div>
++      <form id="review-connect-form" autocomplete="off">
++        <label for="review-key">검토 전용 접속키</label>
++        <div class="review-connect-actions">
++          <input id="review-key" type="password" autocomplete="off" spellcheck="false" required aria-describedby="access-help" />
++          <button id="review-connect" type="submit" class="send-button">연결</button>
++          <button id="review-disconnect" type="button" class="clear-button" hidden>연결 해제</button>
++        </div>
++      </form>
++    </section>
++
++    <section id="review-library" class="review-library" aria-labelledby="library-title" hidden>
++      <div class="review-toolbar">
++        <div>
++          <p class="brand">Collected recordings</p>
++          <h2 id="library-title">음원 목록</h2>
++        </div>
++        <div class="review-filter">
++          <label for="review-status-filter">검토 상태</label>
++          <select id="review-status-filter">
++            <option value="">전체 상태</option>
++            <option value="awaiting_review">검토 대기</option>
++            <option value="approved">검토 승인</option>
++            <option value="published">공개됨</option>
++            <option value="rejected">검토 반려</option>
++            <option value="deferred">수집 보류</option>
++          </select>
++        </div>
++      </div>
++      <p class="review-boundary">등록된 종 이름은 수집 시의 분류입니다. 독립적인 종 동정과 청취 검토가 끝났는지는 각 항목에서 확인하세요. 이 화면에서는 승인하거나 공개하지 않습니다.</p>
++      <div id="review-candidates" class="review-candidates"></div>
++      <button id="review-more" type="button" class="clear-button review-more" hidden>더 보기</button>
++    </section>
++    <p id="review-status" class="review-status" role="status" aria-live="polite">검토 전용 접속키를 입력해 주세요.</p>
++  </main>
++</body>
++</html>
+diff --git a/src/robingraph/api/static/audio-review.css b/src/robingraph/api/static/audio-review.css
+new file mode 100644
+index 0000000..3872d86
+--- /dev/null
++++ b/src/robingraph/api/static/audio-review.css
+@@ -0,0 +1,50 @@
++.audio-review-page { max-width: 1060px; }
++.audio-review-page [hidden] { display: none !important; }
++.audio-review-page h2, .audio-review-page h3, .audio-review-page p { margin: 0; }
++.review-access, .review-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 18px; padding: 1.35rem; }
++.review-access { display: grid; gap: 1rem; }
++.review-access h2, .review-toolbar h2 { font-size: 1.15rem; }
++.review-access p, .review-boundary, .review-status { color: var(--color-muted); font-size: .9rem; }
++.review-access p { margin-top: .4rem; max-width: 65ch; }
++#review-connect-form { display: grid; gap: .45rem; }
++.review-connect-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
++.audio-review-page input, .audio-review-page select { font: inherit; padding: .65rem .8rem; background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 10px; min-width: 0; }
++#review-key { flex: 1; }
++.audio-review-page button { min-height: 44px; }
++.audio-review-page :is(button, input, select, a, audio):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
++.review-library { display: grid; gap: 1rem; }
++.review-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
++.review-filter { display: flex; align-items: center; gap: .7rem; }
++.review-filter label { font-size: .85rem; color: var(--color-muted); }
++.review-boundary { padding: .85rem 1rem; background: var(--color-answer-bg); border-left: 3px solid var(--color-answer-border); border-radius: 0 10px 10px 0; }
++.review-candidates { display: grid; gap: 1rem; }
++.review-card { display: grid; gap: 1rem; min-width: 0; }
++.review-card-header { display: flex; align-items: start; gap: .7rem; justify-content: space-between; }
++.review-card-heading { min-width: 0; }
++.review-card h3 { font-size: 1.15rem; }
++.review-scientific { color: var(--color-muted); font-size: .9rem; font-style: italic; }
++.review-card-subtitle { font-size: .85rem; color: var(--color-muted); margin-top: .2rem !important; }
++.review-badge { background: var(--color-abstain-bg); color: var(--color-warning); border: 1px solid var(--color-abstain-border); font-size: .78rem; font-weight: 700; padding: .3rem .65rem; border-radius: 999px; flex-shrink: 0; }
++.review-badge-reviewed { background: var(--color-answer-bg); color: var(--color-accent); border-color: var(--color-answer-border); }
++.review-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem 1.5rem; margin: 0; }
++.review-fact { min-width: 0; }
++.review-facts dt { color: var(--color-muted); font-size: .8rem; margin-bottom: .15rem; }
++.review-facts dd { margin: 0; font-size: .93rem; }
++.review-card :is(h3, p, dd, a) { overflow-wrap: anywhere; }
++.review-card a { color: var(--color-accent); text-underline-offset: 3px; }
++.review-player { display: grid; gap: .6rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
++.review-player .clear-button { justify-self: start; }
++.review-player audio { display: block; width: 100%; min-width: 0; }
++.review-player-status { font-size: .85rem; color: var(--color-muted); }
++.review-more { justify-self: center; min-width: 150px; }
++.review-empty { text-align: center; padding: 2.5rem 1rem; color: var(--color-muted); background: var(--color-surface); border: 1px dashed var(--color-border); border-radius: 18px; }
++.review-status[data-error="true"] { color: var(--color-error-text); }
++@media (max-width: 540px) {
++  .audio-review-page { padding: 1.25rem 1rem; gap: 1.1rem; }
++  .review-access, .review-card { padding: 1rem; }
++  .review-facts { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
++  .review-card-header { flex-wrap: wrap; }
++  .review-filter { width: 100%; justify-content: space-between; }
++  .review-filter select { flex: 1; max-width: 210px; }
++  .review-connect-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
++}
+diff --git a/src/robingraph/api/static/audio-review.js b/src/robingraph/api/static/audio-review.js
+new file mode 100644
+index 0000000..28da004
+--- /dev/null
++++ b/src/robingraph/api/static/audio-review.js
+@@ -0,0 +1,193 @@
++/* Read-only review access lives in this tab only; metadata never becomes HTML. */
++(function () {
++  "use strict";
++  var form = document.getElementById("review-connect-form");
++  var keyInput = document.getElementById("review-key");
++  var connectButton = document.getElementById("review-connect");
++  var disconnectButton = document.getElementById("review-disconnect");
++  var library = document.getElementById("review-library");
++  var filter = document.getElementById("review-status-filter");
++  var list = document.getElementById("review-candidates");
++  var more = document.getElementById("review-more");
++  var status = document.getElementById("review-status");
++  var token = "", session = 0, offset = 0, loading = false;
++  var requests = new Set(), audio = null, objectUrl = null, playButton = null;
++  var previewController = null;
++  var statuses = {
++    awaiting_review: "검토 대기", approved: "검토 승인", published: "공개됨",
++    rejected: "검토 반려", deferred: "수집 보류"
++  };
++
++  function text(value) { return typeof value === "string" && value.trim() ? value.trim() : "미확인"; }
++  function node(tag, className, value) {
++    var element = document.createElement(tag);
++    if (className) { element.className = className; }
++    if (value != null) { element.textContent = value; }
++    return element;
++  }
++  function safeLink(value, label) {
++    try {
++      var url = new URL(value);
++      if ((url.protocol === "https:" || url.protocol === "http:") && !url.username && !url.password) {
++        var link = node("a", "", label);
++        link.href = url.href; link.target = "_blank"; link.rel = "noopener noreferrer";
++        return link;
++      }
++    } catch (error) { /* Missing or unsafe links stay plain text. */ }
++    return node("span", "", label);
++  }
++  function message(value, failed) {
++    status.textContent = value;
++    status.setAttribute("data-error", failed ? "true" : "false");
++  }
++  function stopAudio() {
++    if (previewController) { previewController.abort(); previewController = null; }
++    if (audio) {
++      audio.pause(); audio.removeAttribute("src"); audio.load(); audio.remove(); audio = null;
++    }
++    if (objectUrl) { URL.revokeObjectURL(objectUrl); objectUrl = null; }
++    if (playButton) { playButton.disabled = false; playButton = null; }
++  }
++  function disconnect(note) {
++    session += 1; token = ""; keyInput.value = "";
++    requests.forEach(function (controller) { controller.abort(); }); requests.clear();
++    stopAudio(); loading = false; offset = 0; filter.disabled = false;
++    list.replaceChildren(); library.hidden = true; more.hidden = true;
++    keyInput.disabled = false; connectButton.hidden = false; connectButton.disabled = false;
++    disconnectButton.hidden = true;
++    message(note || "연결을 해제했습니다. 접속키와 불러온 음원을 지웠습니다.", !!note);
++  }
++  async function request(path, controller) {
++    requests.add(controller);
++    var response = await fetch(path, {
++      method: "GET", headers: { Authorization: "Bearer " + token },
++      credentials: "omit", cache: "no-store", redirect: "error", referrerPolicy: "no-referrer", signal: controller.signal
++    });
++    if (response.status === 401 || response.status === 403) {
++      disconnect("접속키를 확인해 주세요. 검토 전용 접속키만 사용할 수 있습니다.");
++      return null;
++    }
++    if (!response.ok) { throw new Error("Review request failed"); }
++    return response;
++  }
++  async function preview(item, button, player, feedback) {
++    stopAudio();
++    var path = "/internal/v1/audio/preview/" + item.candidate_id;
++    if (!/^[a-f0-9]{64}$/.test(item.candidate_id) || item.preview_url !== path) {
++      feedback.textContent = "미리듣기 경로를 확인하지 못했습니다."; return;
++    }
++    var currentSession = session, controller = new AbortController();
++    previewController = controller; playButton = button; button.disabled = true;
++    feedback.textContent = "음원을 불러오고 있습니다…";
++    try {
++      var response = await request(path, controller);
++      if (!response) { return; }
++      var blob = await response.blob();
++      if (currentSession !== session || controller.signal.aborted) { return; }
++      if (!blob.size || blob.size > 25 * 1024 * 1024 || !/^(audio\/(ogg|mpeg|mp3|wav|x-wav)|application\/ogg)$/i.test(blob.type)) {
++        throw new Error("Invalid audio response");
++      }
++      objectUrl = URL.createObjectURL(blob);
++      audio = node("audio"); audio.controls = true; audio.preload = "none"; audio.src = objectUrl;
++      audio.setAttribute("aria-label", text(item.scientific_name) + " 수집 음원 미리듣기");
++      audio.addEventListener("error", function () { feedback.textContent = "음원을 재생하지 못했습니다. 원본 출처를 확인해 주세요."; });
++      player.appendChild(audio); feedback.textContent = "저장된 음원입니다. 직접 들어보고 원본 출처와 대조해 주세요.";
++      try { await audio.play(); } catch (error) { feedback.textContent = "재생 버튼을 눌러 음원을 들어보세요."; }
++    } catch (error) {
++      if (currentSession === session && !controller.signal.aborted) {
++        feedback.textContent = "음원을 불러오지 못했습니다. 다시 시도해 주세요.";
++      }
++    } finally {
++      requests.delete(controller);
++      if (previewController === controller) { previewController = null; button.disabled = false; }
++    }
++  }
++  function card(item) {
++    var record = item.recording || {}, review = item.review || {};
++    var article = node("article", "review-card");
++    var header = node("div", "review-card-header"), heading = node("div", "review-card-heading");
++    heading.appendChild(node("h3", "", text(item.korean_name || item.scientific_name)));
++    if (item.korean_name) { heading.appendChild(node("p", "review-scientific", text(item.scientific_name))); }
++    heading.appendChild(node("p", "review-card-subtitle", "등록 종 · 수집 시 종 표기"));
++    header.appendChild(heading);
++    header.appendChild(node("span", "review-badge" + (item.status === "approved" || item.status === "published" ? " review-badge-reviewed" : ""), (item.status === "deferred" && item.error_code === "provider_rate_limited" ? "외부 제한으로 보류" : statuses[item.status]) || "상태 미확인"));
++    article.appendChild(header);
++    if (item.status === "deferred") {
++      article.appendChild(node("p", "review-card-subtitle", (item.error_code === "provider_rate_limited" ? "외부 제공처의 요청 제한으로 수집을 보류했습니다. " : "수집을 보류한 항목입니다. ") + "재시도 시각이 지나도 수집 완료를 뜻하지 않습니다."));
++    }
++    article.appendChild(node("p", "", text(record.title || item.file_title)));
++    var facts = node("dl", "review-facts");
++    function fact(label, value) {
++      var group = node("div", "review-fact"), detail = node("dd");
++      group.appendChild(node("dt", "", label));
++      if (typeof value === "string") { detail.textContent = value; } else { detail.appendChild(value); }
++      group.appendChild(detail); facts.appendChild(group);
++    }
++    fact("종 동정", review.taxon_verified === true ? "동정 확인 기록 있음" : "독립 동정 미확인");
++    fact("청취 검토", review.playback_verified === true ? "청취 확인 기록 있음" : "사람의 청취 검토 미확인");
++    fact("녹음자", text(record.creator));
++    fact("라이선스", safeLink(record.license_url, text(record.license_name)));
++    fact("원본 출처", safeLink(record.source_url, record.source_url ? "원본 파일과 설명 보기 ↗" : "미확인"));
++    fact("소리 유형", text(record.recording_type));
++    fact("녹음 일시 · 원자료", text(record.recorded_at));
++    fact("녹음 장소 · 원자료", text(record.location));
++    fact("수집 일시", text(record.evidence && record.evidence.retrieved_at));
++    fact("상태 갱신 일시", text(item.updated_at));
++    if (review.reviewer) { fact("검토자", text(review.reviewer)); }
++    if (review.reviewed_at) { fact("검토 일시", text(review.reviewed_at)); }
++    if (item.retry_at) { fact("재시도 가능 일시", text(item.retry_at)); }
++    if (item.error_code) { fact("수집 상태 코드", text(item.error_code)); }
++    article.appendChild(facts);
++    var player = node("div", "review-player"), feedback = node("p", "review-player-status");
++    feedback.setAttribute("role", "status");
++    if (item.preview_url) {
++      var button = node("button", "clear-button", "미리듣기"); button.type = "button";
++      button.setAttribute("aria-label", text(item.scientific_name) + " 음원 미리듣기");
++      button.addEventListener("click", function () { preview(item, button, player, feedback); });
++      player.appendChild(button); feedback.textContent = "눌러서 저장된 음원을 불러옵니다.";
++    } else { feedback.textContent = "아직 저장된 음원이 없어 미리들을 수 없습니다."; }
++    player.appendChild(feedback); article.appendChild(player);
++    return article;
++  }
++  async function load(reset) {
++    if (!token || loading) { return; }
++    loading = true; more.disabled = true; filter.disabled = true;
++    var currentSession = session, controller = new AbortController();
++    if (reset) { offset = 0; stopAudio(); list.replaceChildren(); more.hidden = true; }
++    message("수집된 음원을 불러오고 있습니다…");
++    var query = new URLSearchParams({ limit: "20", offset: String(offset) });
++    if (filter.value) { query.set("status", filter.value); }
++    try {
++      var response = await request("/internal/v1/audio/candidates?" + query, controller);
++      if (!response) { return; }
++      var body = await response.json();
++      if (currentSession !== session) { return; }
++      if (!body || !Array.isArray(body.items) || body.items.length > 50 || typeof body.has_more !== "boolean" ||
++          (body.has_more && (!Number.isInteger(body.next_offset) || body.next_offset <= offset || body.next_offset > 10000))) {
++        throw new Error("Invalid candidate page");
++      }
++      body.items.forEach(function (item) { if (item && typeof item === "object") { list.appendChild(card(item)); } });
++      library.hidden = false;
++      keyInput.disabled = true; connectButton.hidden = true; disconnectButton.hidden = false;
++      more.hidden = !body.has_more; offset = body.next_offset;
++      if (!body.items.length && reset) { list.replaceChildren(node("p", "review-empty", "조건에 맞는 수집 음원이 없습니다.")); }
++      message("목록을 불러왔습니다. 재생과 조회만 가능하며 승인·공개는 하지 않습니다.");
++    } catch (error) {
++      if (currentSession === session && !controller.signal.aborted) { message("목록을 불러오지 못했습니다. 연결을 다시 시도해 주세요.", true); }
++    } finally {
++      requests.delete(controller);
++      if (currentSession === session) { loading = false; more.disabled = false; filter.disabled = false; connectButton.disabled = false; }
++    }
++  }
++  form.addEventListener("submit", function (event) {
++    event.preventDefault();
++    var value = keyInput.value.trim();
++    if (!value) { message("검토 전용 접속키를 입력해 주세요.", true); return; }
++    disconnect(); token = value; keyInput.value = ""; connectButton.disabled = true; disconnectButton.hidden = false;
++    load(true);
++  });
++  disconnectButton.addEventListener("click", function () { disconnect(); keyInput.focus(); });
++  filter.addEventListener("change", function () { load(true); });
++  more.addEventListener("click", function () { load(false); });
++  window.addEventListener("pagehide", function () { disconnect(); });
++}());
+diff --git a/tests/frontend/audio_review_ui.test.js b/tests/frontend/audio_review_ui.test.js
+new file mode 100644
+index 0000000..085a220
+--- /dev/null
++++ b/tests/frontend/audio_review_ui.test.js
+@@ -0,0 +1,159 @@
++"use strict";
++const test = require("node:test");
++const assert = require("node:assert/strict");
++const fs = require("node:fs");
++const vm = require("node:vm");
++const source = fs.readFileSync("src/robingraph/api/static/audio-review.js", "utf8");
++class Element {
++  constructor(tag) { this.tag = tag; this.children = []; this.value = ""; this.hidden = false; this.disabled = false; this.listeners = {}; this.attributes = {}; this._text = ""; }
++  get textContent() { return this._text + this.children.map(n => n.textContent).join(""); }
++  set textContent(value) { this._text = String(value); this.children = []; }
++  appendChild(child) { child.parentNode = this; this.children.push(child); return child; }
++  replaceChildren(...children) { this._text = ""; this.children.forEach(n => { n.parentNode = null; }); this.children = []; children.forEach(n => this.appendChild(n)); }
++  setAttribute(key, value) { this.attributes[key] = value; }
++  removeAttribute(key) { delete this.attributes[key]; if (key === "src") this.src = ""; }
++  addEventListener(name, fn) { this.listeners[name] = fn; }
++  remove() { this.parentNode.children = this.parentNode.children.filter(n => n !== this); this.parentNode = null; }
++  focus() { this.focused = true; }
++  play() { this.played = true; return Promise.resolve(); }
++  pause() { this.paused = true; }
++  load() { this.loaded = true; }
++}
++function all(node) { return [node, ...node.children.flatMap(all)]; }
++const id = "a".repeat(64);
++function candidate(values = {}) {
++  return {candidate_id:id, scientific_name:"Fixture species", korean_name:"검증용 이름", status:"awaiting_review", file_title:"File:sample.ogg", updated_at:"2026-11-09T01:00:00Z", preview_url:"/internal/v1/audio/preview/"+id,
++    recording:{title:"Original recording", creator:"Original recorder", license_name:"CC BY-SA 4.0", license_url:"https://creativecommons.org/licenses/by-sa/4.0/", source_url:"https://commons.wikimedia.org/wiki/File:sample.ogg", location:"Original location", recorded_at:"2010-01-02", evidence:{retrieved_at:"2026-11-05T00:00:00Z"}}, ...values};
++}
++function response(body, status = 200) { return {ok:status >= 200 && status < 300, status, json:async () => body, blob:async () => new Blob(["fixture"], {type:"audio/ogg"})}; }
++function setup(fetcher = () => response({items:[candidate()],has_more:false,next_offset:null})) {
++  const names = ["review-connect-form","review-key","review-connect","review-disconnect","review-library","review-status-filter","review-candidates","review-more","review-status"];
++  const elements = Object.fromEntries(names.map(name => [name,new Element(name)]));
++  elements["review-library"].hidden = true; elements["review-more"].hidden = true;
++  const calls = [], urls = [], revoked = [], events = {};
++  class ObjectURL extends URL {}
++  ObjectURL.createObjectURL = () => { const url = "blob:fixture-"+urls.length; urls.push(url); return url; };
++  ObjectURL.revokeObjectURL = value => revoked.push(value);
++  vm.runInNewContext(source, {
++    document:{getElementById:name => elements[name], createElement:tag => new Element(tag)},
++    window:{addEventListener:(name, fn) => { events[name] = fn; }},
++    URL:ObjectURL, URLSearchParams, AbortController,
++    fetch:async (path, options) => { calls.push({path,options}); return fetcher(path, options); }
++  });
++  const click = element => element.listeners.click();
++  async function settle() { for (let i=0;i<4;i++) await new Promise(resolve => setImmediate(resolve)); }
++  async function connect() { elements["review-key"].value = "fixture-read-only-key"; elements["review-connect-form"].listeners.submit({preventDefault(){}}); await settle(); }
++  return {elements,calls,urls,revoked,events,click,settle,connect,nodes:() => all(elements["review-candidates"])};
++}
++
++test("review authenticates only by GET header, clears key input, and renders exact metadata and unverified identity without writes", async () => {
++  const f = setup(); assert.equal(f.calls.length,0); await f.connect();
++  assert.equal(f.elements["review-key"].value,"");
++  assert.equal(f.elements["review-library"].hidden,false);
++  assert.equal(f.calls[0].path,"/internal/v1/audio/candidates?limit=20&offset=0");
++  assert.equal(f.calls[0].options.headers.Authorization,"Bearer fixture-read-only-key");
++  assert.equal(f.calls[0].options.method,"GET"); assert.equal(f.calls[0].options.credentials,"omit");
++  assert.equal(f.calls[0].options.redirect,"error"); assert.equal(f.calls[0].options.cache,"no-store");
++  const text = f.elements["review-candidates"].textContent;
++  for (const value of ["검증용 이름","Fixture species","검토 대기","독립 동정 미확인","사람의 청취 검토 미확인","Original recorder","Original location","2010-01-02","2026-11-05T00:00:00Z"]) assert.ok(text.includes(value),value);
++  assert.ok(!text.includes("fixture-read-only-key"));
++  assert.ok(f.nodes().filter(n => n.tag === "a").every(n => n.rel === "noopener noreferrer"));
++  assert.equal(f.nodes().filter(n => n.tag === "audio").length,0,"metadata list must not download audio");
++});
++
++test("malicious source metadata stays text; script, data, credentialed and relative links never become navigation", async () => {
++  for (const bad of ["javascript:alert(1)","data:text/html,bad","https://user:pass@example.test/","/internal/v1/audio/stage"]) {
++    const f=setup(() => response({items:[candidate({korean_name:"<img src=x onerror=alert(1)>", recording:{creator:"<script>alert(1)</script>", source_url:bad, license_url:bad, license_name:"<b>CC</b>"}})],has_more:false,next_offset:null}));
++    await f.connect();
++    assert.ok(f.elements["review-candidates"].textContent.includes("<script>alert(1)</script>"));
++    assert.equal(f.nodes().filter(n => ["a","img","script"].includes(n.tag)).length,0);
++  }
++  assert.ok(!/innerHTML|localStorage|sessionStorage|document\.cookie|console\./.test(source));
++});
++
++test("pagination and status filtering use bounded offset and clear old selection; empty and failed pages are explicit", async () => {
++  const f=setup(path => {
++    if (path.includes("status=rejected")) return response({items:[],has_more:false,next_offset:null});
++    return response({items:[candidate()],has_more:!path.includes("offset=20"),next_offset:path.includes("offset=20")?null:20});
++  });
++  await f.connect(); assert.equal(f.elements["review-more"].hidden,false);
++  f.click(f.elements["review-more"]); await f.settle();
++  assert.ok(f.calls[1].path.endsWith("offset=20")); assert.equal(f.nodes().filter(n=>n.tag==="article").length,2);
++  f.elements["review-status-filter"].value="rejected"; f.elements["review-status-filter"].listeners.change(); await f.settle();
++  assert.match(f.calls[2].path,/offset=0&status=rejected/);
++  assert.match(f.elements["review-candidates"].textContent,/조건에 맞는 수집 음원이 없습니다/);
++  const failed=setup(()=>{throw new Error("secret backend detail");});await failed.connect();
++  assert.match(failed.elements["review-status"].textContent,/불러오지 못했습니다/);
++  assert.ok(!failed.elements["review-status"].textContent.includes("secret"));
++  assert.equal(failed.elements["review-connect"].disabled,false);
++});
++
++test("expired review access clears list and prevents preview use even after previously connected", async () => {
++  const f=setup(path=>path.includes("preview")?response({},401):response({items:[candidate()],has_more:false,next_offset:null}));
++  await f.connect(); f.click(f.nodes().find(n=>n.tag==="button")); await f.settle();
++  assert.equal(f.elements["review-library"].hidden,true); assert.equal(f.nodes().length,1);
++  assert.match(f.elements["review-status"].textContent,/검토 전용 접속키만/);
++  const first=setup(()=>response({},401));await first.connect();
++  assert.equal(first.elements["review-library"].hidden,true);assert.equal(first.urls.length,0);
++});
++
++test("preview fetches only exact same-origin candidate path, creates one player, and revokes on switching/filter/disconnect/pagehide", async () => {
++  const secondId="b".repeat(64);
++  const f=setup(path=>path.includes("preview")?response({}):response({items:[candidate(),candidate({candidate_id:secondId,preview_url:"/internal/v1/audio/preview/"+secondId})],has_more:false,next_offset:null}));
++  await f.connect(); const buttons=f.nodes().filter(n=>n.tag==="button");
++  f.click(buttons[0]); await f.settle();
++  const first=f.nodes().find(n=>n.tag==="audio");
++  assert.equal(first.controls,true);assert.equal(first.preload,"none");assert.equal(first.autoplay,undefined);assert.ok(first.played);
++  assert.equal(f.calls[1].path,"/internal/v1/audio/preview/"+id);
++  assert.equal(f.calls[1].options.headers.Authorization,"Bearer fixture-read-only-key");
++  f.click(buttons[1]);await f.settle();
++  assert.ok(first.paused);assert.equal(first.src,"");assert.deepEqual(f.revoked,["blob:fixture-0"]);
++  assert.equal(f.nodes().filter(n=>n.tag==="audio").length,1);
++  f.elements["review-status-filter"].listeners.change();await f.settle();assert.equal(f.revoked.length,2);
++  f.click(f.nodes().find(n=>n.tag==="button"));await f.settle();
++  f.click(f.elements["review-disconnect"]);assert.equal(f.revoked.length,3);assert.ok(f.elements["review-key"].focused);
++  await f.connect();f.click(f.nodes().find(n=>n.tag==="button"));await f.settle();f.events.pagehide();assert.equal(f.revoked.length,4);
++  assert.equal(f.elements["review-key"].value,"");assert.equal(f.elements["review-library"].hidden,true);
++});
++
++test("provider-limited deferred candidates have no playback and elapsed retry time never implies completion", async () => {
++  const f=setup(()=>response({items:[candidate({status:"deferred",recording:null,preview_url:null,error_code:"provider_rate_limited",retry_at:"2020-01-01T00:00:00Z"})],has_more:false,next_offset:null}));
++  await f.connect();
++  assert.match(f.elements["review-candidates"].textContent,/외부 제한으로 보류/);
++  assert.match(f.elements["review-candidates"].textContent,/재시도 시각이 지나도 수집 완료를 뜻하지 않습니다/);
++  assert.equal(f.nodes().filter(n=>n.tag==="button"||n.tag==="audio").length,0);
++  assert.match(f.elements["review-candidates"].textContent,/아직 저장된 음원이 없어/);
++});
++
++test("unsafe preview URLs and failed/non-audio responses remain inert with retry and do not expose remote errors", async () => {
++  const bad=setup(()=>response({items:[candidate({preview_url:"https://evil.example/"})],has_more:false,next_offset:null}));
++  await bad.connect();bad.click(bad.nodes().find(n=>n.tag==="button"));await bad.settle();assert.equal(bad.calls.length,1);assert.equal(bad.urls.length,0);
++  for (const reply of [()=>{throw new Error("sensitive diagnostic");},()=>({...response({}),blob:async()=>new Blob(["<html>"],{type:"text/html"})})]) {
++    const f=setup(path=>path.includes("preview")?reply():response({items:[candidate()],has_more:false,next_offset:null}));
++    await f.connect();const button=f.nodes().find(n=>n.tag==="button");f.click(button);await f.settle();
++    assert.equal(button.disabled,false);assert.equal(f.urls.length,0);assert.match(f.elements["review-candidates"].textContent,/불러오지 못했습니다/);
++    assert.ok(!f.elements["review-candidates"].textContent.includes("sensitive"));
++  }
++});
++
++test("disconnect aborts pending response bodies and late completions cannot restore metadata or object URLs", async () => {
++  let resolveBody;
++  const f=setup(()=>({...response({}),json:()=>new Promise(resolve=>{resolveBody=resolve;})}));
++  await f.connect();f.click(f.elements["review-disconnect"]);assert.equal(f.calls[0].options.signal.aborted,true);
++  resolveBody({items:[candidate()],has_more:false,next_offset:null});await f.settle();
++  assert.equal(f.nodes().length,1);assert.equal(f.elements["review-library"].hidden,true);
++  let resolveBlob;
++  const p=setup(path=>path.includes("preview")?({...response({}),blob:()=>new Promise(resolve=>{resolveBlob=resolve;})}):response({items:[candidate()],has_more:false,next_offset:null}));
++  await p.connect();p.click(p.nodes().find(n=>n.tag==="button"));await p.settle();p.events.pagehide();
++  assert.ok(p.calls[1].options.signal.aborted);resolveBlob(new Blob(["audio"],{type:"audio/ogg"}));await p.settle();
++  assert.equal(p.urls.length,0);
++});
++
++test("review markup uses labeled native keyboard controls and a responsive dedicated sheet without embedded key or fixtures", () => {
++  const html=fs.readFileSync("src/robingraph/api/static/audio-review.html","utf8");
++  const css=fs.readFileSync("src/robingraph/api/static/audio-review.css","utf8");
++  assert.match(html,/type="password" autocomplete="off"/);assert.match(html,/label for="review-key"/);
++  assert.match(html,/type="submit"/);assert.match(html,/aria-live="polite"/);
++  assert.ok(!/value="[^"]+"[^>]*id="review-key"|fixture|Bearer |sample\.ogg/.test(html));
++  assert.match(css,/@media \(max-width: 540px\)/);assert.match(css,/:focus-visible/);assert.match(css,/overflow-wrap: anywhere/);
++});

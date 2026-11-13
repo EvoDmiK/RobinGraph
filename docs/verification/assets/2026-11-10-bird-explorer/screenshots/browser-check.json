@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "mode": "local-fixture-real-chromium",
+  "summary": [
+    {
+      "viewport": "1280x900",
+      "collapsedMetrics": {
+        "scrollWidth": 1280,
+        "innerWidth": 1280,
+        "cardCount": 2,
+        "notesOpen": false,
+        "profileHref": "/birds?name=Zosterops+japonicus&species_scope=korea"
+      },
+      "expandedMetrics": {
+        "scrollWidth": 1280,
+        "innerWidth": 1280,
+        "notesOpen": true,
+        "sourcesOpen": true
+      },
+      "screenshots": [
+        "/tmp/robingraph-bird-explorer-20261110/screenshots/explore-1280-collapsed.png",
+        "/tmp/robingraph-bird-explorer-20261110/screenshots/explore-1280-expanded.png"
+      ]
+    },
+    {
+      "viewport": "390x844",
+      "collapsedMetrics": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "cardCount": 2,
+        "notesOpen": false,
+        "profileHref": "/birds?name=Zosterops+japonicus&species_scope=korea"
+      },
+      "expandedMetrics": {
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "notesOpen": true,
+        "sourcesOpen": true
+      },
+      "screenshots": [
+        "/tmp/robingraph-bird-explorer-20261110/screenshots/explore-390-collapsed.png",
+        "/tmp/robingraph-bird-explorer-20261110/screenshots/explore-390-expanded.png"
+      ]
+    }
+  ]
+}

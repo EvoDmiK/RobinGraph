@@ -1,0 +1,82 @@
+{
+  "task_id": "RG-215",
+  "ready_for_final_documentation": true,
+  "feature_test_status": "complete",
+  "production_deployed": false,
+  "git_operations_performed": false,
+  "db_writes": 0,
+  "test_source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "test_image": "robingraph-api:test-bird-explorer-cdfed28ae4e3",
+  "test_release": "/Users/kimdove/robingraph-test/releases/bird-explorer-cdfed28ae4e3-b705a1",
+  "test_url": "https://robingraph-test.dove-nest.com/explore",
+  "root_python": {
+    "run": 167,
+    "passed": 167,
+    "failed": 0,
+    "skipped": 0,
+    "seconds": 2.187
+  },
+  "root_frontend": {
+    "run": 361,
+    "passed": 361,
+    "failed": 0,
+    "skipped": 0,
+    "milliseconds": 337.370417
+  },
+  "actual_http_api": {
+    "normal_queries": 12,
+    "invalid_queries_422": 11,
+    "backend_bytes_unchanged_in_final_css_release": true
+  },
+  "final_browser": {
+    "public_https": true,
+    "lan": true,
+    "widths": [
+      1280,
+      390,
+      320
+    ],
+    "mobile_diet_columns": 2,
+    "js_errors": 0
+  },
+  "test_port_recovery": {
+    "manual_test_container_restarts": 1,
+    "lan_public_recovered": true,
+    "root_cause_confirmed": false
+  },
+  "not_tested": [
+    "physical_mobile",
+    "Safari",
+    "Firefox"
+  ],
+  "evidence": [
+    "test-release.json",
+    "first-test-release.json",
+    "release-equivalence.json",
+    "actual-api.json",
+    "actual-browser.json",
+    "first-browser-public.json",
+    "final-lan-browser.json",
+    "test-port-recovery.json",
+    "real-asgi.json",
+    "root-backend-tests.log",
+    "root-frontend-tests.log",
+    "graphify-final.log",
+    "integrated-code.patch",
+    "backend-report.md",
+    "ui-report.md",
+    "filter-values-api.json"
+  ],
+  "all_filter_values_api": {
+    "passed": 23,
+    "diet_keys": 10,
+    "habitat_values": 11,
+    "taxonomy_queries": 2
+  },
+  "commands": {
+    "python": "PYTHONPATH=src:tests uv run --locked --extra test --extra tracing python -m unittest tests.test_bird_explorer tests.test_drf_parity tests.test_taxon_traits tests.test_graph_followup tests.test_graph_questions_api tests.test_api tests.test_audio_assessment -q",
+    "frontend": "node --test tests/frontend/explore_ui.test.js tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js tests/frontend/audio_review_ui.test.js",
+    "graphify": "uv run graphify update .",
+    "diff_check": "git diff --check"
+  }
+}

@@ -1,0 +1,404 @@
+--- a/src/robingraph/api/static/audio-review.js
++++ b/src/robingraph/api/static/audio-review.js
+@@ -1,4 +1,4 @@
+-/* Read-only review access lives in this tab only; metadata never becomes HTML. */
++/* Review access and unsaved notes live in this tab only; metadata never becomes HTML. */
+ (function () {
+   "use strict";
+   var form = document.getElementById("review-connect-form");
+@@ -9,8 +9,10 @@
+   var filter = document.getElementById("review-status-filter");
+   var list = document.getElementById("review-candidates");
+   var more = document.getElementById("review-more");
++  var refresh = document.getElementById("review-refresh");
+   var status = document.getElementById("review-status");
+-  var token = "", session = 0, offset = 0, loading = false;
++  var token = "", session = 0, view = 0, offset = 0, loading = false;
++  var drafts = new Map(), fieldSequence = 0;
+   var requests = new Set(), audio = null, objectUrl = null, playButton = null;
+   var previewController = null;
+   var statuses = {
+@@ -49,7 +51,8 @@
+     if (playButton) { playButton.disabled = false; playButton = null; }
+   }
+   function disconnect(note) {
+-    session += 1; token = ""; keyInput.value = "";
++    session += 1; view += 1; token = ""; keyInput.value = ""; drafts.clear();
++    list.querySelectorAll("input, textarea").forEach(function (field) { field.value = ""; });
+     requests.forEach(function (controller) { controller.abort(); }); requests.clear();
+     stopAudio(); loading = false; offset = 0; filter.disabled = false;
+     list.replaceChildren(); library.hidden = true; more.hidden = true;
+@@ -59,10 +62,12 @@
+   }
+   async function request(path, controller) {
+     requests.add(controller);
++    var requestSession = session;
+     var response = await fetch(path, {
+       method: "GET", headers: { Authorization: "Bearer " + token },
+       credentials: "omit", cache: "no-store", redirect: "error", referrerPolicy: "no-referrer", signal: controller.signal
+     });
++    if (requestSession !== session || controller.signal.aborted) { return null; }
+     if (response.status === 401 || response.status === 403) {
+       disconnect("접속키를 확인해 주세요. 검토 전용 접속키만 사용할 수 있습니다.");
+       return null;
+@@ -102,7 +107,118 @@
+       if (previewController === controller) { previewController = null; button.disabled = false; }
+     }
+   }
+-  function card(item) {
++  var assessmentFields = {
++    playback: ["재생 상태", {unchecked:"미확인",normal:"정상",silent:"무음",file_error:"파일 오류"}],
++    source: ["출처 확인", {unchecked:"미확인",checked:"원문 확인"}],
++    identification: ["종 동정 근거", {unchecked:"미확인",uploader_only:"등록자 표기만 확인",additional_evidence:"추가 동정 근거 있음",uncertain:"불확실"}],
++    decision: ["검토 판정", {pending:"검토 대기",hold:"보류",candidate:"채택 후보",exclude:"제외"}]
++  };
++  function assessmentPanel(item, canAssess, onSaved) {
++    var panel = node("details", "review-assessment"), summary = node("summary");
++    var saved = node("div", "review-assessment-saved");
++    function renderSaved() {
++      saved.replaceChildren();
++      var assessment = item.assessment;
++      summary.textContent = "검토 기록 · " + (assessment && assessmentFields.decision[1][assessment.decision] || "미작성");
++      if (!assessment) { saved.appendChild(node("p", "", "아직 저장된 검토 기록이 없습니다.")); return; }
++      saved.appendChild(node("p", "", "저장 기록 · " + text(assessment.reviewer) + " · " + text(assessment.assessed_at)));
++      Object.keys(assessmentFields).forEach(function (name) {
++        var definition = assessmentFields[name];
++        saved.appendChild(node("p", "", definition[0] + ": " + (definition[1][assessment[name]] || "미확인")));
++      });
++      if (assessment.identification_note) { saved.appendChild(node("p", "review-assessment-note", "동정 근거: " + text(assessment.identification_note))); }
++      if (assessment.note) { saved.appendChild(node("p", "review-assessment-note", "메모: " + text(assessment.note))); }
++    }
++    renderSaved(); panel.appendChild(summary); panel.appendChild(saved);
++    panel.appendChild(node("p", "review-card-subtitle", "채택 후보는 공개 승인이 아니며, 제외는 파일 삭제가 아닙니다. 재생만으로 검토 항목이 자동 체크되지 않습니다."));
++    if (!canAssess) {
++      panel.appendChild(node("p", "review-card-subtitle", "조회 전용 접속입니다. 검토 기록 작성용 접속키로 연결하면 기록을 저장할 수 있습니다."));
++      return panel;
++    }
++    var editor = node("form", "review-assessment-form"), fields = {};
++    editor.autocomplete = "off";
++    var values = drafts.get(item.candidate_id) || item.assessment || {};
++    function field(name, labelText, element) {
++      var label = node("label", "", labelText);
++      element.id = "assessment-" + (++fieldSequence) + "-" + name;
++      element.name = name; label.htmlFor = element.id;
++      editor.appendChild(label); editor.appendChild(element); fields[name] = element;
++      element.addEventListener("input", remember);
++      element.addEventListener("change", remember);
++      return element;
++    }
++    function read() {
++      var result = {};
++      Object.keys(fields).forEach(function (name) { result[name] = fields[name].value; });
++      return result;
++    }
++    function remember() {
++      drafts.set(item.candidate_id, read());
++      fields.identification_note.required = fields.identification.value === "additional_evidence";
++    }
++    var reviewer = field("reviewer", "검토자", node("input"));
++    reviewer.type = "text"; reviewer.maxLength = 120; reviewer.required = true; reviewer.value = values.reviewer || "";
++    Object.keys(assessmentFields).forEach(function (name) {
++      var definition = assessmentFields[name], select = field(name, definition[0], node("select"));
++      Object.keys(definition[1]).forEach(function (value) {
++        var option = node("option", "", definition[1][value]); option.value = value; select.appendChild(option);
++      });
++      select.value = values[name] || (name === "decision" ? "pending" : "unchecked");
++    });
++    var identityNote = field("identification_note", "추가 동정 근거 · 추가 근거 선택 시 필수", node("textarea"));
++    identityNote.rows = 3; identityNote.maxLength = 1000; identityNote.value = values.identification_note || "";
++    identityNote.required = fields.identification.value === "additional_evidence";
++    var note = field("note", "자유 메모 · 최대 2,000자", node("textarea"));
++    note.rows = 3; note.maxLength = 2000; note.value = values.note || "";
++    var submit = node("button", "send-button", "검토 기록 저장"); submit.type = "submit";
++    var feedback = node("p", "review-player-status"); feedback.setAttribute("role", "status");
++    if (drafts.has(item.candidate_id)) { feedback.textContent = "미저장 입력을 유지했습니다. 위의 최신 저장 기록을 확인한 뒤 저장하세요."; }
++    editor.appendChild(submit); editor.appendChild(feedback); panel.appendChild(editor);
++    editor.addEventListener("submit", async function (event) {
++      event.preventDefault();
++      if (submit.disabled || !token) { return; }
++      var input = read();
++      if (!input.reviewer.trim() || input.reviewer.length > 120 || input.note.length > 2000 || input.identification_note.length > 1000 ||
++          (input.identification === "additional_evidence" && !input.identification_note.trim())) {
++        feedback.textContent = "검토자와 추가 동정 근거를 확인하고 입력 길이를 줄여 주세요."; return;
++      }
++      if ([input.reviewer, input.note, input.identification_note].some(function (value) { return value.indexOf(token) !== -1; })) {
++        feedback.textContent = "접속키를 검토 내용에 넣을 수 없습니다."; return;
++      }
++      remember(); submit.disabled = true;
++      Object.keys(fields).forEach(function (name) { fields[name].disabled = true; });
++      feedback.textContent = "검토 기록을 저장하고 있습니다…";
++      var currentSession = session, currentView = view, controller = new AbortController();
++      requests.add(controller);
++      try {
++        var response = await fetch("/internal/v1/audio/assessment", {
++          method:"POST", headers:{Authorization:"Bearer " + token,"Content-Type":"application/json"},
++          body:JSON.stringify(Object.assign({candidate_id:item.candidate_id,expected_updated_at:item.updated_at},input)),
++          credentials:"omit",cache:"no-store",redirect:"error",referrerPolicy:"no-referrer",signal:controller.signal
++        });
++        if (currentSession !== session || currentView !== view || controller.signal.aborted) { return; }
++        if (response.status === 401 || response.status === 403) { disconnect("검토 기록 작성 권한을 확인해 주세요."); return; }
++        if (response.status === 409) {
++          feedback.textContent = "다른 변경과 충돌했습니다. 입력은 유지했습니다. ‘목록 새로 조회’로 최신 저장 기록을 확인한 뒤 다시 저장해 주세요."; return;
++        }
++        if (!response.ok) { throw new Error("Assessment save failed"); }
++        var result = await response.json();
++        if (currentSession !== session || currentView !== view || controller.signal.aborted) { return; }
++        if (result.candidate_id !== item.candidate_id || typeof result.updated_at !== "string" || !result.assessment) { throw new Error("Invalid assessment response"); }
++        item.updated_at = result.updated_at; item.assessment = result.assessment; drafts.delete(item.candidate_id);
++        renderSaved(); onSaved(); feedback.textContent = "검토 기록을 저장했습니다. 공개 승인이나 파일 삭제는 실행하지 않았습니다.";
++      } catch (error) {
++        if (currentSession === session && currentView === view && !controller.signal.aborted) { feedback.textContent = "저장하지 못했습니다. 입력은 유지했습니다. 연결과 입력을 확인한 뒤 다시 저장해 주세요."; }
++      } finally {
++        requests.delete(controller);
++        if (currentSession === session && currentView === view) {
++          submit.disabled = false; Object.keys(fields).forEach(function (name) { fields[name].disabled = false; });
++        }
++      }
++    });
++    return panel;
++  }
++  function card(item, canAssess) {
+     var record = item.recording || {}, review = item.review || {};
+     var article = node("article", "review-card");
+     var header = node("div", "review-card-header"), heading = node("div", "review-card-heading");
+@@ -121,7 +237,7 @@
+       var group = node("div", "review-fact"), detail = node("dd");
+       group.appendChild(node("dt", "", label));
+       if (typeof value === "string") { detail.textContent = value; } else { detail.appendChild(value); }
+-      group.appendChild(detail); facts.appendChild(group);
++      group.appendChild(detail); facts.appendChild(group); return detail;
+     }
+     fact("종 동정", review.taxon_verified === true ? "동정 확인 기록 있음" : "독립 동정 미확인");
+     fact("청취 검토", review.playback_verified === true ? "청취 확인 기록 있음" : "사람의 청취 검토 미확인");
+@@ -132,7 +248,7 @@
+     fact("녹음 일시 · 원자료", text(record.recorded_at));
+     fact("녹음 장소 · 원자료", text(record.location));
+     fact("수집 일시", text(item.collected_at));
+-    fact("상태 갱신 일시", text(item.updated_at));
++    var updatedDetail = fact("상태 갱신 일시", text(item.updated_at));
+     if (review.reviewer) { fact("검토자", text(review.reviewer)); }
+     if (review.reviewed_at) { fact("검토 일시", text(review.reviewed_at)); }
+     if (item.retry_at) { fact("재시도 가능 일시", text(item.retry_at)); }
+@@ -147,13 +263,14 @@
+       player.appendChild(button); feedback.textContent = "눌러서 저장된 음원을 불러옵니다.";
+     } else { feedback.textContent = "아직 저장된 음원이 없어 미리들을 수 없습니다."; }
+     player.appendChild(feedback); article.appendChild(player);
++    article.appendChild(assessmentPanel(item, canAssess, function () { updatedDetail.textContent = text(item.updated_at); }));
+     return article;
+   }
+   async function load(reset) {
+     if (!token || loading) { return; }
+-    loading = true; more.disabled = true; filter.disabled = true;
++    loading = true; more.disabled = true; filter.disabled = true; refresh.disabled = true;
+     var currentSession = session, controller = new AbortController();
+-    if (reset) { offset = 0; stopAudio(); list.replaceChildren(); more.hidden = true; }
++    if (reset) { view += 1; offset = 0; stopAudio(); list.replaceChildren(); more.hidden = true; }
+     message("수집된 음원을 불러오고 있습니다…");
+     var query = new URLSearchParams({ limit: "20", offset: String(offset) });
+     if (filter.value) { query.set("status", filter.value); }
+@@ -166,17 +283,17 @@
+           (body.has_more && (!Number.isInteger(body.next_offset) || body.next_offset <= offset || body.next_offset > 10000))) {
+         throw new Error("Invalid candidate page");
+       }
+-      body.items.forEach(function (item) { if (item && typeof item === "object") { list.appendChild(card(item)); } });
++      body.items.forEach(function (item) { if (item && typeof item === "object") { list.appendChild(card(item, body.can_assess === true)); } });
+       library.hidden = false;
+       keyInput.disabled = true; connectButton.hidden = true; disconnectButton.hidden = false;
+       more.hidden = !body.has_more; offset = body.next_offset;
+       if (!body.items.length && reset) { list.replaceChildren(node("p", "review-empty", "조건에 맞는 수집 음원이 없습니다.")); }
+-      message("목록을 불러왔습니다. 재생과 조회만 가능하며 승인·공개는 하지 않습니다.");
++      message(body.can_assess === true ? "검토 기록을 작성할 수 있습니다. 수집 상태와 공개 승인은 변경하지 않습니다." : "조회 전용 접속입니다. 저장된 검토 기록과 음원을 확인할 수 있습니다.");
+     } catch (error) {
+       if (currentSession === session && !controller.signal.aborted) { message("목록을 불러오지 못했습니다. 연결을 다시 시도해 주세요.", true); }
+     } finally {
+       requests.delete(controller);
+-      if (currentSession === session) { loading = false; more.disabled = false; filter.disabled = false; connectButton.disabled = false; }
++      if (currentSession === session) { loading = false; more.disabled = false; filter.disabled = false; refresh.disabled = false; connectButton.disabled = false; }
+     }
+   }
+   form.addEventListener("submit", function (event) {
+@@ -189,5 +306,6 @@
+   disconnectButton.addEventListener("click", function () { disconnect(); keyInput.focus(); });
+   filter.addEventListener("change", function () { load(true); });
+   more.addEventListener("click", function () { load(false); });
++  refresh.addEventListener("click", function () { load(true); });
+   window.addEventListener("pagehide", function () { disconnect(); });
+ }());
+--- a/src/robingraph/api/static/audio-review.html
++++ b/src/robingraph/api/static/audio-review.html
+@@ -20,11 +20,11 @@
+ 
+     <section class="review-access" aria-labelledby="access-title">
+       <div>
+-        <h2 id="access-title">검토 전용 접속</h2>
++        <h2 id="access-title">음원 검토 접속</h2>
+         <p id="access-help">접속키는 현재 탭의 메모리에만 보관하며, 연결을 해제하거나 페이지를 떠나면 지워집니다.</p>
+       </div>
+       <form id="review-connect-form" autocomplete="off">
+-        <label for="review-key">검토 전용 접속키</label>
++        <label for="review-key">검토 접속키 · 조회용 또는 기록 작성용</label>
+         <div class="review-connect-actions">
+           <input id="review-key" type="password" autocomplete="off" spellcheck="false" required aria-describedby="access-help" />
+           <button id="review-connect" type="submit" class="send-button">연결</button>
+@@ -40,7 +40,7 @@
+           <h2 id="library-title">음원 목록</h2>
+         </div>
+         <div class="review-filter">
+-          <label for="review-status-filter">검토 상태</label>
++          <label for="review-status-filter">수집 상태</label>
+           <select id="review-status-filter">
+             <option value="">전체 상태</option>
+             <option value="awaiting_review">검토 대기</option>
+@@ -49,6 +49,7 @@
+             <option value="rejected">검토 반려</option>
+             <option value="deferred">수집 보류</option>
+           </select>
++          <button id="review-refresh" type="button" class="clear-button">목록 새로 조회</button>
+         </div>
+       </div>
+       <p class="review-boundary">등록된 종 이름은 수집 시의 분류입니다. 독립적인 종 동정과 청취 검토가 끝났는지는 각 항목에서 확인하세요. 이 화면에서는 승인하거나 공개하지 않습니다.</p>
+--- a/src/robingraph/api/static/audio-review.css
++++ b/src/robingraph/api/static/audio-review.css
+@@ -48,3 +48,15 @@
+   .review-filter select { flex: 1; max-width: 210px; }
+   .review-connect-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+ }
++
++.review-filter { flex-wrap: wrap; }
++.review-assessment { padding-top: 1rem; border-top: 1px solid var(--color-border); }
++.review-assessment summary { cursor: pointer; font-weight: 700; color: var(--color-accent); }
++.review-assessment-saved { display: grid; gap: .4rem; padding: .8rem 0; font-size: .9rem; }
++.review-assessment-note { white-space: pre-wrap; }
++.review-assessment-form { display: grid; gap: .45rem; margin-top: 1rem; }
++.review-assessment-form label { font-size: .85rem; margin-top: .5rem; }
++.review-assessment-form :is(input, select, textarea) { width: 100%; }
++.review-assessment-form textarea { min-width: 0; resize: vertical; font: inherit; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: .65rem .8rem; }
++.review-assessment-form button { justify-self: start; margin-top: .5rem; }
++.audio-review-page :is(textarea, summary):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+--- a/tests/frontend/audio_review_ui.test.js
++++ b/tests/frontend/audio_review_ui.test.js
+@@ -13,6 +13,7 @@
+   setAttribute(key, value) { this.attributes[key] = value; }
+   removeAttribute(key) { delete this.attributes[key]; if (key === "src") this.src = ""; }
+   addEventListener(name, fn) { this.listeners[name] = fn; }
++  querySelectorAll(selector) { return all(this).slice(1).filter(n => selector.split(",").map(s=>s.trim()).includes(n.tag)); }
+   remove() { this.parentNode.children = this.parentNode.children.filter(n => n !== this); this.parentNode = null; }
+   focus() { this.focused = true; }
+   play() { this.played = true; return Promise.resolve(); }
+@@ -27,7 +28,7 @@
+ }
+ function response(body, status = 200) { return {ok:status >= 200 && status < 300, status, json:async () => body, blob:async () => new Blob(["fixture"], {type:"audio/ogg"})}; }
+ function setup(fetcher = () => response({items:[candidate()],has_more:false,next_offset:null})) {
+-  const names = ["review-connect-form","review-key","review-connect","review-disconnect","review-library","review-status-filter","review-candidates","review-more","review-status"];
++  const names = ["review-connect-form","review-key","review-connect","review-disconnect","review-library","review-status-filter","review-candidates","review-more","review-refresh","review-status"];
+   const elements = Object.fromEntries(names.map(name => [name,new Element(name)]));
+   elements["review-library"].hidden = true; elements["review-more"].hidden = true;
+   const calls = [], urls = [], revoked = [], events = {};
+@@ -158,3 +159,107 @@
+   assert.ok(!/value="[^"]+"[^>]*id="review-key"|fixture|Bearer |sample\.ogg/.test(html));
+   assert.match(css,/@media \(max-width: 540px\)/);assert.match(css,/:focus-visible/);assert.match(css,/overflow-wrap: anywhere/);
+ });
++
++function editorFields(f) { return Object.fromEntries(f.nodes().filter(n=>n.name).map(n=>[n.name,n])); }
++function editorForm(f) { return f.nodes().find(n=>n.tag==="form"); }
++function edit(f,name,value) { const element=editorFields(f)[name];element.value=value;element.listeners.input(); }
++async function submitAssessment(f) { await editorForm(f).listeners.submit({preventDefault(){}});await f.settle(); }
++function assessment(values={}) { return {reviewer:"Reviewer",playback:"unchecked",source:"unchecked",identification:"unchecked",decision:"pending",note:"",identification_note:"",assessed_at:"2026-11-10T01:00:00Z",...values}; }
++
++test("readonly access can view safe saved assessment separately from collection state but exposes no editor", async () => {
++  for (const permission of [false,"true",undefined]) {
++    const f=setup(()=>response({items:[candidate({assessment:assessment({decision:"candidate",note:"<script>stored note</script>",identification_note:"<img src=x>"})})],can_assess:permission,has_more:false,next_offset:null}));
++    await f.connect();
++    assert.equal(editorForm(f),undefined);assert.match(f.elements["review-candidates"].textContent,/조회 전용 접속/);
++    assert.match(f.elements["review-candidates"].textContent,/검토 기록 · 채택 후보/);
++    assert.match(f.elements["review-candidates"].textContent,/검토 대기/);
++    assert.match(f.elements["review-candidates"].textContent,/<script>stored note<\/script>/);
++    assert.equal(f.nodes().filter(n=>n.tag==="script"||n.tag==="img").length,0);
++    assert.equal(f.calls.length,1);
++  }
++});
++
++test("assessment requires explicit submit, keeps playback unchecked after listening, and updates saved record and expected version", async () => {
++  const f=setup((path,options)=>{
++    if(options.method==="POST") return response({candidate_id:id,updated_at:"2026-11-10T01:00:00Z",assessment:assessment(JSON.parse(options.body))});
++    if(path.includes("preview"))return response({});
++    return response({items:[candidate()],can_assess:true,has_more:false,next_offset:null});
++  });
++  await f.connect();
++  const fields=editorFields(f);assert.equal(fields.playback.value,"unchecked");assert.equal(fields.decision.value,"pending");
++  assert.equal(f.nodes().find(n=>n.tag==="details").open,undefined);
++  f.click(f.nodes().find(n=>n.tag==="button"));await f.settle();
++  assert.equal(fields.playback.value,"unchecked","native listening must not assert a human review outcome");
++  edit(f,"reviewer","Reviewer");edit(f,"note","<b>literal draft</b>");
++  assert.equal(f.calls.filter(c=>c.options.method==="POST").length,0);
++  await submitAssessment(f);
++  const posts=f.calls.filter(c=>c.options.method==="POST");assert.equal(posts.length,1);
++  assert.equal(posts[0].path,"/internal/v1/audio/assessment");
++  const body=JSON.parse(posts[0].options.body);
++  assert.equal(body.expected_updated_at,"2026-11-09T01:00:00Z");assert.equal(body.candidate_id,id);
++  assert.deepEqual(Object.keys(body).sort(),["candidate_id","expected_updated_at","reviewer","playback","source","identification","decision","note","identification_note"].sort());
++  assert.equal(body.playback,"unchecked");assert.equal(body.note,"<b>literal draft</b>");
++  assert.equal(posts[0].options.redirect,"error");assert.equal(posts[0].options.credentials,"omit");
++  assert.match(f.elements["review-candidates"].textContent,/검토 기록을 저장했습니다/);
++  assert.match(f.elements["review-candidates"].textContent,/2026-11-10T01:00:00Z/);
++  await submitAssessment(f);
++  assert.equal(JSON.parse(f.calls.filter(c=>c.options.method==="POST")[1].options.body).expected_updated_at,"2026-11-10T01:00:00Z");
++});
++
++test("assessment validates required evidence and prevents the active access key from entering any saved notes", async () => {
++  const f=setup(()=>response({items:[candidate()],can_assess:true,has_more:false,next_offset:null}));await f.connect();
++  edit(f,"reviewer","Reviewer");edit(f,"identification","additional_evidence");
++  assert.equal(editorFields(f).identification_note.required,true);
++  await submitAssessment(f);assert.match(f.elements["review-candidates"].textContent,/추가 동정 근거/);
++  assert.equal(f.calls.length,1);
++  edit(f,"identification_note","External citation");edit(f,"note","fixture-read-only-key");await submitAssessment(f);
++  assert.match(f.elements["review-candidates"].textContent,/접속키를 검토 내용에 넣을 수 없습니다/);assert.equal(f.calls.length,1);
++});
++
++test("409 preserves draft, manual reload shows latest saved record alongside draft, and no retry occurs automatically", async () => {
++  let reads=0;
++  const f=setup((path,options)=>{
++    if(options.method==="POST")return response({},409);
++    reads++;
++    return response({items:[candidate({updated_at:reads===1?"old-version":"new-version",assessment:reads===1?null:assessment({note:"Other reviewer saved"})})],can_assess:true,has_more:false,next_offset:null});
++  });
++  await f.connect();edit(f,"reviewer","My reviewer");edit(f,"note","My unsaved memo");await submitAssessment(f);
++  assert.match(f.elements["review-candidates"].textContent,/다른 변경과 충돌/);
++  assert.equal(editorFields(f).note.value,"My unsaved memo");assert.equal(f.calls.length,2);
++  f.click(f.elements["review-refresh"]);await f.settle();
++  assert.equal(editorFields(f).note.value,"My unsaved memo");assert.equal(editorFields(f).reviewer.value,"My reviewer");
++  assert.match(f.elements["review-candidates"].textContent,/Other reviewer saved/);
++  assert.match(f.elements["review-candidates"].textContent,/미저장 입력을 유지했습니다/);
++  assert.equal(f.calls.filter(c=>c.options.method==="POST").length,1);
++  await submitAssessment(f);
++  assert.equal(JSON.parse(f.calls.filter(c=>c.options.method==="POST")[1].options.body).expected_updated_at,"new-version");
++});
++
++test("save failures preserve inputs without rendering response details or resubmitting, and disconnect wipes detached editors", async () => {
++  for(const failure of [422,502,"network"]){
++    const f=setup((path,options)=>{
++      if(options.method==="POST"){if(failure==="network")throw Error("private error");return response({detail:"private error"},failure);}
++      return response({items:[candidate()],can_assess:true,has_more:false,next_offset:null});
++    });
++    await f.connect();edit(f,"reviewer","Reviewer");edit(f,"note","Private draft");await submitAssessment(f);
++    assert.equal(editorFields(f).note.value,"Private draft");assert.match(f.elements["review-candidates"].textContent,/저장하지 못했습니다/);
++    assert.ok(!f.elements["review-candidates"].textContent.includes("private error"));assert.equal(f.calls.filter(c=>c.options.method==="POST").length,1);
++    const old=editorFields(f);f.click(f.elements["review-disconnect"]);
++    assert.equal(old.note.value,"");assert.equal(old.reviewer.value,"");
++    await f.connect();assert.equal(editorFields(f).note.value,"");
++  }
++});
++
++test("stale save responses after filter or disconnect cannot replace records or restore deleted notes", async () => {
++  for(const disconnect of [false,true]){
++    let complete;
++    const f=setup((path,options)=>options.method==="POST"?new Promise(resolve=>{complete=resolve;}):response({items:[candidate()],can_assess:true,has_more:false,next_offset:null}));
++    await f.connect();edit(f,"reviewer","Reviewer");edit(f,"note","Unsaved draft");
++    const saving=editorForm(f).listeners.submit({preventDefault(){}});await f.settle();
++    if(disconnect){f.click(f.elements["review-disconnect"]);await f.connect();}
++    else{f.elements["review-status-filter"].listeners.change();await f.settle();}
++    complete(response({candidate_id:id,updated_at:"stale-version",assessment:assessment({note:"Stale response"})}));await saving;await f.settle();
++    assert.ok(!f.elements["review-candidates"].textContent.includes("Stale response"));
++    assert.equal(editorFields(f).note.value,disconnect?"":"Unsaved draft");
++  }
++});

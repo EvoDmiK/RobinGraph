@@ -1,0 +1,9 @@
+{
+  "api_http_tests_source_sha256": "74c37b75336f0f86ea81501148414d16895896f3788399c03dad6446f8b57bb4",
+  "final_source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "changed_files_between_releases": [
+    "src/robingraph/api/static/explore.css"
+  ],
+  "all_backend_sources_identical": true,
+  "final_ui_retested_after_css_change": true
+}

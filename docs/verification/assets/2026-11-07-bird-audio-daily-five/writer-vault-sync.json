@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-07",
+  "task_id": "RG-507",
+  "status": "in_progress",
+  "scope": "하루 최대 5종 운영 설정·후보 3건 현황",
+  "notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-07-RG507-새소리하루최대5종확대.md",
+      "readback_exact": true,
+      "local_file": "docs/work-log/2026-11-07-bird-audio-daily-five.md",
+      "other_task_rows_preserved": null,
+      "characters": 6672
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "readback_exact": true,
+      "local_file": "docs/backlog/RG-507.md",
+      "other_task_rows_preserved": null,
+      "characters": 4382
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "readback_exact": true,
+      "local_file": null,
+      "other_task_rows_preserved": true,
+      "characters": 8626
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "readback_exact": true,
+      "local_file": null,
+      "other_task_rows_preserved": true,
+      "characters": 14632
+    }
+  ],
+  "old_worklogs_unchanged": true,
+  "rg409_unchanged": true,
+  "git_operations_performed": false,
+  "first_daily_five_execution_observed": false,
+  "local_sha256": {
+    "docs/work-log/2026-11-07-bird-audio-daily-five.md": "3ece4abc21aaeb2a863c0060bd73e945a6f88c8a795f6c40192151941ad0bf1d",
+    "docs/backlog/RG-507.md": "4b6882079e35ae1c9bddac8fb382e89586ab46fcb8d02947e6d4b711fb5ef82c",
+    "docs/n8n/README.md": "415a71cc865acb0e54c1f3ce96b2e3a4dcb62c1aa52498a17f51b8a6b2afe4c5"
+  },
+  "evidence_files": [
+    "agy-checks.json",
+    "agy-schedule.patch",
+    "candidates-before.json",
+    "daily-five-receipt.json",
+    "execution-read.json",
+    "snapshot-after.json",
+    "snapshot-live.json",
+    "writer-vault-sync.json"
+  ]
+}

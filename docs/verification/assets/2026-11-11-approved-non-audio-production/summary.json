@@ -1,0 +1,102 @@
+{
+  "state": "verified",
+  "job": "http://192.168.219.99:8080/job/RobinGraph-Explorer-Release/2/",
+  "result": "SUCCESS",
+  "url": "https://robingraph.dove-nest.com/explore",
+  "source_sha256": "5bf5c154475d9332ae8c2e8b35959c287bbfa3aecf6146c341768059077d0890",
+  "base_revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+  "image": "ghcr.io/evodmik/robingraph@sha256:997ce4f410605011a17924b8ea1784849282f8931c22a27c4a11aa706c16e65f",
+  "features": [
+    "조건으로 새 찾기",
+    "20종 단위 페이지네이션",
+    "같은 화면의 도감 카드",
+    "기본 카드 우선 표시와 사진·설명 메타데이터 캐시",
+    "중복 측정값 병합",
+    "출처 접기",
+    "전체 라이트 테마",
+    "후속 조건과 답변 피드백"
+  ],
+  "audio_excluded": true,
+  "python_local": {
+    "passed": 218,
+    "failed": 0
+  },
+  "python_jenkins": {
+    "passed": 218,
+    "failed": 0
+  },
+  "frontend_jenkins": {
+    "passed": 342,
+    "failed": 0,
+    "excluded_audio_test_names": 5
+  },
+  "amd64_network_none_fixture": "passed",
+  "actual_production_data_candidate": "passed",
+  "actual_production_data_live": "passed",
+  "browser": {
+    "source_sha256": "5bf5c154475d9332ae8c2e8b35959c287bbfa3aecf6146c341768059077d0890",
+    "origin": "https://robingraph.dove-nest.com",
+    "actual_production_browser": true,
+    "pagination": {
+      "page": 1,
+      "page_size": 20,
+      "total": 41,
+      "total_pages": 3
+    },
+    "all_pages_unique": true,
+    "global_diet_order": true,
+    "keyboard_next": true,
+    "reload_restores_page": true,
+    "dropdown_last_page": true,
+    "clamps_large_page": true,
+    "invalid_page_422": true,
+    "filter_change_resets_page": true,
+    "natural_pages_unique": true,
+    "shared_profile_modal": true,
+    "card_ready_ms": 738,
+    "audio_ui_absent": true,
+    "card_back_visible": true,
+    "layout": [
+      {
+        "width": 1280,
+        "scrollWidth": 1280,
+        "scheme": "light only",
+        "range": "전체 41종 중 41–41종"
+      },
+      {
+        "width": 390,
+        "scrollWidth": 390,
+        "scheme": "light only",
+        "range": "전체 41종 중 41–41종"
+      },
+      {
+        "width": 320,
+        "scrollWidth": 320,
+        "scheme": "light only",
+        "range": "전체 41종 중 41–41종"
+      }
+    ],
+    "page_exceptions": 0,
+    "physical_mobile_tested": false,
+    "production_changed": true
+  },
+  "test_unchanged": true,
+  "runtime_and_db_endpoints_preserved": true,
+  "cache_write_verified": true,
+  "cache_ttl_seconds": 86400,
+  "production_cache_volume": "robingraph-prod-species-cache",
+  "domain_database_write_commands_executed": false,
+  "whole_database_checksums_verified": false,
+  "rollback_executed": false,
+  "git_commit_push_merge_executed": false,
+  "physical_mobile_tested": false,
+  "approval_harness_notes": "input/api/json returned404; HTML exposed capitalized ApproveNonAudioProduction ID; actual matching verified gate submitted once. No app mutation before approval.",
+  "snapshot_reconstruction_verified": true,
+  "changed_runtime_files": 22,
+  "runtime_manifest_files": 239,
+  "one_off_release_job_disabled": true,
+  "existing_main_polling_job_unchanged": true,
+  "documentation_synced_and_read_back": true,
+  "documentation_owner": "Codex after Writer quota",
+  "graphify_update": "completed"
+}

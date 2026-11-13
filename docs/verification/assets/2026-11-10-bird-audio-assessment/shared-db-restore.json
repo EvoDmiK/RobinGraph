@@ -1,0 +1,9 @@
+{
+  "actual_shared_test_postgresql": true,
+  "source_data_and_legacy_review_unchanged": true,
+  "status_unchanged": true,
+  "automation_annotation_restored": true,
+  "timestamp_advanced_not_rewound": true,
+  "conditional_restore_no_concurrent_overwrite": true,
+  "publication_operations": 0
+}

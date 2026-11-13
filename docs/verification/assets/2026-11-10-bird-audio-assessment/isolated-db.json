@@ -1,0 +1,17 @@
+{
+  "database": "robingraph_test",
+  "schema": "test_audio_assessment_43b0fa7be504",
+  "real_postgresql": true,
+  "transport": "in-process real Django ASGI",
+  "first_save": 200,
+  "reread_matches": true,
+  "stale_save": 409,
+  "readonly_save": 401,
+  "second_save": 200,
+  "source_data_and_legacy_review_unchanged": true,
+  "candidate_status_unchanged": true,
+  "published": false,
+  "provider_requests": 0,
+  "isolated_schema_removed": true,
+  "shared_ingest_candidates_unchanged": true
+}

@@ -1,0 +1,167 @@
+--- /dev/null
++++ b/docs/work-log/2026-11-10-bird-audio-assessment.md
+@@ -0,0 +1,115 @@
++---
++created: 2026-11-10
++date: 2026-11-10
++project: RobinGraph
++type: worklog
++status: completed
++task_id: RG-507
++related_tasks: [RG-409]
++tags: [worklog, robingraph, bird-audio, assessment, test]
++---
++
++# [RG-507] 음원 후보별 검토 기록 저장
++
++
++## 요약
++
++사용자가 재생·출처·동정 근거·판정·메모를 후보별로 저장하는 기능을 승인했다. 기존 읽기 전용 검토 화면에서 검토 의견을 남길 수 있도록 확장하되, 이 기록은 공개 승인과 분리했다. 최신 기록은 기존 candidate.data.assessment JSON에 저장하고 기존 status·legacy review·taxon_verified·publication gate·원출처·음원은 유지한다. [TEST 화면](https://robingraph-test.dove-nest.com/audio-review)에서 실제 저장·재조회·권한·충돌을 확인하고 자동화 검토 기록을 조건부 복원했다.
++
++Claude가 backend 저장·인증·충돌 검사를, Antigravity가 화면 입력·저장 동작을 구현했다. Codex는 통합·검증·TEST 배포, Writer는 근거 기반 문서와 Vault 동기화를 담당한다. 운영 쓰기·배포와 Git 작업은 이번 승인 범위에 없다.
++
++## 작업 및 변경 결과 요약
++
++| 구분 | 변경 사항 | 현재 상태 |
++| --- | --- | --- |
++| 요구사항 | 후보별 검토 의견 저장 | 사용자 구현 승인 |
++| 설계 | assessment 최신 기록·공개 gate 분리 | 구현·단위 검사 완료 |
++| 코드 / 설정 | 별도 작성 키·저장 API·UI 입력 | 최종 구현·회귀 확인 |
++| 실서비스 | TEST 배포 완료 | 공개 TEST 저장·재조회·복원 확인 |
++| 검증 | 격리 schema 저장·재조회·충돌 완료 | 실제 TEST UI 저장·충돌·복원 확인 |
++| 형상 관리 | 기존 11/7·9 미커밋 변경 보존 | commit/push 없음 |
++
++## 1. 작업 배경 및 문제 분석
++
++11/9 화면은 음원·출처·검토 상태를 읽을 수 있었지만 검토자가 확인한 결과를 후보에 남기는 기능은 없었다. 사용자 요청에 따라 항목별 기록을 추가한다. 재생 성공만으로 동정이 확인되거나 자료가 공개되는 흐름을 만들지 않는다.
++
++동시 검토에서는 오래된 화면의 저장이 다른 사람의 기록을 덮을 수 있다. expected_updated_at을 필수로 받아 일치하지 않으면 409로 거부하는 계약을 사용한다. 인증 토큰이 메모에 잘못 포함돼 저장·반사되지 않도록 전용 토큰을 포함한 입력은 422로 차단한다.
++
++## 2. 해결 방안 및 설계
++
++별도 작성 전용 키는 조회·private preview·assessment 저장만 허용한다. 기존 읽기 키의 조회는 유지하지만 저장은 401, 수집 ingest 키의 assessment 저장도 거부한다. 자동 공개·승인 권한으로 확대하지 않는다.
++
++채택 후보는 공개 승인과 다르고, 제외 판정은 파일 삭제가 아니다. 재생이 성공해도 체크 상태를 자동 갱신하지 않는다. 실제 검토자가 항목을 선택하고 저장해야 한다. 최신 기록만 보관하며 변경 이력 누적 저장 기능으로 설명하지 않는다.
++
++## 3. 주요 구현 내용
++
++| 필드 | 계약 |
++| --- | --- |
++| reviewer | 검토자 |
++| playback | unchecked / normal / silent / file_error |
++| source | unchecked / checked |
++| identification | unchecked / uploader_only / additional_evidence / uncertain |
++| decision | pending / hold / candidate / exclude |
++| note | 최대 2,000자 |
++| identification_note | 최대 1,000자, additional_evidence 선택 시 필수 |
++| assessed_at | 서버 기록 시각 |
++| expected_updated_at | 필수, 충돌 보호용 기존 갱신 시각 |
++
++저장 대상은 candidate.data.assessment다. 최신 평가 JSON만 저장하며 기존 후보 status와 원자료·legacy review를 변경하지 않는다.
++
++| 파일 / 범위 | 변경 내용 |
++| --- | --- |
++| `src/robingraph/ingest/audio.py`, `audio_store.py`, `audio_collector.py` | assessment 검증·저장·읽기, 갱신 시각 충돌 보호와 기존 수집 계약 유지 |
++| `src/robingraph/api/drf/audio_views.py`, `urls.py`, `openapi_audio.json` | assessment 경로·전용 키 권한·응답/오류 계약 |
++| `src/robingraph/api/drf/application.py`, `src/robingraph/cli.py`, `.env.example` | 별도 assessment 키 환경 연결 |
++| `src/robingraph/api/static/audio-review.js`, `.html`, `.css` | 항목별 입력·저장·재조회·충돌 안내·읽기 권한에서 폼 비노출 |
++| `tests/test_audio_assessment.py`, `tests/frontend/audio_review_ui.test.js` | 입력·키·충돌·원자료 보존·폼/메모/재생 회귀 |
++
++파일 내용은 `backend.patch`, `ui.patch`로 보관했다. 두 패치는 기존 11/9 상태 대비 이번 변경이며 root의 전체 미커밋 diff에는 11/7·9 변경도 있어 구분한다. `can_assess=true`일 때만 작성 폼을 표시하고 읽기 전용 키로는 기존 저장 기록을 조회할 수 있다. 비밀 키 값·raw env·인증 helper는 문서에 복사하지 않는다.
++
++## 4. 검증 및 테스트 결과
++
++### 단위·fixture 검사
++
++```sh
++PYTHONPATH=src:tests uv run --locked --extra test python -m unittest tests.test_audio_assessment tests.test_audio_review tests.test_audio_collection tests.test_audio_collector tests.test_django_runtime tests.test_drf_parity -q
++node --test tests/frontend/audio_review_ui.test.js tests/frontend/chat_ui.test.js tests/frontend/birds_ui.test.js
++```
++
++
++최종 Python 62/62 통과·실패 0·skip 0·2.104초, 프런트엔드 354/354 통과·실패 0·skip 0·307.493792ms다. 각각 `backend-final-tests.log`, `frontend-tests.log`에 결과를 보존했다. 합성 API와 무음 WAV를 이용한 별도 Chromium fixture는 1280/390에서 초기 unchecked, 수동 저장, 메모 텍스트 처리, 충돌 시 입력 유지, 확대 폼/플레이어 넘침 없음, 연결 해제를 확인했다. 이것은 실제 TEST 저장이나 청취가 아니다.
++
++### 실제 격리 PostgreSQL·Django ASGI
++
++대상 DB는 `robingraph_test`, 일회용 schema는 `test_audio_assessment_43b0fa7be504`다. 실제 PostgreSQL과 in-process 실제 Django ASGI를 사용했다. 첫 저장 200·재조회 일치, 오래된 버전 저장 409, 읽기 키 저장 401, 두 번째 저장 200을 확인했다. 원출처 자료·legacy review·candidate status는 유지됐고 공개는 하지 않았다. provider 요청 0, 일회용 schema 제거·공유 ingest 후보 불변을 확인했다(`isolated-db.json`).
++
++### 실제 공개 TEST 브라우저
++
++실제 공개 HTTPS TEST에서 실존 후보 1개의 폼으로 자동화용 검토 기록을 저장한 뒤 새로 조회해 일치를 확인했다. 읽기 전용 키에는 폼이 없고 저장 POST는 401이었다. assessment 키의 stage/review/publish 요청도 각각 401로 차단됐다. 오래된 expected_updated_at 저장은 409로 거부됐다.
++
++1280/390px Chromium에서 Enter로 연결, 키 입력 비움·storage 없음, 가로 넘침 0을 확인했다. 실제 native audio 디코딩 후에도 재생 확인 항목은 자동 체크되지 않았다. 저장 메모에 넣은 XSS 검사 문자열은 텍스트로만 표시됐고 실행 0·JS 예외 0·provider 요청 0이었다. 자동화 메모는 기능 검사 자료이며 사람이 실제 동정·청취를 완료했다는 기록이 아니다.
++
++이 단계는 격리 schema 시험과 달리 **공유 TEST DB의 실제 후보 annotation 쓰기와 복원**이다. `shared-db-restore.json`에 따라 원 data·legacy review·status를 복원/보존하고 updated_at은 과거로 되돌리지 않았다. 조건부 복원으로 동시 변경을 덮어쓰지 않았고 실제 공개 0이었다. `actual-assessment-browser.json`과 1280/390 실제 캡처를 보관했고 Codex가 화면을 시각 검토했다.
++
++물리 모바일·Safari·Firefox·사람의 청취·전문 동정은 미실행이다. 초기 실행 도구에서 plain `python` 명령이 없어 한 번 검증을 시작하지 못했지만 `python3`로 바로잡은 뒤 최종 실제 검증을 마쳤다. 앱 기능 실패로 분류하지 않는다.
++
++최종 root 로그 `graphify-final.log`의 `graphify update .`는 exit 0, 9,991 nodes·21,739 edges·499 communities로 갱신됐고 `git diff --check`도 통과했다.
++
++자동화용 모의 검토 기록을 실제 사람의 청취·동정 완료로 표현하지 않는다. 실제 DB 저장 검사와 물리 청취·실기기·타 브라우저 검증 범위를 분리한다.
++
++## 5. 배포 및 형상 관리
++
++ARM64 TEST 이미지 `robingraph-api:test-audio-assessment-9afd12fe5956`를 배포했고 source SHA는 `9afd12fe595659b6f610c844216fcb6edfce3f5df7e35eed9fd57149898b4f0f`다. base revision `9ddea521847093b071c9d3436fb908313c4b1f2c`의 미커밋 snapshot이다. release는 `audio-assessment-9afd12fe5956-5912e5`, 영수증 state는 verified다. network-none fixture와 배포 source manifest·compose model을 확인했고 signing key는 보존했다. 직전 `audio-review-f94bade119bd-1e903c`는 영수증에 보존했다. TEST 전용 작성 키는 `/Users/kimdove/robingraph-test/private/audio-assessment.key`(0600), 기존 조회 전용 키는 같은 폴더의 `audio-review.key`다. 값은 기록하거나 증거로 복사하지 않았다. Production에는 작성 키를 설정하지 않았다. Production 쓰기·배포·재시작, Git commit/push/merge는 수행하지 않았다. 기존 11/7·9 작업 문서·미커밋 변경은 보존한다.
++
++## 6. 한계 및 후속 과제
++
++- 검토 기록 저장은 공개 승인·원자료 수정·파일 삭제가 아니다.
++- 최신 assessment만 저장하므로 전체 검토 변경 이력 기능과 구분한다.
++- RG-507은 진행 중을 유지하고 RG-409 및 과거 작업기록을 변경하지 않는다.
++- 실제 사람의 판단 입력과 Production 반영은 후속 범위다. RG507은 기능 저장 검증과 사람의 검토·공개 단계를 구분한다.
++
++## 관련 문서
++
++- [[Work/RobinGraph/백로그 상세/RG-507|RG-507 수집·검토·저장]]
++- [[Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-09-RG507-새소리수집점검과검토화면|읽기 전용 검토 화면 이력]]
++- [[Work/RobinGraph/RobinGraph 작업 백로그|RobinGraph 작업 백로그]]
+--- a/docs/backlog/RG-507.md
++++ b/docs/backlog/RG-507.md
+@@ -1,6 +1,6 @@
+ ---
+ created: 2026-11-05
+-updated: 2026-11-09
++updated: 2026-11-10
+ project: RobinGraph
+ type: backlog-item
+ task_id: RG-507
+@@ -12,7 +12,7 @@
+ 
+ ### RG-507 — n8n 새소리 수집·검토·허용 음원 저장
+ 
+-- **상태**: 진행 중 (운영 7개 검토 대기·1개 보류 / 검토 화면 TEST 완료)
++- **상태**: 진행 중 (검토 기록 저장 TEST 완료 / 운영 적용·사람 검토 대기)
+ - **우선순위**: P2(보통) — 사용자 구현 승인
+ - **권장 담당**: Claude(backend·자료·검토/저장 계약), Antigravity(n8n workflow·TEST 배포·실제 실행), Codex(리뷰·통합·최소 리팩토링), Writer(기록)
+ - **목적**:
+@@ -69,3 +69,6 @@
+   - 2026-11-09: 11/8 `82125` finished(2저장·3후보 없음/cursor 저장), 11/9 `84322` deferred(2저장·1후보 없음·1제한 보류·1미시도/cursor 미저장)를 읽기 감사했다. 현재 운영 후보 7개 검토 대기·1개 보류, 파일 7개 SHA256 일치·review 없음.
+   - 읽기 전용 [TEST 검토 화면](https://robingraph-test.dove-nest.com/audio-review)을 구현·배포했다. TEST 참새 1개로 인증·1280/390 native 재생을 검증했고 운영 자료 복사·승인·공개는 0이다. 운영 화면 반영은 별도 승인 대기다.
+   - [[Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-09-RG507-새소리수집점검과검토화면|실제 수집 결과·TEST 읽기 화면·검증 범위]]
++
++  - 2026-11-10: TEST 후보별 최신 assessment 저장을 추가했다. 재생·출처·동정 근거·판정·메모를 별도 작성 키로 저장하며 기존 status·legacy review·공개 gate는 유지한다. Python 62/62·UI 354/354 통과, 실제 격리 PostgreSQL/Django ASGI 저장·409·401과 공개 TEST 폼 저장·재조회·조건부 복원 완료. 자동화 메모는 실제 사람 검토가 아니며 운영 쓰기·배포는 0이다.
++  - [[Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-10-RG507-새소리검토기록저장|검토 항목·권한·실제 저장 및 복원 검증]]
+--- a/docs/n8n/README.md
++++ b/docs/n8n/README.md
+@@ -216,10 +216,18 @@
+ 
+ 현재 최대 5종 설정·후보·검증 한계는 [11/7 확대 기록](../work-log/2026-11-07-bird-audio-daily-five.md)을 따른다.
+ 
+-## RG-507 읽기 전용 검토 화면 (TEST)
++## RG-507 검토 화면 (TEST, 2026-11-10 현재)
+ 
+ [TEST 음원 검토 화면](https://robingraph-test.dove-nest.com/audio-review)에서 후보 목록·상태 필터·페이지·미리듣기·출처를 확인한다. TEST 실자료는 참새 1개이며 운영 후보를 복사하거나 연결하지 않았다. 운영 후보 화면은 별도 Production 배포 승인 후 제공한다.
+ 
+ 권한 있는 사용자는 TEST 호스트의 `/Users/kimdove/robingraph-test/private/audio-review.key`(mode 600)에서 별도 읽기 키를 확인해 입력한다. 키는 화면 메모리에만 유지되며 URL·storage에 저장하지 않는다. 기존 수집 키는 목록 조회에 쓸 수 없다. 연결 해제는 키·목록·재생 blob을 정리한다. 키 값 자체는 문서·메시지·로그에 남기지 않는다.
+ 
+-승인·공개·재시도 버튼은 없다. 읽기 키는 stage/review/publish 권한이 없으며 사람의 검토 결과를 저장하는 기능도 이번 화면 범위가 아니다. 수집 시각 `collected_at`과 출처 근거 조회 시각은 구분한다. 실제 인증·재생과 합성 fixture 검증 범위는 [11/9 기록](../work-log/2026-11-09-bird-audio-review.md)을 따른다.
++승인·공개·재시도 버튼은 없다. 읽기 키는 저장 폼이 없고 stage/review/publish·assessment 저장 권한도 없다. 별도 assessment 키로 연결하면 최신 검토 기록을 저장할 수 있다. 수집 시각 `collected_at`과 출처 근거 조회 시각은 구분한다. 실제 인증·재생과 합성 fixture 검증 범위는 [11/9 기록](../work-log/2026-11-09-bird-audio-review.md)을 따른다.
++
++### 후보별 검토 기록 저장
++
++TEST 전용 작성 키는 `/Users/kimdove/robingraph-test/private/audio-assessment.key`(0600)에 보관한다. Production에는 설정하지 않았다. 이 키로 연결해 `can_assess=true`이면 폼이 나타난다. 조회 전용 키도 기존 저장 기록을 읽을 수 있다. 작성 키로 연결한 뒤 검토자·재생 상태·출처 확인·동정 근거·판정·메모를 직접 선택해 저장한다. 재생 성공은 항목을 자동 체크하지 않는다. 추가 근거를 선택하면 근거 메모가 필수이고, 일반 메모는 2,000자·근거 메모는 1,000자 이하다. 최신 `assessment`만 보관하며 전체 변경 이력을 누적하지 않는다.
++
++저장 시 화면에서 읽은 `expected_updated_at`을 전송한다. 409 충돌이면 다른 변경을 덮어쓰지 말고 최신 목록을 다시 확인한 뒤 입력을 검토한다. 읽기 키와 수집 키는 assessment 저장에 사용할 수 없고 작성 키도 stage/review/publish 권한은 없다. 키를 메모에 넣으면 422로 거부하며 키 값은 URL·storage·로그·문서에 남기지 않는다.
++
++채택 후보는 공개 승인이 아니고 제외는 파일 삭제가 아니다. 기존 status·legacy review·공개 gate·원출처·음원을 유지한다. 자동화 검증에서 실제 TEST 후보에 임시 기록을 저장하고 조건부 복원했으며 사람 검토를 완료한 것은 아니다. 운영 화면/저장 API는 아직 배포하지 않았다. [11/10 기록](../work-log/2026-11-10-bird-audio-assessment.md)에 단위·격리 DB·공유 TEST 검증 범위와 복원 근거를 남겼다.

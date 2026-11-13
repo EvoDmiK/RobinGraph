@@ -1,0 +1,19 @@
+{
+  "verified_at_utc": "2026-11-11T01:30:09.665362+00:00",
+  "change": "채팅·탐색·도감·음원 검토 화면을 라이트 테마로 고정",
+  "frontend_tests": {
+    "passed": 361,
+    "failed": 0
+  },
+  "browser_checks": 16,
+  "os_light_and_dark_palette_identical": true,
+  "native_controls_light": true,
+  "viewport_widths": [
+    1280,
+    390
+  ],
+  "source_matches": true,
+  "physical_mobile_tested": false,
+  "production_changed": false,
+  "git_commit_push": false
+}

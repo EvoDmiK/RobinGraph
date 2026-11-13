@@ -1,0 +1,122 @@
+{
+  "task_id": "RG-215",
+  "status": "complete_test_verified_not_prod",
+  "production_changed": false,
+  "git_commit_push": false,
+  "bird_db_writes": 0,
+  "provider_requests_initiated_by_verifier": 0,
+  "files": {
+    "docs/backlog/RG-215.md": {
+      "sha256": "704d513a7cc9b3c3a36dd2d1558164091c68e3f1b7c8629234c232f2a4de53f9",
+      "size_bytes": 8323
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/actual-api.json": {
+      "sha256": "ebde8db51c0f3eb98a66108508851811a11ac6c9796924d8d822a95e09cd2e5d",
+      "size_bytes": 4810
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/actual-browser.json": {
+      "sha256": "6b41c4a0d0601713c6260e2799468d506bd8837893cf3109c726246ebced6758",
+      "size_bytes": 1672
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/actual-explorer-1280.png": {
+      "sha256": "a1b38cf296232e0f2dcdc81706c2a88d6611a970fab0c763831936609f4016c3",
+      "size_bytes": 509921
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/actual-explorer-320.png": {
+      "sha256": "042294e58e7541cc0ef0b2af27824c4d057f0f06742e591767de7f68adf4e403",
+      "size_bytes": 196260
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/actual-explorer-390.png": {
+      "sha256": "7f37c317c69760a62002e38dfe7b5541a0ed7156822d514f78b48043de9b06a4",
+      "size_bytes": 223513
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/browser-failure.json": {
+      "sha256": "8324652b605e8f9888aed434a719ce64a8368194e695830f309c4dbb23baa501",
+      "size_bytes": 104
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/deploy-final.log": {
+      "sha256": "c7a822676fc8c3c53e86bfc0ebf18f59d9458ee07ee52bf050ea6ac180697011",
+      "size_bytes": 1639
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/filter-values-api.json": {
+      "sha256": "6faa83592ca7c4b5c941597aee84fa2b530d3e9ecd36bd618668f14007961e6a",
+      "size_bytes": 5842
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/final-lan-browser.json": {
+      "sha256": "3d6b5a2f637e7dac7d9f1e1a14002119308cc21723a8105893a81147e7f4b95f",
+      "size_bytes": 1661
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/first-browser-public.json": {
+      "sha256": "73d92201d5f31e2b442cd991144a429dbb395b52d8739135bc9062c859d2933f",
+      "size_bytes": 1157
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/first-test-release.json": {
+      "sha256": "c360c37492c6d06eeafac2f9ed440bf903055f2e2306a5fb3368a3fae062e779",
+      "size_bytes": 31253
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/graphify-final.log": {
+      "sha256": "dacba01a8871696aac4deda26029a22ed6477622999b3a39fbb4f3d088b011c5",
+      "size_bytes": 1263
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/integrated-code.patch": {
+      "sha256": "ecc279b7514bdc00eaada2742555819b241e55610973bf8749cb562116da77f7",
+      "size_bytes": 110808
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/real-asgi.json": {
+      "sha256": "d5f31d1eeff6177df6c5964a5d331c0548b3fd4bbd4a7dc5b0008ea71910e058",
+      "size_bytes": 1182
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/release-equivalence.json": {
+      "sha256": "a703925a64812abd49c68d29eee7d88c60fb075b1f72d32c5097414515b0327b",
+      "size_bytes": 371
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/root-backend-tests.log": {
+      "sha256": "a51cc43206490ef18f6b2863e508c37b3600db554f4779e8b54e35b79f42e989",
+      "size_bytes": 471
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/root-final-evidence.json": {
+      "sha256": "893bdc496258764998492ebd298c5cc282859d5be645be32a3b3906466b70636",
+      "size_bytes": 2413
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/root-frontend-tests.log": {
+      "sha256": "39a57889658b67af89acd042a1a7af5571f3299ac294978dc13fbfdd66af716a",
+      "size_bytes": 40848
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/screenshots/browser-check.json": {
+      "sha256": "6d396b7b204b11d620810f807938645f35fe5cbcae51f4a710112d7bbe2fbf08",
+      "size_bytes": 1315
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/screenshots/explore-1280-collapsed.png": {
+      "sha256": "d1b20d51436b9823acc9c9720921f761fcb517538b6f9c3fe7eccf9ed850fe23",
+      "size_bytes": 567101
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/screenshots/explore-1280-expanded.png": {
+      "sha256": "a04e2c8d19a2a673dc36054d753ac14a09bcd5a92186493d84d68ca33bc3a334",
+      "size_bytes": 614630
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/screenshots/explore-390-collapsed.png": {
+      "sha256": "c91db29eb546cd91bb64a2a1db2680b5250df0ea0e9f9b2e2896b84fc72118bc",
+      "size_bytes": 579860
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/screenshots/explore-390-expanded.png": {
+      "sha256": "8428bd825b082781670204cfc98dbfc2f3d6ec940d87f4e2c2c8666c65795357",
+      "size_bytes": 623689
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/test-port-recovery.json": {
+      "sha256": "4fc6f8d7be225aae0143c979a6328db71487c16e84dac8bd559dee23b93f06e8",
+      "size_bytes": 838
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/test-release.json": {
+      "sha256": "0f16afc2bf8e9e30938b3a42d8bd039cfc8ab00fc6584b1d7820a164acddae03",
+      "size_bytes": 31241
+    },
+    "docs/verification/assets/2026-11-10-bird-explorer/ui-focused-review.log": {
+      "sha256": "f505eb110ae5991e58032dc1ea45b42ab039d34897d45c6bf0b9cdce3fb83dfb",
+      "size_bytes": 906
+    },
+    "docs/work-log/2026-11-10-bird-explorer.md": {
+      "sha256": "66244f352310f42b2ea52927afebacfab85780b5ffe3d95474fa13caa9eea64a",
+      "size_bytes": 31521
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "container_id": "f62ab640cd9548bc959470feb7cae1bee8fb66b3291c90b809076b00d1dfde92",
+  "image": "ghcr.io/evodmik/robingraph@sha256:997ce4f410605011a17924b8ea1784849282f8931c22a27c4a11aa706c16e65f",
+  "started_at": "2026-11-11T08:36:14.785896403Z",
+  "health": "healthy",
+  "target": "prod",
+  "checks": {
+    "experiment_id": "50",
+    "experiment_name": "robingraph-prod",
+    "health": "ok",
+    "feedback_route": true
+  },
+  "app_mutations": 0,
+  "domain_db_write_commands": 0
+}

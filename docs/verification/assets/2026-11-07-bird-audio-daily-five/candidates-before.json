@@ -1,0 +1,233 @@
+{
+  "database": "robingraph",
+  "schema": "ingest",
+  "candidate_count": 3,
+  "candidates": [
+    {
+      "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+      "scientific_name": "Passer montanus",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-05 11:33:42.529568+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:16592315",
+        "title": "Passer montanus.ogg",
+        "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+        "evidence": {
+          "page_id": 16592315,
+          "revision_id": 1031017614,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+          "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+        },
+        "location": "Moscow region, Russia",
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "recorded_at": "2011-09-20",
+        "license_name": "CC BY-SA 3.0",
+        "recording_type": "Calls",
+        "scientific_name": "Passer montanus"
+      },
+      "raw_record_keys": [
+        "title",
+        "page_id",
+        "location",
+        "imageinfo",
+        "revision_id",
+        "recording_type",
+        "scientific_name"
+      ],
+      "file_bytes": 289857,
+      "file_sha256_matches": true,
+      "metadata_fetched_at": "2026-11-05T02:33:43.046130+00:00",
+      "raw_extmetadata": {
+        "Artist": {
+          "value": "<a href=\"//commons.wikimedia.org/wiki/User:Arkhivov\" title=\"User:Arkhivov\">Vladimir Yu. Arkhipov, Arkhivov</a>",
+          "source": "commons-desc-page"
+        },
+        "LicenseUrl": {
+          "value": "https://creativecommons.org/licenses/by-sa/3.0",
+          "source": "commons-desc-page"
+        },
+        "UsageTerms": {
+          "value": "Creative Commons Attribution-Share Alike 3.0",
+          "source": "commons-desc-page"
+        },
+        "Copyrighted": {
+          "value": "True",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "DateTimeOriginal": {
+          "value": "2011-09-20",
+          "source": "commons-desc-page"
+        },
+        "ImageDescription": {
+          "value": "Calls of several tree sparrows, Moscow region, Russia",
+          "source": "commons-desc-page"
+        },
+        "LicenseShortName": {
+          "value": "CC BY-SA 3.0",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "AttributionRequired": {
+          "value": "true",
+          "hidden": "",
+          "source": "commons-desc-page"
+        }
+      }
+    },
+    {
+      "candidate_id": "9e84efdf7b2f9a9a951553a460c073f4913d56a12065b67d96134713b17f93ba",
+      "scientific_name": "Jynx torquilla",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-06 03:00:03.268208+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:91877997",
+        "title": "Jynx torquilla - Eurasian Wryneck XC561861.mp3",
+        "creator": "Kim Erlend Vidal",
+        "evidence": {
+          "page_id": 91877997,
+          "revision_id": 962980390,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-05T18:00:03.889489+00:00",
+          "metadata_sha256": "fb450d4de75b45c7e9f33b7da0c84d5cbc79eadd0795e9d53665a034863b0385"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2020-05-23 21:30",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Jynx torquilla"
+      },
+      "raw_record_keys": [
+        "title",
+        "page_id",
+        "imageinfo",
+        "revision_id",
+        "scientific_name"
+      ],
+      "file_bytes": 1766350,
+      "file_sha256_matches": true,
+      "metadata_fetched_at": "2026-11-05T18:00:03.889489+00:00",
+      "raw_extmetadata": {
+        "Artist": {
+          "value": "Kim Erlend Vidal",
+          "source": "commons-desc-page"
+        },
+        "LicenseUrl": {
+          "value": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source": "commons-desc-page"
+        },
+        "UsageTerms": {
+          "value": "Creative Commons Attribution-Share Alike 4.0",
+          "source": "commons-desc-page"
+        },
+        "Copyrighted": {
+          "value": "True",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "DateTimeOriginal": {
+          "value": "2020-05-23 21:30",
+          "source": "commons-desc-page"
+        },
+        "ImageDescription": {
+          "value": ":bird-seen:no\n<dl><dd>playback-used:no</dd>\n<dd><b>Common name:</b> Eurasian Wryneck</dd>\n<dd><b>Type:</b> song</dd>\n<dd><b>Genus:</b> Jynx</dd>\n<dd><b>Species:</b> torquilla</dd>\n<dd><b>Location:</b> R\u00f8d\u00f8y, Nordland</dd>\n<dd><b>Country:</b> Norway</dd>\n<dd><b>Elevation:</b> 30 m</dd></dl>",
+          "source": "commons-desc-page"
+        },
+        "LicenseShortName": {
+          "value": "CC BY-SA 4.0",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "AttributionRequired": {
+          "value": "true",
+          "hidden": "",
+          "source": "commons-desc-page"
+        }
+      }
+    },
+    {
+      "candidate_id": "6b6243d6b0070d403d7f67654472f170b2005067b6cb7b8bbc47fff727c8f7fd",
+      "scientific_name": "Picus canus",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-07 03:00:03.617700+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:68244398",
+        "title": "Picus canus - Grey-headed Woodpecker XC310918.mp3",
+        "creator": "Alexander K\u00fcrthy",
+        "evidence": {
+          "page_id": 68244398,
+          "revision_id": 632037353,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-06T18:00:04.274296+00:00",
+          "metadata_sha256": "3067bec254879454843ebfdb36bcb82e129da2038e80ab3b11090042fefce7fd"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Picus_canus_-_Grey-headed_Woodpecker_XC310918.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Picus_canus_-_Grey-headed_Woodpecker_XC310918.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2015-07-17 05:30",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Picus canus"
+      },
+      "raw_record_keys": [
+        "title",
+        "page_id",
+        "imageinfo",
+        "revision_id",
+        "scientific_name"
+      ],
+      "file_bytes": 734114,
+      "file_sha256_matches": true,
+      "metadata_fetched_at": "2026-11-06T18:00:04.274296+00:00",
+      "raw_extmetadata": {
+        "Artist": {
+          "value": "Alexander K\u00fcrthy",
+          "source": "commons-desc-page"
+        },
+        "LicenseUrl": {
+          "value": "https://creativecommons.org/licenses/by-sa/4.0",
+          "source": "commons-desc-page"
+        },
+        "UsageTerms": {
+          "value": "Creative Commons Attribution-Share Alike 4.0",
+          "source": "commons-desc-page"
+        },
+        "Copyrighted": {
+          "value": "True",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "DateTimeOriginal": {
+          "value": "2015-07-17 05:30",
+          "source": "commons-desc-page"
+        },
+        "ImageDescription": {
+          "value": ":no filtered, part of long accoustic monitoring\n<dl><dd>bird-seen:no</dd>\n<dd>playback-used:no</dd>\n<dd><b>Common name:</b> Grey-headed Woodpecker</dd>\n<dd><b>Type:</b> call</dd>\n<dd><b>Genus:</b> Picus</dd>\n<dd><b>Species:</b> canus</dd>\n<dd><b>Location:</b> \u0160arkanica, Tisovec, Rimavsk\u00e1 Sobota District, Bansk\u00e1 Bystrica Region</dd>\n<dd><b>Country:</b> Slovakia</dd>\n<dd><b>Elevation:</b> 700 m</dd></dl>",
+          "source": "commons-desc-page"
+        },
+        "LicenseShortName": {
+          "value": "CC BY-SA 4.0",
+          "hidden": "",
+          "source": "commons-desc-page"
+        },
+        "AttributionRequired": {
+          "value": "true",
+          "hidden": "",
+          "source": "commons-desc-page"
+        }
+      }
+    }
+  ],
+  "data_writes": 0,
+  "provider_requests": 0
+}

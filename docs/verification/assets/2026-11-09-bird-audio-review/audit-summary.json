@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "execution_id": 82125,
+      "started_utc": "2026-11-07T18:00:00.230Z",
+      "n8n_status": "success",
+      "collection_status": "finished",
+      "target_limit": 5,
+      "processed_count": 5,
+      "results": {
+        "awaiting_review": 2,
+        "no_candidates": 3
+      },
+      "unattempted_count": 0,
+      "cursor_saved": true
+    },
+    {
+      "execution_id": 84322,
+      "started_utc": "2026-11-08T18:00:00.072Z",
+      "n8n_status": "success",
+      "collection_status": "deferred",
+      "target_limit": 5,
+      "processed_count": 4,
+      "results": {
+        "no_candidates": 1,
+        "awaiting_review": 2,
+        "deferred": 1
+      },
+      "unattempted_count": 1,
+      "cursor_saved": false
+    }
+  ],
+  "current_counts": {
+    "awaiting_review": 7,
+    "deferred": 1
+  },
+  "candidate_count": 8,
+  "all_stored_files_hash_match": true,
+  "readonly_audit": true,
+  "production_changes": 0
+}

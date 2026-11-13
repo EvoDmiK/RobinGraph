@@ -1,0 +1,65 @@
+{
+  "date": "2026-11-09",
+  "task_id": "RG-507",
+  "status": "in_progress",
+  "test_ui_complete": true,
+  "production_review_ui_deployed": false,
+  "production_counts": {
+    "awaiting_review": 7,
+    "deferred": 1
+  },
+  "notes": [
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/2026-11-09-RG507-새소리수집점검과검토화면.md",
+      "exact_readback": true,
+      "local_file": "docs/work-log/2026-11-09-bird-audio-review.md",
+      "other_rows_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-507.md",
+      "exact_readback": true,
+      "local_file": "docs/backlog/RG-507.md",
+      "other_rows_preserved": null
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "exact_readback": true,
+      "local_file": null,
+      "other_rows_preserved": true
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/5xx 데이터·분류·이름/작업 백로그.md",
+      "exact_readback": true,
+      "local_file": null,
+      "other_rows_preserved": true
+    }
+  ],
+  "rg409_unchanged": true,
+  "historical_worklogs_preserved": true,
+  "git_operations_performed": false,
+  "local_sha256": {
+    "docs/work-log/2026-11-09-bird-audio-review.md": "459eff3e20f5591461877117cad379d3fd76f16e067ff27918e3a836fb9b8295",
+    "docs/backlog/RG-507.md": "a7eeea6acc74c292af82f7d89e607196f6e7ecc6f7d57deab5d102c4be6f16bf",
+    "docs/n8n/README.md": "1bbf0557e527a7a0fae5c93d6cbf840132e24fd6986ba60fec37e52e9bb82bb9"
+  },
+  "evidence_files": [
+    "actual-review-1280.png",
+    "actual-review-390.png",
+    "actual-review-browser.json",
+    "audit-candidates.json",
+    "audit-executions.json",
+    "audit-summary.json",
+    "backend-collected-at.patch",
+    "backend-final-tests.log",
+    "backend.patch",
+    "fixture-1280.png",
+    "fixture-390.png",
+    "frontend-tests.log",
+    "graphify-update.log",
+    "test-release.json",
+    "ui-collected-at.patch",
+    "ui-fixture-browser.json",
+    "ui.patch",
+    "writer-vault-sync.json"
+  ]
+}

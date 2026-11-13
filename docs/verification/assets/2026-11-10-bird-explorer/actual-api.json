@@ -1,0 +1,242 @@
+{
+  "origin": "http://127.0.0.1:8000",
+  "actual_test_api": true,
+  "public_browser_verified_separately": true,
+  "initial_public_urllib_probe_status": 403,
+  "checks": [
+    {
+      "query": {},
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 11131,
+        "scoped": 11131,
+        "matched": 11131
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.218
+    },
+    {
+      "query": {
+        "species_scope": "korea"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 592,
+        "scoped": 592,
+        "matched": 592
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.129
+    },
+    {
+      "query": {
+        "taxon": "Passeriformes"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 6705,
+        "scoped": 6705,
+        "matched": 6705
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.21
+    },
+    {
+      "query": {
+        "taxon": "Anatidae"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 172,
+        "scoped": 172,
+        "matched": 172
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.109
+    },
+    {
+      "query": {
+        "taxon": "Anas"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 31,
+        "scoped": 31,
+        "matched": 31
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.097
+    },
+    {
+      "query": {
+        "habitat": "Forest"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 5595
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.267
+    },
+    {
+      "query": {
+        "diet": "fruit"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 2551
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.41
+    },
+    {
+      "query": {
+        "diet": "fruit,seed"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 924
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.411
+    },
+    {
+      "query": {
+        "species_scope": "korea",
+        "taxon": "참새목",
+        "habitat": "Forest",
+        "diet": "fruit"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 164,
+        "scoped": 256,
+        "matched": 41
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.12
+    },
+    {
+      "query": {
+        "species_scope": "outside",
+        "habitat": "Wetland",
+        "diet": "fish"
+      },
+      "http": 200,
+      "status": "empty",
+      "coverage": {
+        "evaluable": 3,
+        "scoped": 6,
+        "matched": 0
+      },
+      "shown": 0,
+      "has_more": false,
+      "seconds": 0.088
+    },
+    {
+      "query": {
+        "species_scope": "unknown"
+      },
+      "http": 200,
+      "status": "answer",
+      "coverage": {
+        "evaluable": 10533,
+        "scoped": 10533,
+        "matched": 10533
+      },
+      "shown": 20,
+      "has_more": true,
+      "seconds": 0.127
+    },
+    {
+      "query": {
+        "taxon": "Apterygiformes",
+        "diet": "fish"
+      },
+      "http": 200,
+      "status": "empty",
+      "coverage": {
+        "evaluable": 3,
+        "scoped": 5,
+        "matched": 0
+      },
+      "shown": 0,
+      "has_more": false,
+      "seconds": 0.106
+    },
+    {
+      "query_string": "diet=invalid",
+      "http": 422
+    },
+    {
+      "query_string": "habitat=invalid",
+      "http": 422
+    },
+    {
+      "query_string": "species_scope=invalid",
+      "http": 422
+    },
+    {
+      "query_string": "diet=fruit,fruit",
+      "http": 422
+    },
+    {
+      "query_string": "diet=fruit&diet=seed",
+      "http": 422
+    },
+    {
+      "query_string": "habitat=Forest&habitat=Wetland",
+      "http": 422
+    },
+    {
+      "query_string": "limit=30",
+      "http": 422
+    },
+    {
+      "query_string": "taxon=Imaginary",
+      "http": 422
+    },
+    {
+      "query_string": "taxon=Anas+platyrhynchos",
+      "http": 422
+    },
+    {
+      "query_string": "taxon=",
+      "http": 422
+    },
+    {
+      "query_string": "diet=",
+      "http": 422
+    }
+  ],
+  "db_writes": 0,
+  "production_changed": false,
+  "provider_requests_initiated_by_verifier": 0,
+  "api_tests_source_sha256": "74c37b75336f0f86ea81501148414d16895896f3788399c03dad6446f8b57bb4",
+  "final_source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "all_backend_sources_identical": true
+}

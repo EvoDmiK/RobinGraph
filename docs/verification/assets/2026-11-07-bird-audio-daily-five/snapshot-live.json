@@ -1,0 +1,1376 @@
+{
+  "workflow": {
+    "updatedAt": "2026-11-05T03:09:51.484Z",
+    "createdAt": "2026-11-05T02:33:03.164Z",
+    "id": "rgAudioCollectionProd01",
+    "name": "RobinGraph Audio Collection PROD (daily 1 species)",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "8f338e8a-581d-5721-8f18-909c3eeee4ee",
+        "name": "Manual trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          224,
+          64
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const config={action:'collect',limit:1,after_taxon_id:'',scientific_name:'',file_title:'',candidate_id:''};\nreturn [{json:{...config,scheduled:false}}];"
+        },
+        "id": "22268daa-424e-5c85-948b-537d526a30c4",
+        "name": "Manual inputs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          64
+        ]
+      },
+      {
+        "parameters": {
+          "url": "http://robingraph-audio-collector:8000/health",
+          "options": {
+            "redirect": {
+              "redirect": {
+                "followRedirects": false
+              }
+            },
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            },
+            "timeout": 60000
+          }
+        },
+        "id": "7bc81956-b1f4-5028-bb1a-2f80cae07d42",
+        "name": "Verify PROD collector health",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          896,
+          -32
+        ],
+        "retryOnFail": false
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst health = $input.first().json;\nif (health.deployment_target !== 'prod' || health.publication_enabled !== false) throw new Error('Audio workflow requires prod collector with publication disabled');\nconst c = $('Execution inputs').first().json;\nc.scheduled=$('Scheduled collection inputs').isExecuted===true;\nif (!['collect','status'].includes(c.action)) throw new Error('Unsupported manual action');\nif (!Number.isInteger(c.limit) || c.limit < 1 || c.limit > 5) throw new Error('Batch limit must be 1..5');\nconst s = {action:c.action, queue:[], results:[], next_cursor:null, config:c};\nfunction req(path, body) { return [{json:{state:s, request:{path,body},done:false,wait_seconds:0}}]; }\nif (c.action !== 'collect') {\n  if (!/^[a-f0-9]{64}$/.test(c.candidate_id)) throw new Error('Explicit candidate_id required');\n  const body = {candidate_id:c.candidate_id};\n  return req(c.action, body);\n}\nif (c.file_title && !c.scientific_name) throw new Error('File title requires scientific_name');\nif (c.scientific_name) {\n  s.queue = [{scientific_name:c.scientific_name}];\n  return req(c.file_title ? 'stage':'discover', c.file_title ? {scientific_name:c.scientific_name,file_title:c.file_title}:{scientific_name:c.scientific_name,limit:3});\n}\nreturn req('targets',{limit:c.limit,...(c.after_taxon_id ? {after_taxon_id:c.after_taxon_id}:{})});\n"
+        },
+        "id": "c06985b1-433e-5338-8fe5-a4ebf2c3eb8b",
+        "name": "Initialize request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "return $input.all();"
+        },
+        "id": "79fdab99-b312-5005-ae47-e7abe64cc9e0",
+        "name": "Prepare request",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1344,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ 'http://robingraph-audio-collector:8000/internal/v1/audio/' + $json.request.path }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.request.body }}",
+          "options": {
+            "redirect": {
+              "redirect": {
+                "followRedirects": false
+              }
+            },
+            "response": {
+              "response": {
+                "fullResponse": true,
+                "neverError": true,
+                "responseFormat": "json"
+              }
+            },
+            "timeout": 60000
+          }
+        },
+        "id": "8dd56dd1-893a-52ec-9779-9bd0b3bef967",
+        "name": "Audio API",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1568,
+          -104
+        ],
+        "retryOnFail": false,
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "rgAudioProdHeader01",
+            "name": "RobinGraph Audio PROD collector internal"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "\nconst previous = $('Prepare request').item.json;\nconst s = previous.state, path = previous.request.path;\nconst response = $input.first().json;\nconst status = Number(response.statusCode);\nconst b = response.body;\nfunction out(request, done=false, wait_seconds=0) { return [{json:{state:s,request,done,wait_seconds}}]; }\nfunction next() {\n  if (!s.queue.length) return out(null,true);\n  return out({path:'discover',body:{scientific_name:s.queue[0].scientific_name,limit:3}});\n}\nif (s.deferred) { s.status_after_wait = status >= 200 && status < 300 ? b : {status:'unavailable',http_status:status}; return out(null,true); }\nif (status === 429) {\n  const raw = Number(response.headers?.['retry-after'] ?? b?.retry_after_seconds);\n  if (!Number.isFinite(raw) || raw <= 0) throw new Error('429 without valid Retry-After');\n  s.results.push({status:'deferred',scientific_name:s.queue[0]?.scientific_name,candidate_id:b?.candidate_id || null,retry_after_seconds:Math.ceil(raw)});\n  s.queue = []; // Never continue this batch or automatically retry remote collection.\n  s.deferred = true;\n  return out(b?.candidate_id ? {path:'status',body:{candidate_id:b.candidate_id}}:null,false,Math.ceil(raw));\n}\nif (status===422 && path==='stage') {\n const species=s.queue.shift();\n s.results.push({status:'skipped_source_validation',scientific_name:species.scientific_name,file_title:previous.request.body.file_title,http_status:422});\n return next();\n}\nif (!(status >= 200 && status < 300) || !b || typeof b !== 'object') throw new Error('Audio API '+path+' failed: HTTP '+status);\nif (s.action !== 'collect') { s.results.push(b); return out(null,true); }\nif (path === 'targets') {\n  if (!Array.isArray(b.targets) || b.targets.length > s.config.limit) throw new Error('Invalid target batch');\n  s.queue = b.targets; s.next_cursor = b.next_cursor ?? null; return next();\n}\nif (path === 'discover') {\n  if (!Array.isArray(b.candidates) || b.candidates.length > 3) throw new Error('Invalid discovery response');\n  const candidate = b.candidates[0];\n  if (!candidate) { s.results.push({scientific_name:s.queue.shift().scientific_name,status:'no_candidates'}); return next(); }\n  if (candidate.scientific_name !== s.queue[0].scientific_name || typeof candidate.file_title !== 'string') throw new Error('Candidate species mismatch');\n  return out({path:'stage',body:{scientific_name:candidate.scientific_name,file_title:candidate.file_title}});\n}\nif (path === 'stage') {\n  if (!/^[a-f0-9]{64}$/.test(b.candidate_id || '')) throw new Error('Invalid stage candidate_id');\n  return out({path:'status',body:{candidate_id:b.candidate_id}});\n}\nif (path === 'status') { s.results.push(b); s.queue.shift(); return next(); }\nthrow new Error('Unexpected collection operation');\n"
+        },
+        "id": "1c223af3-958e-5ee4-aa08-882aa35ddf78",
+        "name": "Advance state",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1792,
+          -104
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "dca0b0aa-ed7d-559c-a44f-4880a260debc",
+                "leftValue": "={{ $json.wait_seconds > 0 }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "abd70f60-943e-57a7-b568-89bd3d1abb59",
+        "name": "Cooldown required",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2016,
+          -104
+        ]
+      },
+      {
+        "parameters": {
+          "amount": "={{ $json.wait_seconds }}"
+        },
+        "id": "f6e9c6c6-aa20-5f91-968d-304f5b9ba10e",
+        "name": "Respect Retry-After",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2240,
+          -176
+        ],
+        "webhookId": "060e2b8e-dacf-5333-b2b3-076208374cb4"
+      },
+      {
+        "parameters": {
+          "jsCode": "const x=$input.first().json; x.wait_seconds=0; x.done=!x.request; return [{json:x}];"
+        },
+        "id": "88f35417-bd7f-57d9-9c14-6949f9958f32",
+        "name": "After cooldown",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2464,
+          -176
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8bccfbff-c259-5502-8e58-837ded92c5b1",
+                "leftValue": "={{ $json.done }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "6ec38431-884c-5159-95bf-b8dadc92c7be",
+        "name": "Finished",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2688,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const s=$input.first().json.state;\nreturn [{json:{action:s.action,status:s.deferred?'deferred':'finished',results:s.results,next_cursor:s.next_cursor,status_after_wait:s.status_after_wait||null,publication_automatic:false,scheduled:s.config.scheduled===true}}];"
+        },
+        "id": "a106de34-39e7-5a8f-afef-7e80d0d8388a",
+        "name": "Prepare execution summary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2912,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 3 * * *"
+              }
+            ]
+          }
+        },
+        "id": "f227d8f4-d09e-5500-b235-1e1539c14f4a",
+        "name": "Daily 03:00 Korea",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const row=$input.first().json;\nreturn [{json:{action:'collect',limit:1,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];"
+        },
+        "id": "da4a6966-3ee9-59f7-bd7f-536612d22e8e",
+        "name": "Scheduled collection inputs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          448,
+          -128
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "return $input.all();"
+        },
+        "id": "32cb703e-3254-5dbf-8556-697832e7bfcb",
+        "name": "Execution inputs",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          672,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "J49mL4EifvZ0Pres"
+          },
+          "matchType": "allConditions",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "cursor_key",
+                "keyValue": "prod"
+              }
+            ]
+          },
+          "limit": 1
+        },
+        "id": "65e281b3-7e08-5fc4-a5b6-96b5b6b6b59e",
+        "name": "Read scheduled cursor",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          -128
+        ],
+        "alwaysOutputData": true,
+        "retryOnFail": false
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "69be3c03-1f0c-536f-9d90-af5b8665a1c2",
+                "leftValue": "={{ $json.scheduled === true && $json.status === 'finished' }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "088fb9df-2f24-5aa6-acee-344f730827ed",
+        "name": "Checkpoint scheduled success",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3136,
+          -32
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "upsert",
+          "dataTableId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "J49mL4EifvZ0Pres"
+          },
+          "matchType": "allConditions",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "cursor_key",
+                "keyValue": "prod"
+              }
+            ]
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "cursor_key": "prod",
+              "after_taxon_id": "={{ $json.next_cursor || '' }}"
+            }
+          },
+          "options": {
+            "dryRun": false
+          }
+        },
+        "id": "a26f0fb2-e0d8-5bb1-a2f5-9cacb485ccda",
+        "name": "Save scheduled cursor",
+        "type": "n8n-nodes-base.dataTable",
+        "typeVersion": 1.1,
+        "position": [
+          3360,
+          -104
+        ],
+        "retryOnFail": false
+      },
+      {
+        "parameters": {
+          "jsCode": "const s=$('Prepare execution summary').first().json;return [{json:{...s,cursor_saved:s.scheduled===true&&s.status==='finished'}}];"
+        },
+        "id": "c4eda4ff-359d-52b7-b7ee-78a27161f1af",
+        "name": "Execution summary",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3584,
+          -32
+        ]
+      }
+    ],
+    "connections": {
+      "Manual trigger": {
+        "main": [
+          [
+            {
+              "node": "Manual inputs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Manual inputs": {
+        "main": [
+          [
+            {
+              "node": "Execution inputs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Initialize request": {
+        "main": [
+          [
+            {
+              "node": "Prepare request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare request": {
+        "main": [
+          [
+            {
+              "node": "Audio API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Audio API": {
+        "main": [
+          [
+            {
+              "node": "Advance state",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Advance state": {
+        "main": [
+          [
+            {
+              "node": "Cooldown required",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cooldown required": {
+        "main": [
+          [
+            {
+              "node": "Respect Retry-After",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Finished",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respect Retry-After": {
+        "main": [
+          [
+            {
+              "node": "After cooldown",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "After cooldown": {
+        "main": [
+          [
+            {
+              "node": "Finished",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Finished": {
+        "main": [
+          [
+            {
+              "node": "Prepare execution summary",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Prepare request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Daily 03:00 Korea": {
+        "main": [
+          [
+            {
+              "node": "Read scheduled cursor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read scheduled cursor": {
+        "main": [
+          [
+            {
+              "node": "Scheduled collection inputs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Scheduled collection inputs": {
+        "main": [
+          [
+            {
+              "node": "Execution inputs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execution inputs": {
+        "main": [
+          [
+            {
+              "node": "Verify PROD collector health",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verify PROD collector health": {
+        "main": [
+          [
+            {
+              "node": "Initialize request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare execution summary": {
+        "main": [
+          [
+            {
+              "node": "Checkpoint scheduled success",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Checkpoint scheduled success": {
+        "main": [
+          [
+            {
+              "node": "Save scheduled cursor",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Execution summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Save scheduled cursor": {
+        "main": [
+          [
+            {
+              "node": "Execution summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "Asia/Seoul",
+      "saveDataSuccessExecution": "all",
+      "saveDataErrorExecution": "all",
+      "executionTimeout": 86400,
+      "binaryMode": "separate"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+    "activeVersionId": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+    "versionCounter": 5,
+    "triggerCount": 1,
+    "shared": [
+      {
+        "updatedAt": "2026-11-05T02:33:03.164Z",
+        "createdAt": "2026-11-05T02:33:03.164Z",
+        "role": "workflow:owner",
+        "workflowId": "rgAudioCollectionProd01",
+        "projectId": "YvRaBfnmwjtcKmfS",
+        "project": {
+          "updatedAt": "2026-06-02T22:56:13.454Z",
+          "createdAt": "2026-06-02T22:54:34.888Z",
+          "id": "YvRaBfnmwjtcKmfS",
+          "name": "Dove Kim <kimdove.claw@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "fc9be268-d194-4287-ac65-3a8d51fb4251"
+        }
+      }
+    ],
+    "tags": [],
+    "activeVersion": {
+      "updatedAt": "2026-11-05T03:09:56.791Z",
+      "createdAt": "2026-11-05T03:09:51.487Z",
+      "versionId": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+      "workflowId": "rgAudioCollectionProd01",
+      "nodes": [
+        {
+          "parameters": {},
+          "id": "8f338e8a-581d-5721-8f18-909c3eeee4ee",
+          "name": "Manual trigger",
+          "type": "n8n-nodes-base.manualTrigger",
+          "typeVersion": 1,
+          "position": [
+            224,
+            64
+          ]
+        },
+        {
+          "parameters": {
+            "jsCode": "const config={action:'collect',limit:1,after_taxon_id:'',scientific_name:'',file_title:'',candidate_id:''};\nreturn [{json:{...config,scheduled:false}}];"
+          },
+          "id": "22268daa-424e-5c85-948b-537d526a30c4",
+          "name": "Manual inputs",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            448,
+            64
+          ]
+        },
+        {
+          "parameters": {
+            "url": "http://robingraph-audio-collector:8000/health",
+            "options": {
+              "redirect": {
+                "redirect": {
+                  "followRedirects": false
+                }
+              },
+              "response": {
+                "response": {
+                  "responseFormat": "json"
+                }
+              },
+              "timeout": 60000
+            }
+          },
+          "id": "7bc81956-b1f4-5028-bb1a-2f80cae07d42",
+          "name": "Verify PROD collector health",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            896,
+            -32
+          ],
+          "retryOnFail": false
+        },
+        {
+          "parameters": {
+            "jsCode": "\nconst health = $input.first().json;\nif (health.deployment_target !== 'prod' || health.publication_enabled !== false) throw new Error('Audio workflow requires prod collector with publication disabled');\nconst c = $('Execution inputs').first().json;\nc.scheduled=$('Scheduled collection inputs').isExecuted===true;\nif (!['collect','status'].includes(c.action)) throw new Error('Unsupported manual action');\nif (!Number.isInteger(c.limit) || c.limit < 1 || c.limit > 5) throw new Error('Batch limit must be 1..5');\nconst s = {action:c.action, queue:[], results:[], next_cursor:null, config:c};\nfunction req(path, body) { return [{json:{state:s, request:{path,body},done:false,wait_seconds:0}}]; }\nif (c.action !== 'collect') {\n  if (!/^[a-f0-9]{64}$/.test(c.candidate_id)) throw new Error('Explicit candidate_id required');\n  const body = {candidate_id:c.candidate_id};\n  return req(c.action, body);\n}\nif (c.file_title && !c.scientific_name) throw new Error('File title requires scientific_name');\nif (c.scientific_name) {\n  s.queue = [{scientific_name:c.scientific_name}];\n  return req(c.file_title ? 'stage':'discover', c.file_title ? {scientific_name:c.scientific_name,file_title:c.file_title}:{scientific_name:c.scientific_name,limit:3});\n}\nreturn req('targets',{limit:c.limit,...(c.after_taxon_id ? {after_taxon_id:c.after_taxon_id}:{})});\n"
+          },
+          "id": "c06985b1-433e-5338-8fe5-a4ebf2c3eb8b",
+          "name": "Initialize request",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1120,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "jsCode": "return $input.all();"
+          },
+          "id": "79fdab99-b312-5005-ae47-e7abe64cc9e0",
+          "name": "Prepare request",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1344,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "method": "POST",
+            "url": "={{ 'http://robingraph-audio-collector:8000/internal/v1/audio/' + $json.request.path }}",
+            "authentication": "genericCredentialType",
+            "genericAuthType": "httpHeaderAuth",
+            "sendBody": true,
+            "specifyBody": "json",
+            "jsonBody": "={{ $json.request.body }}",
+            "options": {
+              "redirect": {
+                "redirect": {
+                  "followRedirects": false
+                }
+              },
+              "response": {
+                "response": {
+                  "fullResponse": true,
+                  "neverError": true,
+                  "responseFormat": "json"
+                }
+              },
+              "timeout": 60000
+            }
+          },
+          "id": "8dd56dd1-893a-52ec-9779-9bd0b3bef967",
+          "name": "Audio API",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            1568,
+            -104
+          ],
+          "retryOnFail": false,
+          "credentials": {
+            "httpHeaderAuth": {
+              "id": "rgAudioProdHeader01",
+              "name": "RobinGraph Audio PROD collector internal"
+            }
+          }
+        },
+        {
+          "parameters": {
+            "jsCode": "\nconst previous = $('Prepare request').item.json;\nconst s = previous.state, path = previous.request.path;\nconst response = $input.first().json;\nconst status = Number(response.statusCode);\nconst b = response.body;\nfunction out(request, done=false, wait_seconds=0) { return [{json:{state:s,request,done,wait_seconds}}]; }\nfunction next() {\n  if (!s.queue.length) return out(null,true);\n  return out({path:'discover',body:{scientific_name:s.queue[0].scientific_name,limit:3}});\n}\nif (s.deferred) { s.status_after_wait = status >= 200 && status < 300 ? b : {status:'unavailable',http_status:status}; return out(null,true); }\nif (status === 429) {\n  const raw = Number(response.headers?.['retry-after'] ?? b?.retry_after_seconds);\n  if (!Number.isFinite(raw) || raw <= 0) throw new Error('429 without valid Retry-After');\n  s.results.push({status:'deferred',scientific_name:s.queue[0]?.scientific_name,candidate_id:b?.candidate_id || null,retry_after_seconds:Math.ceil(raw)});\n  s.queue = []; // Never continue this batch or automatically retry remote collection.\n  s.deferred = true;\n  return out(b?.candidate_id ? {path:'status',body:{candidate_id:b.candidate_id}}:null,false,Math.ceil(raw));\n}\nif (status===422 && path==='stage') {\n const species=s.queue.shift();\n s.results.push({status:'skipped_source_validation',scientific_name:species.scientific_name,file_title:previous.request.body.file_title,http_status:422});\n return next();\n}\nif (!(status >= 200 && status < 300) || !b || typeof b !== 'object') throw new Error('Audio API '+path+' failed: HTTP '+status);\nif (s.action !== 'collect') { s.results.push(b); return out(null,true); }\nif (path === 'targets') {\n  if (!Array.isArray(b.targets) || b.targets.length > s.config.limit) throw new Error('Invalid target batch');\n  s.queue = b.targets; s.next_cursor = b.next_cursor ?? null; return next();\n}\nif (path === 'discover') {\n  if (!Array.isArray(b.candidates) || b.candidates.length > 3) throw new Error('Invalid discovery response');\n  const candidate = b.candidates[0];\n  if (!candidate) { s.results.push({scientific_name:s.queue.shift().scientific_name,status:'no_candidates'}); return next(); }\n  if (candidate.scientific_name !== s.queue[0].scientific_name || typeof candidate.file_title !== 'string') throw new Error('Candidate species mismatch');\n  return out({path:'stage',body:{scientific_name:candidate.scientific_name,file_title:candidate.file_title}});\n}\nif (path === 'stage') {\n  if (!/^[a-f0-9]{64}$/.test(b.candidate_id || '')) throw new Error('Invalid stage candidate_id');\n  return out({path:'status',body:{candidate_id:b.candidate_id}});\n}\nif (path === 'status') { s.results.push(b); s.queue.shift(); return next(); }\nthrow new Error('Unexpected collection operation');\n"
+          },
+          "id": "1c223af3-958e-5ee4-aa08-882aa35ddf78",
+          "name": "Advance state",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            1792,
+            -104
+          ]
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": true,
+                "leftValue": "",
+                "typeValidation": "strict",
+                "version": 2
+              },
+              "conditions": [
+                {
+                  "id": "dca0b0aa-ed7d-559c-a44f-4880a260debc",
+                  "leftValue": "={{ $json.wait_seconds > 0 }}",
+                  "rightValue": true,
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "options": {}
+          },
+          "id": "abd70f60-943e-57a7-b568-89bd3d1abb59",
+          "name": "Cooldown required",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.3,
+          "position": [
+            2016,
+            -104
+          ]
+        },
+        {
+          "parameters": {
+            "amount": "={{ $json.wait_seconds }}"
+          },
+          "id": "f6e9c6c6-aa20-5f91-968d-304f5b9ba10e",
+          "name": "Respect Retry-After",
+          "type": "n8n-nodes-base.wait",
+          "typeVersion": 1.1,
+          "position": [
+            2240,
+            -176
+          ],
+          "webhookId": "060e2b8e-dacf-5333-b2b3-076208374cb4"
+        },
+        {
+          "parameters": {
+            "jsCode": "const x=$input.first().json; x.wait_seconds=0; x.done=!x.request; return [{json:x}];"
+          },
+          "id": "88f35417-bd7f-57d9-9c14-6949f9958f32",
+          "name": "After cooldown",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2464,
+            -176
+          ]
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": true,
+                "leftValue": "",
+                "typeValidation": "strict",
+                "version": 2
+              },
+              "conditions": [
+                {
+                  "id": "8bccfbff-c259-5502-8e58-837ded92c5b1",
+                  "leftValue": "={{ $json.done }}",
+                  "rightValue": true,
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "options": {}
+          },
+          "id": "6ec38431-884c-5159-95bf-b8dadc92c7be",
+          "name": "Finished",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.3,
+          "position": [
+            2688,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "jsCode": "const s=$input.first().json.state;\nreturn [{json:{action:s.action,status:s.deferred?'deferred':'finished',results:s.results,next_cursor:s.next_cursor,status_after_wait:s.status_after_wait||null,publication_automatic:false,scheduled:s.config.scheduled===true}}];"
+          },
+          "id": "a106de34-39e7-5a8f-afef-7e80d0d8388a",
+          "name": "Prepare execution summary",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            2912,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "cronExpression",
+                  "expression": "0 3 * * *"
+                }
+              ]
+            }
+          },
+          "id": "f227d8f4-d09e-5500-b235-1e1539c14f4a",
+          "name": "Daily 03:00 Korea",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.2,
+          "position": [
+            0,
+            -128
+          ]
+        },
+        {
+          "parameters": {
+            "jsCode": "const row=$input.first().json;\nreturn [{json:{action:'collect',limit:1,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];"
+          },
+          "id": "da4a6966-3ee9-59f7-bd7f-536612d22e8e",
+          "name": "Scheduled collection inputs",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            448,
+            -128
+          ]
+        },
+        {
+          "parameters": {
+            "jsCode": "return $input.all();"
+          },
+          "id": "32cb703e-3254-5dbf-8556-697832e7bfcb",
+          "name": "Execution inputs",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            672,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "operation": "get",
+            "dataTableId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "J49mL4EifvZ0Pres"
+            },
+            "matchType": "allConditions",
+            "filters": {
+              "conditions": [
+                {
+                  "keyName": "cursor_key",
+                  "keyValue": "prod"
+                }
+              ]
+            },
+            "limit": 1
+          },
+          "id": "65e281b3-7e08-5fc4-a5b6-96b5b6b6b59e",
+          "name": "Read scheduled cursor",
+          "type": "n8n-nodes-base.dataTable",
+          "typeVersion": 1.1,
+          "position": [
+            224,
+            -128
+          ],
+          "alwaysOutputData": true,
+          "retryOnFail": false
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": true,
+                "leftValue": "",
+                "typeValidation": "strict",
+                "version": 2
+              },
+              "conditions": [
+                {
+                  "id": "69be3c03-1f0c-536f-9d90-af5b8665a1c2",
+                  "leftValue": "={{ $json.scheduled === true && $json.status === 'finished' }}",
+                  "rightValue": true,
+                  "operator": {
+                    "type": "boolean",
+                    "operation": "true",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "options": {}
+          },
+          "id": "088fb9df-2f24-5aa6-acee-344f730827ed",
+          "name": "Checkpoint scheduled success",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.3,
+          "position": [
+            3136,
+            -32
+          ]
+        },
+        {
+          "parameters": {
+            "operation": "upsert",
+            "dataTableId": {
+              "__rl": true,
+              "mode": "id",
+              "value": "J49mL4EifvZ0Pres"
+            },
+            "matchType": "allConditions",
+            "filters": {
+              "conditions": [
+                {
+                  "keyName": "cursor_key",
+                  "keyValue": "prod"
+                }
+              ]
+            },
+            "columns": {
+              "mappingMode": "defineBelow",
+              "value": {
+                "cursor_key": "prod",
+                "after_taxon_id": "={{ $json.next_cursor || '' }}"
+              }
+            },
+            "options": {
+              "dryRun": false
+            }
+          },
+          "id": "a26f0fb2-e0d8-5bb1-a2f5-9cacb485ccda",
+          "name": "Save scheduled cursor",
+          "type": "n8n-nodes-base.dataTable",
+          "typeVersion": 1.1,
+          "position": [
+            3360,
+            -104
+          ],
+          "retryOnFail": false
+        },
+        {
+          "parameters": {
+            "jsCode": "const s=$('Prepare execution summary').first().json;return [{json:{...s,cursor_saved:s.scheduled===true&&s.status==='finished'}}];"
+          },
+          "id": "c4eda4ff-359d-52b7-b7ee-78a27161f1af",
+          "name": "Execution summary",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [
+            3584,
+            -32
+          ]
+        }
+      ],
+      "connections": {
+        "Manual trigger": {
+          "main": [
+            [
+              {
+                "node": "Manual inputs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Manual inputs": {
+          "main": [
+            [
+              {
+                "node": "Execution inputs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Initialize request": {
+          "main": [
+            [
+              {
+                "node": "Prepare request",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare request": {
+          "main": [
+            [
+              {
+                "node": "Audio API",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Audio API": {
+          "main": [
+            [
+              {
+                "node": "Advance state",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Advance state": {
+          "main": [
+            [
+              {
+                "node": "Cooldown required",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Cooldown required": {
+          "main": [
+            [
+              {
+                "node": "Respect Retry-After",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Finished",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Respect Retry-After": {
+          "main": [
+            [
+              {
+                "node": "After cooldown",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "After cooldown": {
+          "main": [
+            [
+              {
+                "node": "Finished",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Finished": {
+          "main": [
+            [
+              {
+                "node": "Prepare execution summary",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Prepare request",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Daily 03:00 Korea": {
+          "main": [
+            [
+              {
+                "node": "Read scheduled cursor",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Read scheduled cursor": {
+          "main": [
+            [
+              {
+                "node": "Scheduled collection inputs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Scheduled collection inputs": {
+          "main": [
+            [
+              {
+                "node": "Execution inputs",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Execution inputs": {
+          "main": [
+            [
+              {
+                "node": "Verify PROD collector health",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Verify PROD collector health": {
+          "main": [
+            [
+              {
+                "node": "Initialize request",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare execution summary": {
+          "main": [
+            [
+              {
+                "node": "Checkpoint scheduled success",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Checkpoint scheduled success": {
+          "main": [
+            [
+              {
+                "node": "Save scheduled cursor",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Execution summary",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Save scheduled cursor": {
+          "main": [
+            [
+              {
+                "node": "Execution summary",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      },
+      "authors": "Dove Kim",
+      "name": "Version 4f6af6c2",
+      "description": "",
+      "autosaved": true,
+      "workflowPublishHistory": [
+        {
+          "createdAt": "2026-11-05T03:09:56.787Z",
+          "id": 345,
+          "workflowId": "rgAudioCollectionProd01",
+          "versionId": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+          "event": "activated",
+          "userId": "fc9be268-d194-4287-ac65-3a8d51fb4251"
+        }
+      ]
+    }
+  },
+  "cursor": {
+    "data": [
+      {
+        "cursor_key": "fixture",
+        "after_taxon_id": "2",
+        "id": 2,
+        "createdAt": "2026-11-05T02:52:30.082Z",
+        "updatedAt": "2026-11-05T02:52:35.058Z"
+      },
+      {
+        "cursor_key": "prod",
+        "after_taxon_id": "avilist-taxon:v2025b:10399",
+        "id": 1,
+        "createdAt": "2026-11-05T02:46:10.910Z",
+        "updatedAt": "2026-11-06T18:00:07.412Z"
+      }
+    ],
+    "nextCursor": null
+  },
+  "workflow_ids": [
+    "hmtl20260719a7b2",
+    "XVx9VP7t74GElB0p",
+    "ujJyzlLbBQSHWcd0",
+    "Aofvp7nvJxHuvmCZ",
+    "lAhoIgivFiB59z8p",
+    "NbuvdYcU7vd5pRnp",
+    "5mkkZfHRh1zFGuZZ",
+    "vtOMX12kZzpS6Uwc",
+    "smy9xPoHICCO69JF",
+    "Kt26XhwQEO2SuRtt",
+    "twkxBUkux7XRIDQ2",
+    "G4kqFwe7yvar6xPz",
+    "Zx3zgylR2bgLMgSR",
+    "rgAudioCollectionProd01",
+    "Hmjfi1zAIOKR5YE5",
+    "mEf3EuZA4PQ6QcZ0",
+    "yAtHuG3UFEUvawEH",
+    "3tMvIoE0ALerApXh",
+    "mFzE6JOrFpNf0ZVI",
+    "nuIEsSkPxmrpaIEi",
+    "dZBL2ifx5JwC9tHZ",
+    "DMJfvlleqFHWL6Wq",
+    "Mw9tbGM9vyzu6X1F",
+    "n6itxrlhs6pJJITM",
+    "szSDVIWtpHDHYIuT",
+    "QDVAfmynJOfA7uUZ",
+    "7qGNon9dw6Bo4USU",
+    "euLDxI0eOCEs4z2D",
+    "j0w6SadSNCPN0ZAv",
+    "dCbBMUJlGpRFERN5",
+    "nxAeghXMFHT5anUW",
+    "TeCIOlWwUm6HTX2R",
+    "igIrjieP1O9IM1GX",
+    "33Tc3h1hZBj0RqA5",
+    "zyUU1muulSw9P00D",
+    "DhNZOZezIIfM08cY",
+    "Hy2GZ7WQ0n61ybOi",
+    "hBN54KLrn7cS0HMi",
+    "M5hYT97EylZ00Wjk",
+    "8sWGNKpFL5SGG3SY",
+    "vFB6xpsfgt8PH19b"
+  ],
+  "next_inventory_cursor": null,
+  "specs": {}
+}

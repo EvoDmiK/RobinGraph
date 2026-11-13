@@ -1,0 +1,56 @@
+{
+  "verified_at_utc": "2026-11-07T13:25:39.343567+00:00",
+  "workflow_id": "rgAudioCollectionProd01",
+  "name": "RobinGraph Audio Collection PROD (daily 5 species)",
+  "active": true,
+  "previous_version": "4f6af6c2-d708-4ef6-a158-175fb95730b7",
+  "active_version": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+  "current_version": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+  "daily_target_species": 5,
+  "cron": "0 3 * * *",
+  "timezone": "Asia/Seoul",
+  "next_scheduled_kst": "2026-11-08T03:00:00+09:00",
+  "next_scheduled_execution_observed": false,
+  "published_nodes_and_connections_match": true,
+  "only_changed_node": "Scheduled collection inputs",
+  "other_nodes_unchanged": true,
+  "connections_unchanged": true,
+  "existing_setting_values_preserved": true,
+  "api_added_schema_defaults": {
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "initial_exact_settings_comparison_failed": true,
+  "initial_failure_resolved_by_readonly_verification": true,
+  "workflow_update_requests": 1,
+  "cursor_unchanged": true,
+  "cursor_rows": [
+    {
+      "cursor_key": "fixture",
+      "after_taxon_id": "2",
+      "id": 2,
+      "createdAt": "2026-11-05T02:52:30.082Z",
+      "updatedAt": "2026-11-05T02:52:35.058Z"
+    },
+    {
+      "cursor_key": "prod",
+      "after_taxon_id": "avilist-taxon:v2025b:10399",
+      "id": 1,
+      "createdAt": "2026-11-05T02:46:10.910Z",
+      "updatedAt": "2026-11-06T18:00:07.412Z"
+    }
+  ],
+  "workflow_ids_unchanged": true,
+  "manual_inputs_unchanged": true,
+  "automatic_publication": false,
+  "new_collection_executions_triggered": 0,
+  "app_restarts": 0,
+  "credential_writes": 0,
+  "latest_existing_execution": {
+    "id": 79835,
+    "status": "success",
+    "mode": "trigger",
+    "started_at_utc": "2026-11-06T18:00:00.152Z"
+  },
+  "no_post_update_collection_execution_observed": true
+}

@@ -1,0 +1,187 @@
+{
+  "source_sha256": "5a095d694bc0f39500feeeb1962e5dca14f16965a5bbc2e404561d0a63132007",
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_browser": true,
+  "checks": [
+    {
+      "page": "chat",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "chat",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "explore",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "explore",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "birds",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "birds",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "audio-review",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "audio-review",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 1280,
+      "documentWidth": 1280
+    },
+    {
+      "page": "chat",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "chat",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "explore",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "explore",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "birds",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "birds",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "audio-review",
+      "preference": "light",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": false,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    },
+    {
+      "page": "audio-review",
+      "preference": "dark",
+      "scheme": "light only",
+      "background": "rgb(248, 243, 231)",
+      "text": "rgb(42, 39, 31)",
+      "darkRequested": true,
+      "controlScheme": "light only",
+      "width": 390,
+      "documentWidth": 390
+    }
+  ],
+  "light_dark_palette_identical": true,
+  "page_exceptions": 0,
+  "physical_mobile_tested": false,
+  "production_changed": false
+}

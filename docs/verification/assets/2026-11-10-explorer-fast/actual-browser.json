@@ -1,0 +1,64 @@
+{
+  "source_sha256": "484e95223aa961c7dacdefc7cdc175406b4e9f2f76f9f8bac325050d140278c9",
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_browser": true,
+  "checks": [
+    {
+      "width": 1280,
+      "documentWidth": 1280,
+      "dialogLeft": 435.578125,
+      "dialogRight": 844.421875,
+      "dialogTop": 28,
+      "dialogBottom": 872,
+      "name": "Oriolus chinensis",
+      "url": "?species_scope=korea&taxon=Passeriformes&habitat=Forest&diet=fruit",
+      "label": "꾀꼬리 도감 카드"
+    },
+    {
+      "width": 390,
+      "documentWidth": 390,
+      "dialogLeft": 12.078125,
+      "dialogRight": 377.921875,
+      "dialogTop": 28,
+      "dialogBottom": 872,
+      "name": "Oriolus chinensis",
+      "url": "?species_scope=korea&taxon=Passeriformes&habitat=Forest&diet=fruit",
+      "label": "꾀꼬리 도감 카드"
+    },
+    {
+      "width": 320,
+      "documentWidth": 320,
+      "dialogLeft": 12,
+      "dialogRight": 308,
+      "dialogTop": 28,
+      "dialogBottom": 872,
+      "name": "Oriolus chinensis",
+      "url": "?species_scope=korea&taxon=Passeriformes&habitat=Forest&diet=fruit",
+      "label": "꾀꼬리 도감 카드"
+    }
+  ],
+  "times": [
+    {
+      "width": 1280,
+      "open_ms": 645
+    },
+    {
+      "width": 390,
+      "open_ms": 6
+    },
+    {
+      "width": 320,
+      "open_ms": 6
+    }
+  ],
+  "keyboard_open": true,
+  "keyboard_flip": true,
+  "escape_close": true,
+  "close_button": true,
+  "focus_restored": true,
+  "results_preserved": true,
+  "profile_requests": 2,
+  "page_exceptions": 0,
+  "physical_mobile_tested": false,
+  "production_changed": false
+}

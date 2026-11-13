@@ -1,0 +1,4545 @@
+--- a/src/robingraph/api/drf/application.py
++++ b/src/robingraph/api/drf/application.py
+@@ -87,6 +87,7 @@
+     jev_router: JevRouter | None = None,
+     species_profile_handler: Callable[[str], dict] | None = None,
+     species_basic_profile_handler: Callable[[str], dict] | None = None,
++    species_media_profile_handler: Callable[[str], dict] | None = None,
+     related_species_handler: Callable[[str], dict] | None = None,
+     similar_species_handler: Callable[[str], dict] | None = None,
+     ecological_relations_handler: Callable[[str], dict] | None = None,
+@@ -122,6 +123,7 @@
+         jev_router=jev_router,
+         species_profile_handler=species_profile_handler,
+         species_basic_profile_handler=species_basic_profile_handler,
++        species_media_profile_handler=species_media_profile_handler,
+         related_species_handler=related_species_handler,
+         similar_species_handler=similar_species_handler,
+         ecological_relations_handler=ecological_relations_handler,
+--- a/src/robingraph/api/drf/openapi.json
++++ b/src/robingraph/api/drf/openapi.json
+@@ -279,6 +279,26 @@
+               "default": "all",
+               "title": "Species Scope"
+             }
++          },
++          {
++            "name": "defer_enrichment",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "boolean",
++              "default": false,
++              "title": "Defer Enrichment"
++            }
++          },
++          {
++            "name": "include_notes",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "boolean",
++              "default": true,
++              "title": "Include Notes"
++            }
+           }
+         ],
+         "responses": {
+@@ -299,6 +319,113 @@
+                 }
+               }
+             }
++          }
++        }
++      }
++    },
++    "/v1/taxa/explore": {
++      "get": {
++        "summary": "Bird Explorer",
++        "description": "Structured species search without natural-language parsing. Every filter is optional and each parameter may appear once; unknown or repeated parameters are rejected with 422. Results are species, the first 20 with has_more.",
++        "operationId": "bird_explorer_v1_taxa_explore_get",
++        "parameters": [
++          {
++            "name": "species_scope",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "enum": [
++                "all",
++                "korea",
++                "outside",
++                "unknown"
++              ],
++              "type": "string",
++              "default": "all",
++              "title": "Species Scope"
++            }
++          },
++          {
++            "name": "taxon",
++            "in": "query",
++            "required": false,
++            "description": "One order, family or genus: a single scientific name or a reviewed Korean name. Species and subspecies are rejected.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 100,
++              "pattern": "^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$",
++              "title": "Taxon"
++            }
++          },
++          {
++            "name": "habitat",
++            "in": "query",
++            "required": false,
++            "description": "One AVONET habitat value.",
++            "schema": {
++              "enum": [
++                "Forest",
++                "Shrubland",
++                "Woodland",
++                "Grassland",
++                "Rock",
++                "Wetland",
++                "Human Modified",
++                "Coastal",
++                "Marine",
++                "Riverine",
++                "Desert"
++              ],
++              "type": "string",
++              "title": "Habitat"
++            }
++          },
++          {
++            "name": "diet",
++            "in": "query",
++            "required": false,
++            "description": "Comma-separated distinct EltonTraits diet composition keys (1-10), all above 0%: invertebrate, endotherm_vertebrate, ectotherm_vertebrate, fish, unknown_vertebrate, carrion, fruit, nectar, seed, other_plant. Ranked by the sum of the selected shares.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "title": "Diet"
++            }
++          },
++          {
++            "name": "page",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "integer",
++              "minimum": 1,
++              "maximum": 10000,
++              "default": 1,
++              "title": "Page"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {}
++              }
++            }
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Bird explorer unavailable"
+           }
+         }
+       }
+@@ -385,6 +512,20 @@
+               "application/json": {
+                 "schema": {
+                   "$ref": "#/components/schemas/ChatResponse"
++                }
++              }
++            },
++            "headers": {
++              "X-RobinGraph-Trace-Id": {
++                "description": "Trace identifier, when feedback is available.",
++                "schema": {
++                  "type": "string"
++                }
++              },
++              "X-RobinGraph-Feedback-Token": {
++                "description": "Opaque response-specific capability, valid for up to 24 hours.",
++                "schema": {
++                  "type": "string"
+                 }
+               }
+             }
+@@ -664,6 +805,65 @@
+           },
+           "503": {
+             "description": "The AviList reference-taxonomy projection is unavailable"
++          }
++        }
++      }
++    },
++    "/v1/chat/feedback": {
++      "post": {
++        "summary": "Submit Chat Feedback",
++        "operationId": "submit_chat_feedback_v1_chat_feedback_post",
++        "requestBody": {
++          "required": true,
++          "content": {
++            "application/json": {
++              "schema": {
++                "$ref": "#/components/schemas/ChatFeedbackRequest"
++              }
++            }
++          }
++        },
++        "responses": {
++          "200": {
++            "description": "Feedback saved or identical feedback already present.",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "type": "object",
++                  "properties": {
++                    "status": {
++                      "type": "string",
++                      "enum": [
++                        "saved"
++                      ]
++                    }
++                  },
++                  "required": [
++                    "status"
++                  ],
++                  "additionalProperties": false
++                }
++              }
++            }
++          },
++          "400": {
++            "description": "Invalid or expired feedback capability."
++          },
++          "409": {
++            "description": "A different rating has already been submitted."
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Feedback storage or the trace is temporarily unavailable; retry later."
+           }
+         }
+       }
+@@ -905,6 +1105,18 @@
+             ],
+             "title": "Species Scope",
+             "default": "all"
++          },
++          "followup_context": {
++            "anyOf": [
++              {
++                "maxLength": 4096,
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Followup Context"
+           }
+         },
+         "additionalProperties": false,
+@@ -1005,6 +1217,27 @@
+             "anyOf": [
+               {
+                 "$ref": "#/components/schemas/EntityResolutionResponse"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          },
++          "followup_context": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Followup Context"
++          },
++          "followup": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupInfo"
+               },
+               {
+                 "type": "null"
+@@ -2235,6 +2468,152 @@
+         ],
+         "title": "ChatClarifyChoice",
+         "type": "object"
++      },
++      "ChatFeedbackRequest": {
++        "additionalProperties": false,
++        "properties": {
++          "token": {
++            "maxLength": 2048,
++            "minLength": 1,
++            "title": "Token",
++            "type": "string"
++          },
++          "rating": {
++            "enum": [
++              "helpful",
++              "misunderstood",
++              "incorrect"
++            ],
++            "title": "Rating",
++            "type": "string"
++          }
++        },
++        "required": [
++          "token",
++          "rating"
++        ],
++        "title": "ChatFeedbackRequest",
++        "type": "object"
++      },
++      "ChatFollowupInfo": {
++        "additionalProperties": false,
++        "properties": {
++          "status": {
++            "enum": [
++              "applied",
++              "rejected"
++            ],
++            "title": "Status",
++            "type": "string"
++          },
++          "reason": {
++            "anyOf": [
++              {
++                "enum": [
++                  "context_missing",
++                  "context_invalid",
++                  "context_scope_mismatch",
++                  "route_conflict",
++                  "unsupported_addition",
++                  "unresolved_addition",
++                  "multiple_additions",
++                  "duplicate_condition",
++                  "conflicting_condition"
++                ],
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Reason"
++          },
++          "root_question": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Root Question"
++          },
++          "added": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Added"
++          },
++          "plan": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupPlan"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          },
++          "retained": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupPlan"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          }
++        },
++        "required": [
++          "status"
++        ],
++        "title": "ChatFollowupInfo",
++        "type": "object"
++      },
++      "ChatFollowupPlan": {
++        "additionalProperties": false,
++        "properties": {
++          "conditions": {
++            "items": {
++              "type": "string"
++            },
++            "title": "Conditions",
++            "type": "array"
++          },
++          "taxon": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Taxon"
++          },
++          "scope": {
++            "enum": [
++              "all",
++              "korea",
++              "outside",
++              "unknown"
++            ],
++            "title": "Scope",
++            "type": "string"
++          }
++        },
++        "required": [
++          "scope"
++        ],
++        "title": "ChatFollowupPlan",
++        "type": "object"
+       }
+     }
+   }
+--- a/src/robingraph/api/drf/openapi_ingest.json
++++ b/src/robingraph/api/drf/openapi_ingest.json
+@@ -608,6 +608,26 @@
+               "default": "all",
+               "title": "Species Scope"
+             }
++          },
++          {
++            "name": "defer_enrichment",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "boolean",
++              "default": false,
++              "title": "Defer Enrichment"
++            }
++          },
++          {
++            "name": "include_notes",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "boolean",
++              "default": true,
++              "title": "Include Notes"
++            }
+           }
+         ],
+         "responses": {
+@@ -628,6 +648,113 @@
+                 }
+               }
+             }
++          }
++        }
++      }
++    },
++    "/v1/taxa/explore": {
++      "get": {
++        "summary": "Bird Explorer",
++        "description": "Structured species search without natural-language parsing. Every filter is optional and each parameter may appear once; unknown or repeated parameters are rejected with 422. Results are species, the first 20 with has_more.",
++        "operationId": "bird_explorer_v1_taxa_explore_get",
++        "parameters": [
++          {
++            "name": "species_scope",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "enum": [
++                "all",
++                "korea",
++                "outside",
++                "unknown"
++              ],
++              "type": "string",
++              "default": "all",
++              "title": "Species Scope"
++            }
++          },
++          {
++            "name": "taxon",
++            "in": "query",
++            "required": false,
++            "description": "One order, family or genus: a single scientific name or a reviewed Korean name. Species and subspecies are rejected.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 100,
++              "pattern": "^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$",
++              "title": "Taxon"
++            }
++          },
++          {
++            "name": "habitat",
++            "in": "query",
++            "required": false,
++            "description": "One AVONET habitat value.",
++            "schema": {
++              "enum": [
++                "Forest",
++                "Shrubland",
++                "Woodland",
++                "Grassland",
++                "Rock",
++                "Wetland",
++                "Human Modified",
++                "Coastal",
++                "Marine",
++                "Riverine",
++                "Desert"
++              ],
++              "type": "string",
++              "title": "Habitat"
++            }
++          },
++          {
++            "name": "diet",
++            "in": "query",
++            "required": false,
++            "description": "Comma-separated distinct EltonTraits diet composition keys (1-10), all above 0%: invertebrate, endotherm_vertebrate, ectotherm_vertebrate, fish, unknown_vertebrate, carrion, fruit, nectar, seed, other_plant. Ranked by the sum of the selected shares.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "title": "Diet"
++            }
++          },
++          {
++            "name": "page",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "type": "integer",
++              "minimum": 1,
++              "maximum": 10000,
++              "default": 1,
++              "title": "Page"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {}
++              }
++            }
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Bird explorer unavailable"
+           }
+         }
+       }
+@@ -714,6 +841,20 @@
+               "application/json": {
+                 "schema": {
+                   "$ref": "#/components/schemas/ChatResponse"
++                }
++              }
++            },
++            "headers": {
++              "X-RobinGraph-Trace-Id": {
++                "description": "Trace identifier, when feedback is available.",
++                "schema": {
++                  "type": "string"
++                }
++              },
++              "X-RobinGraph-Feedback-Token": {
++                "description": "Opaque response-specific capability, valid for up to 24 hours.",
++                "schema": {
++                  "type": "string"
+                 }
+               }
+             }
+@@ -993,6 +1134,65 @@
+           },
+           "503": {
+             "description": "The AviList reference-taxonomy projection is unavailable"
++          }
++        }
++      }
++    },
++    "/v1/chat/feedback": {
++      "post": {
++        "summary": "Submit Chat Feedback",
++        "operationId": "submit_chat_feedback_v1_chat_feedback_post",
++        "requestBody": {
++          "required": true,
++          "content": {
++            "application/json": {
++              "schema": {
++                "$ref": "#/components/schemas/ChatFeedbackRequest"
++              }
++            }
++          }
++        },
++        "responses": {
++          "200": {
++            "description": "Feedback saved or identical feedback already present.",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "type": "object",
++                  "properties": {
++                    "status": {
++                      "type": "string",
++                      "enum": [
++                        "saved"
++                      ]
++                    }
++                  },
++                  "required": [
++                    "status"
++                  ],
++                  "additionalProperties": false
++                }
++              }
++            }
++          },
++          "400": {
++            "description": "Invalid or expired feedback capability."
++          },
++          "409": {
++            "description": "A different rating has already been submitted."
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Feedback storage or the trace is temporarily unavailable; retry later."
+           }
+         }
+       }
+@@ -1345,6 +1545,18 @@
+             ],
+             "title": "Species Scope",
+             "default": "all"
++          },
++          "followup_context": {
++            "anyOf": [
++              {
++                "maxLength": 4096,
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Followup Context"
+           }
+         },
+         "additionalProperties": false,
+@@ -1445,6 +1657,27 @@
+             "anyOf": [
+               {
+                 "$ref": "#/components/schemas/EntityResolutionResponse"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          },
++          "followup_context": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Followup Context"
++          },
++          "followup": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupInfo"
+               },
+               {
+                 "type": "null"
+@@ -3128,6 +3361,152 @@
+         ],
+         "title": "ChatClarifyChoice",
+         "type": "object"
++      },
++      "ChatFeedbackRequest": {
++        "additionalProperties": false,
++        "properties": {
++          "token": {
++            "maxLength": 2048,
++            "minLength": 1,
++            "title": "Token",
++            "type": "string"
++          },
++          "rating": {
++            "enum": [
++              "helpful",
++              "misunderstood",
++              "incorrect"
++            ],
++            "title": "Rating",
++            "type": "string"
++          }
++        },
++        "required": [
++          "token",
++          "rating"
++        ],
++        "title": "ChatFeedbackRequest",
++        "type": "object"
++      },
++      "ChatFollowupInfo": {
++        "additionalProperties": false,
++        "properties": {
++          "status": {
++            "enum": [
++              "applied",
++              "rejected"
++            ],
++            "title": "Status",
++            "type": "string"
++          },
++          "reason": {
++            "anyOf": [
++              {
++                "enum": [
++                  "context_missing",
++                  "context_invalid",
++                  "context_scope_mismatch",
++                  "route_conflict",
++                  "unsupported_addition",
++                  "unresolved_addition",
++                  "multiple_additions",
++                  "duplicate_condition",
++                  "conflicting_condition"
++                ],
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Reason"
++          },
++          "root_question": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Root Question"
++          },
++          "added": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Added"
++          },
++          "plan": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupPlan"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          },
++          "retained": {
++            "anyOf": [
++              {
++                "$ref": "#/components/schemas/ChatFollowupPlan"
++              },
++              {
++                "type": "null"
++              }
++            ]
++          }
++        },
++        "required": [
++          "status"
++        ],
++        "title": "ChatFollowupInfo",
++        "type": "object"
++      },
++      "ChatFollowupPlan": {
++        "additionalProperties": false,
++        "properties": {
++          "conditions": {
++            "items": {
++              "type": "string"
++            },
++            "title": "Conditions",
++            "type": "array"
++          },
++          "taxon": {
++            "anyOf": [
++              {
++                "type": "string"
++              },
++              {
++                "type": "null"
++              }
++            ],
++            "title": "Taxon"
++          },
++          "scope": {
++            "enum": [
++              "all",
++              "korea",
++              "outside",
++              "unknown"
++            ],
++            "title": "Scope",
++            "type": "string"
++          }
++        },
++        "required": [
++          "scope"
++        ],
++        "title": "ChatFollowupPlan",
++        "type": "object"
+       }
+     }
+   }
+--- a/src/robingraph/api/drf/serializers.py
++++ b/src/robingraph/api/drf/serializers.py
+@@ -10,16 +10,20 @@
+ from __future__ import annotations
+ 
+ from datetime import date
+-from typing import Annotated, Any, ClassVar
+-
+-from pydantic import BaseModel, Field, TypeAdapter
++from typing import Annotated, Any, ClassVar, Literal
++
++from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, StringConstraints, TypeAdapter
++from pydantic_core import PydanticCustomError
+ from rest_framework import serializers
+ from rest_framework.fields import empty
+ 
++from ...retrieval.graph_questions import DIET_SHARE_KEYS, TRAIT_CONDITIONS
+ from ...retrieval.species_scope import SpeciesScope
+ from .. import ingest_service as ingest
+ from .. import schemas
+-from .validation import jsonable, missing, raise_if_errors, validate
++from .validation import RequestValidationFailed, jsonable, missing, raise_if_errors, validate
++
++AVONET_HABITATS = TRAIT_CONDITIONS["habitat"][2]
+ 
+ _REQUIRED = object()
+ 
+@@ -123,12 +127,59 @@
+     query_params = {"name": Param(_NAME), "species_scope": _SCOPE}
+ 
+ 
++class SpeciesProfileRequestSerializer(ScopedTaxonNameRequestSerializer):
++    query_params = {**ScopedTaxonNameRequestSerializer.query_params,
++                    "defer_enrichment": Param(bool, False), "include_notes": Param(bool, True)}
++
++
++def _diet_keys(value: Any) -> Any:
++    return value.split(",") if isinstance(value, str) else value
++
++
++def _distinct(keys: list[str]) -> list[str]:
++    if len(set(keys)) != len(keys):
++        raise PydanticCustomError("duplicate_value", "Diet keys must be distinct")
++    return keys
++
++
++class TaxonExploreRequestSerializer(EndpointRequestSerializer):
++    """Structured explorer filters; unknown or repeated parameters are rejected, never ignored."""
++
++    query_params = {
++        "page": Param(Annotated[int, Field(ge=1, le=10000)], 1),
++        "species_scope": _SCOPE,
++        "taxon": Param(Annotated[str | None, StringConstraints(
++            strip_whitespace=True, min_length=1, max_length=100, pattern=r"^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$")], None),
++        "habitat": Param(Literal[AVONET_HABITATS] | None, None),
++        "diet": Param(Annotated[list[Literal[DIET_SHARE_KEYS]] | None, BeforeValidator(_diet_keys),
++                                AfterValidator(lambda keys: keys and _distinct(keys)), Field(min_length=1, max_length=10)], None),
++    }
++
++    def run_validation(self, data: Any = empty) -> dict[str, Any]:
++        query = (data or {}).get("query") or {}
++        values = dict(query.lists()) if hasattr(query, "lists") else {name: [value] for name, value in query.items()}
++        errors = [{"type": "extra_forbidden", "loc": ("query", name), "msg": "Extra inputs are not permitted",
++                   "input": given[-1]} for name, given in values.items() if name not in self.query_params]
++        errors += [{"type": "duplicate_parameter", "loc": ("query", name), "msg": "Parameter must be given once",
++                    "input": given} for name, given in values.items() if name in self.query_params and len(given) > 1]
++        try:
++            values = super().run_validation(data)
++        except RequestValidationFailed as error:
++            errors += error.errors
++        raise_if_errors(errors)
++        return values
++
++
+ class QuestionRequestSerializer(EndpointRequestSerializer):
+     body = ("request", schemas.QuestionRequest)
+ 
+ 
+ class ChatRequestSerializer(EndpointRequestSerializer):
+     body = ("request", schemas.ChatRequest)
++
++
++class ChatFeedbackRequestSerializer(EndpointRequestSerializer):
++    body = ("request", schemas.ChatFeedbackRequest)
+ 
+ 
+ class DocumentSearchRequestSerializer(EndpointRequestSerializer):
+--- a/src/robingraph/api/drf/urls.py
++++ b/src/robingraph/api/drf/urls.py
+@@ -48,9 +48,11 @@
+         path("v1/taxa/related", bind(views.RelatedSpeciesView)),
+         path("v1/taxa/similar", bind(views.SimilarSpeciesView)),
+         path("v1/taxa/ecological-related", bind(views.EcologicalRelatedView)),
++        path("v1/taxa/explore", bind(views.TaxonExploreView)),
+         path("v1/taxa/subspecies", bind(views.SubspeciesView)),
+         path("v1/taxa/profile", bind(views.SpeciesProfileView)),
+         path("birds", bind(views.BirdsUIView)),
++        path("explore", bind(views.ExploreUIView)),
+         path("favicon.ico", bind(views.FaviconView)),
+         re_path(r"^static/(?P<asset_path>.*)\Z", bind(views.StaticAssetView)),
+         path("", bind(views.ChatUIView)),
+@@ -58,6 +60,7 @@
+         path("health", bind(views.HealthView)),
+         path("v1/answers", bind(views.AnswerView)),
+         path("v1/chat", bind(views.ChatView)),
++        path("v1/chat/feedback", bind(views.ChatFeedbackView)),
+         path("v1/search", bind(views.DocumentSearchView)),
+         path("v1/observations", bind(views.ObservationSearchView)),
+         path("v1/taxa/lineage", bind(views.TaxonomyLineageView)),
+--- a/src/robingraph/api/drf/views.py
++++ b/src/robingraph/api/drf/views.py
+@@ -193,6 +193,14 @@
+         return self.plain(self.service.ecological_related(**self.validated(request)))
+ 
+ 
++class TaxonExploreView(RobinGraphView):
++    http_method_names = ["get"]
++    request_serializer = serializers.TaxonExploreRequestSerializer
++
++    def get(self, request):
++        return self.plain(self.service.explore_taxa(**self.validated(request)))
++
++
+ class SubspeciesView(RobinGraphView):
+     http_method_names = ["get"]
+     request_serializer = serializers.TaxonNameRequestSerializer
+@@ -203,7 +211,7 @@
+ 
+ class SpeciesProfileView(RobinGraphView):
+     http_method_names = ["get"]
+-    request_serializer = serializers.ScopedTaxonNameRequestSerializer
++    request_serializer = serializers.SpeciesProfileRequestSerializer
+ 
+     def get(self, request):
+         return self.plain(self.service.profile(**self.validated(request)))
+@@ -222,7 +230,26 @@
+     request_serializer = serializers.ChatRequestSerializer
+ 
+     def post(self, request):
+-        return self.model(self.service.chat(**self.validated(request)), schemas.ChatResponse)
++        from ..feedback import feedback_headers
++
++        result = self.service.chat(**self.validated(request))
++        response = self.model(result, schemas.ChatResponse)
++        for key, value in feedback_headers(result._trace_id).items():
++            response[key] = value
++        if result.followup_context:   # a signed per-conversation capability is never cached
++            response["Cache-Control"] = "no-store"
++        return response
++
++
++class ChatFeedbackView(RobinGraphView):
++    http_method_names = ["post"]
++    request_serializer = serializers.ChatFeedbackRequestSerializer
++
++    def post(self, request):
++        from ..feedback import submit_feedback
++
++        submit_feedback(self.validated(request)["request"])
++        return self.plain({"status": "saved"})
+ 
+ 
+ class DocumentSearchView(RobinGraphView):
+@@ -265,6 +292,13 @@
+ 
+     def get(self, request):
+         return asset_response(self.service.birds_ui())
++
++
++class ExploreUIView(RobinGraphView):
++    http_method_names = ["get"]
++
++    def get(self, request):
++        return asset_response(self.service.explore_ui())
+ 
+ 
+ class FaviconView(RobinGraphView):
+--- /dev/null
++++ b/src/robingraph/api/feedback.py
+@@ -0,0 +1,49 @@
++"""Signed, response-specific feedback capabilities; no new application database."""
++import logging
++import os
++
++from django.core import signing
++
++from .. import tracing
++from .schemas import ChatFeedbackRequest
++from .services import ApiError
++
++_SALT = "robingraph.chat.feedback"
++_MAX_AGE = 24 * 60 * 60
++
++
++def feedback_headers(trace_id: str | None) -> dict[str, str]:
++    experiment_id = tracing.feedback_experiment_id()
++    if not trace_id or not experiment_id:
++        return {}
++    try:
++        token = signing.dumps({"trace_id": trace_id, "experiment_id": experiment_id,
++                               "target": os.getenv("ROBINGRAPH_DEPLOY_TARGET", "legacy")}, salt=_SALT)
++        return {"X-RobinGraph-Trace-Id": trace_id, "X-RobinGraph-Feedback-Token": token,
++                "Cache-Control": "no-store"}
++    except Exception as error:
++        # Feedback availability must never change the answer or leak the capability.
++        logging.getLogger(__name__).debug("Feedback token failed (%s)", type(error).__name__)
++        return {}
++
++
++def submit_feedback(request: ChatFeedbackRequest) -> None:
++    try:
++        data = signing.loads(request.token, salt=_SALT, max_age=_MAX_AGE)
++        if (not isinstance(data, dict) or not isinstance(data.get("trace_id"), str)
++                or not isinstance(data.get("experiment_id"), str)
++                or data.get("target") != os.getenv("ROBINGRAPH_DEPLOY_TARGET", "legacy")):
++            raise signing.BadSignature("Invalid feedback context")
++    except signing.BadSignature:
++        raise ApiError(400, "Feedback link is invalid or expired") from None
++    if tracing.feedback_experiment_id() is None:
++        raise ApiError(503, "Feedback is temporarily unavailable")
++    try:
++        tracing.record_feedback(data["trace_id"], data["experiment_id"], request.rating)
++    except tracing.FeedbackConflictError:
++        raise ApiError(409, "Feedback was already submitted") from None
++    except tracing.FeedbackTargetError:
++        raise ApiError(400, "Feedback link is invalid or expired") from None
++    except Exception as error:
++        logging.getLogger(__name__).warning("Feedback save failed (%s)", type(error).__name__)
++        raise ApiError(503, "Feedback is temporarily unavailable") from None
+--- /dev/null
++++ b/src/robingraph/api/followup.py
+@@ -0,0 +1,201 @@
++"""Condition-keeping follow-up of a successful taxon_traits query: one supported condition is added.
++
++The previous plan travels as a server-signed token; nothing else from the client is trusted, and the
++merged plan re-runs the fixed query (a previous page is never filtered). No new application database.
++"""
++from dataclasses import asdict, dataclass, replace
++import os
++import re
++
++from ..retrieval.graph_condition_extractor import (_DIET_CONDITIONS, _KOREA, _NEGATION, _UNSUPPORTED, _Claims,
++                                                   _claim_taxon, _residual, extract_graph_intent)
++from ..retrieval.graph_questions import LIMITATIONS, GraphQuestion, TraitCondition, checked_conditions, condition_label
++
++_SALT = "robingraph.chat.followup"
++_MAX_AGE = 60 * 60
++# A demonstrative start is the only follow-up signal; without one the question is a new, standalone one.
++_MARKER = re.compile(
++    r"\s*(?:(?:그럼|그러면)\s*)?"
++    r"(?:(?:그|이|저)\s*(?:새|종|결과)들?\s*(?:중|가운데)|그\s*(?:중|가운데)|이\s+(?:중|가운데)|이중(?=에)|"
++    r"(?:그|이)\s*결과|여기|거기)(?:에서|에|서)?(?:도|는)?(?![가-힣])\s*,?\s*")
++# "한국에서 볼 수 있는" reads as the existing Korea record scope (records, not residency).
++_KOREA_SEEN = r"(국내|한국|우리나라)(에서|에)?\s*(?:볼\s*수\s*있는|관찰할\s*수\s*있는|관찰되는)"
++_PROMPTS = {
++    "context_missing": "이어서 조회할 이전 조건을 찾지 못했습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
++    "context_invalid": "이전 조회 조건이 만료되었거나 확인되지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
++    "context_scope_mismatch": "이전 조회와 선택한 종 범위가 달라 조건을 이어받지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
++    "route_conflict": "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요.",
++    "unsupported_addition": "제외·비교 조건이나 종 사이 관계는 이전 조건에 이어 붙일 수 없습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 알려 주세요.",
++    "unresolved_addition": "추가할 조건을 확인하지 못했습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 구체적으로 알려 주세요.",
++    "multiple_additions": "이전 조건에는 조건을 한 번에 하나씩 추가할 수 있습니다. 하나만 먼저 알려 주세요.",
++    "duplicate_condition": "이미 적용된 조건입니다.",
++    "conflicting_condition": "이전 조건과 함께 적용할 수 없는 조건입니다. 바꾸려면 원하는 조건을 모두 넣어 새로 질문해 주세요.",
++}
++
++
++class FollowupRejected(ValueError):
++    def __init__(self, reason, plan=None):
++        super().__init__(reason)
++        self.reason, self.plan = reason, plan
++
++    def prompt(self, species_scope):
++        kept = describe(self.plan, species_scope) if self.plan else None
++        return _PROMPTS[self.reason] + (f" 유지한 조건: {kept}." if kept else "")
++
++
++@dataclass(frozen=True)
++class FollowupPlan:
++    root_question: str
++    rank: str | None
++    conditions: tuple[TraitCondition, ...]
++    scope: str | None = None   # 'korea' once a follow-up added the Korea record scope
++    turn: int = 0
++    added: str | None = None
++
++    def question(self):
++        return GraphQuestion("taxon_traits", (), self.rank, conditions=self.conditions)
++
++    def species_scope(self, requested):
++        return self.scope or requested
++
++
++def followup_text(question):
++    """The follow-up remainder ('' for a bare "그중?") when ``question`` starts with a demonstrative, else None."""
++    match = _MARKER.match(question)
++    return question[match.end():].strip(" \t\n?？!.,~") if match else None
++
++
++def plan_of(question, graph_question):
++    """Plan of an executed taxon_traits/order_fruit query, else None (other kinds are not continued)."""
++    if graph_question.kind == "taxon_traits":
++        conditions = graph_question.conditions
++    elif graph_question.kind == "order_fruit" and graph_question.criterion in _DIET_CONDITIONS:
++        conditions = (_DIET_CONDITIONS[graph_question.criterion],)
++    else:
++        return None
++    return FollowupPlan(question[:200], graph_question.rank_name, tuple(conditions))
++
++
++_SCOPE_LABELS = {"korea": "국내 기록", "outside": "국외 분포", "unknown": "한국 분포 미확인"}
++
++
++def describe(plan, species_scope):
++    scope = _SCOPE_LABELS.get(plan.species_scope(species_scope))
++    labels = [plan.rank, *(condition_label(c) for c in plan.conditions), scope]
++    return ", ".join(label for label in labels if label)
++
++
++def _shown(plan, species_scope):
++    return {"conditions": [condition_label(c) for c in plan.conditions], "taxon": plan.rank,
++            "scope": plan.species_scope(species_scope)} if plan else None
++
++
++def info(status, species_scope, plan=None, retained=None, reason=None):
++    """``plan``: what this response ran or kept; ``retained``: what its followup_context carries next."""
++    return {"status": status, "reason": reason, "root_question": plan.root_question if plan else None,
++            "added": plan.added if plan and status == "applied" else None,
++            "plan": _shown(plan, species_scope), "retained": _shown(retained, species_scope)}
++
++
++def issue(plan, species_scope):
++    """Signed token for ``plan`` or None when signing is unavailable (the answer itself is unaffected)."""
++    from django.core import signing
++
++    try:
++        return signing.dumps({"v": 1, "q": plan.root_question, "rank": plan.rank,
++                              "c": [asdict(c) for c in plan.conditions], "s": plan.scope, "t": plan.turn,
++                              "ss": species_scope, "target": os.getenv("ROBINGRAPH_DEPLOY_TARGET", "legacy")},
++                             salt=_SALT, compress=True)
++    except Exception:
++        return None
++
++
++def read(token, species_scope):
++    """Verified plan of ``token``; FollowupRejected for a missing, forged, expired or mismatched one."""
++    from django.core import signing
++
++    if not token:
++        raise FollowupRejected("context_missing")
++    try:
++        data = signing.loads(token, salt=_SALT, max_age=_MAX_AGE)
++        if not isinstance(data, dict) or data.get("v") != 1 or data.get("target") != os.getenv(
++                "ROBINGRAPH_DEPLOY_TARGET", "legacy"):
++            raise ValueError
++        rank, scope, turn, question = data.get("rank"), data.get("s"), data.get("t"), data.get("q")
++        if (not isinstance(question, str) or not question or rank is not None and not (
++                isinstance(rank, str) and re.fullmatch(r"[가-힣]+|[A-Z][a-z]+(?: [a-z]+(?:-[a-z]+)?){0,2}", rank))
++                or scope not in (None, "korea") or type(turn) is not int or not isinstance(data.get("c"), list)):
++            raise ValueError
++        plan = FollowupPlan(question, rank, checked_conditions(tuple(TraitCondition(**c) for c in data["c"])),
++                            scope, turn)
++    except Exception:
++        raise FollowupRejected("context_invalid") from None
++    if data.get("ss") != species_scope:
++        raise FollowupRejected("context_scope_mismatch")
++    return plan
++
++
++def _addition(text):
++    """The one (kind, value, label) the follow-up text adds; FollowupRejected otherwise."""
++    # "…새만 보여줘": a restriction particle on the target noun, not on a food ("열매만 먹는" stays).
++    text = re.sub(_KOREA_SEEN, r"\1\2 기록된", text)
++    text = re.sub(r"(?<=[새종것들목과속])만(?=\s*(?:보여|알려|찾아|있|[?.!]|$))", "", text)
++    text = re.sub(r"(?<=[가-힣][목과속])인(?=\s)", "", text)   # "참새목인 새"
++    intent = extract_graph_intent(text)
++    if intent.negation or intent.unsupported or intent.unsupported_food or re.search(_NEGATION, text) or any(
++            re.search(pattern, text) for _, pattern in _UNSUPPORTED):
++        raise FollowupRejected("unsupported_addition")
++    if intent.residual or intent.ambiguity:
++        raise FollowupRejected("unresolved_addition")
++    if intent.kind in ("taxon_traits", "order_fruit"):
++        conditions = ([c for c, _ in intent.conditions] if intent.kind == "taxon_traits"
++                      else [_DIET_CONDITIONS[intent.diet]])
++        units = [("condition", c, condition_label(c)) for c in conditions]
++        if intent.rank:
++            units.append(("taxon", intent.rank.text.strip(), intent.rank.text.strip()))
++        if intent.scope:
++            units.append(("scope", "korea", "국내 기록"))
++    elif intent.kind is not None:
++        raise FollowupRejected("unsupported_addition")
++    else:
++        # No trait cue: only a taxon or the Korea scope can be added; every other word blocks.
++        claims = _Claims(text)
++        claims.each(_KOREA, "scope", "korea")
++        _claim_taxon(claims)
++        if _residual(claims):
++            raise FollowupRejected("unresolved_addition")
++        units = [("scope", "korea", "국내 기록") for _ in claims.of("scope")]
++        units += [("taxon", claims.span(r).text, claims.span(r).text) for r in claims.of("rank")]
++    if not units:
++        raise FollowupRejected("unresolved_addition")
++    if len(units) > 1:
++        raise FollowupRejected("multiple_additions")
++    return units[0]
++
++
++def extend(plan, text, species_scope):
++    """``plan`` with the one condition ``text`` adds; every existing condition is kept."""
++    try:
++        kind, value, label = _addition(text)
++    except FollowupRejected as rejected:
++        raise FollowupRejected(rejected.reason, plan) from None
++    if kind == "scope":
++        if plan.scope or species_scope == "korea":
++            raise FollowupRejected("duplicate_condition", plan)
++        if species_scope != "all":
++            raise FollowupRejected("conflicting_condition", plan)
++        return replace(plan, scope="korea", turn=plan.turn + 1, added=label)
++    if kind == "taxon":
++        if plan.rank:
++            raise FollowupRejected("duplicate_condition" if plan.rank == value else "conflicting_condition", plan)
++        return replace(plan, rank=value, turn=plan.turn + 1, added=label)
++    if value in plan.conditions:
++        raise FollowupRejected("duplicate_condition", plan)
++    try:
++        conditions = checked_conditions(plan.conditions + (value,))
++    except ValueError:
++        raise FollowupRejected("conflicting_condition", plan) from None
++    return replace(plan, conditions=conditions, turn=plan.turn + 1, added=label)
++
++
++KOREA_LIMITATION = LIMITATIONS["korea_record"]
+--- a/src/robingraph/api/schemas.py
++++ b/src/robingraph/api/schemas.py
+@@ -10,7 +10,7 @@
+ from datetime import date
+ from typing import TYPE_CHECKING, Annotated, Callable, Literal
+ 
+-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
++from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator, model_validator
+ 
+ from ..retrieval.hybrid import HybridResult, HybridSearchOutcome
+ from ..retrieval.operational import OperationalObservation, OperationalObservationQuery
+@@ -261,6 +261,8 @@
+     defer_enrichment: bool = False
+     defer_discovery: bool = False
+     species_scope: SpeciesScope = "all"
++    # Opaque signed plan from the previous response of the same conversation; verified, never trusted.
++    followup_context: str | None = Field(default=None, max_length=4_096)
+ 
+     @field_validator("question")
+     @classmethod
+@@ -348,7 +350,27 @@
+ ]
+ 
+ 
++class ChatFollowupPlan(_ChatModel):
++    conditions: list[str] = Field(default_factory=list)
++    taxon: str | None = None
++    scope: SpeciesScope   # the species scope the plan runs with (request scope, or korea once added)
++
++
++class ChatFollowupInfo(_ChatModel):
++    status: Literal["applied", "rejected"]
++    reason: Literal["context_missing", "context_invalid", "context_scope_mismatch", "route_conflict",
++                    "unsupported_addition", "unresolved_addition", "multiple_additions", "duplicate_condition",
++                    "conflicting_condition"] | None = None
++    root_question: str | None = None
++    added: str | None = None
++    # The plan this response ran (applied) or kept (rejected); None when no context was verified.
++    plan: ChatFollowupPlan | None = None
++    # The plan `followup_context` carries into the next turn (the last successful one); None = no context.
++    retained: ChatFollowupPlan | None = None
++
++
+ class ChatResponse(_ChatModel):
++    _trace_id: str | None = PrivateAttr(default=None)
+     selected_intent: ChatIntent | None
+     route_method: Literal["semantic", "explicit", "deterministic", "jev"]
+     disposition: Literal["answer", "abstain", "clarify"]
+@@ -356,3 +378,10 @@
+     warnings: list[str]
+     result: ChatResult
+     entity_resolution: EntityResolutionResponse | None = None
++    followup_context: str | None = Field(default=None, exclude_if=lambda value: value is None)
++    followup: ChatFollowupInfo | None = Field(default=None, exclude_if=lambda value: value is None)
++
++
++class ChatFeedbackRequest(_ChatModel):
++    token: str = Field(min_length=1, max_length=2048)
++    rating: Literal["helpful", "misunderstood", "incorrect"]
+--- a/src/robingraph/api/services.py
++++ b/src/robingraph/api/services.py
+@@ -85,6 +85,8 @@
+ from ..retrieval.species_scope import SpeciesScope, scope_matches, with_species_scope
+ from .jev_router import JevRouter
+ from .question_entities import extract_name, rewrite_name_candidate, AmbiguousNameSpanError
++from .followup import (KOREA_LIMITATION, FollowupRejected, extend as extend_followup, followup_text,
++                       info as followup_info, issue as issue_followup, plan_of, read as read_followup)
+ 
+ 
+ class ApiError(Exception):
+@@ -117,6 +119,9 @@
+     "styles.css": "text/css; charset=utf-8",
+     "birds.html": "text/html; charset=utf-8",
+     "birds.js": "application/javascript",
++    "explore.html": "text/html; charset=utf-8",
++    "explore.js": "application/javascript",
++    "explore.css": "text/css; charset=utf-8",
+ }
+ # Branding icons are optional: a missing icon is a plain 404 and never turns the
+ # chat UI into "unavailable". They live in the same static directory.
+@@ -377,7 +382,9 @@
+ 
+ def _trace_payload(value: object) -> object:
+     if isinstance(value, BaseModel):
+-        return value.model_dump(mode="json")
++        value = value.model_dump(mode="json")
++        if value.get("followup_context"):   # a signed capability: traced as present, never as its value
++            value["followup_context"] = "[redacted]"
+     return value
+ 
+ 
+@@ -462,6 +469,7 @@
+                         tracing.set_trace_tags(tracing.resolve_response_tags(None, reason="unknown", stage="unknown"))
+                         raise
+                     if isinstance(result, ChatResponse):
++                        result._trace_id = span.trace_id
+                         span.set_attributes({
+                             "robingraph.selected_intent": result.selected_intent or "none",
+                             "robingraph.route_method": result.route_method,
+@@ -670,6 +678,7 @@
+         jev_router: JevRouter | None = None,
+         species_profile_handler: Callable[[str], dict] | None = None,
+         species_basic_profile_handler: Callable[[str], dict] | None = None,
++        species_media_profile_handler: Callable[[str], dict] | None = None,
+         related_species_handler: Callable[[str], dict] | None = None,
+         similar_species_handler: Callable[[str], dict] | None = None,
+         ecological_relations_handler: Callable[[str], dict] | None = None,
+@@ -693,6 +702,7 @@
+         self.jev_router = jev_router
+         self.species_profile_handler = species_profile_handler
+         self.species_basic_profile_handler = species_basic_profile_handler
++        self.species_media_profile_handler = species_media_profile_handler
+         self.related_species_handler = related_species_handler
+         self.similar_species_handler = similar_species_handler
+         self.ecological_relations_handler = ecological_relations_handler
+@@ -732,6 +742,12 @@
+             return self._unavailable_ui()
+         return _chat_asset_response(assets, "birds.html")
+ 
++    def explore_ui(self) -> AssetResponse:
++        assets = _read_chat_asset_bundle(self.asset_root, ("explore.html", "explore.js", "explore.css", "styles.css"))
++        if assets is None:
++            return self._unavailable_ui()
++        return _chat_asset_response(assets, "explore.html")
++
+     def chat_ui(self) -> AssetResponse:
+         assets = _read_chat_asset_bundle(self.asset_root)
+         if assets is None:
+@@ -757,6 +773,8 @@
+         if asset_path in _ICON_ASSET_MEDIA_TYPES:
+             return self.icon_asset(asset_path)
+         names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
++        if asset_path in ("explore.html", "explore.js", "explore.css"):
++            names = ("explore.html", "explore.js", "explore.css", "styles.css")
+         assets = _read_chat_asset_bundle(self.asset_root, names)
+         if assets is None:
+             # Do not reflect asset_path: it could contain deployment details or
+@@ -825,6 +843,37 @@
+         except Exception:
+             raise ApiError(status_code=503,detail="Ecological relations are temporarily unavailable") from None
+ 
++    @_traced_route("GET /v1/taxa/explore")
++    def explore_taxa(self, *, species_scope: SpeciesScope = "all", taxon: str | None = None,
++                     habitat: str | None = None, diet: list[str] | None = None, page: int = 1):
++        """Structured bird explorer: the request is the plan; no NL parsing, routing or LLM."""
++        from ..retrieval.graph_questions import DIET_SHARE_KEYS, LIMITATIONS, GraphQuestion, TraitCondition
++
++        graph_question_handler = self.graph_question_handler
++        if graph_question_handler is None:
++            raise ApiError(status_code=503, detail="Bird explorer is unavailable")
++        diet = sorted(diet or (), key=DIET_SHARE_KEYS.index)
++        conditions = ((TraitCondition("habitat", "eq", habitat),) if habitat else ()) + tuple(
++            TraitCondition("diet_distribution", "share_gt", key, 0) for key in diet)
++        query = {"species_scope": species_scope, "taxon": taxon, "habitat": habitat, "diet": diet, "page": page}
++        try:
++            payload = graph_question_handler(GraphQuestion("taxon_traits", rank_name=taxon, criterion="explore",
++                                                           conditions=conditions, page=page), species_scope=species_scope)
++            if not isinstance(payload, dict) or payload.get("status") not in ("answer", "empty", "insufficient_data"):
++                raise ValueError("Invalid bird explorer result")
++        except Exception as error:
++            logging.getLogger(__name__).warning("Bird explorer lookup failed (%s)", type(error).__name__)
++            raise ApiError(status_code=503, detail="Bird explorer is temporarily unavailable") from None
++        reason = payload.get("taxon_resolution")
++        if reason is not None:
++            kind = {"label_rank_conflict": "taxon_rank_conflict"}.get(reason, f"taxon_{reason}")
++            raise ApiError(status_code=422, detail=[{"type": kind, "loc": ["query", "taxon"], "input": taxon,
++                                                     "msg": "Taxon must name one active order, family or genus"}])
++        if species_scope == "korea":
++            payload = {**payload, "limitations": [*payload.get("limitations", []), LIMITATIONS["korea_record"]]}
++        query['page'] = payload.get('pagination', {}).get('page', page)
++        return {**payload, "query": query}
++
+     @_traced_route("GET /v1/taxa/subspecies")
+     def subspecies(self, *, name: str):
+         subspecies_handler = self.subspecies_handler
+@@ -840,8 +889,12 @@
+             raise ApiError(status_code=503,detail="Subspecies lookup is temporarily unavailable") from error
+ 
+     @_traced_route("GET /v1/taxa/profile")
+-    def profile(self, *, name: str, species_scope: SpeciesScope = "all"):
+-        species_profile_handler = self.species_profile_handler
++    def profile(self, *, name: str, species_scope: SpeciesScope = "all", defer_enrichment: bool = False, include_notes: bool = True):
++        species_profile_handler = (self.species_basic_profile_handler
++                                   if defer_enrichment and self.species_basic_profile_handler is not None
++                                   else self.species_profile_handler)
++        if not defer_enrichment and not include_notes and self.species_media_profile_handler is not None:
++            species_profile_handler = self.species_media_profile_handler
+         if not name.strip():
+             raise ApiError(status_code=422, detail="A species name is required")
+         if species_profile_handler is None:
+@@ -894,12 +947,47 @@
+                     result=ChatClarifyResult(prompt=prompt, choices=list(choices)),
+                 )
+ 
+-        graph_question = parse_graph_question(request.question) if request.intent in ("auto", "profile") else None
+-        species_question = parse_species_question(request.question) if request.intent in ("auto", "profile") else None
++        followup = base = None   # an accepted follow-up's merged plan, and the verified plan it extends
++        followup_rest = followup_text(request.question)
++        if followup_rest is not None and (request.intent in ("auto", "profile") or request.followup_context):
++            with tracing.span("graph_intent.route", tracing.CHAIN) as route_span:
++                try:
++                    base = read_followup(request.followup_context, request.species_scope)
++                    if request.intent not in ("auto", "profile") or (
++                            request.filters is not None and not (isinstance(request.filters, ProfileChatFilters)
++                                                 and request.filters.name is None)):
++                        # An explicit route or a species filter is never silently dropped for the context plan.
++                        raise FollowupRejected("route_conflict", base)
++                    followup = extend_followup(base, followup_rest, request.species_scope)
++                except FollowupRejected as rejected:
++                    route_span.set_attributes({"graph_followup.status": "rejected", "graph_followup.reason": rejected.reason,
++                                               "graph_followup.root_question": getattr(rejected.plan, "root_question", None)})
++                    _why({"context_missing": "followup_context_missing", "unsupported_addition": "unsupported_conditions",
++                          "unresolved_addition": "unresolved_conditions", "route_conflict": "filter_mismatch"}.get(
++                        rejected.reason, "followup_context_invalid" if rejected.reason.startswith("context_")
++                        else "plan_validation_rejected"), "followup")
++                    prompt = rejected.prompt(request.species_scope)
++                    return ChatResponse(
++                        selected_intent="profile", route_method="deterministic" if request.intent == "auto" else "explicit",
++                        disposition="clarify", answer_text=prompt,
++                        warnings=["이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."],
++                        result=ChatClarifyResult(prompt=prompt),
++                        followup_context=request.followup_context if rejected.plan else None,
++                        followup=followup_info("rejected", request.species_scope, rejected.plan, rejected.plan,
++                                               rejected.reason),
++                    )
++                route_span.set_attributes({"graph_followup.status": "applied", "graph_followup.root_question": followup.root_question,
++                                           "graph_followup.added": followup.added, "graph_followup.turn": followup.turn,
++                                           "graph_followup.canonical_plan": {**asdict(followup.question()),
++                                                                             "species_scope": followup.species_scope(request.species_scope)}})
++        graph_question = (followup.question() if followup else
++                          parse_graph_question(request.question) if request.intent in ("auto", "profile") else None)
++        species_question = (parse_species_question(request.question)
++                            if request.intent in ("auto", "profile") and not followup else None)
+         graph_method = "deterministic" if request.intent == "auto" else "explicit"
+         # Established single-species routes need no extra embedding request.
+         single_species = species_question or _species_chat_question(request.question)
+-        if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None
++        if (self.graph_intent_mode != "off" and self.graph_intent_handler is not None and followup is None
+                 and request.intent in ("auto", "profile") and (graph_question is not None or not single_species)):
+             from ..retrieval.graph_intent_schema import GraphIntent, canonical_graph_plan, execution_gate, to_graph_question, unsupported_food
+ 
+@@ -1045,7 +1133,9 @@
+             payload = None
+             if self.graph_question_handler is not None:
+                 try:
+-                    payload = self.graph_question_handler(graph_question, species_scope=request.species_scope)
++                    payload = self.graph_question_handler(
++                        graph_question, species_scope=followup.species_scope(request.species_scope)
++                        if followup else request.species_scope)
+                     if (not isinstance(payload, dict)
+                             or payload.get("status") not in ("answer", "empty", "insufficient_data")
+                             or not isinstance(payload.get("text"), str)
+@@ -1072,11 +1162,20 @@
+                            "limitations": ["조회 실패를 해당 종이나 관계가 없다는 뜻으로 해석하지 마세요."], "has_more": False}
+             elif payload["status"] != "answer":
+                 _why("no_matching_results" if payload["status"] == "empty" else "insufficient_data", "retrieval")
++            if followup and followup.scope and KOREA_LIMITATION not in payload.get("limitations", []):
++                payload = {**payload, "limitations": [*payload.get("limitations", []), KOREA_LIMITATION]}
++            # Only a successful condition query is continued; a follow-up miss keeps the last successful plan.
++            plan = followup or (plan_of(request.question, graph_question) if payload["status"] == "answer" else None)
++            context = issue_followup(plan, request.species_scope) if plan and payload["status"] == "answer" else None
++            retained = plan if context else None
++            if followup and context is None:
++                context, retained = request.followup_context, base
+             return ChatResponse(
+                 selected_intent="profile", route_method=graph_method,
+                 disposition="answer" if payload["status"] == "answer" else "abstain",
+                 answer_text=payload["text"], warnings=payload.get("limitations", []),
+-                result=ChatGraphResult(payload=payload),
++                result=ChatGraphResult(payload=payload), followup_context=context,
++                followup=followup_info("applied", request.species_scope, followup, retained) if followup else None,
+             )
+ 
+         # The routing body below predates the service extraction; bind the
+--- a/src/robingraph/api/static/chat.js
++++ b/src/robingraph/api/static/chat.js
+@@ -201,8 +201,161 @@
+     unknown: "한국 분포 근거를 아직 확인하지 못한 종을 표시하며 한국어 이름을 우선합니다. 국외 분포로 판정된 것이 아닙니다.",
+   };
+ 
++  var FOLLOWUP_SCOPE_LABELS = {
++    korea: "국내 기록",
++    outside: "국외 분포",
++    unknown: "한국 분포 미확인",
++  };
++
++  var FOLLOWUP_REASONS = [
++    "context_missing",
++    "context_invalid",
++    "context_scope_mismatch",
++    "route_conflict",
++    "unsupported_addition",
++    "unresolved_addition",
++    "multiple_additions",
++    "duplicate_condition",
++    "conflicting_condition",
++  ];
++
+   function normalizeSpeciesScope(value) {
+     return typeof value === "string" && SPECIES_SCOPES.indexOf(value) !== -1 ? value : "all";
++  }
++
++  function normalizeFollowupContext(value) {
++    if (typeof value !== "string") { return null; }
++    var trimmed = value.trim();
++    return trimmed && trimmed.length <= 4096 ? trimmed : null;
++  }
++
++  function followupPlanItems(plan) {
++    if (!plan || typeof plan !== "object" || SPECIES_SCOPES.indexOf(plan.scope) === -1) {
++      return [];
++    }
++    var items = [];
++    if (typeof plan.taxon === "string" && plan.taxon.trim()) {
++      var taxon = plan.taxon.trim().slice(0, 200);
++      items.push(taxon.indexOf("분류군:") === 0 ? taxon : "분류군: " + taxon);
++    }
++    (Array.isArray(plan.conditions) ? plan.conditions : []).slice(0, 8).forEach(function (cond) {
++      if (typeof cond === "string" && cond.trim()) {
++        var label = cond.trim().slice(0, 200);
++        if (items.indexOf(label) === -1) { items.push(label); }
++      }
++    });
++    var scopeLabel = FOLLOWUP_SCOPE_LABELS[plan.scope];
++    if (scopeLabel && items.indexOf(scopeLabel) === -1) {
++      items.push(scopeLabel);
++    }
++    return items;
++  }
++
++  function normalizeFollowupSummary(followup) {
++    if (!followup || typeof followup !== "object" || Array.isArray(followup.conditions)) { return null; }
++    var status = followup.status;
++    if (status !== "applied" && status !== "rejected") { return null; }
++    var reason = typeof followup.reason === "string" ? followup.reason.trim() : null;
++    if (reason && FOLLOWUP_REASONS.indexOf(reason) === -1) { return null; }
++    if (followup.plan != null && (!followup.plan || typeof followup.plan !== "object" || SPECIES_SCOPES.indexOf(followup.plan.scope) === -1)) {
++      return null;
++    }
++    if (followup.retained != null && (!followup.retained || typeof followup.retained !== "object" || SPECIES_SCOPES.indexOf(followup.retained.scope) === -1)) {
++      return null;
++    }
++    var planItems = followupPlanItems(followup.plan);
++    if (status === "applied" && !planItems.length) { return null; }
++    return {
++      status: status,
++      reason: reason,
++      root_question: typeof followup.root_question === "string" && followup.root_question.trim()
++        ? followup.root_question.trim().slice(0, 200) : null,
++      added: status === "applied" && typeof followup.added === "string" && followup.added.trim()
++        ? followup.added.trim().slice(0, 200) : null,
++      plan: planItems,
++      retained: followupPlanItems(followup.retained),
++    };
++  }
++
++  function initialGraphItems(payload, speciesScope) {
++    if (!payload || typeof payload !== "object") { return []; }
++    var items = [];
++    var hasConditions = Array.isArray(payload.conditions) && payload.conditions.length > 0;
++    if (hasConditions && payload.taxon && typeof payload.taxon === "object") {
++      var taxonLabel = speciesLabel(payload.taxon) || (typeof payload.taxon.scientific_name === "string" ? payload.taxon.scientific_name.trim() : "");
++      if (taxonLabel) { items.push("분류군: " + taxonLabel); }
++    } else if (hasConditions && typeof payload.taxon === "string" && payload.taxon.trim()) {
++      items.push("분류군: " + payload.taxon.trim());
++    }
++    if (hasConditions) {
++      payload.conditions.slice(0, 8).forEach(function (cond) {
++        var label = cond && typeof cond === "object" && typeof cond.label === "string"
++          ? cond.label.trim()
++          : (typeof cond === "string" ? cond.trim() : "");
++        if (label && items.indexOf(label) === -1) {
++          items.push(label.slice(0, 200));
++        }
++      });
++    } else if (typeof payload.criterion === "string" && payload.criterion.trim() && typeof payload.title === "string" && payload.title.trim()) {
++      items.push(payload.title.trim().slice(0, 200));
++    }
++    if (!items.length) { return []; }
++    var scopeLabel = FOLLOWUP_SCOPE_LABELS[normalizeSpeciesScope(speciesScope)];
++    if (scopeLabel && items.indexOf(scopeLabel) === -1) {
++      items.push(scopeLabel);
++    }
++    return items;
++  }
++
++  function appendConditionGroup(doc, parent, labelText, items, addedText) {
++    var header = doc.createElement("div");
++    header.className = "graph-query-conditions-header";
++    var title = doc.createElement("span");
++    title.className = "graph-query-conditions-label";
++    title.textContent = labelText;
++    header.appendChild(title);
++    if (addedText) {
++      var addedBadge = doc.createElement("span");
++      addedBadge.className = "graph-query-condition-added";
++      addedBadge.textContent = "추가 조건: " + addedText;
++      header.appendChild(addedBadge);
++    }
++    parent.appendChild(header);
++    var list = doc.createElement("ul");
++    list.className = "graph-query-condition-list";
++    items.forEach(function (itemText) {
++      var li = doc.createElement("li");
++      li.className = "graph-query-condition-chip";
++      li.textContent = itemText;
++      list.appendChild(li);
++    });
++    parent.appendChild(list);
++  }
++
++  function buildFollowupSummary(doc, followup, payload, speciesScope) {
++    var summary = normalizeFollowupSummary(followup);
++    if (followup != null && !summary) { return null; }
++    var isAbstain = Boolean(payload && payload.status && payload.status !== "answer");
++    var primaryItems = summary
++      ? (summary.status === "rejected" ? summary.retained : summary.plan)
++      : initialGraphItems(payload, speciesScope);
++    if (!primaryItems.length) { return null; }
++
++    var status = summary ? summary.status : "initial";
++    var box = doc.createElement("div");
++    box.className = "graph-query-conditions";
++    box.setAttribute("data-followup-status", status);
++    box.setAttribute("role", "group");
++    var isRejected = status === "rejected";
++    box.setAttribute("aria-label", isRejected ? "유지된 검색 조건" : "현재 적용 조건");
++
++    var primaryLabel = isRejected ? "유지된 조건" : (summary && isAbstain ? "이번 조회 조건" : "적용 조건");
++    appendConditionGroup(doc, box, primaryLabel, primaryItems, summary ? summary.added : null);
++
++    if (summary && status === "applied" && isAbstain && summary.retained.length) {
++      appendConditionGroup(doc, box, "다음 질문 유지 조건", summary.retained, null);
++    }
++    return box;
+   }
+ 
+   function distributionInfo(distribution) {
+@@ -222,13 +375,17 @@
+   }
+ 
+   /** Build the exact typed body accepted by POST /v1/chat. */
+-  function buildChatPayload(question, intent, values, speciesScope) {
++  function buildChatPayload(question, intent, values, speciesScope, followupContext) {
+     var payload = { question: question, intent: intent };
+     var scope = normalizeSpeciesScope(speciesScope || (values && values.species_scope));
+     if (scope !== "all") {
+       payload.species_scope = scope;
+     }
+     values = values || {};
++    var contextToken = normalizeFollowupContext(followupContext);
++    if (contextToken) {
++      payload.followup_context = contextToken;
++    }
+     if (intent === "profile") {
+       var profileName = typeof values.name === "string" ? values.name.trim() : "";
+       payload.filters = profileName ? { kind: "profile", name: profileName } : { kind: "profile" };
+@@ -517,9 +674,18 @@
+   // as the whole species' representative or average unrelated source samples.
+   function cardTraitGroups(traits) {
+     // A species card must never substitute a subordinate group's values.
+-    return groupTraits(traits.filter(function (trait) {
++    var groups = new Map();
++    groupTraits(traits.filter(function (trait) {
+       return trait && trait.source_scope_kind !== "subspecies_group";
+-    }));
++    })).forEach(function (group) {
++      var trait = group.trait;
++      // Equal recorded values share a row; each source keeps its own statistical metadata.
++      var statistic = trait.summary_statistic === "species_mean" ? null : trait.summary_statistic || null;
++      var key = JSON.stringify([trait.name, trait.value, trait.unit, trait.inferred, trait.source_scope_kind, trait.source_scope, statistic]);
++      if (groups.has(key)) { groups.get(key).sources = groups.get(key).sources.concat(group.sources); }
++      else { groups.set(key, group); }
++    });
++    return Array.from(groups.values());
+   }
+ 
+   function cardTraitValue(trait) {
+@@ -2112,6 +2278,16 @@
+       section.appendChild(heading);
+     }
+ 
++    var conditionBox = buildFollowupSummary(
++      doc,
++      options.followup || payload.followup,
++      payload,
++      options.speciesScope
++    );
++    if (conditionBox) {
++      section.appendChild(conditionBox);
++    }
++
+     if (payload.status === "insufficient_data" || payload.status === "empty") {
+       if (typeof payload.text === "string" && payload.text.trim()) {
+         var emptyMsg = doc.createElement("p");
+@@ -2121,26 +2297,35 @@
+       }
+     }
+ 
+-    if ((Array.isArray(payload.limitations) && payload.limitations.length > 0) || (payload.status === "answer" && payload.text)) {
++    var noteListItems = Array.from(new Set(
++      (Array.isArray(payload.limitations) ? payload.limitations : [])
++        .concat(Array.isArray(options.warnings) ? options.warnings : [])
++        .filter(function (note) { return typeof note === "string"; })
++        .map(function (note) { return note.trim(); })
++        .filter(Boolean)
++    ));
++
++    if (noteListItems.length > 0 || (payload.status === "answer" && payload.text)) {
+       var noteBox = doc.createElement("details");
+       noteBox.className = "species-note graph-query-notes";
+       var noteTitle = doc.createElement("summary");
+-      noteTitle.textContent = payload.status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
++      var baseTitle = payload.status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
++      noteTitle.textContent = noteListItems.length > 0 ? baseTitle + " (" + noteListItems.length + ")" : baseTitle;
+       noteBox.appendChild(noteTitle);
+       if (payload.status === "answer" && typeof payload.text === "string" && payload.text.trim()) {
+         var queryContext = doc.createElement("p");
+         queryContext.textContent = payload.text.trim();
+         noteBox.appendChild(queryContext);
+       }
+-      var noteList = doc.createElement("ul");
+-      (Array.isArray(payload.limitations) ? payload.limitations : []).forEach(function (limitation) {
+-        if (typeof limitation === "string" && limitation.trim()) {
++      if (noteListItems.length > 0) {
++        var noteList = doc.createElement("ul");
++        noteListItems.forEach(function (limitation) {
+           var li = doc.createElement("li");
+-          li.textContent = limitation.trim();
++          li.textContent = limitation;
+           noteList.appendChild(li);
+-        }
+-      });
+-      noteBox.appendChild(noteList);
++        });
++        noteBox.appendChild(noteList);
++      }
+     }
+ 
+     if (Array.isArray(payload.paths) && payload.paths.length > 0) {
+@@ -2815,7 +3000,7 @@
+       if (!selected.length) {
+         var empty = doc.createElement("p"); empty.className = "species-observation-empty";
+         empty.textContent = state === "subspecies" ? "이 아종만의 관찰 특징은 아직 확인하지 못했습니다." : state === "pending"
+-          ? "‘더 알아보기’에서 추가 자료를 확인하세요." : observationMessage || "출처가 확인된 관찰 자료가 아직 없습니다.";
++          ? observationMessage || "‘더 알아보기’에서 추가 자료를 확인하세요." : observationMessage || "출처가 확인된 관찰 자료가 아직 없습니다.";
+         observationArea.appendChild(empty);
+       } else {
+         var list = doc.createElement("ul"); list.className = "species-observation-list";
+@@ -3080,7 +3265,7 @@
+       photoSourcesSlot.appendChild(photoSources);
+       card.refreshSources();
+     }
+-    if (profile.enrichment_pending) {
++    if (profile.enrichment_pending && (!Array.isArray(profile.images) || !profile.images.length)) {
+       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
+     } else { renderPhotos(profile.images, profile.photo_availability); }
+     // A photo-only update leaves notes intact; explicit empty sections clear
+@@ -3101,6 +3286,11 @@
+         observationMessage = "추가 관찰 자료를 확인하지 못했습니다. 질문을 다시 보내 확인하세요.";
+         renderObservations();
+       }
++    };
++    card.setNotesMessage = function (message, pending) {
++      observationPending = Boolean(pending);
++      observationMessage = message;
++      renderObservations();
+     };
+ 
+     var dietInfo = dietIconInfo(profile);
+@@ -4236,7 +4426,7 @@
+     fitSurface.appendChild(card); fitFrame.appendChild(fitSurface); dialog.appendChild(fitFrame);
+     wrapper.appendChild(dialog);
+     var view = doc.defaultView;
+-    var fitActive = false, fitRaf = null, fitObserver = null;
++    var fitActive = false, fitRaf = null, fitObserver = null, removalObserver = null;
+     var collapsedFitHeight = 0;
+     var materialMeasureKey = "", materialCanvasHeight = 0;
+     function mobileFit() {
+@@ -4321,6 +4511,7 @@
+       else { fitCard(); }
+     }
+     function stopFit() {
++      if (removalObserver) { removalObserver.disconnect(); removalObserver = null; }
+       fitActive = false;
+       if (fitRaf !== null && view && view.cancelAnimationFrame) { view.cancelAnimationFrame(fitRaf); }
+       fitRaf = null;
+@@ -4335,6 +4526,10 @@
+       card.resetFitScroll();
+       collapsedFitHeight = 0;
+       fitActive = true;
++      if (view && typeof view.MutationObserver === "function" && doc.body) {
++        removalObserver = new view.MutationObserver(function () { if (!dialog.isConnected) { stopFit(); } });
++        removalObserver.observe(doc.body, { childList: true, subtree: true });
++      }
+       if (view && view.addEventListener) { view.addEventListener("resize", scheduleFit); }
+       if (view && view.visualViewport && view.visualViewport.addEventListener) { view.visualViewport.addEventListener("resize", scheduleFit); }
+       card.addEventListener("load", scheduleFit, true); card.addEventListener("toggle", scheduleFit, true);
+@@ -4531,6 +4726,7 @@
+       return doc.getElementById("species-scope-" + key);
+     }).filter(Boolean);
+     var scopeNote = doc.getElementById("species-scope-note");
++    var followupBar = doc.getElementById("followup-context-bar");
+     var activeSpeciesScope = "all";
+     scopeRadios.forEach(function (radio) {
+       if (radio.checked) { activeSpeciesScope = normalizeSpeciesScope(radio.value); }
+@@ -4549,6 +4745,21 @@
+     var enrichmentSections = [];
+     var activeChat = null;
+     var activeLookups = [];
++    var activeFollowupState = null;
++
++    function setFollowupState(nextState) {
++      activeFollowupState = nextState && nextState.token ? nextState : null;
++      if (!followupBar) { return; }
++      if (!activeFollowupState || !activeFollowupState.labels || activeFollowupState.labels.length === 0) {
++        followupBar.hidden = true;
++        followupBar.textContent = "";
++        return;
++      }
++      followupBar.hidden = false;
++      followupBar.textContent =
++        (activeFollowupState.retainedOnly ? "유지된 조건: " : "현재 적용 조건: ") +
++        activeFollowupState.labels.join(" · ");
++    }
+ 
+     function requestController() {
+       var Constructor = win.AbortController || (typeof AbortController !== "undefined" ? AbortController : null);
+@@ -4700,7 +4911,7 @@
+       scrollToLatest();
+     }
+ 
+-    function appendAnswerMessage(answer) {
++    function appendAnswerMessage(answer, feedbackToken) {
+       var scope = currentSpeciesScope();
+       var item = doc.createElement("div");
+       item.className = "message message-answer";
+@@ -4768,9 +4979,13 @@
+           item.appendChild(malformed);
+         }
+       }
+-      if (answer.result && answer.result.kind === "graph_query") {
++      var isGraphQuery = !!(answer.result && answer.result.kind === "graph_query");
++      if (isGraphQuery) {
+         var graphQuestionActive = conversationGuard();
+         var graphAnswer = buildGraphQueryAnswer(doc, answer.result.payload, {
++          followup: answer.followup,
++          speciesScope: scope,
++          warnings: answer.warnings,
+           onQuestion: function (questionText, scientificName) {
+             if (!graphQuestionActive() || input.disabled || form.getAttribute("aria-busy") === "true") {
+               return;
+@@ -4787,6 +5002,38 @@
+         if (graphAnswer) {
+           item.appendChild(graphAnswer);
+         }
++      } else if (answer.followup) {
++        var followupBox = buildFollowupSummary(doc, answer.followup, null, scope);
++        if (followupBox) {
++          item.appendChild(followupBox);
++        }
++      }
++
++      var nextToken = normalizeFollowupContext(answer && answer.followup_context);
++      var followupSummary = normalizeFollowupSummary(answer && answer.followup);
++      if (!nextToken || (answer && answer.followup != null && !followupSummary)) {
++        setFollowupState(null);
++      } else if (followupSummary) {
++        var unrecoverable = followupSummary.status === "rejected"
++          && ["context_missing", "context_invalid", "context_scope_mismatch"].indexOf(followupSummary.reason) !== -1;
++        setFollowupState(!unrecoverable && followupSummary.retained.length ? {
++          token: nextToken,
++          labels: followupSummary.retained,
++          retainedOnly: answer.disposition !== "answer",
++        } : null);
++      } else if (
++        answer.disposition === "answer"
++        && answer.result && answer.result.kind === "graph_query"
++        && answer.result.payload && answer.result.payload.status === "answer"
++      ) {
++        var initialLabels = initialGraphItems(answer.result.payload, scope);
++        setFollowupState(initialLabels.length ? {
++          token: nextToken,
++          labels: initialLabels,
++          retainedOnly: false,
++        } : null);
++      } else {
++        setFollowupState(null);
+       }
+ 
+       if (answer.result && answer.result.kind === "clarify" && Array.isArray(answer.result.choices)) {
+@@ -4926,7 +5173,7 @@
+         }
+       }
+ 
+-      var warnings = Array.isArray(answer.warnings) ? answer.warnings : [];
++      var warnings = (!isGraphQuery && Array.isArray(answer.warnings)) ? answer.warnings : [];
+       if (warnings.length > 0) {
+         var warnList = doc.createElement("ul");
+         warnList.className = "warnings";
+@@ -4993,6 +5240,75 @@
+       if (answerSources) {
+         if (answerSources.refreshSources) { answerSources.refreshSources(); }
+         item.appendChild(answerSources);
++      }
++
++      if (typeof feedbackToken === "string" && feedbackToken.trim()) {
++        var feedbackActive = conversationGuard();
++        var feedbackBusy = false;
++        var feedbackClosed = false;
++        var feedback = doc.createElement("section");
++        feedback.className = "answer-feedback";
++        feedback.setAttribute("aria-label", "답변 평가");
++        var feedbackButtons = doc.createElement("div");
++        feedbackButtons.className = "answer-feedback-buttons";
++        var feedbackStatus = doc.createElement("p");
++        feedbackStatus.className = "answer-feedback-status";
++        feedbackStatus.setAttribute("role", "status");
++        feedbackStatus.setAttribute("aria-live", "polite");
++        [["helpful", "도움됐어요"], ["misunderstood", "질문을 잘못 이해했어요"], ["incorrect", "답변이 틀렸어요"]].forEach(function (rating) {
++          var button = doc.createElement("button");
++          button.type = "button";
++          button.setAttribute("type", "button");
++          button.className = "answer-feedback-button";
++          button.textContent = rating[1];
++          button.setAttribute("aria-pressed", "false");
++          button.addEventListener("click", function () {
++            if (!feedbackActive() || feedbackBusy || feedbackClosed) { return; }
++            feedbackBusy = true;
++            Array.prototype.forEach.call(feedbackButtons.children, function (node) { node.disabled = true; });
++            feedbackStatus.textContent = "의견을 저장하고 있습니다…";
++            Promise.resolve().then(function () {
++              return win.fetch("/v1/chat/feedback", {
++                method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" },
++                body: JSON.stringify({ token: feedbackToken, rating: rating[0] }),
++              });
++            }).then(function (response) {
++              if (response.status === 409) { return { alreadySaved: true }; }
++              if (response.status === 400 || response.status === 422) { return { unavailable: true }; }
++              if (!response.ok) { throw new Error("feedback failed"); }
++              return response.json();
++            }).then(function (payload) {
++              if (payload && payload.unavailable === true) {
++                if (!feedbackActive()) { return; }
++                feedbackClosed = true;
++                feedbackStatus.textContent = "이 답변에는 의견을 남길 수 없습니다. 새 답변에서 다시 시도해 주세요.";
++                return;
++              }
++              if (payload && payload.alreadySaved === true) {
++                if (!feedbackActive()) { return; }
++                feedbackClosed = true;
++                feedbackStatus.textContent = "이미 의견이 저장된 답변입니다.";
++                return;
++              }
++              if (!payload || payload.status !== "saved") { throw new Error("feedback failed"); }
++              if (!feedbackActive()) { return; }
++              feedbackClosed = true;
++              button.setAttribute("aria-pressed", "true");
++              feedbackStatus.textContent = "의견을 남겨 주셔서 감사합니다.";
++            }).catch(function () {
++              if (!feedbackActive()) { return; }
++              feedbackStatus.textContent = "의견을 저장하지 못했습니다. 다시 눌러 시도해 주세요.";
++            }).then(function () {
++              if (!feedbackActive()) { return; }
++              feedbackBusy = false;
++              Array.prototype.forEach.call(feedbackButtons.children, function (node) { node.disabled = feedbackClosed; });
++            });
++          });
++          feedbackButtons.appendChild(button);
++        });
++        feedback.appendChild(feedbackButtons);
++        feedback.appendChild(feedbackStatus);
++        item.appendChild(feedback);
+       }
+ 
+       history.appendChild(item);
+@@ -5071,6 +5387,7 @@
+       var submitGen = ++requestGeneration;
+       var scopeGen = conversationGeneration;
+       var submittedScope = currentSpeciesScope();
++      var submittedFollowup = activeFollowupState ? activeFollowupState.token : null;
+       cancelEnrichments();
+       setBusy(true);
+       setStatus("답변을 불러오는 중입니다…");
+@@ -5082,7 +5399,7 @@
+           method: "POST",
+           credentials: "omit",
+           headers: { "Content-Type": "application/json" },
+-          body: JSON.stringify(Object.assign(payloadOverride || buildChatPayload(question, intent.value, selectedFilterValues(), submittedScope), { defer_discovery: true })),
++          body: JSON.stringify(Object.assign(payloadOverride || buildChatPayload(question, intent.value, selectedFilterValues(), submittedScope, submittedFollowup), { defer_discovery: true })),
+           signal: controller ? controller.signal : undefined,
+         })
+         .then(function (response) {
+@@ -5100,6 +5417,7 @@
+             return;
+           }
+           if (!result.response.ok) {
++            setFollowupState(null);
+             // The server's `detail` string is never read here: see
+             // sanitizeErrorMessage's fixed, honest per-status messages.
+             appendErrorMessage(sanitizeErrorMessage({ kind: "http", status: result.response.status }));
+@@ -5113,15 +5431,20 @@
+           // message.
+           var dispositionInfo = formatDisposition(result.payload && result.payload.disposition);
+           if (!dispositionInfo.recognized) {
++            setFollowupState(null);
+             appendErrorMessage(sanitizeErrorMessage({ kind: "unsupported-response" }));
+             return;
+           }
+-          appendAnswerMessage(result.payload);
++          var feedbackHeaders = result.response.headers;
++          var feedbackToken = feedbackHeaders && typeof feedbackHeaders.get === "function"
++            ? feedbackHeaders.get("X-RobinGraph-Feedback-Token") : null;
++          appendAnswerMessage(result.payload, feedbackToken);
+         })
+         .catch(function () {
+           if (submitGen !== requestGeneration || scopeGen !== conversationGeneration) {
+             return;
+           }
++          setFollowupState(null);
+           appendErrorMessage(sanitizeErrorMessage({ kind: "network" }));
+         })
+         .then(function () {
+@@ -5193,6 +5516,7 @@
+       conversationGeneration += 1;
+       requestGeneration += 1;
+       abortRequests();
++      setFollowupState(null);
+       messages.length = 0;
+       setBusy(false);
+       clearHistoryNodes();
+@@ -5220,6 +5544,7 @@
+       conversationGeneration += 1;
+       requestGeneration += 1;
+       abortRequests();
++      setFollowupState(null);
+       messages.length = 0;
+       clearHistoryNodes();
+       setStatus("대화 기록을 지웠습니다.");
+@@ -5261,7 +5586,7 @@
+ 
+   if (typeof document !== "undefined" && typeof window !== "undefined") {
+     document.addEventListener("DOMContentLoaded", function () {
+-      init(document, window);
++      if (document.getElementById("chat-form")) { init(document, window); }
+     });
+   }
+ 
+@@ -5273,6 +5598,9 @@
+     sanitizeErrorMessage: sanitizeErrorMessage,
+     boundedLimit: boundedLimit,
+     normalizeSpeciesScope: normalizeSpeciesScope,
++    normalizeFollowupContext: normalizeFollowupContext,
++    normalizeFollowupSummary: normalizeFollowupSummary,
++    buildFollowupSummary: buildFollowupSummary,
+     distributionInfo: distributionInfo,
+     buildChatPayload: buildChatPayload,
+     resultSummaryLines: resultSummaryLines,
+--- /dev/null
++++ b/src/robingraph/api/static/explore.css
+@@ -0,0 +1,470 @@
++.explore-page {
++  max-width: 960px;
++}
++
++.explore-page [hidden] {
++  display: none !important;
++}
++
++.explore-nav {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  flex-wrap: wrap;
++}
++
++.explore-main {
++  display: flex;
++  flex-direction: column;
++  gap: 1.15rem;
++  min-width: 0;
++}
++
++.explore-form {
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 1.25rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 14px;
++  min-width: 0;
++}
++
++.explore-fieldset {
++  margin: 0;
++  padding: 0.9rem 1rem;
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  background: var(--color-bg);
++  min-width: 0;
++}
++
++.explore-grid-two {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 1rem;
++  min-width: 0;
++}
++
++.explore-field {
++  display: flex;
++  flex-direction: column;
++  gap: 0.4rem;
++  padding: 0.9rem 1rem;
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  background: var(--color-bg);
++  min-width: 0;
++}
++
++.explore-label {
++  font-size: 0.9rem;
++  font-weight: 700;
++  color: var(--color-text);
++}
++
++.explore-field input,
++.explore-field select {
++  width: 100%;
++  min-width: 0;
++  min-height: 44px;
++  padding: 0.55rem 0.75rem;
++  font: inherit;
++  font-size: 0.92rem;
++  color: var(--color-text);
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++}
++
++.explore-field input:focus-visible,
++.explore-field select:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-field-hint {
++  margin: 0;
++  font-size: 0.8rem;
++  color: var(--color-muted);
++  line-height: 1.45;
++  overflow-wrap: anywhere;
++}
++
++.explore-diet-notice {
++  margin-bottom: 0.65rem;
++  padding: 0.55rem 0.75rem;
++  border-left: 3px solid var(--color-answer-border);
++  background: var(--color-answer-bg);
++  border-radius: 0 6px 6px 0;
++  color: var(--color-text);
++}
++
++.explore-diet-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
++  gap: 0.5rem;
++  min-width: 0;
++}
++
++.explore-diet-option {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  min-height: 44px;
++  padding: 0.45rem 0.65rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++  font-size: 0.86rem;
++  cursor: pointer;
++  min-width: 0;
++}
++
++.explore-diet-option:hover {
++  border-color: var(--color-accent);
++}
++
++.explore-diet-option:has(input:checked) {
++  background: var(--color-answer-bg);
++  border-color: var(--color-accent);
++  font-weight: 600;
++}
++
++.explore-diet-option:has(input:focus-visible) {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-diet-option input {
++  margin: 0;
++  flex-shrink: 0;
++  accent-color: var(--color-accent);
++}
++
++.explore-diet-option span {
++  min-width: 0;
++  overflow-wrap: anywhere;
++}
++
++.explore-diet-option small {
++  color: var(--color-muted);
++  font-weight: 400;
++  font-size: 0.76rem;
++}
++
++.explore-actions {
++  margin-top: 0.2rem;
++}
++
++.explore-status {
++  margin: 0;
++  padding: 0.5rem 0.25rem;
++}
++
++.explore-status[data-error="true"] {
++  color: var(--color-error-text);
++  font-weight: 600;
++}
++
++.explore-results {
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 1.25rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 14px;
++  min-width: 0;
++}
++
++.explore-results-header {
++  display: flex;
++  flex-direction: column;
++  gap: 0.55rem;
++  border-bottom: 1px solid var(--color-border);
++  padding-bottom: 0.85rem;
++}
++
++.explore-results-header h2 {
++  margin: 0;
++  font-size: 1.15rem;
++  color: var(--color-accent);
++  overflow-wrap: anywhere;
++}
++
++.explore-summary-text {
++  margin: 0;
++  font-size: 0.92rem;
++  color: var(--color-text);
++  line-height: 1.5;
++  overflow-wrap: anywhere;
++}
++
++.explore-sort-note {
++  margin: 0;
++  font-size: 0.82rem;
++  color: var(--color-muted);
++}
++
++.explore-coverage {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 0.65rem;
++  padding: 0.75rem 0.9rem;
++  background: var(--color-bg);
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++}
++
++.explore-coverage-item {
++  display: flex;
++  flex-direction: column;
++  gap: 0.15rem;
++  min-width: 0;
++}
++
++.explore-coverage-label {
++  font-size: 0.76rem;
++  color: var(--color-muted);
++}
++
++.explore-coverage-value {
++  font-size: 1rem;
++  font-weight: 700;
++  color: var(--color-text);
++}
++
++.explore-page-range {
++  margin: 0;
++  color: var(--color-muted);
++  font-size: 0.84rem;
++}
++
++.explore-pagination {
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  gap: 0.5rem;
++  flex-wrap: wrap;
++}
++
++.explore-pagination button,
++.explore-page-select {
++  min-height: 44px;
++  padding: 0.45rem 0.65rem;
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++  background: var(--color-surface);
++  color: var(--color-accent);
++  font: inherit;
++  font-size: 0.84rem;
++  cursor: pointer;
++}
++
++.explore-pagination button:disabled {
++  opacity: 0.45;
++  cursor: default;
++}
++
++.explore-pagination button:focus-visible,
++.explore-page-select:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-species-list {
++  list-style: none;
++  margin: 0;
++  padding: 0;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
++  gap: 0.75rem;
++}
++
++.explore-species-card {
++  display: flex;
++  flex-direction: column;
++  gap: 0.6rem;
++  padding: 0.9rem 1rem;
++  background: var(--color-bg);
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  min-width: 0;
++}
++
++.explore-species-top {
++  display: flex;
++  align-items: flex-start;
++  justify-content: space-between;
++  gap: 0.6rem;
++  flex-wrap: wrap;
++}
++
++.explore-species-identity {
++  display: flex;
++  flex-direction: column;
++  gap: 0.15rem;
++  min-width: 0;
++}
++
++.explore-species-name {
++  font-size: 1rem;
++  color: var(--color-text);
++  overflow-wrap: anywhere;
++}
++
++.explore-species-sci {
++  font-size: 0.83rem;
++  font-style: italic;
++  color: var(--color-muted);
++  overflow-wrap: anywhere;
++}
++
++.explore-species-sub {
++  font-size: 0.8rem;
++  color: var(--color-muted);
++  overflow-wrap: anywhere;
++}
++
++.explore-profile-link {
++  display: inline-flex;
++  align-items: center;
++  min-height: 36px;
++  padding: 0.3rem 0.65rem;
++  font-size: 0.8rem;
++  font-weight: 600;
++  color: var(--color-accent);
++  background: var(--color-surface);
++  border: 1px solid var(--color-answer-border);
++  border-radius: 999px;
++  text-decoration: none;
++  flex-shrink: 0;
++}
++
++.explore-profile-link:hover {
++  background: var(--color-answer-bg);
++  border-color: var(--color-accent);
++}
++
++.explore-profile-link:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-item-paths {
++  margin: 0;
++  padding-left: 1.15rem;
++  font-size: 0.82rem;
++  color: var(--color-text);
++  line-height: 1.5;
++}
++
++.explore-item-paths li {
++  margin: 0.2rem 0;
++  overflow-wrap: anywhere;
++}
++
++.explore-card-sources {
++  margin-top: auto;
++  padding-top: 0.65rem;
++  border-top: 1px solid var(--color-border);
++  font-size: 0.78rem;
++  color: var(--color-muted);
++  line-height: 1.5;
++  overflow-wrap: anywhere;
++}
++
++.explore-card-sources summary {
++  cursor: pointer;
++  min-height: 36px;
++  align-content: center;
++}
++
++.explore-card-sources summary:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-card-sources p {
++  margin: 0.4rem 0;
++}
++
++.explore-card-sources a {
++  color: var(--color-accent);
++  text-decoration: underline;
++  text-underline-offset: 2px;
++}
++
++.explore-state-box {
++  padding: 1rem 1.1rem;
++  border-radius: 10px;
++  border: 1px solid var(--color-border);
++  background: var(--color-bg);
++  display: flex;
++  flex-direction: column;
++  gap: 0.4rem;
++}
++
++.explore-state-box h3 {
++  margin: 0;
++  font-size: 1rem;
++}
++
++.explore-state-box p {
++  margin: 0;
++  font-size: 0.88rem;
++  line-height: 1.5;
++  overflow-wrap: anywhere;
++}
++
++.explore-state-box[data-state="empty"] {
++  border-color: var(--color-border);
++  background: var(--color-bg);
++}
++
++.explore-state-box[data-state="insufficient_data"] {
++  border-color: var(--color-abstain-border);
++  background: var(--color-abstain-bg);
++}
++
++.explore-state-box[data-state="validation_error"],
++.explore-state-box[data-state="error"] {
++  border-color: var(--color-error-border);
++  background: var(--color-error-bg);
++  color: var(--color-error-text);
++}
++
++@media (max-width: 640px) {
++  .explore-page {
++    padding: 1rem 0.85rem;
++  }
++
++  .explore-form,
++  .explore-results {
++    padding: 0.95rem;
++  }
++
++  .explore-grid-two {
++    grid-template-columns: minmax(0, 1fr);
++  }
++
++  .explore-diet-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++
++  .explore-coverage {
++    grid-template-columns: minmax(0, 1fr);
++  }
++
++  .explore-species-list {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
++
++@media (max-width: 300px) {
++  .explore-diet-grid {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
+--- /dev/null
++++ b/src/robingraph/api/static/explore.html
+@@ -0,0 +1,171 @@
++<!DOCTYPE html>
++<html lang="ko">
++<head>
++  <meta charset="utf-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <meta name="referrer" content="no-referrer" />
++  <title>조건으로 새 찾기 · RobinGraph</title>
++  <link rel="icon" href="/favicon.ico" sizes="any" />
++  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png" />
++  <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png" />
++  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
++  <link rel="stylesheet" href="/static/styles.css" />
++  <link rel="stylesheet" href="/static/explore.css" />
++  <script src="/static/chat.js" defer></script>
++  <script src="/static/explore.js" defer></script>
++</head>
++<body>
++  <div class="page explore-page">
++    <header class="app-header explore-header">
++      <div class="app-header-top">
++        <p class="brand">RobinGraph · Bird Explorer</p>
++        <nav class="explore-nav" aria-label="화면 이동">
++          <a href="/chat" class="explore-nav-link">← 질문으로 찾기</a>
++          <a href="/birds" class="explore-nav-link">새 도감</a>
++        </nav>
++      </div>
++      <h1 id="explore-title">조건으로 새 찾기</h1>
++      <p class="tagline">
++        분포 범위, 분류군(목·과·속), 대표 서식 환경, 먹이 구성을 조합해 출처가 확인된 종(species)을 찾아보세요.
++      </p>
++    </header>
++
++    <main class="explore-main">
++      <form id="explore-form" class="explore-form" autocomplete="off">
++        <fieldset id="explore-scope-controls" class="species-scope-controls explore-fieldset">
++          <legend class="species-scope-legend">1. 분포 범위 · 이름 우선 기준</legend>
++          <div class="species-scope-options">
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-all" name="species_scope" value="all" checked />
++              <span>전체 (기본 · 한국어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-korea" name="species_scope" value="korea" />
++              <span>국내 기록·분포 확인 (한국어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-outside" name="species_scope" value="outside" />
++              <span>국외 분포 검토 (영어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-unknown" name="species_scope" value="unknown" />
++              <span>미확인 (한국어 우선)</span>
++            </label>
++          </div>
++          <p id="explore-scope-note" class="species-scope-note">
++            전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.
++          </p>
++        </fieldset>
++
++        <div class="explore-grid-two">
++          <div class="explore-field">
++            <label for="explore-taxon" class="explore-label">2. 분류군 (목·과·속 국명 또는 학명)</label>
++            <input
++              id="explore-taxon"
++              name="taxon"
++              type="text"
++              maxlength="100"
++              placeholder="예: 참새목, 직박구리과, Passeriformes, Turdus"
++              aria-describedby="explore-taxon-hint"
++            />
++            <p id="explore-taxon-hint" class="explore-field-hint">
++              목·과·속 단위로 범위를 좁힙니다(종·아종 제외). 비워두면 선택한 분포 범위의 전체 조류를 대상으로 조회합니다.
++            </p>
++          </div>
++
++          <div class="explore-field">
++            <label for="explore-habitat" class="explore-label">3. 대표 서식 환경 (AVONET · 단일 선택)</label>
++            <select id="explore-habitat" name="habitat" aria-describedby="explore-habitat-hint">
++              <option value="">전체 서식 환경 (선택 안 함)</option>
++              <option value="Forest">숲</option>
++              <option value="Shrubland">관목 지대</option>
++              <option value="Woodland">성긴 숲</option>
++              <option value="Grassland">초지</option>
++              <option value="Rock">바위 지대</option>
++              <option value="Wetland">습지</option>
++              <option value="Human Modified">인공·변형 환경</option>
++              <option value="Coastal">해안</option>
++              <option value="Marine">바다</option>
++              <option value="Riverine">하천</option>
++              <option value="Desert">사막</option>
++            </select>
++            <p id="explore-habitat-hint" class="explore-field-hint">
++              AVONET 자료의 종별 대표 서식 환경(1개)과 일치하는 종을 찾습니다.
++            </p>
++          </div>
++        </div>
++
++        <fieldset id="explore-diet-controls" class="explore-fieldset">
++          <legend class="explore-label">4. 먹이 구성 (EltonTraits · 복수 선택 가능)</legend>
++          <p id="explore-diet-hint" class="explore-field-hint explore-diet-notice">
++            복수 선택 시 선택한 먹이가 모두 0%보다 큰 종(AND 조건)만 찾으며, 결과는 선택한 먹이 비율의 합계가 높은 순으로 정렬됩니다(가나다·알파벳순 아님). 먹이를 선택하지 않으면 이름순으로 정렬되며, 확실성 A·B·C 자료만 사용합니다.
++          </p>
++          <div id="explore-diet-options" class="explore-diet-grid" role="group" aria-describedby="explore-diet-hint">
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-invertebrate" name="diet" value="invertebrate" />
++              <span>곤충</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-endotherm_vertebrate" name="diet" value="endotherm_vertebrate" />
++              <span>고기 · 온혈동물</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-ectotherm_vertebrate" name="diet" value="ectotherm_vertebrate" />
++              <span>고기 · 변온동물</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-fish" name="diet" value="fish" />
++              <span>물고기</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-unknown_vertebrate" name="diet" value="unknown_vertebrate" />
++              <span>기타 고기</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-carrion" name="diet" value="carrion" />
++              <span>사체</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-fruit" name="diet" value="fruit" />
++              <span>열매</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-nectar" name="diet" value="nectar" />
++              <span>꽃꿀</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-seed" name="diet" value="seed" />
++              <span>씨앗</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-other_plant" name="diet" value="other_plant" />
++              <span>기타 식물</span>
++            </label>
++          </div>
++          <details class="explore-field-hint">
++            <summary>먹이 분류 안내</summary>
++            <p>‘곤충’은 자료의 무척추동물 범주로 다른 무척추동물도 포함합니다. 고기는 온혈동물·변온동물·기타 고기로 나누며 물고기와 사체는 별도입니다.</p>
++          </details>
++        </fieldset>
++
++        <div class="actions explore-actions">
++          <button type="submit" id="explore-submit" class="send-button">조건으로 새 찾기</button>
++          <button type="button" id="explore-reset" class="clear-button">조건 초기화</button>
++        </div>
++      </form>
++
++      <p id="explore-status" class="status-region explore-status" role="status" aria-live="polite">
++        분포 범위, 분류군, 서식 환경, 먹이 조건을 선택하고 ‘조건으로 새 찾기’를 눌러 조회하세요.
++      </p>
++
++      <section id="explore-results" class="explore-results" aria-live="polite" hidden></section>
++    </main>
++
++    <footer class="app-footer">
++      <p>
++        모든 조회 결과는 활성 분류 체계(AviList)와 직접 연결된 형질 자료(AVONET, EltonTraits)만을 근거로 종(species) 단위로 표시합니다.
++      </p>
++    </footer>
++  </div>
++</body>
++</html>
+--- /dev/null
++++ b/src/robingraph/api/static/explore.js
+@@ -0,0 +1,989 @@
++/* Bird Explorer UI: structured condition search over GET /v1/taxa/explore.
++ * All external strings are rendered strictly via textContent; links use safe http(s) validation. */
++(function (root, factory) {
++  "use strict";
++  var api = factory();
++  if (typeof module === "object" && module.exports) {
++    module.exports = api;
++  }
++  if (root && typeof root === "object") {
++    root.RobinGraphExplore = api;
++  }
++  if (typeof document !== "undefined" && document.getElementById && document.getElementById("explore-form")) {
++    api.init(document, typeof window !== "undefined" ? window : null);
++  }
++})(typeof globalThis !== "undefined" ? globalThis : this, function () {
++  "use strict";
++
++  var SPECIES_SCOPES = ["all", "korea", "outside", "unknown"];
++  var SCOPE_LABELS = {
++    all: "전체 (한국어 우선)",
++    korea: "국내 기록·분포 확인",
++    outside: "국외 분포 검토 (영어 우선)",
++    unknown: "한국 분포 미확인",
++  };
++  var SPECIES_SCOPE_NOTES = {
++    all: "전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.",
++    korea: "대한민국을 기준으로 출처의 Korea·Korean Peninsula 표기도 포함하며, 북한만 명시한 근거는 제외합니다. 한국어 이름을 우선하며 계절·미조 기록을 포함하므로 텃새·현재 서식을 뜻하지 않습니다.",
++    outside: "현재 일부 종의 정상 분포만 검토했으며 미확인 종은 포함하지 않습니다. 영어 이름을 우선하고 없으면 검증 국명·학명을 표시합니다. 우연한 도래나 사육 기록의 부재를 뜻하지 않습니다.",
++    unknown: "한국 분포 근거를 아직 확인하지 못한 종을 표시하며 한국어 이름을 우선합니다. 국외 분포로 판정된 것이 아닙니다.",
++  };
++
++  var HABITATS = [
++    "Forest",
++    "Shrubland",
++    "Woodland",
++    "Grassland",
++    "Rock",
++    "Wetland",
++    "Human Modified",
++    "Coastal",
++    "Marine",
++    "Riverine",
++    "Desert",
++  ];
++  var HABITAT_LABELS = {
++    Forest: "숲 (Forest)",
++    Shrubland: "관목 지대 (Shrubland)",
++    Woodland: "성긴 숲 (Woodland)",
++    Grassland: "초지 (Grassland)",
++    Rock: "바위 지대 (Rock)",
++    Wetland: "습지 (Wetland)",
++    "Human Modified": "인공·변형 환경 (Human Modified)",
++    Coastal: "해안 (Coastal)",
++    Marine: "바다 (Marine)",
++    Riverine: "하천 (Riverine)",
++    Desert: "사막 (Desert)",
++  };
++
++  var DIETS = [
++    "invertebrate",
++    "endotherm_vertebrate",
++    "ectotherm_vertebrate",
++    "fish",
++    "unknown_vertebrate",
++    "carrion",
++    "fruit",
++    "nectar",
++    "seed",
++    "other_plant",
++  ];
++  var DIET_LABELS = {
++    invertebrate: "곤충",
++    endotherm_vertebrate: "고기 · 온혈동물",
++    ectotherm_vertebrate: "고기 · 변온동물",
++    fish: "물고기",
++    unknown_vertebrate: "기타 고기",
++    carrion: "사체",
++    fruit: "열매",
++    nectar: "꽃꿀",
++    seed: "씨앗",
++    other_plant: "기타 식물",
++  };
++
++  function normalizeSpeciesScope(value) {
++    return typeof value === "string" && SPECIES_SCOPES.indexOf(value) !== -1 ? value : "all";
++  }
++
++  function sanitizeUrl(value) {
++    if (typeof value !== "string") { return null; }
++    var trimmed = value.trim();
++    if (!/^https?:\/\//i.test(trimmed)) { return null; }
++    try {
++      var parsed = new URL(trimmed);
++      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") { return null; }
++      if (parsed.username || parsed.password) { return null; }
++      return parsed.href;
++    } catch (_) {
++      return null;
++    }
++  }
++
++  function createEl(doc, tag, text, className) {
++    var node = doc.createElement(tag);
++    if (className) { node.className = className; }
++    if (text !== undefined && text !== null) {
++      node.textContent = String(text);
++    }
++    return node;
++  }
++
++  function safeLink(doc, label, rawUrl, className) {
++    var safeHref = sanitizeUrl(rawUrl);
++    var text = typeof label === "string" && label.trim() ? label.trim() : (safeHref || "출처");
++    if (!safeHref) {
++      return createEl(doc, "span", text, className);
++    }
++    var a = createEl(doc, "a", text, className);
++    a.href = safeHref;
++    a.target = "_blank";
++    a.rel = "noopener noreferrer";
++    return a;
++  }
++
++  function speciesLabel(taxon, scope) {
++    if (!taxon || typeof taxon !== "object") { return "새"; }
++    var verifiedKorean = taxon.korean_name_status !== "machine-translated"
++      && typeof taxon.korean_name === "string" && taxon.korean_name.trim()
++      ? taxon.korean_name.trim()
++      : "";
++    var english = typeof taxon.english_name === "string" && taxon.english_name.trim()
++      ? taxon.english_name.trim()
++      : "";
++    var scientific = typeof taxon.scientific_name === "string" && taxon.scientific_name.trim()
++      ? taxon.scientific_name.trim()
++      : "";
++    var display = typeof taxon.display_name === "string" && taxon.display_name.trim()
++      && (taxon.korean_name_status !== "machine-translated" || taxon.display_name.trim() !== taxon.korean_name)
++      ? taxon.display_name.trim()
++      : "";
++    if (display) { return display; }
++    if (normalizeSpeciesScope(scope) === "outside") {
++      return english || verifiedKorean || scientific || "새";
++    }
++    return verifiedKorean || english || scientific || "새";
++  }
++
++  function normalizeDietList(rawDiets) {
++    var list = Array.isArray(rawDiets)
++      ? rawDiets
++      : (typeof rawDiets === "string" && rawDiets.trim() ? rawDiets.split(",") : []);
++    var seen = new Set();
++    list.forEach(function (item) {
++      if (typeof item === "string") {
++        var key = item.trim();
++        if (DIETS.indexOf(key) !== -1) {
++          seen.add(key);
++        }
++      }
++    });
++    return DIETS.filter(function (key) { return seen.has(key); });
++  }
++
++  function buildExploreParams(state) {
++    state = state || {};
++    var params = new URLSearchParams();
++    var scope = normalizeSpeciesScope(state.species_scope);
++    params.set("species_scope", scope);
++
++    var taxon = typeof state.taxon === "string" ? state.taxon.trim().slice(0, 100) : "";
++    if (taxon) {
++      params.set("taxon", taxon);
++    }
++
++    var habitat = typeof state.habitat === "string" && HABITATS.indexOf(state.habitat) !== -1
++      ? state.habitat
++      : "";
++    if (habitat) {
++      params.set("habitat", habitat);
++    }
++
++    var diets = normalizeDietList(state.diet);
++    if (diets.length > 0) {
++      params.set("diet", diets.join(","));
++    }
++    var page = Number(state.page);
++    if (Number.isInteger(page) && page > 1 && page <= 10000) { params.set("page", String(page)); }
++    return params;
++  }
++
++  function parseExploreSearch(searchString) {
++    var raw = typeof searchString === "string" ? searchString.replace(/^\?/, "") : "";
++    var params = new URLSearchParams(raw);
++    var scopeRaw = params.get("species_scope");
++    var taxonRaw = params.get("taxon");
++    var habitatRaw = params.get("habitat");
++    var dietRaw = params.get("diet");
++    return {
++      hasQuery: raw.trim().length > 0,
++      rawQuery: raw.trim(),
++      page: Number(params.get("page") || 1),
++      species_scope: normalizeSpeciesScope(scopeRaw),
++      taxon: typeof taxonRaw === "string" ? taxonRaw.trim().slice(0, 100) : "",
++      habitat: typeof habitatRaw === "string" && HABITATS.indexOf(habitatRaw) !== -1 ? habitatRaw : "",
++      diet: normalizeDietList(dietRaw),
++    };
++  }
++
++  function formatValidationError(body) {
++    var details = body && Array.isArray(body.detail) ? body.detail : [];
++    var messages = [];
++    var seen = new Set();
++    function addMsg(msg) {
++      if (msg && !seen.has(msg)) {
++        seen.add(msg);
++        messages.push(msg);
++      }
++    }
++    details.forEach(function (err) {
++      if (!err || typeof err !== "object") { return; }
++      var type = typeof err.type === "string" ? err.type : "";
++      var loc = Array.isArray(err.loc) ? err.loc.join(".") : "";
++      if (type === "taxon_not_found") {
++        addMsg("입력한 분류군을 활성 분류 체계에서 찾지 못했습니다. 목·과·속 단위의 국명(예: 참새목, 직박구리과) 또는 학명(예: Passeriformes)을 확인해 주세요.");
++      } else if (type === "taxon_ambiguous") {
++        addMsg("입력한 이름에 해당하는 분류군이 둘 이상입니다. 정확한 학명(예: Passeriformes)으로 입력해 주세요.");
++      } else if (type === "taxon_rank_conflict") {
++        addMsg("입력한 한국어 분류군 이름의 계급(목·과·속)이 활성 분류 자료의 실제 계급과 일치하지 않습니다.");
++      } else if (type === "taxon_rank_unsupported" || type === "rank_unsupported") {
++        addMsg("분류군 입력란에는 목·과·속 단위만 입력할 수 있습니다. 특정 종이나 아종은 새 도감(/birds)에서 직접 조회해 주세요.");
++      } else if (loc.indexOf("taxon") !== -1) {
++        addMsg("분류군 입력 형식이 올바르지 않습니다. 목·과·속 학명 한 단어(예: Passeriformes) 또는 한글 분류군 이름(예: 참새목)을 입력해 주세요.");
++      } else if (type === "duplicate_parameter" || type === "extra_forbidden") {
++        addMsg("허용되지 않거나 중복된 조회 파라미터가 포함되었습니다. 서식 환경은 1개만 선택할 수 있습니다.");
++      } else {
++        addMsg("조회 조건 형식이 올바르지 않습니다. 선택한 분포 범위·서식 환경·먹이 조건을 다시 확인해 주세요.");
++      }
++    });
++    if (!messages.length) {
++      return "조회 조건 형식이 올바르지 않습니다. 입력한 분류군과 선택 조건을 다시 확인해 주세요.";
++    }
++    return messages.join(" ");
++  }
++
++  function buildBirdsProfileHref(scientificName, scope) {
++    var sci = typeof scientificName === "string" ? scientificName.trim() : "";
++    var normalizedScope = normalizeSpeciesScope(scope);
++    var params = new URLSearchParams();
++    if (sci) { params.set("name", sci); }
++    params.set("species_scope", normalizedScope);
++    return "/birds?" + params.toString();
++  }
++
++  function renderStateBox(doc, container, stateKind, titleText, primaryText, secondaryText) {
++    container.replaceChildren();
++    container.hidden = false;
++    container.setAttribute("data-result-state", stateKind);
++    var box = createEl(doc, "div", null, "explore-state-box");
++    box.setAttribute("data-state", stateKind);
++    box.appendChild(createEl(doc, "h3", titleText));
++    if (primaryText) {
++      box.appendChild(createEl(doc, "p", primaryText));
++    }
++    if (secondaryText) {
++      box.appendChild(createEl(doc, "p", secondaryText));
++    }
++    container.appendChild(box);
++  }
++
++  function renderExploreResult(doc, container, payload, requestedScope, options) {
++    if (!payload || typeof payload !== "object") { return; }
++    container.replaceChildren();
++    container.hidden = false;
++
++    var status = typeof payload.status === "string" ? payload.status : "answer";
++    container.setAttribute("data-result-state", status);
++
++    var queryEcho = payload.query && typeof payload.query === "object" ? payload.query : {};
++    var activeScope = normalizeSpeciesScope(queryEcho.species_scope || requestedScope);
++    var activeDiets = normalizeDietList(queryEcho.diet);
++
++    // 1. Header & Applied Conditions
++    var header = createEl(doc, "div", null, "explore-results-header");
++    var titleText = typeof payload.title === "string" && payload.title.trim()
++      ? payload.title.trim()
++      : "조건으로 새 찾기 결과";
++    header.appendChild(createEl(doc, "h2", titleText));
++
++    var condBox = createEl(doc, "div", null, "graph-query-conditions");
++    condBox.setAttribute("role", "group");
++    condBox.setAttribute("aria-label", "적용된 검색 조건");
++    var condList = createEl(doc, "ul", null, "graph-query-condition-list");
++
++    var scopeChipText = "분포 범위: " + (SCOPE_LABELS[activeScope] || SCOPE_LABELS.all);
++    condList.appendChild(createEl(doc, "li", scopeChipText, "graph-query-condition-chip"));
++
++    if (payload.taxon && typeof payload.taxon === "object") {
++      var taxonName = speciesLabel(payload.taxon, activeScope);
++      var taxonSci = typeof payload.taxon.scientific_name === "string" ? payload.taxon.scientific_name.trim() : "";
++      var taxonDisplay = taxonName && taxonSci && taxonName !== taxonSci
++        ? taxonName + " (" + taxonSci + ")"
++        : (taxonName || taxonSci);
++      if (taxonDisplay) {
++        condList.appendChild(createEl(doc, "li", "분류군: " + taxonDisplay, "graph-query-condition-chip"));
++      }
++    } else if (typeof queryEcho.taxon === "string" && queryEcho.taxon.trim()) {
++      condList.appendChild(createEl(doc, "li", "분류군: " + queryEcho.taxon.trim(), "graph-query-condition-chip"));
++    }
++
++    if (Array.isArray(payload.conditions) && payload.conditions.length > 0) {
++      payload.conditions.forEach(function (cond) {
++        var label = cond && typeof cond === "object" && typeof cond.label === "string" ? cond.label.trim() : "";
++        if (label) {
++          condList.appendChild(createEl(doc, "li", label, "graph-query-condition-chip"));
++        }
++      });
++    } else {
++      if (typeof queryEcho.habitat === "string" && HABITAT_LABELS[queryEcho.habitat]) {
++        condList.appendChild(createEl(doc, "li", "서식 환경: " + HABITAT_LABELS[queryEcho.habitat], "graph-query-condition-chip"));
++      }
++      activeDiets.forEach(function (dietKey) {
++        condList.appendChild(createEl(doc, "li", "먹이 구성: " + (DIET_LABELS[dietKey] || dietKey) + " 포함", "graph-query-condition-chip"));
++      });
++    }
++    condBox.appendChild(condList);
++    header.appendChild(condBox);
++
++    var hasDietCondition = activeDiets.length > 0 || (Array.isArray(payload.conditions) && payload.conditions.some(function (c) {
++      return c && c.trait_name === "diet_distribution";
++    }));
++    var sortMessage = hasDietCondition
++      ? "정렬 기준: 선택한 먹이 구성 비율 합산 높은 순 (모든 선택 먹이 > 0% AND 조건 · EltonTraits 확실성 A·B·C 근거, 가나다·알파벳순 아님)"
++      : "정렬 기준: 이름순 (" + (activeScope === "outside" ? "영명 · 검증 국명 · 학명" : "검증 국명 · 영명 · 학명") + ")";
++    header.appendChild(createEl(doc, "p", sortMessage, "explore-sort-note"));
++    container.appendChild(header);
++
++    // 2. Coverage summary
++    if (payload.coverage && typeof payload.coverage === "object") {
++      var cov = payload.coverage;
++      var covBox = createEl(doc, "div", null, "explore-coverage");
++      covBox.setAttribute("role", "group");
++      covBox.setAttribute("aria-label", "조건 자료 범위 및 일치 현황");
++
++      var pairs = [
++        ["범위 내 대상", typeof cov.scoped === "number" ? cov.scoped + "종" : "-"],
++        ["조건 자료 확인", typeof cov.evaluable === "number" ? cov.evaluable + "종" : "-"],
++        ["조건 일치", typeof cov.matched === "number" ? cov.matched + "종" : "-"],
++      ];
++      pairs.forEach(function (pair) {
++        var cell = createEl(doc, "div", null, "explore-coverage-item");
++        cell.appendChild(createEl(doc, "span", pair[0], "explore-coverage-label"));
++        cell.appendChild(createEl(doc, "strong", pair[1], "explore-coverage-value"));
++        covBox.appendChild(cell);
++      });
++      container.appendChild(covBox);
++    }
++
++    // 3. Status-specific body (answer vs empty vs insufficient_data)
++    if (status === "empty") {
++      var emptyBox = createEl(doc, "div", null, "explore-state-box");
++      emptyBox.setAttribute("data-state", "empty");
++      emptyBox.appendChild(createEl(doc, "h3", "조건에 맞는 새가 없습니다 (일치 0종)"));
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        emptyBox.appendChild(createEl(doc, "p", payload.text.trim()));
++      }
++      emptyBox.appendChild(createEl(
++        doc,
++        "p",
++        "선택한 범위와 형질 자료를 검토했으나 지정한 조건을 모두 만족하는 종이 0종입니다. 서식 환경이나 먹이 조합을 완화해 다시 조회해 보세요."
++      ));
++      container.appendChild(emptyBox);
++    } else if (status === "insufficient_data") {
++      var insuffBox = createEl(doc, "div", null, "explore-state-box");
++      insuffBox.setAttribute("data-state", "insufficient_data");
++      insuffBox.appendChild(createEl(doc, "h3", "조건을 판단할 형질 자료가 없습니다 (자료 부족)"));
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        insuffBox.appendChild(createEl(doc, "p", payload.text.trim()));
++      }
++      insuffBox.appendChild(createEl(
++        doc,
++        "p",
++        "조건에 맞는 종이 0종인 것(불일치)이 아니라, 해당 범위에서 조건 형질을 평가할 수 있는 활성 자료가 확인되지 않은 상태입니다."
++      ));
++      container.appendChild(insuffBox);
++    } else {
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        container.appendChild(createEl(doc, "p", payload.text.trim(), "explore-summary-text"));
++      }
++      var items = Array.isArray(payload.items) ? payload.items : [];
++      var pagination = payload.pagination;
++      function appendPagination(position) {
++        if (!pagination || pagination.total_pages <= 1) { return; }
++        var nav = createEl(doc, "nav", null, "explore-pagination");
++        nav.setAttribute("aria-label", position === "top" ? "검색 결과 상단 페이지" : "검색 결과 하단 페이지");
++        var previous = createEl(doc, "button", "← 이전");
++        previous.type = "button";
++        previous.disabled = pagination.page <= 1;
++        previous.addEventListener("click", function () { options.onPageChange(pagination.page - 1); });
++        nav.appendChild(previous);
++        var select = createEl(doc, "select", null, "explore-page-select");
++        select.id = "explore-page-" + position;
++        select.setAttribute("aria-label", "결과 페이지 선택");
++        for (var page = 1; page <= pagination.total_pages; page += 1) {
++          var option = createEl(doc, "option", page + " / " + pagination.total_pages + " 페이지");
++          option.value = String(page);
++          select.appendChild(option);
++        }
++        select.value = String(pagination.page);
++        select.addEventListener("change", function () { options.onPageChange(Number(select.value)); });
++        nav.appendChild(select);
++        var next = createEl(doc, "button", "다음 →");
++        next.type = "button";
++        next.disabled = pagination.page >= pagination.total_pages;
++        next.addEventListener("click", function () { options.onPageChange(pagination.page + 1); });
++        nav.appendChild(next);
++        container.appendChild(nav);
++      }
++      if (pagination && items.length) {
++        var first = (pagination.page - 1) * pagination.page_size + 1;
++        container.appendChild(createEl(doc, "p", "전체 " + pagination.total + "종 중 " + first + "–" +
++          (first + items.length - 1) + "종", "explore-page-range"));
++        if (options && options.onPageChange) { appendPagination("top"); }
++      }
++
++      if (items.length > 0) {
++        var list = createEl(doc, "ul", null, "explore-species-list");
++        items.forEach(function (item) {
++          if (!item || typeof item !== "object" || !item.taxon || typeof item.taxon !== "object") { return; }
++          var taxon = item.taxon;
++          var card = createEl(doc, "li", null, "explore-species-card");
++          var top = createEl(doc, "div", null, "explore-species-top");
++          var identity = createEl(doc, "div", null, "explore-species-identity");
++
++          var primaryLabel = speciesLabel(taxon, activeScope);
++          identity.appendChild(createEl(doc, "strong", primaryLabel, "explore-species-name"));
++
++          var sciName = typeof taxon.scientific_name === "string" ? taxon.scientific_name.trim() : "";
++          if (sciName && sciName !== primaryLabel) {
++            identity.appendChild(createEl(doc, "span", sciName, "explore-species-sci"));
++          }
++
++          var verifiedKo = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string"
++            ? taxon.korean_name.trim() : "";
++          var engName = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
++          var secondary = activeScope === "outside"
++            ? (verifiedKo && verifiedKo !== primaryLabel ? verifiedKo : "")
++            : (engName && engName !== primaryLabel && engName !== sciName ? engName : "");
++          if (secondary) {
++            identity.appendChild(createEl(doc, "span", secondary, "explore-species-sub"));
++          }
++          top.appendChild(identity);
++
++          if (sciName) {
++            var profileLink = createEl(doc, "a", "새 도감 보기 →", "explore-profile-link");
++            profileLink.href = buildBirdsProfileHref(sciName, activeScope);
++            if (options && options.onOpenProfile) {
++              profileLink.setAttribute("aria-haspopup", "dialog");
++              profileLink.addEventListener("click", function (event) {
++                if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) { return; }
++                event.preventDefault();
++                options.onOpenProfile(profileLink, taxon, activeScope);
++              });
++            }
++            top.appendChild(profileLink);
++          }
++          card.appendChild(top);
++
++          if (Array.isArray(item.paths) && item.paths.length > 0) {
++            var pathList = createEl(doc, "ul", null, "explore-item-paths");
++            var cardSources = new Map();
++            item.paths.forEach(function (p) {
++              if (!p || typeof p.text !== "string" || !p.text.trim()) { return; }
++              var pLi = createEl(doc, "li", p.text.trim());
++              var pUrl = sanitizeUrl(p.source_url);
++              var pName = typeof p.source_name === "string" && p.source_name.trim() ? p.source_name.trim() : "";
++              if (pUrl && pName) {
++                cardSources.set(pName + "|" + pUrl, { name: pName, url: pUrl });
++              }
++              pathList.appendChild(pLi);
++            });
++            card.appendChild(pathList);
++            if (cardSources.size > 0) {
++              var sourceDetails = createEl(doc, "details", null, "explore-card-sources");
++              sourceDetails.appendChild(createEl(doc, "summary", "출처 " + cardSources.size + "개"));
++              cardSources.forEach(function (src) {
++                var sourceLine = createEl(doc, "p");
++                sourceLine.appendChild(safeLink(doc, src.name, src.url));
++                sourceDetails.appendChild(sourceLine);
++              });
++              card.appendChild(sourceDetails);
++            }
++          }
++
++          list.appendChild(card);
++        });
++        container.appendChild(list);
++        if (options && options.onPageChange) { appendPagination("bottom"); }
++      }
++    }
++
++    // 4. Shared query/scope paths
++    if (Array.isArray(payload.paths) && payload.paths.length > 0) {
++      var sharedDetails = createEl(doc, "details", null, "graph-shared-paths graph-query-evidence");
++      var sharedSummary = createEl(doc, "summary", "조회 범위 및 조건 확인 경로 (" + payload.paths.length + ")");
++      sharedDetails.appendChild(sharedSummary);
++      var sharedList = createEl(doc, "ul", null, "route-results");
++      payload.paths.forEach(function (pathItem) {
++        if (!pathItem || typeof pathItem.text !== "string" || !pathItem.text.trim()) { return; }
++        var li = createEl(doc, "li", pathItem.text.trim());
++        var url = sanitizeUrl(pathItem.source_url);
++        var sName = typeof pathItem.source_name === "string" && pathItem.source_name.trim() ? pathItem.source_name.trim() : "";
++        if (url && sName) {
++          li.appendChild(createEl(doc, "span", " ("));
++          li.appendChild(safeLink(doc, sName, url));
++          li.appendChild(createEl(doc, "span", ")"));
++        }
++        sharedList.appendChild(li);
++      });
++      sharedDetails.appendChild(sharedList);
++      container.appendChild(sharedDetails);
++    }
++
++    // 5. Sources disclosure
++    if (Array.isArray(payload.sources) && payload.sources.length > 0) {
++      var dedupedSources = [];
++      var seenSourceKeys = new Set();
++      payload.sources.forEach(function (src) {
++        if (!src || typeof src !== "object") { return; }
++        var rawName = typeof src.source_name === "string" && src.source_name.trim()
++          ? src.source_name.trim()
++          : (typeof src.name === "string" && src.name.trim() ? src.name.trim() : "");
++        if (!rawName) { return; }
++        var rawUrl = sanitizeUrl(src.source_url || src.url);
++        var key = rawName + "|" + (rawUrl || "");
++        if (seenSourceKeys.has(key)) { return; }
++        seenSourceKeys.add(key);
++        dedupedSources.push({ name: rawName, url: rawUrl });
++      });
++      if (dedupedSources.length > 0) {
++        var sourcesDetails = createEl(doc, "details", null, "species-answer-sources explore-sources");
++        sourcesDetails.appendChild(createEl(doc, "summary", "출처 및 근거 자료 (" + dedupedSources.length + ")"));
++        dedupedSources.forEach(function (src) {
++          var p = createEl(doc, "p");
++          p.appendChild(safeLink(doc, src.name, src.url));
++          sourcesDetails.appendChild(p);
++        });
++        container.appendChild(sourcesDetails);
++      }
++    }
++
++    // 6. Limitations disclosure (collapsed by default, neutral style)
++    var seenNotes = new Set();
++    var noteItems = [];
++    (Array.isArray(payload.limitations) ? payload.limitations : []).forEach(function (lim) {
++      if (typeof lim === "string") {
++        var trimmed = lim.trim();
++        if (trimmed && !seenNotes.has(trimmed)) {
++          seenNotes.add(trimmed);
++          noteItems.push(trimmed);
++        }
++      }
++    });
++    if (noteItems.length > 0) {
++      var notesDetails = createEl(doc, "details", null, "species-note graph-query-notes explore-limitations");
++      var baseNoteTitle = status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
++      notesDetails.appendChild(createEl(doc, "summary", baseNoteTitle + " (" + noteItems.length + ")"));
++      var noteList = createEl(doc, "ul");
++      noteItems.forEach(function (text) {
++        noteList.appendChild(createEl(doc, "li", text));
++      });
++      notesDetails.appendChild(noteList);
++      container.appendChild(notesDetails);
++    }
++  }
++
++  function init(doc, win) {
++    if (!doc || typeof doc.getElementById !== "function") { return null; }
++    var form = doc.getElementById("explore-form");
++    var taxonInput = doc.getElementById("explore-taxon");
++    var habitatSelect = doc.getElementById("explore-habitat");
++    var scopeNote = doc.getElementById("explore-scope-note");
++    var submitBtn = doc.getElementById("explore-submit");
++    var resetBtn = doc.getElementById("explore-reset");
++    var statusRegion = doc.getElementById("explore-status");
++    var resultsSection = doc.getElementById("explore-results");
++    if (!form || !statusRegion || !resultsSection) { return null; }
++
++    var scopeRadios = SPECIES_SCOPES.map(function (scope) {
++      return doc.getElementById("explore-scope-" + scope);
++    }).filter(Boolean);
++
++    var dietCheckboxes = DIETS.map(function (key) {
++      return doc.getElementById("explore-diet-" + key);
++    }).filter(Boolean);
++
++    var activeScope = "all";
++    var requestGeneration = 0;
++    var activeController = null;
++    var profileGeneration = 0;
++    var profilePopup = null;
++    var profileCache = new Map();
++
++    function clearProfilePopup() {
++      profileGeneration += 1;
++      if (profilePopup) {
++        var popup = profilePopup;
++        profilePopup = null;
++        popup.disposePopup();
++        popup.parentNode.removeChild(popup);
++      }
++    }
++
++    async function openProfile(link, taxon, scope) {
++      clearProfilePopup();
++      var current = profileGeneration;
++      var chat = win && win.RobinGraphChat;
++      var fetcher = win && win.fetch;
++      setStatus("새 도감 카드를 불러오고 있습니다…", false);
++      link.setAttribute("aria-busy", "true");
++      try {
++        if (!chat || !fetcher) { throw new Error("unavailable"); }
++        var params = new URLSearchParams({ name: taxon.scientific_name, species_scope: scope });
++        var key = params.toString();
++        var profile = profileCache.get(key);
++        if (!profile) {
++          var response = await fetcher("/v1/taxa/profile?" + key + "&defer_enrichment=true", { signal: AbortSignal.timeout(60000) });
++          if (current !== profileGeneration) { return; }
++          if (!response.ok) { throw new Error("unavailable"); }
++          profile = await response.json();
++        }
++        if (current !== profileGeneration) { return; }
++        if (!profile || !profile.taxon || profile.taxon.scientific_name !== taxon.scientific_name ||
++            (taxon.taxon_id && profile.taxon.taxon_id !== taxon.taxon_id)) { throw new Error("identity"); }
++        profileCache.set(key, profile);
++        var card = chat.buildSpeciesCard(doc, profile, {
++          fetcher: fetcher,
++          speciesScope: scope,
++          isActive: function () { return current === profileGeneration; },
++        });
++        if (card.sourceMaterial) {
++          var sources = createEl(doc, "details", null, "card-details card-details-scroll explore-profile-sources");
++          sources.appendChild(createEl(doc, "summary", "자료 출처"));
++          sources.appendChild(card.sourceMaterial);
++          card.querySelector(".species-card-back").appendChild(sources);
++        }
++        var popup = chat.buildSpeciesPopup(doc, card, profile);
++        profilePopup = popup;
++        var opener = popup.children[0];
++        opener.hidden = true;
++        doc.body.appendChild(popup);
++        var dialog = popup.children[1];
++        dialog.addEventListener("close", function () {
++          if (profilePopup === popup) { clearProfilePopup(); }
++          if (link.isConnected) { link.focus(); }
++        });
++        opener.click();
++        setStatus(speciesLabel(profile.taxon, scope) + " 도감 카드를 열었습니다.", false);
++        if (profile.enrichment_pending) {
++          card.setNotesMessage("추가 설명을 불러오는 중입니다.", true);
++          function fetchEnrichment(suffix) {
++            return fetcher("/v1/taxa/profile?" + key + suffix, { signal: AbortSignal.timeout(60000) }).then(function (response) {
++              if (!response.ok) { throw new Error("unavailable"); }
++              return response.json();
++            }).then(function (fresh) {
++              if (current !== profileGeneration) { return null; }
++              if (!fresh || !fresh.taxon || fresh.taxon.taxon_id !== profile.taxon.taxon_id ||
++                  fresh.taxon.scientific_name !== taxon.scientific_name ||
++                  !fresh.lineage || !profile.lineage || fresh.lineage.concept_set_id !== profile.lineage.concept_set_id ||
++                  fresh.lineage.taxonomy_release !== profile.lineage.taxonomy_release) { throw new Error("identity"); }
++              return fresh;
++            });
++          }
++          if (!Array.isArray(profile.images) || !profile.images.length) {
++            card.setEnrichmentMessage("사진을 불러오는 중입니다.");
++            fetchEnrichment("&include_notes=false").then(function (fresh) {
++              if (!fresh) { return; }
++              var media = { images: fresh.images, photo_availability: fresh.photo_availability };
++              card.updateEnrichment(media);
++              Object.assign(profile, media);
++            }).catch(function () {
++              if (current === profileGeneration) { card.setEnrichmentMessage("사진 제공처를 현재 조회할 수 없습니다."); }
++            });
++          }
++          fetchEnrichment("").then(function (fresh) {
++            if (!fresh) { return; }
++            card.updateEnrichment(fresh);
++            profileCache.set(key, fresh);
++          }).catch(function () {
++            if (current === profileGeneration) {
++              card.setNotesMessage("추가 설명을 불러오지 못했습니다. 먼저 표시한 정보는 계속 확인할 수 있습니다.");
++            }
++          });
++        }
++      } catch (_) {
++        if (current === profileGeneration) {
++          clearProfilePopup();
++          setStatus("새 도감 카드를 불러오지 못했습니다. ‘새 도감 보기’를 다시 눌러 주세요.", true);
++        }
++      } finally {
++        link.removeAttribute("aria-busy");
++      }
++    }
++
++    function abortInFlight() {
++      if (activeController && typeof activeController.abort === "function") {
++        try { activeController.abort(); } catch (_) {}
++      }
++      activeController = null;
++    }
++
++    function setBusy(busy) {
++      if (submitBtn) { submitBtn.disabled = Boolean(busy); }
++      form.setAttribute("aria-busy", busy ? "true" : "false");
++    }
++
++    function setStatus(message, isError) {
++      statusRegion.textContent = message;
++      if (isError) {
++        statusRegion.setAttribute("data-error", "true");
++      } else {
++        statusRegion.removeAttribute("data-error");
++      }
++    }
++
++    function readFormState() {
++      var selectedScope = activeScope;
++      scopeRadios.forEach(function (radio) {
++        if (radio.checked) { selectedScope = normalizeSpeciesScope(radio.value); }
++      });
++      var selectedDiets = [];
++      dietCheckboxes.forEach(function (box) {
++        if (box.checked) { selectedDiets.push(box.value); }
++      });
++      return {
++        species_scope: selectedScope,
++        taxon: taxonInput && typeof taxonInput.value === "string" ? taxonInput.value.trim() : "",
++        habitat: habitatSelect && typeof habitatSelect.value === "string" ? habitatSelect.value : "",
++        diet: normalizeDietList(selectedDiets),
++      };
++    }
++
++    function applyStateToControls(state) {
++      var nextScope = normalizeSpeciesScope(state && state.species_scope);
++      activeScope = nextScope;
++      scopeRadios.forEach(function (radio) {
++        radio.checked = radio.value === nextScope;
++      });
++      if (scopeNote) {
++        scopeNote.textContent = SPECIES_SCOPE_NOTES[nextScope] || SPECIES_SCOPE_NOTES.all;
++      }
++      if (taxonInput) {
++        taxonInput.value = state && typeof state.taxon === "string" ? state.taxon : "";
++      }
++      if (habitatSelect) {
++        habitatSelect.value = state && typeof state.habitat === "string" && HABITATS.indexOf(state.habitat) !== -1
++          ? state.habitat
++          : "";
++      }
++      var dietSet = new Set(normalizeDietList(state && state.diet));
++      dietCheckboxes.forEach(function (box) {
++        box.checked = dietSet.has(box.value);
++      });
++    }
++
++    function invalidatePendingOnFilterEdit(statusMessage) {
++      resultsSection.hidden = true;
++      clearProfilePopup();
++      requestGeneration += 1;
++      abortInFlight();
++      setBusy(false);
++      if (statusMessage) {
++        setStatus(statusMessage, false);
++      }
++    }
++
++    function syncUrlSearch(queryString) {
++      if (!win || !win.history || typeof win.history.replaceState !== "function") { return; }
++      var pathname = (win.location && win.location.pathname) || "/explore";
++      var target = queryString ? pathname + "?" + queryString : pathname;
++      try {
++        win.history.replaceState(null, "", target);
++      } catch (_) {}
++    }
++
++    async function executeSearch(customQueryString, stateSnapshot) {
++      clearProfilePopup();
++      profileCache.clear();
++      var myGeneration = ++requestGeneration;
++      abortInFlight();
++      var controller = typeof AbortController === "function" ? new AbortController() : null;
++      activeController = controller;
++
++      var state = stateSnapshot || readFormState();
++      var params = buildExploreParams(state);
++      var queryString = typeof customQueryString === "string" ? customQueryString : params.toString();
++
++      setBusy(true);
++      setStatus("선택한 조건에 맞는 새와 출처 근거를 확인하고 있습니다…", false);
++
++      var fetchFn = (win && typeof win.fetch === "function") ? win.fetch : (typeof fetch === "function" ? fetch : null);
++      if (!fetchFn) {
++        setBusy(false);
++        setStatus("브라우저 조회 기능을 사용할 수 없습니다.", true);
++        return;
++      }
++
++      try {
++        var options = { method: "GET" };
++        if (controller && controller.signal) {
++          options.signal = controller.signal;
++        }
++        var response = await fetchFn("/v1/taxa/explore" + (queryString ? "?" + queryString : ""), options);
++        if (myGeneration !== requestGeneration) { return; }
++
++        if (!response.ok) {
++          if (response.status === 422) {
++            var errBody = null;
++            try { errBody = await response.json(); } catch (_) {}
++            if (myGeneration !== requestGeneration) { return; }
++            var validationMsg = formatValidationError(errBody);
++            renderStateBox(
++              doc,
++              resultsSection,
++              "validation_error",
++              "조회 조건을 다시 확인해 주세요",
++              validationMsg,
++              "일치하는 종이 0종인 결과가 아니라, 입력한 분류군 또는 조건 형식을 확인하지 못해 조회를 멈추었습니다."
++            );
++            setStatus(validationMsg, true);
++            return;
++          }
++          var unavailableMsg = "현재 조건으로 새 찾기 기능을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.";
++          renderStateBox(
++            doc,
++            resultsSection,
++            "error",
++            "조회 서비스를 일시적으로 사용할 수 없습니다",
++            unavailableMsg,
++            "조건 불일치(0종)나 자료 부족이 아니라 서버 응답 오류입니다."
++          );
++          setStatus(unavailableMsg, true);
++          return;
++        }
++
++        var payload = await response.json();
++        if (myGeneration !== requestGeneration) { return; }
++
++        if (payload && payload.query && typeof payload.query === "object") {
++          applyStateToControls(payload.query);
++        }
++        if (payload.query) { syncUrlSearch(buildExploreParams(payload.query).toString()); }
++        renderExploreResult(doc, resultsSection, payload, state.species_scope, {
++          onOpenProfile: openProfile,
++          onPageChange: function (page) {
++            var next = Object.assign({}, payload.query || state, { page: page });
++            var query = buildExploreParams(next).toString();
++            var generation = requestGeneration + 1;
++            syncUrlSearch(query);
++            executeSearch(query, next).then(function () {
++              if (requestGeneration !== generation || resultsSection.hidden) { return; }
++              if (resultsSection.scrollIntoView) { resultsSection.scrollIntoView({ block: "start" }); }
++              var select = doc.getElementById("explore-page-top");
++              if (select && select.focus) { select.focus({ preventScroll: true }); }
++            });
++          },
++        });
++
++        if (payload.status === "empty") {
++          setStatus("조회가 완료되었습니다. 조건에 맞는 종이 없습니다 (0종).", false);
++        } else if (payload.status === "insufficient_data") {
++          setStatus("조회가 완료되었습니다. 선택한 조건을 판단할 형질 자료가 없습니다.", false);
++        } else {
++          var itemCount = Array.isArray(payload.items) ? payload.items.length : 0;
++          var totalMatched = payload.coverage && typeof payload.coverage.matched === "number"
++            ? payload.coverage.matched
++            : itemCount;
++          setStatus(
++            "출처가 확인된 " + totalMatched + "종 중 " + itemCount + "종을 표시했습니다." +
++              (payload.pagination ? " " + payload.pagination.page + " / " + payload.pagination.total_pages + " 페이지입니다." : ""),
++            false
++          );
++        }
++      } catch (err) {
++        if (myGeneration !== requestGeneration) { return; }
++        if (err && err.name === "AbortError") { return; }
++        var netMsg = err && err.name === "TimeoutError"
++          ? "조회 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요."
++          : "현재 조건으로 새 찾기 기능을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.";
++        renderStateBox(
++          doc,
++          resultsSection,
++          "error",
++          "조회 중 연결 오류가 발생했습니다",
++          netMsg,
++          "조건 불일치(0종)나 자료 부족이 아니라 통신 오류입니다."
++        );
++        setStatus(netMsg, true);
++      } finally {
++        if (myGeneration === requestGeneration) {
++          setBusy(false);
++          activeController = null;
++        }
++      }
++    }
++
++    scopeRadios.forEach(function (radio) {
++      radio.addEventListener("change", function () {
++        if (!radio.checked) { return; }
++        var nextScope = normalizeSpeciesScope(radio.value);
++        activeScope = nextScope;
++        if (scopeNote) {
++          scopeNote.textContent = SPECIES_SCOPE_NOTES[nextScope] || SPECIES_SCOPE_NOTES.all;
++        }
++        var label = SCOPE_LABELS[nextScope] || SCOPE_LABELS.all;
++        invalidatePendingOnFilterEdit("분포 범위 기준을 ‘" + label + "’(으)로 변경했습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    });
++
++    if (taxonInput) {
++      taxonInput.addEventListener("input", function () {
++        invalidatePendingOnFilterEdit("분류군 입력이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    }
++
++    if (habitatSelect) {
++      habitatSelect.addEventListener("change", function () {
++        invalidatePendingOnFilterEdit("서식 환경 조건이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    }
++
++    dietCheckboxes.forEach(function (box) {
++      box.addEventListener("change", function () {
++        invalidatePendingOnFilterEdit("먹이 구성 조건이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    });
++
++    form.addEventListener("submit", function (event) {
++      if (event && typeof event.preventDefault === "function") {
++        event.preventDefault();
++      }
++      var state = readFormState();
++      var params = buildExploreParams(state);
++      var queryString = params.toString();
++      syncUrlSearch(queryString);
++      executeSearch(queryString, state);
++    });
++
++    if (resetBtn) {
++      resetBtn.addEventListener("click", function () {
++        applyStateToControls({ species_scope: "all", taxon: "", habitat: "", diet: [] });
++        invalidatePendingOnFilterEdit("조건을 초기화했습니다. 원하는 조건을 선택하고 ‘조건으로 새 찾기’를 눌러 조회하세요.");
++        resultsSection.replaceChildren();
++        resultsSection.hidden = true;
++        resultsSection.removeAttribute("data-result-state");
++        syncUrlSearch("");
++      });
++    }
++
++    var initialSearch = (win && win.location && typeof win.location.search === "string")
++      ? win.location.search
++      : (typeof location !== "undefined" && typeof location.search === "string" ? location.search : "");
++    var parsedInitial = parseExploreSearch(initialSearch);
++    if (parsedInitial.hasQuery) {
++      applyStateToControls(parsedInitial);
++      executeSearch(parsedInitial.rawQuery, parsedInitial);
++    }
++
++    return {
++      readFormState: readFormState,
++      applyStateToControls: applyStateToControls,
++      executeSearch: executeSearch,
++    };
++  }
++
++  return {
++    SPECIES_SCOPES: SPECIES_SCOPES,
++    HABITATS: HABITATS,
++    DIETS: DIETS,
++    normalizeSpeciesScope: normalizeSpeciesScope,
++    normalizeDietList: normalizeDietList,
++    sanitizeUrl: sanitizeUrl,
++    speciesLabel: speciesLabel,
++    buildExploreParams: buildExploreParams,
++    parseExploreSearch: parseExploreSearch,
++    formatValidationError: formatValidationError,
++    buildBirdsProfileHref: buildBirdsProfileHref,
++    renderExploreResult: renderExploreResult,
++    init: init,
++  };
++});
+--- a/src/robingraph/api/static/index.html
++++ b/src/robingraph/api/static/index.html
+@@ -13,7 +13,10 @@
+ <body>
+ <div class="page">
+   <header class="app-header">
+-    <p class="brand">RobinGraph</p>
++    <div class="app-header-top">
++      <p class="brand">RobinGraph</p>
++      <a id="explore-link" class="explore-nav-link" href="/explore">조건으로 새 찾기 →</a>
++    </div>
+     <h1 id="app-title">새에 대해 무엇이든 물어보세요</h1>
+     <p class="tagline">
+       분류 계통, 관찰 기록, 사진과 형질 정보를 출처와 함께 바로 보여드립니다.
+@@ -42,6 +45,7 @@
+     </section>
+ 
+     <form id="chat-form" class="chat-form" autocomplete="off">
++      <div id="followup-context-bar" class="followup-context-bar" role="status" aria-live="polite" hidden></div>
+       <label for="question-input" class="visually-hidden">질문 입력</label>
+       <textarea
+         id="question-input"
+--- a/src/robingraph/api/static/styles.css
++++ b/src/robingraph/api/static/styles.css
+@@ -1,4 +1,5 @@
+ :root {
++  color-scheme: only light;
+   --color-bg: #f8f3e7;
+   --color-surface: #fffdf8;
+   --color-text: #2a271f;
+@@ -22,32 +23,6 @@
+   --badge-abstain-text: #4a3200;
+ }
+ 
+-@media (prefers-color-scheme: dark) {
+-  :root {
+-    --color-bg: #16190f;
+-    --color-surface: #1e2217;
+-    --color-text: #ebe7da;
+-    --color-muted: #ada68f;
+-    --color-border: #39392c;
+-    --color-accent: #6fcf97;
+-    --color-answer-bg: #16261d;
+-    --color-answer-border: #2c5a3d;
+-    --color-abstain-bg: #2a2311;
+-    --color-abstain-border: #6b5416;
+-    --color-warning: #e0b34d;
+-    --color-error-bg: #2c1917;
+-    --color-error-border: #6e332c;
+-    --color-error-text: #f2a99e;
+-    --focus-ring: #6fcf97;
+-    /* --color-accent becomes a light green in dark mode, so the send
+-       button needs dark text; the badge backgrounds stay dark, so their
+-       text must flip to the light foreground color to keep >=4.5:1. */
+-    --send-button-text: #1f2328;
+-    --badge-answer-text: #e8eaed;
+-    --badge-abstain-text: #e8eaed;
+-  }
+-}
+-
+ * {
+   box-sizing: border-box;
+ }
+@@ -74,6 +49,34 @@
+   display: flex;
+   flex-direction: column;
+   gap: 0.4rem;
++}
++
++.app-header-top {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 0.75rem;
++  flex-wrap: wrap;
++}
++
++.explore-nav-link {
++  font-size: 0.85rem;
++  font-weight: 600;
++  color: var(--color-accent);
++  text-decoration: none;
++  padding: 0.35rem 0.7rem;
++  border: 1px solid var(--color-answer-border);
++  border-radius: 999px;
++  background: var(--color-answer-bg);
++}
++
++.explore-nav-link:hover {
++  border-color: var(--color-accent);
++}
++
++.explore-nav-link:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
+ }
+ 
+ .brand {
+@@ -1376,11 +1379,6 @@
+   .diet-icon { font-size: .7rem; padding-right: 6px; }
+   .diet-icon-symbol { flex-basis: 18px; width: 18px; height: 18px; }
+ }
+-@media (prefers-color-scheme: dark) {
+-  /* Only the themed chat brief; the card popup is always light. */
+-  .species-chat-brief .diet-icon { background: #1e2217; filter: brightness(1.45); }
+-}
+-
+ /* RG-009 photo absence, broken image, and retry states. */
+ .species-photo-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 120px; margin: 8px 0; padding: 14px; border: 1px dashed #8fAA65; border-radius: 12px; background: repeating-linear-gradient(135deg, #f2f8cf, #f2f8cf 10px, #e9f1c4 10px, #e9f1c4 20px); color: #405635; text-align: center; }
+ .species-photo-placeholder svg { width: 48px; height: 48px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }
+@@ -1932,9 +1930,9 @@
+ /* 4. Notes & Caveats Disclosure (.graph-query-notes) */
+ .graph-query-notes {
+   margin-top: 0.25rem;
+-  border: 1px solid var(--color-abstain-border, #f1d69a);
++  border: 1px solid var(--color-border, #dcd6c8);
+   border-radius: 8px;
+-  background: var(--color-abstain-bg, #fff6e6);
++  background: var(--color-surface, #ffffff);
+   font-size: 0.82rem;
+   overflow-wrap: anywhere;
+ }
+@@ -1943,7 +1941,7 @@
+   padding: 0.55rem 0.75rem;
+   font-size: 0.84rem;
+   font-weight: 600;
+-  color: var(--color-warning, #9a5b00);
++  color: var(--color-muted, #6e6757);
+   cursor: pointer;
+   min-height: 24px;
+   display: list-item;
+@@ -1956,14 +1954,17 @@
+ }
+ 
+ .graph-query-notes ul {
+-  margin: 0.25rem 0 0.5rem;
+-  padding-left: 1.25rem;
++  margin: 0.35rem 0 0.65rem;
++  padding-left: 1.5rem;
++  padding-right: 0.75rem;
+   color: var(--color-text, #2a271f);
+-  line-height: 1.45;
++  line-height: 1.55;
+ }
+ 
+ .graph-query-notes li {
+-  margin: 0.25rem 0;
++  margin: 0.35rem 0;
++  word-break: keep-all;
++  overflow-wrap: anywhere;
+ }
+ 
+ /* 5. Sources & Evidence Disclosure (.graph-query-evidence) */
+@@ -2063,3 +2064,103 @@
+   .species-ecological-related[data-inline="true"] .ecological-peer { padding: .65rem; gap: .4rem; }
+   .species-ecological-related[data-inline="true"] button.comparison-peer-choose { padding-inline: .55rem; font-size: .85rem; }
+ }
++
++.answer-feedback {
++  margin-top: 1rem;
++  padding-top: 0.75rem;
++  border-top: 1px solid var(--color-border);
++}
++.answer-feedback-buttons { display: flex; flex-wrap: wrap; gap: 0.45rem; }
++.answer-feedback-button {
++  font: inherit;
++  font-size: 0.85rem;
++  min-height: 44px;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++  padding: 0.4rem 0.7rem;
++  border: 1px solid var(--color-border);
++  border-radius: 0.5rem;
++  color: var(--color-text);
++  background: var(--color-surface);
++  cursor: pointer;
++}
++.answer-feedback-button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
++.answer-feedback-button[aria-pressed="true"] { border-color: var(--color-accent); font-weight: 700; }
++.answer-feedback-button:disabled { cursor: default; opacity: 0.7; }
++.answer-feedback-status { margin: 0.45rem 0 0; font-size: 0.85rem; color: var(--color-muted); }
++
++.followup-context-bar {
++  margin: 0 0 0.5rem;
++  padding: 0.45rem 0.75rem;
++  border: 1px solid var(--color-answer-border);
++  border-radius: 0.6rem;
++  background: var(--color-answer-bg);
++  color: var(--color-text);
++  font-size: 0.84rem;
++  line-height: 1.45;
++  min-width: 0;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++}
++.followup-context-bar[hidden] { display: none; }
++
++.graph-query-conditions {
++  display: flex;
++  flex-direction: column;
++  gap: 0.4rem;
++  margin-top: 0.2rem;
++  padding: 0.6rem 0.75rem;
++  border: 1px solid var(--color-answer-border);
++  border-radius: 0.65rem;
++  background: var(--color-answer-bg);
++  min-width: 0;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++}
++.graph-query-conditions[data-followup-status="rejected"] {
++  border-color: var(--color-abstain-border);
++  background: var(--color-abstain-bg);
++}
++.graph-query-conditions-header {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 0.4rem;
++  min-width: 0;
++}
++.graph-query-conditions-label {
++  font-size: 0.8rem;
++  font-weight: 700;
++  color: var(--color-text);
++}
++.graph-query-condition-added {
++  padding: 0.15rem 0.5rem;
++  border-radius: 999px;
++  border: 1px solid var(--color-accent);
++  background: var(--color-surface);
++  color: var(--color-accent);
++  font-size: 0.76rem;
++  font-weight: 700;
++  overflow-wrap: anywhere;
++}
++.graph-query-condition-list {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.35rem;
++  margin: 0;
++  padding: 0;
++  list-style: none;
++  min-width: 0;
++}
++.graph-query-condition-chip {
++  padding: 0.2rem 0.55rem;
++  border: 1px solid var(--color-border);
++  border-radius: 999px;
++  background: var(--color-surface);
++  color: var(--color-text);
++  font-size: 0.8rem;
++  line-height: 1.35;
++  max-width: 100%;
++  overflow-wrap: anywhere;
++}
++
+--- a/src/robingraph/cli.py
++++ b/src/robingraph/cli.py
+@@ -352,18 +352,16 @@
+     )
+ 
+     summarize_notes = getattr(answer_generator, 'species_notes', None)
+-    species_flow = create_species_flow(
+-        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
++    notes_handler = create_species_notes(summarize_notes, model=gemini_model) if callable(summarize_notes) else None
++    profile_options = dict(
++        resolve=resolve_species, traits=lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+         conservation=lambda lineage: read_conservation(lineage_repository, lineage),
+-        notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
+-        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+-    )
+-    basic_species_flow = create_species_flow(
+-        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+-        conservation=lambda lineage: read_conservation(lineage_repository, lineage),
+-        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+-        include_enrichment=False,
+-    )
++        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository, lineage),
++        cached_notes=notes_handler.cached if notes_handler is not None else None,
++    )
++    species_flow = create_species_flow(**profile_options, notes=notes_handler)
++    basic_species_flow = create_species_flow(**profile_options, include_enrichment=False)
++    media_species_flow = create_species_flow(**profile_options, include_notes=False)
+     from .retrieval.species_scope import with_species_scope
+ 
+     def annotated_profile(flow, name):
+@@ -387,6 +385,7 @@
+             jev_router=jev_router,
+             species_profile_handler=lambda name: annotated_profile(species_flow, name),
+             species_basic_profile_handler=lambda name: annotated_profile(basic_species_flow, name),
++            species_media_profile_handler=lambda name: annotated_profile(media_species_flow, name),
+             taxon_name_resolution_handler=name_resolver.resolve,
+             related_species_handler=lambda name, species_scope="all": related_species(lineage_repository, resolve_species, name, species_scope),
+             similar_species_handler=lambda name, species_scope="all": similar_species(lineage_repository, ingest_store, resolve_species, name, species_scope),
+--- /dev/null
++++ b/src/robingraph/retrieval/external_cache.py
+@@ -0,0 +1,61 @@
++"""Optional, bounded-age disk cache for public species source metadata."""
++from functools import lru_cache
++import hashlib
++import json
++import os
++from pathlib import Path
++import tempfile
++from threading import Lock
++import time
++
++
++@lru_cache(maxsize=256)
++def _lock(key):
++    return Lock()
++
++
++def _path(key):
++    root = os.getenv('ROBINGRAPH_SPECIES_CACHE_ROOT', '').strip()
++    return Path(root) / (hashlib.sha256(key.encode()).hexdigest() + '.json') if root else None
++
++
++def read_cached(key):
++    path = _path(key)
++    if path is None:
++        return None
++    try:
++        if path.stat().st_size > 2_000_000:
++            return None
++        record = json.loads(path.read_text())
++        if (record['key'] == key and isinstance(record['data'], dict)
++                and 0 <= time.time() - record['saved_at'] < 86400):
++            return record['data']
++    except (OSError, ValueError, KeyError, TypeError):
++        pass
++    return None
++
++
++def remember(key, load):
++    with _lock(key):
++        value = read_cached(key)
++        if value is not None:
++            return value
++        value = load()
++        path = _path(key)
++        if path is not None:
++            temporary = None
++            try:
++                path.parent.mkdir(parents=True, exist_ok=True)
++                with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, delete=False) as stream:
++                    temporary = Path(stream.name)
++                    json.dump({'key': key, 'saved_at': time.time(), 'data': value}, stream, ensure_ascii=False)
++                os.replace(temporary, path)
++            except (OSError, ValueError, TypeError):
++                pass  # A cache failure must not hide an otherwise valid source response.
++            finally:
++                if temporary is not None:
++                    try:
++                        temporary.unlink(missing_ok=True)
++                    except OSError:
++                        pass
++        return value
+--- a/src/robingraph/retrieval/graph_questions.py
++++ b/src/robingraph/retrieval/graph_questions.py
+@@ -117,6 +117,7 @@
+     criterion: str | None = None
+     group: str | None = None
+     conditions: tuple[TraitCondition, ...] = ()
++    page: int = 1  # structured explorer only; chat answers retain their existing cap
+ 
+ 
+ _KO = r'[가-힣]+?(?:\s+[가-힣]+?){0,3}'
+@@ -658,10 +659,10 @@
+ _SCIENTIFIC_RANKS = {0: ('order', 'family', 'genus'), 1: ('species',), 2: ('subspecies',)}
+ 
+ 
+-def checked_conditions(conditions):
++def checked_conditions(conditions, sizes=range(1, 9)):
+     """Allowlisted, non-conflicting conditions; anything else is a caller bug (ValueError)."""
+-    if not isinstance(conditions, tuple) or not 1 <= len(conditions) <= 8:
+-        raise ValueError('taxon_traits needs 1-8 conditions')
++    if not isinstance(conditions, tuple) or len(conditions) not in sizes:
++        raise ValueError('taxon_traits condition count out of range')
+     seen = {}
+     for condition in conditions:
+         spec = TRAIT_CONDITIONS.get(getattr(condition, 'trait_name', None))
+@@ -826,10 +827,18 @@
+ 
+ 
+ def _taxon_traits(repository, store, resolve, parsed, species_scope):
+-    conditions = checked_conditions(parsed.conditions)
++    # The structured explorer (criterion 'explore') may list a scope or taxon without trait conditions; its
++    # taxon is a reviewed order/family/genus name or one scientific name, never a fuzzy species lookup.
++    explore = parsed.criterion == 'explore'
++    requested_page = parsed.page if explore else 1
++    if isinstance(requested_page, bool) or not isinstance(requested_page, int) or not 1 <= requested_page <= 10000:
++        raise ValueError('Invalid explorer page')
++    # shortcut: deep pages read an ordered prefix; use count + SKIP if transfer becomes significant.
++    fetch_limit = requested_page * RESULT_LIMIT + 1
++    conditions = checked_conditions(parsed.conditions, range(0, 12) if explore else range(1, 9))
+     summary = ', '.join(condition_label(c) for c in conditions)
+     scope_label = parsed.rank_name.strip() if parsed.rank_name else '전체 조류'
+-    title = f"{scope_label} 중 조건에 맞는 종"
++    title = f"{scope_label} 중 조건에 맞는 종" if conditions else f"{scope_label}의 종"
+     condition_out = []
+     sources, context = _trait_sources(store)
+     pipelines = {TRAIT_CONDITIONS[c.trait_name][0] for c in conditions}
+@@ -844,7 +853,9 @@
+     taxonomy_source = _taxonomy_source(repository, concept, release)
+     taxon = None
+     if parsed.rank_name is not None:
+-        taxon, reason = _taxon_candidates(repository, resolve, parsed.rank_name, concept, release)
++        taxon, reason = _taxon_candidates(repository, None if explore else resolve, parsed.rank_name, concept, release)
++        if explore and taxon is not None and taxon['rank'] in ('species', 'subspecies'):
++            taxon, reason = None, 'rank_unsupported'   # results are species; a species is not a range
+         if taxon is None:
+             text = {'ambiguous': f"‘{scope_label}’이(가) 현재 분류에서 둘 이상의 분류군으로 확인되어 범위를 정하지 않았습니다.",
+                     'label_rank_conflict': (f"‘{scope_label}’의 한국어 분류명이 가리키는 분류 단계와 자료의 실제 분류 단계가 "
+@@ -854,12 +865,12 @@
+                             limitations=['분류군 이름은 AviList 학명, 검토된 한국어 분류명 또는 출처가 확인된 종 국명만 사용합니다. '
+                                          '다른 분류 단계로 넓히거나 추측하지 않습니다.'],
+                             conditions=condition_out, taxon_resolution=reason)
+-        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종"
++        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종" if conditions else f"{_taxon_display(taxon)}의 종"
+     self_scope = taxon is not None and taxon['rank'] in ('species', 'subspecies')
+     rank_diet = any(c.op == 'share_gt' for c in conditions)
+     params = dict(concept_set_id=concept, taxonomy_release=release,
+                   conditions=[_condition_parameter(c, sources[TRAIT_CONDITIONS[c.trait_name][0]]) for c in conditions],
+-                  korean_reference_names=_korean_reference_names(), limit=RESULT_LIMIT + 1,
++                  korean_reference_names=_korean_reference_names(), limit=fetch_limit,
+                   **scope_query_parameters(species_scope, concept, release))
+     if taxon is None:
+         rows = repository._run(CATALOG_DIET_QUERY if rank_diet else CATALOG_TRAITS_QUERY, **params)
+@@ -873,11 +884,17 @@
+             or not stats['matched'] <= stats['evaluable'] <= stats['scoped']):
+         raise ValueError('Invalid taxon trait statistics')
+     peers = [row for row in rows if (row.get('taxon') or {}).get('taxon_id')]
+-    if len(peers) != (stats['matched'] if rank_diet else min(stats['matched'], RESULT_LIMIT + 1)):
++    if len(peers) != (stats['matched'] if rank_diet else min(stats['matched'], fetch_limit)):
+         raise ValueError('Taxon trait rows disagree with statistics')
+     if rank_diet:
+         peers = _rank_diet_rows(peers, conditions)
+-    peers, has_more = _limited(peers)
++    total_pages = max(1, (stats['matched'] + RESULT_LIMIT - 1) // RESULT_LIMIT)
++    page = min(requested_page, total_pages)
++    offset = (page - 1) * RESULT_LIMIT
++    if explore:
++        peers, has_more = peers[offset:offset + RESULT_LIMIT], page < total_pages
++    else:
++        peers, has_more = _limited(peers)
+     target_rank = taxon['rank'] if self_scope else 'species'
+     items = []
+     for row in peers:
+@@ -905,7 +922,8 @@
+                                     + (' (하위 종 전체)' if not self_scope else ' (해당 분류군 자체)'), **taxonomy_source})
+     scope_paths += [{'text': f"조건: {item['label']}", 'source_name': item['source_name'],
+                      'source_url': None} for item in condition_out]
+-    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.']
++    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.'
++                   ] if conditions else []
+     for c in conditions:
+         if c.qualifier == 'tree_fruit':
+             limitations.append(LIMITATIONS['tree_fruit'])
+@@ -925,9 +943,13 @@
+             limitations.append('AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.')
+     if taxon is not None and taxon['rank'] == 'subspecies':
+         limitations.append('아종 질문은 부모 종의 형질 자료로 대체하지 않습니다.')
+-    limitations.append(LIMITATIONS['graph_claims_only'])
++    if conditions:
++        limitations.append(LIMITATIONS['graph_claims_only'])
+     sources_out = [taxonomy_source] + [_source(p['source_name'], p['source_url']) for item in items for p in item['paths']]
+     extra = {'taxon': taxon, 'conditions': condition_out, 'coverage': dict(stats), 'paths': scope_paths}
++    if explore:
++        extra['pagination'] = {'page': page, 'page_size': RESULT_LIMIT,
++                               'total': stats['matched'], 'total_pages': total_pages}
+     where = _taxon_display(taxon) if taxon is not None else '전체 조류'
+     traits = ', '.join(dict.fromkeys(LABELS[c.trait_name] for c in conditions))
+     if stats['scoped'] == 0:
+@@ -949,7 +971,8 @@
+                 f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 조건({summary})에 맞는 종을 찾지 못했습니다.")
+         return _payload('empty', title, text, sources=[taxonomy_source], limitations=limitations, **extra)
+     text = (f"{where}은(는) 조건({summary})에 맞습니다." if self_scope else
+-            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다.")
++            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다."
++            if conditions else f"{where} 범위의 종 {stats['matched']}종입니다.")
+     if rank_diet:
+         text += (' 요청한 먹이 비율의 합이 높은 순입니다.' if sum(c.op == 'share_gt' for c in conditions) > 1
+                  else ' 먹이 비율이 높은 순입니다.')
+--- a/src/robingraph/retrieval/species_notes.py
++++ b/src/robingraph/retrieval/species_notes.py
+@@ -5,6 +5,7 @@
+ from urllib.parse import unquote, urlsplit
+ 
+ from .species_profile import _json_get
++from .external_cache import read_cached, remember
+ 
+ 
+ @lru_cache(maxsize=128)
+@@ -48,15 +49,23 @@
+             'source_note':'학명과 문서 식별자를 확인한 백과 설명입니다. 현재 AviList 종의 전체 분류 범위와 일치하는지는 별도로 검증하지 않았습니다.'}
+ 
+ 
+-def create_species_notes(summarize):
++def create_species_notes(summarize, *, model="default"):
++    def key(scientific_name):
++        return 'notes-v1:' + model + ':' + scientific_name
++
++    def load(scientific_name):
++        source = encyclopedia_excerpt(scientific_name, int(time.time() // 3600))
++        if source is None:
++            return {'appearance':[], 'fun_facts':[]}
++        notes = summarize(scientific_name, source['text'])
++        return {category:[{'text':item['text'], **{k:v for k,v in source.items() if k != 'text'}}
++                          for item in notes.get(category, [])]
++                for category in ('appearance', 'fun_facts')}
++
+     @lru_cache(maxsize=128)
+     def cached(scientific_name, hour):
+-        source = encyclopedia_excerpt(scientific_name, hour)
+-        if source is None:
+-            return {'appearance':[], 'fun_facts':[]}
+-        # The adapter validates every item against the supplied excerpt.
+-        notes = summarize(scientific_name, source['text'])
+-        return {key:[{'text':item['text'], **{k:v for k,v in source.items() if k != 'text'}}
+-                     for item in notes.get(key, [])]
+-                for key in ('appearance', 'fun_facts')}
+-    return lambda lineage: cached(lineage.items[-1].scientific_name, int(time.time() // 3600))
++        return remember(key(scientific_name), lambda: load(scientific_name))
++
++    handler = lambda lineage: cached(lineage.items[-1].scientific_name, int(time.time() // 3600))
++    handler.cached = lambda lineage: read_cached(key(lineage.items[-1].scientific_name))
++    return handler
+--- a/src/robingraph/retrieval/species_profile.py
++++ b/src/robingraph/retrieval/species_profile.py
+@@ -12,6 +12,7 @@
+ from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
+ from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override, best_reference_assessment
+ from robingraph.retrieval.reviewed_magpie import reviewed_magpie_traits, reviewed_magpie_notes
++from robingraph.retrieval.external_cache import read_cached, remember
+ 
+ class SpeciesNotFoundError(LookupError):
+     """The requested name is not a species in the active taxonomy."""
+@@ -360,7 +361,19 @@
+ 
+ @lru_cache(maxsize=128)
+ def _licensed_images(scientific_name, hour, rank="species"):
+-    # ponytail: hourly bounded metadata cache; shared cache only if traffic warrants it.
++    def load():
++        result = _fetch_licensed_images(scientific_name, rank)
++        return {'images': list(result), 'status': result.status}
++    result = remember('photos-v1:' + rank + ':' + scientific_name, load)
++    return PhotoLookup(result['images'], result['status'])
++
++
++def cached_images(scientific_name, rank="species"):
++    result = read_cached('photos-v1:' + rank + ':' + scientific_name)
++    return PhotoLookup(result['images'], result['status']) if result is not None else None
++
++
++def _fetch_licensed_images(scientific_name, rank):
+     if rank not in ('species', 'subspecies'):
+         raise ValueError('Unsupported photo taxon rank')
+     wikidata_rank = 'Q68947' if rank == 'subspecies' else 'Q7432'
+@@ -448,7 +461,7 @@
+     return sections
+ 
+ 
+-def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True):
++def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True, include_notes=True, cached_notes=None):
+     """Resolve once, collect independent sources, then assemble a sourced response."""
+     def resolve_species(query):
+         lineage = resolve(query)
+@@ -473,6 +486,10 @@
+         return subspecies_info(lineage) if lineage.items[-1].rank=='subspecies' else {}
+     def image_stage(lineage):
+         if not include_enrichment:
++            target = lineage.items[-1]
++            cached = cached_images(target.scientific_name, target.rank) if photos is licensed_images else None
++            if cached is not None:
++                return {'images': list(cached), 'photo_availability': {'status': cached.status, 'message': PHOTO_MESSAGES[cached.status]}, 'warnings': []}
+             return {'images':[], 'photo_availability':{'status':'pending', 'message':'사진을 불러오는 중입니다.'}, 'warnings':[]}
+         try:
+             target=lineage.items[-1]
+@@ -504,8 +521,11 @@
+         reviewed = reviewed_magpie_notes(lineage)
+         if reviewed:
+             return {'notes':reviewed, 'warnings':[]}
+-        if not include_enrichment or lineage.items[-1].rank == 'subspecies':
++        if lineage.items[-1].rank == 'subspecies':
+             return {'notes':{},'warnings':[]}
++        if not include_enrichment or not include_notes:
++            cached = cached_notes(lineage) if cached_notes is not None else None
++            return {'notes': cached or {}, 'warnings': [], 'pending': cached_notes is not None and cached is None}
+         try:
+             value = notes(lineage) if notes is not None else {}
+             return {'notes':value or {}, 'warnings':[]}
+@@ -541,7 +561,7 @@
+             result['subspecies_metadata']=metadata
+             result['sections'].insert(0,metadata['section'])
+             result['summary']=metadata['section']['items'][0]['text']
+-        if not include_enrichment:
++        if state['media']['photo_availability']['status'] == 'pending' or state['notes'].get('pending'):
+             result['enrichment_pending'] = True
+         return result
+     return (RunnableLambda(resolve_species)
+--- a/src/robingraph/tracing.py
++++ b/src/robingraph/tracing.py
+@@ -28,6 +28,7 @@
+ import logging
+ import os
+ import sys
++from threading import Lock
+ from typing import Any
+ from urllib.parse import urlsplit
+ 
+@@ -61,6 +62,7 @@
+     reason: str
+     langchain_autolog: bool = False
+     gemini_autolog: bool = False
++    experiment_id: str | None = None
+ 
+ 
+ _mlflow: Any = None
+@@ -99,9 +101,9 @@
+         mlflow.set_tracking_uri(tracking_uri)
+         experiment_id = env.get("MLFLOW_EXPERIMENT_ID", "").strip()
+         if experiment_id:
+-            mlflow.set_experiment(experiment_id=experiment_id)
++            experiment = mlflow.set_experiment(experiment_id=experiment_id)
+         else:
+-            mlflow.set_experiment(env.get("MLFLOW_EXPERIMENT_NAME", "").strip() or DEFAULT_EXPERIMENT_NAME)
++            experiment = mlflow.set_experiment(env.get("MLFLOW_EXPERIMENT_NAME", "").strip() or DEFAULT_EXPERIMENT_NAME)
+         mlflow.langchain.autolog(silent=True)
+     except Exception as error:
+         _LOGGER.warning("MLflow tracing disabled: initialization failed (%s)", type(error).__name__)
+@@ -115,7 +117,9 @@
+         except Exception as error:
+             _LOGGER.warning("MLflow Gemini autolog unavailable (%s)", type(error).__name__)
+     _mlflow = mlflow
+-    _status = TracingStatus(enabled=True, reason="enabled", langchain_autolog=True, gemini_autolog=gemini_autolog)
++    _status = TracingStatus(enabled=True, reason="enabled", langchain_autolog=True, gemini_autolog=gemini_autolog,
++                            experiment_id=getattr(experiment, "experiment_id", None)
++                            if isinstance(getattr(experiment, "experiment_id", None), str) else None)
+     _LOGGER.info("MLflow tracing enabled (langchain_autolog=True, gemini_autolog=%s)", gemini_autolog)
+     return _status
+ 
+@@ -156,6 +160,8 @@
+ 
+ 
+ class _NoopSpan:
++    trace_id = None
++
+     def set_inputs(self, inputs: Any) -> None:
+         pass
+ 
+@@ -180,6 +186,14 @@
+ 
+     def __init__(self, live: Any) -> None:
+         self._live = live
++
++    @property
++    def trace_id(self) -> str | None:
++        try:
++            value = self._live.trace_id
++            return value if isinstance(value, str) else None
++        except Exception:
++            return None
+ 
+     def set_inputs(self, inputs: Any) -> None:
+         self._call("set_inputs", redact(inputs))
+@@ -295,10 +309,11 @@
+     "interpretation_error", "invalid_plan", "semantic_audit_rejected", "plan_validation_rejected",
+     "unresolved_conditions", "unsupported_relation", "unsupported_conditions", "negated_conditions",
+     "ambiguous_conditions", "insufficient_data", "no_matching_results",
++    "followup_context_missing", "followup_context_invalid",
+ })
+ FAILURE_STAGES = frozenset({
+     "none", "routing", "name_resolution", "retrieval", "generation", "validation", "unknown",
+-    "interpretation", "semantic_audit", "plan_validation",
++    "interpretation", "semantic_audit", "plan_validation", "followup",
+ })
+ SELECTED_INTENTS = frozenset({"profile", "taxonomy", "observations", "evidence", "none"})
+ ROUTE_METHODS = frozenset({"semantic", "explicit", "deterministic", "jev", "none"})
+@@ -384,3 +399,56 @@
+         mlflow.update_current_trace(tags=dict(tags))
+     except Exception as error:
+         _LOGGER.debug("MLflow trace tag write failed (%s)", type(error).__name__)
++
++
++class FeedbackConflictError(ValueError):
++    pass
++
++
++class FeedbackTargetError(ValueError):
++    pass
++
++
++_feedback_lock = Lock()
++
++
++def feedback_experiment_id() -> str | None:
++    if (_status.enabled and _status.experiment_id and _mlflow is not None
++            and callable(getattr(_mlflow, "get_trace", None))
++            and callable(getattr(_mlflow, "flush_trace_async_logging", None))
++            and callable(getattr(_mlflow, "log_feedback", None))):
++        return _status.experiment_id
++    return None
++
++
++def record_feedback(trace_id: str, experiment_id: str, rating: str) -> None:
++    """One human vote per chat trace; repeated identical submissions are safe to retry."""
++    if feedback_experiment_id() != experiment_id:
++        raise RuntimeError("Feedback is unavailable")
++    from mlflow.entities import AssessmentSource
++
++    # Feedback requests run on worker threads; serialize the read/write pair.
++    with _feedback_lock:
++        # A partial trace can be readable before its root arrives. Drain exports first.
++        # Only feedback waits; the chat response stays fail-open.
++        _mlflow.flush_trace_async_logging()
++        trace = _mlflow.get_trace(trace_id, silent=True)
++        if trace is None:
++            raise RuntimeError("Trace is not available yet")
++        if str(trace.info.experiment_id) != experiment_id:
++            raise FeedbackTargetError("Feedback target is not in this experiment")
++        roots = [span for span in trace.data.spans if span.parent_id is None]
++        if not roots:
++            raise RuntimeError("Chat trace is not fully exported yet")
++        if len(roots) != 1 or roots[0].name != "POST /v1/chat":
++            raise FeedbackTargetError("Feedback target is not a chat trace")
++        for assessment in trace.info.assessments:
++            source = assessment.source
++            if (assessment.name == "user_feedback" and source.source_type == "HUMAN"
++                    and source.source_id == "robingraph-web"):
++                if assessment.feedback is not None and assessment.feedback.value == rating:
++                    return
++                raise FeedbackConflictError("Feedback already submitted")
++        _mlflow.log_feedback(trace_id=trace_id, name="user_feedback", value=rating,
++                             source=AssessmentSource(source_type="HUMAN", source_id="robingraph-web"),
++                             metadata={"channel": "chat"})

@@ -1,0 +1,27 @@
+{
+  "target": "test",
+  "final_source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "before": {
+    "container_internal_http": 200,
+    "host_loopback_http": 200,
+    "lan_http": "timeout",
+    "public_http": 502,
+    "browser_navigation": "chrome-error://chromewebdata/"
+  },
+  "action": "docker --context orbstack restart robingraph-api-test",
+  "only_test_container_restarted": true,
+  "after": {
+    "lan_http": 200,
+    "public_http": 200,
+    "final_lan_browser_pass": true,
+    "container_health": "healthy",
+    "container_restart_count": 0,
+    "container_started_at": "2026-11-10T04:07:18.172446438Z"
+  },
+  "root_cause_confirmed": false,
+  "production_changed": false,
+  "db_writes": 0,
+  "image_changed_by_recovery": false,
+  "rollback_executed": false,
+  "manual_test_restart_operations": 1
+}

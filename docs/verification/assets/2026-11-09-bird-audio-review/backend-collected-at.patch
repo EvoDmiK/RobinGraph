@@ -1,0 +1,39 @@
+--- a/src/robingraph/ingest/audio.py
++++ b/src/robingraph/ingest/audio.py
+@@ -120,6 +120,7 @@
+             item = {key:row[key] for key in ('scientific_name','status','file_title')}
+             updated = row['updated_at']
+             item.update(candidate_id=row['id'], updated_at=updated.isoformat(),
++                        collected_at=data.get('metadata_fetched_at'),
+                         file_bytes=None, preview_url=None, korean_name=None)
+             target = data.get('target',{})
+             if (target.get('concept_set_id'),target.get('taxonomy_release')) == ('rg:concept-set:avilist-v2025b','v2025b'):
+--- a/tests/test_audio_review.py
++++ b/tests/test_audio_review.py
+@@ -40,6 +40,7 @@
+             'file_title':record['title'],'status':'awaiting_review','updated_at':datetime(2026,11,9,tzinfo=timezone.utc),
+             'data':{'recording':record,'file_name':self.name,'file_sha256':digest,'mime':'audio/ogg',
+                     'raw_record':{'html':'<script>secret</script>'},'private_path':'/private/test/path',
++                    'metadata_fetched_at':'2026-11-05T02:33:43.046130+00:00',
+                     'target':{'taxon_id':'avilist-taxon:v2025b:29772','concept_set_id':'rg:concept-set:avilist-v2025b','taxonomy_release':'v2025b'}}}
+ 
+     def test_list_requires_distinct_review_bearer_and_missing_configuration_fails_closed(self):
+@@ -67,14 +68,18 @@
+         data=response.json();item=data['items'][0]
+         self.assertEqual({'has_more':False,'next_offset':None},{key:data[key] for key in ('has_more','next_offset')})
+         self.assertEqual('참새',item['korean_name']);self.assertEqual(11,item['file_bytes'])
++        self.assertEqual('2026-11-05T02:33:43.046130+00:00',item['collected_at'])
++        self.assertNotEqual(item['recording']['evidence']['retrieved_at'],item['collected_at'])
+         self.assertEqual('/internal/v1/audio/preview/'+self.key,item['preview_url'])
+         for forbidden in ('private_extra','hidden evidence','private_path','/private/test/path','<script>secret','raw_record','file_name'):
+             self.assertNotIn(forbidden,response.text)
+         self.assertEqual(self.store.rows[self.key]['data']['recording']['evidence']['metadata_sha256'],item['recording']['evidence']['metadata_sha256'])
+         (Path(self.directory.name)/self.name).unlink()
+         self.store.rows[self.key]['data']['target']['taxonomy_release']='future'
++        self.store.rows[self.key]['data'].pop('metadata_fetched_at')
+         item=self.client.get('/internal/v1/audio/candidates',headers=self.headers).json()['items'][0]
+         self.assertIsNone(item['korean_name']);self.assertIsNone(item['file_bytes']);self.assertIsNone(item['preview_url'])
++        self.assertIsNone(item['collected_at'])
+         self.assertEqual(404,self.client.get('/internal/v1/audio/preview/'+self.key,headers=self.headers).status_code)
+ 
+     def test_stable_tie_pages_status_filter_empty_and_query_guards(self):

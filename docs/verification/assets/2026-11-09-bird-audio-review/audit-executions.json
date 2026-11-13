@@ -1,0 +1,180 @@
+{
+  "checked_at_utc": "2026-11-09T01:50:26.575Z",
+  "workflow": {
+    "id": "rgAudioCollectionProd01",
+    "name": "RobinGraph Audio Collection PROD (daily 5 species)",
+    "active": true,
+    "versionId": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+    "activeVersionId": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "Asia/Seoul",
+      "saveDataSuccessExecution": "all",
+      "saveDataErrorExecution": "all",
+      "executionTimeout": 86400,
+      "binaryMode": "separate",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    }
+  },
+  "runs": [
+    {
+      "execution": {
+        "id": 84322,
+        "status": "success",
+        "mode": "trigger",
+        "startedAt": "2026-11-08T18:00:00.072Z",
+        "stoppedAt": "2026-11-08T18:00:12.925Z",
+        "waitTill": null
+      },
+      "workflow_version": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+      "last_node": "Execution summary",
+      "error": null,
+      "scheduled_inputs": [
+        {
+          "action": "collect",
+          "limit": 5,
+          "after_taxon_id": "avilist-taxon:v2025b:1083",
+          "scheduled": true
+        }
+      ],
+      "summaries": [
+        {
+          "action": "collect",
+          "status": "deferred",
+          "results": [
+            {
+              "status": "no_candidates",
+              "scientific_name": "Dendrocopos hyperythrus"
+            },
+            {
+              "status": "awaiting_review",
+              "scientific_name": "Dendrocopos leucotos",
+              "candidate_id": "0b998e3fb9ed1ac9e52bb4a0a83ed04ecc47849e624ac9ff4a00404bc0c36464",
+              "file_title": "File:Feh\u00e9rh\u00e1t\u00fa fakop\u00e1ncs dob - Dendrocopos leucotos.ogg"
+            },
+            {
+              "status": "awaiting_review",
+              "scientific_name": "Dendrocopos major",
+              "candidate_id": "5b0a2bcb495f07ed58c5c2e9e3a30133361cf9936d3591afec3daf30f4f461cc",
+              "file_title": "File:Dendrocopos major - Great Spotted Woodpecker XC542957.mp3"
+            },
+            {
+              "status": "deferred",
+              "scientific_name": "Falco tinnunculus",
+              "candidate_id": "e75f41e4db529cbe2be4b2e98bd24cfb6ad1352fe88555ce4a57b34ee22a5958",
+              "retry_after_seconds": 1
+            }
+          ],
+          "next_cursor": "avilist-taxon:v2025b:11201",
+          "scheduled": true,
+          "cursor_saved": false,
+          "publication_automatic": false
+        }
+      ],
+      "nodes_executed": [
+        "Daily 03:00 Korea",
+        "Read scheduled cursor",
+        "Scheduled collection inputs",
+        "Execution inputs",
+        "Verify PROD collector health",
+        "Initialize request",
+        "Prepare request",
+        "Audio API",
+        "Advance state",
+        "Cooldown required",
+        "Finished",
+        "Respect Retry-After",
+        "After cooldown",
+        "Prepare execution summary",
+        "Checkpoint scheduled success",
+        "Execution summary"
+      ]
+    },
+    {
+      "execution": {
+        "id": 82125,
+        "status": "success",
+        "mode": "trigger",
+        "startedAt": "2026-11-07T18:00:00.230Z",
+        "stoppedAt": "2026-11-07T18:00:12.275Z",
+        "waitTill": null
+      },
+      "workflow_version": "d8f1c0c4-a745-4ed2-97f1-3388b7331f00",
+      "last_node": "Execution summary",
+      "error": null,
+      "scheduled_inputs": [
+        {
+          "action": "collect",
+          "limit": 5,
+          "after_taxon_id": "avilist-taxon:v2025b:10399",
+          "scheduled": true
+        }
+      ],
+      "summaries": [
+        {
+          "action": "collect",
+          "status": "finished",
+          "results": [
+            {
+              "status": "awaiting_review",
+              "scientific_name": "Dryocopus martius",
+              "candidate_id": "bf2cf4d13e0601dfa4da9b135e553475fb621a06ed6ca0109ca69b049fa3d324",
+              "file_title": "File:Dryocopus martius - Black Woodpecker XC311605.mp3"
+            },
+            {
+              "status": "no_candidates",
+              "scientific_name": "Dryocopus javensis"
+            },
+            {
+              "status": "no_candidates",
+              "scientific_name": "Yungipicus canicapillus"
+            },
+            {
+              "status": "no_candidates",
+              "scientific_name": "Yungipicus kizuki"
+            },
+            {
+              "status": "awaiting_review",
+              "scientific_name": "Tetrastes bonasia",
+              "candidate_id": "74d5d61e7ad5578e5d369696e4ddc15c9f7459fa56a93903f6270167f9b64dcf",
+              "file_title": "File:Tetrastes bonasia - Hazel Grouse XC103672.mp3"
+            }
+          ],
+          "next_cursor": "avilist-taxon:v2025b:1083",
+          "scheduled": true,
+          "cursor_saved": true,
+          "publication_automatic": false
+        }
+      ],
+      "nodes_executed": [
+        "Daily 03:00 Korea",
+        "Read scheduled cursor",
+        "Scheduled collection inputs",
+        "Execution inputs",
+        "Verify PROD collector health",
+        "Initialize request",
+        "Prepare request",
+        "Audio API",
+        "Advance state",
+        "Cooldown required",
+        "Finished",
+        "Prepare execution summary",
+        "Checkpoint scheduled success",
+        "Save scheduled cursor",
+        "Execution summary"
+      ]
+    }
+  ],
+  "cursor": [
+    {
+      "id": 1,
+      "cursor_key": "prod",
+      "after_taxon_id": "avilist-taxon:v2025b:1083",
+      "createdAt": "2026-11-05T02:46:10.910Z",
+      "updatedAt": "2026-11-07T18:00:12.257Z"
+    }
+  ],
+  "data_writes": 0,
+  "collection_requests": 0
+}

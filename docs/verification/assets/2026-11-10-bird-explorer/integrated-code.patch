@@ -1,0 +1,2635 @@
+--- a/src/robingraph/api/drf/openapi.json
++++ b/src/robingraph/api/drf/openapi.json
+@@ -299,6 +299,101 @@
+                 }
+               }
+             }
++          }
++        }
++      }
++    },
++    "/v1/taxa/explore": {
++      "get": {
++        "summary": "Bird Explorer",
++        "description": "Structured species search without natural-language parsing. Every filter is optional and each parameter may appear once; unknown or repeated parameters are rejected with 422. Results are species, the first 20 with has_more.",
++        "operationId": "bird_explorer_v1_taxa_explore_get",
++        "parameters": [
++          {
++            "name": "species_scope",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "enum": [
++                "all",
++                "korea",
++                "outside",
++                "unknown"
++              ],
++              "type": "string",
++              "default": "all",
++              "title": "Species Scope"
++            }
++          },
++          {
++            "name": "taxon",
++            "in": "query",
++            "required": false,
++            "description": "One order, family or genus: a single scientific name or a reviewed Korean name. Species and subspecies are rejected.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 100,
++              "pattern": "^(?:[A-Z][a-z]+|[\uac00-\ud7a3]+(?: [\uac00-\ud7a3]+)*)$",
++              "title": "Taxon"
++            }
++          },
++          {
++            "name": "habitat",
++            "in": "query",
++            "required": false,
++            "description": "One AVONET habitat value.",
++            "schema": {
++              "enum": [
++                "Forest",
++                "Shrubland",
++                "Woodland",
++                "Grassland",
++                "Rock",
++                "Wetland",
++                "Human Modified",
++                "Coastal",
++                "Marine",
++                "Riverine",
++                "Desert"
++              ],
++              "type": "string",
++              "title": "Habitat"
++            }
++          },
++          {
++            "name": "diet",
++            "in": "query",
++            "required": false,
++            "description": "Comma-separated distinct EltonTraits diet composition keys (1-10), all above 0%: invertebrate, endotherm_vertebrate, ectotherm_vertebrate, fish, unknown_vertebrate, carrion, fruit, nectar, seed, other_plant. Ranked by the sum of the selected shares.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "title": "Diet"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {}
++              }
++            }
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Bird explorer unavailable"
+           }
+         }
+       }
+--- a/src/robingraph/api/drf/openapi_ingest.json
++++ b/src/robingraph/api/drf/openapi_ingest.json
+@@ -628,6 +628,101 @@
+                 }
+               }
+             }
++          }
++        }
++      }
++    },
++    "/v1/taxa/explore": {
++      "get": {
++        "summary": "Bird Explorer",
++        "description": "Structured species search without natural-language parsing. Every filter is optional and each parameter may appear once; unknown or repeated parameters are rejected with 422. Results are species, the first 20 with has_more.",
++        "operationId": "bird_explorer_v1_taxa_explore_get",
++        "parameters": [
++          {
++            "name": "species_scope",
++            "in": "query",
++            "required": false,
++            "schema": {
++              "enum": [
++                "all",
++                "korea",
++                "outside",
++                "unknown"
++              ],
++              "type": "string",
++              "default": "all",
++              "title": "Species Scope"
++            }
++          },
++          {
++            "name": "taxon",
++            "in": "query",
++            "required": false,
++            "description": "One order, family or genus: a single scientific name or a reviewed Korean name. Species and subspecies are rejected.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "maxLength": 100,
++              "pattern": "^(?:[A-Z][a-z]+|[\uac00-\ud7a3]+(?: [\uac00-\ud7a3]+)*)$",
++              "title": "Taxon"
++            }
++          },
++          {
++            "name": "habitat",
++            "in": "query",
++            "required": false,
++            "description": "One AVONET habitat value.",
++            "schema": {
++              "enum": [
++                "Forest",
++                "Shrubland",
++                "Woodland",
++                "Grassland",
++                "Rock",
++                "Wetland",
++                "Human Modified",
++                "Coastal",
++                "Marine",
++                "Riverine",
++                "Desert"
++              ],
++              "type": "string",
++              "title": "Habitat"
++            }
++          },
++          {
++            "name": "diet",
++            "in": "query",
++            "required": false,
++            "description": "Comma-separated distinct EltonTraits diet composition keys (1-10), all above 0%: invertebrate, endotherm_vertebrate, ectotherm_vertebrate, fish, unknown_vertebrate, carrion, fruit, nectar, seed, other_plant. Ranked by the sum of the selected shares.",
++            "schema": {
++              "type": "string",
++              "minLength": 1,
++              "title": "Diet"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "description": "Successful Response",
++            "content": {
++              "application/json": {
++                "schema": {}
++              }
++            }
++          },
++          "422": {
++            "description": "Validation Error",
++            "content": {
++              "application/json": {
++                "schema": {
++                  "$ref": "#/components/schemas/HTTPValidationError"
++                }
++              }
++            }
++          },
++          "503": {
++            "description": "Bird explorer unavailable"
+           }
+         }
+       }
+--- a/src/robingraph/api/drf/serializers.py
++++ b/src/robingraph/api/drf/serializers.py
+@@ -10,16 +10,20 @@
+ from __future__ import annotations
+ 
+ from datetime import date
+-from typing import Annotated, Any, ClassVar
+-
+-from pydantic import BaseModel, Field, TypeAdapter
++from typing import Annotated, Any, ClassVar, Literal
++
++from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, StringConstraints, TypeAdapter
++from pydantic_core import PydanticCustomError
+ from rest_framework import serializers
+ from rest_framework.fields import empty
+ 
++from ...retrieval.graph_questions import DIET_SHARE_KEYS, TRAIT_CONDITIONS
+ from ...retrieval.species_scope import SpeciesScope
+ from .. import ingest_service as ingest
+ from .. import schemas
+-from .validation import jsonable, missing, raise_if_errors, validate
++from .validation import RequestValidationFailed, jsonable, missing, raise_if_errors, validate
++
++AVONET_HABITATS = TRAIT_CONDITIONS["habitat"][2]
+ 
+ _REQUIRED = object()
+ 
+@@ -123,6 +127,43 @@
+     query_params = {"name": Param(_NAME), "species_scope": _SCOPE}
+ 
+ 
++def _diet_keys(value: Any) -> Any:
++    return value.split(",") if isinstance(value, str) else value
++
++
++def _distinct(keys: list[str]) -> list[str]:
++    if len(set(keys)) != len(keys):
++        raise PydanticCustomError("duplicate_value", "Diet keys must be distinct")
++    return keys
++
++
++class TaxonExploreRequestSerializer(EndpointRequestSerializer):
++    """Structured explorer filters; unknown or repeated parameters are rejected, never ignored."""
++
++    query_params = {
++        "species_scope": _SCOPE,
++        "taxon": Param(Annotated[str | None, StringConstraints(
++            strip_whitespace=True, min_length=1, max_length=100, pattern=r"^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$")], None),
++        "habitat": Param(Literal[AVONET_HABITATS] | None, None),
++        "diet": Param(Annotated[list[Literal[DIET_SHARE_KEYS]] | None, BeforeValidator(_diet_keys),
++                                AfterValidator(lambda keys: keys and _distinct(keys)), Field(min_length=1, max_length=10)], None),
++    }
++
++    def run_validation(self, data: Any = empty) -> dict[str, Any]:
++        query = (data or {}).get("query") or {}
++        values = dict(query.lists()) if hasattr(query, "lists") else {name: [value] for name, value in query.items()}
++        errors = [{"type": "extra_forbidden", "loc": ("query", name), "msg": "Extra inputs are not permitted",
++                   "input": given[-1]} for name, given in values.items() if name not in self.query_params]
++        errors += [{"type": "duplicate_parameter", "loc": ("query", name), "msg": "Parameter must be given once",
++                    "input": given} for name, given in values.items() if name in self.query_params and len(given) > 1]
++        try:
++            values = super().run_validation(data)
++        except RequestValidationFailed as error:
++            errors += error.errors
++        raise_if_errors(errors)
++        return values
++
++
+ class QuestionRequestSerializer(EndpointRequestSerializer):
+     body = ("request", schemas.QuestionRequest)
+ 
+--- a/src/robingraph/api/drf/urls.py
++++ b/src/robingraph/api/drf/urls.py
+@@ -58,9 +58,11 @@
+         path("v1/taxa/related", bind(views.RelatedSpeciesView)),
+         path("v1/taxa/similar", bind(views.SimilarSpeciesView)),
+         path("v1/taxa/ecological-related", bind(views.EcologicalRelatedView)),
++        path("v1/taxa/explore", bind(views.TaxonExploreView)),
+         path("v1/taxa/subspecies", bind(views.SubspeciesView)),
+         path("v1/taxa/profile", bind(views.SpeciesProfileView)),
+         path("birds", bind(views.BirdsUIView)),
++        path("explore", bind(views.ExploreUIView)),
+         path("favicon.ico", bind(views.FaviconView)),
+         re_path(r"^static/(?P<asset_path>.*)\Z", bind(views.StaticAssetView)),
+         path("", bind(views.ChatUIView)),
+--- a/src/robingraph/api/drf/views.py
++++ b/src/robingraph/api/drf/views.py
+@@ -193,6 +193,14 @@
+         return self.plain(self.service.ecological_related(**self.validated(request)))
+ 
+ 
++class TaxonExploreView(RobinGraphView):
++    http_method_names = ["get"]
++    request_serializer = serializers.TaxonExploreRequestSerializer
++
++    def get(self, request):
++        return self.plain(self.service.explore_taxa(**self.validated(request)))
++
++
+ class SubspeciesView(RobinGraphView):
+     http_method_names = ["get"]
+     request_serializer = serializers.TaxonNameRequestSerializer
+@@ -284,6 +292,13 @@
+ 
+     def get(self, request):
+         return asset_response(self.service.birds_ui())
++
++
++class ExploreUIView(RobinGraphView):
++    http_method_names = ["get"]
++
++    def get(self, request):
++        return asset_response(self.service.explore_ui())
+ 
+ 
+ class AudioReviewUIView(RobinGraphView):
+--- a/src/robingraph/api/services.py
++++ b/src/robingraph/api/services.py
+@@ -122,6 +122,9 @@
+     "audio-review.html": "text/html; charset=utf-8",
+     "audio-review.js": "application/javascript",
+     "audio-review.css": "text/css; charset=utf-8",
++    "explore.html": "text/html; charset=utf-8",
++    "explore.js": "application/javascript",
++    "explore.css": "text/css; charset=utf-8",
+ }
+ # Branding icons are optional: a missing icon is a plain 404 and never turns the
+ # chat UI into "unavailable". They live in the same static directory.
+@@ -746,6 +749,12 @@
+             return self._unavailable_ui()
+         return _chat_asset_response(assets, "audio-review.html")
+ 
++    def explore_ui(self) -> AssetResponse:
++        assets = _read_chat_asset_bundle(self.asset_root, ("explore.html", "explore.js", "explore.css", "styles.css"))
++        if assets is None:
++            return self._unavailable_ui()
++        return _chat_asset_response(assets, "explore.html")
++
+     def chat_ui(self) -> AssetResponse:
+         assets = _read_chat_asset_bundle(self.asset_root)
+         if assets is None:
+@@ -773,6 +782,8 @@
+         names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
+         if asset_path in ("audio-review.html", "audio-review.js", "audio-review.css"):
+             names = ("audio-review.html", "audio-review.js", "audio-review.css", "styles.css")
++        if asset_path in ("explore.html", "explore.js", "explore.css"):
++            names = ("explore.html", "explore.js", "explore.css", "styles.css")
+         assets = _read_chat_asset_bundle(self.asset_root, names)
+         if assets is None:
+             # Do not reflect asset_path: it could contain deployment details or
+@@ -840,6 +851,36 @@
+             raise ApiError(status_code=404,detail="Species not found in active taxonomy") from None
+         except Exception:
+             raise ApiError(status_code=503,detail="Ecological relations are temporarily unavailable") from None
++
++    @_traced_route("GET /v1/taxa/explore")
++    def explore_taxa(self, *, species_scope: SpeciesScope = "all", taxon: str | None = None,
++                     habitat: str | None = None, diet: list[str] | None = None):
++        """Structured bird explorer: the request is the plan; no NL parsing, routing or LLM."""
++        from ..retrieval.graph_questions import DIET_SHARE_KEYS, LIMITATIONS, GraphQuestion, TraitCondition
++
++        graph_question_handler = self.graph_question_handler
++        if graph_question_handler is None:
++            raise ApiError(status_code=503, detail="Bird explorer is unavailable")
++        diet = sorted(diet or (), key=DIET_SHARE_KEYS.index)
++        conditions = ((TraitCondition("habitat", "eq", habitat),) if habitat else ()) + tuple(
++            TraitCondition("diet_distribution", "share_gt", key, 0) for key in diet)
++        query = {"species_scope": species_scope, "taxon": taxon, "habitat": habitat, "diet": diet}
++        try:
++            payload = graph_question_handler(GraphQuestion("taxon_traits", rank_name=taxon, criterion="explore",
++                                                           conditions=conditions), species_scope=species_scope)
++            if not isinstance(payload, dict) or payload.get("status") not in ("answer", "empty", "insufficient_data"):
++                raise ValueError("Invalid bird explorer result")
++        except Exception as error:
++            logging.getLogger(__name__).warning("Bird explorer lookup failed (%s)", type(error).__name__)
++            raise ApiError(status_code=503, detail="Bird explorer is temporarily unavailable") from None
++        reason = payload.get("taxon_resolution")
++        if reason is not None:
++            kind = {"label_rank_conflict": "taxon_rank_conflict"}.get(reason, f"taxon_{reason}")
++            raise ApiError(status_code=422, detail=[{"type": kind, "loc": ["query", "taxon"], "input": taxon,
++                                                     "msg": "Taxon must name one active order, family or genus"}])
++        if species_scope == "korea":
++            payload = {**payload, "limitations": [*payload.get("limitations", []), LIMITATIONS["korea_record"]]}
++        return {**payload, "query": query}
+ 
+     @_traced_route("GET /v1/taxa/subspecies")
+     def subspecies(self, *, name: str):
+--- /dev/null
++++ b/src/robingraph/api/static/explore.css
+@@ -0,0 +1,418 @@
++.explore-page {
++  max-width: 960px;
++}
++
++.explore-page [hidden] {
++  display: none !important;
++}
++
++.explore-nav {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  flex-wrap: wrap;
++}
++
++.explore-main {
++  display: flex;
++  flex-direction: column;
++  gap: 1.15rem;
++  min-width: 0;
++}
++
++.explore-form {
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 1.25rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 14px;
++  min-width: 0;
++}
++
++.explore-fieldset {
++  margin: 0;
++  padding: 0.9rem 1rem;
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  background: var(--color-bg);
++  min-width: 0;
++}
++
++.explore-grid-two {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 1rem;
++  min-width: 0;
++}
++
++.explore-field {
++  display: flex;
++  flex-direction: column;
++  gap: 0.4rem;
++  padding: 0.9rem 1rem;
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  background: var(--color-bg);
++  min-width: 0;
++}
++
++.explore-label {
++  font-size: 0.9rem;
++  font-weight: 700;
++  color: var(--color-text);
++}
++
++.explore-field input,
++.explore-field select {
++  width: 100%;
++  min-width: 0;
++  min-height: 44px;
++  padding: 0.55rem 0.75rem;
++  font: inherit;
++  font-size: 0.92rem;
++  color: var(--color-text);
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++}
++
++.explore-field input:focus-visible,
++.explore-field select:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-field-hint {
++  margin: 0;
++  font-size: 0.8rem;
++  color: var(--color-muted);
++  line-height: 1.45;
++  overflow-wrap: anywhere;
++}
++
++.explore-diet-notice {
++  margin-bottom: 0.65rem;
++  padding: 0.55rem 0.75rem;
++  border-left: 3px solid var(--color-answer-border);
++  background: var(--color-answer-bg);
++  border-radius: 0 6px 6px 0;
++  color: var(--color-text);
++}
++
++.explore-diet-grid {
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
++  gap: 0.5rem;
++  min-width: 0;
++}
++
++.explore-diet-option {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  min-height: 44px;
++  padding: 0.45rem 0.65rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 8px;
++  font-size: 0.86rem;
++  cursor: pointer;
++  min-width: 0;
++}
++
++.explore-diet-option:hover {
++  border-color: var(--color-accent);
++}
++
++.explore-diet-option:has(input:checked) {
++  background: var(--color-answer-bg);
++  border-color: var(--color-accent);
++  font-weight: 600;
++}
++
++.explore-diet-option:has(input:focus-visible) {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-diet-option input {
++  margin: 0;
++  flex-shrink: 0;
++  accent-color: var(--color-accent);
++}
++
++.explore-diet-option span {
++  min-width: 0;
++  overflow-wrap: anywhere;
++}
++
++.explore-diet-option small {
++  color: var(--color-muted);
++  font-weight: 400;
++  font-size: 0.76rem;
++}
++
++.explore-actions {
++  margin-top: 0.2rem;
++}
++
++.explore-status {
++  margin: 0;
++  padding: 0.5rem 0.25rem;
++}
++
++.explore-status[data-error="true"] {
++  color: var(--color-error-text);
++  font-weight: 600;
++}
++
++.explore-results {
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 1.25rem;
++  background: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: 14px;
++  min-width: 0;
++}
++
++.explore-results-header {
++  display: flex;
++  flex-direction: column;
++  gap: 0.55rem;
++  border-bottom: 1px solid var(--color-border);
++  padding-bottom: 0.85rem;
++}
++
++.explore-results-header h2 {
++  margin: 0;
++  font-size: 1.15rem;
++  color: var(--color-accent);
++  overflow-wrap: anywhere;
++}
++
++.explore-summary-text {
++  margin: 0;
++  font-size: 0.92rem;
++  color: var(--color-text);
++  line-height: 1.5;
++  overflow-wrap: anywhere;
++}
++
++.explore-sort-note {
++  margin: 0;
++  font-size: 0.82rem;
++  color: var(--color-muted);
++}
++
++.explore-coverage {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 0.65rem;
++  padding: 0.75rem 0.9rem;
++  background: var(--color-bg);
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++}
++
++.explore-coverage-item {
++  display: flex;
++  flex-direction: column;
++  gap: 0.15rem;
++  min-width: 0;
++}
++
++.explore-coverage-label {
++  font-size: 0.76rem;
++  color: var(--color-muted);
++}
++
++.explore-coverage-value {
++  font-size: 1rem;
++  font-weight: 700;
++  color: var(--color-text);
++}
++
++.explore-cap-notice {
++  margin: 0;
++  padding: 0.6rem 0.85rem;
++  background: var(--color-answer-bg);
++  border: 1px solid var(--color-answer-border);
++  border-radius: 8px;
++  font-size: 0.84rem;
++  color: var(--color-text);
++}
++
++.explore-species-list {
++  list-style: none;
++  margin: 0;
++  padding: 0;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
++  gap: 0.75rem;
++}
++
++.explore-species-card {
++  display: flex;
++  flex-direction: column;
++  justify-content: space-between;
++  gap: 0.6rem;
++  padding: 0.9rem 1rem;
++  background: var(--color-bg);
++  border: 1px solid var(--color-border);
++  border-radius: 10px;
++  min-width: 0;
++}
++
++.explore-species-top {
++  display: flex;
++  align-items: flex-start;
++  justify-content: space-between;
++  gap: 0.6rem;
++  flex-wrap: wrap;
++}
++
++.explore-species-identity {
++  display: flex;
++  flex-direction: column;
++  gap: 0.15rem;
++  min-width: 0;
++}
++
++.explore-species-name {
++  font-size: 1rem;
++  color: var(--color-text);
++  overflow-wrap: anywhere;
++}
++
++.explore-species-sci {
++  font-size: 0.83rem;
++  font-style: italic;
++  color: var(--color-muted);
++  overflow-wrap: anywhere;
++}
++
++.explore-species-sub {
++  font-size: 0.8rem;
++  color: var(--color-muted);
++  overflow-wrap: anywhere;
++}
++
++.explore-profile-link {
++  display: inline-flex;
++  align-items: center;
++  min-height: 36px;
++  padding: 0.3rem 0.65rem;
++  font-size: 0.8rem;
++  font-weight: 600;
++  color: var(--color-accent);
++  background: var(--color-surface);
++  border: 1px solid var(--color-answer-border);
++  border-radius: 999px;
++  text-decoration: none;
++  flex-shrink: 0;
++}
++
++.explore-profile-link:hover {
++  background: var(--color-answer-bg);
++  border-color: var(--color-accent);
++}
++
++.explore-profile-link:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
++}
++
++.explore-item-paths {
++  margin: 0;
++  padding-left: 1.15rem;
++  font-size: 0.82rem;
++  color: var(--color-text);
++  line-height: 1.5;
++}
++
++.explore-item-paths li {
++  margin: 0.2rem 0;
++  overflow-wrap: anywhere;
++}
++
++.explore-item-paths a {
++  color: var(--color-accent);
++  text-decoration: underline;
++  text-underline-offset: 2px;
++}
++
++.explore-state-box {
++  padding: 1rem 1.1rem;
++  border-radius: 10px;
++  border: 1px solid var(--color-border);
++  background: var(--color-bg);
++  display: flex;
++  flex-direction: column;
++  gap: 0.4rem;
++}
++
++.explore-state-box h3 {
++  margin: 0;
++  font-size: 1rem;
++}
++
++.explore-state-box p {
++  margin: 0;
++  font-size: 0.88rem;
++  line-height: 1.5;
++  overflow-wrap: anywhere;
++}
++
++.explore-state-box[data-state="empty"] {
++  border-color: var(--color-border);
++  background: var(--color-bg);
++}
++
++.explore-state-box[data-state="insufficient_data"] {
++  border-color: var(--color-abstain-border);
++  background: var(--color-abstain-bg);
++}
++
++.explore-state-box[data-state="validation_error"],
++.explore-state-box[data-state="error"] {
++  border-color: var(--color-error-border);
++  background: var(--color-error-bg);
++  color: var(--color-error-text);
++}
++
++@media (max-width: 640px) {
++  .explore-page {
++    padding: 1rem 0.85rem;
++  }
++
++  .explore-form,
++  .explore-results {
++    padding: 0.95rem;
++  }
++
++  .explore-grid-two {
++    grid-template-columns: minmax(0, 1fr);
++  }
++
++  .explore-diet-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++
++  .explore-coverage {
++    grid-template-columns: minmax(0, 1fr);
++  }
++
++  .explore-species-list {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
++
++@media (max-width: 300px) {
++  .explore-diet-grid {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
+--- /dev/null
++++ b/src/robingraph/api/static/explore.html
+@@ -0,0 +1,170 @@
++<!DOCTYPE html>
++<html lang="ko">
++<head>
++  <meta charset="utf-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1" />
++  <meta name="referrer" content="no-referrer" />
++  <title>조건으로 새 찾기 · RobinGraph</title>
++  <link rel="icon" href="/favicon.ico" sizes="any" />
++  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png" />
++  <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png" />
++  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
++  <link rel="stylesheet" href="/static/styles.css" />
++  <link rel="stylesheet" href="/static/explore.css" />
++  <script src="/static/explore.js" defer></script>
++</head>
++<body>
++  <div class="page explore-page">
++    <header class="app-header explore-header">
++      <div class="app-header-top">
++        <p class="brand">RobinGraph · Bird Explorer</p>
++        <nav class="explore-nav" aria-label="화면 이동">
++          <a href="/chat" class="explore-nav-link">← 질문으로 찾기</a>
++          <a href="/birds" class="explore-nav-link">새 도감</a>
++        </nav>
++      </div>
++      <h1 id="explore-title">조건으로 새 찾기</h1>
++      <p class="tagline">
++        분포 범위, 분류군(목·과·속), 대표 서식 환경, 먹이 구성을 조합해 출처가 확인된 종(species)을 찾아보세요.
++      </p>
++    </header>
++
++    <main class="explore-main">
++      <form id="explore-form" class="explore-form" autocomplete="off">
++        <fieldset id="explore-scope-controls" class="species-scope-controls explore-fieldset">
++          <legend class="species-scope-legend">1. 분포 범위 · 이름 우선 기준</legend>
++          <div class="species-scope-options">
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-all" name="species_scope" value="all" checked />
++              <span>전체 (기본 · 한국어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-korea" name="species_scope" value="korea" />
++              <span>국내 기록·분포 확인 (한국어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-outside" name="species_scope" value="outside" />
++              <span>국외 분포 검토 (영어 우선)</span>
++            </label>
++            <label class="species-scope-option">
++              <input type="radio" id="explore-scope-unknown" name="species_scope" value="unknown" />
++              <span>미확인 (한국어 우선)</span>
++            </label>
++          </div>
++          <p id="explore-scope-note" class="species-scope-note">
++            전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.
++          </p>
++        </fieldset>
++
++        <div class="explore-grid-two">
++          <div class="explore-field">
++            <label for="explore-taxon" class="explore-label">2. 분류군 (목·과·속 국명 또는 학명)</label>
++            <input
++              id="explore-taxon"
++              name="taxon"
++              type="text"
++              maxlength="100"
++              placeholder="예: 참새목, 직박구리과, Passeriformes, Turdus"
++              aria-describedby="explore-taxon-hint"
++            />
++            <p id="explore-taxon-hint" class="explore-field-hint">
++              목·과·속 단위로 범위를 좁힙니다(종·아종 제외). 비워두면 선택한 분포 범위의 전체 조류를 대상으로 조회합니다.
++            </p>
++          </div>
++
++          <div class="explore-field">
++            <label for="explore-habitat" class="explore-label">3. 대표 서식 환경 (AVONET · 단일 선택)</label>
++            <select id="explore-habitat" name="habitat" aria-describedby="explore-habitat-hint">
++              <option value="">전체 서식 환경 (선택 안 함)</option>
++              <option value="Forest">숲</option>
++              <option value="Shrubland">관목 지대</option>
++              <option value="Woodland">성긴 숲</option>
++              <option value="Grassland">초지</option>
++              <option value="Rock">바위 지대</option>
++              <option value="Wetland">습지</option>
++              <option value="Human Modified">인공·변형 환경</option>
++              <option value="Coastal">해안</option>
++              <option value="Marine">바다</option>
++              <option value="Riverine">하천</option>
++              <option value="Desert">사막</option>
++            </select>
++            <p id="explore-habitat-hint" class="explore-field-hint">
++              AVONET 자료의 종별 대표 서식 환경(1개)과 일치하는 종을 찾습니다.
++            </p>
++          </div>
++        </div>
++
++        <fieldset id="explore-diet-controls" class="explore-fieldset">
++          <legend class="explore-label">4. 먹이 구성 (EltonTraits · 복수 선택 가능)</legend>
++          <p id="explore-diet-hint" class="explore-field-hint explore-diet-notice">
++            복수 선택 시 선택한 먹이가 모두 0%보다 큰 종(AND 조건)만 찾으며, 결과는 선택한 먹이 비율의 합계가 높은 순으로 정렬됩니다(가나다·알파벳순 아님). 먹이를 선택하지 않으면 이름순으로 정렬되며, 확실성 A·B·C 자료만 사용합니다.
++          </p>
++          <div id="explore-diet-options" class="explore-diet-grid" role="group" aria-describedby="explore-diet-hint">
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-invertebrate" name="diet" value="invertebrate" />
++              <span>곤충</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-endotherm_vertebrate" name="diet" value="endotherm_vertebrate" />
++              <span>고기 · 온혈동물</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-ectotherm_vertebrate" name="diet" value="ectotherm_vertebrate" />
++              <span>고기 · 변온동물</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-fish" name="diet" value="fish" />
++              <span>물고기</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-unknown_vertebrate" name="diet" value="unknown_vertebrate" />
++              <span>기타 고기</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-carrion" name="diet" value="carrion" />
++              <span>사체</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-fruit" name="diet" value="fruit" />
++              <span>열매</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-nectar" name="diet" value="nectar" />
++              <span>꽃꿀</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-seed" name="diet" value="seed" />
++              <span>씨앗</span>
++            </label>
++            <label class="explore-diet-option">
++              <input type="checkbox" id="explore-diet-other_plant" name="diet" value="other_plant" />
++              <span>기타 식물</span>
++            </label>
++          </div>
++          <details class="explore-field-hint">
++            <summary>먹이 분류 안내</summary>
++            <p>‘곤충’은 자료의 무척추동물 범주로 다른 무척추동물도 포함합니다. 고기는 온혈동물·변온동물·기타 고기로 나누며 물고기와 사체는 별도입니다.</p>
++          </details>
++        </fieldset>
++
++        <div class="actions explore-actions">
++          <button type="submit" id="explore-submit" class="send-button">조건으로 새 찾기</button>
++          <button type="button" id="explore-reset" class="clear-button">조건 초기화</button>
++        </div>
++      </form>
++
++      <p id="explore-status" class="status-region explore-status" role="status" aria-live="polite">
++        분포 범위, 분류군, 서식 환경, 먹이 조건을 선택하고 ‘조건으로 새 찾기’를 눌러 조회하세요.
++      </p>
++
++      <section id="explore-results" class="explore-results" aria-live="polite" hidden></section>
++    </main>
++
++    <footer class="app-footer">
++      <p>
++        모든 조회 결과는 활성 분류 체계(AviList)와 직접 연결된 형질 자료(AVONET, EltonTraits)만을 근거로 종(species) 단위로 표시합니다.
++      </p>
++    </footer>
++  </div>
++</body>
++</html>
+--- /dev/null
++++ b/src/robingraph/api/static/explore.js
+@@ -0,0 +1,822 @@
++/* Bird Explorer UI: structured condition search over GET /v1/taxa/explore.
++ * All external strings are rendered strictly via textContent; links use safe http(s) validation. */
++(function (root, factory) {
++  "use strict";
++  var api = factory();
++  if (typeof module === "object" && module.exports) {
++    module.exports = api;
++  }
++  if (root && typeof root === "object") {
++    root.RobinGraphExplore = api;
++  }
++  if (typeof document !== "undefined" && document.getElementById && document.getElementById("explore-form")) {
++    api.init(document, typeof window !== "undefined" ? window : null);
++  }
++})(typeof globalThis !== "undefined" ? globalThis : this, function () {
++  "use strict";
++
++  var SPECIES_SCOPES = ["all", "korea", "outside", "unknown"];
++  var SCOPE_LABELS = {
++    all: "전체 (한국어 우선)",
++    korea: "국내 기록·분포 확인",
++    outside: "국외 분포 검토 (영어 우선)",
++    unknown: "한국 분포 미확인",
++  };
++  var SPECIES_SCOPE_NOTES = {
++    all: "전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.",
++    korea: "대한민국을 기준으로 출처의 Korea·Korean Peninsula 표기도 포함하며, 북한만 명시한 근거는 제외합니다. 한국어 이름을 우선하며 계절·미조 기록을 포함하므로 텃새·현재 서식을 뜻하지 않습니다.",
++    outside: "현재 일부 종의 정상 분포만 검토했으며 미확인 종은 포함하지 않습니다. 영어 이름을 우선하고 없으면 검증 국명·학명을 표시합니다. 우연한 도래나 사육 기록의 부재를 뜻하지 않습니다.",
++    unknown: "한국 분포 근거를 아직 확인하지 못한 종을 표시하며 한국어 이름을 우선합니다. 국외 분포로 판정된 것이 아닙니다.",
++  };
++
++  var HABITATS = [
++    "Forest",
++    "Shrubland",
++    "Woodland",
++    "Grassland",
++    "Rock",
++    "Wetland",
++    "Human Modified",
++    "Coastal",
++    "Marine",
++    "Riverine",
++    "Desert",
++  ];
++  var HABITAT_LABELS = {
++    Forest: "숲 (Forest)",
++    Shrubland: "관목 지대 (Shrubland)",
++    Woodland: "성긴 숲 (Woodland)",
++    Grassland: "초지 (Grassland)",
++    Rock: "바위 지대 (Rock)",
++    Wetland: "습지 (Wetland)",
++    "Human Modified": "인공·변형 환경 (Human Modified)",
++    Coastal: "해안 (Coastal)",
++    Marine: "바다 (Marine)",
++    Riverine: "하천 (Riverine)",
++    Desert: "사막 (Desert)",
++  };
++
++  var DIETS = [
++    "invertebrate",
++    "endotherm_vertebrate",
++    "ectotherm_vertebrate",
++    "fish",
++    "unknown_vertebrate",
++    "carrion",
++    "fruit",
++    "nectar",
++    "seed",
++    "other_plant",
++  ];
++  var DIET_LABELS = {
++    invertebrate: "곤충",
++    endotherm_vertebrate: "고기 · 온혈동물",
++    ectotherm_vertebrate: "고기 · 변온동물",
++    fish: "물고기",
++    unknown_vertebrate: "기타 고기",
++    carrion: "사체",
++    fruit: "열매",
++    nectar: "꽃꿀",
++    seed: "씨앗",
++    other_plant: "기타 식물",
++  };
++
++  function normalizeSpeciesScope(value) {
++    return typeof value === "string" && SPECIES_SCOPES.indexOf(value) !== -1 ? value : "all";
++  }
++
++  function sanitizeUrl(value) {
++    if (typeof value !== "string") { return null; }
++    var trimmed = value.trim();
++    if (!/^https?:\/\//i.test(trimmed)) { return null; }
++    try {
++      var parsed = new URL(trimmed);
++      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") { return null; }
++      if (parsed.username || parsed.password) { return null; }
++      return parsed.href;
++    } catch (_) {
++      return null;
++    }
++  }
++
++  function createEl(doc, tag, text, className) {
++    var node = doc.createElement(tag);
++    if (className) { node.className = className; }
++    if (text !== undefined && text !== null) {
++      node.textContent = String(text);
++    }
++    return node;
++  }
++
++  function safeLink(doc, label, rawUrl, className) {
++    var safeHref = sanitizeUrl(rawUrl);
++    var text = typeof label === "string" && label.trim() ? label.trim() : (safeHref || "출처");
++    if (!safeHref) {
++      return createEl(doc, "span", text, className);
++    }
++    var a = createEl(doc, "a", text, className);
++    a.href = safeHref;
++    a.target = "_blank";
++    a.rel = "noopener noreferrer";
++    return a;
++  }
++
++  function speciesLabel(taxon, scope) {
++    if (!taxon || typeof taxon !== "object") { return "새"; }
++    var verifiedKorean = taxon.korean_name_status !== "machine-translated"
++      && typeof taxon.korean_name === "string" && taxon.korean_name.trim()
++      ? taxon.korean_name.trim()
++      : "";
++    var english = typeof taxon.english_name === "string" && taxon.english_name.trim()
++      ? taxon.english_name.trim()
++      : "";
++    var scientific = typeof taxon.scientific_name === "string" && taxon.scientific_name.trim()
++      ? taxon.scientific_name.trim()
++      : "";
++    var display = typeof taxon.display_name === "string" && taxon.display_name.trim()
++      && (taxon.korean_name_status !== "machine-translated" || taxon.display_name.trim() !== taxon.korean_name)
++      ? taxon.display_name.trim()
++      : "";
++    if (display) { return display; }
++    if (normalizeSpeciesScope(scope) === "outside") {
++      return english || verifiedKorean || scientific || "새";
++    }
++    return verifiedKorean || english || scientific || "새";
++  }
++
++  function normalizeDietList(rawDiets) {
++    var list = Array.isArray(rawDiets)
++      ? rawDiets
++      : (typeof rawDiets === "string" && rawDiets.trim() ? rawDiets.split(",") : []);
++    var seen = new Set();
++    list.forEach(function (item) {
++      if (typeof item === "string") {
++        var key = item.trim();
++        if (DIETS.indexOf(key) !== -1) {
++          seen.add(key);
++        }
++      }
++    });
++    return DIETS.filter(function (key) { return seen.has(key); });
++  }
++
++  function buildExploreParams(state) {
++    state = state || {};
++    var params = new URLSearchParams();
++    var scope = normalizeSpeciesScope(state.species_scope);
++    params.set("species_scope", scope);
++
++    var taxon = typeof state.taxon === "string" ? state.taxon.trim().slice(0, 100) : "";
++    if (taxon) {
++      params.set("taxon", taxon);
++    }
++
++    var habitat = typeof state.habitat === "string" && HABITATS.indexOf(state.habitat) !== -1
++      ? state.habitat
++      : "";
++    if (habitat) {
++      params.set("habitat", habitat);
++    }
++
++    var diets = normalizeDietList(state.diet);
++    if (diets.length > 0) {
++      params.set("diet", diets.join(","));
++    }
++    return params;
++  }
++
++  function parseExploreSearch(searchString) {
++    var raw = typeof searchString === "string" ? searchString.replace(/^\?/, "") : "";
++    var params = new URLSearchParams(raw);
++    var scopeRaw = params.get("species_scope");
++    var taxonRaw = params.get("taxon");
++    var habitatRaw = params.get("habitat");
++    var dietRaw = params.get("diet");
++    return {
++      hasQuery: raw.trim().length > 0,
++      rawQuery: raw.trim(),
++      species_scope: normalizeSpeciesScope(scopeRaw),
++      taxon: typeof taxonRaw === "string" ? taxonRaw.trim().slice(0, 100) : "",
++      habitat: typeof habitatRaw === "string" && HABITATS.indexOf(habitatRaw) !== -1 ? habitatRaw : "",
++      diet: normalizeDietList(dietRaw),
++    };
++  }
++
++  function formatValidationError(body) {
++    var details = body && Array.isArray(body.detail) ? body.detail : [];
++    var messages = [];
++    var seen = new Set();
++    function addMsg(msg) {
++      if (msg && !seen.has(msg)) {
++        seen.add(msg);
++        messages.push(msg);
++      }
++    }
++    details.forEach(function (err) {
++      if (!err || typeof err !== "object") { return; }
++      var type = typeof err.type === "string" ? err.type : "";
++      var loc = Array.isArray(err.loc) ? err.loc.join(".") : "";
++      if (type === "taxon_not_found") {
++        addMsg("입력한 분류군을 활성 분류 체계에서 찾지 못했습니다. 목·과·속 단위의 국명(예: 참새목, 직박구리과) 또는 학명(예: Passeriformes)을 확인해 주세요.");
++      } else if (type === "taxon_ambiguous") {
++        addMsg("입력한 이름에 해당하는 분류군이 둘 이상입니다. 정확한 학명(예: Passeriformes)으로 입력해 주세요.");
++      } else if (type === "taxon_rank_conflict") {
++        addMsg("입력한 한국어 분류군 이름의 계급(목·과·속)이 활성 분류 자료의 실제 계급과 일치하지 않습니다.");
++      } else if (type === "taxon_rank_unsupported" || type === "rank_unsupported") {
++        addMsg("분류군 입력란에는 목·과·속 단위만 입력할 수 있습니다. 특정 종이나 아종은 새 도감(/birds)에서 직접 조회해 주세요.");
++      } else if (loc.indexOf("taxon") !== -1) {
++        addMsg("분류군 입력 형식이 올바르지 않습니다. 목·과·속 학명 한 단어(예: Passeriformes) 또는 한글 분류군 이름(예: 참새목)을 입력해 주세요.");
++      } else if (type === "duplicate_parameter" || type === "extra_forbidden") {
++        addMsg("허용되지 않거나 중복된 조회 파라미터가 포함되었습니다. 서식 환경은 1개만 선택할 수 있습니다.");
++      } else {
++        addMsg("조회 조건 형식이 올바르지 않습니다. 선택한 분포 범위·서식 환경·먹이 조건을 다시 확인해 주세요.");
++      }
++    });
++    if (!messages.length) {
++      return "조회 조건 형식이 올바르지 않습니다. 입력한 분류군과 선택 조건을 다시 확인해 주세요.";
++    }
++    return messages.join(" ");
++  }
++
++  function buildBirdsProfileHref(scientificName, scope) {
++    var sci = typeof scientificName === "string" ? scientificName.trim() : "";
++    var normalizedScope = normalizeSpeciesScope(scope);
++    var params = new URLSearchParams();
++    if (sci) { params.set("name", sci); }
++    params.set("species_scope", normalizedScope);
++    return "/birds?" + params.toString();
++  }
++
++  function renderStateBox(doc, container, stateKind, titleText, primaryText, secondaryText) {
++    container.replaceChildren();
++    container.hidden = false;
++    container.setAttribute("data-result-state", stateKind);
++    var box = createEl(doc, "div", null, "explore-state-box");
++    box.setAttribute("data-state", stateKind);
++    box.appendChild(createEl(doc, "h3", titleText));
++    if (primaryText) {
++      box.appendChild(createEl(doc, "p", primaryText));
++    }
++    if (secondaryText) {
++      box.appendChild(createEl(doc, "p", secondaryText));
++    }
++    container.appendChild(box);
++  }
++
++  function renderExploreResult(doc, container, payload, requestedScope) {
++    if (!payload || typeof payload !== "object") { return; }
++    container.replaceChildren();
++    container.hidden = false;
++
++    var status = typeof payload.status === "string" ? payload.status : "answer";
++    container.setAttribute("data-result-state", status);
++
++    var queryEcho = payload.query && typeof payload.query === "object" ? payload.query : {};
++    var activeScope = normalizeSpeciesScope(queryEcho.species_scope || requestedScope);
++    var activeDiets = normalizeDietList(queryEcho.diet);
++
++    // 1. Header & Applied Conditions
++    var header = createEl(doc, "div", null, "explore-results-header");
++    var titleText = typeof payload.title === "string" && payload.title.trim()
++      ? payload.title.trim()
++      : "조건으로 새 찾기 결과";
++    header.appendChild(createEl(doc, "h2", titleText));
++
++    var condBox = createEl(doc, "div", null, "graph-query-conditions");
++    condBox.setAttribute("role", "group");
++    condBox.setAttribute("aria-label", "적용된 검색 조건");
++    var condList = createEl(doc, "ul", null, "graph-query-condition-list");
++
++    var scopeChipText = "분포 범위: " + (SCOPE_LABELS[activeScope] || SCOPE_LABELS.all);
++    condList.appendChild(createEl(doc, "li", scopeChipText, "graph-query-condition-chip"));
++
++    if (payload.taxon && typeof payload.taxon === "object") {
++      var taxonName = speciesLabel(payload.taxon, activeScope);
++      var taxonSci = typeof payload.taxon.scientific_name === "string" ? payload.taxon.scientific_name.trim() : "";
++      var taxonDisplay = taxonName && taxonSci && taxonName !== taxonSci
++        ? taxonName + " (" + taxonSci + ")"
++        : (taxonName || taxonSci);
++      if (taxonDisplay) {
++        condList.appendChild(createEl(doc, "li", "분류군: " + taxonDisplay, "graph-query-condition-chip"));
++      }
++    } else if (typeof queryEcho.taxon === "string" && queryEcho.taxon.trim()) {
++      condList.appendChild(createEl(doc, "li", "분류군: " + queryEcho.taxon.trim(), "graph-query-condition-chip"));
++    }
++
++    if (Array.isArray(payload.conditions) && payload.conditions.length > 0) {
++      payload.conditions.forEach(function (cond) {
++        var label = cond && typeof cond === "object" && typeof cond.label === "string" ? cond.label.trim() : "";
++        if (label) {
++          condList.appendChild(createEl(doc, "li", label, "graph-query-condition-chip"));
++        }
++      });
++    } else {
++      if (typeof queryEcho.habitat === "string" && HABITAT_LABELS[queryEcho.habitat]) {
++        condList.appendChild(createEl(doc, "li", "서식 환경: " + HABITAT_LABELS[queryEcho.habitat], "graph-query-condition-chip"));
++      }
++      activeDiets.forEach(function (dietKey) {
++        condList.appendChild(createEl(doc, "li", "먹이 구성: " + (DIET_LABELS[dietKey] || dietKey) + " 포함", "graph-query-condition-chip"));
++      });
++    }
++    condBox.appendChild(condList);
++    header.appendChild(condBox);
++
++    var hasDietCondition = activeDiets.length > 0 || (Array.isArray(payload.conditions) && payload.conditions.some(function (c) {
++      return c && c.trait_name === "diet_distribution";
++    }));
++    var sortMessage = hasDietCondition
++      ? "정렬 기준: 선택한 먹이 구성 비율 합산 높은 순 (모든 선택 먹이 > 0% AND 조건 · EltonTraits 확실성 A·B·C 근거, 가나다·알파벳순 아님)"
++      : "정렬 기준: 이름순 (" + (activeScope === "outside" ? "영명 · 검증 국명 · 학명" : "검증 국명 · 영명 · 학명") + ")";
++    header.appendChild(createEl(doc, "p", sortMessage, "explore-sort-note"));
++    container.appendChild(header);
++
++    // 2. Coverage summary
++    if (payload.coverage && typeof payload.coverage === "object") {
++      var cov = payload.coverage;
++      var covBox = createEl(doc, "div", null, "explore-coverage");
++      covBox.setAttribute("role", "group");
++      covBox.setAttribute("aria-label", "조건 자료 범위 및 일치 현황");
++
++      var pairs = [
++        ["범위 내 대상", typeof cov.scoped === "number" ? cov.scoped + "종" : "-"],
++        ["조건 자료 확인", typeof cov.evaluable === "number" ? cov.evaluable + "종" : "-"],
++        ["조건 일치", typeof cov.matched === "number" ? cov.matched + "종" : "-"],
++      ];
++      pairs.forEach(function (pair) {
++        var cell = createEl(doc, "div", null, "explore-coverage-item");
++        cell.appendChild(createEl(doc, "span", pair[0], "explore-coverage-label"));
++        cell.appendChild(createEl(doc, "strong", pair[1], "explore-coverage-value"));
++        covBox.appendChild(cell);
++      });
++      container.appendChild(covBox);
++    }
++
++    // 3. Status-specific body (answer vs empty vs insufficient_data)
++    if (status === "empty") {
++      var emptyBox = createEl(doc, "div", null, "explore-state-box");
++      emptyBox.setAttribute("data-state", "empty");
++      emptyBox.appendChild(createEl(doc, "h3", "조건에 맞는 새가 없습니다 (일치 0종)"));
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        emptyBox.appendChild(createEl(doc, "p", payload.text.trim()));
++      }
++      emptyBox.appendChild(createEl(
++        doc,
++        "p",
++        "선택한 범위와 형질 자료를 검토했으나 지정한 조건을 모두 만족하는 종이 0종입니다. 서식 환경이나 먹이 조합을 완화해 다시 조회해 보세요."
++      ));
++      container.appendChild(emptyBox);
++    } else if (status === "insufficient_data") {
++      var insuffBox = createEl(doc, "div", null, "explore-state-box");
++      insuffBox.setAttribute("data-state", "insufficient_data");
++      insuffBox.appendChild(createEl(doc, "h3", "조건을 판단할 형질 자료가 없습니다 (자료 부족)"));
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        insuffBox.appendChild(createEl(doc, "p", payload.text.trim()));
++      }
++      insuffBox.appendChild(createEl(
++        doc,
++        "p",
++        "조건에 맞는 종이 0종인 것(불일치)이 아니라, 해당 범위에서 조건 형질을 평가할 수 있는 활성 자료가 확인되지 않은 상태입니다."
++      ));
++      container.appendChild(insuffBox);
++    } else {
++      if (typeof payload.text === "string" && payload.text.trim()) {
++        container.appendChild(createEl(doc, "p", payload.text.trim(), "explore-summary-text"));
++      }
++      var items = Array.isArray(payload.items) ? payload.items : [];
++      if (payload.has_more) {
++        var matchedCount = payload.coverage && typeof payload.coverage.matched === "number"
++          ? "전체 일치 " + payload.coverage.matched + "종 중 "
++          : "";
++        var capNotice = createEl(
++          doc,
++          "p",
++          matchedCount + "상위 20종까지만 표시됩니다. 더 구체적인 분류군·서식 환경·먹이 조건을 지정해 범위를 좁혀 보세요.",
++          "explore-cap-notice"
++        );
++        capNotice.setAttribute("data-has-more", "true");
++        container.appendChild(capNotice);
++      }
++
++      if (items.length > 0) {
++        var list = createEl(doc, "ul", null, "explore-species-list");
++        items.forEach(function (item) {
++          if (!item || typeof item !== "object" || !item.taxon || typeof item.taxon !== "object") { return; }
++          var taxon = item.taxon;
++          var card = createEl(doc, "li", null, "explore-species-card");
++          var top = createEl(doc, "div", null, "explore-species-top");
++          var identity = createEl(doc, "div", null, "explore-species-identity");
++
++          var primaryLabel = speciesLabel(taxon, activeScope);
++          identity.appendChild(createEl(doc, "strong", primaryLabel, "explore-species-name"));
++
++          var sciName = typeof taxon.scientific_name === "string" ? taxon.scientific_name.trim() : "";
++          if (sciName && sciName !== primaryLabel) {
++            identity.appendChild(createEl(doc, "span", sciName, "explore-species-sci"));
++          }
++
++          var verifiedKo = taxon.korean_name_status !== "machine-translated" && typeof taxon.korean_name === "string"
++            ? taxon.korean_name.trim() : "";
++          var engName = typeof taxon.english_name === "string" ? taxon.english_name.trim() : "";
++          var secondary = activeScope === "outside"
++            ? (verifiedKo && verifiedKo !== primaryLabel ? verifiedKo : "")
++            : (engName && engName !== primaryLabel && engName !== sciName ? engName : "");
++          if (secondary) {
++            identity.appendChild(createEl(doc, "span", secondary, "explore-species-sub"));
++          }
++          top.appendChild(identity);
++
++          if (sciName) {
++            var profileLink = createEl(doc, "a", "새 도감 보기 →", "explore-profile-link");
++            profileLink.href = buildBirdsProfileHref(sciName, activeScope);
++            top.appendChild(profileLink);
++          }
++          card.appendChild(top);
++
++          if (Array.isArray(item.paths) && item.paths.length > 0) {
++            var pathList = createEl(doc, "ul", null, "explore-item-paths");
++            item.paths.forEach(function (p) {
++              if (!p || typeof p.text !== "string" || !p.text.trim()) { return; }
++              var pLi = createEl(doc, "li", p.text.trim());
++              var pUrl = sanitizeUrl(p.source_url);
++              var pName = typeof p.source_name === "string" && p.source_name.trim() ? p.source_name.trim() : "";
++              if (pUrl && pName) {
++                pLi.appendChild(createEl(doc, "span", " · "));
++                pLi.appendChild(safeLink(doc, pName, pUrl));
++              }
++              pathList.appendChild(pLi);
++            });
++            card.appendChild(pathList);
++          }
++
++          list.appendChild(card);
++        });
++        container.appendChild(list);
++      }
++    }
++
++    // 4. Shared query/scope paths
++    if (Array.isArray(payload.paths) && payload.paths.length > 0) {
++      var sharedDetails = createEl(doc, "details", null, "graph-shared-paths graph-query-evidence");
++      var sharedSummary = createEl(doc, "summary", "조회 범위 및 조건 확인 경로 (" + payload.paths.length + ")");
++      sharedDetails.appendChild(sharedSummary);
++      var sharedList = createEl(doc, "ul", null, "route-results");
++      payload.paths.forEach(function (pathItem) {
++        if (!pathItem || typeof pathItem.text !== "string" || !pathItem.text.trim()) { return; }
++        var li = createEl(doc, "li", pathItem.text.trim());
++        var url = sanitizeUrl(pathItem.source_url);
++        var sName = typeof pathItem.source_name === "string" && pathItem.source_name.trim() ? pathItem.source_name.trim() : "";
++        if (url && sName) {
++          li.appendChild(createEl(doc, "span", " ("));
++          li.appendChild(safeLink(doc, sName, url));
++          li.appendChild(createEl(doc, "span", ")"));
++        }
++        sharedList.appendChild(li);
++      });
++      sharedDetails.appendChild(sharedList);
++      container.appendChild(sharedDetails);
++    }
++
++    // 5. Sources disclosure
++    if (Array.isArray(payload.sources) && payload.sources.length > 0) {
++      var dedupedSources = [];
++      var seenSourceKeys = new Set();
++      payload.sources.forEach(function (src) {
++        if (!src || typeof src !== "object") { return; }
++        var rawName = typeof src.source_name === "string" && src.source_name.trim()
++          ? src.source_name.trim()
++          : (typeof src.name === "string" && src.name.trim() ? src.name.trim() : "");
++        if (!rawName) { return; }
++        var rawUrl = sanitizeUrl(src.source_url || src.url);
++        var key = rawName + "|" + (rawUrl || "");
++        if (seenSourceKeys.has(key)) { return; }
++        seenSourceKeys.add(key);
++        dedupedSources.push({ name: rawName, url: rawUrl });
++      });
++      if (dedupedSources.length > 0) {
++        var sourcesDetails = createEl(doc, "details", null, "species-answer-sources explore-sources");
++        sourcesDetails.appendChild(createEl(doc, "summary", "출처 및 근거 자료 (" + dedupedSources.length + ")"));
++        dedupedSources.forEach(function (src) {
++          var p = createEl(doc, "p");
++          p.appendChild(safeLink(doc, src.name, src.url));
++          sourcesDetails.appendChild(p);
++        });
++        container.appendChild(sourcesDetails);
++      }
++    }
++
++    // 6. Limitations disclosure (collapsed by default, neutral style)
++    var seenNotes = new Set();
++    var noteItems = [];
++    (Array.isArray(payload.limitations) ? payload.limitations : []).forEach(function (lim) {
++      if (typeof lim === "string") {
++        var trimmed = lim.trim();
++        if (trimmed && !seenNotes.has(trimmed)) {
++          seenNotes.add(trimmed);
++          noteItems.push(trimmed);
++        }
++      }
++    });
++    if (noteItems.length > 0) {
++      var notesDetails = createEl(doc, "details", null, "species-note graph-query-notes explore-limitations");
++      var baseNoteTitle = status === "insufficient_data" ? "자료 한계 및 유의사항" : "안내 및 유의사항";
++      notesDetails.appendChild(createEl(doc, "summary", baseNoteTitle + " (" + noteItems.length + ")"));
++      var noteList = createEl(doc, "ul");
++      noteItems.forEach(function (text) {
++        noteList.appendChild(createEl(doc, "li", text));
++      });
++      notesDetails.appendChild(noteList);
++      container.appendChild(notesDetails);
++    }
++  }
++
++  function init(doc, win) {
++    if (!doc || typeof doc.getElementById !== "function") { return null; }
++    var form = doc.getElementById("explore-form");
++    var taxonInput = doc.getElementById("explore-taxon");
++    var habitatSelect = doc.getElementById("explore-habitat");
++    var scopeNote = doc.getElementById("explore-scope-note");
++    var submitBtn = doc.getElementById("explore-submit");
++    var resetBtn = doc.getElementById("explore-reset");
++    var statusRegion = doc.getElementById("explore-status");
++    var resultsSection = doc.getElementById("explore-results");
++    if (!form || !statusRegion || !resultsSection) { return null; }
++
++    var scopeRadios = SPECIES_SCOPES.map(function (scope) {
++      return doc.getElementById("explore-scope-" + scope);
++    }).filter(Boolean);
++
++    var dietCheckboxes = DIETS.map(function (key) {
++      return doc.getElementById("explore-diet-" + key);
++    }).filter(Boolean);
++
++    var activeScope = "all";
++    var requestGeneration = 0;
++    var activeController = null;
++
++    function abortInFlight() {
++      if (activeController && typeof activeController.abort === "function") {
++        try { activeController.abort(); } catch (_) {}
++      }
++      activeController = null;
++    }
++
++    function setBusy(busy) {
++      if (submitBtn) { submitBtn.disabled = Boolean(busy); }
++      form.setAttribute("aria-busy", busy ? "true" : "false");
++    }
++
++    function setStatus(message, isError) {
++      statusRegion.textContent = message;
++      if (isError) {
++        statusRegion.setAttribute("data-error", "true");
++      } else {
++        statusRegion.removeAttribute("data-error");
++      }
++    }
++
++    function readFormState() {
++      var selectedScope = activeScope;
++      scopeRadios.forEach(function (radio) {
++        if (radio.checked) { selectedScope = normalizeSpeciesScope(radio.value); }
++      });
++      var selectedDiets = [];
++      dietCheckboxes.forEach(function (box) {
++        if (box.checked) { selectedDiets.push(box.value); }
++      });
++      return {
++        species_scope: selectedScope,
++        taxon: taxonInput && typeof taxonInput.value === "string" ? taxonInput.value.trim() : "",
++        habitat: habitatSelect && typeof habitatSelect.value === "string" ? habitatSelect.value : "",
++        diet: normalizeDietList(selectedDiets),
++      };
++    }
++
++    function applyStateToControls(state) {
++      var nextScope = normalizeSpeciesScope(state && state.species_scope);
++      activeScope = nextScope;
++      scopeRadios.forEach(function (radio) {
++        radio.checked = radio.value === nextScope;
++      });
++      if (scopeNote) {
++        scopeNote.textContent = SPECIES_SCOPE_NOTES[nextScope] || SPECIES_SCOPE_NOTES.all;
++      }
++      if (taxonInput) {
++        taxonInput.value = state && typeof state.taxon === "string" ? state.taxon : "";
++      }
++      if (habitatSelect) {
++        habitatSelect.value = state && typeof state.habitat === "string" && HABITATS.indexOf(state.habitat) !== -1
++          ? state.habitat
++          : "";
++      }
++      var dietSet = new Set(normalizeDietList(state && state.diet));
++      dietCheckboxes.forEach(function (box) {
++        box.checked = dietSet.has(box.value);
++      });
++    }
++
++    function invalidatePendingOnFilterEdit(statusMessage) {
++      requestGeneration += 1;
++      abortInFlight();
++      setBusy(false);
++      if (statusMessage) {
++        setStatus(statusMessage, false);
++      }
++    }
++
++    function syncUrlSearch(queryString) {
++      if (!win || !win.history || typeof win.history.replaceState !== "function") { return; }
++      var pathname = (win.location && win.location.pathname) || "/explore";
++      var target = queryString ? pathname + "?" + queryString : pathname;
++      try {
++        win.history.replaceState(null, "", target);
++      } catch (_) {}
++    }
++
++    async function executeSearch(customQueryString, stateSnapshot) {
++      var myGeneration = ++requestGeneration;
++      abortInFlight();
++      var controller = typeof AbortController === "function" ? new AbortController() : null;
++      activeController = controller;
++
++      var state = stateSnapshot || readFormState();
++      var params = buildExploreParams(state);
++      var queryString = typeof customQueryString === "string" ? customQueryString : params.toString();
++
++      setBusy(true);
++      setStatus("선택한 조건에 맞는 새와 출처 근거를 확인하고 있습니다…", false);
++
++      var fetchFn = (win && typeof win.fetch === "function") ? win.fetch : (typeof fetch === "function" ? fetch : null);
++      if (!fetchFn) {
++        setBusy(false);
++        setStatus("브라우저 조회 기능을 사용할 수 없습니다.", true);
++        return;
++      }
++
++      try {
++        var options = { method: "GET" };
++        if (controller && controller.signal) {
++          options.signal = controller.signal;
++        }
++        var response = await fetchFn("/v1/taxa/explore" + (queryString ? "?" + queryString : ""), options);
++        if (myGeneration !== requestGeneration) { return; }
++
++        if (!response.ok) {
++          if (response.status === 422) {
++            var errBody = null;
++            try { errBody = await response.json(); } catch (_) {}
++            if (myGeneration !== requestGeneration) { return; }
++            var validationMsg = formatValidationError(errBody);
++            renderStateBox(
++              doc,
++              resultsSection,
++              "validation_error",
++              "조회 조건을 다시 확인해 주세요",
++              validationMsg,
++              "일치하는 종이 0종인 결과가 아니라, 입력한 분류군 또는 조건 형식을 확인하지 못해 조회를 멈추었습니다."
++            );
++            setStatus(validationMsg, true);
++            return;
++          }
++          var unavailableMsg = "현재 조건으로 새 찾기 기능을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.";
++          renderStateBox(
++            doc,
++            resultsSection,
++            "error",
++            "조회 서비스를 일시적으로 사용할 수 없습니다",
++            unavailableMsg,
++            "조건 불일치(0종)나 자료 부족이 아니라 서버 응답 오류입니다."
++          );
++          setStatus(unavailableMsg, true);
++          return;
++        }
++
++        var payload = await response.json();
++        if (myGeneration !== requestGeneration) { return; }
++
++        if (payload && payload.query && typeof payload.query === "object") {
++          applyStateToControls(payload.query);
++        }
++        renderExploreResult(doc, resultsSection, payload, state.species_scope);
++
++        if (payload.status === "empty") {
++          setStatus("조회가 완료되었습니다. 조건에 맞는 종이 없습니다 (0종).", false);
++        } else if (payload.status === "insufficient_data") {
++          setStatus("조회가 완료되었습니다. 선택한 조건을 판단할 형질 자료가 없습니다.", false);
++        } else {
++          var itemCount = Array.isArray(payload.items) ? payload.items.length : 0;
++          var totalMatched = payload.coverage && typeof payload.coverage.matched === "number"
++            ? payload.coverage.matched
++            : itemCount;
++          setStatus(
++            "출처가 확인된 " + totalMatched + "종 중 " + itemCount + "종을 표시했습니다.",
++            false
++          );
++        }
++      } catch (err) {
++        if (myGeneration !== requestGeneration) { return; }
++        if (err && err.name === "AbortError") { return; }
++        var netMsg = err && err.name === "TimeoutError"
++          ? "조회 시간이 초과되었습니다. 잠시 후 다시 시도해 주세요."
++          : "현재 조건으로 새 찾기 기능을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.";
++        renderStateBox(
++          doc,
++          resultsSection,
++          "error",
++          "조회 중 연결 오류가 발생했습니다",
++          netMsg,
++          "조건 불일치(0종)나 자료 부족이 아니라 통신 오류입니다."
++        );
++        setStatus(netMsg, true);
++      } finally {
++        if (myGeneration === requestGeneration) {
++          setBusy(false);
++          activeController = null;
++        }
++      }
++    }
++
++    scopeRadios.forEach(function (radio) {
++      radio.addEventListener("change", function () {
++        if (!radio.checked) { return; }
++        var nextScope = normalizeSpeciesScope(radio.value);
++        activeScope = nextScope;
++        if (scopeNote) {
++          scopeNote.textContent = SPECIES_SCOPE_NOTES[nextScope] || SPECIES_SCOPE_NOTES.all;
++        }
++        var label = SCOPE_LABELS[nextScope] || SCOPE_LABELS.all;
++        invalidatePendingOnFilterEdit("분포 범위 기준을 ‘" + label + "’(으)로 변경했습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    });
++
++    if (taxonInput) {
++      taxonInput.addEventListener("input", function () {
++        invalidatePendingOnFilterEdit("분류군 입력이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    }
++
++    if (habitatSelect) {
++      habitatSelect.addEventListener("change", function () {
++        invalidatePendingOnFilterEdit("서식 환경 조건이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    }
++
++    dietCheckboxes.forEach(function (box) {
++      box.addEventListener("change", function () {
++        invalidatePendingOnFilterEdit("먹이 구성 조건이 변경되었습니다. ‘조건으로 새 찾기’를 눌러 조회하세요.");
++      });
++    });
++
++    form.addEventListener("submit", function (event) {
++      if (event && typeof event.preventDefault === "function") {
++        event.preventDefault();
++      }
++      var state = readFormState();
++      var params = buildExploreParams(state);
++      var queryString = params.toString();
++      syncUrlSearch(queryString);
++      executeSearch(queryString, state);
++    });
++
++    if (resetBtn) {
++      resetBtn.addEventListener("click", function () {
++        applyStateToControls({ species_scope: "all", taxon: "", habitat: "", diet: [] });
++        invalidatePendingOnFilterEdit("조건을 초기화했습니다. 원하는 조건을 선택하고 ‘조건으로 새 찾기’를 눌러 조회하세요.");
++        resultsSection.replaceChildren();
++        resultsSection.hidden = true;
++        resultsSection.removeAttribute("data-result-state");
++        syncUrlSearch("");
++      });
++    }
++
++    var initialSearch = (win && win.location && typeof win.location.search === "string")
++      ? win.location.search
++      : (typeof location !== "undefined" && typeof location.search === "string" ? location.search : "");
++    var parsedInitial = parseExploreSearch(initialSearch);
++    if (parsedInitial.hasQuery) {
++      applyStateToControls(parsedInitial);
++      executeSearch(parsedInitial.rawQuery, parsedInitial);
++    }
++
++    return {
++      readFormState: readFormState,
++      applyStateToControls: applyStateToControls,
++      executeSearch: executeSearch,
++    };
++  }
++
++  return {
++    SPECIES_SCOPES: SPECIES_SCOPES,
++    HABITATS: HABITATS,
++    DIETS: DIETS,
++    normalizeSpeciesScope: normalizeSpeciesScope,
++    normalizeDietList: normalizeDietList,
++    sanitizeUrl: sanitizeUrl,
++    speciesLabel: speciesLabel,
++    buildExploreParams: buildExploreParams,
++    parseExploreSearch: parseExploreSearch,
++    formatValidationError: formatValidationError,
++    buildBirdsProfileHref: buildBirdsProfileHref,
++    renderExploreResult: renderExploreResult,
++    init: init,
++  };
++});
+--- a/src/robingraph/api/static/index.html
++++ b/src/robingraph/api/static/index.html
+@@ -13,7 +13,10 @@
+ <body>
+ <div class="page">
+   <header class="app-header">
+-    <p class="brand">RobinGraph</p>
++    <div class="app-header-top">
++      <p class="brand">RobinGraph</p>
++      <a id="explore-link" class="explore-nav-link" href="/explore">조건으로 새 찾기 →</a>
++    </div>
+     <h1 id="app-title">새에 대해 무엇이든 물어보세요</h1>
+     <p class="tagline">
+       분류 계통, 관찰 기록, 사진과 형질 정보를 출처와 함께 바로 보여드립니다.
+--- a/src/robingraph/api/static/styles.css
++++ b/src/robingraph/api/static/styles.css
+@@ -74,6 +74,34 @@
+   display: flex;
+   flex-direction: column;
+   gap: 0.4rem;
++}
++
++.app-header-top {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 0.75rem;
++  flex-wrap: wrap;
++}
++
++.explore-nav-link {
++  font-size: 0.85rem;
++  font-weight: 600;
++  color: var(--color-accent);
++  text-decoration: none;
++  padding: 0.35rem 0.7rem;
++  border: 1px solid var(--color-answer-border);
++  border-radius: 999px;
++  background: var(--color-answer-bg);
++}
++
++.explore-nav-link:hover {
++  border-color: var(--color-accent);
++}
++
++.explore-nav-link:focus-visible {
++  outline: 2px solid var(--focus-ring);
++  outline-offset: 2px;
+ }
+ 
+ .brand {
+--- a/src/robingraph/retrieval/graph_questions.py
++++ b/src/robingraph/retrieval/graph_questions.py
+@@ -658,10 +658,10 @@
+ _SCIENTIFIC_RANKS = {0: ('order', 'family', 'genus'), 1: ('species',), 2: ('subspecies',)}
+ 
+ 
+-def checked_conditions(conditions):
++def checked_conditions(conditions, sizes=range(1, 9)):
+     """Allowlisted, non-conflicting conditions; anything else is a caller bug (ValueError)."""
+-    if not isinstance(conditions, tuple) or not 1 <= len(conditions) <= 8:
+-        raise ValueError('taxon_traits needs 1-8 conditions')
++    if not isinstance(conditions, tuple) or len(conditions) not in sizes:
++        raise ValueError('taxon_traits condition count out of range')
+     seen = {}
+     for condition in conditions:
+         spec = TRAIT_CONDITIONS.get(getattr(condition, 'trait_name', None))
+@@ -826,10 +826,13 @@
+ 
+ 
+ def _taxon_traits(repository, store, resolve, parsed, species_scope):
+-    conditions = checked_conditions(parsed.conditions)
++    # The structured explorer (criterion 'explore') may list a scope or taxon without trait conditions; its
++    # taxon is a reviewed order/family/genus name or one scientific name, never a fuzzy species lookup.
++    explore = parsed.criterion == 'explore'
++    conditions = checked_conditions(parsed.conditions, range(0, 12) if explore else range(1, 9))
+     summary = ', '.join(condition_label(c) for c in conditions)
+     scope_label = parsed.rank_name.strip() if parsed.rank_name else '전체 조류'
+-    title = f"{scope_label} 중 조건에 맞는 종"
++    title = f"{scope_label} 중 조건에 맞는 종" if conditions else f"{scope_label}의 종"
+     condition_out = []
+     sources, context = _trait_sources(store)
+     pipelines = {TRAIT_CONDITIONS[c.trait_name][0] for c in conditions}
+@@ -844,7 +847,9 @@
+     taxonomy_source = _taxonomy_source(repository, concept, release)
+     taxon = None
+     if parsed.rank_name is not None:
+-        taxon, reason = _taxon_candidates(repository, resolve, parsed.rank_name, concept, release)
++        taxon, reason = _taxon_candidates(repository, None if explore else resolve, parsed.rank_name, concept, release)
++        if explore and taxon is not None and taxon['rank'] in ('species', 'subspecies'):
++            taxon, reason = None, 'rank_unsupported'   # results are species; a species is not a range
+         if taxon is None:
+             text = {'ambiguous': f"‘{scope_label}’이(가) 현재 분류에서 둘 이상의 분류군으로 확인되어 범위를 정하지 않았습니다.",
+                     'label_rank_conflict': (f"‘{scope_label}’의 한국어 분류명이 가리키는 분류 단계와 자료의 실제 분류 단계가 "
+@@ -854,7 +859,7 @@
+                             limitations=['분류군 이름은 AviList 학명, 검토된 한국어 분류명 또는 출처가 확인된 종 국명만 사용합니다. '
+                                          '다른 분류 단계로 넓히거나 추측하지 않습니다.'],
+                             conditions=condition_out, taxon_resolution=reason)
+-        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종"
++        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종" if conditions else f"{_taxon_display(taxon)}의 종"
+     self_scope = taxon is not None and taxon['rank'] in ('species', 'subspecies')
+     rank_diet = any(c.op == 'share_gt' for c in conditions)
+     params = dict(concept_set_id=concept, taxonomy_release=release,
+@@ -905,7 +910,8 @@
+                                     + (' (하위 종 전체)' if not self_scope else ' (해당 분류군 자체)'), **taxonomy_source})
+     scope_paths += [{'text': f"조건: {item['label']}", 'source_name': item['source_name'],
+                      'source_url': None} for item in condition_out]
+-    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.']
++    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.'
++                   ] if conditions else []
+     for c in conditions:
+         if c.qualifier == 'tree_fruit':
+             limitations.append(LIMITATIONS['tree_fruit'])
+@@ -925,7 +931,8 @@
+             limitations.append('AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.')
+     if taxon is not None and taxon['rank'] == 'subspecies':
+         limitations.append('아종 질문은 부모 종의 형질 자료로 대체하지 않습니다.')
+-    limitations.append(LIMITATIONS['graph_claims_only'])
++    if conditions:
++        limitations.append(LIMITATIONS['graph_claims_only'])
+     sources_out = [taxonomy_source] + [_source(p['source_name'], p['source_url']) for item in items for p in item['paths']]
+     extra = {'taxon': taxon, 'conditions': condition_out, 'coverage': dict(stats), 'paths': scope_paths}
+     where = _taxon_display(taxon) if taxon is not None else '전체 조류'
+@@ -949,7 +956,8 @@
+                 f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 조건({summary})에 맞는 종을 찾지 못했습니다.")
+         return _payload('empty', title, text, sources=[taxonomy_source], limitations=limitations, **extra)
+     text = (f"{where}은(는) 조건({summary})에 맞습니다." if self_scope else
+-            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다.")
++            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다."
++            if conditions else f"{where} 범위의 종 {stats['matched']}종입니다.")
+     if rank_diet:
+         text += (' 요청한 먹이 비율의 합이 높은 순입니다.' if sum(c.op == 'share_gt' for c in conditions) > 1
+                  else ' 먹이 비율이 높은 순입니다.')
+--- /dev/null
++++ b/tests/frontend/explore_ui.test.js
+@@ -0,0 +1,423 @@
++"use strict";
++
++const test = require("node:test");
++const assert = require("node:assert/strict");
++const fs = require("node:fs");
++const path = require("node:path");
++
++const STATIC_DIR = path.join(__dirname, "../../src/robingraph/api/static");
++const exploreHtml = fs.readFileSync(path.join(STATIC_DIR, "explore.html"), "utf8");
++const exploreCss = fs.readFileSync(path.join(STATIC_DIR, "explore.css"), "utf8");
++const exploreJsSource = fs.readFileSync(path.join(STATIC_DIR, "explore.js"), "utf8");
++const indexHtml = fs.readFileSync(path.join(STATIC_DIR, "index.html"), "utf8");
++const explore = require(path.join(STATIC_DIR, "explore.js"));
++
++class FakeElement {
++  constructor(tag) {
++    this.tagName = String(tag).toLowerCase();
++    this.children = [];
++    this.attributes = {};
++    this.listeners = {};
++    this.className = "";
++    this.value = "";
++    this.checked = false;
++    this.disabled = false;
++    this.hidden = false;
++    this._text = "";
++  }
++  get textContent() {
++    return this._text + this.children.map((c) => c.textContent).join("");
++  }
++  set textContent(val) {
++    this._text = String(val ?? "");
++    this.children = [];
++  }
++  appendChild(child) {
++    child.parentNode = this;
++    this.children.push(child);
++    return child;
++  }
++  replaceChildren(...nodes) {
++    this._text = "";
++    this.children = [];
++    nodes.forEach((n) => this.appendChild(n));
++  }
++  setAttribute(k, v) {
++    this.attributes[k] = String(v);
++  }
++  getAttribute(k) {
++    return this.attributes[k];
++  }
++  removeAttribute(k) {
++    delete this.attributes[k];
++  }
++  addEventListener(type, fn) {
++    if (!this.listeners[type]) { this.listeners[type] = []; }
++    this.listeners[type].push(fn);
++  }
++  dispatch(type, event = {}) {
++    (this.listeners[type] || []).forEach((fn) => fn(event));
++  }
++}
++
++function allNodes(root) {
++  return [root, ...(root.children || []).flatMap(allNodes)];
++}
++
++function createExploreDom(fetcher, initialSearch = "") {
++  const elements = {};
++  const register = (id, tag = "div") => {
++    const el = new FakeElement(tag);
++    el.id = id;
++    elements[id] = el;
++    return el;
++  };
++
++  register("explore-form", "form");
++  register("explore-taxon", "input");
++  register("explore-habitat", "select");
++  register("explore-scope-note", "p");
++  register("explore-submit", "button");
++  register("explore-reset", "button");
++  register("explore-status", "p");
++  const results = register("explore-results", "section");
++  results.hidden = true;
++
++  for (const scope of explore.SPECIES_SCOPES) {
++    const radio = register("explore-scope-" + scope, "input");
++    radio.value = scope;
++    radio.checked = scope === "all";
++  }
++
++  for (const diet of explore.DIETS) {
++    const box = register("explore-diet-" + diet, "input");
++    box.value = diet;
++    box.checked = false;
++  }
++
++  const fetchCalls = [];
++  const replacedUrls = [];
++  const doc = {
++    getElementById: (id) => elements[id] || null,
++    createElement: (tag) => new FakeElement(tag),
++  };
++  const win = {
++    location: { pathname: "/explore", search: initialSearch },
++    history: {
++      replaceState: (_state, _title, url) => {
++        replacedUrls.push(url);
++      },
++    },
++    fetch: (url, options) => {
++      fetchCalls.push({ url, options });
++      return fetcher(url, options);
++    },
++  };
++
++  const controller = explore.init(doc, win);
++  return { elements, doc, win, fetchCalls, replacedUrls, controller };
++}
++
++async function settle() {
++  for (let i = 0; i < 5; i += 1) {
++    await new Promise((resolve) => setImmediate(resolve));
++  }
++}
++
++function jsonRes(body, status = 200) {
++  return Promise.resolve({
++    ok: status >= 200 && status < 300,
++    status,
++    json: async () => body,
++  });
++}
++
++test("explore.html, explore.css, explore.js, and index.html declare required controls, links, and safe code rules", () => {
++  assert.ok(indexHtml.includes('href="/explore"'), "index.html must provide an entry link to /explore");
++  assert.ok(exploreHtml.includes('href="/chat"'), "explore.html must link back to /chat");
++  assert.ok(exploreHtml.includes('href="/birds"'), "explore.html must link to /birds");
++
++  for (const scope of ["all", "korea", "outside", "unknown"]) {
++    assert.ok(exploreHtml.includes(`id="explore-scope-${scope}"`), `missing scope radio: ${scope}`);
++  }
++  for (const habitat of explore.HABITATS) {
++    assert.ok(exploreHtml.includes(`value="${habitat}"`), `missing habitat option: ${habitat}`);
++  }
++  for (const diet of explore.DIETS) {
++    assert.ok(exploreHtml.includes(`id="explore-diet-${diet}"`), `missing diet checkbox: ${diet}`);
++  }
++  assert.ok(exploreHtml.includes("모두 0%보다 큰 종(AND 조건)"), "must explain multi-diet AND semantics");
++  assert.ok(exploreHtml.includes("선택한 먹이 비율의 합계가 높은 순"), "must explain diet sum descending sort");
++  assert.ok(exploreCss.includes("@media (max-width: 640px)"), "explore.css must include mobile responsive layout");
++  assert.equal(
++    /innerHTML|outerHTML|insertAdjacentHTML|document\.write|localStorage|sessionStorage|document\.cookie|console\./.test(exploreJsSource),
++    false,
++    "explore.js must not contain HTML injection sinks, storage APIs, or console calls"
++  );
++});
++
++test("buildExploreParams omits empty optional parameters and normalizes diet keys to contract order", () => {
++  const emptyParams = explore.buildExploreParams({ species_scope: "all", taxon: "   ", habitat: "", diet: [] });
++  assert.equal(emptyParams.toString(), "species_scope=all");
++
++  const fullParams = explore.buildExploreParams({
++    species_scope: "korea",
++    taxon: " 참새목 ",
++    habitat: "Forest",
++    diet: ["seed", "fruit", "seed", "invalid_key"],
++  });
++  assert.equal(fullParams.get("species_scope"), "korea");
++  assert.equal(fullParams.get("taxon"), "참새목");
++  assert.equal(fullParams.get("habitat"), "Forest");
++  assert.equal(fullParams.get("diet"), "fruit,seed", "diet keys must follow canonical EltonTraits order without duplicates");
++});
++
++test("shareable URL restores exact filter selection, renders answer with coverage, 20-cap, sources, limitations, and /birds links", async () => {
++  const samplePayload = {
++    status: "answer",
++    title: "참새목 (Passeriformes) 중 조건에 맞는 종",
++    text: "국내 기록 범위에서 조건에 모두 맞습니다.",
++    taxon: { taxon_id: "t_order", rank: "order", scientific_name: "Passeriformes", korean_name: "참새목" },
++    conditions: [
++      { trait_name: "habitat", label: "서식 환경 숲(Forest)" },
++      { trait_name: "diet_distribution", label: "먹이 구성에 열매 포함" },
++      { trait_name: "diet_distribution", label: "먹이 구성에 씨앗 포함" },
++    ],
++    coverage: { scoped: 320, evaluable: 300, matched: 25 },
++    has_more: true,
++    items: [
++      {
++        taxon: {
++          taxon_id: "sp1",
++          rank: "species",
++          scientific_name: "Zosterops japonicus",
++          korean_name: "동박새",
++          english_name: "Warbling White-eye",
++        },
++        paths: [
++          { text: "서식 환경: 숲 (Forest)", source_name: "AVONET", source_url: "https://doi.org/10.6084/m9.figshare.16586228.v7" },
++          { text: "먹이 구성: 열매 40% · 씨앗 20% · EltonTraits 확실성 A", source_name: "EltonTraits", source_url: "https://doi.org/10.6084/m9.figshare.3559887.v1" },
++        ],
++      },
++    ],
++    paths: [
++      { text: "범위 확인: 국내 기록 종", source_name: "AviList v2025b", source_url: "https://explore.avilist.org" },
++    ],
++    sources: [
++      { name: "AVONET", url: "https://doi.org/10.6084/m9.figshare.16586228.v7" },
++      { source_name: "EltonTraits v1", source_url: "https://doi.org/10.6084/m9.figshare.3559887.v1" },
++    ],
++    limitations: [
++      "그래프에 종과 직접 연결된 형질 주장만 검색합니다.",
++      "그래프에 종과 직접 연결된 형질 주장만 검색합니다. ",
++    ],
++    query: {
++      species_scope: "korea",
++      taxon: "Passeriformes",
++      habitat: "Forest",
++      diet: ["fruit", "seed"],
++    },
++  };
++
++  const dom = createExploreDom(
++    () => jsonRes(samplePayload),
++    "?species_scope=korea&taxon=Passeriformes&habitat=Forest&diet=seed,fruit"
++  );
++  await settle();
++
++  assert.equal(dom.fetchCalls.length, 1);
++  assert.equal(
++    dom.fetchCalls[0].url,
++    "/v1/taxa/explore?species_scope=korea&taxon=Passeriformes&habitat=Forest&diet=seed,fruit"
++  );
++  assert.equal(dom.elements["explore-scope-korea"].checked, true);
++  assert.equal(dom.elements["explore-taxon"].value, "Passeriformes");
++  assert.equal(dom.elements["explore-habitat"].value, "Forest");
++  assert.equal(dom.elements["explore-diet-fruit"].checked, true);
++  assert.equal(dom.elements["explore-diet-seed"].checked, true);
++  assert.equal(dom.elements["explore-diet-fish"].checked, false);
++
++  const results = dom.elements["explore-results"];
++  assert.equal(results.hidden, false);
++  const text = results.textContent;
++  assert.ok(text.includes("참새목 (Passeriformes) 중 조건에 맞는 종"));
++  assert.ok(text.includes("320종"));
++  assert.ok(text.includes("300종"));
++  assert.ok(text.includes("25종"));
++  assert.ok(text.includes("상위 20종까지만 표시됩니다"));
++  assert.ok(text.includes("선택한 먹이 구성 비율 합산 높은 순"));
++  assert.ok(text.includes("동박새"));
++  assert.ok(text.includes("Zosterops japonicus"));
++
++  const nodes = allNodes(results);
++  const profileLink = nodes.find((n) => n.tagName === "a" && n.className === "explore-profile-link");
++  assert.ok(profileLink);
++  assert.equal(profileLink.href, "/birds?name=Zosterops+japonicus&species_scope=korea");
++
++  const limitationsBox = nodes.find((n) => n.className && n.className.includes("explore-limitations"));
++  assert.ok(limitationsBox);
++  assert.equal(limitationsBox.open, undefined, "limitations disclosure must be collapsed by default");
++  assert.ok(limitationsBox.textContent.includes("안내 및 유의사항 (1)"), "duplicate limitations must be deduplicated");
++});
++
++test("outside scope prioritizes English common names and propagates outside scope to /birds profile link", async () => {
++  const payload = {
++    status: "answer",
++    title: "국외 분포 조류 조회",
++    text: "국외 분포 검토 결과입니다.",
++    coverage: { scoped: 100, evaluable: 100, matched: 1 },
++    has_more: false,
++    items: [
++      {
++        taxon: {
++          taxon_id: "sp_out",
++          rank: "species",
++          scientific_name: "Turdus merula",
++          korean_name: "대륙검은지빠귀",
++          english_name: "Eurasian Blackbird",
++        },
++        paths: [],
++      },
++    ],
++    sources: [],
++    limitations: [],
++    query: { species_scope: "outside", taxon: null, habitat: null, diet: [] },
++  };
++
++  const dom = createExploreDom(() => jsonRes(payload), "?species_scope=outside");
++  await settle();
++
++  const nodes = allNodes(dom.elements["explore-results"]);
++  const primaryName = nodes.find((n) => n.className === "explore-species-name");
++  assert.ok(primaryName);
++  assert.equal(primaryName.textContent, "Eurasian Blackbird");
++
++  const profileLink = nodes.find((n) => n.className === "explore-profile-link");
++  assert.ok(profileLink);
++  assert.equal(profileLink.href, "/birds?name=Turdus+merula&species_scope=outside");
++});
++
++test("empty, insufficient_data, 422 validation error, and 503 unavailable states are visibly distinct", async () => {
++  let currentResponse = () => jsonRes({
++    status: "empty",
++    title: "조건 결과 없음",
++    text: "조건을 모두 만족하는 종이 없습니다.",
++    coverage: { scoped: 500, evaluable: 420, matched: 0 },
++    items: [],
++    sources: [],
++    limitations: [],
++  });
++
++  const dom = createExploreDom((url, opts) => currentResponse(url, opts));
++
++  // 1. Empty (0 matching species)
++  dom.elements["explore-form"].dispatch("submit", { preventDefault() {} });
++  await settle();
++  assert.equal(dom.elements["explore-results"].getAttribute("data-result-state"), "empty");
++  assert.ok(dom.elements["explore-results"].textContent.includes("조건에 맞는 새가 없습니다 (일치 0종)"));
++
++  // 2. Insufficient data (evaluable = 0)
++  currentResponse = () => jsonRes({
++    status: "insufficient_data",
++    title: "자료 부족",
++    text: "활성 형질 자료가 확인되지 않았습니다.",
++    coverage: { scoped: 50, evaluable: 0, matched: 0 },
++    items: [],
++    sources: [],
++    limitations: ["직접 연결된 형질 자료만 평가합니다."],
++  });
++  dom.elements["explore-form"].dispatch("submit", { preventDefault() {} });
++  await settle();
++  assert.equal(dom.elements["explore-results"].getAttribute("data-result-state"), "insufficient_data");
++  assert.ok(dom.elements["explore-results"].textContent.includes("조건을 판단할 형질 자료가 없습니다"));
++
++  // 3. 422 Validation error (e.g. taxon_not_found & taxon_rank_unsupported)
++  currentResponse = () => jsonRes(
++    { detail: [{ type: "taxon_not_found", loc: ["query", "taxon"], msg: "not found" }] },
++    422
++  );
++  dom.elements["explore-taxon"].value = "없는분류군";
++  dom.elements["explore-form"].dispatch("submit", { preventDefault() {} });
++  await settle();
++  assert.equal(dom.elements["explore-results"].getAttribute("data-result-state"), "validation_error");
++  assert.ok(dom.elements["explore-results"].textContent.includes("활성 분류 체계에서 찾지 못했습니다"));
++
++  // 4. 503 Server unavailable error
++  currentResponse = () => jsonRes({ detail: "Bird explorer is temporarily unavailable" }, 503);
++  dom.elements["explore-form"].dispatch("submit", { preventDefault() {} });
++  await settle();
++  assert.equal(dom.elements["explore-results"].getAttribute("data-result-state"), "error");
++  assert.ok(dom.elements["explore-results"].textContent.includes("일시적으로 사용할 수 없습니다"));
++  assert.equal(dom.elements["explore-results"].textContent.includes("temporarily unavailable"), false, "must not echo raw server exception text");
++});
++
++test("changing filter controls does not auto-submit and drops stale in-flight responses", async () => {
++  let resolveSlow;
++  const slowPromise = new Promise((resolve) => {
++    resolveSlow = resolve;
++  });
++
++  const dom = createExploreDom(() => slowPromise);
++  dom.elements["explore-taxon"].value = "Passeriformes";
++  dom.elements["explore-form"].dispatch("submit", { preventDefault() {} });
++  assert.equal(dom.fetchCalls.length, 1);
++  assert.equal(dom.elements["explore-submit"].disabled, true);
++
++  // User changes habitat while request #1 is still in flight
++  dom.elements["explore-habitat"].value = "Wetland";
++  dom.elements["explore-habitat"].dispatch("change", {});
++
++  assert.equal(dom.fetchCalls.length, 1, "changing a filter must not auto-submit");
++  assert.equal(dom.elements["explore-submit"].disabled, false, "submit button must be re-enabled when filter edit invalidates pending search");
++
++  // Stale response resolves now
++  resolveSlow({
++    ok: true,
++    status: 200,
++    json: async () => ({
++      status: "answer",
++      title: "이전 오래된 응답",
++      items: [],
++      query: { species_scope: "all", taxon: "Passeriformes", habitat: "Forest", diet: [] },
++    }),
++  });
++  await settle();
++
++  assert.equal(dom.elements["explore-results"].hidden, true, "stale response must not render into results");
++  assert.equal(dom.elements["explore-habitat"].value, "Wetland", "stale response must not overwrite newer filter state");
++});
++
++test("hostile URLs and HTML strings in payload are neutralized as plain text", async () => {
++  const hostilePayload = {
++    status: "answer",
++    title: "<script>alert(1)</script>",
++    text: "<img src=x onerror=alert(1)>",
++    items: [
++      {
++        taxon: {
++          scientific_name: "Anas platyrhynchos",
++          korean_name: "<b>청둥오리</b>",
++        },
++        paths: [
++          { text: "경로", source_name: "Evil", source_url: "javascript:alert(1)" },
++          { text: "자격증명", source_name: "Creds", source_url: "https://user:pass@example.com/data" },
++        ],
++      },
++    ],
++    sources: [
++      { name: "DataUrl", url: "data:text/html,evil" },
++      { name: "RelativeUrl", url: "/internal/admin" },
++    ],
++    limitations: ["<svg onload=alert(1)>"],
++  };
++
++  const dom = createExploreDom(() => jsonRes(hostilePayload), "?species_scope=all");
++  await settle();
++
++  const nodes = allNodes(dom.elements["explore-results"]);
++  const links = nodes.filter((n) => n.tagName === "a");
++  // Only the safe /birds profile link should be an <a> tag; all hostile source URLs become <span>
++  assert.equal(links.length, 1);
++  assert.ok(links[0].href.startsWith("/birds?"));
++  assert.ok(dom.elements["explore-results"].textContent.includes("<script>alert(1)</script>"));
++});
+--- /dev/null
++++ b/tests/test_bird_explorer.py
+@@ -0,0 +1,229 @@
++"""Structured bird explorer: GET /v1/taxa/explore reuses the taxon_traits plan without any NL parsing."""
++import json
++import unittest
++from unittest.mock import Mock
++
++from asgi_client import TestClient
++from robingraph.api.drf import create_django_app
++from robingraph.retrieval import graph_questions as gq
++from robingraph.retrieval.graph_questions import GraphQuestion, TraitCondition, graph_question_answer
++from test_taxon_traits import TAXA, Repo, Store, empty_row, peer_row, stats
++
++FOREST = TraitCondition('habitat', 'eq', 'Forest')
++FRUIT = TraitCondition('diet_distribution', 'share_gt', 'fruit', 0)
++SEED = TraitCondition('diet_distribution', 'share_gt', 'seed', 0)
++TAXA = {**TAXA, ('family', 'Pycnonotidae'): 'avilist-taxon:v2025b:23600',
++        ('species', 'Hypsipetes amaurotis'): 'avilist-taxon:v2025b:23698'}   # 직박구리, sourced species name
++
++
++def habitat(value='Forest', url='https://example.org/avonet#1'):
++    return {'trait_name': 'habitat', 'value_text': value, 'value_json': None, 'value_num': None, 'unit': None,
++            'certainty': None, 'source_url': url, 'citation': None}
++
++
++def diet(fruit, seed, certainty='A'):
++    return {'trait_name': 'diet_distribution', 'value_text': None, 'value_num': None, 'unit': 'percent',
++            'value_json': json.dumps({'invertebrate': 100 - fruit - seed, 'fruit': fruit, 'seed': seed}),
++            'certainty': certainty, 'source_url': 'https://example.org/elton#%d-%d' % (fruit, seed), 'citation': None}
++
++
++def explore(repo, taxon=None, conditions=(), species_scope='all'):
++    def resolve(name):
++        raise AssertionError('the explorer never resolves a species name')
++    question = GraphQuestion('taxon_traits', rank_name=taxon, criterion='explore', conditions=conditions)
++    return graph_question_answer(repo, resolve, question, species_scope, store=Store())
++
++
++class ExplorerPlanTest(unittest.TestCase):
++    """The fixed taxon_traits query, provenance checks and diet-share ranking, driven by a structured plan."""
++
++    def test_forest_fruit_seed_in_an_order_ranks_by_the_selected_share_sum(self):
++        counts = stats(500, 400, 3)
++        rows = [peer_row(1, 'Alpha one', [habitat(), diet(10, 10), diet(10, 10)], counts=counts),
++                peer_row(2, 'Beta two', [habitat(), diet(30, 20), diet(30, 20)], counts=counts),
++                peer_row(3, 'Gamma three', [habitat(), diet(20, 10), diet(20, 10)], counts=counts)]
++        repo = Repo(rows, TAXA)
++        payload = explore(repo, 'Passeriformes', (FOREST, FRUIT, SEED))
++        self.assertEqual('answer', payload['status'])
++        self.assertEqual(['Beta two', 'Gamma three', 'Alpha one'],
++                         [item['taxon']['scientific_name'] for item in payload['items']])
++        (query, params), = repo.trait_calls()
++        self.assertIs(gq.TAXON_DIET_QUERY, query)
++        self.assertEqual((TAXA[('order', 'Passeriformes')], 'order', 'species'),
++                         (params['root_id'], params['root_rank'], params['target_rank']))
++        self.assertEqual([('habitat', 'eq', 'Forest'), ('diet_distribution', 'share_gt', 'fruit'),
++                          ('diet_distribution', 'share_gt', 'seed')],
++                         [(c['trait_name'], c['op'], c['value']) for c in params['conditions']])
++        self.assertEqual(counts, payload['coverage'])
++        self.assertIn('요청한 먹이 비율의 합이 높은 순', payload['text'])
++        self.assertIn(gq.LIMITATIONS['elton_interpolated'], payload['limitations'])
++        texts = [path['text'] for path in payload['items'][0]['paths']]
++        self.assertIn('서식 환경: 숲 (Forest)', texts)
++        self.assertTrue(any('열매 30%' in text and '확실성 A' in text for text in texts), texts)
++
++    def test_interpolated_diet_evidence_is_never_listed(self):
++        rows = [peer_row(1, 'Alpha one', [diet(10, 10, certainty='D1')], counts=stats(5, 5, 1))]
++        with self.assertRaises(ValueError):
++            explore(Repo(rows, TAXA), conditions=(FRUIT,))
++
++    def test_taxon_only_lists_the_species_of_a_reviewed_korean_order(self):
++        rows = [peer_row(1, 'Alpha one', [], counts=stats(2, 2, 2)), peer_row(2, 'Beta two', [], counts=stats(2, 2, 2))]
++        repo = Repo(rows, TAXA)
++        payload = explore(repo, '참새목')
++        (query, params), = repo.trait_calls()
++        self.assertIs(gq.TAXON_TRAITS_QUERY, query)
++        self.assertEqual([], params['conditions'])
++        self.assertEqual(('answer', '참새목 (Passeriformes)의 종', [], [], stats(2, 2, 2)),
++                         (payload['status'], payload['title'], payload['conditions'], payload['limitations'],
++                          payload['coverage']))
++        self.assertEqual('참새목 (Passeriformes) 범위의 종 2종입니다.', payload['text'])
++
++    def test_scope_only_reads_the_whole_scoped_catalog_without_conditions(self):
++        repo = Repo([empty_row(stats(0, 0, 0))], TAXA)
++        payload = explore(repo, species_scope='korea')
++        (query, params), = repo.trait_calls()
++        self.assertIs(gq.CATALOG_TRAITS_QUERY, query)
++        self.assertEqual(('korea', []), (params['species_scope'], params['conditions']))
++        self.assertEqual('empty', payload['status'])
++
++    def test_species_and_subspecies_are_not_ranges(self):
++        for surface in ('직박구리', 'Corvus corone', 'Corvus corone cornix'):
++            with self.subTest(surface=surface):
++                repo = Repo([], TAXA)
++                payload = explore(repo, surface, (FRUIT,))
++                self.assertEqual(('insufficient_data', 'rank_unsupported'),
++                                 (payload['status'], payload['taxon_resolution']))
++                self.assertEqual([], repo.trait_calls())
++
++    def test_unknown_and_contradicting_names_are_resolution_failures(self):
++        for surface, reason in (('없는목', 'not_found'), ('Nonexistus', 'not_found')):
++            with self.subTest(surface=surface):
++                payload = explore(Repo([], TAXA), surface, (FOREST,))
++                self.assertEqual(reason, payload['taxon_resolution'])
++
++    def test_no_data_zero_matches_and_out_of_range_stay_distinct(self):
++        cases = ((stats(10, 0, 0), 'insufficient_data'), (stats(10, 6, 0), 'empty'), (stats(0, 0, 0), 'empty'))
++        for counts, status in cases:
++            with self.subTest(counts=counts):
++                payload = explore(Repo([empty_row(counts)], TAXA), 'Passeriformes', (FOREST,))
++                self.assertEqual((status, counts), (payload['status'], payload['coverage']))
++
++    def test_has_more_after_twenty_species(self):
++        rows = [peer_row(n, f'Species{n:02d} name', [habitat()], counts=stats(30, 30, 25)) for n in range(1, 22)]
++        payload = explore(Repo(rows, TAXA), conditions=(FOREST,))
++        self.assertEqual((20, True, 25), (len(payload['items']), payload['has_more'], payload['coverage']['matched']))
++
++    def test_chat_plans_still_need_a_condition(self):
++        with self.assertRaises(ValueError):
++            graph_question_answer(Repo([], TAXA), None, GraphQuestion('taxon_traits', rank_name='Passeriformes'),
++                                  store=Store())
++
++
++def payload(status='answer', **extra):
++    return {'status': status, 'title': 't', 'text': 'x', 'items': [], 'sources': [], 'limitations': ['L'],
++            'has_more': False, 'taxon': None, 'conditions': [], 'coverage': stats(1, 1, 1), 'paths': [], **extra}
++
++
++class ExplorerApiTest(unittest.TestCase):
++
++    def get(self, query, handler=None):
++        return TestClient(create_django_app(graph_question_handler=handler)).get('/v1/taxa/explore' + query)
++
++    def test_structured_request_becomes_the_plan_with_every_condition_kept(self):
++        handler = Mock(return_value=payload())
++        response = self.get('?species_scope=all&taxon=Passeriformes&habitat=Forest&diet=seed,fruit', handler)
++        self.assertEqual(200, response.status_code)
++        handler.assert_called_once_with(
++            GraphQuestion('taxon_traits', rank_name='Passeriformes', criterion='explore',
++                          conditions=(FOREST, FRUIT, SEED)), species_scope='all')
++        body = response.json()
++        self.assertEqual({'species_scope': 'all', 'taxon': 'Passeriformes', 'habitat': 'Forest',
++                          'diet': ['fruit', 'seed']}, body['query'])
++        self.assertEqual({**payload(), 'query': body['query']}, body)
++
++    def test_every_filter_is_optional(self):
++        handler = Mock(return_value=payload())
++        for query, plan in (('', GraphQuestion('taxon_traits', criterion='explore')),
++                            ('?taxon=%20참새목%20', GraphQuestion('taxon_traits', rank_name='참새목', criterion='explore')),
++                            ('?habitat=Human%20Modified',
++                             GraphQuestion('taxon_traits', criterion='explore',
++                                           conditions=(TraitCondition('habitat', 'eq', 'Human Modified'),))),
++                            ('?diet=fruit', GraphQuestion('taxon_traits', criterion='explore', conditions=(FRUIT,)))):
++            with self.subTest(query=query):
++                handler.reset_mock()
++                self.assertEqual(200, self.get(query, handler).status_code)
++                handler.assert_called_once_with(plan, species_scope='all')
++
++    def test_invalid_unknown_and_repeated_parameters_are_422_before_any_lookup(self):
++        handler = Mock(return_value=payload())
++        cases = {
++            '?limit=5': [('extra_forbidden', ['query', 'limit'])],
++            '?habitat=Forest&habitat=Wetland': [('duplicate_parameter', ['query', 'habitat'])],
++            '?species_scope=asia': [('literal_error', ['query', 'species_scope'])],
++            '?habitat=forest': [('literal_error', ['query', 'habitat'])],
++            '?diet=fruit,fruit': [('duplicate_value', ['query', 'diet'])],
++            '?diet=meat': [('literal_error', ['query', 'diet', 0])],
++            '?diet=': [('literal_error', ['query', 'diet', 0])],
++            '?diet=fruit,': [('literal_error', ['query', 'diet', 1])],
++            '?taxon=': [('string_too_short', ['query', 'taxon'])],
++            '?taxon=Turdus%20merula': [('string_pattern_mismatch', ['query', 'taxon'])],
++            '?taxon=Corvus%20corone%20cornix': [('string_pattern_mismatch', ['query', 'taxon'])],
++            '?taxon=MATCH%20(n)': [('string_pattern_mismatch', ['query', 'taxon'])],
++            '?taxon=' + 'A' + 'a' * 100: [('string_too_long', ['query', 'taxon'])],
++            '?q=x&diet=seed&diet=fruit': [('extra_forbidden', ['query', 'q']), ('duplicate_parameter', ['query', 'diet'])],
++        }
++        for query, expected in cases.items():
++            with self.subTest(query=query):
++                response = self.get(query, handler)
++                self.assertEqual(422, response.status_code)
++                self.assertEqual(expected, [(e['type'], e['loc']) for e in response.json()['detail']])
++        handler.assert_not_called()
++
++    def test_unresolved_taxon_is_422_not_an_empty_result(self):
++        for reason, kind in (('not_found', 'taxon_not_found'), ('ambiguous', 'taxon_ambiguous'),
++                             ('label_rank_conflict', 'taxon_rank_conflict'), ('rank_unsupported', 'taxon_rank_unsupported')):
++            with self.subTest(reason=reason):
++                handler = Mock(return_value=payload('insufficient_data', taxon_resolution=reason))
++                response = self.get('?taxon=직박구리', handler)
++                self.assertEqual(422, response.status_code)
++                (error,) = response.json()['detail']
++                self.assertEqual((kind, ['query', 'taxon'], '직박구리'), (error['type'], error['loc'], error['input']))
++
++    def test_unavailable_or_failing_lookups_are_503_never_empty(self):
++        for handler in (None, Mock(side_effect=ValueError('bad provenance')), Mock(return_value={'status': 'odd'})):
++            with self.subTest(handler=handler):
++                response = self.get('?habitat=Forest', handler)
++                self.assertEqual(503, response.status_code)
++                self.assertIn('Bird explorer', response.json()['detail'])
++
++    def test_empty_and_insufficient_data_pass_through_and_korea_names_its_basis(self):
++        for status in ('empty', 'insufficient_data'):
++            with self.subTest(status=status):
++                body = self.get('?species_scope=korea&diet=fruit', Mock(return_value=payload(status))).json()
++                self.assertEqual(status, body['status'])
++                self.assertEqual(['L', gq.LIMITATIONS['korea_record']], body['limitations'])
++
++    def test_real_plan_through_the_api_without_nl_routing(self):
++        counts = stats(50, 40, 2)
++        rows = [peer_row(1, 'Alpha one', [habitat(), diet(10, 0)], counts=counts),
++                peer_row(2, 'Beta two', [habitat(), diet(40, 0)], counts=counts)]
++        repo = Repo(rows, TAXA)
++        handler = Mock(side_effect=lambda parsed, species_scope='all': graph_question_answer(
++            repo, None, parsed, species_scope, store=Store()))
++        router, intent = Mock(), Mock()
++        app = create_django_app(graph_question_handler=handler, semantic_router=router, graph_intent_handler=intent)
++        body = TestClient(app).get('/v1/taxa/explore?taxon=Pycnonotidae&habitat=Forest&diet=fruit').json()
++        self.assertEqual(['Beta two', 'Alpha one'], [item['taxon']['scientific_name'] for item in body['items']])
++        self.assertEqual(['서식 환경 숲(Forest)', '먹이 구성에 열매 포함'], [c['label'] for c in body['conditions']])
++        self.assertEqual('Pycnonotidae', body['taxon']['scientific_name'])
++        router.assert_not_called()
++        intent.assert_not_called()
++
++    def test_openapi_documents_the_route(self):
++        operation = TestClient(create_django_app()).get('/openapi.json').json()['paths']['/v1/taxa/explore']['get']
++        self.assertEqual(['species_scope', 'taxon', 'habitat', 'diet'], [p['name'] for p in operation['parameters']])
++        self.assertEqual(list(gq.TRAIT_CONDITIONS['habitat'][2]), operation['parameters'][2]['schema']['enum'])
++
++
++if __name__ == '__main__':
++    unittest.main()
+--- a/tests/test_drf_parity.py
++++ b/tests/test_drf_parity.py
+@@ -211,6 +211,8 @@
+                 schemas = body["components"]["schemas"]
+                 schemas.pop("ChatFeedbackRequest", None)
+                 body["paths"].pop("/v1/chat/feedback", None)
++                # The additive structured explorer route is checked in OpenApiContractTest.
++                body["paths"].pop("/v1/taxa/explore", None)
+                 body["paths"]["/v1/chat"]["post"]["responses"]["200"].pop("headers", None)
+                 schemas.pop("ChatGraphResult", None)
+                 # Additive confirmation controls are checked against live DTOs below.
+@@ -557,7 +559,8 @@
+         schema = create_django_app().openapi()
+         self.assertEqual({"/v1/taxa/name-relations", "/v1/taxa/related", "/v1/taxa/similar",
+                           "/v1/taxa/ecological-related", "/v1/taxa/subspecies", "/v1/taxa/profile", "/health",
+-                          "/v1/answers", "/v1/chat", "/v1/chat/feedback", "/v1/search", "/v1/observations", "/v1/taxa/lineage"},
++                          "/v1/answers", "/v1/chat", "/v1/chat/feedback", "/v1/search", "/v1/observations", "/v1/taxa/lineage",
++                          "/v1/taxa/explore"},
+                          set(schema["paths"]))
+         self.assertIn("LineageTaxonResponse", schema["components"]["schemas"])
+         self.assertEqual(json.loads(json.dumps(schema)), schema)
+@@ -611,7 +614,7 @@
+                       for parameter in item.get("get", {}).get("parameters", ())
+                       if parameter["name"] == "species_scope"}
+         self.assertEqual({"/v1/taxa/related", "/v1/taxa/similar", "/v1/taxa/ecological-related",
+-                          "/v1/taxa/profile", "/v1/taxa/lineage"}, documented)
++                          "/v1/taxa/profile", "/v1/taxa/lineage", "/v1/taxa/explore"}, documented)
+         for route in documented:
+             parameter = next(p for p in paths[route]["get"]["parameters"] if p["name"] == "species_scope")
+             self.assertEqual(list(get_args(SpeciesScope)), parameter["schema"]["enum"], route)

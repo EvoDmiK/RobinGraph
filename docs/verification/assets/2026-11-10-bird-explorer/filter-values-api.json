@@ -1,0 +1,311 @@
+{
+  "origin": "http://127.0.0.1:8000",
+  "actual_test_api": true,
+  "source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "diet_keys_tested": 10,
+  "habitat_values_tested": 11,
+  "additional_taxonomy_queries": 2,
+  "checks": [
+    {
+      "query": {
+        "diet": "invertebrate"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 6143
+      },
+      "shown": 20,
+      "seconds": 0.697
+    },
+    {
+      "query": {
+        "diet": "endotherm_vertebrate"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 574
+      },
+      "shown": 20,
+      "seconds": 0.296
+    },
+    {
+      "query": {
+        "diet": "ectotherm_vertebrate"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 874
+      },
+      "shown": 20,
+      "seconds": 0.267
+    },
+    {
+      "query": {
+        "diet": "fish"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 518
+      },
+      "shown": 20,
+      "seconds": 0.23
+    },
+    {
+      "query": {
+        "diet": "unknown_vertebrate"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 141
+      },
+      "shown": 20,
+      "seconds": 0.233
+    },
+    {
+      "query": {
+        "diet": "carrion"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 192
+      },
+      "shown": 20,
+      "seconds": 0.276
+    },
+    {
+      "query": {
+        "diet": "fruit"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 2551
+      },
+      "shown": 20,
+      "seconds": 0.39
+    },
+    {
+      "query": {
+        "diet": "nectar"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 851
+      },
+      "shown": 20,
+      "seconds": 0.286
+    },
+    {
+      "query": {
+        "diet": "seed"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 1888
+      },
+      "shown": 20,
+      "seconds": 0.321
+    },
+    {
+      "query": {
+        "diet": "other_plant"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 992
+      },
+      "shown": 20,
+      "seconds": 0.272
+    },
+    {
+      "query": {
+        "habitat": "Forest"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 5595
+      },
+      "shown": 20,
+      "seconds": 0.235
+    },
+    {
+      "query": {
+        "habitat": "Shrubland"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 1254
+      },
+      "shown": 20,
+      "seconds": 0.27
+    },
+    {
+      "query": {
+        "habitat": "Woodland"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 878
+      },
+      "shown": 20,
+      "seconds": 0.233
+    },
+    {
+      "query": {
+        "habitat": "Grassland"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 726
+      },
+      "shown": 20,
+      "seconds": 0.24
+    },
+    {
+      "query": {
+        "habitat": "Rock"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 127
+      },
+      "shown": 20,
+      "seconds": 0.246
+    },
+    {
+      "query": {
+        "habitat": "Wetland"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 590
+      },
+      "shown": 20,
+      "seconds": 0.226
+    },
+    {
+      "query": {
+        "habitat": "Human Modified"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 113
+      },
+      "shown": 20,
+      "seconds": 0.235
+    },
+    {
+      "query": {
+        "habitat": "Coastal"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 91
+      },
+      "shown": 20,
+      "seconds": 0.234
+    },
+    {
+      "query": {
+        "habitat": "Marine"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 259
+      },
+      "shown": 20,
+      "seconds": 0.248
+    },
+    {
+      "query": {
+        "habitat": "Riverine"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 96
+      },
+      "shown": 20,
+      "seconds": 0.334
+    },
+    {
+      "query": {
+        "habitat": "Desert"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 9796,
+        "scoped": 11131,
+        "matched": 67
+      },
+      "shown": 20,
+      "seconds": 0.228
+    },
+    {
+      "query": {
+        "taxon": "직박구리과"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 161,
+        "scoped": 161,
+        "matched": 161
+      },
+      "shown": 20,
+      "seconds": 0.085
+    },
+    {
+      "query": {
+        "taxon": "Turdus"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 105,
+        "scoped": 105,
+        "matched": 105
+      },
+      "shown": 20,
+      "seconds": 0.104
+    }
+  ],
+  "db_writes": 0,
+  "production_changed": false
+}

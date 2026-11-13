@@ -1,0 +1,33 @@
+--- a/src/robingraph/api/static/audio-review.js
++++ b/src/robingraph/api/static/audio-review.js
+@@ -131,7 +131,7 @@
+     fact("소리 유형", text(record.recording_type));
+     fact("녹음 일시 · 원자료", text(record.recorded_at));
+     fact("녹음 장소 · 원자료", text(record.location));
+-    fact("수집 일시", text(record.evidence && record.evidence.retrieved_at));
++    fact("수집 일시", text(item.collected_at));
+     fact("상태 갱신 일시", text(item.updated_at));
+     if (review.reviewer) { fact("검토자", text(review.reviewer)); }
+     if (review.reviewed_at) { fact("검토 일시", text(review.reviewed_at)); }
+--- a/tests/frontend/audio_review_ui.test.js
++++ b/tests/frontend/audio_review_ui.test.js
+@@ -22,7 +22,7 @@
+ function all(node) { return [node, ...node.children.flatMap(all)]; }
+ const id = "a".repeat(64);
+ function candidate(values = {}) {
+-  return {candidate_id:id, scientific_name:"Fixture species", korean_name:"검증용 이름", status:"awaiting_review", file_title:"File:sample.ogg", updated_at:"2026-11-09T01:00:00Z", preview_url:"/internal/v1/audio/preview/"+id,
++  return {candidate_id:id, scientific_name:"Fixture species", korean_name:"검증용 이름", status:"awaiting_review", file_title:"File:sample.ogg", updated_at:"2026-11-09T01:00:00Z", collected_at:"2026-11-05T02:00:00Z", preview_url:"/internal/v1/audio/preview/"+id,
+     recording:{title:"Original recording", creator:"Original recorder", license_name:"CC BY-SA 4.0", license_url:"https://creativecommons.org/licenses/by-sa/4.0/", source_url:"https://commons.wikimedia.org/wiki/File:sample.ogg", location:"Original location", recorded_at:"2010-01-02", evidence:{retrieved_at:"2026-11-05T00:00:00Z"}}, ...values};
+ }
+ function response(body, status = 200) { return {ok:status >= 200 && status < 300, status, json:async () => body, blob:async () => new Blob(["fixture"], {type:"audio/ogg"})}; }
+@@ -55,8 +55,9 @@
+   assert.equal(f.calls[0].options.method,"GET"); assert.equal(f.calls[0].options.credentials,"omit");
+   assert.equal(f.calls[0].options.redirect,"error"); assert.equal(f.calls[0].options.cache,"no-store");
+   const text = f.elements["review-candidates"].textContent;
+-  for (const value of ["검증용 이름","Fixture species","검토 대기","독립 동정 미확인","사람의 청취 검토 미확인","Original recorder","Original location","2010-01-02","2026-11-05T00:00:00Z"]) assert.ok(text.includes(value),value);
++  for (const value of ["검증용 이름","Fixture species","검토 대기","독립 동정 미확인","사람의 청취 검토 미확인","Original recorder","Original location","2010-01-02","2026-11-05T02:00:00Z"]) assert.ok(text.includes(value),value);
+   assert.ok(!text.includes("fixture-read-only-key"));
++  assert.ok(!text.includes("2026-11-05T00:00:00Z"),"source metadata time must not masquerade as collection time");
+   assert.ok(f.nodes().filter(n => n.tag === "a").every(n => n.rel === "noopener noreferrer"));
+   assert.equal(f.nodes().filter(n => n.tag === "audio").length,0,"metadata list must not download audio");
+ });

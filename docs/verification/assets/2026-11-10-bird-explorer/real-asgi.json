@@ -1,0 +1,62 @@
+{
+  "transport": "in-process real Django ASGI",
+  "actual_test_neo4j": true,
+  "actual_test_postgresql": true,
+  "checks": [
+    {
+      "query": {},
+      "status": "answer",
+      "coverage": {
+        "evaluable": 11131,
+        "scoped": 11131,
+        "matched": 11131
+      },
+      "shown": 20,
+      "seconds": 0.498
+    },
+    {
+      "query": {
+        "taxon": "Anas"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 31,
+        "scoped": 31,
+        "matched": 31
+      },
+      "shown": 20,
+      "seconds": 0.288
+    },
+    {
+      "query": {
+        "species_scope": "korea",
+        "taxon": "Passeriformes",
+        "habitat": "Forest",
+        "diet": "fruit"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 164,
+        "scoped": 256,
+        "matched": 41
+      },
+      "shown": 20,
+      "seconds": 0.226
+    },
+    {
+      "query": {
+        "diet": "fruit,seed"
+      },
+      "status": "answer",
+      "coverage": {
+        "evaluable": 7067,
+        "scoped": 11131,
+        "matched": 924
+      },
+      "shown": 20,
+      "seconds": 0.551
+    }
+  ],
+  "db_writes": 0,
+  "production_changed": false
+}

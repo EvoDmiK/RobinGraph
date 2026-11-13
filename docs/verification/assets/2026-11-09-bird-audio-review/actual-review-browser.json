@@ -1,0 +1,66 @@
+{
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_api": true,
+  "candidate_count": 1,
+  "scientific_name": "Passer montanus",
+  "status": "awaiting_review",
+  "auth": {
+    "without_key": 401,
+    "collection_key_list": 401,
+    "readonly_list": 200,
+    "invalid_limit": 422,
+    "stage_with_readonly": 401,
+    "review_with_readonly": 401,
+    "publish_with_readonly": 401
+  },
+  "checks": [
+    {
+      "viewport": 1280,
+      "document_width": 1280,
+      "key_input_empty": true,
+      "storage_empty": true,
+      "native_audio_before_click": 0,
+      "collected_at": "2026-11-05T01:40:17.323534+00:00",
+      "unverified_label": true,
+      "playback": {
+        "count": 1,
+        "blob": true,
+        "current_time": 0.293799,
+        "duration": 11.001333,
+        "ready_state": 4,
+        "error_code": null,
+        "decoded_bytes": 14601
+      },
+      "empty_filter_and_cleanup": true,
+      "disconnected": true
+    },
+    {
+      "viewport": 390,
+      "document_width": 390,
+      "key_input_empty": true,
+      "storage_empty": true,
+      "native_audio_before_click": 0,
+      "collected_at": "2026-11-05T01:40:17.323534+00:00",
+      "unverified_label": true,
+      "playback": {
+        "count": 1,
+        "blob": true,
+        "current_time": 0.266783,
+        "duration": 11.001333,
+        "ready_state": 4,
+        "error_code": null,
+        "decoded_bytes": 14070
+      },
+      "empty_filter_and_cleanup": true,
+      "disconnected": true
+    }
+  ],
+  "page_exceptions": 0,
+  "provider_requests": 0,
+  "human_listening_performed": false,
+  "production_data_copied": false,
+  "collection_operations": 0,
+  "review_operations": 0,
+  "publication_operations": 0,
+  "request_headers_or_tokens_recorded": false
+}

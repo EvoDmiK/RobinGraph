@@ -1,0 +1,105 @@
+{
+  "verified_at_utc": "2026-11-11T00:35:53.869960+00:00",
+  "changes": [
+    "TEST 전용 Docker 볼륨에 공개 사진·출처 있는 설명 메타데이터 24시간 캐시",
+    "기본 조회에서 저장된 사진·설명을 즉시 재사용",
+    "사진 조회를 AI 설명 생성과 분리",
+    "동일 체중 값·단위는 한 줄, 표본 평균·다른 값·자료 범위는 분리, 모든 출처 보존"
+  ],
+  "backend_tests": {
+    "passed": 115,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "passed": 365,
+    "failed": 0
+  },
+  "source_matches": {
+    "src/robingraph/retrieval/external_cache.py": true,
+    "src/robingraph/retrieval/species_profile.py": true,
+    "src/robingraph/retrieval/species_notes.py": true,
+    "src/robingraph/api/static/chat.js": true,
+    "src/robingraph/api/static/explore.js": true,
+    "src/robingraph/cli.py": true
+  },
+  "test_cache_volume": "robingraph-test-species-cache",
+  "browser": {
+    "source_sha256": "7369806b5d99e2f79971f50ea880c99fe354f6269effdb96bffb62532dce70d4",
+    "origin": "https://robingraph-test.dove-nest.com",
+    "actual_test_browser": true,
+    "timings": {
+      "open_ms": 425,
+      "photo_ms": 2785,
+      "notes_settled_ms": 5150,
+      "notes_state": "unavailable",
+      "reload_photo_ms": 514,
+      "reload_profile_requests": 2
+    },
+    "checks": [
+      {
+        "width": 1280,
+        "documentWidth": 1280,
+        "left": 433.703125,
+        "right": 846.296875,
+        "massRows": [
+          "759.1 g"
+        ],
+        "sources_preserved": true
+      },
+      {
+        "width": 390,
+        "documentWidth": 390,
+        "left": 12.078125,
+        "right": 377.921875,
+        "massRows": [
+          "759.1 g"
+        ],
+        "sources_preserved": true
+      },
+      {
+        "width": 320,
+        "documentWidth": 320,
+        "left": 12,
+        "right": 308,
+        "massRows": [
+          "759.1 g"
+        ],
+        "sources_preserved": true
+      }
+    ],
+    "page_exceptions": 0,
+    "physical_mobile_tested": false,
+    "production_changed": false
+  },
+  "cached_browser": {
+    "species": "Asio otus",
+    "prepopulated_public_metadata": true,
+    "new_page": true,
+    "open_ms": 409,
+    "photo_and_notes_ready_ms": 1322,
+    "profile_requests": 1,
+    "notes_state": "ready",
+    "page_exceptions": 0
+  },
+  "persistent_offline": {
+    "mode": "offline",
+    "seconds": 0.0,
+    "photo_count": 2,
+    "note_count": 4,
+    "source_licenses_preserved": true,
+    "cache_records": 4,
+    "uid": 10001
+  },
+  "initial_failures": [
+    "프런트엔드 1건은 기존 fixture에 사진이 있는데도 pending이면 숨긴다는 전제. 빈 사진 fixture와 캐시 사진 노출 검증을 분리 후 통과.",
+    "추가 중복 검증에서 분리 보존된 sourceMaterial을 카드 DOM에서만 찾는 검사 위치 오류. 실제 sourceMaterial의 출처 보존 검사로 수정 후 통과."
+  ],
+  "limits": [
+    "Buteo buteo 첫 설명 조회는 unavailable 상태로 끝났으며 새 사실을 생성하거나 성공으로 보고하지 않음. 사진은 먼저 정상 표시.",
+    "단일 세션 관측값이며 통제된 반복 벤치마크 아님. 첫 외부 조회나 사진 파일 다운로드에는 지연이 남을 수 있음.",
+    "물리 모바일·Safari·Firefox 검사는 미실행.",
+    "외부 자료 메타데이터만 캐시하며 이미지 파일 바이트 캐시는 추가하지 않음."
+  ],
+  "production_changed": false,
+  "git_commit_push": false
+}

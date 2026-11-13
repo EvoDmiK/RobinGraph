@@ -1,0 +1,15 @@
+{
+  "change": "새 탐색기 결과의 새 도감 보기에서 기존 도감 카드 팝업 열기",
+  "frontend_tests": {
+    "passed": 363,
+    "failed": 0
+  },
+  "focused_recheck": {
+    "passed": 9,
+    "failed": 0
+  },
+  "verification_note": "첫 브라우저 검사는 뒤집기 애니메이션 완료 대기 없이 판정해 실패. 완료 대기 후 최종 검사 통과.",
+  "production_changed": false,
+  "git_commit_push": false,
+  "physical_mobile_tested": false
+}

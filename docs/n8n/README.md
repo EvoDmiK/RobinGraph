@@ -204,12 +204,30 @@ n8n의 앱 origin은 고정 TEST LAN `http://192.168.219.97:8000`이다. 실행 
 
 현재 실제 수집 후보는 참새 1개 `awaiting_review`이며 review/publish를 실행하지 않았다. 검증 범위는 작업기록의 최종 영수증으로 확인한다. 미검토 실자료를 승인된 fixture 결과와 혼동하지 않는다. Production API·DB·NAS 파일 서비스·운영 n8n 활성화는 이 런북의 TEST 실행 범위가 아니다.
 
-## RG-507 운영 수집 (2026-11-05 적용)
+## RG-507 운영 수집 (2026-11-09 현재)
 
-[운영 workflow](https://workflow.dove-nest.com/workflow/rgAudioCollectionProd01)는 매일 **03:00 Asia/Seoul·1종** 수집으로 활성화했다. 공개 앱과 분리된 NAS `robingraph-audio-collector`를 사용하며 후보는 `awaiting_review`로 저장한다. 자동 승인·공개는 없고 sidecar의 publish/public media 경로도 비활성이다. 앞선 TEST 전용 절차와 별도 승인·환경이다.
+[운영 workflow](https://workflow.dove-nest.com/workflow/rgAudioCollectionProd01)는 매일 **03:00 Asia/Seoul·최대 5종** 처리으로 활성화했다. 공개 앱과 분리된 NAS `robingraph-audio-collector`를 사용하며 후보는 `awaiting_review`로 저장한다. 자동 승인·공개는 없고 sidecar의 publish/public media 경로도 비활성이다. 앞선 TEST 전용 절차와 별도 승인·환경이다.
 
-진행 cursor는 n8n Data Table `RobinGraph Audio PROD cursor`(`J49mL4EifvZ0Pres`)의 `cursor_key=prod` 행에 저장한다. staticData는 실제 반복 trigger에서 영속화되지 않아 사용하지 않는다. 정상 처리 또는 명시적인 422 skip은 다음 대상으로 진행하지만 429·5xx는 cursor를 진행시키지 않는다. 스케줄 입력은 collect·limit 1로 고정하고 수동 검토·공개 입력을 상속하지 않는다.
+진행 cursor는 n8n Data Table `RobinGraph Audio PROD cursor`(`J49mL4EifvZ0Pres`)의 `cursor_key=prod` 행에 저장한다. staticData는 실제 반복 trigger에서 영속화되지 않아 사용하지 않는다. 정상 처리 또는 명시적인 422 skip은 다음 대상으로 진행하지만 429·5xx는 cursor를 진행시키지 않는다. 스케줄 입력은 collect·limit 5로 고정하고 수동 검토·공개 입력을 상속하지 않는다.
 
-운영 수동 수집/중복 실행과 Data Table trigger 간 저장은 검증했다. 첫 정기 수집은 **2026-11-06 03:00 KST 예정**이며 배포 당일에는 아직 실행되지 않았다. 운영 후보 1개는 사람의 청취·동정 검토가 남았고 실제 공개는 하지 않았다. 내부 서비스 인증은 저장 credential과 비공개 env를 사용한다. 값 자체를 workflow JSON·문서·명령에 남기지 않는다.
+운영 수동 수집/중복 실행과 Data Table trigger 간 저장, 11/6·11/7의 기존 1종 정기 실행은 검증했다. 첫 최대 5종 batch는 11/8 실제 실행돼 2개 저장·3개 후보 없음으로 완료됐다. 11/9는 2개 저장 뒤 제공자 제한으로 deferred 종료하고 cursor를 저장하지 않았다(n8n 실행 자체는 success). 수동 기본 1·최대 5는 유지한다. 자료 없음·검증 skip·429/5xx 등에 따라 실제 저장은 5건보다 적을 수 있다. 현재 운영 후보는 7개 검토 대기·1개 보류이며 실제 공개는 하지 않았다. 내부 서비스 인증은 저장 credential과 비공개 env를 사용한다. 값 자체를 workflow JSON·문서·명령에 남기지 않는다.
 
 공개 앱 revision `5056ccba9e75a891cc133a6f371b49deb5dbc598`과 TEST 환경은 유지했다. RG-409 도감 UI의 운영 반영이나 TEST 12종 음원의 운영 공개를 뜻하지 않는다. 배포·실행 ID·검증 및 실패 이력은 [운영 후속 기록](../work-log/2026-11-05-n8n-bird-audio-production.md)을 따른다.
+
+현재 최대 5종 설정·후보·검증 한계는 [11/7 확대 기록](../work-log/2026-11-07-bird-audio-daily-five.md)을 따른다.
+
+## RG-507 검토 화면 (TEST, 2026-11-10 현재)
+
+[TEST 음원 검토 화면](https://robingraph-test.dove-nest.com/audio-review)에서 후보 목록·상태 필터·페이지·미리듣기·출처를 확인한다. TEST 실자료는 참새 1개이며 운영 후보를 복사하거나 연결하지 않았다. 운영 후보 화면은 별도 Production 배포 승인 후 제공한다.
+
+권한 있는 사용자는 TEST 호스트의 `/Users/kimdove/robingraph-test/private/audio-review.key`(mode 600)에서 별도 읽기 키를 확인해 입력한다. 키는 화면 메모리에만 유지되며 URL·storage에 저장하지 않는다. 기존 수집 키는 목록 조회에 쓸 수 없다. 연결 해제는 키·목록·재생 blob을 정리한다. 키 값 자체는 문서·메시지·로그에 남기지 않는다.
+
+승인·공개·재시도 버튼은 없다. 읽기 키는 저장 폼이 없고 stage/review/publish·assessment 저장 권한도 없다. 별도 assessment 키로 연결하면 최신 검토 기록을 저장할 수 있다. 수집 시각 `collected_at`과 출처 근거 조회 시각은 구분한다. 실제 인증·재생과 합성 fixture 검증 범위는 [11/9 기록](../work-log/2026-11-09-bird-audio-review.md)을 따른다.
+
+### 후보별 검토 기록 저장
+
+TEST 전용 작성 키는 `/Users/kimdove/robingraph-test/private/audio-assessment.key`(0600)에 보관한다. Production에는 설정하지 않았다. 이 키로 연결해 `can_assess=true`이면 폼이 나타난다. 조회 전용 키도 기존 저장 기록을 읽을 수 있다. 작성 키로 연결한 뒤 검토자·재생 상태·출처 확인·동정 근거·판정·메모를 직접 선택해 저장한다. 재생 성공은 항목을 자동 체크하지 않는다. 추가 근거를 선택하면 근거 메모가 필수이고, 일반 메모는 2,000자·근거 메모는 1,000자 이하다. 최신 `assessment`만 보관하며 전체 변경 이력을 누적하지 않는다.
+
+저장 시 화면에서 읽은 `expected_updated_at`을 전송한다. 409 충돌이면 다른 변경을 덮어쓰지 말고 최신 목록을 다시 확인한 뒤 입력을 검토한다. 읽기 키와 수집 키는 assessment 저장에 사용할 수 없고 작성 키도 stage/review/publish 권한은 없다. 키를 메모에 넣으면 422로 거부하며 키 값은 URL·storage·로그·문서에 남기지 않는다.
+
+채택 후보는 공개 승인이 아니고 제외는 파일 삭제가 아니다. 기존 status·legacy review·공개 gate·원출처·음원을 유지한다. 자동화 검증에서 실제 TEST 후보에 임시 기록을 저장하고 조건부 복원했으며 사람 검토를 완료한 것은 아니다. 운영 화면/저장 API는 아직 배포하지 않았다. [11/10 기록](../work-log/2026-11-10-bird-audio-assessment.md)에 단위·격리 DB·공유 TEST 검증 범위와 복원 근거를 남겼다.

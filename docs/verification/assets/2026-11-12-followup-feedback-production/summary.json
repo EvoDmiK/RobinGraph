@@ -1,0 +1,57 @@
+{
+  "state": "verified",
+  "tasks": {
+    "RG-213": "phase1 completed; Production verified",
+    "RG-603": "completed; Production experiment50 verified"
+  },
+  "run_id": "rg213-rg603-prod-20261112-1794492610778",
+  "production_chats": 12,
+  "followup_chain_cases": 4,
+  "followup_guard_cases": 8,
+  "feedback_first_submit": {
+    "passed": 3,
+    "total": 3,
+    "keyboard_submissions": 1
+  },
+  "same_vote_retries": {
+    "count": 3,
+    "status": 200
+  },
+  "conflicting_vote_retries": {
+    "count": 3,
+    "status": 409
+  },
+  "tampered_feedback": {
+    "count": 1,
+    "status": 400
+  },
+  "feedback_posts_total": 10,
+  "mlflow_experiment_id": "50",
+  "mlflow_trace_readbacks": 12,
+  "mlflow_matching_assessments": 3,
+  "automated_verification_not_human_gold": true,
+  "capabilities_redacted": true,
+  "viewports": [
+    1280,
+    390
+  ],
+  "page_errors": 0,
+  "production_app_unchanged": true,
+  "app_restarted": false,
+  "domain_db_write_commands": 0,
+  "physical_mobile_tested": false,
+  "full_unit_suite_rerun": false,
+  "git_commit_push_merge": false,
+  "jenkins_readback_build": 4,
+  "harness_failures": [
+    "Initial helper module name collision before Jenkins job creation",
+    "Build1 used MlflowClient absent from lightweight tracing package; replaced by official experiment REST GET",
+    "Build3 exceeded Groovy literal length before execution; compressed public verification input; no extra chat or vote POST"
+  ],
+  "backlogs_updated": [
+    "RG-213 phase1",
+    "RG-603"
+  ],
+  "vault_sync_verified": true,
+  "one_off_jenkins_job_disabled": true
+}

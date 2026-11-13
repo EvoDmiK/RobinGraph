@@ -1,0 +1,31 @@
+{
+  "environment": "Local headless Chromium; synthetic API metadata and generated silent WAV only. No actual TEST API or physical audio/device test.",
+  "results": [
+    {
+      "width": 1280,
+      "documentWidth": 1280,
+      "cardWidth": 1020,
+      "keyInputCleared": true,
+      "nativeAudioNotLoaded": true,
+      "noStorage": true,
+      "unverified": true,
+      "deferredHasNoButton": true,
+      "playerLoaded": true,
+      "noOverflowWithPlayer": true,
+      "disconnected": true
+    },
+    {
+      "width": 390,
+      "documentWidth": 390,
+      "cardWidth": 358,
+      "keyInputCleared": true,
+      "nativeAudioNotLoaded": true,
+      "noStorage": true,
+      "unverified": true,
+      "deferredHasNoButton": true,
+      "playerLoaded": true,
+      "noOverflowWithPlayer": true,
+      "disconnected": true
+    }
+  ]
+}

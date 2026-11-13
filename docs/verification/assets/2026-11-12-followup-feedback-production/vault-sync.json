@@ -1,0 +1,42 @@
+{
+  "owner": "Codex",
+  "template_read": true,
+  "readback": [
+    {
+      "path": "Work/RobinGraph/작업기록/6xx 관측·평가/2026-11-12-후속조건-피드백-운영검증.md",
+      "readback_equal": true,
+      "characters": 5562
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-213.md",
+      "readback_equal": true,
+      "characters": 1703
+    },
+    {
+      "path": "Work/RobinGraph/백로그 상세/RG-603.md",
+      "readback_equal": true,
+      "characters": 2608
+    },
+    {
+      "path": "Work/RobinGraph/RobinGraph 작업 백로그.md",
+      "readback_equal": true,
+      "characters": 9247
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/2xx 검색·RAG·그래프 질의/작업 백로그.md",
+      "readback_equal": true,
+      "characters": 21249
+    },
+    {
+      "path": "Work/RobinGraph/작업기록/6xx 관측·평가/작업 백로그.md",
+      "readback_equal": true,
+      "characters": 8266
+    }
+  ],
+  "unrelated_backlog_statuses_preserved": [
+    "RG-409",
+    "RG-507",
+    "RG-205",
+    "RG-212"
+  ]
+}

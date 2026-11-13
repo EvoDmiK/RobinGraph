@@ -1,0 +1,39 @@
+{
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_network_api": true,
+  "actual_browser_form_save": true,
+  "reload_matches": true,
+  "stale_save_status": 409,
+  "readonly_save_status": 401,
+  "assessment_key_denied": {
+    "stage": 401,
+    "review": 401,
+    "publish": 401
+  },
+  "readonly_form_absent": true,
+  "native_audio_does_not_autocheck": true,
+  "keyboard_enter_connect": true,
+  "checks": [
+    {
+      "width": 1280,
+      "document_width": 1280,
+      "key_empty": true,
+      "storage_empty": true,
+      "xss_executed": false,
+      "note_as_text": true
+    },
+    {
+      "width": 390,
+      "document_width": 390,
+      "key_empty": true,
+      "storage_empty": true,
+      "xss_executed": false,
+      "note_as_text": true
+    }
+  ],
+  "page_exceptions": 0,
+  "provider_requests": 0,
+  "human_listening_performed": false,
+  "publication_operations": 0,
+  "physical_mobile_tested": false
+}

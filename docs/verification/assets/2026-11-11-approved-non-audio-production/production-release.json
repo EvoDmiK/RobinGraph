@@ -1,0 +1,17 @@
+{
+  "source_sha256": "5bf5c154475d9332ae8c2e8b35959c287bbfa3aecf6146c341768059077d0890",
+  "base_revision": "5056ccba9e75a891cc133a6f371b49deb5dbc598",
+  "image": "ghcr.io/evodmik/robingraph@sha256:997ce4f410605011a17924b8ea1784849282f8931c22a27c4a11aa706c16e65f",
+  "audio_excluded": true,
+  "cache_volume": "robingraph-prod-species-cache",
+  "backup": "/home/kimdove/RobinGraph-approved-ui-e7ad221/.registry-deployments/non-audio-5bf5c154475d-1794386172069115698",
+  "previous_id": "4ac6fc9a208fb7318a8fb1f0208a936931ef10456a938e220d859dba76f518ab",
+  "previous_image": "ghcr.io/evodmik/robingraph@sha256:963b4836ccf77155a8ca94efa105e66c60f799d05e75f6ae6c5b6ce710b05edc",
+  "state": "verified",
+  "domain_db_writes": false,
+  "container_id": "f62ab640cd9548bc959470feb7cae1bee8fb66b3291c90b809076b00d1dfde92",
+  "started_at": "2026-11-11T08:36:14.785896403Z",
+  "health": "healthy",
+  "runtime_preserved": true,
+  "cache_write_verified": true
+}

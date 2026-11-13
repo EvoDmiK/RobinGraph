@@ -1,0 +1,544 @@
+--- a/.env.example
++++ b/.env.example
+@@ -58,5 +58,7 @@
+ # Internal audio operations and preview require this bearer token; keep it out of n8n workflow JSON.
+ # Read-only audio review list/preview; must differ from the collection token.
+ ROBINGRAPH_AUDIO_REVIEW_TOKEN=
++# Save assessments only; distinct from both other audio tokens. No approval/publication authority.
++ROBINGRAPH_AUDIO_ASSESSMENT_TOKEN=
+ ROBINGRAPH_AUDIO_ROOT=
+ ROBINGRAPH_INGEST_INTERNAL_TOKEN=
+--- a/src/robingraph/api/drf/audio_views.py
++++ b/src/robingraph/api/drf/audio_views.py
+@@ -42,7 +42,7 @@
+     audio = None
+ 
+     def get(self,request):
+-        self.audio.require_review_bearer(request.META.get('HTTP_AUTHORIZATION'))
++        can_assess = self.audio.require_review_bearer(request.META.get('HTTP_AUTHORIZATION'))
+         query = request.query_params
+         if set(query)-{'limit','offset','status'} or any(len(query.getlist(key))!=1 for key in query):
+             raise ApiError(422,'Invalid audio candidate query')
+@@ -50,8 +50,22 @@
+             limit=int(query.get('limit','20')); offset=int(query.get('offset','0'))
+         except ValueError:
+             raise ApiError(422,'Invalid audio candidate pagination') from None
+-        return Response(self.audio.candidates(limit=limit,offset=offset,status=query.get('status')),
+-                        headers={'Cache-Control':'private, no-store'})
++        result = self.audio.candidates(limit=limit,offset=offset,status=query.get('status'))
++        return Response({**result,'can_assess':can_assess},headers={'Cache-Control':'private, no-store'})
++
++
++class AudioAssessmentView(RobinGraphView):
++    http_method_names = ['post']
++    audio = None
++
++    def post(self,request):
++        self.audio.require_assessment_bearer(request.META.get('HTTP_AUTHORIZATION'))
++        body = read_json_body(request)
++        required = {'candidate_id','expected_updated_at','reviewer','playback','source',
++                    'identification','decision','note','identification_note'}
++        if not isinstance(body,dict) or set(body)!=required:
++            raise ApiError(422,'Invalid audio assessment fields')
++        return Response(self.audio.assessment(**body),headers={'Cache-Control':'private, no-store'})
+ 
+ 
+ def audio_response(request,path,mime,*,private=False):
+--- a/src/robingraph/api/drf/application.py
++++ b/src/robingraph/api/drf/application.py
+@@ -140,6 +140,6 @@
+     if audio_service is not None:
+         import json
+         schema['paths'].update(json.loads(Path(__file__).with_name('openapi_audio.json').read_text()))
+-        for name in ('AudioInternalBearer','AudioReviewBearer'):
++        for name in ('AudioInternalBearer','AudioReviewBearer','AudioAssessmentBearer'):
+             schema['components'].setdefault('securitySchemes',{})[name] = {'type':'http','scheme':'bearer'}
+     return DjangoApiApplication(build_urlconf(service, ingest, schema, audio_service=audio_service), schema)
+--- a/src/robingraph/api/drf/openapi_audio.json
++++ b/src/robingraph/api/drf/openapi_audio.json
+@@ -426,6 +426,9 @@
+         },
+         {
+           "AudioReviewBearer": []
++        },
++        {
++          "AudioAssessmentBearer": []
+         }
+       ]
+     },
+@@ -468,6 +471,9 @@
+         },
+         {
+           "AudioReviewBearer": []
++        },
++        {
++          "AudioAssessmentBearer": []
+         }
+       ]
+     }
+@@ -551,6 +557,9 @@
+       "security": [
+         {
+           "AudioReviewBearer": []
++        },
++        {
++          "AudioAssessmentBearer": []
+         }
+       ],
+       "parameters": [
+@@ -591,7 +600,7 @@
+       ],
+       "responses": {
+         "200": {
+-          "description": "Sanitized candidate page; has_more and nullable next_offset"
++          "description": "Sanitized candidate page with can_assess boolean, nullable item assessment and next_offset"
+         },
+         "401": {
+           "description": "A distinct read-only review bearer is required"
+@@ -601,5 +610,114 @@
+         }
+       }
+     }
++  },
++  "/internal/v1/audio/assessment": {
++    "post": {
++      "summary": "Save candidate assessment only; does not approve or publish audio",
++      "tags": [
++        "audio"
++      ],
++      "security": [
++        {
++          "AudioAssessmentBearer": []
++        }
++      ],
++      "requestBody": {
++        "required": true,
++        "content": {
++          "application/json": {
++            "schema": {
++              "type": "object",
++              "additionalProperties": false,
++              "required": [
++                "candidate_id",
++                "expected_updated_at",
++                "reviewer",
++                "playback",
++                "source",
++                "identification",
++                "decision",
++                "note",
++                "identification_note"
++              ],
++              "properties": {
++                "candidate_id": {
++                  "type": "string",
++                  "pattern": "^[a-f0-9]{64}$"
++                },
++                "expected_updated_at": {
++                  "type": "string",
++                  "format": "date-time"
++                },
++                "reviewer": {
++                  "type": "string",
++                  "minLength": 1,
++                  "maxLength": 120
++                },
++                "playback": {
++                  "type": "string",
++                  "enum": [
++                    "unchecked",
++                    "normal",
++                    "silent",
++                    "file_error"
++                  ]
++                },
++                "source": {
++                  "type": "string",
++                  "enum": [
++                    "unchecked",
++                    "checked"
++                  ]
++                },
++                "identification": {
++                  "type": "string",
++                  "enum": [
++                    "unchecked",
++                    "uploader_only",
++                    "additional_evidence",
++                    "uncertain"
++                  ]
++                },
++                "decision": {
++                  "type": "string",
++                  "enum": [
++                    "pending",
++                    "hold",
++                    "candidate",
++                    "exclude"
++                  ]
++                },
++                "note": {
++                  "type": "string",
++                  "maxLength": 2000
++                },
++                "identification_note": {
++                  "type": "string",
++                  "maxLength": 1000
++                }
++              }
++            }
++          }
++        }
++      },
++      "responses": {
++        "200": {
++          "description": "Saved latest assessment, candidate_id and updated_at for the next edit"
++        },
++        "401": {
++          "description": "A distinct assessment bearer is required"
++        },
++        "404": {
++          "description": "Candidate not found"
++        },
++        "409": {
++          "description": "Candidate changed; reload before retrying"
++        },
++        "422": {
++          "description": "Invalid fields, timestamp, choices, evidence note, or credential text"
++        }
++      }
++    }
+   }
+ }
+--- a/src/robingraph/api/drf/urls.py
++++ b/src/robingraph/api/drf/urls.py
+@@ -38,9 +38,10 @@
+ 
+     patterns = []
+     if audio_service is not None:
+-        from .audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView
++        from .audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView, AudioAssessmentView
+         patterns += [
+             path('audio-review', bind(views.AudioReviewUIView)),
++            path('internal/v1/audio/assessment', views.threaded(AudioAssessmentView.as_view(audio=audio_service))),
+             path('internal/v1/audio/candidates', views.threaded(AudioCandidatesView.as_view(audio=audio_service))),
+             path('internal/v1/audio/preview/<str:name>', views.threaded(AudioMediaView.as_view(audio=audio_service,private=True))),
+             path('internal/v1/audio/<str:action>', views.threaded(AudioOperationView.as_view(audio=audio_service))),
+--- a/src/robingraph/cli.py
++++ b/src/robingraph/cli.py
+@@ -375,7 +375,8 @@
+ 
+         audio_service = AudioService(AudioStore(PostgresSettings.from_environment()),audio_root,lineage_repository,
+                                      audio_exact_species,os.environ.get('ROBINGRAPH_INGEST_INTERNAL_TOKEN',''),
+-                                     review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'))
++                                     review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'),
++                                     assessment_token=os.environ.get('ROBINGRAPH_AUDIO_ASSESSMENT_TOKEN'))
+ 
+     summarize_notes = getattr(answer_generator, 'species_notes', None)
+     species_flow = create_species_flow(
+--- a/src/robingraph/ingest/audio.py
++++ b/src/robingraph/ingest/audio.py
+@@ -21,6 +21,13 @@
+ STORED_RELEASE = 'commons-stored-reviewed-v1'
+ MAX_AUDIO_BYTES = 20 * 1024 * 1024
+ FILE_NAME = re.compile(r'^[a-f0-9]{64}\.(ogg|mp3|wav)$')
++ASSESSMENT_VALUES = {
++    'playback':('unchecked','normal','silent','file_error'),
++    'source':('unchecked','checked'),
++    'identification':('unchecked','uploader_only','additional_evidence','uncertain'),
++    'decision':('pending','hold','candidate','exclude'),
++}
++ASSESSMENT_FIELDS = ('reviewer','playback','source','identification','decision','note','identification_note','assessed_at')
+ 
+ 
+ class NoRedirect(HTTPRedirectHandler):
+@@ -86,14 +93,16 @@
+ 
+ 
+ class AudioService:
+-    def __init__(self, store, root, repository, resolve_exact, token, *, review_token=None):
++    def __init__(self, store, root, repository, resolve_exact, token, *, review_token=None, assessment_token=None):
+         if not token or not Path(root).is_absolute():
+             raise ValueError('Audio storage requires an absolute persistent root and internal token')
+         self.store, self.root, self.repository, self.resolve_exact = store, Path(root), repository, resolve_exact
+-        if review_token and review_token == token:
+-            raise ValueError('Audio review and collection tokens must be distinct')
++        tokens = [value for value in (token,review_token,assessment_token) if value]
++        if len(tokens)!=len(set(tokens)):
++            raise ValueError('Audio review, assessment and collection tokens must be distinct')
+         self.token = token
+         self.review_token = review_token
++        self.assessment_token = assessment_token
+ 
+     def require_internal_bearer(self, value):
+         import secrets
+@@ -104,8 +113,15 @@
+     def require_review_bearer(self, value, *, preview=False):
+         import secrets
+         supplied = value[7:] if value and value.startswith('Bearer ') else ''
+-        tokens = (self.review_token, self.token) if preview else (self.review_token,)
+-        if not supplied or not any(token and secrets.compare_digest(supplied, token) for token in tokens):
++        tokens = (self.review_token, self.assessment_token, self.token) if preview else (self.review_token, self.assessment_token)
++        if not supplied or not any(token and secrets.compare_digest(supplied.encode(), token.encode()) for token in tokens):
++            raise ApiError(401,'Unauthorized',{'WWW-Authenticate':'Bearer'})
++        return bool(self.assessment_token and secrets.compare_digest(supplied.encode(),self.assessment_token.encode()))
++
++    def require_assessment_bearer(self, value):
++        import secrets
++        supplied = value[7:] if value and value.startswith('Bearer ') else ''
++        if not supplied or not self.assessment_token or not secrets.compare_digest(supplied.encode(),self.assessment_token.encode()):
+             raise ApiError(401,'Unauthorized',{'WWW-Authenticate':'Bearer'})
+ 
+     def candidates(self, *, limit=20, offset=0, status=None):
+@@ -121,6 +137,7 @@
+             updated = row['updated_at']
+             item.update(candidate_id=row['id'], updated_at=updated.isoformat(),
+                         collected_at=data.get('metadata_fetched_at'),
++                        assessment=self.assessment_fields(data.get('assessment')),
+                         file_bytes=None, preview_url=None, korean_name=None)
+             target = data.get('target',{})
+             if (target.get('concept_set_id'),target.get('taxonomy_release')) == ('rg:concept-set:avilist-v2025b','v2025b'):
+@@ -149,6 +166,43 @@
+             items.append(item)
+         more = len(rows)>limit
+         return {'items':items,'has_more':more,'next_offset':offset+limit if more else None}
++
++    @staticmethod
++    def assessment_fields(value):
++        return {key:value[key] for key in ASSESSMENT_FIELDS if key in value} if isinstance(value,dict) else None
++
++    def assessment(self, candidate_id, expected_updated_at, reviewer, playback, source,
++                   identification, decision, note, identification_note):
++        if not isinstance(candidate_id,str) or not re.fullmatch('[a-f0-9]{64}',candidate_id):
++            raise ApiError(422,'Invalid audio candidate ID')
++        try:
++            expected = datetime.fromisoformat(expected_updated_at) if isinstance(expected_updated_at,str) else None
++        except ValueError:
++            expected = None
++        if expected is None or expected.utcoffset() is None:
++            raise ApiError(422,'An aware expected_updated_at timestamp is required')
++        if (not isinstance(reviewer,str) or not 1 <= len(reviewer.strip()) <= 120
++                or not isinstance(note,str) or len(note)>2000
++                or not isinstance(identification_note,str) or len(identification_note)>1000):
++            raise ApiError(422,'Invalid audio assessment text fields')
++        values = dict(playback=playback,source=source,identification=identification,decision=decision)
++        if any(not isinstance(value,str) or value not in ASSESSMENT_VALUES[key] for key,value in values.items()):
++            raise ApiError(422,'Invalid audio assessment choices')
++        if identification=='additional_evidence' and not identification_note.strip():
++            raise ApiError(422,'Additional identification evidence requires a note')
++        if any(token and token in text for token in (self.token,self.review_token,self.assessment_token)
++               for text in (reviewer,note,identification_note)):
++            raise ApiError(422,'Credentials must not be stored in assessment text')
++        with self.store.session() as cursor:
++            row = self.store.get(cursor,candidate_id)
++            if row is None:
++                raise ApiError(404,'Audio candidate not found')
++            if row['updated_at'] != expected:
++                raise ApiError(409,'Audio candidate changed; reload before saving the assessment')
++            assessment = dict(values,reviewer=reviewer.strip(),note=note,identification_note=identification_note,
++                              assessed_at=datetime.now(timezone.utc).isoformat())
++            updated = self.store.save_assessment(cursor,candidate_id,assessment)
++        return {'candidate_id':candidate_id,'updated_at':updated.isoformat(),'assessment':assessment}
+ 
+     @staticmethod
+     def result(row):
+--- a/src/robingraph/ingest/audio_store.py
++++ b/src/robingraph/ingest/audio_store.py
+@@ -29,6 +29,14 @@
+             (candidate_id,science,title,status,Jsonb(data)))
+ 
+     @staticmethod
++    def save_assessment(cursor, candidate_id, assessment):
++        # Use wall-clock time after the row lock, even when this transaction waited for an older writer.
++        cursor.execute('''UPDATE audio_recording_candidate SET
++            data=jsonb_set(data,'{assessment}',%s),updated_at=clock_timestamp()
++            WHERE id=%s RETURNING updated_at''', (Jsonb(assessment),candidate_id))
++        return cursor.fetchone()['updated_at']
++
++    @staticmethod
+     def cooldown(cursor):
+         cursor.execute("SELECT max((data->>'retry_at')::timestamptz) AS until FROM audio_recording_candidate WHERE status='deferred'")
+         return cursor.fetchone()['until']
+--- a/src/robingraph/ingest/audio_collector.py
++++ b/src/robingraph/ingest/audio_collector.py
+@@ -8,7 +8,7 @@
+ from robingraph.api.drf.application import DjangoApiApplication, configure_default_settings
+ configure_default_settings()
+ 
+-from robingraph.api.drf.audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView
++from robingraph.api.drf.audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView, AudioAssessmentView
+ from robingraph.api.drf.urls import UrlConf
+ from robingraph.api.drf.views import RobinGraphView, threaded
+ from robingraph.api.services import ApiError
+@@ -35,7 +35,8 @@
+     if target not in ('test','prod'):
+         raise ValueError('An explicit test or prod collector target is required')
+     configure_default_settings()
+-    patterns=[path('internal/v1/audio/candidates',threaded(AudioCandidatesView.as_view(audio=audio_service))),
++    patterns=[path('internal/v1/audio/assessment',threaded(AudioAssessmentView.as_view(audio=audio_service))),
++              path('internal/v1/audio/candidates',threaded(AudioCandidatesView.as_view(audio=audio_service))),
+               path('health',threaded(CollectorHealthView.as_view(target=target))),
+               path('internal/v1/audio/preview/<str:name>',threaded(AudioMediaView.as_view(audio=audio_service,private=True)))]
+     for action in ('targets','discover','stage','status','review'):
+@@ -91,7 +92,8 @@
+ 
+     service=AudioService(store,os.environ['ROBINGRAPH_AUDIO_ROOT'],repository,exact_species,
+                          os.environ['ROBINGRAPH_INGEST_INTERNAL_TOKEN'],
+-                         review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'))
++                         review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'),
++                         assessment_token=os.environ.get('ROBINGRAPH_AUDIO_ASSESSMENT_TOKEN'))
+     app=create_app(service,target)
+     app.collector_repository=repository
+     return app
+--- /dev/null
++++ b/tests/test_audio_assessment.py
+@@ -0,0 +1,149 @@
++"""Assessment-only writes never approve or publish a recording (offline fixtures)."""
++import copy
++from datetime import datetime, timedelta, timezone
++from unittest import TestCase
++from unittest.mock import Mock
++
++from asgi_client import TestClient
++from robingraph.api.drf import create_django_app
++from robingraph.api.services import ApiError
++from robingraph.ingest.audio import AudioService
++from robingraph.ingest.audio_collector import create_app
++from robingraph.ingest.audio_store import AudioStore
++import test_audio_review as review_fixture
++from test_audio_review import ReviewStore
++
++
++class AssessmentStore(ReviewStore):
++    def save_assessment(self,cursor,candidate_id,assessment):
++        row=self.rows[candidate_id]
++        row['data']['assessment']=copy.deepcopy(assessment)
++        row['updated_at']=max(datetime.now(timezone.utc),row['updated_at']+timedelta(microseconds=1))
++        return row['updated_at']
++
++
++class AudioAssessmentTests(TestCase):
++    def setUp(self):
++        review_fixture.AudioReviewTests.setUp(self)
++        self.store=AssessmentStore()
++        self.store.rows=copy.deepcopy(self.service.store.rows)
++        self.service=AudioService(self.store,self.directory.name,self.graph,self.resolve,'collection-fixture',
++                                  review_token='readonly-fixture',assessment_token='assessment-fixture')
++        self.client=TestClient(create_django_app(audio_service=self.service))
++        self.write_headers={'Authorization':'Bearer assessment-fixture'}
++        self.url='/internal/v1/audio/assessment'
++
++    def body(self,**changes):
++        return {'candidate_id':self.key,'expected_updated_at':self.store.rows[self.key]['updated_at'].isoformat(),
++                'reviewer':'Reviewer','playback':'normal','source':'checked','identification':'uploader_only',
++                'decision':'candidate','note':'','identification_note':'',**changes}
++
++    def test_token_capability_matrix_and_distinct_configuration(self):
++        for headers in ({},self.headers,{'Authorization':'Bearer collection-fixture'}):
++            self.assertEqual(401,self.client.post(self.url,json=self.body(),headers=headers).status_code)
++        with self.assertRaises(ApiError) as malformed:
++            self.service.require_assessment_bearer('Bearer 비밀')
++        self.assertEqual(401,malformed.exception.status_code)
++        self.assertFalse(self.client.get('/internal/v1/audio/candidates',headers=self.headers).json()['can_assess'])
++        self.assertTrue(self.client.get('/internal/v1/audio/candidates',headers=self.write_headers).json()['can_assess'])
++        self.assertEqual(200,self.client.head('/internal/v1/audio/preview/'+self.key,headers=self.write_headers).status_code)
++        for action in ('status','targets','discover','stage','review','publish'):
++            self.assertEqual(401,self.client.post('/internal/v1/audio/'+action,json={},headers=self.write_headers).status_code)
++        for review,assessment in (('collection-fixture','other'),('reader','collection-fixture'),('same','same')):
++            with self.assertRaises(ValueError):
++                AudioService(self.store,self.directory.name,self.graph,self.resolve,'collection-fixture',
++                             review_token=review,assessment_token=assessment)
++        self.service.assessment_token=None
++        self.assertEqual(401,self.client.post(self.url,json=self.body(),headers=self.write_headers).status_code)
++        self.assertFalse(self.client.get('/internal/v1/audio/candidates',headers=self.headers).json()['can_assess'])
++
++    def test_assessment_update_preserves_raw_record_legacy_review_status_and_publication_gate(self):
++        row=self.store.rows[self.key]
++        row['data']['review']={'approved':False,'taxon_verified':False,'playback_verified':False,'reviewer':'original'}
++        before=copy.deepcopy(row)
++        self.assertIsNone(self.client.get('/internal/v1/audio/candidates',headers=self.headers).json()['items'][0]['assessment'])
++        body=self.body(note='<img src=x onerror=alert(1)>',identification='additional_evidence',
++                       identification_note='Observed field marks; corroboration needed')
++        response=self.client.post(self.url,json=body,headers=self.write_headers)
++        self.assertEqual(200,response.status_code)
++        result=response.json();self.assertNotEqual(body['expected_updated_at'],result['updated_at'])
++        assessment=result['assessment'];self.assertEqual(body['note'],assessment['note'])
++        self.assertIsNotNone(datetime.fromisoformat(assessment['assessed_at']).utcoffset())
++        for key,value in before.items():
++            if key not in ('data','updated_at'):self.assertEqual(value,row[key])
++        self.assertEqual(before['data'],{key:value for key,value in row['data'].items() if key!='assessment'})
++        listed=self.client.get('/internal/v1/audio/candidates',headers=self.headers).json()['items'][0]
++        self.assertEqual(assessment,listed['assessment']);self.assertEqual(result['updated_at'],listed['updated_at'])
++        row['data']['assessment']['private_extra']='hidden'
++        self.assertNotIn('private_extra',self.client.get('/internal/v1/audio/candidates',headers=self.headers).text)
++        self.assertEqual(404,self.client.get('/media/audio/'+self.name).status_code)
++        self.assertEqual(409,self.client.post('/internal/v1/audio/publish',json={'candidate_id':self.key},
++                                            headers={'Authorization':'Bearer collection-fixture'}).status_code)
++        self.graph._run.assert_not_called();self.resolve.assert_not_called()
++
++    def test_optimistic_conflict_rejects_stale_editor_then_allows_explicit_latest_update(self):
++        stale=self.body()
++        first=self.client.post(self.url,json=stale,headers=self.write_headers)
++        self.assertEqual(200,first.status_code)
++        saved=copy.deepcopy(self.store.rows[self.key])
++        conflict=self.client.post(self.url,json={**stale,'note':'second editor'},headers=self.write_headers)
++        self.assertEqual(409,conflict.status_code);self.assertEqual(saved,self.store.rows[self.key])
++        retry=self.client.post(self.url,json=self.body(note='reloaded edit'),headers=self.write_headers)
++        self.assertEqual(200,retry.status_code);self.assertEqual('reloaded edit',retry.json()['assessment']['note'])
++        self.assertNotEqual(first.json()['updated_at'],retry.json()['updated_at'])
++
++    def test_body_time_text_enums_and_additional_evidence_validation_are_atomic(self):
++        original=copy.deepcopy(self.store.rows)
++        invalid=[{**self.body(),'unknown':'value'},self.body(expected_updated_at=None),
++                 self.body(expected_updated_at='2026-11-09T00:00:00'),self.body(expected_updated_at='garbage'),
++                 self.body(reviewer=' '),self.body(reviewer='x'*121),self.body(note='x'*2001),
++                 self.body(identification_note='x'*1001),self.body(note=None),
++                 self.body(identification='additional_evidence',identification_note=' \n'),
++                 self.body(playback=True),self.body(source=['checked']),self.body(decision='publish'),
++                 self.body(candidate_id='invalid')]
++        for field in self.body():
++            value=self.body();value.pop(field);invalid.append(value)
++        for body in invalid:
++            self.assertEqual(422,self.client.post(self.url,json=body,headers=self.write_headers).status_code)
++            self.assertEqual(original,self.store.rows)
++        missing=self.client.post(self.url,json=self.body(candidate_id='f'*64),headers=self.write_headers)
++        self.assertEqual(404,missing.status_code)
++
++    def test_secret_values_are_rejected_without_storage_or_reflection(self):
++        before=copy.deepcopy(self.store.rows)
++        for field in ('reviewer','note','identification_note'):
++            for secret in ('collection-fixture','readonly-fixture','assessment-fixture'):
++                response=self.client.post(self.url,json=self.body(**{field:'prefix '+secret+' suffix'}),headers=self.write_headers)
++                self.assertEqual(422,response.status_code);self.assertNotIn(secret,response.text)
++                self.assertEqual(before,self.store.rows)
++
++    def test_every_choice_allows_notes_without_file_or_any_candidate_state_transition(self):
++        # A reviewer can record a failed/missing file or defer judgment without approving it.
++        for index,(playback,source,identification,decision,status) in enumerate(zip(
++                ('unchecked','normal','silent','file_error'),('unchecked','checked','checked','unchecked'),
++                ('unchecked','uploader_only','additional_evidence','uncertain'),
++                ('pending','hold','candidate','exclude'),('deferred','awaiting_review','rejected','approved'))):
++            row=self.store.rows[self.key];row['status']=status;row['data'].pop('file_name',None)
++            result=self.client.post(self.url,json=self.body(playback=playback,source=source,identification=identification,
++                decision=decision,identification_note='Explicit evidence' if identification=='additional_evidence' else ''),headers=self.write_headers)
++            self.assertEqual(200,result.status_code);self.assertEqual(status,row['status']);self.assertNotIn('review',row['data'])
++        self.graph._run.assert_not_called();self.resolve.assert_not_called()
++
++    def test_collector_assessment_is_separate_from_publication_and_timestamp_offsets_compare(self):
++        client=TestClient(create_app(self.service,'test'))
++        expected=self.store.rows[self.key]['updated_at'].astimezone(timezone(timedelta(hours=9))).isoformat()
++        response=client.post(self.url,json=self.body(expected_updated_at=expected),headers=self.write_headers)
++        self.assertEqual(200,response.status_code)
++        self.assertEqual(404,client.post('/internal/v1/audio/publish',json={},headers=self.write_headers).status_code)
++        self.assertFalse(client.get('/health').json()['publication_enabled'])
++
++    def test_store_locks_then_updates_only_assessment_json_with_returning_timestamp(self):
++        cursor=Mock();updated=datetime.now(timezone.utc);cursor.fetchone.return_value={'updated_at':updated}
++        payload={'note':'plain'}
++        self.assertEqual(updated,AudioStore.save_assessment(cursor,self.key,payload))
++        query,params=cursor.execute.call_args.args
++        self.assertIn("data=jsonb_set(data,'{assessment}',%s)",query)
++        self.assertIn('RETURNING updated_at',query);self.assertNotIn('status=',query)
++        self.assertEqual(self.key,params[1]);self.assertEqual(payload,params[0].obj)
++        AudioStore.get(cursor,self.key)
++        self.assertIn('FOR UPDATE',cursor.execute.call_args.args[0])

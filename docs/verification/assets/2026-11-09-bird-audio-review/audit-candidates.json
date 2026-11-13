@@ -1,0 +1,258 @@
+{
+  "database": "robingraph",
+  "schema": "ingest",
+  "candidates": [
+    {
+      "candidate_id": "5f6598b66f5a5ff48e11897283fb59db3dad440cb44961d32212d442db1229f2",
+      "scientific_name": "Passer montanus",
+      "file_title": "File:Passer montanus.ogg",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-05 11:33:42.529568+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:16592315",
+        "title": "Passer montanus.ogg",
+        "creator": "Vladimir Yu. Arkhipov, Arkhivov",
+        "evidence": {
+          "page_id": 16592315,
+          "revision_id": 1031017614,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-10-30T06:29:17.911783+00:00",
+          "metadata_sha256": "c9651be0b378f0a54f70f27939f56ad42398bdca9f359fd7ba33eb6584987a9d"
+        },
+        "location": "Moscow region, Russia",
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/8/83/Passer_montanus.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Passer_montanus.ogg",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "recorded_at": "2011-09-20",
+        "license_name": "CC BY-SA 3.0",
+        "recording_type": "Calls",
+        "scientific_name": "Passer montanus"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 289857,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "9e84efdf7b2f9a9a951553a460c073f4913d56a12065b67d96134713b17f93ba",
+      "scientific_name": "Jynx torquilla",
+      "file_title": "File:Jynx torquilla - Eurasian Wryneck XC561861.mp3",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-06 03:00:03.268208+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:91877997",
+        "title": "Jynx torquilla - Eurasian Wryneck XC561861.mp3",
+        "creator": "Kim Erlend Vidal",
+        "evidence": {
+          "page_id": 91877997,
+          "revision_id": 962980390,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-05T18:00:03.889489+00:00",
+          "metadata_sha256": "fb450d4de75b45c7e9f33b7da0c84d5cbc79eadd0795e9d53665a034863b0385"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Jynx_torquilla_-_Eurasian_Wryneck_XC561861.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2020-05-23 21:30",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Jynx torquilla"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 1766350,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "6b6243d6b0070d403d7f67654472f170b2005067b6cb7b8bbc47fff727c8f7fd",
+      "scientific_name": "Picus canus",
+      "file_title": "File:Picus canus - Grey-headed Woodpecker XC310918.mp3",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-07 03:00:03.617700+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:68244398",
+        "title": "Picus canus - Grey-headed Woodpecker XC310918.mp3",
+        "creator": "Alexander K\u00fcrthy",
+        "evidence": {
+          "page_id": 68244398,
+          "revision_id": 632037353,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-06T18:00:04.274296+00:00",
+          "metadata_sha256": "3067bec254879454843ebfdb36bcb82e129da2038e80ab3b11090042fefce7fd"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Picus_canus_-_Grey-headed_Woodpecker_XC310918.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Picus_canus_-_Grey-headed_Woodpecker_XC310918.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2015-07-17 05:30",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Picus canus"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 734114,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "bf2cf4d13e0601dfa4da9b135e553475fb621a06ed6ca0109ca69b049fa3d324",
+      "scientific_name": "Dryocopus martius",
+      "file_title": "File:Dryocopus martius - Black Woodpecker XC311605.mp3",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-08 03:00:03.898751+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:68244355",
+        "title": "Dryocopus martius - Black Woodpecker XC311605.mp3",
+        "creator": "Alexander K\u00fcrthy",
+        "evidence": {
+          "page_id": 68244355,
+          "revision_id": 1080160736,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-07T18:00:04.516762+00:00",
+          "metadata_sha256": "18d4f6b8fc626726ea2d92e72b0b4134d92e895c02a1d28662e4030d2f26796b"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Dryocopus_martius_-_Black_Woodpecker_XC311605.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Dryocopus_martius_-_Black_Woodpecker_XC311605.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2015-03-08 10:00",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Dryocopus martius"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 173069,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "74d5d61e7ad5578e5d369696e4ddc15c9f7459fa56a93903f6270167f9b64dcf",
+      "scientific_name": "Tetrastes bonasia",
+      "file_title": "File:Tetrastes bonasia - Hazel Grouse XC103672.mp3",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-08 03:00:10.478357+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:68240342",
+        "title": "Tetrastes bonasia - Hazel Grouse XC103672.mp3",
+        "creator": "Alexander Kurthy",
+        "evidence": {
+          "page_id": 68240342,
+          "revision_id": 993931420,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-07T18:00:11.117751+00:00",
+          "metadata_sha256": "5a2e017a8dd3087b2ad5893e420cbe1b111170d80e8c7daf54dbe2914c2ed4ed"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Tetrastes_bonasia_-_Hazel_Grouse_XC103672.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Tetrastes_bonasia_-_Hazel_Grouse_XC103672.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "recorded_at": "2012-05-11 19:30",
+        "license_name": "CC BY-SA 3.0",
+        "recording_type": null,
+        "scientific_name": "Tetrastes bonasia"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 116436,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "0b998e3fb9ed1ac9e52bb4a0a83ed04ecc47849e624ac9ff4a00404bc0c36464",
+      "scientific_name": "Dendrocopos leucotos",
+      "file_title": "File:Feh\u00e9rh\u00e1t\u00fa fakop\u00e1ncs dob - Dendrocopos leucotos.ogg",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-09 03:00:04.231830+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:17268255",
+        "title": "Feh\u00e9rh\u00e1t\u00fa fakop\u00e1ncs dob - Dendrocopos leucotos.ogg",
+        "creator": "Hangvad\u00e1sz",
+        "evidence": {
+          "page_id": 17268255,
+          "revision_id": 1250832419,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-08T18:00:04.891270+00:00",
+          "metadata_sha256": "e711370083ceabdc5e74905d89e8ab387b9e1760ab00f3ccf938f2cd5b364c83"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Feh%C3%A9rh%C3%A1t%C3%BA_fakop%C3%A1ncs_dob_-_Dendrocopos_leucotos.ogg",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Feh%C3%A9rh%C3%A1t%C3%BA_fakop%C3%A1ncs_dob_-_Dendrocopos_leucotos.ogg",
+        "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+        "recorded_at": "2002-05-05",
+        "license_name": "CC BY-SA 3.0",
+        "recording_type": null,
+        "scientific_name": "Dendrocopos leucotos"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 1671989,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "5b0a2bcb495f07ed58c5c2e9e3a30133361cf9936d3591afec3daf30f4f461cc",
+      "scientific_name": "Dendrocopos major",
+      "file_title": "File:Dendrocopos major - Great Spotted Woodpecker XC542957.mp3",
+      "status": "awaiting_review",
+      "updated_at": "2026-11-09 03:00:07.670796+09:00",
+      "review_field_present": false,
+      "recording": {
+        "id": "commons-recording:89559129",
+        "title": "Dendrocopos major - Great Spotted Woodpecker XC542957.mp3",
+        "creator": "Beno\u00eet Van Hecke",
+        "evidence": {
+          "page_id": 89559129,
+          "revision_id": 1200901607,
+          "taxon_match": "exact_scientific_name",
+          "retrieved_at": "2026-11-08T18:00:08.272678+00:00",
+          "metadata_sha256": "ddb0eb1df48787862c5bb7b681138c09b65a6eda5c60acab40a82c305c72bbee"
+        },
+        "location": null,
+        "audio_url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Dendrocopos_major_-_Great_Spotted_Woodpecker_XC542957.mp3",
+        "source_url": "https://commons.wikimedia.org/wiki/File:Dendrocopos_major_-_Great_Spotted_Woodpecker_XC542957.mp3",
+        "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+        "recorded_at": "2020-04-07 18:38",
+        "license_name": "CC BY-SA 4.0",
+        "recording_type": null,
+        "scientific_name": "Dendrocopos major"
+      },
+      "retry_at": null,
+      "error_code": null,
+      "file_present": true,
+      "file_bytes": 54303,
+      "file_sha256_matches": true
+    },
+    {
+      "candidate_id": "e75f41e4db529cbe2be4b2e98bd24cfb6ad1352fe88555ce4a57b34ee22a5958",
+      "scientific_name": "Falco tinnunculus",
+      "file_title": "File:Falco tinnunculus - Common Kestrel XC468409.mp3",
+      "status": "deferred",
+      "updated_at": "2026-11-09 03:00:10.604233+09:00",
+      "review_field_present": false,
+      "recording": null,
+      "retry_at": "2026-11-08T18:00:12.573847+00:00",
+      "error_code": "provider_rate_limited",
+      "file_present": false,
+      "file_bytes": null,
+      "file_sha256_matches": null
+    }
+  ],
+  "candidate_count": 8,
+  "status_counts": {
+    "awaiting_review": 7,
+    "deferred": 1
+  },
+  "data_writes": 0,
+  "provider_requests": 0
+}

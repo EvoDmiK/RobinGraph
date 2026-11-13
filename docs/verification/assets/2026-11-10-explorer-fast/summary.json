@@ -1,0 +1,37 @@
+{
+  "change": "기본 프로필로 카드 먼저 표시, 전체 프로필은 후속 반영, 같은 검색 결과에서 재열기 캐시 사용",
+  "backend_tests": {
+    "passed": 79,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "passed": 363,
+    "failed": 0
+  },
+  "api_probe": {
+    "species": "Asio otus",
+    "earlier_full_seconds": 17.343554,
+    "later_basic_seconds": 2.108542,
+    "basic_enrichment_pending": true,
+    "note": "순차 단일 측정이며 통제된 반복 벤치마크 아님"
+  },
+  "browser_probe": {
+    "species": "Oriolus chinensis",
+    "first_open_ms": 645,
+    "reopen_ms": [
+      6,
+      6
+    ],
+    "note": "실제 HTTPS Chromium 단일 세션 측정. 사진 후속 표시까지 확인."
+  },
+  "source_matches": {
+    "src/robingraph/api/static/explore.js": true,
+    "src/robingraph/api/services.py": true,
+    "src/robingraph/api/drf/serializers.py": true,
+    "src/robingraph/api/drf/views.py": true
+  },
+  "initial_checks": "첫 Python 실행은 PYTHONPATH 누락으로 import 실패. 수정 후 API 회귀 77 통과·문서 비교 2 실패. 기존 계약 비교에서 추가 옵션을 제외하고 새 옵션을 별도 검사한 최종 79건 통과.",
+  "production_changed": false,
+  "git_commit_push": false,
+  "physical_mobile_tested": false
+}

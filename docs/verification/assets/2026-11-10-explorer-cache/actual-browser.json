@@ -1,0 +1,48 @@
+{
+  "source_sha256": "7369806b5d99e2f79971f50ea880c99fe354f6269effdb96bffb62532dce70d4",
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_browser": true,
+  "timings": {
+    "open_ms": 425,
+    "photo_ms": 2785,
+    "notes_settled_ms": 5150,
+    "notes_state": "unavailable",
+    "reload_photo_ms": 514,
+    "reload_profile_requests": 2
+  },
+  "checks": [
+    {
+      "width": 1280,
+      "documentWidth": 1280,
+      "left": 433.703125,
+      "right": 846.296875,
+      "massRows": [
+        "759.1 g"
+      ],
+      "sources_preserved": true
+    },
+    {
+      "width": 390,
+      "documentWidth": 390,
+      "left": 12.078125,
+      "right": 377.921875,
+      "massRows": [
+        "759.1 g"
+      ],
+      "sources_preserved": true
+    },
+    {
+      "width": 320,
+      "documentWidth": 320,
+      "left": 12,
+      "right": 308,
+      "massRows": [
+        "759.1 g"
+      ],
+      "sources_preserved": true
+    }
+  ],
+  "page_exceptions": 0,
+  "physical_mobile_tested": false,
+  "production_changed": false
+}

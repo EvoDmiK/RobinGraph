@@ -1,0 +1,43 @@
+{
+  "source_sha256": "d0ebb4d5d356d20ced77fc1632883f4a67587d6f11c3fd7b9b9cc9d50146d01b",
+  "origin": "https://robingraph-test.dove-nest.com",
+  "actual_test_browser": true,
+  "pagination": {
+    "page": 1,
+    "page_size": 20,
+    "total": 41,
+    "total_pages": 3
+  },
+  "all_pages_unique": true,
+  "global_diet_order": true,
+  "keyboard_next": true,
+  "reload_restores_page": true,
+  "dropdown_last_page": true,
+  "clamps_large_page": true,
+  "invalid_page_422": true,
+  "filter_change_resets_page": true,
+  "natural_pages_unique": true,
+  "layout": [
+    {
+      "width": 1280,
+      "scrollWidth": 1280,
+      "scheme": "light only",
+      "range": "전체 41종 중 41–41종"
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "scheme": "light only",
+      "range": "전체 41종 중 41–41종"
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "scheme": "light only",
+      "range": "전체 41종 중 41–41종"
+    }
+  ],
+  "page_exceptions": 0,
+  "physical_mobile_tested": false,
+  "production_changed": false
+}

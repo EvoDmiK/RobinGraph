@@ -1,0 +1,16 @@
+{
+  "test_artifact_unchanged": true,
+  "test_artifact_sha256": "36251149e461653612dec3afcea0a91f10f42dcff70889ac7f06965de4137ce3",
+  "production_changed_paths": [
+    "/versionId",
+    "/nodes/13/parameters/jsCode",
+    "/name"
+  ],
+  "fixture_tests": {
+    "run": 13,
+    "passed": 13,
+    "failed": 0
+  },
+  "actual_remote_changes": false,
+  "actual_five_species_collection_executed": false
+}

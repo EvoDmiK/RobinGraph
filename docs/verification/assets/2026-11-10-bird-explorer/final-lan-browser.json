@@ -1,0 +1,63 @@
+{
+  "source_sha256": "cdfed28ae4e30c0c3e95164ead69b7e41ddc2535ddbfa0d9654f314f39b980a9",
+  "origin": "http://192.168.219.97:8000",
+  "actual_test_browser": true,
+  "checks": [
+    {
+      "diet_columns": 4,
+      "viewport": 1280,
+      "document_width": 1280,
+      "cards": 20,
+      "scope": "korea",
+      "taxon": "Passeriformes",
+      "habitat": "Forest",
+      "fruit_selected": true,
+      "profile_scope": "korea",
+      "profile_scientific": "Oriolus chinensis",
+      "sources": 60,
+      "notes_collapsed": true,
+      "has_more": true
+    },
+    {
+      "diet_columns": 2,
+      "viewport": 390,
+      "document_width": 390,
+      "cards": 20,
+      "scope": "korea",
+      "taxon": "Passeriformes",
+      "habitat": "Forest",
+      "fruit_selected": true,
+      "profile_scope": "korea",
+      "profile_scientific": "Oriolus chinensis",
+      "sources": 60,
+      "notes_collapsed": true,
+      "has_more": true
+    },
+    {
+      "diet_columns": 2,
+      "viewport": 320,
+      "document_width": 320,
+      "cards": 20,
+      "scope": "korea",
+      "taxon": "Passeriformes",
+      "habitat": "Forest",
+      "fruit_selected": true,
+      "profile_scope": "korea",
+      "profile_scientific": "Oriolus chinensis",
+      "sources": 60,
+      "notes_collapsed": true,
+      "has_more": true
+    }
+  ],
+  "keyboard_submit": true,
+  "multiple_diet_share_sum": true,
+  "url_reload_filter_restore": true,
+  "invalid_taxon_visible_not_empty": true,
+  "stale_results_removed": true,
+  "reset_clears_url": true,
+  "page_exceptions": 0,
+  "chat_or_provider_requests": 0,
+  "physical_mobile_tested": false,
+  "db_writes": 0,
+  "production_changed": false
+}

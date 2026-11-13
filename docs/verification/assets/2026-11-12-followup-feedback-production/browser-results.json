@@ -1,0 +1,3567 @@
+{
+  "run_id": "rg213-rg603-prod-20261112-1794492610778",
+  "origin": "https://robingraph.dove-nest.com",
+  "rows": [
+    {
+      "label": "chain.base",
+      "request": {
+        "question": "숲에 사는 열매 먹는 새",
+        "intent": "auto",
+        "defer_discovery": true
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "semantic",
+        "disposition": "answer",
+        "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "전체 조류 중 조건에 맞는 종",
+            "text": "전체 조류 범위에서 조건 자료가 모두 있는 6898종 중 1775종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "녹색비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2835",
+                  "scientific_name": "Treron sieboldii",
+                  "english_name": "White-bellied Green Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-147",
+                        "source_rank": "species",
+                        "source_scientific_name": "Treron sieboldii",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "녹색비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "초록금강앵무",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:11706",
+                  "scientific_name": "Ara militaris",
+                  "english_name": "Military Macaw",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Ara%20militaris",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "초록금강앵무"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10258&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2155"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰유리금강앵무",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:11676",
+                  "scientific_name": "Anodorhynchus hyacinthinus",
+                  "english_name": "Hyacinth Macaw",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://www.forest.go.kr/kfsweb/kfi/kfs/bkmnt/selectAnmlBioList.do?mn=AR03_05_05_04&selectCondition=anmlScnm&searchValue=Anodorhynchus%20hyacinthinus",
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "큰유리금강앵무"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10249&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2149"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:733",
+                  "scientific_name": "Mitu mitu",
+                  "english_name": "Alagoas Curassow",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Alagoas Curassow"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2272&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 C",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=178"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2488",
+                  "scientific_name": "Macropygia rufipennis",
+                  "english_name": "Andaman Cuckoo-Dove",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Cuckoo-Dove"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1672&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3397"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2676",
+                  "scientific_name": "Columba palumboides",
+                  "english_name": "Andaman Wood Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andaman Wood Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1547&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3342"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:673",
+                  "scientific_name": "Penelope montagnii",
+                  "english_name": "Andean Guan",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Andean Guan"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2303&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=153"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:11939",
+                  "scientific_name": "Tanygnathus sumatranus",
+                  "english_name": "Azure-rumped Parrot",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Azure-rumped Parrot"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10549&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2037"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:12703",
+                  "scientific_name": "Pipreola intermedia",
+                  "english_name": "Band-tailed Fruiteater",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Band-tailed Fruiteater"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3639&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 C",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6273"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:667",
+                  "scientific_name": "Penelope argyrotis",
+                  "english_name": "Band-tailed Guan",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Band-tailed Guan"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2297&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=150"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3117",
+                  "scientific_name": "Ptilinopus cinctus",
+                  "english_name": "Banded Fruit Dove",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Banded Fruit Dove"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1729&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 B",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3553"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:1736",
+                  "scientific_name": "Tauraco bannermani",
+                  "english_name": "Bannerman's Turaco",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bannerman's Turaco"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2756&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2836"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26210",
+                  "scientific_name": "Streptocitta albertinae",
+                  "english_name": "Bare-eyed Myna",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bare-eyed Myna"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7593&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9544"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:12812",
+                  "scientific_name": "Procnias nudicollis",
+                  "english_name": "Bare-throated Bellbird",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bare-throated Bellbird"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3649&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6327"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3053",
+                  "scientific_name": "Ducula latrans",
+                  "english_name": "Barking Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Barking Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1589&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3634"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:12706",
+                  "scientific_name": "Pipreola arcuata",
+                  "english_name": "Barred Fruiteater",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Barred Fruiteater"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3634&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 C",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6274"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:12809",
+                  "scientific_name": "Procnias averano",
+                  "english_name": "Bearded Bellbird",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bearded Bellbird"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3648&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6326"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:671",
+                  "scientific_name": "Penelope barbata",
+                  "english_name": "Bearded Guan",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Bearded Guan"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2298&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=151"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3183",
+                  "scientific_name": "Ptilinopus pulchellus",
+                  "english_name": "Beautiful Fruit Dove",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Beautiful Fruit Dove"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1755&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3574"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": null,
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:3061",
+                  "scientific_name": "Ducula melanochroa",
+                  "english_name": "Black Imperial Pigeon",
+                  "korean_name_status": null,
+                  "korean_name_source_url": null,
+                  "distribution": {
+                    "status": "unknown",
+                    "geographic_scope": "KR",
+                    "basis": "no_reviewed_source_distribution",
+                    "evidence": [],
+                    "seasonal_status": null,
+                    "note": "미확인: 한국 분포 근거를 확인하지 못했습니다. 국외 분포라는 뜻은 아닙니다."
+                  },
+                  "display_name": "Black Imperial Pigeon"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1591&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 B",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3639"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10258&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2155"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10249&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2149"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2272&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=178"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1672&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3397"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1547&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3342"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2303&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=153"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=10549&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2037"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3639&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6273"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2297&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=150"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1729&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3553"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2756&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=2836"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7593&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9544"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3649&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6327"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1589&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3634"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3634&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6274"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3648&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=6326"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2298&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=151"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1755&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3574"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1591&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3639"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다."
+            ],
+            "has_more": true,
+            "taxon": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "label": "서식 환경 숲(Forest)",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "source_name": "AVONET Supplementary dataset 1"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "label": "먹이 구성에 열매 포함",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "source_name": "AviList and EltonTraits approved reference bundle"
+              }
+            ],
+            "coverage": {
+              "evaluable": 6898,
+              "scoped": 11131,
+              "matched": 1775
+            },
+            "paths": [
+              {
+                "text": "조건: 서식 환경 숲(Forest)",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              },
+              {
+                "text": "조건: 먹이 구성에 열매 포함",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]"
+      },
+      "trace_id": "tr-f4e49a5731b9fd1b567a111c208e27f0",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "chain.korea",
+      "request": {
+        "question": "그중 한국에서 볼 수 있는 새는?",
+        "intent": "auto",
+        "followup_context": "[redacted]",
+        "defer_discovery": true
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "answer",
+        "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 48종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+          "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "전체 조류 중 조건에 맞는 종",
+            "text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 48종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "녹색비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2835",
+                  "scientific_name": "Treron sieboldii",
+                  "english_name": "White-bellied Green Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-147",
+                        "source_rank": "species",
+                        "source_scientific_name": "Treron sieboldii",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "녹색비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "꾀꼬리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:18796",
+                  "scientific_name": "Oriolus chinensis",
+                  "english_name": "Black-naped Oriole",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-611",
+                        "source_rank": "species",
+                        "source_scientific_name": "Oriolus chinensis",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "꾀꼬리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6044&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 60% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8271"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "홍여새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:25262",
+                  "scientific_name": "Bombycilla japonica",
+                  "english_name": "Japanese Waxwing",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-672",
+                        "source_rank": "species",
+                        "source_scientific_name": "Bombycilla japonica",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "홍여새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3065&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 60% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8767"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흰눈썹붉은배지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26907",
+                  "scientific_name": "Turdus obscurus",
+                  "english_name": "Eyebrowed Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-871",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus obscurus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "흰눈썹붉은배지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8648&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 60% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8951"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "검은지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26899",
+                  "scientific_name": "Turdus cardis",
+                  "english_name": "Japanese Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-869",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus cardis",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "검은지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8605&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 50% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8937"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은가슴딱새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:27385",
+                  "scientific_name": "Niltava davidi",
+                  "english_name": "Fujian Niltava",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-891",
+                        "source_rank": "species",
+                        "source_scientific_name": "Niltava davidi",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은가슴딱새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=5782&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 50% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9152"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "황여새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:25263",
+                  "scientific_name": "Bombycilla garrulus",
+                  "english_name": "Bohemian Waxwing",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-670",
+                        "source_rank": "species",
+                        "source_scientific_name": "Bombycilla garrulus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "황여새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3064&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 50% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8766"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "노랑지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26890",
+                  "scientific_name": "Turdus naumanni",
+                  "english_name": "Naumann's Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-880",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus naumanni",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:26890",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus naumanni",
+                        "source_text": "breeds central Siberia to northern Manchuria, Amurland, and Sakhalin; winters to Korea",
+                        "source_text_sha256": "e09dd9c2e643c34efda3fe28a23caef3b5d8d236ebf9df76e2bfa55c4fa487eb",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "노랑지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8643&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 40% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8959"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "되새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:30054",
+                  "scientific_name": "Fringilla montifringilla",
+                  "english_name": "Brambling",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-1003",
+                        "source_rank": "species",
+                        "source_scientific_name": "Fringilla montifringilla",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "되새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4081&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 40% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12248"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흰머리검은직박구리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:23718",
+                  "scientific_name": "Hypsipetes leucocephalus",
+                  "english_name": "Black Bulbul",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-719",
+                        "source_rank": "species",
+                        "source_scientific_name": "Hypsipetes leucocephalus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "흰머리검은직박구리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7159&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 40% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=10354"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "동박새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:24097",
+                  "scientific_name": "Zosterops japonicus",
+                  "english_name": "Warbling White-eye",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-818",
+                        "source_rank": "species",
+                        "source_scientific_name": "Zosterops japonicus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:24098",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Zosterops japonicus japonicus",
+                        "source_text": "breeds southern Sakhalin, Japan, and the southern Korean Peninsula; partially migratory, withdrawing from Sakhalin and northern Japan in the nonbreeding season",
+                        "source_text_sha256": "2f04dc1545d2bd39e2cc15552d97826a9a2466070271c3b054ff3fb4d77b4b5b",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "동박새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9345&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=10581"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "되지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26900",
+                  "scientific_name": "Turdus hortulorum",
+                  "english_name": "Grey-backed Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-870",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus hortulorum",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "되지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8624&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8934"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "밀화부리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:30201",
+                  "scientific_name": "Eophona migratoria",
+                  "english_name": "Chinese Grosbeak",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-1007",
+                        "source_rank": "species",
+                        "source_scientific_name": "Eophona migratoria",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "밀화부리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4049&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12411"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은날개지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26866",
+                  "scientific_name": "Turdus iliacus",
+                  "english_name": "Redwing",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-867",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus iliacus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은날개지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8626&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8964"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은목지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26888",
+                  "scientific_name": "Turdus ruficollis",
+                  "english_name": "Red-throated Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-878",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus ruficollis",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은목지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8664&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8955"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "붉은배지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26904",
+                  "scientific_name": "Turdus chrysolaus",
+                  "english_name": "Brown-headed Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-874",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus chrysolaus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "붉은배지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8608&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8953"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20152",
+                  "scientific_name": "Garrulus glandarius",
+                  "english_name": "Eurasian Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-648",
+                        "source_rank": "species",
+                        "source_scientific_name": "Garrulus glandarius",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20173",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Garrulus glandarius brandtii",
+                        "source_text": "southern Siberia and northern Mongolia eastward through northeastern China, Korean Peninsula, and northern Japan",
+                        "source_text_sha256": "08396779a96b4f844cc1b50b3bba36341c0987dd6697604c6ed48a30d76e39c2",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "어치"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8023"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰부리밀화부리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:30198",
+                  "scientific_name": "Eophona personata",
+                  "english_name": "Japanese Grosbeak",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-1009",
+                        "source_rank": "species",
+                        "source_scientific_name": "Eophona personata",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰부리밀화부리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4050&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12412"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "파랑딱새",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:27412",
+                  "scientific_name": "Eumyias thalassinus",
+                  "english_name": "Verditer Flycatcher",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-896",
+                        "source_rank": "species",
+                        "source_scientific_name": "Eumyias thalassinus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "파랑딱새"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=5660&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 B",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9144"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "회색머리지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26879",
+                  "scientific_name": "Turdus pilaris",
+                  "english_name": "Fieldfare",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-876",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus pilaris",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "회색머리지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8963"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=6044&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8271"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3065&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8767"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8648&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8951"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8605&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8937"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=5782&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9152"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3064&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8766"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8643&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8959"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4081&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12248"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=7159&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=10354"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9345&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=10581"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8624&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8934"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4049&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12411"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8626&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8964"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8664&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8955"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8608&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8953"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8023"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=4050&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=12412"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=5660&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=9144"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8963"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+              "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+            ],
+            "has_more": true,
+            "taxon": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "label": "서식 환경 숲(Forest)",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "source_name": "AVONET Supplementary dataset 1"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "label": "먹이 구성에 열매 포함",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "source_name": "AviList and EltonTraits approved reference bundle"
+              }
+            ],
+            "coverage": {
+              "evaluable": 410,
+              "scoped": 592,
+              "matched": 48
+            },
+            "paths": [
+              {
+                "text": "조건: 서식 환경 숲(Forest)",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              },
+              {
+                "text": "조건: 먹이 구성에 열매 포함",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "applied",
+          "reason": null,
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": "국내 기록",
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          }
+        }
+      },
+      "trace_id": "tr-5567cda1a5da6979d6c0d777124e4910",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "chain.empty",
+      "request": {
+        "question": "그중 체중 5000g 이상인 새는?",
+        "intent": "auto",
+        "followup_context": "[redacted]",
+        "defer_discovery": true
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "abstain",
+        "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함, 체중 5000g 이상)에 맞는 종을 찾지 못했습니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+          "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "empty",
+            "title": "전체 조류 중 조건에 맞는 종",
+            "text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함, 체중 5000g 이상)에 맞는 종을 찾지 못했습니다.",
+            "items": [],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+              "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+            ],
+            "has_more": false,
+            "taxon": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "label": "서식 환경 숲(Forest)",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "source_name": "AVONET Supplementary dataset 1"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "label": "먹이 구성에 열매 포함",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "source_name": "AviList and EltonTraits approved reference bundle"
+              },
+              {
+                "trait_name": "body_mass",
+                "label": "체중 5000g 이상",
+                "op": "num_gte",
+                "value": null,
+                "threshold": 5000,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 410,
+              "scoped": 592,
+              "matched": 0
+            },
+            "paths": [
+              {
+                "text": "조건: 서식 환경 숲(Forest)",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              },
+              {
+                "text": "조건: 먹이 구성에 열매 포함",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": null
+              },
+              {
+                "text": "조건: 체중 5000g 이상",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "applied",
+          "reason": null,
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": "체중 5000g 이상",
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함",
+              "체중 5000g 이상"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          }
+        }
+      },
+      "trace_id": "tr-1290731418f9f0bec16139de8d83578e",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "chain.number",
+      "request": {
+        "question": "그 새들 중 체중 100g 이상인 새는?",
+        "intent": "auto",
+        "followup_context": "[redacted]",
+        "defer_discovery": true
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "answer",
+        "answer_text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 10종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함, 체중 100g 이상)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+        "warnings": [
+          "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+          "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+          "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+          "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+          "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+          "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+          "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+        ],
+        "result": {
+          "kind": "graph_query",
+          "payload": {
+            "status": "answer",
+            "title": "전체 조류 중 조건에 맞는 종",
+            "text": "전체 조류 범위에서 조건 자료가 모두 있는 410종 중 10종이 조건(서식 환경 숲(Forest), 먹이 구성에 열매 포함, 체중 100g 이상)에 모두 맞습니다. 먹이 비율이 높은 순입니다.",
+            "items": [
+              {
+                "taxon": {
+                  "korean_name": "녹색비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2835",
+                  "scientific_name": "Treron sieboldii",
+                  "english_name": "White-bellied Green Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-147",
+                        "source_rank": "species",
+                        "source_scientific_name": "Treron sieboldii",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "녹색비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 100% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+                  },
+                  {
+                    "text": "체중: 245 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "어치",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20152",
+                  "scientific_name": "Garrulus glandarius",
+                  "english_name": "Eurasian Jay",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-648",
+                        "source_rank": "species",
+                        "source_scientific_name": "Garrulus glandarius",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:20173",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Garrulus glandarius brandtii",
+                        "source_text": "southern Siberia and northern Mongolia eastward through northeastern China, Korean Peninsula, and northern Japan",
+                        "source_text_sha256": "08396779a96b4f844cc1b50b3bba36341c0987dd6697604c6ed48a30d76e39c2",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "어치"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8023"
+                  },
+                  {
+                    "text": "체중: 159.46 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "회색머리지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26879",
+                  "scientific_name": "Turdus pilaris",
+                  "english_name": "Fieldfare",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-876",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus pilaris",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "회색머리지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8963"
+                  },
+                  {
+                    "text": "체중: 106 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "흑비둘기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2653",
+                  "scientific_name": "Columba janthina",
+                  "english_name": "Black Wood Pigeon",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-138",
+                        "source_rank": "species",
+                        "source_scientific_name": "Columba janthina",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:2654",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Columba janthina janthina",
+                        "source_text": "small islands southwest of South Korea to Ryukyu Islands (southern Japan) and islets off Taiwan",
+                        "source_text_sha256": "61ff7e307e84d42abfb13c05e0138579ca0d0f5357ceb0222404c79b38ba75ca",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "흑비둘기"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 30% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3343"
+                  },
+                  {
+                    "text": "체중: 397 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "대륙점지빠귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:26808",
+                  "scientific_name": "Turdus viscivorus",
+                  "english_name": "Mistle Thrush",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-863",
+                        "source_rank": "species",
+                        "source_scientific_name": "Turdus viscivorus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "대륙점지빠귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8677&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8967"
+                  },
+                  {
+                    "text": "체중: 117.37 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8677&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰오색딱다구리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:10911",
+                  "scientific_name": "Dendrocopos leucotos",
+                  "english_name": "White-backed Woodpecker",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-571",
+                        "source_rank": "species",
+                        "source_scientific_name": "Dendrocopos leucotos",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:10920",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Dendrocopos leucotos quelpartensis",
+                        "source_text": "Jeju Island (Quelpart), off southern South Korea",
+                        "source_text_sha256": "a6359e00c358bb44db0c42629d98f5e1a21934084593c7452980f97a79aaeea9",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:10922",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Dendrocopos leucotos leucotos",
+                        "source_text": "northern Europe (Norway, Sweden, Finland, and Poland) south to eastern Switzerland, Austria, northern Serbia, and the Carpathian Mountains, and east through southern Russia to Kamchatka, Sakhalin, northeastern China, and Korea",
+                        "source_text_sha256": "f65e68c074e369ed6bd21cd29bbed2142b5b8b94fe41f6a5e7933759dca80ffa",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰오색딱다구리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9788&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 20% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=947"
+                  },
+                  {
+                    "text": "체중: 116.8 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9788&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "멧도요",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:4052",
+                  "scientific_name": "Scolopax rusticola",
+                  "english_name": "Eurasian Woodcock",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-244",
+                        "source_rank": "species",
+                        "source_scientific_name": "Scolopax rusticola",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "멧도요"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1432&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4034"
+                  },
+                  {
+                    "text": "체중: 308.31 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1432&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "뻐꾸기",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:2213",
+                  "scientific_name": "Cuculus canorus",
+                  "english_name": "Common Cuckoo",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-127",
+                        "source_rank": "species",
+                        "source_scientific_name": "Cuculus canorus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "뻐꾸기"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2139&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=1747"
+                  },
+                  {
+                    "text": "체중: 111.36 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2139&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "청딱다구리",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:10399",
+                  "scientific_name": "Picus canus",
+                  "english_name": "Grey-headed Woodpecker",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_and_range_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-579",
+                        "source_rank": "species",
+                        "source_scientific_name": "Picus canus",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      },
+                      {
+                        "source_id": "avilist-v2025b",
+                        "source_url": "https://explore.avilist.org/data/avilist-2025b.json",
+                        "source_title": "AviList v2025b (Explorer JSON)",
+                        "source_taxon_id": "avilist-taxon:v2025b:10401",
+                        "source_rank": "subspecies",
+                        "source_scientific_name": "Picus canus jessoensis",
+                        "source_text": "eastern Siberia to northeastern China, Korea, Sakhalin, and Hokkaido",
+                        "source_text_sha256": "dd8d1a3927393b835e9c07b88aeb10bf73e0772d963a9800fb5967754013e97f",
+                        "source_sha256": "3b08845b54b8ab53908aee84d05b0fd8df765e9e01dc655599ca304d9f132411",
+                        "geography_basis": "avilist_range_names_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "청딱다구리"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9925&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=1054"
+                  },
+                  {
+                    "text": "체중: 137 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9925&field=Mass"
+                  }
+                ]
+              },
+              {
+                "taxon": {
+                  "korean_name": "큰까마귀",
+                  "rank": "species",
+                  "taxon_id": "avilist-taxon:v2025b:20261",
+                  "scientific_name": "Corvus corax",
+                  "english_name": "Northern Raven",
+                  "korean_name_status": "source-reference",
+                  "korean_name_source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                  "distribution": {
+                    "status": "korea",
+                    "geographic_scope": "KR",
+                    "basis": "source_record_korea",
+                    "evidence": [
+                      {
+                        "source_id": "kos-2025-v2.1",
+                        "source_url": "https://sites.google.com/khu.ac.kr/korornsoc/알림마당/자료실",
+                        "source_title": "한국조류학회 2025 한국조류목록 개정판 v2.1",
+                        "source_taxon_id": "kos-2025-v2.1:공식목록:row-667",
+                        "source_rank": "species",
+                        "source_scientific_name": "Corvus corax",
+                        "source_text": null,
+                        "category": "가-1",
+                        "category_definition": "야생에서 관찰되었으며, 기록의 근거가 명확한 종",
+                        "source_sha256": "b660e125a35abc00df77aa61f3ba24997de7fe1d213ef1350ceacfe08466ba7a",
+                        "geography_basis": "kos_official_list_wild_record_korea"
+                      }
+                    ],
+                    "seasonal_status": null,
+                    "note": "국내 기록·분포 확인: 출처에 한국의 야생 기록 또는 분포가 있습니다. 텃새·철새·미조 구분과 현재 서식 여부는 확인되지 않았습니다."
+                  },
+                  "display_name": "큰까마귀"
+                },
+                "paths": [
+                  {
+                    "text": "서식 환경: 숲 (Forest)",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Habitat"
+                  },
+                  {
+                    "text": "먹이 구성: 열매 10% (자료의 먹이 구성비) · EltonTraits 확실성 A",
+                    "source_name": "AviList and EltonTraits approved reference bundle",
+                    "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8124"
+                  },
+                  {
+                    "text": "체중: 927.97 g",
+                    "source_name": "AVONET Supplementary dataset 1",
+                    "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+                  }
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source_name": "AviList global avian checklist",
+                "source_url": "https://explore.avilist.org/data/avilist-2025b.json"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3550"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1827&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8023"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3560&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8963"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8656&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=3343"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1538&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8677&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8967"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=8677&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9788&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=947"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9788&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1432&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=4034"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=1432&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2139&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=1747"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=2139&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9925&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=1054"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=9925&field=Mass"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Habitat"
+              },
+              {
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": "https://ndownloader.figshare.com/files/5631081#SpecID=8124"
+              },
+              {
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": "https://ndownloader.figshare.com/files/34480856#sheet=AVONET1_BirdLife&row=3478&field=Mass"
+              }
+            ],
+            "limitations": [
+              "모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.",
+              "AVONET 범주값은 종마다 하나로 정리된 대표 범주입니다. 일부만 해당하는 종은 빠질 수 있습니다.",
+              "EltonTraits 먹이 구성에서 열매 비율이 0보다 큰 종입니다. 열매가 주식이라는 뜻은 아니며 구성비는 자료 저자가 문헌으로 정리한 10% 단위 범주값입니다.",
+              "EltonTraits 확실성 D1·D2(근연 분류군에서 보간한 추정값) 먹이 자료는 제외하고, 확실성 A·B·C 자료만 사용했습니다.",
+              "AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.",
+              "그래프에 종과 직접 연결된 형질 주장만 검색합니다. 프로필에서 분류 대응으로 복원되는 형질이나 보충 자료(BirdBase 등)는 목록에 포함되지 않아 일부 종이 빠질 수 있습니다.",
+              "국내 기록은 KOS 공식목록 가-1 또는 AviList 분포 문구 근거입니다. 텃새·철새·미조 구분이나 현재 서식을 뜻하지 않습니다."
+            ],
+            "has_more": false,
+            "taxon": null,
+            "conditions": [
+              {
+                "trait_name": "habitat",
+                "label": "서식 환경 숲(Forest)",
+                "op": "eq",
+                "value": "Forest",
+                "threshold": null,
+                "unit": null,
+                "source_name": "AVONET Supplementary dataset 1"
+              },
+              {
+                "trait_name": "diet_distribution",
+                "label": "먹이 구성에 열매 포함",
+                "op": "share_gt",
+                "value": "fruit",
+                "threshold": 0,
+                "unit": null,
+                "source_name": "AviList and EltonTraits approved reference bundle"
+              },
+              {
+                "trait_name": "body_mass",
+                "label": "체중 100g 이상",
+                "op": "num_gte",
+                "value": null,
+                "threshold": 100,
+                "unit": "g",
+                "source_name": "AVONET Supplementary dataset 1"
+              }
+            ],
+            "coverage": {
+              "evaluable": 410,
+              "scoped": 592,
+              "matched": 10
+            },
+            "paths": [
+              {
+                "text": "조건: 서식 환경 숲(Forest)",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              },
+              {
+                "text": "조건: 먹이 구성에 열매 포함",
+                "source_name": "AviList and EltonTraits approved reference bundle",
+                "source_url": null
+              },
+              {
+                "text": "조건: 체중 100g 이상",
+                "source_name": "AVONET Supplementary dataset 1",
+                "source_url": null
+              }
+            ]
+          }
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "applied",
+          "reason": null,
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": "체중 100g 이상",
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함",
+              "체중 100g 이상"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함",
+              "체중 100g 이상"
+            ],
+            "taxon": null,
+            "scope": "korea"
+          }
+        }
+      },
+      "trace_id": "tr-e59b281ab44d48c95b07ea65451867c0",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.missing",
+      "request": {
+        "question": "그중 열매 먹는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이어서 조회할 이전 조건을 찾지 못했습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이어서 조회할 이전 조건을 찾지 못했습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요."
+        },
+        "entity_resolution": null,
+        "followup": {
+          "status": "rejected",
+          "reason": "context_missing",
+          "root_question": null,
+          "added": null,
+          "plan": null,
+          "retained": null
+        }
+      },
+      "trace_id": "tr-935b460b0a5e5e0ee2fb1aa59e944318",
+      "feedback_token_present": true,
+      "followup_token_present": false,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.forged",
+      "request": {
+        "question": "그중 열매 먹는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이전 조회 조건이 만료되었거나 확인되지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이전 조회 조건이 만료되었거나 확인되지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요."
+        },
+        "entity_resolution": null,
+        "followup": {
+          "status": "rejected",
+          "reason": "context_invalid",
+          "root_question": null,
+          "added": null,
+          "plan": null,
+          "retained": null
+        }
+      },
+      "trace_id": "tr-9c411ead7032b3a656e79b59246daaea",
+      "feedback_token_present": true,
+      "followup_token_present": false,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.scope",
+      "request": {
+        "question": "그중 한국에서 볼 수 있는 새는?",
+        "intent": "auto",
+        "species_scope": "outside",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이전 조회와 선택한 종 범위가 달라 조건을 이어받지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이전 조회와 선택한 종 범위가 달라 조건을 이어받지 않았습니다. 원하는 조건을 모두 넣어 새로 질문해 주세요."
+        },
+        "entity_resolution": null,
+        "followup": {
+          "status": "rejected",
+          "reason": "context_scope_mismatch",
+          "root_question": null,
+          "added": null,
+          "plan": null,
+          "retained": null
+        }
+      },
+      "trace_id": "tr-5f3181ac89bff2c8455fc9db6e85892e",
+      "feedback_token_present": true,
+      "followup_token_present": false,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.negation",
+      "request": {
+        "question": "그중 열매 안 먹는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "제외·비교 조건이나 종 사이 관계는 이전 조건에 이어 붙일 수 없습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "제외·비교 조건이나 종 사이 관계는 이전 조건에 이어 붙일 수 없습니다. 먹이·서식지·분류군·국내 기록 조건 하나를 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함."
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "rejected",
+          "reason": "unsupported_addition",
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": null,
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          }
+        }
+      },
+      "trace_id": "tr-6815aacf13451565219b3f19cfac1884",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.multiple",
+      "request": {
+        "question": "그중 한국에서 볼 수 있는 습지에 사는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이전 조건에는 조건을 한 번에 하나씩 추가할 수 있습니다. 하나만 먼저 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이전 조건에는 조건을 한 번에 하나씩 추가할 수 있습니다. 하나만 먼저 알려 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함."
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "rejected",
+          "reason": "multiple_additions",
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": null,
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          }
+        }
+      },
+      "trace_id": "tr-9fb26b5002ce9881436125b455df1651",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.conflict",
+      "request": {
+        "question": "그중 습지에 사는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이전 조건과 함께 적용할 수 없는 조건입니다. 바꾸려면 원하는 조건을 모두 넣어 새로 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이전 조건과 함께 적용할 수 없는 조건입니다. 바꾸려면 원하는 조건을 모두 넣어 새로 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함."
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "rejected",
+          "reason": "conflicting_condition",
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": null,
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          }
+        }
+      },
+      "trace_id": "tr-ea918fbcac9c453da25fc459768d24d0",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.duplicate",
+      "request": {
+        "question": "그중 열매 먹는 새",
+        "intent": "auto",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "deterministic",
+        "disposition": "clarify",
+        "answer_text": "이미 적용된 조건입니다. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이미 적용된 조건입니다. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함."
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "rejected",
+          "reason": "duplicate_condition",
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": null,
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          }
+        }
+      },
+      "trace_id": "tr-a7a6ffdf290c0b4e64abd5b5bb133a21",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    },
+    {
+      "label": "guard.route",
+      "request": {
+        "question": "그중 한국에서 볼 수 있는 새는?",
+        "intent": "taxonomy",
+        "species_scope": "all",
+        "defer_enrichment": true,
+        "defer_discovery": true,
+        "followup_context": "[redacted]"
+      },
+      "status": 200,
+      "response": {
+        "selected_intent": "profile",
+        "route_method": "explicit",
+        "disposition": "clarify",
+        "answer_text": "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함.",
+        "warnings": [
+          "이전 조건 중 일부를 빼거나 바꿔 조회하지 않았습니다."
+        ],
+        "result": {
+          "kind": "clarify",
+          "prompt": "이전 조건 조회를 이어가려면 개별 종 필터나 다른 조회 유형을 비우고 다시 질문해 주세요. 유지한 조건: 서식 환경 숲(Forest), 먹이 구성에 열매 포함."
+        },
+        "entity_resolution": null,
+        "followup_context": "[redacted]",
+        "followup": {
+          "status": "rejected",
+          "reason": "route_conflict",
+          "root_question": "숲에 사는 열매 먹는 새",
+          "added": null,
+          "plan": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          },
+          "retained": {
+            "conditions": [
+              "서식 환경 숲(Forest)",
+              "먹이 구성에 열매 포함"
+            ],
+            "taxon": null,
+            "scope": "all"
+          }
+        }
+      },
+      "trace_id": "tr-551fd2c0f5897579e60247abb969d7f2",
+      "feedback_token_present": true,
+      "followup_token_present": true,
+      "cache_control": "no-store"
+    }
+  ],
+  "guards": [
+    {
+      "label": "guard.missing",
+      "reason": "context_missing",
+      "passed": true
+    },
+    {
+      "label": "guard.forged",
+      "reason": "context_invalid",
+      "passed": true
+    },
+    {
+      "label": "guard.scope",
+      "reason": "context_scope_mismatch",
+      "passed": true
+    },
+    {
+      "label": "guard.negation",
+      "reason": "unsupported_addition",
+      "passed": true
+    },
+    {
+      "label": "guard.multiple",
+      "reason": "multiple_additions",
+      "passed": true
+    },
+    {
+      "label": "guard.conflict",
+      "reason": "conflicting_condition",
+      "passed": true
+    },
+    {
+      "label": "guard.duplicate",
+      "reason": "duplicate_condition",
+      "passed": true
+    },
+    {
+      "label": "guard.route",
+      "reason": "route_conflict",
+      "passed": true
+    }
+  ],
+  "votes": [
+    {
+      "label": "chain.base",
+      "trace_id": "tr-f4e49a5731b9fd1b567a111c208e27f0",
+      "rating": "helpful",
+      "keyboard": true,
+      "first_status": 200,
+      "retry_statuses": [
+        200,
+        409
+      ]
+    },
+    {
+      "label": "chain.korea",
+      "trace_id": "tr-5567cda1a5da6979d6c0d777124e4910",
+      "rating": "misunderstood",
+      "keyboard": false,
+      "first_status": 200,
+      "retry_statuses": [
+        200,
+        409
+      ]
+    },
+    {
+      "label": "chain.empty",
+      "trace_id": "tr-1290731418f9f0bec16139de8d83578e",
+      "rating": "incorrect",
+      "keyboard": false,
+      "first_status": 200,
+      "retry_statuses": [
+        200,
+        409
+      ]
+    }
+  ],
+  "tampered_feedback_status": 400,
+  "health": {
+    "target": "prod",
+    "status": "ok"
+  },
+  "page_errors": [],
+  "scope_change_clears_context": true,
+  "clear_clears_context": true,
+  "response_mocking": false,
+  "automated_verification": true,
+  "not_human_gold": true,
+  "viewports": [
+    1280,
+    390
+  ],
+  "physical_mobile_tested": false,
+  "app_changed": false
+}
