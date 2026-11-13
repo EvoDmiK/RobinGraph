@@ -37,6 +37,37 @@ class AudioOperationView(RobinGraphView):
         return Response(result)
 
 
+class AudioCandidatesView(RobinGraphView):
+    http_method_names = ['get']
+    audio = None
+
+    def get(self,request):
+        can_assess = self.audio.require_review_bearer(request.META.get('HTTP_AUTHORIZATION'))
+        query = request.query_params
+        if set(query)-{'limit','offset','status'} or any(len(query.getlist(key))!=1 for key in query):
+            raise ApiError(422,'Invalid audio candidate query')
+        try:
+            limit=int(query.get('limit','20')); offset=int(query.get('offset','0'))
+        except ValueError:
+            raise ApiError(422,'Invalid audio candidate pagination') from None
+        result = self.audio.candidates(limit=limit,offset=offset,status=query.get('status'))
+        return Response({**result,'can_assess':can_assess},headers={'Cache-Control':'private, no-store'})
+
+
+class AudioAssessmentView(RobinGraphView):
+    http_method_names = ['post']
+    audio = None
+
+    def post(self,request):
+        self.audio.require_assessment_bearer(request.META.get('HTTP_AUTHORIZATION'))
+        body = read_json_body(request)
+        required = {'candidate_id','expected_updated_at','reviewer','playback','source',
+                    'identification','decision','note','identification_note'}
+        if not isinstance(body,dict) or set(body)!=required:
+            raise ApiError(422,'Invalid audio assessment fields')
+        return Response(self.audio.assessment(**body),headers={'Cache-Control':'private, no-store'})
+
+
 def audio_response(request,path,mime,*,private=False):
     size = path.stat().st_size
     start,end,status = 0,size-1,200
@@ -80,7 +111,7 @@ class AudioMediaView(RobinGraphView):
 
     def get(self,request,name):
         if self.private:
-            self.audio.require_internal_bearer(request.META.get('HTTP_AUTHORIZATION'))
+            self.audio.require_review_bearer(request.META.get('HTTP_AUTHORIZATION'),preview=True)
             path,mime=self.audio.preview(name)
         else:
             path,mime=self.audio.media(name)

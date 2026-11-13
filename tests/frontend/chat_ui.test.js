@@ -529,8 +529,7 @@ test("index.html only references same-origin local assets, never a remote script
 // ---------------------------------------------------------------------------
 // WCAG 2.1 AA contrast (>=4.5:1) for the send button and the
 // answer/abstain/clarify badges, computed from the actual declarations in
-// styles.css rather than eyeballed -- both the light (:root) and dark
-// (`@media (prefers-color-scheme: dark)`) themes are checked.
+// styles.css rather than eyeballed for the fixed light theme.
 // ---------------------------------------------------------------------------
 
 const cssSource = fs.readFileSync(path.join(STATIC_DIR, "styles.css"), "utf8");
@@ -571,18 +570,10 @@ function extractCustomProperties(block) {
   return props;
 }
 
-// The light theme lives in the top-level `:root { ... }` block (no nested
-// braces), and the dark theme only overrides the variables that change,
-// inside `@media (prefers-color-scheme: dark) { :root { ... } }` -- matching
-// real CSS cascade semantics, unset variables in the dark block fall back to
-// the light block's value on the same effective :root selector.
+// The shared light palette is defined in the top-level :root block.
 const lightRootMatch = cssSource.match(/:root\s*\{([^}]*)\}/);
 assert.ok(lightRootMatch, "expected to find a top-level :root block in styles.css");
 const lightVars = extractCustomProperties(lightRootMatch[1]);
-
-const darkRootMatch = cssSource.match(/@media \(prefers-color-scheme: dark\)\s*\{\s*:root\s*\{([^}]*)\}/);
-assert.ok(darkRootMatch, "expected to find a dark-mode :root override block in styles.css");
-const darkVars = Object.assign({}, lightVars, extractCustomProperties(darkRootMatch[1]));
 
 // Resolves a CSS value like "var(--color-accent)" or a literal "#ffffff"
 // against a theme's variable table, following one or more levels of var()
@@ -625,13 +616,9 @@ function propertyValue(block, property) {
 
 const CONTRAST_PAIRS = [
   { name: ".send-button (light)", selector: ".send-button {", themeVars: lightVars },
-  { name: ".send-button (dark)", selector: ".send-button {", themeVars: darkVars },
   { name: ".disposition-answer (light)", selector: ".disposition-answer {", themeVars: lightVars },
-  { name: ".disposition-answer (dark)", selector: ".disposition-answer {", themeVars: darkVars },
   { name: ".disposition-abstain (light)", selector: ".disposition-abstain,", themeVars: lightVars },
-  { name: ".disposition-abstain (dark)", selector: ".disposition-abstain,", themeVars: darkVars },
   { name: ".disposition-clarify (light)", selector: ".disposition-clarify {", themeVars: lightVars },
-  { name: ".disposition-clarify (dark)", selector: ".disposition-clarify {", themeVars: darkVars },
 ];
 
 for (const pair of CONTRAST_PAIRS) {
@@ -1321,6 +1308,7 @@ test("renders a species profile card with validated photos, sourced trait fact c
 test("species profile card groups identical measurements from multiple sources into one fact with both citations, keeps diet/habitat and body mass visible, and collapses other measurements", async () => {
   const bodyMassAvonet = {
     name: "body_mass", label: "체중", value: 1083.3, display: "1083.3", unit: "g", inferred: false,
+    summary_statistic: "species_mean",
     source_url: "https://example.org/avonet", citation: "AVONET", license_name: "CC BY 4.0",
   };
   const bodyMassTraits = {
@@ -7799,7 +7787,7 @@ function recordingFixture() {
 }
 
 test("recordings render independently of photos, retain exact attribution, and fail closed without inventing metadata", () => {
-  const f = recordingFixture(), a = f.create();
+  const f = recordingFixture(), a = f.create({ images: [] });
   assert.equal(a.audio.preload, "none"); assert.equal(a.audio.controls, true); assert.equal(a.audio.autoplay, undefined);
   assert.match(collectedText(a.area), /Recorder <b>/); assert.match(collectedText(a.area), /Original overseas location/);
   assert.equal(a.area.open, undefined, "recording details begin closed");
@@ -7870,4 +7858,29 @@ test("recording controls occupy the photo-adjacent front face once and source na
   a.card.updateEnrichment({ images: [], recordings: [], recording_availability: { status: "no_licensed_recording" } });
   assert.equal(controls.hidden, true); assert.equal(controls.children.length, 0);
   assert.match(collectedText(a.area), /확인된 새소리 자료가 없습니다/);
+});
+
+test("cached photos remain visible while additional notes are still pending", () => {
+  const card = chat.buildSpeciesCard(svgCapableDoc(), photoProfile({ enrichment_pending: true }));
+  const area = cardPart(card, "species-photo-area");
+  assert.ok(collectAllNodes(area).some((node) => node.tagName === "img"));
+  assert.doesNotMatch(collectedText(area), /더 알아보기/);
+});
+
+test("equal species mass values share one card row without merging sample means or different values", () => {
+  const mass = { name: "body_mass", label: "체중", value: 759.1, display: "759.1", unit: "g", inferred: false };
+  const traits = [
+    { ...mass, summary_statistic: "species_mean", citation: "AVONET", source_url: "https://example.org/avonet" },
+    { ...mass, summary_statistic: null, citation: "EltonTraits", source_url: "https://example.org/elton" },
+    { ...mass, summary_statistic: "sample_mean", citation: "Study", source_url: "https://example.org/sample" },
+    { ...mass, value: 760, display: "760", citation: "Other", source_url: "https://example.org/other" },
+  ];
+  const card = chat.buildSpeciesCard(svgCapableDoc(), photoProfile({ traits, images: [] }));
+  const nodes = collectAllNodes(card);
+  assert.equal(nodes.filter((node) => node.tagName === "strong" && node.textContent === "체중").length, 2);
+  assert.equal(nodes.filter((node) => node.tagName === "strong" && node.textContent === "체중 · 표본 평균").length, 1);
+  const sources = collectAllNodes(card.sourceMaterial);
+  for (const trait of traits) {
+    assert.ok(sources.some((node) => node.tagName === "a" && node.href === trait.source_url));
+  }
 });

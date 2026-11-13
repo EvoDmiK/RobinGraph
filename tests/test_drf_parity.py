@@ -211,6 +211,11 @@ class ParityCase(unittest.TestCase):
                 schemas = body["components"]["schemas"]
                 schemas.pop("ChatFeedbackRequest", None)
                 body["paths"].pop("/v1/chat/feedback", None)
+                # The additive structured explorer route is checked in OpenApiContractTest.
+                body["paths"].pop("/v1/taxa/explore", None)
+                profile = body["paths"]["/v1/taxa/profile"]["get"]
+                profile["parameters"] = [param for param in profile["parameters"]
+                                         if param["name"] not in ("defer_enrichment", "include_notes")]
                 body["paths"]["/v1/chat"]["post"]["responses"]["200"].pop("headers", None)
                 schemas.pop("ChatGraphResult", None)
                 # Additive confirmation controls are checked against live DTOs below.
@@ -482,6 +487,41 @@ class IngestParityTest(ParityCase):
 
 
 class NativeRuntimeTest(unittest.TestCase):
+    def test_deferred_profile_skips_full_enrichment_and_preserves_default(self) -> None:
+        calls = []
+
+        def basic(name):
+            calls.append(("basic", name))
+            return {"taxon": {"scientific_name": name}, "enrichment_pending": True}
+
+        def full(name):
+            calls.append(("full", name))
+            return {"taxon": {"scientific_name": name}, "images": []}
+
+        def media(name):
+            calls.append(("media", name))
+            return {"taxon": {"scientific_name": name}, "images": [], "enrichment_pending": True}
+
+        client = TestClient(create_django_app(species_profile_handler=full, species_basic_profile_handler=basic,
+                                             species_media_profile_handler=media))
+        response = client.get("/v1/taxa/profile?name=Asio%20otus&defer_enrichment=true")
+        self.assertEqual(200, response.status_code)
+        self.assertTrue(response.json()["enrichment_pending"])
+        self.assertEqual([("basic", "Asio otus")], calls)
+        self.assertEqual(200, client.get("/v1/taxa/profile?name=Asio%20otus").status_code)
+        self.assertEqual(("full", "Asio otus"), calls[-1])
+        self.assertEqual(200, client.get("/v1/taxa/profile?name=Asio%20otus&include_notes=false").status_code)
+        self.assertEqual(("media", "Asio otus"), calls[-1])
+        self.assertEqual(422, client.get("/v1/taxa/profile?name=a&defer_enrichment=invalid").status_code)
+        for ingest in (False, True):
+            params = frozen_openapi(ingest=ingest)["paths"]["/v1/taxa/profile"]["get"]["parameters"]
+            deferred = next(param for param in params if param["name"] == "defer_enrichment")
+            self.assertEqual("boolean", deferred["schema"]["type"])
+            self.assertIs(False, deferred["schema"]["default"])
+            notes = next(param for param in params if param["name"] == "include_notes")
+            self.assertEqual("boolean", notes["schema"]["type"])
+            self.assertIs(True, notes["schema"]["default"])
+
     def test_apps_with_different_dependencies_are_isolated(self) -> None:
         first = TestClient(create_django_app(species_profile_handler=lambda name: {"taxon": {"n": 1}}))
         second = TestClient(create_django_app())
@@ -557,7 +597,8 @@ class NativeRuntimeTest(unittest.TestCase):
         schema = create_django_app().openapi()
         self.assertEqual({"/v1/taxa/name-relations", "/v1/taxa/related", "/v1/taxa/similar",
                           "/v1/taxa/ecological-related", "/v1/taxa/subspecies", "/v1/taxa/profile", "/health",
-                          "/v1/answers", "/v1/chat", "/v1/chat/feedback", "/v1/search", "/v1/observations", "/v1/taxa/lineage"},
+                          "/v1/answers", "/v1/chat", "/v1/chat/feedback", "/v1/search", "/v1/observations", "/v1/taxa/lineage",
+                          "/v1/taxa/explore"},
                          set(schema["paths"]))
         self.assertIn("LineageTaxonResponse", schema["components"]["schemas"])
         self.assertEqual(json.loads(json.dumps(schema)), schema)
@@ -611,7 +652,7 @@ class OpenApiContractTest(unittest.TestCase):
                       for parameter in item.get("get", {}).get("parameters", ())
                       if parameter["name"] == "species_scope"}
         self.assertEqual({"/v1/taxa/related", "/v1/taxa/similar", "/v1/taxa/ecological-related",
-                          "/v1/taxa/profile", "/v1/taxa/lineage"}, documented)
+                          "/v1/taxa/profile", "/v1/taxa/lineage", "/v1/taxa/explore"}, documented)
         for route in documented:
             parameter = next(p for p in paths[route]["get"]["parameters"] if p["name"] == "species_scope")
             self.assertEqual(list(get_args(SpeciesScope)), parameter["schema"]["enum"], route)

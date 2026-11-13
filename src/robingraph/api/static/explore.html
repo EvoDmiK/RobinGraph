@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <title>조건으로 새 찾기 · RobinGraph</title>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/static/favicon-192.png" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/explore.css" />
+  <script src="/static/chat.js" defer></script>
+  <script src="/static/explore.js" defer></script>
+</head>
+<body>
+  <div class="page explore-page">
+    <header class="app-header explore-header">
+      <div class="app-header-top">
+        <p class="brand">RobinGraph · Bird Explorer</p>
+        <nav class="explore-nav" aria-label="화면 이동">
+          <a href="/chat" class="explore-nav-link">← 질문으로 찾기</a>
+          <a href="/birds" class="explore-nav-link">새 도감</a>
+        </nav>
+      </div>
+      <h1 id="explore-title">조건으로 새 찾기</h1>
+      <p class="tagline">
+        분포 범위, 분류군(목·과·속), 대표 서식 환경, 먹이 구성을 조합해 출처가 확인된 종(species)을 찾아보세요.
+      </p>
+    </header>
+
+    <main class="explore-main">
+      <form id="explore-form" class="explore-form" autocomplete="off">
+        <fieldset id="explore-scope-controls" class="species-scope-controls explore-fieldset">
+          <legend class="species-scope-legend">1. 분포 범위 · 이름 우선 기준</legend>
+          <div class="species-scope-options">
+            <label class="species-scope-option">
+              <input type="radio" id="explore-scope-all" name="species_scope" value="all" checked />
+              <span>전체 (기본 · 한국어 우선)</span>
+            </label>
+            <label class="species-scope-option">
+              <input type="radio" id="explore-scope-korea" name="species_scope" value="korea" />
+              <span>국내 기록·분포 확인 (한국어 우선)</span>
+            </label>
+            <label class="species-scope-option">
+              <input type="radio" id="explore-scope-outside" name="species_scope" value="outside" />
+              <span>국외 분포 검토 (영어 우선)</span>
+            </label>
+            <label class="species-scope-option">
+              <input type="radio" id="explore-scope-unknown" name="species_scope" value="unknown" />
+              <span>미확인 (한국어 우선)</span>
+            </label>
+          </div>
+          <p id="explore-scope-note" class="species-scope-note">
+            전체 분류군을 표시하며 검증된 한국어 이름을 먼저 보여줍니다. 국내 기록·분포 확인은 출처의 야생 기록·분포 유무이며 모두 텃새라는 뜻이 아닙니다.
+          </p>
+        </fieldset>
+
+        <div class="explore-grid-two">
+          <div class="explore-field">
+            <label for="explore-taxon" class="explore-label">2. 분류군 (목·과·속 국명 또는 학명)</label>
+            <input
+              id="explore-taxon"
+              name="taxon"
+              type="text"
+              maxlength="100"
+              placeholder="예: 참새목, 직박구리과, Passeriformes, Turdus"
+              aria-describedby="explore-taxon-hint"
+            />
+            <p id="explore-taxon-hint" class="explore-field-hint">
+              목·과·속 단위로 범위를 좁힙니다(종·아종 제외). 비워두면 선택한 분포 범위의 전체 조류를 대상으로 조회합니다.
+            </p>
+          </div>
+
+          <div class="explore-field">
+            <label for="explore-habitat" class="explore-label">3. 대표 서식 환경 (AVONET · 단일 선택)</label>
+            <select id="explore-habitat" name="habitat" aria-describedby="explore-habitat-hint">
+              <option value="">전체 서식 환경 (선택 안 함)</option>
+              <option value="Forest">숲</option>
+              <option value="Shrubland">관목 지대</option>
+              <option value="Woodland">성긴 숲</option>
+              <option value="Grassland">초지</option>
+              <option value="Rock">바위 지대</option>
+              <option value="Wetland">습지</option>
+              <option value="Human Modified">인공·변형 환경</option>
+              <option value="Coastal">해안</option>
+              <option value="Marine">바다</option>
+              <option value="Riverine">하천</option>
+              <option value="Desert">사막</option>
+            </select>
+            <p id="explore-habitat-hint" class="explore-field-hint">
+              AVONET 자료의 종별 대표 서식 환경(1개)과 일치하는 종을 찾습니다.
+            </p>
+          </div>
+        </div>
+
+        <fieldset id="explore-diet-controls" class="explore-fieldset">
+          <legend class="explore-label">4. 먹이 구성 (EltonTraits · 복수 선택 가능)</legend>
+          <p id="explore-diet-hint" class="explore-field-hint explore-diet-notice">
+            복수 선택 시 선택한 먹이가 모두 0%보다 큰 종(AND 조건)만 찾으며, 결과는 선택한 먹이 비율의 합계가 높은 순으로 정렬됩니다(가나다·알파벳순 아님). 먹이를 선택하지 않으면 이름순으로 정렬되며, 확실성 A·B·C 자료만 사용합니다.
+          </p>
+          <div id="explore-diet-options" class="explore-diet-grid" role="group" aria-describedby="explore-diet-hint">
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-invertebrate" name="diet" value="invertebrate" />
+              <span>곤충</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-endotherm_vertebrate" name="diet" value="endotherm_vertebrate" />
+              <span>고기 · 온혈동물</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-ectotherm_vertebrate" name="diet" value="ectotherm_vertebrate" />
+              <span>고기 · 변온동물</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-fish" name="diet" value="fish" />
+              <span>물고기</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-unknown_vertebrate" name="diet" value="unknown_vertebrate" />
+              <span>기타 고기</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-carrion" name="diet" value="carrion" />
+              <span>사체</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-fruit" name="diet" value="fruit" />
+              <span>열매</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-nectar" name="diet" value="nectar" />
+              <span>꽃꿀</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-seed" name="diet" value="seed" />
+              <span>씨앗</span>
+            </label>
+            <label class="explore-diet-option">
+              <input type="checkbox" id="explore-diet-other_plant" name="diet" value="other_plant" />
+              <span>기타 식물</span>
+            </label>
+          </div>
+          <details class="explore-field-hint">
+            <summary>먹이 분류 안내</summary>
+            <p>‘곤충’은 자료의 무척추동물 범주로 다른 무척추동물도 포함합니다. 고기는 온혈동물·변온동물·기타 고기로 나누며 물고기와 사체는 별도입니다.</p>
+          </details>
+        </fieldset>
+
+        <div class="actions explore-actions">
+          <button type="submit" id="explore-submit" class="send-button">조건으로 새 찾기</button>
+          <button type="button" id="explore-reset" class="clear-button">조건 초기화</button>
+        </div>
+      </form>
+
+      <p id="explore-status" class="status-region explore-status" role="status" aria-live="polite">
+        분포 범위, 분류군, 서식 환경, 먹이 조건을 선택하고 ‘조건으로 새 찾기’를 눌러 조회하세요.
+      </p>
+
+      <section id="explore-results" class="explore-results" aria-live="polite" hidden></section>
+    </main>
+
+    <footer class="app-footer">
+      <p>
+        모든 조회 결과는 활성 분류 체계(AviList)와 직접 연결된 형질 자료(AVONET, EltonTraits)만을 근거로 종(species) 단위로 표시합니다.
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

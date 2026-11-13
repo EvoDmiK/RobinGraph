@@ -10,16 +10,20 @@ framework-independent service.  Response serializers render the shared DTOs.
 from __future__ import annotations
 
 from datetime import date
-from typing import Annotated, Any, ClassVar
+from typing import Annotated, Any, ClassVar, Literal
 
-from pydantic import BaseModel, Field, TypeAdapter
+from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, StringConstraints, TypeAdapter
+from pydantic_core import PydanticCustomError
 from rest_framework import serializers
 from rest_framework.fields import empty
 
+from ...retrieval.graph_questions import DIET_SHARE_KEYS, TRAIT_CONDITIONS
 from ...retrieval.species_scope import SpeciesScope
 from .. import ingest_service as ingest
 from .. import schemas
-from .validation import jsonable, missing, raise_if_errors, validate
+from .validation import RequestValidationFailed, jsonable, missing, raise_if_errors, validate
+
+AVONET_HABITATS = TRAIT_CONDITIONS["habitat"][2]
 
 _REQUIRED = object()
 
@@ -121,6 +125,49 @@ class TaxonNameRequestSerializer(EndpointRequestSerializer):
 
 class ScopedTaxonNameRequestSerializer(EndpointRequestSerializer):
     query_params = {"name": Param(_NAME), "species_scope": _SCOPE}
+
+
+class SpeciesProfileRequestSerializer(ScopedTaxonNameRequestSerializer):
+    query_params = {**ScopedTaxonNameRequestSerializer.query_params,
+                    "defer_enrichment": Param(bool, False), "include_notes": Param(bool, True)}
+
+
+def _diet_keys(value: Any) -> Any:
+    return value.split(",") if isinstance(value, str) else value
+
+
+def _distinct(keys: list[str]) -> list[str]:
+    if len(set(keys)) != len(keys):
+        raise PydanticCustomError("duplicate_value", "Diet keys must be distinct")
+    return keys
+
+
+class TaxonExploreRequestSerializer(EndpointRequestSerializer):
+    """Structured explorer filters; unknown or repeated parameters are rejected, never ignored."""
+
+    query_params = {
+        "page": Param(Annotated[int, Field(ge=1, le=10000)], 1),
+        "species_scope": _SCOPE,
+        "taxon": Param(Annotated[str | None, StringConstraints(
+            strip_whitespace=True, min_length=1, max_length=100, pattern=r"^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$")], None),
+        "habitat": Param(Literal[AVONET_HABITATS] | None, None),
+        "diet": Param(Annotated[list[Literal[DIET_SHARE_KEYS]] | None, BeforeValidator(_diet_keys),
+                                AfterValidator(lambda keys: keys and _distinct(keys)), Field(min_length=1, max_length=10)], None),
+    }
+
+    def run_validation(self, data: Any = empty) -> dict[str, Any]:
+        query = (data or {}).get("query") or {}
+        values = dict(query.lists()) if hasattr(query, "lists") else {name: [value] for name, value in query.items()}
+        errors = [{"type": "extra_forbidden", "loc": ("query", name), "msg": "Extra inputs are not permitted",
+                   "input": given[-1]} for name, given in values.items() if name not in self.query_params]
+        errors += [{"type": "duplicate_parameter", "loc": ("query", name), "msg": "Parameter must be given once",
+                    "input": given} for name, given in values.items() if name in self.query_params and len(given) > 1]
+        try:
+            values = super().run_validation(data)
+        except RequestValidationFailed as error:
+            errors += error.errors
+        raise_if_errors(errors)
+        return values
 
 
 class QuestionRequestSerializer(EndpointRequestSerializer):

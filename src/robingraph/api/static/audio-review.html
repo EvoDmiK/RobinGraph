@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <title>음원 검토 · RobinGraph</title>
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/audio-review.css" />
+  <script src="/static/audio-review.js" defer></script>
+</head>
+<body>
+  <main class="page audio-review-page">
+    <header class="app-header">
+      <p class="brand">RobinGraph · Audio library</p>
+      <h1>수집된 새소리 살펴보기</h1>
+      <p class="tagline">음원을 듣고 원본 출처와 검토 상태를 함께 확인하세요.</p>
+    </header>
+
+    <section class="review-access" aria-labelledby="access-title">
+      <div>
+        <h2 id="access-title">음원 검토 접속</h2>
+        <p id="access-help">접속키는 현재 탭의 메모리에만 보관하며, 연결을 해제하거나 페이지를 떠나면 지워집니다.</p>
+      </div>
+      <form id="review-connect-form" autocomplete="off">
+        <label for="review-key">검토 접속키 · 조회용 또는 기록 작성용</label>
+        <div class="review-connect-actions">
+          <input id="review-key" type="password" autocomplete="off" spellcheck="false" required aria-describedby="access-help" />
+          <button id="review-connect" type="submit" class="send-button">연결</button>
+          <button id="review-disconnect" type="button" class="clear-button" hidden>연결 해제</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="review-library" class="review-library" aria-labelledby="library-title" hidden>
+      <div class="review-toolbar">
+        <div>
+          <p class="brand">Collected recordings</p>
+          <h2 id="library-title">음원 목록</h2>
+        </div>
+        <div class="review-filter">
+          <label for="review-status-filter">수집 상태</label>
+          <select id="review-status-filter">
+            <option value="">전체 상태</option>
+            <option value="awaiting_review">검토 대기</option>
+            <option value="approved">검토 승인</option>
+            <option value="published">공개됨</option>
+            <option value="rejected">검토 반려</option>
+            <option value="deferred">수집 보류</option>
+          </select>
+          <button id="review-refresh" type="button" class="clear-button">목록 새로 조회</button>
+        </div>
+      </div>
+      <p class="review-boundary">등록된 종 이름은 수집 시의 분류입니다. 독립적인 종 동정과 청취 검토가 끝났는지는 각 항목에서 확인하세요. 이 화면에서는 승인하거나 공개하지 않습니다.</p>
+      <div id="review-candidates" class="review-candidates"></div>
+      <button id="review-more" type="button" class="clear-button review-more" hidden>더 보기</button>
+    </section>
+    <p id="review-status" class="review-status" role="status" aria-live="polite">검토 전용 접속키를 입력해 주세요.</p>
+  </main>
+</body>
+</html>

@@ -279,6 +279,26 @@
               "default": "all",
               "title": "Species Scope"
             }
+          },
+          {
+            "name": "defer_enrichment",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Defer Enrichment"
+            }
+          },
+          {
+            "name": "include_notes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Include Notes"
+            }
           }
         ],
         "responses": {
@@ -299,6 +319,113 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/taxa/explore": {
+      "get": {
+        "summary": "Bird Explorer",
+        "description": "Structured species search without natural-language parsing. Every filter is optional and each parameter may appear once; unknown or repeated parameters are rejected with 422. Results are species, the first 20 with has_more.",
+        "operationId": "bird_explorer_v1_taxa_explore_get",
+        "parameters": [
+          {
+            "name": "species_scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "all",
+                "korea",
+                "outside",
+                "unknown"
+              ],
+              "type": "string",
+              "default": "all",
+              "title": "Species Scope"
+            }
+          },
+          {
+            "name": "taxon",
+            "in": "query",
+            "required": false,
+            "description": "One order, family or genus: a single scientific name or a reviewed Korean name. Species and subspecies are rejected.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^(?:[A-Z][a-z]+|[가-힣]+(?: [가-힣]+)*)$",
+              "title": "Taxon"
+            }
+          },
+          {
+            "name": "habitat",
+            "in": "query",
+            "required": false,
+            "description": "One AVONET habitat value.",
+            "schema": {
+              "enum": [
+                "Forest",
+                "Shrubland",
+                "Woodland",
+                "Grassland",
+                "Rock",
+                "Wetland",
+                "Human Modified",
+                "Coastal",
+                "Marine",
+                "Riverine",
+                "Desert"
+              ],
+              "type": "string",
+              "title": "Habitat"
+            }
+          },
+          {
+            "name": "diet",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated distinct EltonTraits diet composition keys (1-10), all above 0%: invertebrate, endotherm_vertebrate, ectotherm_vertebrate, fish, unknown_vertebrate, carrion, fruit, nectar, seed, other_plant. Ranked by the sum of the selected shares.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "title": "Diet"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "title": "Page"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Bird explorer unavailable"
           }
         }
       }

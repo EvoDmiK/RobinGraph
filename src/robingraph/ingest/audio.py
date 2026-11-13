@@ -21,6 +21,13 @@ from robingraph.retrieval.recordings import (
 STORED_RELEASE = 'commons-stored-reviewed-v1'
 MAX_AUDIO_BYTES = 20 * 1024 * 1024
 FILE_NAME = re.compile(r'^[a-f0-9]{64}\.(ogg|mp3|wav)$')
+ASSESSMENT_VALUES = {
+    'playback':('unchecked','normal','silent','file_error'),
+    'source':('unchecked','checked'),
+    'identification':('unchecked','uploader_only','additional_evidence','uncertain'),
+    'decision':('pending','hold','candidate','exclude'),
+}
+ASSESSMENT_FIELDS = ('reviewer','playback','source','identification','decision','note','identification_note','assessed_at')
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -86,17 +93,116 @@ def validate_file(data, info):
 
 
 class AudioService:
-    def __init__(self, store, root, repository, resolve_exact, token):
+    def __init__(self, store, root, repository, resolve_exact, token, *, review_token=None, assessment_token=None):
         if not token or not Path(root).is_absolute():
             raise ValueError('Audio storage requires an absolute persistent root and internal token')
         self.store, self.root, self.repository, self.resolve_exact = store, Path(root), repository, resolve_exact
+        tokens = [value for value in (token,review_token,assessment_token) if value]
+        if len(tokens)!=len(set(tokens)):
+            raise ValueError('Audio review, assessment and collection tokens must be distinct')
         self.token = token
+        self.review_token = review_token
+        self.assessment_token = assessment_token
 
     def require_internal_bearer(self, value):
         import secrets
         supplied = value[7:] if value and value.startswith('Bearer ') else ''
         if not supplied or not secrets.compare_digest(supplied,self.token):
             raise ApiError(401,'Unauthorized',{'WWW-Authenticate':'Bearer'})
+
+    def require_review_bearer(self, value, *, preview=False):
+        import secrets
+        supplied = value[7:] if value and value.startswith('Bearer ') else ''
+        tokens = (self.review_token, self.assessment_token, self.token) if preview else (self.review_token, self.assessment_token)
+        if not supplied or not any(token and secrets.compare_digest(supplied.encode(), token.encode()) for token in tokens):
+            raise ApiError(401,'Unauthorized',{'WWW-Authenticate':'Bearer'})
+        return bool(self.assessment_token and secrets.compare_digest(supplied.encode(),self.assessment_token.encode()))
+
+    def require_assessment_bearer(self, value):
+        import secrets
+        supplied = value[7:] if value and value.startswith('Bearer ') else ''
+        if not supplied or not self.assessment_token or not secrets.compare_digest(supplied.encode(),self.assessment_token.encode()):
+            raise ApiError(401,'Unauthorized',{'WWW-Authenticate':'Bearer'})
+
+    def candidates(self, *, limit=20, offset=0, status=None):
+        if (type(limit) is not int or not 1 <= limit <= 50 or type(offset) is not int
+                or not 0 <= offset <= 10000 or status not in (None,'awaiting_review','approved','published','rejected','deferred')):
+            raise ApiError(422,'Invalid audio candidate pagination or status')
+        from robingraph.retrieval.taxonomy_lineage import sourced_korean_names
+        rows = self.store.candidates(limit=limit+1, offset=offset, status=status)
+        items = []
+        for row in rows[:limit]:
+            data = row['data']
+            item = {key:row[key] for key in ('scientific_name','status','file_title')}
+            updated = row['updated_at']
+            item.update(candidate_id=row['id'], updated_at=updated.isoformat(),
+                        collected_at=data.get('metadata_fetched_at'),
+                        assessment=self.assessment_fields(data.get('assessment')),
+                        file_bytes=None, preview_url=None, korean_name=None)
+            target = data.get('target',{})
+            if (target.get('concept_set_id'),target.get('taxonomy_release')) == ('rg:concept-set:avilist-v2025b','v2025b'):
+                name = sourced_korean_names().get(target.get('taxon_id'),{})
+                if name.get('scientific_name') == row['scientific_name']:
+                    item['korean_name'] = name.get('name')
+            record = data.get('recording',{})
+            item['recording'] = {key:record[key] for key in (
+                'id','scientific_name','audio_url','source_url','creator','license_name','license_url',
+                'title','recording_type','recorded_at','location') if key in record}
+            evidence = record.get('evidence',{})
+            if evidence:
+                item['recording']['evidence'] = {key:evidence[key] for key in (
+                    'page_id','revision_id','taxon_match','retrieved_at','metadata_sha256') if key in evidence}
+            if 'review' in data:
+                item['review'] = {key:data['review'][key] for key in (
+                    'reviewer','taxon_verified','playback_verified','approved','reviewed_at') if key in data['review']}
+            for key in ('retry_at','error_code'):
+                if key in data:
+                    item[key] = data[key]
+            try:
+                path,_ = self.file(data, verify=False)
+                item.update(file_bytes=path.stat().st_size,preview_url='/internal/v1/audio/preview/'+row['id'])
+            except (ApiError,OSError):
+                pass
+            items.append(item)
+        more = len(rows)>limit
+        return {'items':items,'has_more':more,'next_offset':offset+limit if more else None}
+
+    @staticmethod
+    def assessment_fields(value):
+        return {key:value[key] for key in ASSESSMENT_FIELDS if key in value} if isinstance(value,dict) else None
+
+    def assessment(self, candidate_id, expected_updated_at, reviewer, playback, source,
+                   identification, decision, note, identification_note):
+        if not isinstance(candidate_id,str) or not re.fullmatch('[a-f0-9]{64}',candidate_id):
+            raise ApiError(422,'Invalid audio candidate ID')
+        try:
+            expected = datetime.fromisoformat(expected_updated_at) if isinstance(expected_updated_at,str) else None
+        except ValueError:
+            expected = None
+        if expected is None or expected.utcoffset() is None:
+            raise ApiError(422,'An aware expected_updated_at timestamp is required')
+        if (not isinstance(reviewer,str) or not 1 <= len(reviewer.strip()) <= 120
+                or not isinstance(note,str) or len(note)>2000
+                or not isinstance(identification_note,str) or len(identification_note)>1000):
+            raise ApiError(422,'Invalid audio assessment text fields')
+        values = dict(playback=playback,source=source,identification=identification,decision=decision)
+        if any(not isinstance(value,str) or value not in ASSESSMENT_VALUES[key] for key,value in values.items()):
+            raise ApiError(422,'Invalid audio assessment choices')
+        if identification=='additional_evidence' and not identification_note.strip():
+            raise ApiError(422,'Additional identification evidence requires a note')
+        if any(token and token in text for token in (self.token,self.review_token,self.assessment_token)
+               for text in (reviewer,note,identification_note)):
+            raise ApiError(422,'Credentials must not be stored in assessment text')
+        with self.store.session() as cursor:
+            row = self.store.get(cursor,candidate_id)
+            if row is None:
+                raise ApiError(404,'Audio candidate not found')
+            if row['updated_at'] != expected:
+                raise ApiError(409,'Audio candidate changed; reload before saving the assessment')
+            assessment = dict(values,reviewer=reviewer.strip(),note=note,identification_note=identification_note,
+                              assessed_at=datetime.now(timezone.utc).isoformat())
+            updated = self.store.save_assessment(cursor,candidate_id,assessment)
+        return {'candidate_id':candidate_id,'updated_at':updated.isoformat(),'assessment':assessment}
 
     @staticmethod
     def result(row):

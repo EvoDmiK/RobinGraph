@@ -12,6 +12,7 @@ from urllib.request import Request, urlopen
 from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
 from robingraph.retrieval.conservation import linked_checklist, manual_magpie_override, best_reference_assessment
 from robingraph.retrieval.reviewed_magpie import reviewed_magpie_traits, reviewed_magpie_notes
+from robingraph.retrieval.external_cache import read_cached, remember
 
 class SpeciesNotFoundError(LookupError):
     """The requested name is not a species in the active taxonomy."""
@@ -360,7 +361,19 @@ class PhotoLookup(list):
 
 @lru_cache(maxsize=128)
 def _licensed_images(scientific_name, hour, rank="species"):
-    # ponytail: hourly bounded metadata cache; shared cache only if traffic warrants it.
+    def load():
+        result = _fetch_licensed_images(scientific_name, rank)
+        return {'images': list(result), 'status': result.status}
+    result = remember('photos-v1:' + rank + ':' + scientific_name, load)
+    return PhotoLookup(result['images'], result['status'])
+
+
+def cached_images(scientific_name, rank="species"):
+    result = read_cached('photos-v1:' + rank + ':' + scientific_name)
+    return PhotoLookup(result['images'], result['status']) if result is not None else None
+
+
+def _fetch_licensed_images(scientific_name, rank):
     if rank not in ('species', 'subspecies'):
         raise ValueError('Unsupported photo taxon rank')
     wikidata_rank = 'Q68947' if rank == 'subspecies' else 'Q7432'
@@ -448,7 +461,7 @@ def species_sections(taxon, traits, notes):
     return sections
 
 
-def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True, recordings=None):
+def create_species_flow(resolve, traits, photos=licensed_images, conservation=None, notes=None, subspecies_info=None, *, include_enrichment=True, recordings=None, include_notes=True, cached_notes=None):
     """Resolve once, collect independent sources, then assemble a sourced response."""
     def resolve_species(query):
         lineage = resolve(query)
@@ -473,6 +486,10 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         return subspecies_info(lineage) if lineage.items[-1].rank=='subspecies' else {}
     def image_stage(lineage):
         if not include_enrichment:
+            target = lineage.items[-1]
+            cached = cached_images(target.scientific_name, target.rank) if photos is licensed_images else None
+            if cached is not None:
+                return {'images': list(cached), 'photo_availability': {'status': cached.status, 'message': PHOTO_MESSAGES[cached.status]}, 'warnings': []}
             return {'images':[], 'photo_availability':{'status':'pending', 'message':'사진을 불러오는 중입니다.'}, 'warnings':[]}
         try:
             target=lineage.items[-1]
@@ -518,8 +535,11 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
         reviewed = reviewed_magpie_notes(lineage)
         if reviewed:
             return {'notes':reviewed, 'warnings':[]}
-        if not include_enrichment or lineage.items[-1].rank == 'subspecies':
+        if lineage.items[-1].rank == 'subspecies':
             return {'notes':{},'warnings':[]}
+        if not include_enrichment or not include_notes:
+            cached = cached_notes(lineage) if cached_notes is not None else None
+            return {'notes': cached or {}, 'warnings': [], 'pending': cached_notes is not None and cached is None}
         try:
             value = notes(lineage) if notes is not None else {}
             return {'notes':value or {}, 'warnings':[]}
@@ -557,7 +577,7 @@ def create_species_flow(resolve, traits, photos=licensed_images, conservation=No
             result['subspecies_metadata']=metadata
             result['sections'].insert(0,metadata['section'])
             result['summary']=metadata['section']['items'][0]['text']
-        if not include_enrichment:
+        if state['media']['photo_availability']['status'] == 'pending' or state['notes'].get('pending'):
             result['enrichment_pending'] = True
         return result
     return (RunnableLambda(resolve_species)

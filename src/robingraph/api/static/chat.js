@@ -696,9 +696,18 @@
   // as the whole species' representative or average unrelated source samples.
   function cardTraitGroups(traits) {
     // A species card must never substitute a subordinate group's values.
-    return groupTraits(traits.filter(function (trait) {
+    var groups = new Map();
+    groupTraits(traits.filter(function (trait) {
       return trait && trait.source_scope_kind !== "subspecies_group";
-    }));
+    })).forEach(function (group) {
+      var trait = group.trait;
+      // Equal recorded values share a row; each source keeps its own statistical metadata.
+      var statistic = trait.summary_statistic === "species_mean" ? null : trait.summary_statistic || null;
+      var key = JSON.stringify([trait.name, trait.value, trait.unit, trait.inferred, trait.source_scope_kind, trait.source_scope, statistic]);
+      if (groups.has(key)) { groups.get(key).sources = groups.get(key).sources.concat(group.sources); }
+      else { groups.set(key, group); }
+    });
+    return Array.from(groups.values());
   }
 
   function cardTraitValue(trait) {
@@ -3013,7 +3022,7 @@
       if (!selected.length) {
         var empty = doc.createElement("p"); empty.className = "species-observation-empty";
         empty.textContent = state === "subspecies" ? "이 아종만의 관찰 특징은 아직 확인하지 못했습니다." : state === "pending"
-          ? "‘더 알아보기’에서 추가 자료를 확인하세요." : observationMessage || "출처가 확인된 관찰 자료가 아직 없습니다.";
+          ? observationMessage || "‘더 알아보기’에서 추가 자료를 확인하세요." : observationMessage || "출처가 확인된 관찰 자료가 아직 없습니다.";
         observationArea.appendChild(empty);
       } else {
         var list = doc.createElement("ul"); list.className = "species-observation-list";
@@ -3278,7 +3287,7 @@
       photoSourcesSlot.appendChild(photoSources);
       card.refreshSources();
     }
-    if (profile.enrichment_pending) {
+    if (profile.enrichment_pending && (!Array.isArray(profile.images) || !profile.images.length)) {
       photoArea.appendChild(buildPhotoPlaceholder("사진과 추가 설명은 ‘더 알아보기’를 눌러 확인하세요."));
     } else { renderPhotos(profile.images, profile.photo_availability); }
     var audioControls = doc.createElement("section");
@@ -3361,6 +3370,11 @@
         observationMessage = "추가 관찰 자료를 확인하지 못했습니다. 질문을 다시 보내 확인하세요.";
         renderObservations();
       }
+    };
+    card.setNotesMessage = function (message, pending) {
+      observationPending = Boolean(pending);
+      observationMessage = message;
+      renderObservations();
     };
 
     var dietInfo = dietIconInfo(profile);
@@ -5661,7 +5675,7 @@
 
   if (typeof document !== "undefined" && typeof window !== "undefined") {
     document.addEventListener("DOMContentLoaded", function () {
-      init(document, window);
+      if (document.getElementById("chat-form")) { init(document, window); }
     });
   }
 

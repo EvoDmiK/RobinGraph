@@ -119,6 +119,12 @@ _CHAT_ASSET_MEDIA_TYPES = {
     "styles.css": "text/css; charset=utf-8",
     "birds.html": "text/html; charset=utf-8",
     "birds.js": "application/javascript",
+    "audio-review.html": "text/html; charset=utf-8",
+    "audio-review.js": "application/javascript",
+    "audio-review.css": "text/css; charset=utf-8",
+    "explore.html": "text/html; charset=utf-8",
+    "explore.js": "application/javascript",
+    "explore.css": "text/css; charset=utf-8",
 }
 # Branding icons are optional: a missing icon is a plain 404 and never turns the
 # chat UI into "unavailable". They live in the same static directory.
@@ -675,6 +681,7 @@ class ApiService:
         jev_router: JevRouter | None = None,
         species_profile_handler: Callable[[str], dict] | None = None,
         species_basic_profile_handler: Callable[[str], dict] | None = None,
+        species_media_profile_handler: Callable[[str], dict] | None = None,
         related_species_handler: Callable[[str], dict] | None = None,
         similar_species_handler: Callable[[str], dict] | None = None,
         ecological_relations_handler: Callable[[str], dict] | None = None,
@@ -698,6 +705,7 @@ class ApiService:
         self.jev_router = jev_router
         self.species_profile_handler = species_profile_handler
         self.species_basic_profile_handler = species_basic_profile_handler
+        self.species_media_profile_handler = species_media_profile_handler
         self.related_species_handler = related_species_handler
         self.similar_species_handler = similar_species_handler
         self.ecological_relations_handler = ecological_relations_handler
@@ -737,6 +745,18 @@ class ApiService:
             return self._unavailable_ui()
         return _chat_asset_response(assets, "birds.html")
 
+    def audio_review_ui(self) -> AssetResponse:
+        assets = _read_chat_asset_bundle(self.asset_root, ("audio-review.html", "audio-review.js", "audio-review.css", "styles.css"))
+        if assets is None:
+            return self._unavailable_ui()
+        return _chat_asset_response(assets, "audio-review.html")
+
+    def explore_ui(self) -> AssetResponse:
+        assets = _read_chat_asset_bundle(self.asset_root, ("explore.html", "explore.js", "explore.css", "styles.css"))
+        if assets is None:
+            return self._unavailable_ui()
+        return _chat_asset_response(assets, "explore.html")
+
     def chat_ui(self) -> AssetResponse:
         assets = _read_chat_asset_bundle(self.asset_root)
         if assets is None:
@@ -762,6 +782,10 @@ class ApiService:
         if asset_path in _ICON_ASSET_MEDIA_TYPES:
             return self.icon_asset(asset_path)
         names = ("birds.html", "birds.js", "styles.css") if asset_path in ("birds.html", "birds.js") else _REQUIRED_CHAT_ASSETS
+        if asset_path in ("audio-review.html", "audio-review.js", "audio-review.css"):
+            names = ("audio-review.html", "audio-review.js", "audio-review.css", "styles.css")
+        if asset_path in ("explore.html", "explore.js", "explore.css"):
+            names = ("explore.html", "explore.js", "explore.css", "styles.css")
         assets = _read_chat_asset_bundle(self.asset_root, names)
         if assets is None:
             # Do not reflect asset_path: it could contain deployment details or
@@ -830,6 +854,37 @@ class ApiService:
         except Exception:
             raise ApiError(status_code=503,detail="Ecological relations are temporarily unavailable") from None
 
+    @_traced_route("GET /v1/taxa/explore")
+    def explore_taxa(self, *, species_scope: SpeciesScope = "all", taxon: str | None = None,
+                     habitat: str | None = None, diet: list[str] | None = None, page: int = 1):
+        """Structured bird explorer: the request is the plan; no NL parsing, routing or LLM."""
+        from ..retrieval.graph_questions import DIET_SHARE_KEYS, LIMITATIONS, GraphQuestion, TraitCondition
+
+        graph_question_handler = self.graph_question_handler
+        if graph_question_handler is None:
+            raise ApiError(status_code=503, detail="Bird explorer is unavailable")
+        diet = sorted(diet or (), key=DIET_SHARE_KEYS.index)
+        conditions = ((TraitCondition("habitat", "eq", habitat),) if habitat else ()) + tuple(
+            TraitCondition("diet_distribution", "share_gt", key, 0) for key in diet)
+        query = {"species_scope": species_scope, "taxon": taxon, "habitat": habitat, "diet": diet, "page": page}
+        try:
+            payload = graph_question_handler(GraphQuestion("taxon_traits", rank_name=taxon, criterion="explore",
+                                                           conditions=conditions, page=page), species_scope=species_scope)
+            if not isinstance(payload, dict) or payload.get("status") not in ("answer", "empty", "insufficient_data"):
+                raise ValueError("Invalid bird explorer result")
+        except Exception as error:
+            logging.getLogger(__name__).warning("Bird explorer lookup failed (%s)", type(error).__name__)
+            raise ApiError(status_code=503, detail="Bird explorer is temporarily unavailable") from None
+        reason = payload.get("taxon_resolution")
+        if reason is not None:
+            kind = {"label_rank_conflict": "taxon_rank_conflict"}.get(reason, f"taxon_{reason}")
+            raise ApiError(status_code=422, detail=[{"type": kind, "loc": ["query", "taxon"], "input": taxon,
+                                                     "msg": "Taxon must name one active order, family or genus"}])
+        if species_scope == "korea":
+            payload = {**payload, "limitations": [*payload.get("limitations", []), LIMITATIONS["korea_record"]]}
+        query['page'] = payload.get('pagination', {}).get('page', page)
+        return {**payload, "query": query}
+
     @_traced_route("GET /v1/taxa/subspecies")
     def subspecies(self, *, name: str):
         subspecies_handler = self.subspecies_handler
@@ -845,8 +900,12 @@ class ApiService:
             raise ApiError(status_code=503,detail="Subspecies lookup is temporarily unavailable") from error
 
     @_traced_route("GET /v1/taxa/profile")
-    def profile(self, *, name: str, species_scope: SpeciesScope = "all"):
-        species_profile_handler = self.species_profile_handler
+    def profile(self, *, name: str, species_scope: SpeciesScope = "all", defer_enrichment: bool = False, include_notes: bool = True):
+        species_profile_handler = (self.species_basic_profile_handler
+                                   if defer_enrichment and self.species_basic_profile_handler is not None
+                                   else self.species_profile_handler)
+        if not defer_enrichment and not include_notes and self.species_media_profile_handler is not None:
+            species_profile_handler = self.species_media_profile_handler
         if not name.strip():
             raise ApiError(status_code=422, detail="A species name is required")
         if species_profile_handler is None:

@@ -87,6 +87,7 @@ def create_django_app(
     jev_router: JevRouter | None = None,
     species_profile_handler: Callable[[str], dict] | None = None,
     species_basic_profile_handler: Callable[[str], dict] | None = None,
+    species_media_profile_handler: Callable[[str], dict] | None = None,
     related_species_handler: Callable[[str], dict] | None = None,
     similar_species_handler: Callable[[str], dict] | None = None,
     ecological_relations_handler: Callable[[str], dict] | None = None,
@@ -123,6 +124,7 @@ def create_django_app(
         jev_router=jev_router,
         species_profile_handler=species_profile_handler,
         species_basic_profile_handler=species_basic_profile_handler,
+        species_media_profile_handler=species_media_profile_handler,
         related_species_handler=related_species_handler,
         similar_species_handler=similar_species_handler,
         ecological_relations_handler=ecological_relations_handler,
@@ -140,5 +142,6 @@ def create_django_app(
     if audio_service is not None:
         import json
         schema['paths'].update(json.loads(Path(__file__).with_name('openapi_audio.json').read_text()))
-        schema['components'].setdefault('securitySchemes',{})['AudioInternalBearer'] = {'type':'http','scheme':'bearer'}
+        for name in ('AudioInternalBearer','AudioReviewBearer','AudioAssessmentBearer'):
+            schema['components'].setdefault('securitySchemes',{})[name] = {'type':'http','scheme':'bearer'}
     return DjangoApiApplication(build_urlconf(service, ingest, schema, audio_service=audio_service), schema)

@@ -193,6 +193,14 @@ class EcologicalRelatedView(RobinGraphView):
         return self.plain(self.service.ecological_related(**self.validated(request)))
 
 
+class TaxonExploreView(RobinGraphView):
+    http_method_names = ["get"]
+    request_serializer = serializers.TaxonExploreRequestSerializer
+
+    def get(self, request):
+        return self.plain(self.service.explore_taxa(**self.validated(request)))
+
+
 class SubspeciesView(RobinGraphView):
     http_method_names = ["get"]
     request_serializer = serializers.TaxonNameRequestSerializer
@@ -203,7 +211,7 @@ class SubspeciesView(RobinGraphView):
 
 class SpeciesProfileView(RobinGraphView):
     http_method_names = ["get"]
-    request_serializer = serializers.ScopedTaxonNameRequestSerializer
+    request_serializer = serializers.SpeciesProfileRequestSerializer
 
     def get(self, request):
         return self.plain(self.service.profile(**self.validated(request)))
@@ -284,6 +292,20 @@ class BirdsUIView(RobinGraphView):
 
     def get(self, request):
         return asset_response(self.service.birds_ui())
+
+
+class ExploreUIView(RobinGraphView):
+    http_method_names = ["get"]
+
+    def get(self, request):
+        return asset_response(self.service.explore_ui())
+
+
+class AudioReviewUIView(RobinGraphView):
+    http_method_names = ["get"]
+
+    def get(self, request):
+        return asset_response(self.service.audio_review_ui())
 
 
 class FaviconView(RobinGraphView):

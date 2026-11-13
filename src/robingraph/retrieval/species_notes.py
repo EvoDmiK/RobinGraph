@@ -5,6 +5,7 @@ import time
 from urllib.parse import unquote, urlsplit
 
 from .species_profile import _json_get
+from .external_cache import read_cached, remember
 
 
 @lru_cache(maxsize=128)
@@ -48,15 +49,23 @@ def encyclopedia_excerpt(scientific_name, hour):
             'source_note':'학명과 문서 식별자를 확인한 백과 설명입니다. 현재 AviList 종의 전체 분류 범위와 일치하는지는 별도로 검증하지 않았습니다.'}
 
 
-def create_species_notes(summarize):
-    @lru_cache(maxsize=128)
-    def cached(scientific_name, hour):
-        source = encyclopedia_excerpt(scientific_name, hour)
+def create_species_notes(summarize, *, model="default"):
+    def key(scientific_name):
+        return 'notes-v1:' + model + ':' + scientific_name
+
+    def load(scientific_name):
+        source = encyclopedia_excerpt(scientific_name, int(time.time() // 3600))
         if source is None:
             return {'appearance':[], 'fun_facts':[]}
-        # The adapter validates every item against the supplied excerpt.
         notes = summarize(scientific_name, source['text'])
-        return {key:[{'text':item['text'], **{k:v for k,v in source.items() if k != 'text'}}
-                     for item in notes.get(key, [])]
-                for key in ('appearance', 'fun_facts')}
-    return lambda lineage: cached(lineage.items[-1].scientific_name, int(time.time() // 3600))
+        return {category:[{'text':item['text'], **{k:v for k,v in source.items() if k != 'text'}}
+                          for item in notes.get(category, [])]
+                for category in ('appearance', 'fun_facts')}
+
+    @lru_cache(maxsize=128)
+    def cached(scientific_name, hour):
+        return remember(key(scientific_name), lambda: load(scientific_name))
+
+    handler = lambda lineage: cached(lineage.items[-1].scientific_name, int(time.time() // 3600))
+    handler.cached = lambda lineage: read_cached(key(lineage.items[-1].scientific_name))
+    return handler

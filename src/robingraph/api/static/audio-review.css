@@ -1,0 +1,62 @@
+.audio-review-page { max-width: 1060px; }
+.audio-review-page [hidden] { display: none !important; }
+.audio-review-page h2, .audio-review-page h3, .audio-review-page p { margin: 0; }
+.review-access, .review-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 18px; padding: 1.35rem; }
+.review-access { display: grid; gap: 1rem; }
+.review-access h2, .review-toolbar h2 { font-size: 1.15rem; }
+.review-access p, .review-boundary, .review-status { color: var(--color-muted); font-size: .9rem; }
+.review-access p { margin-top: .4rem; max-width: 65ch; }
+#review-connect-form { display: grid; gap: .45rem; }
+.review-connect-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.audio-review-page input, .audio-review-page select { font: inherit; padding: .65rem .8rem; background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); border-radius: 10px; min-width: 0; }
+#review-key { flex: 1; }
+.audio-review-page button { min-height: 44px; }
+.audio-review-page :is(button, input, select, a, audio):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.review-library { display: grid; gap: 1rem; }
+.review-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.review-filter { display: flex; align-items: center; gap: .7rem; }
+.review-filter label { font-size: .85rem; color: var(--color-muted); }
+.review-boundary { padding: .85rem 1rem; background: var(--color-answer-bg); border-left: 3px solid var(--color-answer-border); border-radius: 0 10px 10px 0; }
+.review-candidates { display: grid; gap: 1rem; }
+.review-card { display: grid; gap: 1rem; min-width: 0; }
+.review-card-header { display: flex; align-items: start; gap: .7rem; justify-content: space-between; }
+.review-card-heading { min-width: 0; }
+.review-card h3 { font-size: 1.15rem; }
+.review-scientific { color: var(--color-muted); font-size: .9rem; font-style: italic; }
+.review-card-subtitle { font-size: .85rem; color: var(--color-muted); margin-top: .2rem !important; }
+.review-badge { background: var(--color-abstain-bg); color: var(--color-warning); border: 1px solid var(--color-abstain-border); font-size: .78rem; font-weight: 700; padding: .3rem .65rem; border-radius: 999px; flex-shrink: 0; }
+.review-badge-reviewed { background: var(--color-answer-bg); color: var(--color-accent); border-color: var(--color-answer-border); }
+.review-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem 1.5rem; margin: 0; }
+.review-fact { min-width: 0; }
+.review-facts dt { color: var(--color-muted); font-size: .8rem; margin-bottom: .15rem; }
+.review-facts dd { margin: 0; font-size: .93rem; }
+.review-card :is(h3, p, dd, a) { overflow-wrap: anywhere; }
+.review-card a { color: var(--color-accent); text-underline-offset: 3px; }
+.review-player { display: grid; gap: .6rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+.review-player .clear-button { justify-self: start; }
+.review-player audio { display: block; width: 100%; min-width: 0; }
+.review-player-status { font-size: .85rem; color: var(--color-muted); }
+.review-more { justify-self: center; min-width: 150px; }
+.review-empty { text-align: center; padding: 2.5rem 1rem; color: var(--color-muted); background: var(--color-surface); border: 1px dashed var(--color-border); border-radius: 18px; }
+.review-status[data-error="true"] { color: var(--color-error-text); }
+@media (max-width: 540px) {
+  .audio-review-page { padding: 1.25rem 1rem; gap: 1.1rem; }
+  .review-access, .review-card { padding: 1rem; }
+  .review-facts { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
+  .review-card-header { flex-wrap: wrap; }
+  .review-filter { width: 100%; justify-content: space-between; }
+  .review-filter select { flex: 1; max-width: 210px; }
+  .review-connect-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+}
+
+.review-filter { flex-wrap: wrap; }
+.review-assessment { padding-top: 1rem; border-top: 1px solid var(--color-border); }
+.review-assessment summary { cursor: pointer; font-weight: 700; color: var(--color-accent); }
+.review-assessment-saved { display: grid; gap: .4rem; padding: .8rem 0; font-size: .9rem; }
+.review-assessment-note { white-space: pre-wrap; }
+.review-assessment-form { display: grid; gap: .45rem; margin-top: 1rem; }
+.review-assessment-form label { font-size: .85rem; margin-top: .5rem; }
+.review-assessment-form :is(input, select, textarea) { width: 100%; }
+.review-assessment-form textarea { min-width: 0; resize: vertical; font: inherit; color: var(--color-text); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 10px; padding: .65rem .8rem; }
+.review-assessment-form button { justify-self: start; margin-top: .5rem; }
+.audio-review-page :is(textarea, summary):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }

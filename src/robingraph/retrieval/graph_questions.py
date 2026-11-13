@@ -117,6 +117,7 @@ class GraphQuestion:
     criterion: str | None = None
     group: str | None = None
     conditions: tuple[TraitCondition, ...] = ()
+    page: int = 1  # structured explorer only; chat answers retain their existing cap
 
 
 _KO = r'[가-힣]+?(?:\s+[가-힣]+?){0,3}'
@@ -658,10 +659,10 @@ _SUFFIX_RANKS = {suffix: rank for rank, suffix in RANK_LABELS.items() if rank !=
 _SCIENTIFIC_RANKS = {0: ('order', 'family', 'genus'), 1: ('species',), 2: ('subspecies',)}
 
 
-def checked_conditions(conditions):
+def checked_conditions(conditions, sizes=range(1, 9)):
     """Allowlisted, non-conflicting conditions; anything else is a caller bug (ValueError)."""
-    if not isinstance(conditions, tuple) or not 1 <= len(conditions) <= 8:
-        raise ValueError('taxon_traits needs 1-8 conditions')
+    if not isinstance(conditions, tuple) or len(conditions) not in sizes:
+        raise ValueError('taxon_traits condition count out of range')
     seen = {}
     for condition in conditions:
         spec = TRAIT_CONDITIONS.get(getattr(condition, 'trait_name', None))
@@ -826,10 +827,18 @@ def _taxon_display(taxon):
 
 
 def _taxon_traits(repository, store, resolve, parsed, species_scope):
-    conditions = checked_conditions(parsed.conditions)
+    # The structured explorer (criterion 'explore') may list a scope or taxon without trait conditions; its
+    # taxon is a reviewed order/family/genus name or one scientific name, never a fuzzy species lookup.
+    explore = parsed.criterion == 'explore'
+    requested_page = parsed.page if explore else 1
+    if isinstance(requested_page, bool) or not isinstance(requested_page, int) or not 1 <= requested_page <= 10000:
+        raise ValueError('Invalid explorer page')
+    # shortcut: deep pages read an ordered prefix; use count + SKIP if transfer becomes significant.
+    fetch_limit = requested_page * RESULT_LIMIT + 1
+    conditions = checked_conditions(parsed.conditions, range(0, 12) if explore else range(1, 9))
     summary = ', '.join(condition_label(c) for c in conditions)
     scope_label = parsed.rank_name.strip() if parsed.rank_name else '전체 조류'
-    title = f"{scope_label} 중 조건에 맞는 종"
+    title = f"{scope_label} 중 조건에 맞는 종" if conditions else f"{scope_label}의 종"
     condition_out = []
     sources, context = _trait_sources(store)
     pipelines = {TRAIT_CONDITIONS[c.trait_name][0] for c in conditions}
@@ -844,7 +853,9 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
     taxonomy_source = _taxonomy_source(repository, concept, release)
     taxon = None
     if parsed.rank_name is not None:
-        taxon, reason = _taxon_candidates(repository, resolve, parsed.rank_name, concept, release)
+        taxon, reason = _taxon_candidates(repository, None if explore else resolve, parsed.rank_name, concept, release)
+        if explore and taxon is not None and taxon['rank'] in ('species', 'subspecies'):
+            taxon, reason = None, 'rank_unsupported'   # results are species; a species is not a range
         if taxon is None:
             text = {'ambiguous': f"‘{scope_label}’이(가) 현재 분류에서 둘 이상의 분류군으로 확인되어 범위를 정하지 않았습니다.",
                     'label_rank_conflict': (f"‘{scope_label}’의 한국어 분류명이 가리키는 분류 단계와 자료의 실제 분류 단계가 "
@@ -854,12 +865,12 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
                             limitations=['분류군 이름은 AviList 학명, 검토된 한국어 분류명 또는 출처가 확인된 종 국명만 사용합니다. '
                                          '다른 분류 단계로 넓히거나 추측하지 않습니다.'],
                             conditions=condition_out, taxon_resolution=reason)
-        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종"
+        title = f"{_taxon_display(taxon)} 중 조건에 맞는 종" if conditions else f"{_taxon_display(taxon)}의 종"
     self_scope = taxon is not None and taxon['rank'] in ('species', 'subspecies')
     rank_diet = any(c.op == 'share_gt' for c in conditions)
     params = dict(concept_set_id=concept, taxonomy_release=release,
                   conditions=[_condition_parameter(c, sources[TRAIT_CONDITIONS[c.trait_name][0]]) for c in conditions],
-                  korean_reference_names=_korean_reference_names(), limit=RESULT_LIMIT + 1,
+                  korean_reference_names=_korean_reference_names(), limit=fetch_limit,
                   **scope_query_parameters(species_scope, concept, release))
     if taxon is None:
         rows = repository._run(CATALOG_DIET_QUERY if rank_diet else CATALOG_TRAITS_QUERY, **params)
@@ -873,11 +884,17 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
             or not stats['matched'] <= stats['evaluable'] <= stats['scoped']):
         raise ValueError('Invalid taxon trait statistics')
     peers = [row for row in rows if (row.get('taxon') or {}).get('taxon_id')]
-    if len(peers) != (stats['matched'] if rank_diet else min(stats['matched'], RESULT_LIMIT + 1)):
+    if len(peers) != (stats['matched'] if rank_diet else min(stats['matched'], fetch_limit)):
         raise ValueError('Taxon trait rows disagree with statistics')
     if rank_diet:
         peers = _rank_diet_rows(peers, conditions)
-    peers, has_more = _limited(peers)
+    total_pages = max(1, (stats['matched'] + RESULT_LIMIT - 1) // RESULT_LIMIT)
+    page = min(requested_page, total_pages)
+    offset = (page - 1) * RESULT_LIMIT
+    if explore:
+        peers, has_more = peers[offset:offset + RESULT_LIMIT], page < total_pages
+    else:
+        peers, has_more = _limited(peers)
     target_rank = taxon['rank'] if self_scope else 'species'
     items = []
     for row in peers:
@@ -905,7 +922,8 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
                                     + (' (하위 종 전체)' if not self_scope else ' (해당 분류군 자체)'), **taxonomy_source})
     scope_paths += [{'text': f"조건: {item['label']}", 'source_name': item['source_name'],
                      'source_url': None} for item in condition_out]
-    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.']
+    limitations = ['모든 조건을 동시에 만족하는 종만 포함합니다. 조건 형질 자료가 없는 종은 결과에서 빠지며, 조건에 맞지 않는다는 뜻은 아닙니다.'
+                   ] if conditions else []
     for c in conditions:
         if c.qualifier == 'tree_fruit':
             limitations.append(LIMITATIONS['tree_fruit'])
@@ -925,9 +943,13 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
             limitations.append('AVONET 수치는 종 단위 측정 요약값이며 근연종에서 추정한 값은 제외했습니다.')
     if taxon is not None and taxon['rank'] == 'subspecies':
         limitations.append('아종 질문은 부모 종의 형질 자료로 대체하지 않습니다.')
-    limitations.append(LIMITATIONS['graph_claims_only'])
+    if conditions:
+        limitations.append(LIMITATIONS['graph_claims_only'])
     sources_out = [taxonomy_source] + [_source(p['source_name'], p['source_url']) for item in items for p in item['paths']]
     extra = {'taxon': taxon, 'conditions': condition_out, 'coverage': dict(stats), 'paths': scope_paths}
+    if explore:
+        extra['pagination'] = {'page': page, 'page_size': RESULT_LIMIT,
+                               'total': stats['matched'], 'total_pages': total_pages}
     where = _taxon_display(taxon) if taxon is not None else '전체 조류'
     traits = ', '.join(dict.fromkeys(LABELS[c.trait_name] for c in conditions))
     if stats['scoped'] == 0:
@@ -949,7 +971,8 @@ def _taxon_traits(repository, store, resolve, parsed, species_scope):
                 f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 조건({summary})에 맞는 종을 찾지 못했습니다.")
         return _payload('empty', title, text, sources=[taxonomy_source], limitations=limitations, **extra)
     text = (f"{where}은(는) 조건({summary})에 맞습니다." if self_scope else
-            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다.")
+            f"{where} 범위에서 조건 자료가 모두 있는 {stats['evaluable']}종 중 {stats['matched']}종이 조건({summary})에 모두 맞습니다."
+            if conditions else f"{where} 범위의 종 {stats['matched']}종입니다.")
     if rank_diet:
         text += (' 요청한 먹이 비율의 합이 높은 순입니다.' if sum(c.op == 'share_gt' for c in conditions) > 1
                  else ' 먹이 비율이 높은 순입니다.')

@@ -38,8 +38,11 @@ def build_urlpatterns(service: ApiService, ingest: IngestService | None = None,
 
     patterns = []
     if audio_service is not None:
-        from .audio_views import AudioOperationView, AudioMediaView
+        from .audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView, AudioAssessmentView
         patterns += [
+            path('audio-review', bind(views.AudioReviewUIView)),
+            path('internal/v1/audio/assessment', views.threaded(AudioAssessmentView.as_view(audio=audio_service))),
+            path('internal/v1/audio/candidates', views.threaded(AudioCandidatesView.as_view(audio=audio_service))),
             path('internal/v1/audio/preview/<str:name>', views.threaded(AudioMediaView.as_view(audio=audio_service,private=True))),
             path('internal/v1/audio/<str:action>', views.threaded(AudioOperationView.as_view(audio=audio_service))),
             path('media/audio/<str:name>', views.threaded(AudioMediaView.as_view(audio=audio_service))),
@@ -55,9 +58,11 @@ def build_urlpatterns(service: ApiService, ingest: IngestService | None = None,
         path("v1/taxa/related", bind(views.RelatedSpeciesView)),
         path("v1/taxa/similar", bind(views.SimilarSpeciesView)),
         path("v1/taxa/ecological-related", bind(views.EcologicalRelatedView)),
+        path("v1/taxa/explore", bind(views.TaxonExploreView)),
         path("v1/taxa/subspecies", bind(views.SubspeciesView)),
         path("v1/taxa/profile", bind(views.SpeciesProfileView)),
         path("birds", bind(views.BirdsUIView)),
+        path("explore", bind(views.ExploreUIView)),
         path("favicon.ico", bind(views.FaviconView)),
         re_path(r"^static/(?P<asset_path>.*)\Z", bind(views.StaticAssetView)),
         path("", bind(views.ChatUIView)),

@@ -1,4 +1,5 @@
 :root {
+  color-scheme: only light;
   --color-bg: #f8f3e7;
   --color-surface: #fffdf8;
   --color-text: #2a271f;
@@ -20,32 +21,6 @@
   --send-button-text: #ffffff;
   --badge-answer-text: #10331f;
   --badge-abstain-text: #4a3200;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #16190f;
-    --color-surface: #1e2217;
-    --color-text: #ebe7da;
-    --color-muted: #ada68f;
-    --color-border: #39392c;
-    --color-accent: #6fcf97;
-    --color-answer-bg: #16261d;
-    --color-answer-border: #2c5a3d;
-    --color-abstain-bg: #2a2311;
-    --color-abstain-border: #6b5416;
-    --color-warning: #e0b34d;
-    --color-error-bg: #2c1917;
-    --color-error-border: #6e332c;
-    --color-error-text: #f2a99e;
-    --focus-ring: #6fcf97;
-    /* --color-accent becomes a light green in dark mode, so the send
-       button needs dark text; the badge backgrounds stay dark, so their
-       text must flip to the light foreground color to keep >=4.5:1. */
-    --send-button-text: #1f2328;
-    --badge-answer-text: #e8eaed;
-    --badge-abstain-text: #e8eaed;
-  }
 }
 
 * {
@@ -74,6 +49,34 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.app-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.explore-nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: none;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-answer-border);
+  border-radius: 999px;
+  background: var(--color-answer-bg);
+}
+
+.explore-nav-link:hover {
+  border-color: var(--color-accent);
+}
+
+.explore-nav-link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .brand {
@@ -1376,11 +1379,6 @@ body:has(.species-popup[open]) { overflow: hidden; }
   .diet-icon { font-size: .7rem; padding-right: 6px; }
   .diet-icon-symbol { flex-basis: 18px; width: 18px; height: 18px; }
 }
-@media (prefers-color-scheme: dark) {
-  /* Only the themed chat brief; the card popup is always light. */
-  .species-chat-brief .diet-icon { background: #1e2217; filter: brightness(1.45); }
-}
-
 /* RG-009 photo absence, broken image, and retry states. */
 .species-photo-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 120px; margin: 8px 0; padding: 14px; border: 1px dashed #8fAA65; border-radius: 12px; background: repeating-linear-gradient(135deg, #f2f8cf, #f2f8cf 10px, #e9f1c4 10px, #e9f1c4 20px); color: #405635; text-align: center; }
 .species-photo-placeholder svg { width: 48px; height: 48px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: .7; }

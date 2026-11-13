@@ -374,23 +374,22 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
                     'taxonomy_release':lineage.taxonomy_release}
 
         audio_service = AudioService(AudioStore(PostgresSettings.from_environment()),audio_root,lineage_repository,
-                                     audio_exact_species,os.environ.get('ROBINGRAPH_INGEST_INTERNAL_TOKEN',''))
+                                     audio_exact_species,os.environ.get('ROBINGRAPH_INGEST_INTERNAL_TOKEN',''),
+                                     review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'),
+                                     assessment_token=os.environ.get('ROBINGRAPH_AUDIO_ASSESSMENT_TOKEN'))
 
     summarize_notes = getattr(answer_generator, 'species_notes', None)
-    species_flow = create_species_flow(
-        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
+    notes_handler = create_species_notes(summarize_notes, model=gemini_model) if callable(summarize_notes) else None
+    profile_options = dict(
+        resolve=resolve_species, traits=lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
         conservation=lambda lineage: read_conservation(lineage_repository, lineage),
-        notes=create_species_notes(summarize_notes) if callable(summarize_notes) else None,
-        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
+        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository, lineage),
         recordings=audio_service.recordings if audio_service is not None else lambda lineage: read_recordings(lineage_repository,lineage),
+        cached_notes=notes_handler.cached if notes_handler is not None else None,
     )
-    basic_species_flow = create_species_flow(
-        resolve_species, lambda lineage: read_traits(lineage_repository, ingest_store, lineage),
-        conservation=lambda lineage: read_conservation(lineage_repository, lineage),
-        subspecies_info=lambda lineage: subspecies_metadata(lineage_repository,lineage),
-        recordings=audio_service.recordings if audio_service is not None else lambda lineage: read_recordings(lineage_repository,lineage),
-        include_enrichment=False,
-    )
+    species_flow = create_species_flow(**profile_options, notes=notes_handler)
+    basic_species_flow = create_species_flow(**profile_options, include_enrichment=False)
+    media_species_flow = create_species_flow(**profile_options, include_notes=False)
     from .retrieval.species_scope import with_species_scope
 
     def annotated_profile(flow, name):
@@ -414,6 +413,7 @@ def serve_neo4j(arguments: argparse.Namespace) -> int:
             jev_router=jev_router,
             species_profile_handler=lambda name: annotated_profile(species_flow, name),
             species_basic_profile_handler=lambda name: annotated_profile(basic_species_flow, name),
+            species_media_profile_handler=lambda name: annotated_profile(media_species_flow, name),
             taxon_name_resolution_handler=name_resolver.resolve,
             related_species_handler=lambda name, species_scope="all": related_species(lineage_repository, resolve_species, name, species_scope),
             similar_species_handler=lambda name, species_scope="all": similar_species(lineage_repository, ingest_store, resolve_species, name, species_scope),

@@ -423,6 +423,12 @@
       "security": [
         {
           "AudioInternalBearer": []
+        },
+        {
+          "AudioReviewBearer": []
+        },
+        {
+          "AudioAssessmentBearer": []
         }
       ]
     },
@@ -462,6 +468,12 @@
       "security": [
         {
           "AudioInternalBearer": []
+        },
+        {
+          "AudioReviewBearer": []
+        },
+        {
+          "AudioAssessmentBearer": []
         }
       ]
     }
@@ -532,6 +544,178 @@
         },
         "416": {
           "description": "Invalid or unsatisfiable byte range"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/candidates": {
+    "get": {
+      "summary": "Read-only audio candidate review list",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioReviewBearer": []
+        },
+        {
+          "AudioAssessmentBearer": []
+        }
+      ],
+      "parameters": [
+        {
+          "in": "query",
+          "name": "limit",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 20
+          }
+        },
+        {
+          "in": "query",
+          "name": "offset",
+          "schema": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000,
+            "default": 0
+          }
+        },
+        {
+          "in": "query",
+          "name": "status",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "awaiting_review",
+              "approved",
+              "published",
+              "rejected",
+              "deferred"
+            ]
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Sanitized candidate page with can_assess boolean, nullable item assessment and next_offset"
+        },
+        "401": {
+          "description": "A distinct read-only review bearer is required"
+        },
+        "422": {
+          "description": "Invalid pagination or status"
+        }
+      }
+    }
+  },
+  "/internal/v1/audio/assessment": {
+    "post": {
+      "summary": "Save candidate assessment only; does not approve or publish audio",
+      "tags": [
+        "audio"
+      ],
+      "security": [
+        {
+          "AudioAssessmentBearer": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "candidate_id",
+                "expected_updated_at",
+                "reviewer",
+                "playback",
+                "source",
+                "identification",
+                "decision",
+                "note",
+                "identification_note"
+              ],
+              "properties": {
+                "candidate_id": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "expected_updated_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "reviewer": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "playback": {
+                  "type": "string",
+                  "enum": [
+                    "unchecked",
+                    "normal",
+                    "silent",
+                    "file_error"
+                  ]
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "unchecked",
+                    "checked"
+                  ]
+                },
+                "identification": {
+                  "type": "string",
+                  "enum": [
+                    "unchecked",
+                    "uploader_only",
+                    "additional_evidence",
+                    "uncertain"
+                  ]
+                },
+                "decision": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "hold",
+                    "candidate",
+                    "exclude"
+                  ]
+                },
+                "note": {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                "identification_note": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Saved latest assessment, candidate_id and updated_at for the next edit"
+        },
+        "401": {
+          "description": "A distinct assessment bearer is required"
+        },
+        "404": {
+          "description": "Candidate not found"
+        },
+        "409": {
+          "description": "Candidate changed; reload before retrying"
+        },
+        "422": {
+          "description": "Invalid fields, timestamp, choices, evidence note, or credential text"
         }
       }
     }

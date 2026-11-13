@@ -29,6 +29,14 @@ class AudioStore(IngestionStore):
             (candidate_id,science,title,status,Jsonb(data)))
 
     @staticmethod
+    def save_assessment(cursor, candidate_id, assessment):
+        # Use wall-clock time after the row lock, even when this transaction waited for an older writer.
+        cursor.execute('''UPDATE audio_recording_candidate SET
+            data=jsonb_set(data,'{assessment}',%s),updated_at=clock_timestamp()
+            WHERE id=%s RETURNING updated_at''', (Jsonb(assessment),candidate_id))
+        return cursor.fetchone()['updated_at']
+
+    @staticmethod
     def cooldown(cursor):
         cursor.execute("SELECT max((data->>'retry_at')::timestamptz) AS until FROM audio_recording_candidate WHERE status='deferred'")
         return cursor.fetchone()['until']
@@ -44,4 +52,11 @@ class AudioStore(IngestionStore):
                 AND (%s::text IS NULL OR scientific_name=%s)
                 AND (%s::text IS NULL OR data->>'file_name'=%s) ORDER BY id LIMIT 3''',
                 (scientific_name,scientific_name,file_name,file_name))
+            return cursor.fetchall()
+
+    def candidates(self, *, limit, offset, status=None):
+        with self.session() as cursor:
+            cursor.execute('''SELECT id,scientific_name,file_title,status,data,updated_at
+                FROM audio_recording_candidate WHERE (%s::text IS NULL OR status=%s)
+                ORDER BY updated_at DESC,id DESC LIMIT %s OFFSET %s''', (status,status,limit,offset))
             return cursor.fetchall()

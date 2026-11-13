@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from robingraph.api.drf.application import DjangoApiApplication, configure_default_settings
 configure_default_settings()
 
-from robingraph.api.drf.audio_views import AudioOperationView, AudioMediaView
+from robingraph.api.drf.audio_views import AudioOperationView, AudioMediaView, AudioCandidatesView, AudioAssessmentView
 from robingraph.api.drf.urls import UrlConf
 from robingraph.api.drf.views import RobinGraphView, threaded
 from robingraph.api.services import ApiError
@@ -35,7 +35,9 @@ def create_app(audio_service,target):
     if target not in ('test','prod'):
         raise ValueError('An explicit test or prod collector target is required')
     configure_default_settings()
-    patterns=[path('health',threaded(CollectorHealthView.as_view(target=target))),
+    patterns=[path('internal/v1/audio/assessment',threaded(AudioAssessmentView.as_view(audio=audio_service))),
+              path('internal/v1/audio/candidates',threaded(AudioCandidatesView.as_view(audio=audio_service))),
+              path('health',threaded(CollectorHealthView.as_view(target=target))),
               path('internal/v1/audio/preview/<str:name>',threaded(AudioMediaView.as_view(audio=audio_service,private=True)))]
     for action in ('targets','discover','stage','status','review'):
         patterns.append(path('internal/v1/audio/'+action,
@@ -89,7 +91,9 @@ def create_from_environment():
                 'taxonomy_release':lineage.taxonomy_release}
 
     service=AudioService(store,os.environ['ROBINGRAPH_AUDIO_ROOT'],repository,exact_species,
-                         os.environ['ROBINGRAPH_INGEST_INTERNAL_TOKEN'])
+                         os.environ['ROBINGRAPH_INGEST_INTERNAL_TOKEN'],
+                         review_token=os.environ.get('ROBINGRAPH_AUDIO_REVIEW_TOKEN'),
+                         assessment_token=os.environ.get('ROBINGRAPH_AUDIO_ASSESSMENT_TOKEN'))
     app=create_app(service,target)
     app.collector_repository=repository
     return app
