@@ -112,7 +112,7 @@ def workflow(target="test"):
 
 def configure_production(result):
     """Extend the shared collection graph; production has no review/publish action."""
-    result.update(id='rgAudioCollectionProd01',name='RobinGraph Audio Collection PROD (daily 1 species)')
+    result.update(id='rgAudioCollectionProd01',name='RobinGraph Audio Collection PROD (daily 5 species)')
     by_name={n['name']:n for n in result['nodes']}
     for n in result['nodes']:
         if n['type']=='n8n-nodes-base.httpRequest':
@@ -141,7 +141,7 @@ if (!(status >= 200 && status < 300)""")
     result['nodes'] += [node('Daily 03:00 Korea','n8n-nodes-base.scheduleTrigger',1.2,
         {'rule':{'interval':[{'field':'cronExpression','expression':'0 3 * * *'}]}},(0,300)),
         code('Scheduled collection inputs',"""const row=$input.first().json;
-return [{json:{action:'collect',limit:1,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];""",(220,300)),
+return [{json:{action:'collect',limit:5,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];""",(220,300)),
         code('Execution inputs','return $input.all();',(440,150))]
     c=result['connections']
     c['Manual inputs']={'main':[[edge('Execution inputs')]]}

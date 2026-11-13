@@ -1,6 +1,6 @@
 {
   "id": "rgAudioCollectionProd01",
-  "name": "RobinGraph Audio Collection PROD (daily 1 species)",
+  "name": "RobinGraph Audio Collection PROD (daily 5 species)",
   "active": false,
   "nodes": [
     {
@@ -276,7 +276,7 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "const row=$input.first().json;\nreturn [{json:{action:'collect',limit:1,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];"
+        "jsCode": "const row=$input.first().json;\nreturn [{json:{action:'collect',limit:5,after_taxon_id:row.after_taxon_id||'',scientific_name:'',file_title:'',candidate_id:'',approved:false,taxon_verified:false,playback_verified:false,scheduled:true}}];"
       },
       "id": "da4a6966-3ee9-59f7-bd7f-536612d22e8e",
       "name": "Scheduled collection inputs",
@@ -652,5 +652,5 @@
     "executionTimeout": 86400
   },
   "pinData": {},
-  "versionId": "b97177d4-2ffc-503d-ac77-fcb6f5794987"
+  "versionId": "17c8c1dd-7392-5904-92a1-12b42776a138"
 }

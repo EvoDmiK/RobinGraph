@@ -63,13 +63,66 @@ class AudioWorkflowTests(unittest.TestCase):
         for action in ['review','publish']:
             config={**self.config(),'action':action,'candidate_id':'a'*64,'approved':True}
             scheduled=run_js(nodes['Scheduled collection inputs']['parameters']['jsCode'],{'after_taxon_id':'old'},config=config)['output'][0]['json']
-            self.assertEqual(scheduled['action'],'collect');self.assertEqual(scheduled['limit'],1)
+            self.assertEqual(scheduled['action'],'collect');self.assertEqual(scheduled['limit'],5)
             self.assertFalse(scheduled['approved']);self.assertEqual(scheduled['candidate_id'],'')
             self.assertEqual(scheduled['after_taxon_id'],'old')
             initial=nodes['Initialize request']['parameters']['jsCode']
             self.assertIn('error',run_js(initial,{'deployment_target':'prod','publication_enabled':False},config=config))
             self.assertIn('error',run_js(initial,{'deployment_target':'prod','publication_enabled':True},config=scheduled))
         self.assertEqual(json.loads((ROOT/'n8n/robingraph-audio-collection-prod.json').read_text()),w)
+
+    def test_production_daily_five_species_are_sequential_and_never_auto_published(self):
+        w=audio.workflow('prod');nodes={n['name']:n for n in w['nodes']}
+        self.assertEqual(w['name'],'RobinGraph Audio Collection PROD (daily 5 species)')
+        self.assertEqual(w['settings']['timezone'],'Asia/Seoul')
+        manual=run_js(nodes['Manual inputs']['parameters']['jsCode'],{})['output'][0]['json']
+        self.assertEqual(manual['limit'],1)
+        scheduled=run_js(nodes['Scheduled collection inputs']['parameters']['jsCode'],{'after_taxon_id':'prior'})['output'][0]['json']
+        # Exercise shared initialization and the generated PROD transition with fixture responses.
+        r=self.initial(**scheduled)
+        self.assertEqual(r['request']['body'],{'limit':5,'after_taxon_id':'prior'})
+        transition=nodes['Advance state']['parameters']['jsCode']
+        def advance(status,body):
+            return run_js(transition,{'statusCode':status,'body':body},previous=r)['output'][0]['json']
+        targets=[{'scientific_name':'Fixture species'+str(i)} for i in range(5)]
+        r=advance(200,{'targets':targets,'next_cursor':'after-five'})
+        for i,target in enumerate(targets):
+            self.assertEqual(r['request']['path'],'discover')
+            self.assertEqual(r['request']['body']['scientific_name'],target['scientific_name'])
+            r=advance(200,{'candidates':[{**target,'file_title':'File:first.ogg'},{**target,'file_title':'File:unused.ogg'}]})
+            self.assertEqual(r['request']['path'],'stage')
+            self.assertEqual(r['request']['body']['file_title'],'File:first.ogg')
+            candidate_id=str(i)*64
+            r=advance(200,{'candidate_id':candidate_id,'status':'awaiting_review'})
+            self.assertEqual(r['request']['path'],'status')
+            r=advance(200,{'candidate_id':candidate_id,'status':'awaiting_review'})
+            self.assertEqual(r['done'],i==4)
+        summary=run_js(nodes['Prepare execution summary']['parameters']['jsCode'],r)['output'][0]['json']
+        self.assertEqual(summary['next_cursor'],'after-five')
+        self.assertEqual(len(summary['results']),5)
+        self.assertTrue(all(item['status']=='awaiting_review' for item in summary['results']))
+        self.assertFalse(summary['publication_automatic'])
+        self.assertIn('error',run_js(audio.INITIALIZE,{'deployment_target':'test'},config={**manual,'limit':6}))
+
+    def test_production_daily_batch_stops_without_checkpoint_on_provider_failure(self):
+        nodes={n['name']:n for n in audio.workflow('prod')['nodes']}
+        for status in (429,502):
+            with self.subTest(status=status):
+                r=self.initial(limit=5,scheduled=True)
+                targets=[{'scientific_name':'Fixture species'+str(i)} for i in range(5)]
+                previous=self.advance(r,200,{'targets':targets,'next_cursor':'after-five'})
+                response=run_js(nodes['Advance state']['parameters']['jsCode'],{'statusCode':status,'body':{'retry_after_seconds':600}},previous=previous)
+                if status==502:
+                    self.assertIn('error',response)
+                    continue
+                deferred=response['output'][0]['json']
+                self.assertEqual(deferred['wait_seconds'],600)
+                self.assertEqual(deferred['state']['queue'],[])
+                self.assertIsNone(deferred['request'])
+                summary=run_js(nodes['Prepare execution summary']['parameters']['jsCode'],deferred)['output'][0]['json']
+                self.assertEqual(summary['status'],'deferred')
+                final=run_js(nodes['Execution summary']['parameters']['jsCode'],{},config=summary)['output'][0]['json']
+                self.assertFalse(final['cursor_saved'])
 
     def test_production_cursor_checkpoint_preserves_results_and_requires_scheduled_success(self):
         w=audio.workflow('prod');nodes={n['name']:n for n in w['nodes']}
