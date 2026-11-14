@@ -19,6 +19,7 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 
 ## 목차
 
+- [웹 화면과 데이터 흐름](#웹-화면과-데이터-흐름)
 - [현재 제공 기능](#현재-제공-기능)
 - [기술 스택](#기술-스택)
 - [로컬에서 빠르게 실행](#로컬에서-빠르게-실행)
@@ -30,6 +31,74 @@ RobinGraph는 **새를 좋아하는 마음에서 시작한 조류 지식 탐색 
 - [테스트](#테스트)
 - [문서 안내](#문서-안내)
 - [기여자](#기여자)
+
+## 웹 화면과 데이터 흐름
+
+웹은 검증된 자료를 찾아 답변·도감으로 보여주고, 수집 과정은 그 자료와 출처를 준비합니다. 질문할 때마다 전체 자료를 다시 수집하지 않으며, 필요한 사진·설명은 별도로 조회하고 설정에 따라 캐시합니다.
+
+### 웹에 표시하는 내용
+
+```mermaid
+flowchart TD
+    U[사용자] --> C[채팅: 한국어 질문]
+    U --> E[새 탐색기: 분류·서식지·먹이 조건]
+    U --> B[도감: 새 목록·카드]
+    C --> A[API: 이름·질문 확인과 자료 조회]
+    E --> A
+    B --> A
+    A --> R[답변·검색 결과·도감 카드]
+    R --> I[사진·이름·형질·보전 등급·출처]
+    R --> X[아종·관련 종·비교 후속 조회]
+    R --> F[답변 피드백과 MLflow 추적 연결]
+```
+
+채팅은 질문으로, 탐색기는 조건 선택으로 새를 찾습니다. 결과의 도감 카드에서 특징과 근거를 확인하고 관련 종을 더 살펴볼 수 있습니다. 후속 질문은 지원하는 그래프 질의에서 단일 조건을 추가하는 범위이며, 모든 자연어 질문의 일반화가 완료된 것은 아닙니다.
+
+### 데이터를 수집하고 준비하는 과정
+
+```mermaid
+flowchart TD
+    S[외부 자료·검토된 자료] --> L[n8n·수집 API·전용 로더]
+    L --> V[버전·해시·출처·라이선스·종 연결 검증]
+    V --> P[PostgreSQL: 원자료 기록·수집 이력·활성 자료판]
+    V --> N[Neo4j: 분류·이름·형질·검색용 관계]
+    V --> Q[실패·모호한 자료 분리]
+    P --> A[API가 허용된 활성 자료를 조회]
+    N --> A
+    A --> W[웹 답변·도감·탐색 결과]
+    M[사진 제공처·설명 조회 경로] --> K[필요할 때 조회·선택적 캐시]
+    K --> W
+```
+
+| 자료 | 화면에서 사용하는 내용 |
+| --- | --- |
+| AviList v2025b | 분류·학명·영명·분포 설명 |
+| EltonTraits·AVONET | 먹이 구성·먹이활동 위치·체중·형태·서식 환경 |
+| 검토된 국명·이름 연결 자료 | 한국어 이름·동의어·이름 후보 확인 |
+| IUCN 공개 평가목록·AviList 기록 | 출처와 평가 대상 범위를 구분한 보전 등급 표시 |
+| GBIF 관찰·허용 문헌 | 관찰 기록 조회·문헌 근거 검색 경로 |
+| 사진 제공처·검토된 설명 자료 | 출처·라이선스가 있는 사진과 설명 |
+
+모든 출처가 매일 자동 갱신되는 것은 아닙니다. 고정 자료판과 검증된 적재 범위를 사용하며, 출처마다 수집·검토·활성화 경로가 다릅니다. PostgreSQL은 원자료·수집 관리 정보를, Neo4j는 조회에 필요한 관계를 담당합니다. 문헌 검색 경로는 구현돼 있지만 HippoRAG/PPR 전환은 미구현입니다.
+
+### 새소리의 수집·검토·공개 단계
+
+```mermaid
+flowchart LR
+    S[Commons 음원 후보] --> C[수집·파일 저장·출처 검증]
+    C --> P[비공개 후보 보관]
+    P --> R[인증된 미리듣기·검토 의견]
+    R -. 별도 사람 검토·공개 절차 .-> W[공개 가능한 음원·도감 재생]
+```
+
+| 구분 | 검증 기록상 상태 |
+| --- | --- |
+| 음원 후보 수집 | 운영 수집 전용 실행기·매일 03:00 Asia/Seoul 최대 5종 처리 예약 적용. 성공 저장 5건을 보장하지 않음 |
+| 도감 새소리 재생 | 12종 TEST 검증, 2종 CDN 가용성 후속·운영 승인 대기 |
+| 검토 화면·후보별 의견 저장 | TEST 검증 완료, 해당 기능의 운영 반영·실제 사람 검토 대기 |
+| 공개 | 수집·의견 저장과 별도 절차. 자동 승인·공개하지 않음 |
+
+위 상태는 저장된 검증 기록 기준입니다. [웹·수집 기능의 현재 백로그](docs/backlog/README.md), [하루 최대 5종 예약](docs/work-log/2026-11-07-bird-audio-daily-five.md), [실제 수집 결과·검토 화면](docs/work-log/2026-11-09-bird-audio-review.md)을 함께 확인합니다.
 
 ## 현재 제공 기능
 <p align='center'>
@@ -302,7 +371,7 @@ GitHub Actions는 Windows·macOS·Linux fixture, 프런트엔드 계약, Docker/
 | 이름·관계 | [국명 정책](docs/korean-display-names.md) · [생태 관계](docs/ecological-relations.md) · [아종](docs/subspecies-cards.md) · [통칭·가축형](docs/name-relations.md) · [관계 조사 목록](docs/name-relations-coverage.md) |
 | 설계·데이터 | [시스템 설계](docs/system-design.md) · [그래프 스키마](docs/graph-database-schema.md) · [데이터 계약](docs/data-contracts.md) · [수집 포인트](docs/collection-points.md) · [기술 결정](docs/decisions/) |
 | 수집·배포 | [n8n 수집 런북](docs/n8n/README.md) · [PostgreSQL 수집 관리](docs/postgres-ingest-control-plane.md) · [NAS 배포](docs/nas-deployment.md) |
-| 개발·기록 | [개발환경·테스트](docs/development.md) · [평가](docs/evaluation.md) · [작업 이력](docs/work-log/) · [검증·배포 기록](docs/verification/) |
+| 개발·기록 | [개발환경·테스트](docs/development.md) · [평가](docs/evaluation.md) · [현재 백로그](docs/backlog/README.md) · [작업 이력](docs/work-log/) · [검증·배포 기록](docs/verification/) |
 
 설계 문서와 과거 작업 기록에는 당시 상태가 남아 있습니다. 현재 기능은 이 README와 최신 날짜의 검증 기록을 함께 확인합니다. RG-301 Jev 의도 분석, RG-405 카드 조작·반응형 화면, RG-602 MLflow 결과 구분은 구현되어 있으며, 후속·보류 작업의 우선순위는 Obsidian `Work/RobinGraph/RobinGraph 작업 백로그.md`에서 관리합니다.
 
